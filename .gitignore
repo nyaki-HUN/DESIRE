@@ -1,0 +1,15 @@
+# Intermediate build directories
+[Dd]ebug/
+[Rr]elease/
+
+# Visual Studio
+*.sdf
+*.opensdf
+*.suo
+*.user
+*.ilk
+ipch/
+
+# Xcode and OS X
+xcuserdata
+.DS_Store
