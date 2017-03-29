@@ -106,8 +106,6 @@
     <ClInclude Include="..\..\src\Component\RenderComponent.h" />
     <ClInclude Include="..\..\src\Component\SceneNodeComponent.h" />
     <ClInclude Include="..\..\src\Component\ScriptComponent.h" />
-    <ClInclude Include="..\..\src\Core\ANDROID\ANDROIDLoggerPolicies.h" />
-    <ClInclude Include="..\..\src\Core\ANDROID\ANDROIDWindow.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueInt.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\IConfigValue.h" />
@@ -116,15 +114,10 @@
     <ClInclude Include="..\..\src\Core\HashedString.h" />
     <ClInclude Include="..\..\src\Core\HashedStringMap.h" />
     <ClInclude Include="..\..\src\Core\IApp.h" />
-    <ClInclude Include="..\..\src\Core\IOS\IOSLoggerPolicies.h" />
-    <ClInclude Include="..\..\src\Core\IOS\IOSWindow.h" />
     <ClInclude Include="..\..\src\Core\IWindow.h" />
-    <ClInclude Include="..\..\src\Core\LINUX\LINUXFile.h" />
-    <ClInclude Include="..\..\src\Core\LINUX\LINUXWindow.h" />
     <ClInclude Include="..\..\src\Core\LockFreeRingBuffer.h" />
     <ClInclude Include="..\..\src\Core\Log.h" />
     <ClInclude Include="..\..\src\Core\Logger.h" />
-    <ClInclude Include="..\..\src\Core\OSX\OSXWindow.h" />
     <ClInclude Include="..\..\src\Core\Object.h" />
     <ClInclude Include="..\..\src\Core\SMemoryBuffer.h" />
     <ClInclude Include="..\..\src\Core\Singleton.h" />
@@ -174,9 +167,7 @@
     <ClInclude Include="..\..\src\Input\GameController.h" />
     <ClInclude Include="..\..\src\Input\Input.h" />
     <ClInclude Include="..\..\src\Input\Keyboard.h" />
-    <ClInclude Include="..\..\src\Input\LINUX\LINUXInput.h" />
     <ClInclude Include="..\..\src\Input\Mouse.h" />
-    <ClInclude Include="..\..\src\Input\OSX\OSXInput.h" />
     <ClInclude Include="..\..\src\Input\WINDOWS\WINDOWSInput.h" />
     <ClInclude Include="..\..\src\Input\keyCodes.h" />
     <ClInclude Include="..\..\src\Network\NetworkFileSource.h" />
@@ -258,19 +249,11 @@
     <ClCompile Include="..\..\src\Component\RenderComponent.cpp" />
     <ClCompile Include="..\..\src\Component\SceneNodeComponent.cpp" />
     <ClCompile Include="..\..\src\Component\ScriptComponent.cpp" />
-    <ClCompile Include="..\..\src\Core\ANDROID\ANDROIDLoggerPolicies.cpp" />
-    <ClCompile Include="..\..\src\Core\ANDROID\ANDROIDWindow.cpp" />
-    <ClCompile Include="..\..\src\Core\ANDROID\main.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueInt.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\IConfigValue.cpp" />
     <ClCompile Include="..\..\src\Core\IApp.cpp" />
-    <ClCompile Include="..\..\src\Core\IOS\IOSTimer.cpp" />
-    <ClCompile Include="..\..\src\Core\IOS\IOSWindow.cpp" />
     <ClCompile Include="..\..\src\Core\IWindow.cpp" />
-    <ClCompile Include="..\..\src\Core\LINUX\LINUXFile.cpp" />
-    <ClCompile Include="..\..\src\Core\LINUX\LINUXTimer.cpp" />
-    <ClCompile Include="..\..\src\Core\LINUX\LINUXWindow.cpp" />
     <ClCompile Include="..\..\src\Core\Log.cpp" />
     <ClCompile Include="..\..\src\Core\Logger.cpp" />
     <ClCompile Include="..\..\src\Core\Object.cpp" />
@@ -281,10 +264,7 @@
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSLoggerPolicies.cpp" />
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSTimer.cpp" />
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSWindow.cpp" />
-    <ClCompile Include="..\..\src\Core\WINDOWS\main.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\main1.obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\main1.obj</ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\src\Core\WINDOWS\main.cpp" />
     <ClCompile Include="..\..\src\Core\fs\FileSourceZip.cpp" />
     <ClCompile Include="..\..\src\Core\fs\FileSystem.cpp" />
     <ClCompile Include="..\..\src\Core\fs\IReadFile.cpp" />
@@ -300,9 +280,7 @@
     <ClCompile Include="..\..\src\Input\GameController.cpp" />
     <ClCompile Include="..\..\src\Input\Input.cpp" />
     <ClCompile Include="..\..\src\Input\Keyboard.cpp" />
-    <ClCompile Include="..\..\src\Input\LINUX\LINUXInput.cpp" />
     <ClCompile Include="..\..\src\Input\Mouse.cpp" />
-    <ClCompile Include="..\..\src\Input\OSX\OSXInput.cpp" />
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp" />
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp" />
     <ClCompile Include="..\..\src\Physics\Bullet\!\BulletCarPhysicsComponent.cpp" />

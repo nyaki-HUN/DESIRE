@@ -7,20 +7,8 @@
     <Filter Include="Core">
       <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\ANDROID">
-      <UniqueIdentifier>{9EB8E263-8A1B-7208-33A1-AABE1FE33D8B}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\ConfigValue">
       <UniqueIdentifier>{50D630CC-3CCF-4F1E-6501-35A351592F2A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\IOS">
-      <UniqueIdentifier>{082299C2-F4EE-F3CD-1D08-E2750934295C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\LINUX">
-      <UniqueIdentifier>{4DB99CCD-3971-DE1A-A278-B7768E4F790B}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\OSX">
-      <UniqueIdentifier>{173C99C2-0309-F4CD-2C22-E275184E295C}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\WINDOWS">
       <UniqueIdentifier>{A86F67F6-94D2-F69A-3D58-2F51299AC21D}</UniqueIdentifier>
@@ -39,12 +27,6 @@
     </Filter>
     <Filter Include="Input">
       <UniqueIdentifier>{953A660D-014F-8EBE-CAD0-311E36A48AEF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Input\LINUX">
-      <UniqueIdentifier>{F4307AF4-60E6-F2E9-E9DA-ECC0558FE9ED}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Input\OSX">
-      <UniqueIdentifier>{FE9D9674-6A08-4BEB-B346-FC901FF02840}</UniqueIdentifier>
     </Filter>
     <Filter Include="Input\WINDOWS">
       <UniqueIdentifier>{0F6D814A-7B2D-FD80-4468-46FEB0E7415D}</UniqueIdentifier>
@@ -147,12 +129,6 @@
     <ClInclude Include="..\..\src\Component\ScriptComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\ANDROID\ANDROIDLoggerPolicies.h">
-      <Filter>Core\ANDROID</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\ANDROID\ANDROIDWindow.h">
-      <Filter>Core\ANDROID</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueFloat.h">
       <Filter>Core\ConfigValue</Filter>
     </ClInclude>
@@ -177,20 +153,8 @@
     <ClInclude Include="..\..\src\Core\IApp.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\IOS\IOSLoggerPolicies.h">
-      <Filter>Core\IOS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\IOS\IOSWindow.h">
-      <Filter>Core\IOS</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Core\IWindow.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\LINUX\LINUXFile.h">
-      <Filter>Core\LINUX</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\LINUX\LINUXWindow.h">
-      <Filter>Core\LINUX</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\LockFreeRingBuffer.h">
       <Filter>Core</Filter>
@@ -200,9 +164,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Core\Logger.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\OSX\OSXWindow.h">
-      <Filter>Core\OSX</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\Object.h">
       <Filter>Core</Filter>
@@ -349,14 +310,8 @@
     <ClInclude Include="..\..\src\Input\Keyboard.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\LINUX\LINUXInput.h">
-      <Filter>Input\LINUX</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Input\Mouse.h">
       <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Input\OSX\OSXInput.h">
-      <Filter>Input\OSX</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\WINDOWS\WINDOWSInput.h">
       <Filter>Input\WINDOWS</Filter>
@@ -595,15 +550,6 @@
     <ClCompile Include="..\..\src\Component\ScriptComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\ANDROID\ANDROIDLoggerPolicies.cpp">
-      <Filter>Core\ANDROID</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\ANDROID\ANDROIDWindow.cpp">
-      <Filter>Core\ANDROID</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\ANDROID\main.cpp">
-      <Filter>Core\ANDROID</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueFloat.cpp">
       <Filter>Core\ConfigValue</Filter>
     </ClCompile>
@@ -616,23 +562,8 @@
     <ClCompile Include="..\..\src\Core\IApp.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\IOS\IOSTimer.cpp">
-      <Filter>Core\IOS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\IOS\IOSWindow.cpp">
-      <Filter>Core\IOS</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Core\IWindow.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\LINUX\LINUXFile.cpp">
-      <Filter>Core\LINUX</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\LINUX\LINUXTimer.cpp">
-      <Filter>Core\LINUX</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\LINUX\LINUXWindow.cpp">
-      <Filter>Core\LINUX</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\Log.cpp">
       <Filter>Core</Filter>
@@ -712,14 +643,8 @@
     <ClCompile Include="..\..\src\Input\Keyboard.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\LINUX\LINUXInput.cpp">
-      <Filter>Input\LINUX</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Input\Mouse.cpp">
       <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Input\OSX\OSXInput.cpp">
-      <Filter>Input\OSX</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp">
       <Filter>Input\WINDOWS</Filter>

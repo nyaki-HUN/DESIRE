@@ -17,10 +17,33 @@ project "DESIRE"
 		"../src/**.hpp",
 		"../src/**.cpp",
 	}
-	
-	filter "system:Windows"
+
+	filter "system:not android"
 		removefiles
 		{
-			"**/ANDROID/**",
-			"**/LINUX/**",
+			"../src/**/ANDROID/**",
+		}
+
+	filter "system:not ios"
+		removefiles
+		{
+			"../src/**/IOS/**",
+		}
+
+	filter "system:not linux"
+		removefiles
+		{
+			"../src/**/LINUX/**",
+		}
+
+	filter "system:not macosx"
+		removefiles
+		{
+			"../src/**/OSX/**",
+		}
+
+	filter "system:not windows"
+		removefiles
+		{
+			"../src/**/WINDOWS/**",
 		}
