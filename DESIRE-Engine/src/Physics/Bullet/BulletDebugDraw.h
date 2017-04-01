@@ -3,7 +3,7 @@
 #include "Render/DebugDraw.h"
 #include "Physics/Bullet/BulletVectormathExt.h"
 
-#include "LinearMath/btIDebugDraw.h"
+#include "Physics-Bullet/src/LinearMath/btIDebugDraw.h"
 
 class BulletDebugDraw : public btIDebugDraw
 {

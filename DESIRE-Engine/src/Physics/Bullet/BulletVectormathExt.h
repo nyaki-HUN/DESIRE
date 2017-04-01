@@ -3,8 +3,8 @@
 #include "Core/math/vectormath.h"
 
 #define BT_USE_SSE_IN_API
-#include "LinearMath/btVector3.h"
-#include "LinearMath/btQuaternion.h"
+#include "Physics-Bullet/src/LinearMath/btVector3.h"
+#include "Physics-Bullet/src/LinearMath/btQuaternion.h"
 
 #if (defined(DESIRE_USE_SSE) && defined(BT_USE_SSE)) || (defined(__ARM_NEON__) && defined(BT_USE_NEON))
 	#define BULLET_VECTORMATH_USE_VEC128	1

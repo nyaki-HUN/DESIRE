@@ -6,8 +6,8 @@
 
 DESIRE_DISABLE_WARNINGS
 #define BT_USE_SSE_IN_API
-#include "btBulletDynamicsCommon.h"
-#include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
+#include "Physics-Bullet/src/btBulletDynamicsCommon.h"
+#include "Physics-Bullet/src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
 DESIRE_ENABLE_WARNINGS
 
 BulletPhysicsComponent::BulletPhysicsComponent(bool dynamic)

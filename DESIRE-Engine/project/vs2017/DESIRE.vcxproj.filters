@@ -40,9 +40,6 @@
     <Filter Include="Physics\Bullet">
       <UniqueIdentifier>{3F283075-2BF6-237B-148A-94A100F7FFDF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics\Bullet\!">
-      <UniqueIdentifier>{2F3ADB81-1B33-FAD3-4465-DF5830BDD9DF}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Physics\PhysX">
       <UniqueIdentifier>{B3488B23-1F09-075A-E843-50D754C34B36}</UniqueIdentifier>
     </Filter>
@@ -249,9 +246,6 @@
     <ClInclude Include="..\..\src\Core\math\vectormath\Vector4.h">
       <Filter>Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\_neon-2-sse_0.h">
-      <Filter>Core\math\vectormath</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\matrix_NEON.hpp">
       <Filter>Core\math\vectormath</Filter>
     </ClInclude>
@@ -377,6 +371,9 @@
       <Filter>Resource\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h">
+      <Filter>Resource\TextureLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Resource\TextureLoader\stb_image.h">
       <Filter>Resource\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Scene\ISceneManager.h">
@@ -613,9 +610,6 @@
     <ClCompile Include="..\..\src\Core\fs\MemoryFile.cpp">
       <Filter>Core\fs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\fs\_MemoryMapped.cpp">
-      <Filter>Core\fs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Core\math\AABB.cpp">
       <Filter>Core\math</Filter>
     </ClCompile>
@@ -651,12 +645,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp">
       <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Physics\Bullet\!\BulletCarPhysicsComponent.cpp">
-      <Filter>Physics\Bullet\!</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Physics\Bullet\!\_physics_utils.cpp">
-      <Filter>Physics\Bullet\!</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysics.cpp">
       <Filter>Physics\Bullet</Filter>

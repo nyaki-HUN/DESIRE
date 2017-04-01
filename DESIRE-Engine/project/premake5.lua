@@ -1,14 +1,17 @@
 project "DESIRE"
 	kind "StaticLib"
 	location(_ACTION)
-	targetdir("../lib/" .. _ACTION)
 	objdir(_ACTION .. "/obj/%{cfg.buildcfg}/")
+	targetdir("../lib/" .. _ACTION)
 
 	uuid "74923478-6D8D-4892-A013-C2B759A870EC"
 
 	includedirs
 	{
 		"../src",
+		"../../../DESIRE-modules",
+		"../../../DESIRE-modules/Physics-Bullet/src",
+		"../../../DESIRE-modules/ResourceLoader-Assimp/include",
 	}
 
 	files

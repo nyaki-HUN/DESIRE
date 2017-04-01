@@ -15,7 +15,6 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DESIRE</RootNamespace>
-    <UseNativeEnvironment>true</UseNativeEnvironment>
     <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -59,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\..\DESIRE-modules;..\..\..\..\DESIRE-modules\Physics-Bullet\src;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -80,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\..\DESIRE-modules;..\..\..\..\DESIRE-modules\Physics-Bullet\src;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -146,7 +145,6 @@
     <ClInclude Include="..\..\src\Core\math\vectormath\Quat.h" />
     <ClInclude Include="..\..\src\Core\math\vectormath\Vector3.h" />
     <ClInclude Include="..\..\src\Core\math\vectormath\Vector4.h" />
-    <ClInclude Include="..\..\src\Core\math\vectormath\_neon-2-sse_0.h" />
     <ClInclude Include="..\..\src\Core\math\vectormath\matrix_NEON.hpp" />
     <ClInclude Include="..\..\src\Core\math\vectormath\matrix_SSE.hpp" />
     <ClInclude Include="..\..\src\Core\math\vectormath\matrix_scalar.hpp" />
@@ -190,6 +188,7 @@
     <ClInclude Include="..\..\src\Resource\Texture.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\StbImageLoader.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h" />
+    <ClInclude Include="..\..\src\Resource\TextureLoader\stb_image.h" />
     <ClInclude Include="..\..\src\Scene\ISceneManager.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeLeaf.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeSceneManager.h" />
@@ -270,7 +269,6 @@
     <ClCompile Include="..\..\src\Core\fs\IReadFile.cpp" />
     <ClCompile Include="..\..\src\Core\fs\IWriteFile.cpp" />
     <ClCompile Include="..\..\src\Core\fs\MemoryFile.cpp" />
-    <ClCompile Include="..\..\src\Core\fs\_MemoryMapped.cpp" />
     <ClCompile Include="..\..\src\Core\math\AABB.cpp" />
     <ClCompile Include="..\..\src\Core\math\math.cpp" />
     <ClCompile Include="..\..\src\Core\memory\FreeList.cpp" />
@@ -283,8 +281,6 @@
     <ClCompile Include="..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp" />
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp" />
-    <ClCompile Include="..\..\src\Physics\Bullet\!\BulletCarPhysicsComponent.cpp" />
-    <ClCompile Include="..\..\src\Physics\Bullet\!\_physics_utils.cpp" />
     <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysics.cpp" />
     <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\Physics\Bullet\BulletVehicleRaycaster.cpp" />

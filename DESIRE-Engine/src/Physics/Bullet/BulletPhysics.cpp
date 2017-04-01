@@ -8,8 +8,8 @@
 
 DESIRE_DISABLE_WARNINGS
 #define BT_USE_SSE_IN_API
-#include "btBulletDynamicsCommon.h"
-#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+#include "Physics-Bullet/src/btBulletDynamicsCommon.h"
+#include "Physics-Bullet/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 DESIRE_ENABLE_WARNINGS
 
 BulletPhysics::BulletPhysics()
