@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lua/include/lua.hpp"
+#include "Script-Lua/include/lua.hpp"
 #include "Script/Lua/LuaBridge/LuaBridge.h"
 
 // Engine API register functions

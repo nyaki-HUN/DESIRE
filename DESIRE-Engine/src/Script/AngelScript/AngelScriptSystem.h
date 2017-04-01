@@ -5,7 +5,7 @@
 
 #include <vector>
 DESIRE_DISABLE_WARNINGS
-#include "AngelScript/include/angelscript.h"
+#include "Script-AngelScript/include/angelscript.h"
 DESIRE_ENABLE_WARNINGS
 
 class String;

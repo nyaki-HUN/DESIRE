@@ -2,7 +2,7 @@
 
 #include "Script/IScriptSystem.h"
 
-#include "SQUIRREL3/include/squirrel.h"
+#include "Script-Squirrel/include/squirrel.h"
 
 class SquirrelScriptSystem : public IScriptSystem
 {

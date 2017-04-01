@@ -34,7 +34,7 @@
 
 #include <cassert>
 #include <unordered_map>
-#include "SQUIRREL3/include/squirrel.h"
+#include "Script-Squirrel/include/squirrel.h"
 #include "Core/String.h"
 
 namespace Sqrat

@@ -2,7 +2,7 @@
 
 #include "Script/IScriptSystem.h"
 
-#include "lua/include/lua.hpp"
+#include "Script-Lua/include/lua.hpp"
 
 class LuaScriptSystem : public IScriptSystem
 {

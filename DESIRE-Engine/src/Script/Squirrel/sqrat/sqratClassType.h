@@ -32,7 +32,7 @@
 //    distribution.
 //
 
-#include "SQUIRREL3/include/squirrel.h"
+#include "Script-Squirrel/include/squirrel.h"
 #include "sqratUtil.h"
 
 namespace Sqrat
