@@ -27,5 +27,7 @@ configuration "Release"
 	optimize "On"
 
 solution "DESIRE"
+	startproject "SandBox"
+
 	include "DESIRE-Engine/project/premake5.lua"
 	include "SandBox/project/premake5.lua"
