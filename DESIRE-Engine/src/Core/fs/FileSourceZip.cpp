@@ -5,7 +5,7 @@
 #include "Core/memory/IAllocator.h"
 
 #if defined(DESIRE_ENABLE_ZLIB)
-	#include "zlib/include/zlib.h"
+	#include "Compression-zlib-ng/include/zlib.h"
 #endif
 
 static const int ZIP_SIGNATURE_CENTRAL_DIRECTORY_FILE_HEADER	= 0x02014b50;	//'PK12'

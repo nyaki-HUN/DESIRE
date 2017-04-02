@@ -11,6 +11,7 @@ project "DESIRE"
 		"../src",
 		"../../../DESIRE-modules",
 		"../../../DESIRE-modules/Physics-Bullet/src",
+		"../../../DESIRE-modules/Render-bgfx/include",
 		"../../../DESIRE-modules/ResourceLoader-Assimp/include",
 	}
 
