@@ -60,7 +60,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;DEBUG;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\DESIRE-Engine\src;..\..\..\..\DESIRE-modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\DESIRE-Engine\src;..\..\..\..\DESIRE-modules;..\..\..\..\DESIRE-modules\Render-bgfx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -75,6 +75,8 @@
       <SubSystem>Windows</SubSystem>
       <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
+      <AdditionalDependencies>Compression-zlib-ng_d.lib;Physics-Bullet_d.lib;Render-bgfx_d.lib;ResourceLoader-Assimp_d.lib;Script-AngelScript_d.lib;Script-Lua_d.lib;Script-Squirrel_d.lib;UI-imgui_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
@@ -83,7 +85,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\..\DESIRE-Engine\src;..\..\..\..\DESIRE-modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\..\DESIRE-Engine\src;..\..\..\..\DESIRE-modules;..\..\..\..\DESIRE-modules\Render-bgfx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -101,6 +103,8 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Compression-zlib-ng.lib;Physics-Bullet.lib;ResourceLoader-Assimp.lib;Render-bgfx.lib;Script-AngelScript.lib;Script-Lua.lib;Script-Squirrel.lib;UI-imgui.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
@@ -112,6 +116,11 @@
     <ClCompile Include="..\..\src\SandBox.cpp" />
     <ClCompile Include="..\..\src\SimpleRotateScript.cpp" />
     <ClCompile Include="..\..\src\modules.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DESIRE-Engine\project\vs2017\DESIRE.vcxproj">
+      <Project>{74923478-6D8D-4892-A013-C2B759A870EC}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

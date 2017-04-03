@@ -6,11 +6,13 @@ floatingpoint "Fast"
 rtti "Off"
 editandcontinue "Off"
 
-systemversion "10.0.10240.0"
-
-defines { "WIN32", "_HAS_EXCEPTIONS=0" }
 buildoptions { "/Gw", "/Zc:rvalueCast" }
 flags { "StaticRuntime", "MultiProcessorCompile", "C++11" }
+
+if _ACTION == "vs2017" then
+	systemversion "10.0.10240.0"
+	defines { "WIN32", "_HAS_EXCEPTIONS=0" }
+end
 
 configuration "Debug"
 	targetsuffix "_d"
