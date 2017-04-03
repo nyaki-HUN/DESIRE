@@ -66,7 +66,10 @@ void SandBox::Init(IWindow *mainWindow)
 	Mesh *mesh = ResourceManager::Get()->LoadMesh("data/meshes/sibenik/sibenik.obj");
 
 	Texture *texture = ResourceManager::Get()->LoadTexture("data/meshes/sibenik/mramor6x6.png");
-	Render::Get()->Bind(texture);
+	if(texture != nullptr)
+	{
+		Render::Get()->Bind(texture);
+	}
 
 	//////////
 

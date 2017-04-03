@@ -23,17 +23,19 @@ Mesh* ResourceManager::LoadMesh(const char *filename)
 	}
 
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
-
-	for(MeshLoaderFunc_t loaderFunc : meshLoaders)
+	if(file)
 	{
-		Mesh *mesh = loaderFunc(file);
-		if(mesh != nullptr)
+		for(MeshLoaderFunc_t loaderFunc : meshLoaders)
 		{
-			loadedMeshes.Insert(filenameHash, mesh);
-			return mesh;
-		}
+			Mesh *mesh = loaderFunc(file);
+			if(mesh != nullptr)
+			{
+				loadedMeshes.Insert(filenameHash, mesh);
+				return mesh;
+			}
 
-		file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+		}
 	}
 
 	LOG_ERROR("Failed to load mesh from: %s", filename);
@@ -50,17 +52,19 @@ Texture* ResourceManager::LoadTexture(const char *filename)
 	}
 
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
-
-	for(TextureLoaderFunc_t loaderFunc : textureLoaders)
+	if(file)
 	{
-		Texture *texture = loaderFunc(file);
-		if(texture != nullptr)
+		for(TextureLoaderFunc_t loaderFunc : textureLoaders)
 		{
-			loadedTextures.Insert(filenameHash, texture);
-			return texture;
-		}
+			Texture *texture = loaderFunc(file);
+			if(texture != nullptr)
+			{
+				loadedTextures.Insert(filenameHash, texture);
+				return texture;
+			}
 
-		file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+		}
 	}
 
 	LOG_ERROR("Failed to load texture from: %s", filename);

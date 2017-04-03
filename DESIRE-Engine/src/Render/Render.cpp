@@ -65,6 +65,8 @@ void Render::EndFrame()
 
 void Render::Bind(Mesh *mesh)
 {
+	ASSERT(mesh != nullptr);
+
 	if(mesh->renderData != nullptr)
 	{
 		// Already bound
@@ -88,6 +90,8 @@ void Render::Bind(Mesh *mesh)
 
 void Render::UnBind(Mesh *mesh)
 {
+	ASSERT(mesh != nullptr);
+
 	if(mesh->renderData == nullptr)
 	{
 		// Not yet bound
@@ -104,6 +108,8 @@ void Render::UnBind(Mesh *mesh)
 
 void Render::Bind(Texture *texture)
 {
+	ASSERT(texture != nullptr);
+
 	if(texture->renderData != nullptr)
 	{
 		// Already bound
@@ -127,6 +133,8 @@ void Render::Bind(Texture *texture)
 
 void Render::Unbind(Texture *texture)
 {
+	ASSERT(texture != nullptr);
+
 	if(texture->renderData == nullptr)
 	{
 		// Not yet bound
