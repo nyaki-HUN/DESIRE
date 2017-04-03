@@ -20,7 +20,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
@@ -64,7 +64,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -73,11 +73,9 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <FullProgramDatabaseFile>true</FullProgramDatabaseFile>
-      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Compression-zlib-ng_d.lib;Physics-Bullet_d.lib;Render-bgfx_d.lib;ResourceLoader-Assimp_d.lib;Script-AngelScript_d.lib;Script-Lua_d.lib;Script-Squirrel_d.lib;UI-imgui_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -105,7 +103,6 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>Compression-zlib-ng.lib;Physics-Bullet.lib;ResourceLoader-Assimp.lib;Render-bgfx.lib;Script-AngelScript.lib;Script-Lua.lib;Script-Squirrel.lib;UI-imgui.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

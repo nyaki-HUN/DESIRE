@@ -6,6 +6,8 @@ project "SandBox"
 
 	uuid "97C50FE7-F697-4ABD-8212-7195BB4F410F"
 
+	flags { "WinMain" }
+
 	includedirs
 	{
 		"../src",
@@ -38,7 +40,6 @@ project "SandBox"
 	}
 
 	configuration "Debug"
-		symbols "FastLink"
 		links
 		{
 			"Compression-zlib-ng_d",
