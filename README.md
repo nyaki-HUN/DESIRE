@@ -8,9 +8,9 @@ What is it?
 This is an experimental porject to create an Engine which makes game development easier.
 The main focus is on creating a simple to use and powerful framework.
 
-This is not a simple, plug-and-play engine.
+This is not a simple, plug-and-play engine.  
 If you think about cars, other game engines are more like having the whole car, changing parts, painting and customizing it for you.
-DESIRE is more like a high-performance engine where you still need to build the car around.
+DESIRE is more like a high-performance engine where you still need to build the car around.  
 I'm not expecting someone without any coding experience to be able to use it.
 
 Features
@@ -21,22 +21,22 @@ Features
 Supported platforms
 -------------------
 
-DESIRE is meant to be a cross-platform engine, but it is under heavly development.
+DESIRE is meant to be a cross-platform engine, but it is under heavly development.  
 The currently supported platforms are:
 
- * Windows (10)
+ * Windows 10
 
 Documentation
 -------------
 
+ * TODO
 
 Contacts
 --------
 
 nyakacska.zoltan@gmail.com
 
-
-[License (BSD 2-Clause)](https://github.com/nyaki-HUN/DESIRE/LICENSE)
+[License (BSD 2-Clause)](../blob/master/LICENSE)
 ---------------------------------------------------------------------
 
 <a href="http://opensource.org/licenses/BSD-2-Clause" target="_blank">

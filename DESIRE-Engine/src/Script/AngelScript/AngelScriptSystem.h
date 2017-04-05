@@ -3,7 +3,6 @@
 #include "Script/IScriptSystem.h"
 #include "Core/platform.h"
 
-#include <vector>
 DESIRE_DISABLE_WARNINGS
 #include "Script-AngelScript/include/angelscript.h"
 DESIRE_ENABLE_WARNINGS
