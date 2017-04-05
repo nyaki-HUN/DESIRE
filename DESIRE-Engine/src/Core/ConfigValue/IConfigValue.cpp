@@ -5,7 +5,8 @@ IConfigValue *IConfigValue::listHead = nullptr;
 IConfigValue *IConfigValue::listTail = nullptr;
 
 IConfigValue::IConfigValue(const char *name, const char *description)
-	: name(name)
+	: next(nullptr)
+	, name(name)
 	, description(description)
 {
 	ASSERT(name != nullptr);
