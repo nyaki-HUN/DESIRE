@@ -15,10 +15,27 @@ if _ACTION == "vs2017" then
 	defines { "WIN32", "_HAS_EXCEPTIONS=0" }
 end
 
-function AddCommonLibConfig()
-	kind "StaticLib"
+function AddCommonProjectConfig()
 	location(_ACTION)
 	objdir(_ACTION .. "/obj/%{cfg.buildcfg}/")
+
+	includedirs
+	{
+		"../src",
+	}
+
+	files
+	{
+		"../src/**.h",
+		"../src/**.hpp",
+		"../src/**.c",
+		"../src/**.cpp",
+	}
+end
+
+function AddCommonLibConfig()
+	AddCommonProjectConfig()
+	kind "StaticLib"
 	targetdir("../lib/" .. _ACTION)
 
 	defines { "_LIB" }
@@ -26,17 +43,12 @@ function AddCommonLibConfig()
 	includedirs
 	{
 		"../include",
-		"../src",
 	}
 
 	files
 	{
 		"../include/**.h",
 		"../include/**.hpp",
-		"../src/**.h",
-		"../src/**.hpp",
-		"../src/**.c",
-		"../src/**.cpp",
 	}
 end
 
@@ -59,3 +71,4 @@ solution "DESIRE"
 
 	include "DESIRE-Engine/project/premake5.lua"
 	include "SandBox/project/premake5.lua"
+	include "UnitTest/project/premake5.lua"

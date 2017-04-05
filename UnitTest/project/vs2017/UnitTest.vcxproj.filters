@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Catch">
+      <UniqueIdentifier>{4895F20C-B4A9-1ABE-7D2B-BE1DE9FE16EF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{F8BD1DB3-6428-D229-AD66-83CF1910B07E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\ConfigValue">
+      <UniqueIdentifier>{50D630CC-3CCF-4F1E-6501-35A351592F2A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\math">
+      <UniqueIdentifier>{E771D115-53DC-858C-9C1A-373208C463E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\memory">
+      <UniqueIdentifier>{F63F3AD0-62F5-B2C5-EBE9-AC9C579EA9C9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{F68B420E-62A0-6ABF-2B22-0E1F97F566F0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\Catch\catch.hpp">
+      <Filter>Catch</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\Component\test_SceneNodeComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Component\test_ScriptComponent.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\ConfigValue\test_IConfigValue.cpp">
+      <Filter>Core\ConfigValue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\math\test_Matrix4.cpp">
+      <Filter>Core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\math\test_Vector3.cpp">
+      <Filter>Core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\math\test_Vector4.cpp">
+      <Filter>Core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\memory\test_IAllocator.cpp">
+      <Filter>Core\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\memory\test_PoolAllocator.cpp">
+      <Filter>Core\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\memory\test_StackAllocator.cpp">
+      <Filter>Core\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\memory\test_StdFrameAllocatorWrapper.cpp">
+      <Filter>Core\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\test_HashedStringMap.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\test_LockFreeRingBuffer.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\test_String.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\UnitTest.cpp" />
+    <ClCompile Include="..\..\src\Utils\test_Enumerator.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Utils\test_GuardedCallbackFactory.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Utils\test_JsonDataTranslator.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\stdafx.cpp" />
+  </ItemGroup>
+</Project>

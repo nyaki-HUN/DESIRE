@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandBox", "SandBox\project\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DESIRE", "DESIRE-Engine\project\vs2017\DESIRE.vcxproj", "{74923478-6D8D-4892-A013-C2B759A870EC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\project\vs2017\UnitTest.vcxproj", "{157414AA-AF20-4A4C-BA53-CD8CC77C4775}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -19,6 +21,10 @@ Global
 		{74923478-6D8D-4892-A013-C2B759A870EC}.Debug|x64.Build.0 = Debug|x64
 		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.ActiveCfg = Release|x64
 		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.Build.0 = Release|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Debug|x64.ActiveCfg = Debug|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Debug|x64.Build.0 = Debug|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Release|x64.ActiveCfg = Release|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
