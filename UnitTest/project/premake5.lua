@@ -23,15 +23,3 @@ project "UnitTest"
 	{
 		"DESIRE",
 	}
-
-	configuration "Debug"
-		links
-		{
-			"Compression-zlib-ng_d",
-		}
-
-	configuration "Release"
-		links
-		{
-			"Compression-zlib-ng",
-		}
