@@ -36,7 +36,7 @@ Contacts
 
 nyakacska.zoltan@gmail.com
 
-[License (BSD 2-Clause)](../blob/master/LICENSE)
+[License (BSD 2-Clause)](../master/LICENSE)
 ---------------------------------------------------------------------
 
 <a href="http://opensource.org/licenses/BSD-2-Clause" target="_blank">
