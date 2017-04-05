@@ -11,12 +11,13 @@ The main focus is on creating a simple to use and powerful framework.
 This is not a simple, plug-and-play engine.  
 If you think about cars, other game engines are more like having the whole car, changing parts, painting and customizing it for you.
 DESIRE is more like a high-performance engine where you still need to build the car around.  
-I'm not expecting someone without any coding experience to be able to use it.
 
 Features
 --------
 
  * TODO
+ * Modular design - each module can be easily replaced with other or custom implementations
+ * All project files are generated and maintained via premake5
 
 Supported platforms
 -------------------
@@ -31,8 +32,8 @@ Documentation
 
  * TODO
 
-Contacts
---------
+Contact
+-------
 
 nyakacska.zoltan@gmail.com
 
