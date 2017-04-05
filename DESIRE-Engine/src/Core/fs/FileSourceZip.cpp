@@ -175,6 +175,9 @@ ReadFilePtr FileSourceZip::OpenFile(const char *filename)
 	// 15-17 : Reserved
 	// 18 : Compressed using IBM TERSE
 	// 19 : IBM LZ77 z
+	// 95 : xz compression
+	// 96 : Jpeg compression
+	// 97 : WavPack
 	// 98 : PPMd version I, Rev 1
 
 	switch(entry.compressionMethod)
