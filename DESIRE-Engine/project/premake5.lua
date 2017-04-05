@@ -2,6 +2,9 @@ project "DESIRE"
 	AddCommonLibConfig()
 	uuid "74923478-6D8D-4892-A013-C2B759A870EC"
 
+	pchheader "stdafx.h"
+	pchsource "../src/stdafx.cpp"
+
 	includedirs
 	{
 		"../../../DESIRE-modules",
@@ -9,9 +12,6 @@ project "DESIRE"
 		"../../../DESIRE-modules/Render-bgfx/include",
 		"../../../DESIRE-modules/ResourceLoader-Assimp/include",
 	}
-
-	pchheader "stdafx.h"
-	pchsource "../src/stdafx.cpp"
 
 	filter "system:not android"
 		removefiles
