@@ -6,7 +6,7 @@ Development Experiment for a Simple Innovative and Roboust Engine
 What is it?
 -----------
 This is an experimental porject to create an Engine which makes game development easier.
-The main focus is on creating simple to use and powerful framework.
+The main focus is on creating a simple to use and powerful framework.
 
 This is not a simple, plug-and-play engine.
 If you think about cars, other game engines are more like having the whole car, changing parts, painting and customizing it for you.
@@ -33,7 +33,7 @@ Documentation
 Contacts
 --------
 
-zoltan.nyakacska@gmail.com
+nyakacska.zoltan@gmail.com
 
 
 [License (BSD 2-Clause)](https://github.com/nyaki-HUN/DESIRE/LICENSE)
