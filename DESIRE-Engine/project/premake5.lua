@@ -11,7 +11,7 @@ project "DESIRE"
 	}
 
 	pchheader "stdafx.h"
-	pchsource "stdafx.cpp"
+	pchsource "../src/stdafx.cpp"
 
 	filter "system:not android"
 		removefiles
