@@ -16,14 +16,12 @@ Features
 --------
 
  * TODO
- * Modular design - each module can be easily replaced with other or custom implementations
+ * Modular design - each module can be easily disabled or replaced with a different (or even a custom) implementation
  * All project files are generated and maintained via premake5
 
-Supported platforms
--------------------
+### Supported platforms
 
-DESIRE is meant to be a cross-platform engine, but it is under heavly development.  
-The currently supported platforms are:
+(DESIRE is meant to be a cross-platform engine, but it is under heavly development)
 
  * Windows 10
 
@@ -31,6 +29,7 @@ Documentation
 -------------
 
  * TODO
+ * Check [DESIRE-modules](https://github.com/nyaki-HUN/DESIRE-modules) for the supported external modules
 
 Contact
 -------
