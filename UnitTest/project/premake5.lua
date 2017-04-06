@@ -12,6 +12,7 @@ project "UnitTest"
 
 	includedirs
 	{
+		"../3rdparty",
 		"../../DESIRE-Engine/src",
 		"../../DESIRE-Engine/3rdparty",
 	}
