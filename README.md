@@ -8,9 +8,7 @@ What is it?
 This is an experimental porject to create an Engine which makes game development easier.
 The main focus is on creating a simple to use and powerful framework.
 
-This is not a simple, plug-and-play engine.  
-If you think about cars, other game engines are more like having the whole car, changing parts, painting and customizing it for you.
-DESIRE is more like a high-performance engine where you still need to build the car around.  
+This is not a plug-and-play engine. If you think about cars, other game engines are like having the whole car, changing parts, painting and customizing it. DESIRE is more like a high-performance engine where you still need to build the car around.  
 
 Features
 --------
