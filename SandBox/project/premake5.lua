@@ -9,6 +9,7 @@ project "SandBox"
 	includedirs
 	{
 		"../../DESIRE-Engine/src",
+		"../../DESIRE-Engine/3rdparty",
 		"../../../DESIRE-modules",
 		"../../../DESIRE-modules/Render-bgfx/include",
 	}

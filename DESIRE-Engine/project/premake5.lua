@@ -7,6 +7,7 @@ project "DESIRE"
 
 	includedirs
 	{
+		"../3rdparty",
 		"../../../DESIRE-modules",
 		"../../../DESIRE-modules/Physics-Bullet/src",
 		"../../../DESIRE-modules/Render-bgfx/include",

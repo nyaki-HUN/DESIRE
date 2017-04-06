@@ -13,6 +13,7 @@ project "UnitTest"
 	includedirs
 	{
 		"../../DESIRE-Engine/src",
+		"../../DESIRE-Engine/3rdparty",
 	}
 
 	filter "files:../src/UnitTest.cpp"
