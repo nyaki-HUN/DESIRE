@@ -167,7 +167,7 @@
     <ClInclude Include="..\..\src\Input\GameController.h" />
     <ClInclude Include="..\..\src\Input\Input.h" />
     <ClInclude Include="..\..\src\Input\InputDevice.h" />
-    <ClInclude Include="..\..\src\Input\InputMap.h" />
+    <ClInclude Include="..\..\src\Input\InputMapping.h" />
     <ClInclude Include="..\..\src\Input\Keyboard.h" />
     <ClInclude Include="..\..\src\Input\Mouse.h" />
     <ClInclude Include="..\..\src\Input\WINDOWS\WINDOWSInput.h" />
@@ -282,7 +282,7 @@
     <ClCompile Include="..\..\src\Input\GameController.cpp" />
     <ClCompile Include="..\..\src\Input\Input.cpp" />
     <ClCompile Include="..\..\src\Input\InputDevice.cpp" />
-    <ClCompile Include="..\..\src\Input\InputMap.cpp" />
+    <ClCompile Include="..\..\src\Input\InputMapping.cpp" />
     <ClCompile Include="..\..\src\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp" />

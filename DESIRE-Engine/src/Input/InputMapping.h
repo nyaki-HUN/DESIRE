@@ -1,15 +1,13 @@
 #pragma once
 
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
-#include "Input/GameController.h"
-
 #include <vector>
 
-class InputMap
+class InputDevice;
+
+class InputMapping
 {
 public:
-	InputMap();
+	InputMapping();
 
 	void MapButton(int userActionId, const InputDevice& inputDevice, int buttonId);
 
@@ -38,12 +36,6 @@ private:
 		}
 	};
 
-/*	struct SMappedAxis
-	{
-		std::vector<Mouse::EAxis> mappedMouseAxis;
-		std::vector<GameController::EAxis> mappedGamepadAxis;
-	};
-*/
 	const SUserAction* GetUserActionById(int userActionId) const;
 	SUserAction& GetOrCreateUserActionById(int userActionId);
 

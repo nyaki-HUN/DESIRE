@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "Input/InputMap.h"
+#include "Input/InputMapping.h"
 #include "Input/Input.h"
 
-InputMap::InputMap()
+InputMapping::InputMapping()
 {
 
 }
 
-void InputMap::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
+void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
 {
 	SUserAction& action = GetOrCreateUserActionById(userActionId);
 	for(SMappedInput& mappedInput : action.mappedInputs)
@@ -22,7 +22,7 @@ void InputMap::MapButton(int userActionId, const InputDevice& inputDevice, int b
 	action.mappedInputs.push_back({ inputDevice.handle, buttonId });
 }
 
-bool InputMap::IsDown(int userActionId) const
+bool InputMapping::IsDown(int userActionId) const
 {
 	const SUserAction *action = GetUserActionById(userActionId);
 	for(const SMappedInput& mappedInput : action->mappedInputs)
@@ -37,7 +37,7 @@ bool InputMap::IsDown(int userActionId) const
 	return false;
 }
 
-bool InputMap::WentDown(int userActionId) const
+bool InputMapping::WentDown(int userActionId) const
 {
 	const SUserAction *action = GetUserActionById(userActionId);
 	for(const SMappedInput& mappedInput : action->mappedInputs)
@@ -52,8 +52,7 @@ bool InputMap::WentDown(int userActionId) const
 	return false;
 }
 
-// Returns how many times the action was triggered since the last frame
-uint8_t InputMap::GetPressedCount(int userActionId) const
+uint8_t InputMapping::GetPressedCount(int userActionId) const
 {
 	uint8_t pressedCount = 0;
 
@@ -70,7 +69,7 @@ uint8_t InputMap::GetPressedCount(int userActionId) const
 	return pressedCount;
 }
 
-const InputMap::SUserAction* InputMap::GetUserActionById(int userActionId) const
+const InputMapping::SUserAction* InputMapping::GetUserActionById(int userActionId) const
 {
 	for(const SUserAction& userAction : userActions)
 	{
@@ -83,7 +82,7 @@ const InputMap::SUserAction* InputMap::GetUserActionById(int userActionId) const
 	return nullptr;
 }
 
-InputMap::SUserAction& InputMap::GetOrCreateUserActionById(int userActionId)
+InputMapping::SUserAction& InputMapping::GetOrCreateUserActionById(int userActionId)
 {
 	for(SUserAction& userAction : userActions)
 	{
