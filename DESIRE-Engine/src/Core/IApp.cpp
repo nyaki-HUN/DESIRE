@@ -54,10 +54,11 @@ int IApp::Run(int argc, const char * const *argv)
 	isMainLoopRunning = true;
 	while(isMainLoopRunning)
 	{
-		mainWindow->HandleWindowMessages();
-
 		Timer::Get()->Update();
 		Input::Get()->Update();
+
+		mainWindow->HandleWindowMessages();
+
 		IScriptSystem::Get()->Update();
 		IPhysics::Get()->Update();
 		IApp::Get()->Update();
