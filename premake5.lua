@@ -54,7 +54,7 @@ end
 
 configuration "Debug"
 	targetsuffix "_d"
-	defines { "DEBUG", "_DEBUG" }
+	defines { "DESIRE_DEBUG", "DEBUG", "_DEBUG" }
 	buildoptions { "/Zc:inline" }
 	exceptionhandling "SEH"
 	symbols "On"

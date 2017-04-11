@@ -58,7 +58,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;DESIRE_DEBUG;DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\3rdparty;..\..\..\..\DESIRE-modules;..\..\..\..\DESIRE-modules\Physics-Bullet\src;..\..\..\..\DESIRE-modules\Render-bgfx\include;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>

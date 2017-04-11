@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Component">
@@ -301,6 +301,12 @@
     <ClInclude Include="..\..\src\Input\Input.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Input\InputDevice.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Input\InputMap.h">
+      <Filter>Input</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Input\Keyboard.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -533,12 +539,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\stdafx.h" />
-    <ClInclude Include="..\..\src\Input\InputMap.h">
-      <Filter>Input</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Input\InputDevice.h">
-      <Filter>Input</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Component\PhysicsComponent.cpp">
@@ -638,6 +638,12 @@
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\Input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Input\InputDevice.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Input\InputMap.cpp">
       <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\Keyboard.cpp">
@@ -806,11 +812,5 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\stdafx.cpp" />
-    <ClCompile Include="..\..\src\Input\InputMap.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Input\InputDevice.cpp">
-      <Filter>Input</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
