@@ -1,6 +1,8 @@
 #pragma once
 
-class Mouse
+#include "Input/InputDevice.h"
+
+class Mouse : public InputDevice
 {
 	friend class Input;
 	friend class InputImpl;
@@ -8,30 +10,26 @@ class Mouse
 	Mouse(void *handle);
 
 public:
-	enum EButton
+	enum EMouseDeviceButtonId
 	{
-		BUTTON_LEFT,
-		BUTTON_RIGHT,
-		BUTTON_MIDDLE,
-		BUTTON_1 = BUTTON_LEFT,
-		BUTTON_2 = BUTTON_RIGHT,
-		BUTTON_3 = BUTTON_MIDDLE,
+		BUTTON_1 = FIRST_MOUSE_BUTTON_ID,
+		BUTTON_2,
+		BUTTON_3,
 		BUTTON_4,
 		BUTTON_5,
-		NUM_BUTTONS
+
+		LAST_MOUSE_BUTTON_ID,
+
+		// Helpers
+		BUTTON_LEFT = BUTTON_1,
+		BUTTON_RIGHT = BUTTON_2,
+		BUTTON_MIDDLE = BUTTON_3
 	};
-
-	bool IsDown(EButton button) const;
-	bool WentDown(EButton button) const;
-
-	// Returns how many times the button went down since the last frame
-	uint8_t GetPressedCount(EButton button) const;
 
 	int16_t deltaPosX;
 	int16_t deltaPosY;
 	int16_t wheelDelta;
 
 private:
-	uint8_t buttons[EButton::NUM_BUTTONS];
-	void *handle;
+	uint8_t buttons[LAST_MOUSE_BUTTON_ID - FIRST_MOUSE_BUTTON_ID];
 };

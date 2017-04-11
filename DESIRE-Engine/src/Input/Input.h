@@ -4,12 +4,12 @@
 #include "Core/math/SPoint.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
+#include "Input/GameController.h"
 
 #include <vector>
 
 class InputImpl;
 class IWindow;
-class GameController;
 
 class Input
 {
@@ -18,7 +18,6 @@ class Input
 
 public:
 	static const int MAX_NUM_TYPING_CHARACTERS = 8;
-	static const uint8_t BUTTON_STATE_DOWN_FLAG = 0x80;
 
 	typedef void(*HotkeyCallback_t)(void *userData);
 
@@ -42,7 +41,9 @@ public:
 
 	const std::vector<Keyboard>& GetKeyboards() const;
 	const std::vector<Mouse>& GetMouses() const;
-	const std::vector<GameController*>& GetControllers() const;
+	const std::vector<GameController>& GetControllers() const;
+
+	const InputDevice* GetInputDeviceByHandle(const void *handle) const;
 
 	// Returns a string from the characters typed since the last frame (maximized by MAX_NUM_TYPING_CHARACTERS)
 	const char* GetTypingCharacters() const;
@@ -62,7 +63,7 @@ private:
 
 	std::vector<Keyboard> keyboards;
 	std::vector<Mouse> mouses;
-	std::vector<GameController*> controllers;
+	std::vector<GameController> gameControllers;
 
 	char typingCharacters[MAX_NUM_TYPING_CHARACTERS];
 

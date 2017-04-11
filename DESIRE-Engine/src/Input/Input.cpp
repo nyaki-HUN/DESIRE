@@ -26,10 +26,10 @@ void Input::Update()
 			}
 		}
 
-		// Reset key released count
-		for(uint16_t i = 0; i < 256; i++)
+		// Reset pressed count
+		for(uint8_t& keyState : keyboard.keyStates)
 		{
-			keyboard.keyStates[i] &= Input::BUTTON_STATE_DOWN_FLAG;
+			keyState &= InputDevice::BUTTON_STATE_DOWN_FLAG;
 		}
 	}
 
@@ -40,14 +40,23 @@ void Input::Update()
 		mouse.deltaPosX = 0;
 		mouse.deltaPosY = 0;
 		mouse.wheelDelta = 0;
+
+		// Reset pressed count
+		for(uint8_t& buttonState : mouse.buttons)
+		{
+			buttonState &= InputDevice::BUTTON_STATE_DOWN_FLAG;
+		}
 	}
 
-	// Joystick
-/*	for(Joystick& joystick : joysticks)
+	// Game Controller
+	for(GameController& gamepad : gameControllers)
 	{
-
+		// Reset pressed count
+		for(uint8_t& buttonState : gamepad.buttons)
+		{
+			buttonState &= InputDevice::BUTTON_STATE_DOWN_FLAG;
+		}
 	}
-*/
 
 	memset(typingCharacters, 0, MAX_NUM_TYPING_CHARACTERS);
 }
@@ -92,9 +101,38 @@ const std::vector<Mouse>& Input::GetMouses() const
 	return mouses;
 }
 
-const std::vector<GameController*>& Input::GetControllers() const
+const std::vector<GameController>& Input::GetControllers() const
 {
-	return controllers;
+	return gameControllers;
+}
+
+const InputDevice* Input::GetInputDeviceByHandle(const void *handle) const
+{
+	for(const Keyboard& device : keyboards)
+	{
+		if(device.handle == handle)
+		{
+			return &device;
+		}
+	}
+
+	for(const Mouse& device : mouses)
+	{
+		if(device.handle == handle)
+		{
+			return &device;
+		}
+	}
+
+	for(const GameController& device : gameControllers)
+	{
+		if(device.handle == handle)
+		{
+			return &device;
+		}
+	}
+
+	return nullptr;
 }
 
 const char* Input::GetTypingCharacters() const

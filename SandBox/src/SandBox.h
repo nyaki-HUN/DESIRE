@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/IApp.h"
+#include "Input/InputMap.h"
 
 class Object;
 
@@ -18,4 +19,6 @@ private:
 	IWindow *window;
 	Object *scriptedObject;
 	Object *cubeObj;
+
+	InputMap inputMap;
 };

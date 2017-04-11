@@ -145,7 +145,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 
 		for(int keyCode : io.KeyMap)
 		{
-			io.KeysDown[keyCode] = keyboard.IsDown((EKeyCode)keyCode);
+			io.KeysDown[keyCode] = keyboard.IsDown(keyCode);
 		}
 	}
 
@@ -161,9 +161,9 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	{
 		const Mouse& mouse = mouses.back();
 		io.MouseWheel = mouse.wheelDelta;
-		for(int i = 0; i < DESIRE_ASIZEOF(io.MouseDown); ++i)
+		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 		{
-			io.MouseDown[i] = mouse.IsDown((Mouse::EButton)i);
+			io.MouseDown[i] = mouse.IsDown(Mouse::FIRST_MOUSE_BUTTON_ID + i);
 		}
 
 		const SPoint<int16_t>& mousePos = Input::Get()->GetOsMouseCursorPos();

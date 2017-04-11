@@ -3,12 +3,7 @@
 #include "Input/Input.h"
 
 GameController::GameController(void *handle)
-	: handle(handle)
+	: InputDevice(handle, offsetof(GameController, buttons), DESIRE_ASIZEOF(buttons), FIRST_GAME_CONTROLLER_BUTTON_ID)
 {
-
-}
-
-bool GameController::IsDown(EButton button) const
-{
-	return false;
+	memset(buttons, 0, sizeof(buttons));
 }

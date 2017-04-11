@@ -12,6 +12,14 @@
 #include "Component/SceneNodeComponent.h"
 #include "Component/ScriptComponent.h"
 
+enum EAction
+{
+	EXIT,
+	FIRE,
+	MOUSE_X,
+	MOUSE_Y
+}; 
+
 SandBox::SandBox()
 	: window(nullptr)
 	, scriptedObject(nullptr)
@@ -73,6 +81,19 @@ void SandBox::Init(IWindow *mainWindow)
 
 	//////////
 
+	for(const Keyboard& keyboard : Input::Get()->GetKeyboards())
+	{
+		inputMap.MapButton(EAction::EXIT, keyboard, KEY_ESCAPE);
+		inputMap.MapButton(EAction::FIRE, keyboard, KEY_SPACE);
+	}
+
+	for(const GameController& gamepad : Input::Get()->GetControllers())
+	{
+		inputMap.MapButton(EAction::FIRE, gamepad, GameController::BTN_X);
+	}
+
+	//////////
+
 	LOG_DEBUG("Init done");
 }
 
@@ -83,6 +104,17 @@ void SandBox::Kill()
 
 void SandBox::Update()
 {
+	if(inputMap.GetPressedCount(EAction::EXIT))
+	{
+		LOG_MESSAGE("!EXIT!");
+		return;
+	}
+
+	if(inputMap.IsDown(EAction::FIRE))
+	{
+		LOG_MESSAGE("Fire is down");
+	}
+
 	Render::Get()->BeginFrame(window);
 	ImGuiImpl::Get()->NewFrame(window);
 

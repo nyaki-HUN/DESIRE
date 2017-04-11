@@ -41,8 +41,8 @@ void Input::Init(IWindow *window)
 	// Enumerate input devices
 	UINT numDevices = 0;
 	GetRawInputDeviceList(nullptr, &numDevices, sizeof(RAWINPUTDEVICELIST));
-	RAWINPUTDEVICELIST *deviceList = new RAWINPUTDEVICELIST[numDevices];
-	GetRawInputDeviceList(deviceList, &numDevices, sizeof(RAWINPUTDEVICELIST));
+	std::unique_ptr<RAWINPUTDEVICELIST[]> deviceList = std::make_unique<RAWINPUTDEVICELIST[]>(numDevices);
+	GetRawInputDeviceList(deviceList.get(), &numDevices, sizeof(RAWINPUTDEVICELIST));
 	for(UINT i = 0; i < numDevices; ++i)
 	{
 		const RAWINPUTDEVICELIST& device = deviceList[i];
@@ -55,7 +55,6 @@ void Input::Init(IWindow *window)
 			InputImpl::GetMouseByHandle(device.hDevice);
 		}
 	}
-	delete[] deviceList;
 }
 
 void Input::Kill()
@@ -72,6 +71,11 @@ void Input::Kill()
 	rawInputDevices[1].dwFlags = RIDEV_REMOVE;
 	rawInputDevices[1].hwndTarget = nullptr;
 	RegisterRawInputDevices(rawInputDevices, 2, sizeof(RAWINPUTDEVICE));
+
+	// Reset input devices
+	Input::Get()->keyboards.clear();
+	Input::Get()->mouses.clear();
+	Input::Get()->gameControllers.clear();
 }
 
 void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
@@ -107,53 +111,53 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 			// Left button
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
 			{
-				mouse.buttons[Mouse::BUTTON_LEFT]++;
-				mouse.buttons[Mouse::BUTTON_LEFT] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP)
 			{
-				mouse.buttons[Mouse::BUTTON_LEFT] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, false);
 			}
+
 			// Right button
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
 			{
-				mouse.buttons[Mouse::BUTTON_RIGHT]++;
-				mouse.buttons[Mouse::BUTTON_RIGHT] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
 			{
-				mouse.buttons[Mouse::BUTTON_RIGHT] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, false);
 			}
+
 			// Middle button
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
 			{
-				mouse.buttons[Mouse::BUTTON_MIDDLE]++;
-				mouse.buttons[Mouse::BUTTON_MIDDLE] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
 			{
-				mouse.buttons[Mouse::BUTTON_MIDDLE] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, false);
 			}
+
 			// Button 4
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN)
 			{
-				mouse.buttons[Mouse::BUTTON_4]++;
-				mouse.buttons[Mouse::BUTTON_4] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_4, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_4_UP)
 			{
-				mouse.buttons[Mouse::BUTTON_4] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_4, false);
 			}
+
 			// Button 5
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN)
 			{
-				mouse.buttons[Mouse::BUTTON_5]++;
-				mouse.buttons[Mouse::BUTTON_5] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_5, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_5_UP)
 			{
-				mouse.buttons[Mouse::BUTTON_5] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_5, false);
 			}
+
 			// Wheel
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_WHEEL)
 			{
@@ -175,15 +179,7 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 				scanCode |= SCANCODE_E0_MASK;
 			}
 
-			if(rawData.data.keyboard.Flags & RI_KEY_BREAK)
-			{
-				keyboard.keyStates[scanCode] &= ~Input::BUTTON_STATE_DOWN_FLAG;
-			}
-			else
-			{
-				keyboard.keyStates[scanCode]++;
-				keyboard.keyStates[scanCode] |= Input::BUTTON_STATE_DOWN_FLAG;
-			}
+			keyboard.SetButtonStateDown(scanCode, !(rawData.data.keyboard.Flags & RI_KEY_BREAK));
 		}
 	}
 }

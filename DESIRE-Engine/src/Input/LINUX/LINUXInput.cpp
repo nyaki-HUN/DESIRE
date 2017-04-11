@@ -59,6 +59,11 @@ void Input::Kill()
 		XCloseDisplay(InputImpl::display);
 		InputImpl::display = nullptr;
 	}
+
+	// Reset input devices
+	Input::Get()->keyboards.clear();
+	Input::Get()->mouses.clear();
+	Input::Get()->gameControllers.clear();
 }
 
 void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, EventRef event, void *userData)
@@ -92,8 +97,7 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 					}
 				}
 
-				keyboard.keyStates[keyCode]++;
-				keyboard.keyStates[keyCode] |= Input::BUTTON_STATE_DOWN_FLAG;
+				keyboard.SetButtonStateDown(keyCode, true);
 
 				// Add typed UTF-8 character
 				char buffer[5] = {};
@@ -126,44 +130,27 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 					}
 				}
 
-				keyboard.keyStates[keyCode] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				keyboard.SetButtonStateDown(keyCode, false);
 				break;
 			}
 
 			case ButtonPress:
 				switch(event.xbutton.button)
 				{
-					case Button1:
-						mouse.buttons[Mouse::BUTTON_LEFT]++;
-						mouse.buttons[Mouse::BUTTON_LEFT] |= Input::BUTTON_STATE_DOWN_FLAG;
-						break;
-
-					case Button2:
-						mouse.buttons[Mouse::BUTTON_MIDDLE]++;
-						mouse.buttons[Mouse::BUTTON_MIDDLE] |= Input::BUTTON_STATE_DOWN_FLAG;
-						break;
-
-					case Button3:
-						mouse.buttons[Mouse::BUTTON_RIGHT]++;
-						mouse.buttons[Mouse::BUTTON_RIGHT] |= Input::BUTTON_STATE_DOWN_FLAG;
-						break;
-
-					case Button4:
-						mouse.wheelDelta += 120;
-						break;
-
-					case Button5:
-						mouse.wheelDelta -= 120;
-						break;
+					case Button1:	mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, true); break;
+					case Button2:	mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, true); break;
+					case Button3:	mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, true); break;
+					case Button4:	mouse.wheelDelta += 120; break;
+					case Button5:	mouse.wheelDelta -= 120; break;
 				}
 				break;
 
 			case ButtonRelease:
 				switch(event.xbutton.button)
 				{
-					case Button1:	mouse.buttons[Mouse::BUTTON_LEFT] &= ~Input::BUTTON_STATE_DOWN_FLAG; break;
-					case Button2:	mouse.buttons[Mouse::BUTTON_MIDDLE] &= ~Input::BUTTON_STATE_DOWN_FLAG; break;
-					case Button3:	mouse.buttons[Mouse::BUTTON_RIGHT] &= ~Input::BUTTON_STATE_DOWN_FLAG; break;
+					case Button1:	mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, false); break;
+					case Button2:	mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, false); break;
+					case Button3:	mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, false); break;
 				}
 				break;
 
