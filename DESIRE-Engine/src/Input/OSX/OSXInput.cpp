@@ -177,6 +177,11 @@ void Input::Kill()
 	InputImpl::keyboardUPP = nullptr;
 	DisposeEventHandlerUPP(InputImpl::mouseUPP);
 	InputImpl::mouseUPP = nullptr;
+
+	// Reset input devices
+	Input::Get()->keyboards.clear();
+	Input::Get()->mouses.clear();
+	Input::Get()->gameControllers.clear();
 }
 
 OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
@@ -194,8 +199,7 @@ OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, Eve
 			if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
 			{
 				const EKeyCode keyCode = keyConversionTable[virtualKey];
-				keyboard.keyStates[keyCode]++;
-				keyboard.keyStates[keyCode] |= Input::BUTTON_STATE_DOWN_FLAG;
+				keyboard.SetButtonStateDown(keyCode, true);
 			}
 			break;
 		}
@@ -207,7 +211,7 @@ OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, Eve
 			if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
 			{
 				const EKeyCode keyCode = keyConversionTable[virtualKey];
-				keyboard.keyStates[keyCode] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				keyboard.SetButtonStateDown(keyCode, false);
 			}
 			break;
 		}
@@ -217,69 +221,13 @@ OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, Eve
 			UInt32 modifiers = 0;
 			GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
 
-			if(modifiers & controlKey)
-			{
-				keyboard.keyStates[KEY_LCONTROL]++;
-				keyboard.keyStates[KEY_LCONTROL] |= Input::BUTTON_STATE_DOWN_FLAG;
-			}
-			else
-			{
-				keyboard.keyStates[KEY_LCONTROL] &= ~Input::BUTTON_STATE_DOWN_FLAG;
-			}
-
-			if(modifiers & shiftKey)
-			{
-				keyboard.keyStates[KEY_LSHIFT]++;
-				keyboard.keyStates[KEY_LSHIFT] |= Input::BUTTON_STATE_DOWN_FLAG;
-			}
-			else
-			{
-				keyboard.keyStates[KEY_LSHIFT] &= ~Input::BUTTON_STATE_DOWN_FLAG;
-			}
-
-			if(modifiers & optionKey)
-			{
-				keyboard.keyStates[KEY_LALT]++;
-				keyboard.keyStates[KEY_LALT] |= Input::BUTTON_STATE_DOWN_FLAG;
-			}
-			else
-			{
-				keyboard.keyStates[KEY_LALT] &= ~Input::BUTTON_STATE_DOWN_FLAG;
-			}
-
-			if(modifiers & cmdKey)
-			{
-				keyboard.keyStates[KEY_LWIN]++;
-				keyboard.keyStates[KEY_LWIN] |= Input::BUTTON_STATE_DOWN_FLAG;
-			}
-			else
-			{
-				keyboard.keyStates[KEY_LWIN] &= ~Input::BUTTON_STATE_DOWN_FLAG;
-			}
-
-			if(modifiers & alphaLock)
-			{
-				keyboard.keyStates[KEY_CAPSLOCK]++;
-				keyboard.keyStates[KEY_CAPSLOCK] |= Input::BUTTON_STATE_DOWN_FLAG;
-			}
-			else
-			{
-				keyboard.keyStates[KEY_CAPSLOCK] &= ~Input::BUTTON_STATE_DOWN_FLAG;
-			}
-
-			if(modifiers & kEventKeyModifierFnMask)
-			{
-				keyboard.keyStates[KEY_APPS]++;
-				keyboard.keyStates[KEY_APPS] |= Input::BUTTON_STATE_DOWN_FLAG;
-			}
-			else
-			{
-				keyboard.keyStates[KEY_APPS] &= ~Input::BUTTON_STATE_DOWN_FLAG;
-			}
-
-			if(modifiers & kEventKeyModifierNumLockMask)
-			{
-			}
+			keyboard.SetButtonStateDown(KEY_LCONTROL,	(modifiers & controlKey));
+			keyboard.SetButtonStateDown(KEY_LSHIFT,		(modifiers & shiftKey));
+			keyboard.SetButtonStateDown(KEY_LALT,		(modifiers & optionKey));
+			keyboard.SetButtonStateDown(KEY_LWIN,		(modifiers & cmdKey));
+			keyboard.SetButtonStateDown(KEY_CAPSLOCK,	(modifiers & alphaLock));
+			keyboard.SetButtonStateDown(KEY_APPS,		(modifiers & kEventKeyModifierFnMask));
+//			keyboard.SetButtonStateDown(KEY_,			(modifiers & kEventKeyModifierNumLockMask));
 			break;
 		}
 	}
@@ -304,18 +252,15 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 
 			if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
 			{
-				mouse.buttons[Mouse::BUTTON_MIDDLE]++;
-				mouse.buttons[Mouse::BUTTON_MIDDLE] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, true);
 			}
 			else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
 			{
-				mouse.buttons[Mouse::BUTTON_RIGHT]++;
-				mouse.buttons[Mouse::BUTTON_RIGHT] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, true);
 			}
 			else if(button == kEventMouseButtonPrimary)
 			{
-				mouse.buttons[Mouse::BUTTON_LEFT]++;
-				mouse.buttons[Mouse::BUTTON_LEFT] |= Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, true);
 			}
 			break;
 		}
@@ -329,15 +274,15 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 
 			if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
 			{
-				mouse.buttons[Mouse::BUTTON_MIDDLE] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, false);
 			}
 			else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
 			{
-				mouse.buttons[Mouse::BUTTON_RIGHT] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, false);
 			}
 			else if(button == kEventMouseButtonPrimary)
 			{
-				mouse.buttons[Mouse::BUTTON_LEFT] &= ~Input::BUTTON_STATE_DOWN_FLAG;
+				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, false);
 			}
 			break;
 		}
