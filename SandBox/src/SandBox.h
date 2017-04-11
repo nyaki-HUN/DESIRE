@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/IApp.h"
-#include "Input/InputMap.h"
+#include "Input/InputMapping.h"
 
 class Object;
 
@@ -20,5 +20,5 @@ private:
 	Object *scriptedObject;
 	Object *cubeObj;
 
-	InputMap inputMap;
+	InputMapping inputMapping;
 };

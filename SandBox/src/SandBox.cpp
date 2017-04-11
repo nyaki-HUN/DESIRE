@@ -83,13 +83,13 @@ void SandBox::Init(IWindow *mainWindow)
 
 	for(const Keyboard& keyboard : Input::Get()->GetKeyboards())
 	{
-		inputMap.MapButton(EAction::EXIT, keyboard, KEY_ESCAPE);
-		inputMap.MapButton(EAction::FIRE, keyboard, KEY_SPACE);
+		inputMapping.MapButton(EAction::EXIT, keyboard, KEY_ESCAPE);
+		inputMapping.MapButton(EAction::FIRE, keyboard, KEY_SPACE);
 	}
 
 	for(const GameController& gamepad : Input::Get()->GetControllers())
 	{
-		inputMap.MapButton(EAction::FIRE, gamepad, GameController::BTN_X);
+		inputMapping.MapButton(EAction::FIRE, gamepad, GameController::BTN_X);
 	}
 
 	//////////
@@ -104,13 +104,13 @@ void SandBox::Kill()
 
 void SandBox::Update()
 {
-	if(inputMap.GetPressedCount(EAction::EXIT))
+	if(inputMapping.GetPressedCount(EAction::EXIT))
 	{
 		LOG_MESSAGE("!EXIT!");
 		return;
 	}
 
-	if(inputMap.IsDown(EAction::FIRE))
+	if(inputMapping.IsDown(EAction::FIRE))
 	{
 		LOG_MESSAGE("Fire is down");
 	}
