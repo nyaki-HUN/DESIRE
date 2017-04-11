@@ -3,11 +3,13 @@
 #include "Resource/Texture.h"
 #include "Core/fs/IReadFile.h"
 
+DESIRE_DISABLE_WARNINGS
 #define STBI_NO_TGA					// We have our own TGA loader
 #define STBI_NO_FAILURE_STRINGS
 #define STBI_NO_STDIO
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+DESIRE_ENABLE_WARNINGS
 
 Texture* StbImageLoader::Load(const ReadFilePtr& file)
 {

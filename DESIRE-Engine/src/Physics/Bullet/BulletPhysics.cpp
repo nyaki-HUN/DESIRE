@@ -83,8 +83,8 @@ PhysicsComponent* BulletPhysics::CreatePhysicsComponent()
 
 void BulletPhysics::SetCollisionEnabled(EPhysicsCollisionGroup a, EPhysicsCollisionGroup b, bool enabled)
 {
-	const int groupA = (int)a;
-	const int groupB = (int)b;
+	const size_t groupA = (size_t)a;
+	const size_t groupB = (size_t)b;
 
 	ASSERT(groupA < DESIRE_ASIZEOF(collisionMasks));
 	ASSERT(groupB < DESIRE_ASIZEOF(collisionMasks));
@@ -103,8 +103,8 @@ void BulletPhysics::SetCollisionEnabled(EPhysicsCollisionGroup a, EPhysicsCollis
 
 int16_t BulletPhysics::GetCollisionMaskForGroup(EPhysicsCollisionGroup group) const
 {
-	ASSERT((int)group < DESIRE_ASIZEOF(collisionMasks));
-	return collisionMasks[(int)group];
+	ASSERT((size_t)group < DESIRE_ASIZEOF(collisionMasks));
+	return collisionMasks[(size_t)group];
 }
 
 bool BulletPhysics::RayTest(const Vector3& startPoint, const Vector3& direction, Vector3 *o_hitpoint, PhysicsComponent **o_component, int collisionGroupMask)
