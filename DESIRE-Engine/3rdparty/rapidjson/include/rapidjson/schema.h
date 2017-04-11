@@ -880,7 +880,7 @@ public:
 #define RAPIDJSON_STRING_(name, ...) \
     static const ValueType& Get##name##String() {\
         static const Ch s[] = { __VA_ARGS__, '\0' };\
-        static const ValueType v(s, sizeof(s) / sizeof(Ch) - 1);\
+        static const ValueType v(s, static_cast<SizeType>(sizeof(s) / sizeof(Ch) - 1));\
         return v;\
     }
 
@@ -1263,7 +1263,7 @@ struct TokenHelper {
         char buffer[21];
         size_t length = static_cast<size_t>((sizeof(SizeType) == 4 ? u32toa(index, buffer) : u64toa(index, buffer)) - buffer);
         for (size_t i = 0; i < length; i++)
-            *documentStack.template Push<Ch>() = buffer[i];
+            *documentStack.template Push<Ch>() = static_cast<Ch>(buffer[i]);
     }
 };
 
@@ -1344,7 +1344,7 @@ public:
         schemaRef_(allocator, kInitialSchemaRefSize)
     {
         if (!allocator_)
-            ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator());
+            ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator)();
 
         typeless_ = static_cast<SchemaType*>(allocator_->Malloc(sizeof(SchemaType)));
         new (typeless_) SchemaType(this, PointerType(), ValueType(kObjectType).Move(), ValueType(kObjectType).Move(), 0);
@@ -1823,7 +1823,7 @@ private:
 
     StateAllocator& GetStateAllocator() {
         if (!stateAllocator_)
-            stateAllocator_ = ownStateAllocator_ = RAPIDJSON_NEW(StateAllocator());
+            stateAllocator_ = ownStateAllocator_ = RAPIDJSON_NEW(StateAllocator)();
         return *stateAllocator_;
     }
 
@@ -1928,7 +1928,7 @@ private:
     const Context& CurrentContext() const { return *schemaStack_.template Top<Context>(); }
 
     OutputHandler& CreateNullHandler() {
-        return *(nullHandler_ = static_cast<OutputHandler*>(GetStateAllocator().Malloc(sizeof(OutputHandler))));
+        return *(nullHandler_ = new (GetStateAllocator().Malloc(sizeof(OutputHandler))) OutputHandler);
     }
 
     static const size_t kDefaultSchemaStackCapacity = 1024;

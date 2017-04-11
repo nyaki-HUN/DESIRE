@@ -16,6 +16,7 @@
 #define RAPIDJSON_WRITER_H_
 
 #include "stream.h"
+#include "internal/meta.h"
 #include "internal/stack.h"
 #include "internal/strfunc.h"
 #include "internal/dtoa.h"
@@ -221,8 +222,9 @@ public:
 
     bool EndObject(SizeType memberCount = 0) {
         (void)memberCount;
-        RAPIDJSON_ASSERT(level_stack_.GetSize() >= sizeof(Level));
-        RAPIDJSON_ASSERT(!level_stack_.template Top<Level>()->inArray);
+        RAPIDJSON_ASSERT(level_stack_.GetSize() >= sizeof(Level)); // not inside an Object
+        RAPIDJSON_ASSERT(!level_stack_.template Top<Level>()->inArray); // currently inside an Array, not Object
+        RAPIDJSON_ASSERT(0 == level_stack_.template Top<Level>()->valueCount % 2); // Object has a Key without a Value
         level_stack_.template Pop<Level>(1);
         return EndValue(WriteEndObject());
     }
@@ -246,9 +248,9 @@ public:
     //@{
 
     //! Simpler but slower overload.
-    bool String(const Ch* str) { return String(str, internal::StrLen(str)); }
-    bool Key(const Ch* str) { return Key(str, internal::StrLen(str)); }
-
+    bool String(const Ch* const& str) { return String(str, internal::StrLen(str)); }
+    bool Key(const Ch* const& str) { return Key(str, internal::StrLen(str)); }
+    
     //@}
 
     //! Write a raw JSON value.
@@ -263,6 +265,14 @@ public:
         RAPIDJSON_ASSERT(json != 0);
         Prefix(type);
         return EndValue(WriteRawValue(json, length));
+    }
+
+    //! Flush the output stream.
+    /*!
+        Allows the user to flush the output stream immediately.
+     */
+    void Flush() {
+        os_->Flush();
     }
 
 protected:
@@ -297,7 +307,7 @@ protected:
         const char* end = internal::i32toa(i, buffer);
         PutReserve(*os_, static_cast<size_t>(end - buffer));
         for (const char* p = buffer; p != end; ++p)
-            PutUnsafe(*os_, static_cast<typename TargetEncoding::Ch>(*p));
+            PutUnsafe(*os_, static_cast<typename OutputStream::Ch>(*p));
         return true;
     }
 
@@ -306,7 +316,7 @@ protected:
         const char* end = internal::u32toa(u, buffer);
         PutReserve(*os_, static_cast<size_t>(end - buffer));
         for (const char* p = buffer; p != end; ++p)
-            PutUnsafe(*os_, static_cast<typename TargetEncoding::Ch>(*p));
+            PutUnsafe(*os_, static_cast<typename OutputStream::Ch>(*p));
         return true;
     }
 
@@ -315,7 +325,7 @@ protected:
         const char* end = internal::i64toa(i64, buffer);
         PutReserve(*os_, static_cast<size_t>(end - buffer));
         for (const char* p = buffer; p != end; ++p)
-            PutUnsafe(*os_, static_cast<typename TargetEncoding::Ch>(*p));
+            PutUnsafe(*os_, static_cast<typename OutputStream::Ch>(*p));
         return true;
     }
 
@@ -324,7 +334,7 @@ protected:
         char* end = internal::u64toa(u64, buffer);
         PutReserve(*os_, static_cast<size_t>(end - buffer));
         for (char* p = buffer; p != end; ++p)
-            PutUnsafe(*os_, static_cast<typename TargetEncoding::Ch>(*p));
+            PutUnsafe(*os_, static_cast<typename OutputStream::Ch>(*p));
         return true;
     }
 
@@ -352,12 +362,12 @@ protected:
         char* end = internal::dtoa(d, buffer, maxDecimalPlaces_);
         PutReserve(*os_, static_cast<size_t>(end - buffer));
         for (char* p = buffer; p != end; ++p)
-            PutUnsafe(*os_, static_cast<typename TargetEncoding::Ch>(*p));
+            PutUnsafe(*os_, static_cast<typename OutputStream::Ch>(*p));
         return true;
     }
 
     bool WriteString(const Ch* str, SizeType length)  {
-        static const typename TargetEncoding::Ch hexDigits[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        static const typename OutputStream::Ch hexDigits[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
         static const char escape[256] = {
 #define Z16 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
             //0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
@@ -413,7 +423,7 @@ protected:
             else if ((sizeof(Ch) == 1 || static_cast<unsigned>(c) < 256) && RAPIDJSON_UNLIKELY(escape[static_cast<unsigned char>(c)]))  {
                 is.Take();
                 PutUnsafe(*os_, '\\');
-                PutUnsafe(*os_, static_cast<typename TargetEncoding::Ch>(escape[static_cast<unsigned char>(c)]));
+                PutUnsafe(*os_, static_cast<typename OutputStream::Ch>(escape[static_cast<unsigned char>(c)]));
                 if (escape[static_cast<unsigned char>(c)] == 'u') {
                     PutUnsafe(*os_, '0');
                     PutUnsafe(*os_, '0');
@@ -471,7 +481,7 @@ protected:
     // Flush the value if it is the top level one.
     bool EndValue(bool ret) {
         if (RAPIDJSON_UNLIKELY(level_stack_.Empty()))   // end of json text
-            os_->Flush();
+            Flush();
         return ret;
     }
 
@@ -575,7 +585,7 @@ inline bool Writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, siz
     // The rest of string using SIMD
     static const char dquote[16] = { '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"', '\"' };
     static const char bslash[16] = { '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\', '\\' };
-    static const char space[16]  = { 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19, 0x19 };
+    static const char space[16]  = { 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F };
     const __m128i dq = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&dquote[0]));
     const __m128i bs = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&bslash[0]));
     const __m128i sp = _mm_loadu_si128(reinterpret_cast<const __m128i *>(&space[0]));
@@ -584,7 +594,7 @@ inline bool Writer<StringBuffer>::ScanWriteUnescapedString(StringStream& is, siz
         const __m128i s = _mm_load_si128(reinterpret_cast<const __m128i *>(p));
         const __m128i t1 = _mm_cmpeq_epi8(s, dq);
         const __m128i t2 = _mm_cmpeq_epi8(s, bs);
-        const __m128i t3 = _mm_cmpeq_epi8(_mm_max_epu8(s, sp), sp); // s < 0x20 <=> max(s, 0x19) == 0x19
+        const __m128i t3 = _mm_cmpeq_epi8(_mm_max_epu8(s, sp), sp); // s < 0x20 <=> max(s, 0x1F) == 0x1F
         const __m128i x = _mm_or_si128(_mm_or_si128(t1, t2), t3);
         unsigned short r = static_cast<unsigned short>(_mm_movemask_epi8(x));
         if (RAPIDJSON_UNLIKELY(r != 0)) {   // some of characters is escaped

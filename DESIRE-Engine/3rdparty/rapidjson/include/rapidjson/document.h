@@ -2088,7 +2088,7 @@ public:
         GenericValue<Encoding, Allocator>(type),  allocator_(allocator), ownAllocator_(0), stack_(stackAllocator, stackCapacity), parseResult_()
     {
         if (!allocator_)
-            ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator());
+            ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator)();
     }
 
     //! Constructor
@@ -2101,7 +2101,7 @@ public:
         allocator_(allocator), ownAllocator_(0), stack_(stackAllocator, stackCapacity), parseResult_()
     {
         if (!allocator_)
-            ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator());
+            ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator)();
     }
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
@@ -2293,7 +2293,7 @@ public:
     template <unsigned parseFlags, typename SourceEncoding>
     GenericDocument& Parse(const typename SourceEncoding::Ch* str, size_t length) {
         RAPIDJSON_ASSERT(!(parseFlags & kParseInsituFlag));
-        MemoryStream ms(static_cast<const char*>(str), length * sizeof(typename SourceEncoding::Ch));
+        MemoryStream ms(reinterpret_cast<const char*>(str), length * sizeof(typename SourceEncoding::Ch));
         EncodedInputStream<SourceEncoding, MemoryStream> is(ms);
         ParseStream<parseFlags, SourceEncoding>(is);
         return *this;
@@ -2564,7 +2564,7 @@ public:
     GenericObject AddMember(StringRefType name, ValueType& value, AllocatorType& allocator) const { value_.AddMember(name, value, allocator); return *this; }
     GenericObject AddMember(StringRefType name, StringRefType value, AllocatorType& allocator) const { value_.AddMember(name, value, allocator); return *this; }
     template <typename T> RAPIDJSON_DISABLEIF_RETURN((internal::OrExpr<internal::IsPointer<T>, internal::IsGenericValue<T> >), (GenericObject)) AddMember(StringRefType name, T value, AllocatorType& allocator) const { value_.AddMember(name, value, allocator); return *this; }
-    void RemoveAllMembers() { return value_.RemoveAllMembers(); }
+    void RemoveAllMembers() { value_.RemoveAllMembers(); }
     bool RemoveMember(const Ch* name) const { return value_.RemoveMember(name); }
 #if RAPIDJSON_HAS_STDSTRING
     bool RemoveMember(const std::basic_string<Ch>& name) const { return value_.RemoveMember(name); }
