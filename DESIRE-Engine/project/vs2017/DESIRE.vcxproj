@@ -102,6 +102,42 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\document.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\encodedstream.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\encodings.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\error\en.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\error\error.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\filereadstream.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\filewritestream.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\fwd.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\itoa.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\meta.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\pow10.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\regex.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\stack.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\strtod.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\swap.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\memorybuffer.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\memorystream.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\pointer.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\prettywriter.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\rapidjson.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\reader.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\schema.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\stream.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\stringbuffer.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\writer.h" />
+    <ClInclude Include="..\..\3rdparty\stb\stb_image.h" />
     <ClInclude Include="..\..\src\Component\IComponent.h" />
     <ClInclude Include="..\..\src\Component\PhysicsComponent.h" />
     <ClInclude Include="..\..\src\Component\RenderComponent.h" />
@@ -192,7 +228,6 @@
     <ClInclude Include="..\..\src\Resource\Texture.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\StbImageLoader.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h" />
-    <ClInclude Include="..\..\src\Resource\TextureLoader\stb_image.h" />
     <ClInclude Include="..\..\src\Scene\ISceneManager.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeLeaf.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeSceneManager.h" />

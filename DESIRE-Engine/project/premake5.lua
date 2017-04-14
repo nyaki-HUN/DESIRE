@@ -14,6 +14,11 @@ project "DESIRE"
 		"../../../DESIRE-modules/ResourceLoader-Assimp/include",
 	}
 
+	files
+	{
+		"../3rdparty/**.h",
+	}
+
 	filter "system:not android"
 		removefiles
 		{

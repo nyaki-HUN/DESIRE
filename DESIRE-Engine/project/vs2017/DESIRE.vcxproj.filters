@@ -1,816 +1,954 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Component">
-      <UniqueIdentifier>{F8BD1DB3-6428-D229-AD66-83CF1910B07E}</UniqueIdentifier>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{3E7DA5C5-2A4A-00D1-5363-EE783F8F355F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    <Filter Include="3rdparty\rapidjson">
+      <UniqueIdentifier>{772CDC34-6310-9D8A-CC70-97DDB873870C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\ConfigValue">
-      <UniqueIdentifier>{50D630CC-3CCF-4F1E-6501-35A351592F2A}</UniqueIdentifier>
+    <Filter Include="3rdparty\rapidjson\include">
+      <UniqueIdentifier>{EADAADD4-D6EA-59A5-3FA4-BEC32BD3483E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\WINDOWS">
-      <UniqueIdentifier>{A86F67F6-94D2-F69A-3D58-2F51299AC21D}</UniqueIdentifier>
+    <Filter Include="3rdparty\rapidjson\include\rapidjson">
+      <UniqueIdentifier>{239106F6-0F78-C8ED-B8C8-2E0BA48E4154}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\fs">
-      <UniqueIdentifier>{F6427134-6222-F0CF-6B3A-7BA6D7985631}</UniqueIdentifier>
+    <Filter Include="3rdparty\rapidjson\include\rapidjson\error">
+      <UniqueIdentifier>{BC362C9A-A89E-F267-110A-077EFD900954}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\math">
-      <UniqueIdentifier>{E771D115-53DC-858C-9C1A-373208C463E1}</UniqueIdentifier>
+    <Filter Include="3rdparty\rapidjson\include\rapidjson\internal">
+      <UniqueIdentifier>{CF2AC519-3B9B-C792-04BA-411B70E9FF93}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\math\vectormath">
-      <UniqueIdentifier>{13A81061-FF36-9A2A-A855-AE2594C3AAD0}</UniqueIdentifier>
+    <Filter Include="3rdparty\rapidjson\include\rapidjson\msinttypes">
+      <UniqueIdentifier>{12BD6F89-7EF8-CF4C-87ED-4CDCF3A7547D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\memory">
-      <UniqueIdentifier>{F63F3AD0-62F5-B2C5-EBE9-AC9C579EA9C9}</UniqueIdentifier>
+    <Filter Include="3rdparty\stb">
+      <UniqueIdentifier>{96AA99EA-820D-298F-2B93-614517D5F411}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Input">
-      <UniqueIdentifier>{953A660D-014F-8EBE-CAD0-311E36A48AEF}</UniqueIdentifier>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Input\WINDOWS">
-      <UniqueIdentifier>{0F6D814A-7B2D-FD80-4468-46FEB0E7415D}</UniqueIdentifier>
+    <Filter Include="src\Component">
+      <UniqueIdentifier>{CF1FD8F2-3BE0-5329-041B-9DA6709A9805}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Network">
-      <UniqueIdentifier>{8F6A0D6C-FB49-8C07-0462-17DE70C0F268}</UniqueIdentifier>
+    <Filter Include="src\Core">
+      <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics">
-      <UniqueIdentifier>{888B590D-F46A-D8A8-FD82-637F69E13E0A}</UniqueIdentifier>
+    <Filter Include="src\Core\ConfigValue">
+      <UniqueIdentifier>{47E09D33-336F-27FD-DC8D-3BF8C8FB37A3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics\Bullet">
-      <UniqueIdentifier>{3F283075-2BF6-237B-148A-94A100F7FFDF}</UniqueIdentifier>
+    <Filter Include="src\Core\WINDOWS">
+      <UniqueIdentifier>{1F168809-0B0F-A75B-3441-8CE020998667}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics\PhysX">
-      <UniqueIdentifier>{B3488B23-1F09-075A-E843-50D754C34B36}</UniqueIdentifier>
+    <Filter Include="src\Core\fs">
+      <UniqueIdentifier>{0D43AB3D-79F8-2333-02ED-1D0A6EA11A37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Render">
-      <UniqueIdentifier>{C5BB87CE-B15D-B2A4-9A18-C6F8865939F5}</UniqueIdentifier>
+    <Filter Include="src\Core\math">
+      <UniqueIdentifier>{BED38B55-2A94-078C-F3CE-50095F4E4C68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Render\bgfx">
-      <UniqueIdentifier>{7BDFA6FE-E794-1FF4-7089-19CBDC3D16F8}</UniqueIdentifier>
+    <Filter Include="src\Core\math\vectormath">
+      <UniqueIdentifier>{8AD54F6B-76FA-9EEB-9F45-847B8BC99D09}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource">
-      <UniqueIdentifier>{ED6CDF9B-D939-3AA7-0253-284FEE7E6F35}</UniqueIdentifier>
+    <Filter Include="src\Core\memory">
+      <UniqueIdentifier>{8D7314E8-F9FE-81AC-0210-05A16E1ADEAC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource\MeshLoader">
-      <UniqueIdentifier>{E0C80FD8-4C2A-EDE5-D597-339841F823A5}</UniqueIdentifier>
+    <Filter Include="src\Input">
+      <UniqueIdentifier>{EC4823B3-58B3-D729-A1F1-88CF0D9BB57E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource\TextureLoader">
-      <UniqueIdentifier>{644C0BE0-5046-3432-39B3-CA42254C9A9E}</UniqueIdentifier>
+    <Filter Include="src\Input\WINDOWS">
+      <UniqueIdentifier>{66E2B6C1-D2F8-B457-1B70-407987C585DF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{B3F7140E-1F0C-3DBF-E88D-E01E546139F0}</UniqueIdentifier>
+    <Filter Include="src\Network">
+      <UniqueIdentifier>{A66A4775-1220-C06A-9B14-BA4107C9B66E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script">
-      <UniqueIdentifier>{9AFBBAD0-869D-E5A6-6F58-F9FA5B996CF7}</UniqueIdentifier>
+    <Filter Include="src\Physics">
+      <UniqueIdentifier>{9F8B9316-0B41-0C0C-9435-06E300EA0210}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\AngelScript">
-      <UniqueIdentifier>{85C57191-71A9-32E7-DA09-2D3AC60C1D69}</UniqueIdentifier>
+    <Filter Include="src\Physics\Bullet">
+      <UniqueIdentifier>{764814D3-622C-D528-CB8C-CF7BB78FBFAA}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\AngelScript\API">
-      <UniqueIdentifier>{EEE44DD8-DADE-762A-C34B-0D3BAFE4DC96}</UniqueIdentifier>
+    <Filter Include="src\Physics\PhysX">
+      <UniqueIdentifier>{0ABEC09A-76D4-BE30-BF4B-4A522BA18FB8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\Lua">
-      <UniqueIdentifier>{2B51BE66-1709-00B4-8010-D90F6CE79AA4}</UniqueIdentifier>
+    <Filter Include="src\Render">
+      <UniqueIdentifier>{FC94E62B-E84C-2879-5154-01D53D2BC369}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\Lua\API">
-      <UniqueIdentifier>{94D3A352-80A1-9758-6935-087F55A273BD}</UniqueIdentifier>
+    <Filter Include="src\Render\bgfx">
+      <UniqueIdentifier>{12138116-7E9E-EEDA-87AF-71CFF3B94ADB}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\Lua\LuaBridge">
-      <UniqueIdentifier>{09323242-F5C0-BB0B-9EDF-CF068A4DCCB1}</UniqueIdentifier>
+    <Filter Include="src\Resource">
+      <UniqueIdentifier>{E46F59CC-D0D2-E870-7958-2127659AB4F3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\Lua\LuaBridge\detail">
-      <UniqueIdentifier>{AB6570D2-1773-9EB8-A059-9AA30C666A6F}</UniqueIdentifier>
+    <Filter Include="src\Resource\MeshLoader">
+      <UniqueIdentifier>{77A3D3A9-E3DA-1B41-ECE4-7F64589B423A}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\Squirrel">
-      <UniqueIdentifier>{4052DE1B-ACDD-4BE0-B5EE-CED421F9A7E0}</UniqueIdentifier>
+    <Filter Include="src\Resource\TextureLoader">
+      <UniqueIdentifier>{9BB3CB76-87C3-7747-F07C-DC65DCAB66E0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\Squirrel\API">
-      <UniqueIdentifier>{295758AB-95B8-35B9-1E26-7C6B8A866C78}</UniqueIdentifier>
+    <Filter Include="src\Scene">
+      <UniqueIdentifier>{0A06D2B3-7670-862A-BFAE-37D02B58647F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script\Squirrel\sqrat">
-      <UniqueIdentifier>{7A6266E6-E6CE-21E1-AFC2-B93E1BEE4349}</UniqueIdentifier>
+    <Filter Include="src\Script">
+      <UniqueIdentifier>{D1D4192E-BD8C-5B7B-2694-34D7126BF66B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sound">
-      <UniqueIdentifier>{4ED01B0E-BAE4-43BF-8366-E71EEF3940F0}</UniqueIdentifier>
+    <Filter Include="src\Script\AngelScript">
+      <UniqueIdentifier>{3C294988-2823-72DA-1190-08EBFD28D846}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sound\FMOD">
-      <UniqueIdentifier>{43656A01-2F1D-AC4E-9824-85AA84FB463F}</UniqueIdentifier>
+    <Filter Include="src\Script\AngelScript\API">
+      <UniqueIdentifier>{254C0E6F-115C-BA3F-7A15-1F5E6644A9D8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sound\OpenAL">
-      <UniqueIdentifier>{FC541D1D-E8B7-ACC1-913D-E5777D7F7844}</UniqueIdentifier>
+    <Filter Include="src\Script\Lua">
+      <UniqueIdentifier>{E2EDC49D-CEBB-B8A3-B74F-29CAA3BC9408}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sound\Wwise">
-      <UniqueIdentifier>{2C2B0230-98E0-7A25-21D5-74FC8D897129}</UniqueIdentifier>
+    <Filter Include="src\Script\Lua\API">
+      <UniqueIdentifier>{CBF387B0-B7D7-4806-2038-43590C3B3388}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI">
-      <UniqueIdentifier>{83755900-6F01-880B-D8AF-880BC45A880B}</UniqueIdentifier>
+    <Filter Include="src\Script\Lua\LuaBridge">
+      <UniqueIdentifier>{805F714C-6C84-C0CC-95CF-A55C8153BFEA}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils">
-      <UniqueIdentifier>{F68B420E-62A0-6ABF-2B22-0E1F97F566F0}</UniqueIdentifier>
+    <Filter Include="src\Script\Lua\LuaBridge\detail">
+      <UniqueIdentifier>{42E7D464-AECA-E3A4-B7CD-11E12330AAF5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Script\Squirrel">
+      <UniqueIdentifier>{57794636-C3DA-2344-4C48-6AF6B8A85A03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Script\Squirrel\API">
+      <UniqueIdentifier>{C0311C7D-2C69-6414-3573-C837A1298B0D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Script\Squirrel\sqrat">
+      <UniqueIdentifier>{D13E8B38-3D01-BFC2-86B1-4D4FF2B297A0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Sound">
+      <UniqueIdentifier>{A5DED8B3-1149-8D2A-5A87-3ED0C6306B7F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Sound\FMOD">
+      <UniqueIdentifier>{FA017138-E6CF-643E-CF63-D564BBD040A3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Sound\OpenAL">
+      <UniqueIdentifier>{73FB3D30-5FF4-5C82-8826-4207747E3C8E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Sound\Wwise">
+      <UniqueIdentifier>{C35EDC47-2FEA-490C-38FB-CC00A405A60C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\UI">
+      <UniqueIdentifier>{3A4B661C-26ED-90F2-0FA8-A446FBE81743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Utils">
+      <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\document.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\encodedstream.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\encodings.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\error\en.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\error\error.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\error</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\filereadstream.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\filewritestream.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\fwd.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\biginteger.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\diyfp.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\dtoa.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\ieee754.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\itoa.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\meta.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\pow10.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\regex.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\stack.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\strfunc.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\strtod.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\swap.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\istreamwrapper.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\memorybuffer.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\memorystream.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\msinttypes\inttypes.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\msinttypes\stdint.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\msinttypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\ostreamwrapper.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\pointer.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\prettywriter.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\rapidjson.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\reader.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\schema.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\stream.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\stringbuffer.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\writer.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\stb\stb_image.h">
+      <Filter>3rdparty\stb</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Component\IComponent.h">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Component\PhysicsComponent.h">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Component\RenderComponent.h">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Component\SceneNodeComponent.h">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Component\ScriptComponent.h">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueFloat.h">
-      <Filter>Core\ConfigValue</Filter>
+      <Filter>src\Core\ConfigValue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueInt.h">
-      <Filter>Core\ConfigValue</Filter>
+      <Filter>src\Core\ConfigValue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\ConfigValue\IConfigValue.h">
-      <Filter>Core\ConfigValue</Filter>
+      <Filter>src\Core\ConfigValue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\CoreAppEvent.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\EAppEventType.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\HashedString.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\HashedStringMap.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\IApp.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\IWindow.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\LockFreeRingBuffer.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\Log.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\Logger.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\Object.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\SMemoryBuffer.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\Singleton.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\StrUtils.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\String.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\Timer.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSFile.h">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSLoggerPolicies.h">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSWindow.h">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\WINDOWS\os.h">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\assert.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\FilePtr_fwd.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\FileSourceZip.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\FileSystem.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\FileSystemWatcher.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\IFileSource.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\IReadFile.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\IWriteFile.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\fs\MemoryFile.h">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\AABB.h">
-      <Filter>Core\math</Filter>
+      <Filter>src\Core\math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\SPoint.h">
-      <Filter>Core\math</Filter>
+      <Filter>src\Core\math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\math.h">
-      <Filter>Core\math</Filter>
+      <Filter>src\Core\math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath.h">
-      <Filter>Core\math</Filter>
+      <Filter>src\Core\math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\Matrix3.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\Matrix4.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\Quat.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\Vector3.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\Vector4.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\matrix_NEON.hpp">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\matrix_SSE.hpp">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\matrix_scalar.hpp">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\quaternion_SSE.hpp">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\quaternion_scalar.hpp">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_NEON.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_SSE.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_scalar.h">
-      <Filter>Core\math\vectormath</Filter>
+      <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\FreeList.h">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\IAllocator.h">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\LinearAllocator.h">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\MallocAllocator.h">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\PoolAllocator.h">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\StackAllocator.h">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\StdFrameAllocatorWrapper.h">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\platform.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DESIRE_config.h" />
+    <ClInclude Include="..\..\src\DESIRE_config.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Input\GameController.h">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\Input.h">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\InputDevice.h">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\InputMapping.h">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\Keyboard.h">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\Mouse.h">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\WINDOWS\WINDOWSInput.h">
-      <Filter>Input\WINDOWS</Filter>
+      <Filter>src\Input\WINDOWS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Input\keyCodes.h">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Network\NetworkFileSource.h">
-      <Filter>Network</Filter>
+      <Filter>src\Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\Bullet\BulletDebugDraw.h">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\Bullet\BulletPhysics.h">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\Bullet\BulletPhysicsComponent.h">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\Bullet\BulletVectormathExt.h">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\Bullet\BulletVehicleRaycaster.h">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\Collision.h">
-      <Filter>Physics</Filter>
+      <Filter>src\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\IPhysics.h">
-      <Filter>Physics</Filter>
+      <Filter>src\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Physics\PhysX\PhysXPhysics.h">
-      <Filter>Physics\PhysX</Filter>
+      <Filter>src\Physics\PhysX</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\Camera.h">
-      <Filter>Render</Filter>
+      <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\DebugDraw.h">
-      <Filter>Render</Filter>
+      <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\Render.h">
-      <Filter>Render</Filter>
+      <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h">
-      <Filter>Render\bgfx</Filter>
+      <Filter>src\Render\bgfx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\ErrorTexture.h">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\Mesh.h">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\MeshLoader\AssimpLoader.h">
-      <Filter>Resource\MeshLoader</Filter>
+      <Filter>src\Resource\MeshLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\ResourceManager.h">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\Texture.h">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\TextureLoader\StbImageLoader.h">
-      <Filter>Resource\TextureLoader</Filter>
+      <Filter>src\Resource\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h">
-      <Filter>Resource\TextureLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Resource\TextureLoader\stb_image.h">
-      <Filter>Resource\TextureLoader</Filter>
+      <Filter>src\Resource\TextureLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Scene\ISceneManager.h">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Scene\QuadTreeLeaf.h">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Scene\QuadTreeSceneManager.h">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Scene\SSceneGraphTraversal.h">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Scene\Transform.h">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\AngelScript\API\AngelScriptAPI.h">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\AngelScript\AngelScriptComponent.h">
-      <Filter>Script\AngelScript</Filter>
+      <Filter>src\Script\AngelScript</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\AngelScript\AngelScriptSystem.h">
-      <Filter>Script\AngelScript</Filter>
+      <Filter>src\Script\AngelScript</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\IScript.h">
-      <Filter>Script</Filter>
+      <Filter>src\Script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\IScriptSystem.h">
-      <Filter>Script</Filter>
+      <Filter>src\Script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\API\LuaScriptAPI.h">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\LuaBridge.h">
-      <Filter>Script\Lua\LuaBridge</Filter>
+      <Filter>src\Script\Lua\LuaBridge</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\CFunctions.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\ClassInfo.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Constructor.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\FuncTraits.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Iterator.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaException.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaHelpers.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaRef.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Namespace.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Stack.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\TypeList.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\TypeTraits.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Userdata.h">
-      <Filter>Script\Lua\LuaBridge\detail</Filter>
+      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaScriptComponent.h">
-      <Filter>Script\Lua</Filter>
+      <Filter>src\Script\Lua</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaScriptSystem.h">
-      <Filter>Script\Lua</Filter>
+      <Filter>src\Script\Lua</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\NativeScriptComponent.h">
-      <Filter>Script</Filter>
+      <Filter>src\Script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\API\SquirrelScriptAPI.h">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\SquirrelScriptComponent.h">
-      <Filter>Script\Squirrel</Filter>
+      <Filter>src\Script\Squirrel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\SquirrelScriptSystem.h">
-      <Filter>Script\Squirrel</Filter>
+      <Filter>src\Script\Squirrel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratAllocator.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratClass.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratClassType.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratConst.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratGlobalMethods.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratMemberMethods.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratObject.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratOverloadMethods.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratTable.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratTypes.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratUtil.h">
-      <Filter>Script\Squirrel\sqrat</Filter>
+      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Sound\FMOD\FMODSound.h">
-      <Filter>Sound\FMOD</Filter>
+      <Filter>src\Sound\FMOD</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Sound\ISound.h">
-      <Filter>Sound</Filter>
+      <Filter>src\Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Sound\OpenAL\OpenALSound.h">
-      <Filter>Sound\OpenAL</Filter>
+      <Filter>src\Sound\OpenAL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Sound\Wwise\WwiseSound.h">
-      <Filter>Sound\Wwise</Filter>
+      <Filter>src\Sound\Wwise</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\UI\ImGuiImpl.h">
-      <Filter>UI</Filter>
+      <Filter>src\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\UI\fs_ocornut_imgui.bin.h">
-      <Filter>UI</Filter>
+      <Filter>src\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\UI\vs_ocornut_imgui.bin.h">
-      <Filter>UI</Filter>
+      <Filter>src\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Utils\Enumerator.h">
-      <Filter>Utils</Filter>
+      <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Utils\GuardedCallbackFactory.h">
-      <Filter>Utils</Filter>
+      <Filter>src\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Utils\JsonDataTranslator.h">
-      <Filter>Utils</Filter>
+      <Filter>src\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\stdafx.h" />
+    <ClInclude Include="..\..\src\stdafx.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Component\PhysicsComponent.cpp">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Component\RenderComponent.cpp">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Component\SceneNodeComponent.cpp">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Component\ScriptComponent.cpp">
-      <Filter>Component</Filter>
+      <Filter>src\Component</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueFloat.cpp">
-      <Filter>Core\ConfigValue</Filter>
+      <Filter>src\Core\ConfigValue</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueInt.cpp">
-      <Filter>Core\ConfigValue</Filter>
+      <Filter>src\Core\ConfigValue</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\ConfigValue\IConfigValue.cpp">
-      <Filter>Core\ConfigValue</Filter>
+      <Filter>src\Core\ConfigValue</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\IApp.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\IWindow.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\Log.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\Logger.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\Object.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\StrUtils.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\String.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\Timer.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSFile.cpp">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSLoggerPolicies.cpp">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSTimer.cpp">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSWindow.cpp">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\WINDOWS\main.cpp">
-      <Filter>Core\WINDOWS</Filter>
+      <Filter>src\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\fs\FileSourceZip.cpp">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\fs\FileSystem.cpp">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\fs\IReadFile.cpp">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\fs\IWriteFile.cpp">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\fs\MemoryFile.cpp">
-      <Filter>Core\fs</Filter>
+      <Filter>src\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\math\AABB.cpp">
-      <Filter>Core\math</Filter>
+      <Filter>src\Core\math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\math\math.cpp">
-      <Filter>Core\math</Filter>
+      <Filter>src\Core\math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\memory\FreeList.cpp">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\memory\IAllocator.cpp">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\memory\LinearAllocator.cpp">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\memory\MallocAllocator.cpp">
-      <Filter>Core\memory</Filter>
+      <Filter>src\Core\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\GameController.cpp">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\Input.cpp">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\InputDevice.cpp">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\InputMapping.cpp">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\Keyboard.cpp">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\Mouse.cpp">
-      <Filter>Input</Filter>
+      <Filter>src\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp">
-      <Filter>Input\WINDOWS</Filter>
+      <Filter>src\Input\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp">
-      <Filter>Network</Filter>
+      <Filter>src\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysics.cpp">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysicsComponent.cpp">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Physics\Bullet\BulletVehicleRaycaster.cpp">
-      <Filter>Physics\Bullet</Filter>
+      <Filter>src\Physics\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Physics\PhysX\PhysXPhysics.cpp">
-      <Filter>Physics\PhysX</Filter>
+      <Filter>src\Physics\PhysX</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\Camera.cpp">
-      <Filter>Render</Filter>
+      <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp">
-      <Filter>Render</Filter>
+      <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\Render.cpp">
-      <Filter>Render</Filter>
+      <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\Mesh.cpp">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\MeshLoader\AssimpLoader.cpp">
-      <Filter>Resource\MeshLoader</Filter>
+      <Filter>src\Resource\MeshLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\ResourceManager.cpp">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\Texture.cpp">
-      <Filter>Resource</Filter>
+      <Filter>src\Resource</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\TextureLoader\StbImageLoader.cpp">
-      <Filter>Resource\TextureLoader</Filter>
+      <Filter>src\Resource\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\TextureLoader\TgaLoader.cpp">
-      <Filter>Resource\TextureLoader</Filter>
+      <Filter>src\Resource\TextureLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Scene\QuadTreeLeaf.cpp">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Scene\QuadTreeSceneManager.cpp">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Scene\Transform.cpp">
-      <Filter>Scene</Filter>
+      <Filter>src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\ComponentAPI_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\CoreAPI_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\InputAPI_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\NetworkAPI_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\PhysicsAPI_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\RenderAPI_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\SoundAPI_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\API\String_AngelScript.cpp">
-      <Filter>Script\AngelScript\API</Filter>
+      <Filter>src\Script\AngelScript\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\AngelScriptComponent.cpp">
-      <Filter>Script\AngelScript</Filter>
+      <Filter>src\Script\AngelScript</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\AngelScript\AngelScriptSystem.cpp">
-      <Filter>Script\AngelScript</Filter>
+      <Filter>src\Script\AngelScript</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\IScriptSystem.cpp">
-      <Filter>Script</Filter>
+      <Filter>src\Script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\API\ComponentAPI_Lua.cpp">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\API\CoreAPI_Lua.cpp">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\API\InputAPI_Lua.cpp">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\API\NetworkAPI_Lua.cpp">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\API\PhysicsAPI_Lua.cpp">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\API\RenderAPI_Lua.cpp">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\API\SoundAPI_Lua.cpp">
-      <Filter>Script\Lua\API</Filter>
+      <Filter>src\Script\Lua\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\LuaScriptComponent.cpp">
-      <Filter>Script\Lua</Filter>
+      <Filter>src\Script\Lua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Lua\LuaScriptSystem.cpp">
-      <Filter>Script\Lua</Filter>
+      <Filter>src\Script\Lua</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\NativeScriptComponent.cpp">
-      <Filter>Script</Filter>
+      <Filter>src\Script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\API\ComponentAPI_Squirrel.cpp">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\API\CoreAPI_Squirrel.cpp">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\API\InputAPI_Squirrel.cpp">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\API\NetworkAPI_Squirrel.cpp">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\API\PhysicsAPI_Squirrel.cpp">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\API\RenderAPI_Squirrel.cpp">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\API\SoundAPI_Squirrel.cpp">
-      <Filter>Script\Squirrel\API</Filter>
+      <Filter>src\Script\Squirrel\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\SquirrelScriptComponent.cpp">
-      <Filter>Script\Squirrel</Filter>
+      <Filter>src\Script\Squirrel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\Squirrel\SquirrelScriptSystem.cpp">
-      <Filter>Script\Squirrel</Filter>
+      <Filter>src\Script\Squirrel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Sound\FMOD\FMODSound.cpp">
-      <Filter>Sound\FMOD</Filter>
+      <Filter>src\Sound\FMOD</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Sound\OpenAL\OpenALSound.cpp">
-      <Filter>Sound\OpenAL</Filter>
+      <Filter>src\Sound\OpenAL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Sound\Wwise\WwiseSound.cpp">
-      <Filter>Sound\Wwise</Filter>
+      <Filter>src\Sound\Wwise</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\UI\ImGuiImpl.cpp">
-      <Filter>UI</Filter>
+      <Filter>src\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\stdafx.cpp" />
+    <ClCompile Include="..\..\src\stdafx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
