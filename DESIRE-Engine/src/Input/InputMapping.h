@@ -45,27 +45,6 @@ private:
 		{
 
 		}
-
-		SUserAction(SUserAction&& action)
-			: id(action.id)
-			, mappedButtons(std::move(action.mappedButtons))
-			, mappedAxes(std::move(action.mappedAxes))
-		{
-
-		}
-
-		SUserAction& operator =(SUserAction&& action)
-		{
-			id = action.id;
-			mappedButtons = std::move(action.mappedButtons);
-			mappedAxes = std::move(action.mappedAxes);
-			return *this;
-		}
-
-		inline bool operator <(const SUserAction& action) const
-		{
-			return (id < action.id);
-		}
 	};
 
 	std::vector<SUserAction> userActions;

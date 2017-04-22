@@ -10,8 +10,8 @@ InputMapping::InputMapping()
 
 void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
 {
-	SUserAction& action = core::binary_search_or_insert(userActions, SUserAction(userActionId));
-	for(SMappedInput& mappedInput : action.mappedButtons)
+	auto it = core::binary_find_or_insert(userActions, userActionId);
+	for(SMappedInput& mappedInput : it->mappedButtons)
 	{
 		if(mappedInput.id == buttonId && mappedInput.inputDeviceHandle == inputDevice.handle)
 		{
@@ -23,13 +23,13 @@ void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, i
 	SMappedInput button;
 	button.id = buttonId;
 	button.inputDeviceHandle = inputDevice.handle;
-	action.mappedButtons.push_back(button);
+	it->mappedButtons.push_back(button);
 }
 
 void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int axisId)
 {
-	SUserAction& action = core::binary_search_or_insert(userActions, SUserAction(userActionId));
-	for(SMappedInput& mappedInput : action.mappedAxes)
+	auto it = core::binary_find_or_insert(userActions, userActionId);
+	for(SMappedInput& mappedInput : it->mappedAxes)
 	{
 		if(mappedInput.id == axisId && mappedInput.inputDeviceHandle == inputDevice.handle)
 		{
@@ -42,13 +42,13 @@ void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int
 	axis.id = axisId;
 	axis.inputDeviceHandle = inputDevice.handle;
 	axis.deadZone = 0.0f;
-	action.mappedAxes.push_back(axis);
+	it->mappedAxes.push_back(axis);
 }
 
 bool InputMapping::IsMapped(int userActionId) const
 {
-	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
-	return (action != nullptr);
+	auto it = core::binary_find(userActions, userActionId);
+	return (it != userActions.end());
 }
 
 void InputMapping::Unmap(int userActionId)
@@ -61,13 +61,13 @@ void InputMapping::Unmap(int userActionId)
 
 bool InputMapping::IsDown(int userActionId) const
 {
-	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
-	if(action != nullptr)
+	auto it = core::binary_find(userActions, userActionId);
+	if(it != userActions.end())
 	{
-		for(const SMappedInput& mappedInput : action->mappedButtons)
+		for(const SMappedInput& button : it->mappedButtons)
 		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(mappedInput.inputDeviceHandle);
-			if(inputDevice != nullptr && inputDevice->IsDown(mappedInput.id))
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
+			if(inputDevice != nullptr && inputDevice->IsDown(button.id))
 			{
 				return true;
 			}
@@ -79,10 +79,10 @@ bool InputMapping::IsDown(int userActionId) const
 
 bool InputMapping::WentDown(int userActionId) const
 {
-	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
-	if(action != nullptr)
+	auto it = core::binary_find(userActions, userActionId);
+	if(it != userActions.end())
 	{
-		for(const SMappedInput& button : action->mappedButtons)
+		for(const SMappedInput& button : it->mappedButtons)
 		{
 			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr && inputDevice->WentDown(button.id))
@@ -99,18 +99,28 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 {
 	uint8_t pressedCount = 0;
 
-	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
-	if(action != nullptr)
+	auto it = core::binary_find(userActions, userActionId);
+	if(it != userActions.end())
 	{
-		for(const SMappedInput& mappedInput : action->mappedButtons)
+		for(const SMappedInput& button : it->mappedButtons)
 		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(mappedInput.inputDeviceHandle);
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr)
 			{
-				pressedCount += inputDevice->GetPressedCount(mappedInput.id);
+				pressedCount += inputDevice->GetPressedCount(button.id);
 			}
 		}
 	}
 
 	return pressedCount;
 }
+
+/*
+GetAxisState
+{
+	if(std::abs(value) <= axis->deadZone)
+	{
+		value = 0.0f;
+	}
+}
+*/
