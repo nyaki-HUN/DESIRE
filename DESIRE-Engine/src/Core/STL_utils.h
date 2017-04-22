@@ -10,7 +10,17 @@ namespace core
 // Note: When T1 is different from T2 the comparision is done in a way as if T2 would be the first member variable of T1.
 //	This is useful for cases when we want to find a struct by an id where the id is the first member of the struct.
 template<typename T1, typename A, typename T2>
-inline auto binary_find(const std::vector<T1, A>& container, const T2& val)
+inline auto binary_find(std::vector<T1, A>& container, const T2& val)
+{
+	auto it = std::lower_bound(container.begin(), container.end(), val, [](const T1& a, const T2& b)
+	{
+		return *reinterpret_cast<const T2*>(&a) < b;
+	});
+	return (it != container.end() && !(val < *reinterpret_cast<const T2*>(&*it))) ? it : container.end();
+}
+
+template<typename T1, typename A, typename T2>
+inline const auto binary_find(const std::vector<T1, A>& container, const T2& val)
 {
 	auto it = std::lower_bound(container.begin(), container.end(), val, [](const T1& a, const T2& b)
 	{

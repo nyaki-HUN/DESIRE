@@ -2,8 +2,7 @@
 
 #include "Core/Assert.h"
 #include "Core/HashedString.h"
-
-#include <vector>
+#include "Core/STL_utils.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	HashedStringMap is a sorted associative container that contains key-value pairs with unique HashedString keys.
@@ -30,29 +29,22 @@ public:
 		return *this;
 	}
 
-	bool Insert(HashedString key, const T& value)
+	void Insert(HashedString key, const T& value)
 	{
-		size_t idx;
-		if(FindKeyIndex(key, idx))
-		{
-			ASSERT(false && "Element already added with this key");
-			return false;
-		}
-
-		elements.emplace(std::next(elements.begin(), (ptrdiff_t)idx), key, value);
-		return true;
+		auto it = core::binary_find_or_insert(elements, SKeyValuePair(key, value));
+		ASSERT(it->value == value && "An other value is already added with this key");
 	}
 
 	T* Find(HashedString key)
 	{
-		size_t idx;
-		return (FindKeyIndex(key, idx) ? &elements[idx].second : nullptr);
+		auto it = core::binary_find(elements, key);
+		return (it != elements.end()) ? &it->value : nullptr;
 	}
 
 	const T* Find(HashedString key) const
 	{
-		size_t idx;
-		return (FindKeyIndex(key, idx) ? &elements[idx].second : nullptr);
+		auto it = core::binary_find(elements, key);
+		return (it != elements.end()) ? &it->value : nullptr;
 	}
 
 	// Remove all elements from the map
@@ -62,34 +54,23 @@ public:
 	}
 
 private:
-	bool FindKeyIndex(HashedString key, size_t& idx) const
+	struct SKeyValuePair
 	{
-		// Do binary-search on elements
-		size_t left = 0;
-		size_t right = elements.size();
-		size_t middle = 0;
-		while(left < right)
+		HashedString key;
+		T value;
+
+		SKeyValuePair(HashedString key, const T& value)
+			: key(key)
+			, value(value)
 		{
-			middle = left + (right - left) / 2;
-			const auto& pair = elements[middle];
-			if(key > pair.first)
-			{
-				left = middle + 1;
-			}
-			else if(key < pair.first)
-			{
-				right = middle;
-			}
-			else
-			{
-				idx = middle;
-				return true;
-			}
+
 		}
 
-		idx = right;
-		return false;
-	}
+		inline bool operator <(const SKeyValuePair& other) const
+		{
+			return key < other.key;
+		}
+	};
 
-	std::vector<std::pair<HashedString, T>> elements;
+	std::vector<SKeyValuePair> elements;
 };
