@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Input/InputMapping.h"
 #include "Input/Input.h"
+#include "Core/STL_utils.h"
 
 InputMapping::InputMapping()
 {
@@ -9,28 +10,67 @@ InputMapping::InputMapping()
 
 void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
 {
-	SUserAction& action = GetOrCreateUserActionById(userActionId);
-	for(SMappedInput& mappedInput : action.mappedInputs)
+	SUserAction& action = core::binary_search_or_insert(userActions, SUserAction(userActionId));
+	for(SMappedInput& mappedInput : action.mappedButtons)
 	{
-		if(mappedInput.buttonId == buttonId && mappedInput.inputDeviceHandle == inputDevice.handle)
+		if(mappedInput.id == buttonId && mappedInput.inputDeviceHandle == inputDevice.handle)
 		{
-			// Button already mapped
+			// Already mapped
 			return;
 		}
 	}
 
-	action.mappedInputs.push_back({ inputDevice.handle, buttonId });
+	SMappedInput button;
+	button.id = buttonId;
+	button.inputDeviceHandle = inputDevice.handle;
+	action.mappedButtons.push_back(button);
+}
+
+void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int axisId)
+{
+	SUserAction& action = core::binary_search_or_insert(userActions, SUserAction(userActionId));
+	for(SMappedInput& mappedInput : action.mappedAxes)
+	{
+		if(mappedInput.id == axisId && mappedInput.inputDeviceHandle == inputDevice.handle)
+		{
+			// Already mapped
+			return;
+		}
+	}
+
+	SMappedAxis axis;
+	axis.id = axisId;
+	axis.inputDeviceHandle = inputDevice.handle;
+	axis.deadZone = 0.0f;
+	action.mappedAxes.push_back(axis);
+}
+
+bool InputMapping::IsMapped(int userActionId) const
+{
+	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
+	return (action != nullptr);
+}
+
+void InputMapping::Unmap(int userActionId)
+{
+	userActions.erase(std::remove_if(userActions.begin(), userActions.end(), [userActionId](const SUserAction& action)
+	{
+		return (action.id == userActionId);
+	}), userActions.end());
 }
 
 bool InputMapping::IsDown(int userActionId) const
 {
-	const SUserAction *action = GetUserActionById(userActionId);
-	for(const SMappedInput& mappedInput : action->mappedInputs)
+	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
+	if(action != nullptr)
 	{
-		const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(mappedInput.inputDeviceHandle);
-		if(inputDevice != nullptr && inputDevice->IsDown(mappedInput.buttonId))
+		for(const SMappedInput& mappedInput : action->mappedButtons)
 		{
-			return true;
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(mappedInput.inputDeviceHandle);
+			if(inputDevice != nullptr && inputDevice->IsDown(mappedInput.id))
+			{
+				return true;
+			}
 		}
 	}
 
@@ -39,13 +79,16 @@ bool InputMapping::IsDown(int userActionId) const
 
 bool InputMapping::WentDown(int userActionId) const
 {
-	const SUserAction *action = GetUserActionById(userActionId);
-	for(const SMappedInput& mappedInput : action->mappedInputs)
+	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
+	if(action != nullptr)
 	{
-		const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(mappedInput.inputDeviceHandle);
-		if(inputDevice != nullptr && inputDevice->WentDown(mappedInput.buttonId))
+		for(const SMappedInput& button : action->mappedButtons)
 		{
-			return true;
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
+			if(inputDevice != nullptr && inputDevice->WentDown(button.id))
+			{
+				return true;
+			}
 		}
 	}
 
@@ -56,42 +99,18 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 {
 	uint8_t pressedCount = 0;
 
-	const SUserAction *action = GetUserActionById(userActionId);
-	for(const SMappedInput& mappedInput : action->mappedInputs)
+	const SUserAction *action = core::binary_search(userActions, SUserAction(userActionId));
+	if(action != nullptr)
 	{
-		const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(mappedInput.inputDeviceHandle);
-		if(inputDevice != nullptr)
+		for(const SMappedInput& mappedInput : action->mappedButtons)
 		{
-			pressedCount += inputDevice->GetPressedCount(mappedInput.buttonId);
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(mappedInput.inputDeviceHandle);
+			if(inputDevice != nullptr)
+			{
+				pressedCount += inputDevice->GetPressedCount(mappedInput.id);
+			}
 		}
 	}
 
 	return pressedCount;
-}
-
-const InputMapping::SUserAction* InputMapping::GetUserActionById(int userActionId) const
-{
-	for(const SUserAction& userAction : userActions)
-	{
-		if(userAction.id == userActionId)
-		{
-			return &userAction;
-		}
-	}
-
-	return nullptr;
-}
-
-InputMapping::SUserAction& InputMapping::GetOrCreateUserActionById(int userActionId)
-{
-	for(SUserAction& userAction : userActions)
-	{
-		if(userAction.id == userActionId)
-		{
-			return userAction;
-		}
-	}
-
-	userActions.emplace_back(userActionId);
-	return userActions.back();
 }

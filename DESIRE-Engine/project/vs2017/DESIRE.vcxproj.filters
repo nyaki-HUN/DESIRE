@@ -303,6 +303,9 @@
     <ClInclude Include="..\..\src\Core\SMemoryBuffer.h">
       <Filter>src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Core\STL_utils.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Core\Singleton.h">
       <Filter>src\Core</Filter>
     </ClInclude>
