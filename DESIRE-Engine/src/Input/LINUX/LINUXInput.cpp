@@ -82,38 +82,6 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 		switch(event.type)
 		{
 			case KeyPress:
-			{
-				EKeyCode keyCode = (EKeyCode)0;
-				if(event.xkey.keycode < FIRST_MAPPED_KEY_CODE)
-				{
-					keyCode = (EKeyCode)event.xkey.keycode;
-				}
-				else
-				{
-					int index = event.xkey.keycode - FIRST_MAPPED_KEY_CODE;
-					if(index < DESIRE_ASIZEOF(keyConversionTable))
-					{
-						keyCode = keyConversionTable[index];
-					}
-				}
-
-				keyboard.SetButtonStateDown(keyCode, true);
-
-				// Add typed UTF-8 character
-				char buffer[5] = {};
-				XLookupString(&event.xkey, buffer, DESIRE_ASIZEOF(buffer), nullptr, nullptr);
-
-				char *typingCharacters = Input::Get()->typingCharacters;
-				const size_t len = strlen(typingCharacters);
-				const size_t bufferLen = strlen(buffer);
-				if(len + bufferLen + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
-				{
-					memcpy(&typingCharacters[len], buffer, bufferLen);
-					typingCharacters[len + bufferLen + 1] = '\0';
-				}
-				break;
-			}
-
 			case KeyRelease:
 			{
 				EKeyCode keyCode = (EKeyCode)0;
@@ -130,7 +98,27 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 					}
 				}
 
-				keyboard.SetButtonStateDown(keyCode, false);
+				if(event.type == KeyPress)
+				{
+					keyboard.SetButtonStateDown(keyCode, true);
+
+					// Add typed UTF-8 character
+					char buffer[5] = {};
+					XLookupString(&event.xkey, buffer, DESIRE_ASIZEOF(buffer), nullptr, nullptr);
+
+					char *typingCharacters = Input::Get()->typingCharacters;
+					const size_t len = strlen(typingCharacters);
+					const size_t bufferLen = strlen(buffer);
+					if(len + bufferLen + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
+					{
+						memcpy(&typingCharacters[len], buffer, bufferLen);
+						typingCharacters[len + bufferLen + 1] = '\0';
+					}
+				}
+				else
+				{
+					keyboard.SetButtonStateDown(keyCode, false);
+				}
 				break;
 			}
 

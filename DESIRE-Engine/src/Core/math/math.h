@@ -106,4 +106,4 @@ inline float Clamp01(float x)
 	return Clamp(x, 0.0f, 1.0f);
 }
 
-}	// namespace Math
+}	// end of namespace Math
