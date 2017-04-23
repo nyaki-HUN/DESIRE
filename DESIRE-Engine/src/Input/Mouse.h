@@ -33,8 +33,6 @@ public:
 		NUM_AXES
 	};
 
-	int16_t wheelDelta;
-
 private:
 	uint8_t buttons[NUM_BUTTONS];
 	SAxisState axes[NUM_AXES];

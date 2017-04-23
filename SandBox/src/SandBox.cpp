@@ -16,8 +16,8 @@ enum EAction
 {
 	EXIT,
 	FIRE,
-	MOUSE_X,
-	MOUSE_Y
+	CAMERA_YAW,
+	CAMERA_PITCH
 }; 
 
 SandBox::SandBox()
@@ -87,6 +87,13 @@ void SandBox::Init(IWindow *mainWindow)
 		inputMapping.MapButton(EAction::FIRE, keyboard, KEY_SPACE);
 	}
 
+	for(const Mouse& mouse : Input::Get()->GetMouses())
+	{
+		inputMapping.MapButton(EAction::FIRE, mouse, Mouse::BUTTON_LEFT);
+		inputMapping.MapAxis(EAction::CAMERA_YAW, mouse, Mouse::MOUSE_X);
+		inputMapping.MapAxis(EAction::CAMERA_PITCH, mouse, Mouse::MOUSE_Y);
+	}
+
 	for(const GameController& gamepad : Input::Get()->GetControllers())
 	{
 		inputMapping.MapButton(EAction::FIRE, gamepad, GameController::BTN_X);
@@ -104,7 +111,7 @@ void SandBox::Kill()
 
 void SandBox::Update()
 {
-	if(inputMapping.GetPressedCount(EAction::EXIT))
+	if(inputMapping.WentDown(EAction::EXIT))
 	{
 		LOG_MESSAGE("!EXIT!");
 		return;

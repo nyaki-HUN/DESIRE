@@ -33,7 +33,6 @@ void Input::Update()
 	for(Mouse& mouse : mouses)
 	{
 		mouse.Update();
-		mouse.wheelDelta = 0;
 	}
 
 	// Game Controller
