@@ -14,10 +14,10 @@ public:
 	// Returns how many times the button went down since the last frame
 	uint8_t GetPressedCount(int buttonId) const;
 
-	// Returns the raw axis position as returned from the device
+	// Returns the current axis position, which is usually normalized into the [0.0, 1.0] range
 	float GetAxisPos(int axisId) const;
 
-	// Returns the difference in the an axis position since the last frame
+	// Returns the difference in axis position since the last frame
 	float GetAxisDelta(int axisId) const;
 
 	void *handle;
