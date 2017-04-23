@@ -3,7 +3,7 @@
 #include "Input/Input.h"
 
 Keyboard::Keyboard(void *handle)
-	: InputDevice(handle, offsetof(Keyboard, keyStates), DESIRE_ASIZEOF(keyStates), FIRST_KEYBOARD_BUTTON_ID)
+	: InputDevice(handle, offsetof(Keyboard, keyStates), (uint16_t)DESIRE_ASIZEOF(keyStates))
 {
 	memset(keyStates, 0, sizeof(keyStates));
 }

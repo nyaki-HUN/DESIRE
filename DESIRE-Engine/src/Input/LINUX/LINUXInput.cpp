@@ -100,7 +100,7 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 
 				if(event.type == KeyPress)
 				{
-					keyboard.SetButtonStateDown(keyCode, true);
+					keyboard.HandleButton(keyCode, true);
 
 					// Add typed UTF-8 character
 					char buffer[5] = {};
@@ -117,7 +117,7 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 				}
 				else
 				{
-					keyboard.SetButtonStateDown(keyCode, false);
+					keyboard.HandleButton(keyCode, false);
 				}
 				break;
 			}
@@ -125,26 +125,26 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 			case ButtonPress:
 				switch(event.xbutton.button)
 				{
-					case Button1:	mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, true); break;
-					case Button2:	mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, true); break;
-					case Button3:	mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, true); break;
-					case Button4:	mouse.wheelDelta += 120; break;
-					case Button5:	mouse.wheelDelta -= 120; break;
+					case Button1:	mouse.HandleButton(Mouse::BUTTON_LEFT, true); break;
+					case Button2:	mouse.HandleButton(Mouse::BUTTON_MIDDLE, true); break;
+					case Button3:	mouse.HandleButton(Mouse::BUTTON_RIGHT, true); break;
+					case Button4:	mouse.HandleAxis(Mouse::MOUSE_WHEEL, 1.0f); break;
+					case Button5:	mouse.HandleAxis(Mouse::MOUSE_WHEEL, -1.0f); break;
 				}
 				break;
 
 			case ButtonRelease:
 				switch(event.xbutton.button)
 				{
-					case Button1:	mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, false); break;
-					case Button2:	mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, false); break;
-					case Button3:	mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, false); break;
+					case Button1:	mouse.HandleButton(Mouse::BUTTON_LEFT, false); break;
+					case Button2:	mouse.HandleButton(Mouse::BUTTON_MIDDLE, false); break;
+					case Button3:	mouse.HandleButton(Mouse::BUTTON_RIGHT, false); break;
 				}
 				break;
 
 			case MotionNotify:
-				mouse.deltaPosX += (int16_t)event.xmotion.x - mouseCursorPos.x;
-				mouse.deltaPosY += (int16_t)event.xmotion.y - mouseCursorPos.y;
+				mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)event.xmotion.x);
+				mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)event.xmotion.y);
 				mouseCursorPos.Set((int16_t)event.xmotion.x, (int16_t)event.xmotion.y);
 				break;
 

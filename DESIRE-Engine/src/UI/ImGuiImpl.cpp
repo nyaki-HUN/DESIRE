@@ -163,7 +163,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 		io.MouseWheel = mouse.wheelDelta;
 		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 		{
-			io.MouseDown[i] = mouse.IsDown(Mouse::FIRST_MOUSE_BUTTON_ID + i);
+			io.MouseDown[i] = mouse.IsDown(i);
 		}
 
 		const SPoint<int16_t>& mousePos = Input::Get()->GetOsMouseCursorPos();

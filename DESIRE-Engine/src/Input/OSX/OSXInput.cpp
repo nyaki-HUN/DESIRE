@@ -199,7 +199,7 @@ OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, Eve
 			if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
 			{
 				const EKeyCode keyCode = keyConversionTable[virtualKey];
-				keyboard.SetButtonStateDown(keyCode, true);
+				keyboard.HandleButton(keyCode, true);
 			}
 			break;
 		}
@@ -211,7 +211,7 @@ OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, Eve
 			if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
 			{
 				const EKeyCode keyCode = keyConversionTable[virtualKey];
-				keyboard.SetButtonStateDown(keyCode, false);
+				keyboard.HandleButton(keyCode, false);
 			}
 			break;
 		}
@@ -221,13 +221,13 @@ OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, Eve
 			UInt32 modifiers = 0;
 			GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
 
-			keyboard.SetButtonStateDown(KEY_LCONTROL,	(modifiers & controlKey));
-			keyboard.SetButtonStateDown(KEY_LSHIFT,		(modifiers & shiftKey));
-			keyboard.SetButtonStateDown(KEY_LALT,		(modifiers & optionKey));
-			keyboard.SetButtonStateDown(KEY_LWIN,		(modifiers & cmdKey));
-			keyboard.SetButtonStateDown(KEY_CAPSLOCK,	(modifiers & alphaLock));
-			keyboard.SetButtonStateDown(KEY_APPS,		(modifiers & kEventKeyModifierFnMask));
-//			keyboard.SetButtonStateDown(KEY_,			(modifiers & kEventKeyModifierNumLockMask));
+			keyboard.HandleButton(KEY_LCONTROL,	(modifiers & controlKey));
+			keyboard.HandleButton(KEY_LSHIFT,	(modifiers & shiftKey));
+			keyboard.HandleButton(KEY_LALT,		(modifiers & optionKey));
+			keyboard.HandleButton(KEY_LWIN,		(modifiers & cmdKey));
+			keyboard.HandleButton(KEY_CAPSLOCK,	(modifiers & alphaLock));
+			keyboard.HandleButton(KEY_APPS,		(modifiers & kEventKeyModifierFnMask));
+//			keyboard.HandleButton(KEY_,			(modifiers & kEventKeyModifierNumLockMask));
 			break;
 		}
 	}
@@ -252,15 +252,15 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 
 			if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, true);
+				mouse.HandleButton(Mouse::BUTTON_MIDDLE, true);
 			}
 			else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, true);
+				mouse.HandleButton(Mouse::BUTTON_RIGHT, true);
 			}
 			else if(button == kEventMouseButtonPrimary)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, true);
+				mouse.HandleButton(Mouse::BUTTON_LEFT, true);
 			}
 			break;
 		}
@@ -274,15 +274,15 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 
 			if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, false);
+				mouse.HandleButton(Mouse::BUTTON_MIDDLE, false);
 			}
 			else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, false);
+				mouse.HandleButton(Mouse::BUTTON_RIGHT, false);
 			}
 			else if(button == kEventMouseButtonPrimary)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, false);
+				mouse.HandleButton(Mouse::BUTTON_LEFT, false);
 			}
 			break;
 		}
@@ -290,29 +290,27 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 		case kEventMouseDragged:
 		case kEventMouseMoved:
 		{
-			HIPoint location = { 0.0f, 0.0f };
-			GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &location);
-
-			Input::Get()->mouseCursorPos.Set((int16_t)location.x, (int16_t)location.y);
-
 			HIPoint delta = { 0.0f, 0.0f };
 			GetEventParameter(event, kEventParamMouseDelta, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &delta);
+			mouse.HandleAxis(Mouse::MOUSE_X, delta.x);
+			mouse.HandleAxis(Mouse::MOUSE_Y, delta.y);
 
-			mouse.deltaPosX += (int16_t)delta.x;
-			mouse.deltaPosY += (int16_t)delta.y;
+			HIPoint location = { 0.0f, 0.0f };
+			GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &location);
+			Input::Get()->mouseCursorPos.Set((int16_t)location.x, (int16_t)location.y);
 			break;
 		}
 
 		case kEventMouseWheelMoved:
 		{
 			EventMouseWheelAxis	wheelAxis = 0;
-			SInt32 wheelDelta = 0;
 			GetEventParameter(event, kEventParamMouseWheelAxis, typeMouseWheelAxis, nullptr, sizeof(EventMouseWheelAxis), nullptr, &wheelAxis);
+			SInt32 wheelDelta = 0;
 			GetEventParameter(event, kEventParamMouseWheelDelta, typeSInt32, nullptr, sizeof(SInt32), nullptr, &wheelDelta);
 
 			if(wheelAxis == kEventMouseWheelAxisY)
 			{
-				mouse.wheelDelta += wheelDelta * 60;
+				mouse.HandleAxis(Mouse::MOUSE_WHEEL, (float)wheelDelta);
 			}
 			break;
 		}

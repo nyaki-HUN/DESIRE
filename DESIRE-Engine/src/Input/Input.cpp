@@ -26,36 +26,20 @@ void Input::Update()
 			}
 		}
 
-		// Reset pressed count
-		for(uint8_t& keyState : keyboard.keyStates)
-		{
-			keyState &= InputDevice::BUTTON_STATE_DOWN_FLAG;
-		}
+		keyboard.Update();
 	}
 
 	// Mouse
 	for(Mouse& mouse : mouses)
 	{
-		// Reset mouse deltas
-		mouse.deltaPosX = 0;
-		mouse.deltaPosY = 0;
+		mouse.Update();
 		mouse.wheelDelta = 0;
-
-		// Reset pressed count
-		for(uint8_t& buttonState : mouse.buttons)
-		{
-			buttonState &= InputDevice::BUTTON_STATE_DOWN_FLAG;
-		}
 	}
 
 	// Game Controller
 	for(GameController& gamepad : gameControllers)
 	{
-		// Reset pressed count
-		for(uint8_t& buttonState : gamepad.buttons)
-		{
-			buttonState &= InputDevice::BUTTON_STATE_DOWN_FLAG;
-		}
+		gamepad.Update();
 	}
 
 	memset(typingCharacters, 0, MAX_NUM_TYPING_CHARACTERS);

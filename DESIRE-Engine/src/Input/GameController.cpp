@@ -3,7 +3,8 @@
 #include "Input/Input.h"
 
 GameController::GameController(void *handle)
-	: InputDevice(handle, offsetof(GameController, buttons), DESIRE_ASIZEOF(buttons), FIRST_GAME_CONTROLLER_BUTTON_ID)
+	: InputDevice(handle, offsetof(GameController, buttons), NUM_BUTTONS, offsetof(GameController, axes), NUM_AXES)
 {
 	memset(buttons, 0, sizeof(buttons));
+	memset(axes, 0, sizeof(axes));
 }

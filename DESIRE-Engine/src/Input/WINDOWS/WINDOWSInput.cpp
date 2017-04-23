@@ -89,20 +89,25 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 		if(rawData.header.dwType == RIM_TYPEMOUSE)
 		{
 			Mouse& mouse = GetMouseByHandle(rawData.header.hDevice);
-			if(rawData.data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE)
-			{
-				// Mouse movement data is based on absolute position
-			}
-			else
+
+			if(rawData.data.mouse.usFlags == MOUSE_MOVE_RELATIVE)
 			{
 				// Mouse movement data is relative to the last mouse position
-				mouse.deltaPosX += (int16_t)rawData.data.mouse.lLastX;
-				mouse.deltaPosY += (int16_t)rawData.data.mouse.lLastY;
+				mouse.HandleAxis(Mouse::MOUSE_X, (float)rawData.data.mouse.lLastX);
+				mouse.HandleAxis(Mouse::MOUSE_Y, (float)rawData.data.mouse.lLastY);
 			}
+			else if(rawData.data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE)
+			{
+				// Mouse movement data is based on absolute position
+				mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)rawData.data.mouse.lLastX);
+				mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)rawData.data.mouse.lLastY);
+			}
+
 			if(rawData.data.mouse.usFlags & MOUSE_VIRTUAL_DESKTOP)
 			{
 				// Mouse coordinates are mapped to the virtual desktop (for a multiple monitor system)
 			}
+
 			if(rawData.data.mouse.usFlags & MOUSE_ATTRIBUTES_CHANGED)
 			{
 				// Mouse attributes changed, application needs to query the mouse attributes
@@ -111,57 +116,63 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 			// Left button
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, true);
+				mouse.HandleButton(Mouse::BUTTON_LEFT, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_LEFT, false);
+				mouse.HandleButton(Mouse::BUTTON_LEFT, false);
 			}
 
 			// Right button
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, true);
+				mouse.HandleButton(Mouse::BUTTON_RIGHT, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_RIGHT, false);
+				mouse.HandleButton(Mouse::BUTTON_RIGHT, false);
 			}
 
 			// Middle button
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, true);
+				mouse.HandleButton(Mouse::BUTTON_MIDDLE, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_MIDDLE, false);
+				mouse.HandleButton(Mouse::BUTTON_MIDDLE, false);
 			}
 
 			// Button 4
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_4, true);
+				mouse.HandleButton(Mouse::BUTTON_4, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_4_UP)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_4, false);
+				mouse.HandleButton(Mouse::BUTTON_4, false);
 			}
 
 			// Button 5
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_5, true);
+				mouse.HandleButton(Mouse::BUTTON_5, true);
 			}
 			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_5_UP)
 			{
-				mouse.SetButtonStateDown(Mouse::BUTTON_5, false);
+				mouse.HandleButton(Mouse::BUTTON_5, false);
 			}
 
 			// Wheel
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_WHEEL)
 			{
-				mouse.wheelDelta += (int16_t)rawData.data.mouse.usButtonData / WHEEL_DELTA;
+				mouse.HandleAxis(Mouse::MOUSE_WHEEL, (float)rawData.data.mouse.usButtonData / WHEEL_DELTA);
+			}
+
+			// Horizontal wheel
+			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_HWHEEL)
+			{
+
 			}
 		}
 		else if(rawData.header.dwType == RIM_TYPEKEYBOARD)
@@ -179,18 +190,22 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 				scanCode |= SCANCODE_E0_MASK;
 			}
 
-			keyboard.SetButtonStateDown(scanCode, !(rawData.data.keyboard.Flags & RI_KEY_BREAK));
+			keyboard.HandleButton(scanCode, !(rawData.data.keyboard.Flags & RI_KEY_BREAK));
 		}
 	}
 }
 
-void InputImpl::Handle_WM_MOUSEMOVE(WPARAM /*wParam*/, LPARAM lParam)
+void InputImpl::Handle_WM_MOUSEMOVE(WPARAM wParam, LPARAM lParam)
 {
+	DESIRE_UNUSED(wParam);
+
 	Input::Get()->mouseCursorPos.Set(GET_MOUSE_X(lParam), GET_MOUSE_Y(lParam));
 }
 
-void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM /*lParam*/)
+void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)
 {
+	DESIRE_UNUSED(lParam);
+
 	char ch = (char)wParam;
 	if(ch >= 0 && ch < 32)
 	{

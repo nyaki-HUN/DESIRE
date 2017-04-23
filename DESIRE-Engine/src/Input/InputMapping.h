@@ -22,6 +22,8 @@ public:
 	// Returns how many times the action was triggered since the last frame
 	uint8_t GetPressedCount(int userActionId) const;
 
+	float GetFloatState(int userActionId) const;
+
 private:
 	struct SMappedInput
 	{

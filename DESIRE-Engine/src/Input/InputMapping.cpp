@@ -41,7 +41,7 @@ void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int
 	SMappedAxis axis;
 	axis.id = axisId;
 	axis.inputDeviceHandle = inputDevice.handle;
-	axis.deadZone = 0.0f;
+	axis.deadZone = 0;
 	it->mappedAxes.push_back(axis);
 }
 
@@ -68,6 +68,15 @@ bool InputMapping::IsDown(int userActionId) const
 		{
 			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr && inputDevice->IsDown(button.id))
+			{
+				return true;
+			}
+		}
+
+		for(const SMappedAxis& axis : it->mappedAxes)
+		{
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(axis.inputDeviceHandle);
+			if(inputDevice != nullptr && inputDevice->GetAxisPos(axis.id) > 0.0f)
 			{
 				return true;
 			}
@@ -115,12 +124,35 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 	return pressedCount;
 }
 
-/*
-GetAxisState
+float InputMapping::GetFloatState(int userActionId) const
 {
-	if(std::abs(value) <= axis->deadZone)
+	auto it = core::binary_find(userActions, userActionId);
+	if(it != userActions.end())
 	{
-		value = 0.0f;
+		for(const SMappedInput& button : it->mappedButtons)
+		{
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
+			if(inputDevice != nullptr && inputDevice->IsDown(button.id))
+			{
+				return 1.0f;
+			}
+		}
+
+		for(const SMappedAxis& axis : it->mappedAxes)
+		{
+			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(axis.inputDeviceHandle);
+			if(inputDevice != nullptr)
+			{
+				float pos = inputDevice->GetAxisPos(axis.id);
+				if(std::abs(pos) <= axis.deadZone)
+				{
+					pos = 0.0f;
+				}
+
+				return pos;
+			}
+		}
 	}
+
+	return 0.0f;
 }
-*/

@@ -10,18 +10,27 @@ class GameController : public InputDevice
 	GameController(void *handle);
 
 public:
-	enum EGameControllerDeviceButtonId
+	enum EButtonId
 	{
-		BTN_UP = FIRST_GAME_CONTROLLER_BUTTON_ID,
+		BTN_UP,
 		BTN_RIGHT,
 		BTN_DOWN,
 		BTN_LEFT,
 
 		BTN_X,
 
-		LAST_GAME_CONTROLLER_BUTTON_ID,
+		NUM_BUTTONS
 	};
 
+	enum EAxisId
+	{
+		AXIS_1,
+
+		NUM_AXES
+	};
+
+
 private:
-	uint8_t buttons[LAST_GAME_CONTROLLER_BUTTON_ID - FIRST_GAME_CONTROLLER_BUTTON_ID];
+	uint8_t buttons[NUM_BUTTONS];
+	SAxisState axes[NUM_AXES];
 };
