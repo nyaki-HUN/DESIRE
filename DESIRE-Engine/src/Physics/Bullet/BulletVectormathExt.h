@@ -2,7 +2,6 @@
 
 #include "Core/math/vectormath.h"
 
-#define BT_USE_SSE_IN_API
 #include "Physics-Bullet/src/LinearMath/btVector3.h"
 #include "Physics-Bullet/src/LinearMath/btQuaternion.h"
 

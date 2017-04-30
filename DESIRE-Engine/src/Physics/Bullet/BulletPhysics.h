@@ -2,13 +2,11 @@
 
 #include "Physics/IPhysics.h"
 
+DESIRE_DISABLE_WARNINGS
+#include "Physics-Bullet/src/btBulletDynamicsCommon.h"
+DESIRE_ENABLE_WARNINGS
+
 class BulletDebugDraw;
-class btDiscreteDynamicsWorld;
-class btDynamicsWorld;
-class btDefaultCollisionConfiguration;
-class btCollisionDispatcher;
-class btAxisSweep3;
-class btSequentialImpulseConstraintSolver;
 
 class BulletPhysics : public IPhysics
 {
@@ -30,11 +28,11 @@ public:
 private:
 	static void SimulationTickCallback(btDynamicsWorld *world, float timeStep);
 
+	int16_t collisionMasks[16];
+	BulletDebugDraw *blletDebugDraw;
+
 	btDefaultCollisionConfiguration *collisionConfiguration;
 	btCollisionDispatcher *dispatcher;
 	btAxisSweep3 *broadphase;
 	btSequentialImpulseConstraintSolver *constraintSolver;
-
-	int16_t collisionMasks[16];
-	BulletDebugDraw *blletDebugDraw;
 };

@@ -6,14 +6,14 @@
 #include "Physics/Collision.h"
 #include "Core/Timer.h"
 
-DESIRE_DISABLE_WARNINGS
-#define BT_USE_SSE_IN_API
-#include "Physics-Bullet/src/btBulletDynamicsCommon.h"
 #include "Physics-Bullet/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
-DESIRE_ENABLE_WARNINGS
 
 BulletPhysics::BulletPhysics()
 	: dynamicsWorld(nullptr)
+	, collisionConfiguration(nullptr)
+	, dispatcher(nullptr)
+	, broadphase(nullptr)
+	, constraintSolver(nullptr)
 	, blletDebugDraw(nullptr)
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();

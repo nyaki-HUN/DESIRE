@@ -4,11 +4,7 @@
 #include "Physics/Bullet/BulletVectormathExt.h"
 #include "Core/math/AABB.h"
 
-DESIRE_DISABLE_WARNINGS
-#define BT_USE_SSE_IN_API
-#include "Physics-Bullet/src/btBulletDynamicsCommon.h"
 #include "Physics-Bullet/src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
-DESIRE_ENABLE_WARNINGS
 
 BulletPhysicsComponent::BulletPhysicsComponent(bool dynamic)
 	: body(nullptr)
