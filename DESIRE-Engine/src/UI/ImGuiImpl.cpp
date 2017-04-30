@@ -160,7 +160,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	if(!mouses.empty())
 	{
 		const Mouse& mouse = mouses.back();
-		io.MouseWheel = mouse.GetAxisDelta(Mouse::MOUSE_WHEEL);
+		io.MouseWheel = mouse.GetAxisDelta(Mouse::WHEEL);
 		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 		{
 			io.MouseDown[i] = mouse.IsDown(i);
