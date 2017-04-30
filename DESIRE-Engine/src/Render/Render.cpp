@@ -120,8 +120,11 @@ void Render::Bind(Texture *texture)
 	switch(texture->format)
 	{
 		case Texture::EFormat::UNKNOWN:		format = bgfx::TextureFormat::Unknown; break;
+		case Texture::EFormat::R8:			format = bgfx::TextureFormat::R8; break;
+		case Texture::EFormat::RG8:			format = bgfx::TextureFormat::RG8; break;
 		case Texture::EFormat::RGB8:		format = bgfx::TextureFormat::RGB8; break;
 		case Texture::EFormat::RGBA8:		format = bgfx::TextureFormat::RGBA8; break;
+		case Texture::EFormat::RGBA32F:		format = bgfx::TextureFormat::RGBA32F; break;
 	}
 
 	bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 0, format, BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));

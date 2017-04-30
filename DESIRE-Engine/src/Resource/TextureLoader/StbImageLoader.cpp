@@ -29,18 +29,28 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 		return static_cast<IReadFile*>(file)->IsEof() ? 1 : 0;
 	};
 
+	void *data = nullptr;
+	Texture::EFormat format = Texture::EFormat::UNKNOWN;
+
 	int width = 0;
 	int height = 0;
 	int numComponents = 0;
-	uint8_t *data = stbi_load_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0);
-
-	Texture::EFormat format = Texture::EFormat::UNKNOWN;
-	switch(numComponents)
+	if(stbi_is_hdr_from_callbacks(&callbacks, file.get()))
 	{
-		case 1:	break;	// greyscale
-		case 2: break;	// greyscale with alpha
-		case 3: format = Texture::EFormat::RGB8; break;
-		case 4: format = Texture::EFormat::RGBA8; break;
+		data = stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 4);
+		format = Texture::EFormat::RGBA32F;
+	}
+	else
+	{
+		data = stbi_load_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0);
+
+		switch(numComponents)
+		{
+			case 1:	format = Texture::EFormat::R8; break;		// greyscale
+			case 2: format = Texture::EFormat::RG8; break;		// greyscale with alpha
+			case 3: format = Texture::EFormat::RGB8; break;
+			case 4: format = Texture::EFormat::RGBA8; break;
+		}
 	}
 
 	if(format == Texture::EFormat::UNKNOWN ||
