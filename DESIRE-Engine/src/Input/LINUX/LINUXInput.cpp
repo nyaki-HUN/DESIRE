@@ -128,8 +128,8 @@ void InputImpl::HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, Ev
 					case Button1:	mouse.HandleButton(Mouse::BUTTON_LEFT, true); break;
 					case Button2:	mouse.HandleButton(Mouse::BUTTON_MIDDLE, true); break;
 					case Button3:	mouse.HandleButton(Mouse::BUTTON_RIGHT, true); break;
-					case Button4:	mouse.HandleAxis(Mouse::MOUSE_WHEEL, 1.0f); break;
-					case Button5:	mouse.HandleAxis(Mouse::MOUSE_WHEEL, -1.0f); break;
+					case Button4:	mouse.HandleAxis(Mouse::WHEEL, 1.0f); break;
+					case Button5:	mouse.HandleAxis(Mouse::WHEEL, -1.0f); break;
 				}
 				break;
 

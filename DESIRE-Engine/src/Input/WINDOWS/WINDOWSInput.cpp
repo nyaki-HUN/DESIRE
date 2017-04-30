@@ -163,16 +163,14 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 				mouse.HandleButton(Mouse::BUTTON_5, false);
 			}
 
-			// Wheel
+			// Wheel and (vertical and horizontal)
 			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_WHEEL)
 			{
-				mouse.HandleAxis(Mouse::MOUSE_WHEEL, (float)rawData.data.mouse.usButtonData / WHEEL_DELTA);
+				mouse.HandleAxis(Mouse::WHEEL, (int16_t)rawData.data.mouse.usButtonData / (float)WHEEL_DELTA);
 			}
-
-			// Horizontal wheel
-			if(rawData.data.mouse.usButtonFlags & RI_MOUSE_HWHEEL)
+			else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_HWHEEL)
 			{
-
+				mouse.HandleAxis(Mouse::WHEEL_HORIZONTAL, (int16_t)rawData.data.mouse.usButtonData / (float)WHEEL_DELTA);
 			}
 		}
 		else if(rawData.header.dwType == RIM_TYPEKEYBOARD)

@@ -303,14 +303,18 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 
 		case kEventMouseWheelMoved:
 		{
-			EventMouseWheelAxis	wheelAxis = 0;
+			EventMouseWheelAxis wheelAxis = 0;
 			GetEventParameter(event, kEventParamMouseWheelAxis, typeMouseWheelAxis, nullptr, sizeof(EventMouseWheelAxis), nullptr, &wheelAxis);
 			SInt32 wheelDelta = 0;
 			GetEventParameter(event, kEventParamMouseWheelDelta, typeSInt32, nullptr, sizeof(SInt32), nullptr, &wheelDelta);
 
 			if(wheelAxis == kEventMouseWheelAxisY)
 			{
-				mouse.HandleAxis(Mouse::MOUSE_WHEEL, (float)wheelDelta);
+				mouse.HandleAxis(Mouse::WHEEL, (float)wheelDelta);
+			}
+			else if(wheelAxis == kEventMouseWheelAxisX)
+			{
+				mouse.HandleAxis(Mouse::WHEEL_HORIZONTAL, (float)wheelDelta);
 			}
 			break;
 		}
