@@ -18,6 +18,7 @@ project "SandBox"
 	{
 		"../../../DESIRE-modules/Compression-zlib-ng/lib/" .. _ACTION,
 		"../../../DESIRE-modules/Physics-Bullet/lib/" .. _ACTION,
+		"../../../DESIRE-modules/Physics-PhysX/lib/" .. _ACTION,
 		"../../../DESIRE-modules/Render-bgfx/lib/" .. _ACTION,
 		"../../../DESIRE-modules/ResourceLoader-Assimp/lib/".. _ACTION,
 		"../../../DESIRE-modules/Script-AngelScript/lib/" .. _ACTION,

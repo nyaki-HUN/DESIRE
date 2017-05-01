@@ -75,7 +75,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>Compression-zlib-ng_d.lib;Physics-Bullet_d.lib;Render-bgfx_d.lib;ResourceLoader-Assimp_d.lib;Script-AngelScript_d.lib;Script-Lua_d.lib;Script-Squirrel_d.lib;UI-imgui_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-PhysX\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -102,7 +102,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>Compression-zlib-ng.lib;Physics-Bullet.lib;ResourceLoader-Assimp.lib;Render-bgfx.lib;Script-AngelScript.lib;Script-Lua.lib;Script-Squirrel.lib;UI-imgui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\..\DESIRE-modules\Physics-PhysX\lib\vs2017;..\..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
