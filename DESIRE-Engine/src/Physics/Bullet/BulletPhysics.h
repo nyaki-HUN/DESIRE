@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/platform.h"
 #include "Physics/IPhysics.h"
 
 DESIRE_DISABLE_WARNINGS

@@ -13,5 +13,5 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMip
 
 Texture::~Texture()
 {
-	ASSERT(renderData == nullptr);
+	ASSERT(renderData == nullptr && "Forgot to unbind");
 }
