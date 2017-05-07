@@ -122,20 +122,21 @@ float InputMapping::GetFloatState(int userActionId) const
 			if(inputDevice != nullptr)
 			{
 				float pos = inputDevice->GetAxisPos(axis.id);
-				if(axis.deadZone != 0.0f)
+				if(pos > 0.0f)
 				{
-					if(std::abs(pos) <= axis.deadZone)
+					if(axis.deadZone != 0.0f)
 					{
-						pos = 0.0f;
-					}
-					else
-					{
+						if(std::abs(pos) <= axis.deadZone)
+						{
+							continue;
+						}
+
 						pos -= std::signbit(pos) ? -axis.deadZone : axis.deadZone;
 						pos /= 1.0f - axis.deadZone;
 					}
-				}
 
-				return pos;
+					return pos;
+				}
 			}
 		}
 	}
