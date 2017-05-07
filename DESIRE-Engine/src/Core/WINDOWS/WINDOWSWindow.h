@@ -3,6 +3,8 @@
 #include "Core/IWindow.h"
 #include "os.h"
 
+#include <map>
+
 class WINDOWSWindow : public IWindow
 {
 public:
@@ -21,7 +23,7 @@ public:
 	bool SetClipboardString(const char *str) override;
 	String GetClipboardString() override;
 
-	void RegisterMessageHandler(uint32_t msgType, MessageHandler_t messageHandler);
+	void RegisterMessageHandler(UINT msgType, MessageHandler_t messageHandler);
 
 private:
 	void Activated();
@@ -31,10 +33,6 @@ private:
 
 	HWND hWnd;
 	HCURSOR cursors[NUM_CURSORS];
-
-	MessageHandler_t messageHandler_WM_INPUT;
-	MessageHandler_t messageHandler_WM_MOUSEMOVE;
-	MessageHandler_t messageHandler_WM_CHAR;
-
+	std::map<UINT, MessageHandler_t> additionalMessageHandlers;
 	bool isInSizeMove;
 };

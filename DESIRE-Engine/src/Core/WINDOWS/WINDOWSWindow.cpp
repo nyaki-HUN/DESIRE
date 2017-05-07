@@ -5,9 +5,6 @@
 WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 	: IWindow(creationParams)
 	, hWnd(0)
-	, messageHandler_WM_INPUT(nullptr)
-	, messageHandler_WM_MOUSEMOVE(nullptr)
-	, messageHandler_WM_CHAR(nullptr)
 	, isInSizeMove(false)
 {
 	int posX = 0;
@@ -178,15 +175,10 @@ String WINDOWSWindow::GetClipboardString()
 	return str;
 }
 
-void WINDOWSWindow::RegisterMessageHandler(uint32_t msgType, MessageHandler_t customMessageHandler)
+void WINDOWSWindow::RegisterMessageHandler(UINT msgType, MessageHandler_t messageHandler)
 {
-	switch(msgType)
-	{
-		case WM_INPUT:		messageHandler_WM_INPUT = customMessageHandler; break;
-		case WM_MOUSEMOVE:	messageHandler_WM_MOUSEMOVE = customMessageHandler; break;
-		case WM_CHAR:		messageHandler_WM_CHAR = customMessageHandler; break;
-		default:			ASSERT(false && "Not supported");
-	}
+	ASSERT(messageHandler != nullptr);
+	additionalMessageHandlers[msgType] = messageHandler;
 }
 
 void WINDOWSWindow::Activated()
@@ -216,27 +208,18 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
+	auto it = window->additionalMessageHandlers.find(msg);
+	if(it != window->additionalMessageHandlers.end())
+	{
+		it->second(wParam, lParam);
+	}
+
 	switch(msg)
 	{
-		case WM_INPUT:				// Sent to the window that is getting raw input
-			if(window->messageHandler_WM_INPUT != nullptr)
-			{
-				window->messageHandler_WM_INPUT(wParam, lParam);
-			}
-			break;
-
 		case WM_MOUSEMOVE:			// Posted to a window when the cursor moves
-			if(window->messageHandler_WM_MOUSEMOVE != nullptr)
-			{
-				window->messageHandler_WM_MOUSEMOVE(wParam, lParam);
-			}
 			return 0;
 
 		case WM_CHAR:				// Posted to the window when a WM_KEYDOWN message is translated by TranslateMessage()
-			if(window->messageHandler_WM_CHAR != nullptr)
-			{
-				window->messageHandler_WM_CHAR(wParam, lParam);
-			}
 			return 0;
 
 		case WM_SYSKEYDOWN:
@@ -313,6 +296,7 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 			IApp::Stop();
 			return 0;
 	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
