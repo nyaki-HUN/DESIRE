@@ -61,29 +61,7 @@ void InputMapping::Unmap(int userActionId)
 
 bool InputMapping::IsDown(int userActionId) const
 {
-	auto it = core::binary_find(userActions, userActionId);
-	if(it != userActions.end())
-	{
-		for(const SMappedInput& button : it->mappedButtons)
-		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
-			if(inputDevice != nullptr && inputDevice->IsDown(button.id))
-			{
-				return true;
-			}
-		}
-
-		for(const SMappedAxis& axis : it->mappedAxes)
-		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(axis.inputDeviceHandle);
-			if(inputDevice != nullptr && inputDevice->GetAxisPos(axis.id) > 0.0f)
-			{
-				return true;
-			}
-		}
-	}
-
-	return false;
+	return GetFloatState(userActionId) > 0.0f;
 }
 
 bool InputMapping::WentDown(int userActionId) const
@@ -144,14 +122,17 @@ float InputMapping::GetFloatState(int userActionId) const
 			if(inputDevice != nullptr)
 			{
 				float pos = inputDevice->GetAxisPos(axis.id);
-				if(std::abs(pos) <= axis.deadZone)
+				if(axis.deadZone != 0.0f)
 				{
-					pos = 0.0f;
-				}
-				else
-				{
-					pos -= std::signbit(pos) ? -axis.deadZone : axis.deadZone;
-					pos /= 1.0f - axis.deadZone;
+					if(std::abs(pos) <= axis.deadZone)
+					{
+						pos = 0.0f;
+					}
+					else
+					{
+						pos -= std::signbit(pos) ? -axis.deadZone : axis.deadZone;
+						pos /= 1.0f - axis.deadZone;
+					}
 				}
 
 				return pos;

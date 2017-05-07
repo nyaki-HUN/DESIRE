@@ -20,7 +20,6 @@ public:
 		BUTTON_MIDDLE = BUTTON_3,
 		BUTTON_4,
 		BUTTON_5,
-
 		NUM_BUTTONS
 	};
 
@@ -30,7 +29,6 @@ public:
 		MOUSE_Y,
 		WHEEL,
 		WHEEL_HORIZONTAL,
-
 		NUM_AXES
 	};
 
