@@ -43,6 +43,13 @@ void LINUXWindow::HandleWindowMessages()
 	while(XPending(display) > 0)
 	{
 		XNextEvent(display, &event);
+
+		auto it = window->additionalMessageHandlers.find(event.type);
+		if(it != window->additionalMessageHandlers.end())
+		{
+			it->second(event);
+		}
+
 		switch(event.type)
 		{
 			case FocusIn:
@@ -177,6 +184,12 @@ String LINUXWindow::GetClipboardString()
 	}
 
 	return str;
+}
+
+void LINUXWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHandler)
+{
+	ASSERT(messageHandler != nullptr);
+	additionalMessageHandlers[msgType] = messageHandler;
 }
 
 // Create implementation
