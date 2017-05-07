@@ -148,6 +148,11 @@ float InputMapping::GetFloatState(int userActionId) const
 				{
 					pos = 0.0f;
 				}
+				else
+				{
+					pos -= std::signbit(pos) ? -axis.deadZone : axis.deadZone;
+					pos /= 1.0f - axis.deadZone;
+				}
 
 				return pos;
 			}
