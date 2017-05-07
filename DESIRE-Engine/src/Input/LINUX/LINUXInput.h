@@ -5,7 +5,9 @@
 class InputImpl
 {
 public:
-	static void HandleKeyboardAndMouseEvents(EventHandlerCallRef nextHandler, EventRef event, void *userData);
+	static void Handle_KeyPress_KeyRelease(const XEvent& event);
+	static void Handle_ButtonPress_ButtonRelease(const XEvent& event);
+	static void Handle_MotionNotify(const XEvent& event);
 
 	static Display *display;
 
