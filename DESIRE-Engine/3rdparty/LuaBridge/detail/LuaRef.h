@@ -407,7 +407,7 @@ private:
     /**
         Call Lua code.
 
-        These overloads allow Lua code to be called with up to 8 parameters.
+        These overloads allow Lua code to be called with up to 6 parameters.
         The return value is provided as a LuaRef (which may be LUA_REFNIL).
         If an error occurs, a LuaException is thrown.
     */
@@ -485,37 +485,6 @@ private:
       Stack <P5>::push (m_L, p5);
       Stack <P6>::push (m_L, p6);
       LuaException::pcall (m_L, 6, 1);
-      return LuaRef (m_L, FromStack ());
-    }
-
-    template <class P1, class P2, class P3, class P4, class P5, class P6, class P7>
-    LuaRef const operator() (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7) const
-    {
-      push (m_L);
-      Stack <P1>::push (m_L, p1);
-      Stack <P2>::push (m_L, p2);
-      Stack <P3>::push (m_L, p3);
-      Stack <P4>::push (m_L, p4);
-      Stack <P5>::push (m_L, p5);
-      Stack <P6>::push (m_L, p6);
-      Stack <P7>::push (m_L, p7);
-      LuaException::pcall (m_L, 7, 1);
-      return LuaRef (m_L, FromStack ());
-    }
-
-    template <class P1, class P2, class P3, class P4, class P5, class P6, class P7, class P8>
-    LuaRef const operator() (P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8) const
-    {
-      push (m_L);
-      Stack <P1>::push (m_L, p1);
-      Stack <P2>::push (m_L, p2);
-      Stack <P3>::push (m_L, p3);
-      Stack <P4>::push (m_L, p4);
-      Stack <P5>::push (m_L, p5);
-      Stack <P6>::push (m_L, p6);
-      Stack <P7>::push (m_L, p7);
-      Stack <P8>::push (m_L, p8);
-      LuaException::pcall (m_L, 8, 1);
       return LuaRef (m_L, FromStack ());
     }
     /** @} */

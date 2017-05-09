@@ -33,13 +33,13 @@
 /*
 * Constructor generators.  These templates allow you to call operator new and
 * pass the contents of a type/value list to the Constructor.  Like the
-* function pointer containers, these are only defined up to 8 parameters.
+* function pointer containers, these are only defined up to 6 parameters.
 */
 
 /** Constructor generators.
 
     These templates call operator new with the contents of a type/value
-    list passed to the Constructor with up to 8 parameters. Two versions
+    list passed to the Constructor with up to 6 parameters. Two versions
     of call() are provided. One performs a regular new, the other performs
     a placement new.
 */

@@ -25,6 +25,7 @@
   SOFTWARE.
 */
 //==============================================================================
+
 /**
     Traits for function pointers.
 
@@ -33,7 +34,7 @@
     belongs to if it is a class member, the const-ness if it is a member
     function, and the type information for the return value and argument list.
 
-    Expansions are provided for functions with up to 8 parameters. This can be
+    Expansions are provided for functions with up to 6 parameters. This can be
     manually extended, or expanded to an arbitrary amount using C++11 features.
 */
 template <class MemFn, class D = MemFn>
