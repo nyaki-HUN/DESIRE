@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Script/Squirrel/sqrat/sqratTable.h"
-#include "Script/Squirrel/sqrat/sqratClass.h"
+#include "sqrat/sqratTable.h"
+#include "sqrat/sqratClass.h"
 
 // Engine API register functions
 void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable);

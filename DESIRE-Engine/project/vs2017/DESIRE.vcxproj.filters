@@ -28,6 +28,9 @@
     <Filter Include="3rdparty\rapidjson\include\rapidjson\msinttypes">
       <UniqueIdentifier>{12BD6F89-7EF8-CF4C-87ED-4CDCF3A7547D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdparty\sqrat">
+      <UniqueIdentifier>{F853ADF7-E421-A1FD-CDB5-1124B9227D62}</UniqueIdentifier>
+    </Filter>
     <Filter Include="3rdparty\stb">
       <UniqueIdentifier>{96AA99EA-820D-298F-2B93-614517D5F411}</UniqueIdentifier>
     </Filter>
@@ -114,9 +117,6 @@
     </Filter>
     <Filter Include="src\Script\Squirrel\API">
       <UniqueIdentifier>{C0311C7D-2C69-6414-3573-C837A1298B0D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Script\Squirrel\sqrat">
-      <UniqueIdentifier>{D13E8B38-3D01-BFC2-86B1-4D4FF2B297A0}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Sound">
       <UniqueIdentifier>{A5DED8B3-1149-8D2A-5A87-3ED0C6306B7F}</UniqueIdentifier>
@@ -284,6 +284,39 @@
     </ClInclude>
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\writer.h">
       <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratAllocator.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratClass.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratClassType.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratConst.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratGlobalMethods.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratMemberMethods.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratObject.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratOverloadMethods.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratTable.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratTypes.h">
+      <Filter>3rdparty\sqrat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\sqrat\sqratUtil.h">
+      <Filter>3rdparty\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h">
       <Filter>3rdparty\stb</Filter>
@@ -611,39 +644,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Squirrel\SquirrelScriptSystem.h">
       <Filter>src\Script\Squirrel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratAllocator.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratClass.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratClassType.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratConst.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratGlobalMethods.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratMemberMethods.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratObject.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratOverloadMethods.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratTable.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratTypes.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\sqrat\sqratUtil.h">
-      <Filter>src\Script\Squirrel\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Sound\FMOD\FMODSound.h">
       <Filter>src\Sound\FMOD</Filter>

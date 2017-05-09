@@ -3,7 +3,7 @@
 #include "Core/String.h"
 #include "Utils/Enumerator.h"
 
-#include "Script/Squirrel/sqrat/sqratTypes.h"
+#include "sqrat/sqratTypes.h"
 
 SquirrelScriptComponent::SquirrelScriptComponent(HSQUIRRELVM vm)
 	: vm(vm)
