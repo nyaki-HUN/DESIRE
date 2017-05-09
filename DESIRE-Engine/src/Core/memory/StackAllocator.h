@@ -11,7 +11,7 @@ class StackAllocator : public LinearAllocator
 {
 public:
 	StackAllocator()
-		: LinearAllocator(data, data + STACK_SIZE)
+		: LinearAllocator(data, STACK_SIZE)
 	{
 
 	}

@@ -15,9 +15,6 @@ public:
 	virtual void* Allocate(size_t size, size_t alignment = IAllocator::DEFAULT_ALIGNMENT) = 0;
 	virtual void Deallocate(void *ptr) = 0;
 
-	// Aligns ptr to the specified alignment by moving it forward
-	static void* AlignForward(void *ptr, size_t alignment);
-
 	// Returns the default MallocAllocator
 	static IAllocator& GetDefaultAllocator();
 

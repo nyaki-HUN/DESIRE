@@ -10,7 +10,7 @@
 class LinearAllocator : public IAllocator
 {
 public:
-	LinearAllocator(void *memoryStart, void *memoryEnd, IAllocator& fallbackAllocator = IAllocator::GetDefaultAllocator());
+	LinearAllocator(void *memoryStart, size_t memorySize, IAllocator& fallbackAllocator = IAllocator::GetDefaultAllocator());
 
 	void* Allocate(size_t size, size_t alignment = IAllocator::DEFAULT_ALIGNMENT) final override;
 	void Deallocate(void *ptr) final override;
@@ -20,7 +20,7 @@ public:
 
 private:
 	char *memoryStart;
-	char *memoryEnd;
-	char *currMemPtr;
+	size_t memorySize;
+	size_t freeSpace;
 	IAllocator& fallbackAllocator;
 };

@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "Core/memory/LinearAllocator.h"
 
-LinearAllocator::LinearAllocator(void *memoryStart, void *memoryEnd, IAllocator& fallbackAllocator)
+#include <memory>		// for std::align
+
+LinearAllocator::LinearAllocator(void *memoryStart, size_t memorySize, IAllocator& fallbackAllocator)
 	: memoryStart((char*)memoryStart)
-	, memoryEnd((char*)memoryEnd)
-	, currMemPtr((char*)memoryStart)
+	, memorySize(memorySize)
+	, freeSpace(memorySize)
 	, fallbackAllocator(fallbackAllocator)
 {
 
@@ -12,27 +14,31 @@ LinearAllocator::LinearAllocator(void *memoryStart, void *memoryEnd, IAllocator&
 
 void* LinearAllocator::Allocate(size_t size, size_t alignment)
 {
-	char *ptr = (char*)AlignForward(currMemPtr, alignment);
-	if(ptr + size <= memoryEnd)
+	ASSERT((alignment & (alignment - 1)) == 0 && "Alignment must be power of two");
+
+	void *ptr = memoryStart + (memorySize - freeSpace);
+	ptr = std::align(alignment, size, ptr, freeSpace);
+	if(ptr == nullptr)
 	{
-		currMemPtr = ptr + size;
-		return ptr;
+		return fallbackAllocator.Allocate(size, alignment);
 	}
 
-	return fallbackAllocator.Allocate(size, alignment);
+	freeSpace -= size;
+	return ptr;
 }
 
 void LinearAllocator::Deallocate(void *ptr)
 {
-	if(memoryStart <= ptr && ptr < memoryEnd)
+	if(ptr < memoryStart || ptr >= memoryStart + memorySize)
 	{
+		fallbackAllocator.Deallocate(ptr);
 		return;
 	}
 
-	fallbackAllocator.Deallocate(ptr);
+	// Do nothing
 }
 
 void LinearAllocator::Reset()
 {
-	currMemPtr = memoryStart;
+	freeSpace = memorySize;
 }
