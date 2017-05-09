@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "Core/memory/StdFrameAllocatorWrapper.h"
+#include "Core/memory/StdAllocatorWrapper.h"
 
-TEST_CASE("StdFrameAllocatorWrapper", "[Core][memory]")
+TEST_CASE("StdAllocatorWrapper", "[Core][memory]")
 {
 	IAllocator::ResetFrameAllocator();
 
@@ -19,7 +19,7 @@ TEST_CASE("StdFrameAllocatorWrapper", "[Core][memory]")
 	{
 		const size_t numAllocBegin = globalMemoryAllocationCount;
 
-		std::vector<int, StdFrameAllocatorWrapper<int>> container;
+		std::vector<int, StdAllocatorWrapper<int>> container;
 		container.push_back(123);
 		container.push_back(9999);
 

@@ -426,7 +426,7 @@
     <ClInclude Include="..\..\src\Core\memory\StackAllocator.h">
       <Filter>src\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\StdFrameAllocatorWrapper.h">
+    <ClInclude Include="..\..\src\Core\memory\StdAllocatorWrapper.h">
       <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\platform.h">

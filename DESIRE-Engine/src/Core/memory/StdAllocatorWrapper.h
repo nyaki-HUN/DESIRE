@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#pragma once
+
 #include "Core/platform.h"	// for DESIRE_UNUSED
 #include "Core/memory/IAllocator.h"
 
@@ -6,7 +7,7 @@
 #include <utility>			// for std::forward()
 
 template<typename T>
-class StdFrameAllocatorWrapper
+class StdAllocatorWrapper
 {
 public:
 	typedef T value_type;
@@ -22,16 +23,16 @@ public:
 	template<typename U>
 	struct rebind
 	{
-		typedef StdFrameAllocatorWrapper<U> other;
+		typedef StdAllocatorWrapper<U> other;
 	};
 
-	StdFrameAllocatorWrapper()
+	StdAllocatorWrapper()
 	{
 
 	}
 
 	template<typename U>
-	StdFrameAllocatorWrapper(const StdFrameAllocatorWrapper<U>&)
+	StdAllocatorWrapper(const StdAllocatorWrapper<U>&)
 	{
 
 	}
@@ -86,7 +87,7 @@ public:
 	}
 
 	// (deprecated in C++17)
-	template< class U >
+	template<class U>
 	void destroy(U *ptr)
 	{
 		DESIRE_UNUSED(ptr);		// Suppress warning C4100: 'ptr': unreferenced formal parameter
@@ -94,17 +95,17 @@ public:
 	}
 
 	// Stateless allocators are always equal
-	bool operator ==(const StdFrameAllocatorWrapper& other) const
+	bool operator ==(const StdAllocatorWrapper& other) const
 	{
 		return true;
 	}
 
 	// Stateless allocators are always equal
-	bool operator !=(const StdFrameAllocatorWrapper& other) const
+	bool operator !=(const StdAllocatorWrapper& other) const
 	{
 		return false;
 	}
 
 private:
-	StdFrameAllocatorWrapper& operator =(const StdFrameAllocatorWrapper&) = delete;
+	StdAllocatorWrapper& operator =(const StdAllocatorWrapper&) = delete;
 };
