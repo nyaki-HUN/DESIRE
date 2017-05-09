@@ -4,6 +4,12 @@
     <Filter Include="3rdparty">
       <UniqueIdentifier>{3E7DA5C5-2A4A-00D1-5363-EE783F8F355F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdparty\LuaBridge">
+      <UniqueIdentifier>{DCD1E182-C8B5-A2D8-3116-9D2B1D198D5A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\LuaBridge\detail">
+      <UniqueIdentifier>{1E9AB935-8A5C-EDBF-D30C-7C4C3F0EC69D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="3rdparty\rapidjson">
       <UniqueIdentifier>{772CDC34-6310-9D8A-CC70-97DDB873870C}</UniqueIdentifier>
     </Filter>
@@ -103,12 +109,6 @@
     <Filter Include="src\Script\Lua\API">
       <UniqueIdentifier>{CBF387B0-B7D7-4806-2038-43590C3B3388}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Script\Lua\LuaBridge">
-      <UniqueIdentifier>{805F714C-6C84-C0CC-95CF-A55C8153BFEA}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Script\Lua\LuaBridge\detail">
-      <UniqueIdentifier>{42E7D464-AECA-E3A4-B7CD-11E12330AAF5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Script\Squirrel">
       <UniqueIdentifier>{57794636-C3DA-2344-4C48-6AF6B8A85A03}</UniqueIdentifier>
     </Filter>
@@ -138,6 +138,48 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\LuaBridge.h">
+      <Filter>3rdparty\LuaBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\CFunctions.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\ClassInfo.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Constructor.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\FuncTraits.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Iterator.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaException.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaHelpers.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaRef.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Namespace.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Stack.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeList.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeTraits.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Userdata.h">
+      <Filter>3rdparty\LuaBridge\detail</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h">
       <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
     </ClInclude>
@@ -551,48 +593,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\API\LuaScriptAPI.h">
       <Filter>src\Script\Lua\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\LuaBridge.h">
-      <Filter>src\Script\Lua\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\CFunctions.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\ClassInfo.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Constructor.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\FuncTraits.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Iterator.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaException.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaHelpers.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaRef.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Namespace.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Stack.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\TypeList.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\TypeTraits.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Userdata.h">
-      <Filter>src\Script\Lua\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\Lua\LuaScriptComponent.h">
       <Filter>src\Script\Lua</Filter>

@@ -102,6 +102,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\3rdparty\LuaBridge\LuaBridge.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\CFunctions.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\ClassInfo.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Constructor.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\FuncTraits.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Iterator.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaException.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaHelpers.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaRef.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Namespace.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Stack.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeList.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeTraits.h" />
+    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Userdata.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\document.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\encodedstream.h" />
@@ -240,20 +254,6 @@
     <ClInclude Include="..\..\src\Script\IScript.h" />
     <ClInclude Include="..\..\src\Script\IScriptSystem.h" />
     <ClInclude Include="..\..\src\Script\Lua\API\LuaScriptAPI.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\LuaBridge.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\CFunctions.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\ClassInfo.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Constructor.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\FuncTraits.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Iterator.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaException.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaHelpers.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\LuaRef.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Namespace.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Stack.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\TypeList.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\TypeTraits.h" />
-    <ClInclude Include="..\..\src\Script\Lua\LuaBridge\detail\Userdata.h" />
     <ClInclude Include="..\..\src\Script\Lua\LuaScriptComponent.h" />
     <ClInclude Include="..\..\src\Script\Lua\LuaScriptSystem.h" />
     <ClInclude Include="..\..\src\Script\NativeScriptComponent.h" />
