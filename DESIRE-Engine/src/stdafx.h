@@ -8,15 +8,20 @@
 
 // STD library
 #include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <string.h>
 #include <float.h>
+#include <cmath>
 #include <cctype>
 #include <algorithm>
 #include <functional>
 #include <memory>
 #include <utility>
+
+// Containers
+#include <vector>
+#include <array>
 
 // Multi-threading
 #include <atomic>

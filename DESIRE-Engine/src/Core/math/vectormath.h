@@ -3,7 +3,7 @@
 #include "Core/platform.h"
 
 #include <stdint.h>
-#include <math.h>
+#include <cmath>
 
 #define _VECTORMATH_SLERP_TOL 0.999f
 

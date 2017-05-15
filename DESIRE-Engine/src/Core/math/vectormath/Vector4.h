@@ -152,7 +152,7 @@ public:
 	// Compute the length of a 4-D vector
 	DESIRE_FORCE_INLINE float Length() const
 	{
-		return sqrtf(LengthSqr());
+		return std::sqrtf(LengthSqr());
 	}
 
 	// Normalize a 4-D vector
@@ -203,10 +203,10 @@ public:
 		const float cosAngle = unitVec0.Dot(unitVec1);
 		if(cosAngle < _VECTORMATH_SLERP_TOL)
 		{
-			const float angle = acosf(cosAngle);
-			const float recipSinAngle = 1.0f / sinf(angle);
-			scale0 = sinf((1.0f - t) * angle) * recipSinAngle;
-			scale1 = sinf(t * angle) * recipSinAngle;
+			const float angle = std::acosf(cosAngle);
+			const float recipSinAngle = 1.0f / std::sinf(angle);
+			scale0 = std::sinf((1.0f - t) * angle) * recipSinAngle;
+			scale1 = std::sinf(t * angle) * recipSinAngle;
 		}
 		else
 		{
