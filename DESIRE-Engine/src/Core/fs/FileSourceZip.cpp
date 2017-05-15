@@ -308,7 +308,7 @@ String FileSourceZip::ConvertFilename(const char *filename)
 {
 	String strFilename;
 
-	if(flags & FileSystem::FILESOURCE_IGNORE_PATH)
+	if(flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_PATH)
 	{
 		const char *lastSlash = strrchr(filename, '/');
 		if(lastSlash != nullptr)
@@ -325,7 +325,7 @@ String FileSourceZip::ConvertFilename(const char *filename)
 		strFilename = filename;
 	}
 
-	if(flags & FileSystem::FILESOURCE_IGNORE_CASE)
+	if(flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_CASE)
 	{
 		strFilename.ToLower();
 	}

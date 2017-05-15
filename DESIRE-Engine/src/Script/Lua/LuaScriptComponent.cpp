@@ -2,7 +2,7 @@
 #include "Script/Lua/LuaScriptComponent.h"
 #include "Core/String.h"
 
-#include "Script/Lua/LuaBridge/LuaBridge.h"
+#include "LuaBridge/LuaBridge.h"
 
 LuaScriptComponent::LuaScriptComponent(lua_State *L)
 	: L(L)

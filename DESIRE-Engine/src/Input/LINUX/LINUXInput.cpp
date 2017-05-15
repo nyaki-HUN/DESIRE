@@ -117,8 +117,6 @@ void InputImpl::Handle_KeyPress_KeyRelease(const XEvent& event)
 
 void InputImpl::Handle_ButtonPress_ButtonRelease(const XEvent& event)
 {
-	SPoint<int16_t>& mouseCursorPos = Input::Get()->mouseCursorPos;
-
 	ASSERT(!Input::Get()->mouses.empty());
 	Mouse& mouse = Input::Get()->mouses.back();
 
