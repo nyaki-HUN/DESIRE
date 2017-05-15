@@ -40,3 +40,9 @@ protected:												\
 		static Impl instance;							\
 		return &instance;								\
 	}	
+
+#define DESIRE_DEFINE_EMPTY_SINGLETON_INSTANCE(Class)	\
+	Class* Class::Get()									\
+	{													\
+		return nullptr;									\
+	}	

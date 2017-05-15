@@ -40,8 +40,8 @@ int IApp::Run(int argc, const char * const *argv)
 	// Init engine
 	Timer::Get();
 	Input::Get();
-	IPhysics::Get();
-	IScriptSystem::Get();
+	IPhysics *physics = IPhysics::Get();
+	IScriptSystem *scriptSystem = IScriptSystem::Get();
 
 	SCreationParams params = IApp::Get()->GetCreationParams(argc, argv);
 	IWindow *mainWindow = IWindow::Create(params.windowParams);
@@ -59,8 +59,16 @@ int IApp::Run(int argc, const char * const *argv)
 
 		mainWindow->HandleWindowMessages();
 
-		IScriptSystem::Get()->Update();
-		IPhysics::Get()->Update();
+		if(scriptSystem != nullptr)
+		{
+			scriptSystem->Update();
+		}
+
+		if(physics != nullptr)
+		{
+			physics->Update();
+		}
+
 		IApp::Get()->Update();
 	}
 	IApp::Get()->Kill();
