@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <cmath>
 
-#define _VECTORMATH_SLERP_TOL 0.999f
+constexpr float _VECTORMATH_SLERP_TOL = 0.999f;
 
 #if defined(DESIRE_USE_SSE)
 	#include "Core/math/vectormath/vectormath_SSE.h"
