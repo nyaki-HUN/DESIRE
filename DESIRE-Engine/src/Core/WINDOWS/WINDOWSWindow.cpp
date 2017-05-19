@@ -11,6 +11,7 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 	int posY = 0;
 	bool resizable = true;
 	DWORD windowStyleFlags = 0;
+	RECT rect = { 0, 0, width, height };
 	if(isFullscreen)
 	{
 		windowStyleFlags = WS_POPUP;
@@ -27,24 +28,27 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 		}
 
 		// Calculate position and dimensions
-		RECT windowRect = { 0, 0, width, height };
-		AdjustWindowRect(&windowRect, windowStyleFlags, FALSE);
-		width = (uint16_t)windowRect.right;
-		height = (uint16_t)windowRect.bottom;
+		AdjustWindowRect(&rect, windowStyleFlags, FALSE);
+		long w = rect.right - rect.left;
+		long h = rect.bottom - rect.top;
 
 		int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 		int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-		if(width > screenWidth)
+		if(w > screenWidth)
 		{
-			width = (uint16_t)screenWidth;
+			rect.left = 0;
+			rect.right = screenWidth;
+			w = screenWidth;
 		}
-		if(height > screenHeight)
+		if(h > screenHeight)
 		{
-			height = (uint16_t)screenHeight;
+			rect.top = 0;
+			rect.bottom = screenHeight;
+			h = screenHeight;
 		}
 
-		posX = (creationParams.posX != SCreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posX : (screenWidth - width) / 2;
-		posY = (creationParams.posY != SCreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posY : (screenHeight - height) / 2;
+		posX = (creationParams.posX != SCreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posX : (screenWidth - w) / 2;
+		posY = (creationParams.posY != SCreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posY : (screenHeight - h) / 2;
 	}
 
 	HINSTANCE hInstance = GetModuleHandle(nullptr);
@@ -64,7 +68,7 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 	};
 	RegisterClassEx(&wc);
 
-	hWnd = CreateWindowA("DESIRE_Wnd", "DESIRE", windowStyleFlags, posX, posY, width, height, GetDesktopWindow(), nullptr, hInstance, this);
+	hWnd = CreateWindowExA(0, "DESIRE_Wnd", "DESIRE", windowStyleFlags, posX, posY, rect.right - rect.left, rect.bottom - rect.top, GetDesktopWindow(), nullptr, hInstance, this);
 
 	ShowWindow(hWnd, SW_SHOW);
 }
@@ -252,12 +256,14 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 			return 0;
 
 		case WM_EXITSIZEMOVE:		// Sent one time to a window, after it has exited the moving or sizing modal loop
+		{
 			window->isInSizeMove = false;
 
 			WINDOWINFO pwi;
 			GetWindowInfo(hWnd, &pwi);
 			window->SetSize((uint16_t)(pwi.rcClient.right - pwi.rcClient.left), (uint16_t)(pwi.rcClient.bottom - pwi.rcClient.top));
 			return 0;
+		}
 
 		case WM_SIZE:				// Sent to a window after its size has changed
 			if(!window->isInSizeMove && wParam != SIZE_MINIMIZED)
