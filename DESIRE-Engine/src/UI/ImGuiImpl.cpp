@@ -48,9 +48,6 @@ void ImGuiImpl::Init()
 	io.IniFilename = nullptr;
 	io.RenderDrawListsFn = ImGuiImpl::RenderDrawListsCallback;
 
-//	ImGuiStyle& style = ImGui::GetStyle();
-//	style.FrameRounding = 4.0f;
-
 	// Setup font texture
 	unsigned char *data;
 	int width, height;
