@@ -51,23 +51,8 @@ void Transform::SetRotation(const Quat& newRotation)
 void Transform::SetScale(const Vector3& newScale)
 {
 	scale = newScale;
-	flags |= SCALE_CHANGED | HAS_SCALE;
+	flags |= SCALE_CHANGED;
 	flags &= ~IS_IDENTITY;
-}
-
-const Vector3& Transform::GetPosition() const
-{
-	return position;
-}
-
-const Quat& Transform::GetRotation() const
-{
-	return rotation;
-}
-
-const Vector3& Transform::GetScale() const
-{
-	return scale;
 }
 
 uint8_t Transform::GetFlags() const
@@ -75,13 +60,11 @@ uint8_t Transform::GetFlags() const
 	return flags;
 }
 
-void Transform::ConstructLocalMatrix(Matrix4& matrix) const
+Matrix4 Transform::ConstructLocalMatrix() const
 {
-	matrix = Matrix4(rotation, position);
-	if(flags & HAS_SCALE)
-	{
-		matrix.AppendScale(scale);
-	}
+	Matrix4 mat = Matrix4(rotation, position);
+	mat.AppendScale(scale);
+	return mat;
 }
 
 const Matrix4& Transform::GetWorldMatrix() const
@@ -98,16 +81,11 @@ void Transform::UpdateWorldMatrix()
 {
 	if(flags & IS_IDENTITY)
 	{
-		parent->ConstructLocalMatrix(worldMatrix);
+		worldMatrix = parent->worldMatrix;
 	}
 	else
 	{
-		const Vector3 tmpPosition = parent->position + parent->rotation.RotateVec(parent->scale.MulPerElem(position));
-		worldMatrix = Matrix4(parent->rotation * rotation, tmpPosition);
-		if(flags & HAS_SCALE || parent->flags & HAS_SCALE)
-		{
-			worldMatrix.AppendScale(parent->scale.MulPerElem(scale));
-		}
+		worldMatrix = ConstructLocalMatrix() * parent->worldMatrix;
 	}
 
 	flags &= ~WORLD_MATRIX_DIRTY;

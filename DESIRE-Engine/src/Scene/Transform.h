@@ -16,7 +16,6 @@ public:
 		SCALE_CHANGED				= 0x04,
 		WORLD_MATRIX_DIRTY			= (POSITION_CHANGED | ROTATION_CHANGED | SCALE_CHANGED),
 		IS_IDENTITY					= 0x08,
-		HAS_SCALE					= 0x10,
 	};
 
 	Transform();
@@ -31,15 +30,14 @@ public:
 	void SetRotation(const Quat& newRotation);
 	void SetScale(const Vector3& newScale);
 
-	const Vector3& GetPosition() const;
-	const Quat& GetRotation() const;
-	const Vector3& GetScale() const;
+	inline const Vector3& GetPosition() const		{ return position; }
+	inline const Quat& GetRotation() const			{ return rotation; }
+	inline const Vector3& GetScale() const			{ return scale; }
 
 	// Returns a combination of flags from EFlags
 	uint8_t GetFlags() const;
 
-	// Construct the local matrix into 'matrix'
-	void ConstructLocalMatrix(Matrix4& matrix) const;
+	Matrix4 ConstructLocalMatrix() const;
 
 	// Returns the absolute transformation matrix from the last UpdateWorldMatrix() call
 	const Matrix4& GetWorldMatrix() const;
