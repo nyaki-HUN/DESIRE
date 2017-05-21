@@ -158,7 +158,6 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f()", asFUNCTION(AngelScriptAPI<Matrix3>::Factory), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f(const Matrix3& in)", asFUNCTION(AngelScriptAPI<Matrix3>::FactoryWithArgs<const Matrix3&>), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f(const Vector3& in, const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptAPI<Matrix3>::FactoryWithArgs<const Vector3&, const Vector3&, const Vector3&>)), asCALL_CDECL);
-	engine->RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f(float)", asFUNCTION(AngelScriptAPI<Matrix3>::FactoryWithArgs<float>), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f(const Quat& in)", asFUNCTION(AngelScriptAPI<Matrix3>::FactoryWithArgs<const Quat&>), asCALL_CDECL);
 	engine->RegisterObjectProperty("Matrix3", "Vector3& col0", asOFFSET(Matrix3, col0));
 	engine->RegisterObjectProperty("Matrix3", "Vector3& col1", asOFFSET(Matrix3, col1));
@@ -203,7 +202,6 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectBehaviour("Matrix4", asBEHAVE_FACTORY, "Matrix4@ f()", asFUNCTION(AngelScriptAPI<Matrix4>::Factory), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Matrix4", asBEHAVE_FACTORY, "Matrix4@ f(const Matrix4& in)", asFUNCTION(AngelScriptAPI<Matrix4>::FactoryWithArgs<const Matrix4&>), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Matrix4", asBEHAVE_FACTORY, "Matrix4@ f(const Vector4& in, const Vector4& in, const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptAPI<Matrix4>::FactoryWithArgs<const Vector4&, const Vector4&, const Vector4&, const Vector4&>)), asCALL_CDECL);
-	engine->RegisterObjectBehaviour("Matrix4", asBEHAVE_FACTORY, "Matrix4@ f(float)", asFUNCTION(AngelScriptAPI<Matrix4>::FactoryWithArgs<float>), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Matrix4", asBEHAVE_FACTORY, "Matrix4@ f(const Matrix3& in, const Vector3& in)", asFUNCTION((AngelScriptAPI<Matrix4>::FactoryWithArgs<const Matrix3&, const Vector3&>)), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Matrix4", asBEHAVE_FACTORY, "Matrix4@ f(const Quat& in, const Vector3& in)", asFUNCTION((AngelScriptAPI<Matrix4>::FactoryWithArgs<const Quat&, const Vector3&>)), asCALL_CDECL);
 	engine->RegisterObjectMethod("Matrix4", "void SetUpper3x3(const Matrix3& in)", asMETHODPR(Matrix4, SetUpper3x3, (const Matrix3&), Matrix4&), asCALL_THISCALL);

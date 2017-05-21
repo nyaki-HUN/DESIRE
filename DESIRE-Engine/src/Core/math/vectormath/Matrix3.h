@@ -28,15 +28,6 @@ public:
 
 	}
 
-	// Set all elements of a 3x3 matrix to the same scalar value
-	explicit DESIRE_FORCE_INLINE Matrix3(float scalar)
-		: col0(scalar)
-		, col1(scalar)
-		, col2(scalar)
-	{
-
-	}
-
 	// Construct a 3x3 rotation matrix from a unit-length quaternion
 	explicit DESIRE_FORCE_INLINE Matrix3(const Quat& unitQuat);
 

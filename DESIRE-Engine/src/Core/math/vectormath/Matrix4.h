@@ -30,25 +30,6 @@ public:
 
 	}
 
-	// Set all elements of a 4x4 matrix to the same scalar value
-	explicit DESIRE_FORCE_INLINE Matrix4(float scalar)
-		: col0(scalar)
-		, col1(scalar)
-		, col2(scalar)
-		, col3(scalar)
-	{
-
-	}
-
-	// Set elements of a 4x4 matrix from a float array
-	explicit DESIRE_FORCE_INLINE Matrix4(const float matrix[16])
-	{
-		col0.LoadXYZW(&matrix[0]);
-		col1.LoadXYZW(&matrix[4]);
-		col2.LoadXYZW(&matrix[8]);
-		col3.LoadXYZW(&matrix[12]);
-	}
-
 	// Construct a 4x4 matrix from a 3x3 matrix and a 3-D vector
 	DESIRE_FORCE_INLINE Matrix4(const Matrix3& mat, const Vector3& translateVec)
 		: col0(mat.col0, 0.0f)
@@ -67,6 +48,24 @@ public:
 		col1 = Vector4(mat.col1, 0.0f);
 		col2 = Vector4(mat.col2, 0.0f);
 		col3 = Vector4(translateVec, 1.0f);
+	}
+
+	// Set elements of a 4x4 matrix from a 16 element float array
+	DESIRE_FORCE_INLINE Matrix4(const float(&fptr)[16])
+	{
+		col0.LoadXYZW(&fptr[0]);
+		col1.LoadXYZW(&fptr[4]);
+		col2.LoadXYZW(&fptr[8]);
+		col3.LoadXYZW(&fptr[12]);
+	}
+
+	// Store elements of a 4x4 matrix in a 16 elements float array
+	DESIRE_FORCE_INLINE void Store(float(&fptr)[16]) const
+	{
+		col0.StoreXYZW(&fptr[0]);
+		col1.StoreXYZW(&fptr[4]);
+		col2.StoreXYZW(&fptr[8]);
+		col3.StoreXYZW(&fptr[12]);
 	}
 
 	// Set the upper-left 3x3 submatrix
