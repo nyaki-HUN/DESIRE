@@ -3,6 +3,7 @@
 #include "Core/assert.h"
 
 #include <stdint.h>
+#include <cmath>
 
 namespace Math
 {
@@ -22,7 +23,7 @@ inline float RadToDeg(float rad)
 
 inline int Round32(float x)
 {
-	return (int)std::roundf(x);
+	return (int)std::round(x);
 }
 
 inline int RoundUp(float x, int roundFactor)
