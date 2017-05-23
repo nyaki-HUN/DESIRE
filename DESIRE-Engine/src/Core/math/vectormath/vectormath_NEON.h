@@ -125,23 +125,23 @@ public:
 	// Get maximum element
 	static DESIRE_FORCE_INLINE float32x4_t MaxElem3(float32x4_t vec)
 	{
-		return vmaxq_f32(vmaxq_f32(vec, SIMD::Shuffle_yyyy(vec, 1)), SIMD::Shuffle_zzzz(vec));
+		return vmaxq_f32(vmaxq_f32(vec, SIMD::Shuffle_YYYY(vec, 1)), SIMD::Shuffle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE float32x4_t MaxElem4(float32x4_t vec)
 	{
-		return vmaxq_f32(vmaxq_f32(vec, SIMD::Shuffle_yyyy(vec)), vmaxq_f32(SIMD::Shuffle_zzzz(vec), SIMD::Shuffle_wwww(vec)));
+		return vmaxq_f32(vmaxq_f32(vec, SIMD::Shuffle_YYYY(vec)), vmaxq_f32(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Get minimum element
 	static DESIRE_FORCE_INLINE float32x4_t MinElem3(float32x4_t vec)
 	{
-		return vminq_f32(vminq_f32(vec, SIMD::Shuffle_yyyy(vec)), SIMD::Shuffle_zzzz(vec));
+		return vminq_f32(vminq_f32(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE float32x4_t MinElem4(float32x4_t vec)
 	{
-		return vminq_f32(vminq_f32(vec, SIMD::Shuffle_yyyy(vec)), vminq_f32(SIMD::Shuffle_zzzz(vec), SIMD::Shuffle_wwww(vec)));
+		return vminq_f32(vminq_f32(vec, SIMD::Shuffle_YYYY(vec)), vminq_f32(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Compute the dot product of two 3-D vectors
@@ -211,22 +211,22 @@ public:
 	}
 
 	// Shuffle
-	static DESIRE_FORCE_INLINE __m128 Shuffle_xxxx(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Shuffle_XXXX(__m128 vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 0, 0 });
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_yyyy(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Shuffle_YYYY(__m128 vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 1, 1, 1, 1 });
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_zzzz(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Shuffle_ZZZZ(__m128 vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 2, 2 });
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_wwww(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Shuffle_WWWW(__m128 vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 3, 3, 3, 3 });
 	}

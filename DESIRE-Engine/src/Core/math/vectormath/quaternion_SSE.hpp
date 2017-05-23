@@ -8,7 +8,7 @@ DESIRE_FORCE_INLINE Vector3 Quat::RotateVec(const Vector3& vec) const
 	__m128 tmp1 = _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2));
 	__m128 tmp2 = _mm_shuffle_ps(mVec128, mVec128, _MM_SHUFFLE(3, 1, 0, 2));
 	__m128 tmp3 = _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1));
-	const __m128 wwww = SIMD::Shuffle_wwww(mVec128);
+	const __m128 wwww = SIMD::Shuffle_WWWW(mVec128);
 	__m128 qv = _mm_mul_ps(wwww, vec);
 	qv = vec_madd(tmp0, tmp1, qv);
 	qv = vec_nmsub(tmp2, tmp3, qv);
@@ -17,7 +17,7 @@ DESIRE_FORCE_INLINE Vector3 Quat::RotateVec(const Vector3& vec) const
 	qw = _mm_add_ps(_mm_ror_ps(product, 2), qw);
 	tmp1 = _mm_shuffle_ps(qv, qv, _MM_SHUFFLE(3, 1, 0, 2));
 	tmp3 = _mm_shuffle_ps(qv, qv, _MM_SHUFFLE(3, 0, 2, 1));
-	__m128 res = _mm_mul_ps(SIMD::Shuffle_xxxx(qw), mVec128);
+	__m128 res = _mm_mul_ps(SIMD::Shuffle_XXXX(qw), mVec128);
 	res = vec_madd(wwww, qv, res);
 	res = vec_madd(tmp0, tmp1, res);
 	res = vec_nmsub(tmp2, tmp3, res);
@@ -38,9 +38,9 @@ DESIRE_FORCE_INLINE Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat&
 	angles = _mm_unpacklo_ps(angles, oneMinusT);
 	angles = vec_madd(angles, angle, _mm_setzero_ps());
 	const __m128 sines = sinf4(angles);
-	const __m128 scales = _mm_div_ps(sines, SIMD::Shuffle_xxxx(sines));
-	const __m128 scale0 = _mm_blendv_ps(oneMinusT, SIMD::Shuffle_yyyy(scales), selectMask);
-	const __m128 scale1 = _mm_blendv_ps(tttt, SIMD::Shuffle_zzzz(scales), selectMask);
+	const __m128 scales = _mm_div_ps(sines, SIMD::Shuffle_XXXX(sines));
+	const __m128 scale0 = _mm_blendv_ps(oneMinusT, SIMD::Shuffle_YYYY(scales), selectMask);
+	const __m128 scale1 = _mm_blendv_ps(tttt, SIMD::Shuffle_ZZZZ(scales), selectMask);
 	return vec_madd(start, scale0, _mm_mul_ps(unitQuat1, scale1));
 }
 
@@ -126,8 +126,8 @@ DESIRE_FORCE_INLINE Quat Quat::operator *(const Quat& quat) const
 	const __m128 tmp1 = _mm_shuffle_ps(quat.mVec128, quat.mVec128, _MM_SHUFFLE(3, 1, 0, 2));
 	const __m128 tmp2 = _mm_shuffle_ps(mVec128, mVec128, _MM_SHUFFLE(3, 1, 0, 2));
 	const __m128 tmp3 = _mm_shuffle_ps(quat.mVec128, quat.mVec128, _MM_SHUFFLE(3, 0, 2, 1));
-	__m128 qv = _mm_mul_ps(SIMD::Shuffle_wwww(mVec128), quat.mVec128);
-	qv = vec_madd(SIMD::Shuffle_wwww(quat.mVec128), mVec128, qv);
+	__m128 qv = _mm_mul_ps(SIMD::Shuffle_WWWW(mVec128), quat.mVec128);
+	qv = vec_madd(SIMD::Shuffle_WWWW(quat.mVec128), mVec128, qv);
 	qv = vec_madd(tmp0, tmp1, qv);
 	qv = vec_nmsub(tmp2, tmp3, qv);
 	const __m128 product = _mm_mul_ps(mVec128, quat.mVec128);
