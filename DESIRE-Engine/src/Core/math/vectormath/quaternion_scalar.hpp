@@ -87,17 +87,23 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotationZ(float radians)
 DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
 {
 	const Vector3 halfAngle = radiansXYZ * 0.5f;
-	const float t0 = std::cos(halfAngle.mVec128.z);
-	const float t1 = std::sin(halfAngle.mVec128.z);
-	const float t2 = std::cos(halfAngle.mVec128.x);
-	const float t3 = std::sin(halfAngle.mVec128.x);
-	const float t4 = std::cos(halfAngle.mVec128.y);
-	const float t5 = std::sin(halfAngle.mVec128.y);
+	const float cZ = std::cos(halfAngle.mVec128.z);
+	const float sZ = std::sin(halfAngle.mVec128.z);
+	const float cX = std::cos(halfAngle.mVec128.x);
+	const float sX = std::sin(halfAngle.mVec128.x);
+	const float cY = std::cos(halfAngle.mVec128.y);
+	const float sY = std::sin(halfAngle.mVec128.y);
+
+	const float cYcZ = cY * cZ;
+	const float sYcZ = sY * cZ;
+	const float cYsZ = cY * sZ;
+	const float sYsZ = sY * sZ;
+
 	return Quat(
-		t0 * t3 * t4 - t1 * t2 * t5,
-		t0 * t2 * t5 + t1 * t3 * t4,
-		t1 * t2 * t4 - t0 * t3 * t5,
-		t0 * t2 * t4 + t1 * t3 * t5
+		sX * cYcZ - cX * sYsZ,
+		cX * sYcZ + sX * cYsZ,
+		cX * cYsZ - sX * sYcZ,
+		cX * cYcZ + sX * sYsZ
 	);
 }
 

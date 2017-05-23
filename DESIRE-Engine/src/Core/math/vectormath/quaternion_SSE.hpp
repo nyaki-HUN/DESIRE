@@ -106,17 +106,23 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromEulerAngles(const Vector3& radi
 {
 	__m128 s, c;
 	sincosf4(radiansXYZ * 0.5f, &s, &c);
-	const float t0 = SIMD::GetZ(c);
-	const float t1 = SIMD::GetZ(s);
-	const float t2 = SIMD::GetX(c);
-	const float t3 = SIMD::GetX(s);
-	const float t4 = SIMD::GetY(c);
-	const float t5 = SIMD::GetY(s);
+	const float cZ = SIMD::GetZ(c);
+	const float sZ = SIMD::GetZ(s);
+	const float cX = SIMD::GetX(c);
+	const float sX = SIMD::GetX(s);
+	const float cY = SIMD::GetY(c);
+	const float sY = SIMD::GetY(s);
+
+	const float cYcZ = cY * cZ;
+	const float sYcZ = sY * cZ;
+	const float cYsZ = cY * sZ;
+	const float sYsZ = sY * sZ;
+
 	return Quat(
-		t0 * t3 * t4 - t1 * t2 * t5,
-		t0 * t2 * t5 + t1 * t3 * t4,
-		t1 * t2 * t4 - t0 * t3 * t5,
-		t0 * t2 * t4 + t1 * t3 * t5
+		sX * cYcZ - cX * sYsZ,
+		cX * sYcZ + sX * cYsZ,
+		cX * cYsZ - sX * sYcZ,
+		cX * cYcZ + sX * sYsZ
 	);
 }
 
