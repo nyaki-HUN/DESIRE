@@ -111,17 +111,6 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectBehaviour("Quat", asBEHAVE_FACTORY, "Quat@ f()", asFUNCTION(AngelScriptAPI<Quat>::Factory), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Quat", asBEHAVE_FACTORY, "Quat@ f(const Quat& in)", asFUNCTION(AngelScriptAPI<Quat>::FactoryWithArgs<const Quat&>), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Quat", asBEHAVE_FACTORY, "Quat@ f(float, float, float, float)", asFUNCTION((AngelScriptAPI<Quat>::FactoryWithArgs<float, float, float, float>)), asCALL_CDECL);
-	engine->RegisterObjectBehaviour("Quat", asBEHAVE_FACTORY, "Quat@ f(const Vector3& in, float)", asFUNCTION((AngelScriptAPI<Quat>::FactoryWithArgs<const Vector3&, float>)), asCALL_CDECL);
-	engine->RegisterObjectMethod("Quat", "void SetXYZ(const Vector3& in)", asMETHODPR(Quat, SetXYZ, (const Vector3&), void), asCALL_THISCALL);
-//	Vector3 GetXYZ() const;
-	engine->RegisterObjectMethod("Quat", "void set_x(float)", asMETHODPR(Quat, SetX, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "void set_y(float)", asMETHODPR(Quat, SetY, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "void set_z(float)", asMETHODPR(Quat, SetZ, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "void set_w(float)", asMETHODPR(Quat, SetW, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "float get_x() const", asMETHODPR(Quat, GetX, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "float get_y() const", asMETHODPR(Quat, GetY, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "float get_z() const", asMETHODPR(Quat, GetZ, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "float get_w() const", asMETHODPR(Quat, GetW, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Quat", "void opAssign(const Quat& in)", asFUNCTION(AngelScriptAPI<Quat>::OpAssign<Quat&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "Quat@ opNeg()", asFUNCTION(AngelScriptAPI<Quat>::OpNeg), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "Quat@ opAdd(const Quat& in) const", asFUNCTION(AngelScriptAPI<Quat>::OpAdd<const Quat&>), asCALL_CDECL_OBJFIRST);
@@ -150,6 +139,7 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterGlobalFunction("Quat@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationX>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationY>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationZ>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotationFromEulerAngles(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<const Vector3&, &Quat::CreateRotationFromEulerAngles>)), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 
 	// Matrix3

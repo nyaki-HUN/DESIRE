@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Render/Camera.h"
 #include "Render/Render.h"
+#include "Core/math/math.h"
 
 Camera::Camera()
 {
@@ -59,11 +60,11 @@ Matrix4 Camera::CreateViewMatrix(const Vector3& eyePos, const Vector3& lookAtPos
 	return matView;
 }
 
-Matrix4 Camera::CreatePerspectiveProjectionMatrix(float fovyRadians, float aspect, float zNear, float zFar)
+Matrix4 Camera::CreatePerspectiveProjectionMatrix(float fov, float aspect, float zNear, float zFar)
 {
 	const bool isRenderOGL = Render::IsUsingOpenGL();
 
-	const float yScale = tanf(PI_2 - (fovyRadians * 0.5f));
+	const float yScale = tanf(PI_2 - (Math::DegToRad(fov) * 0.5f));
 	const float xScale = yScale / aspect;
 	const float invFN = 1.0f / (zFar - zNear);
 	return Matrix4(

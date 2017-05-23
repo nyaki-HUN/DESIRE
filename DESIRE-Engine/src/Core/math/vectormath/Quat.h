@@ -15,13 +15,6 @@ public:
 	DESIRE_FORCE_INLINE Quat(vec_float4_t vf4)						: mVec128(vf4) {}
 	DESIRE_FORCE_INLINE Quat(float x, float y, float z, float w)	{ SIMD::Construct(mVec128, x, y, z, w); }
 
-	// Construct a quaternion from a 3-D vector and a scalar
-	DESIRE_FORCE_INLINE Quat(const Vector3& xyz, float w)
-	{
-		mVec128 = xyz;
-		SetW(w);
-	}
-
 	// Convert a rotation matrix to a unit-length quaternion
 	explicit DESIRE_FORCE_INLINE Quat(const Matrix3& rotMat);
 
@@ -35,18 +28,6 @@ public:
 	DESIRE_FORCE_INLINE void StoreXYZW(float *fptr) const
 	{
 		SIMD::StoreXYZW(mVec128, fptr);
-	}
-
-	// Set the x, y, and z elements of a quaternion (does not change the w element)
-	DESIRE_FORCE_INLINE void SetXYZ(const Vector3& vec)
-	{
-		SIMD::SetXYZ(mVec128, vec);
-	}
-
-	// Get the x, y, and z elements of a quaternion
-	DESIRE_FORCE_INLINE Vector3 GetXYZ() const
-	{
-		return mVec128;
 	}
 
 	// Set element
@@ -183,6 +164,9 @@ public:
 
 	// Construct a quaternion to rotate around the z axis
 	static DESIRE_FORCE_INLINE Quat CreateRotationZ(float radians);
+
+	// Construct a quaternion to rotate using Euler angles for each axis
+	static DESIRE_FORCE_INLINE Quat CreateRotationFromEulerAngles(const Vector3& radiansXYZ);
 
 private:
 	vec_float4_t mVec128;

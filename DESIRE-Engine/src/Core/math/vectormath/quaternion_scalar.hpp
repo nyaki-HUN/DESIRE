@@ -55,33 +55,50 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotation(const Vector3& unitVec0, const Vec
 DESIRE_FORCE_INLINE Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 {
 	const float angle = radians * 0.5f;
-	const float s = sinf(angle);
-	const float c = cosf(angle);
+	const float s = std::sin(angle);
+	const float c = std::cos(angle);
 	return Quat((unitVec * s), c);
 }
 
 DESIRE_FORCE_INLINE Quat Quat::CreateRotationX(float radians)
 {
 	const float angle = radians * 0.5f;
-	const float s = sinf(angle);
-	const float c = cosf(angle);
+	const float s = std::sin(angle);
+	const float c = std::cos(angle);
 	return Quat(s, 0.0f, 0.0f, c);
 }
 
 DESIRE_FORCE_INLINE Quat Quat::CreateRotationY(float radians)
 {
 	const float angle = radians * 0.5f;
-	const float s = sinf(angle);
-	const float c = cosf(angle);
+	const float s = std::sin(angle);
+	const float c = std::cos(angle);
 	return Quat(0.0f, s, 0.0f, c);
 }
 
 DESIRE_FORCE_INLINE Quat Quat::CreateRotationZ(float radians)
 {
 	const float angle = radians * 0.5f;
-	const float s = sinf(angle);
-	const float c = cosf(angle);
+	const float s = std::sin(angle);
+	const float c = std::cos(angle);
 	return Quat(0.0f, 0.0f, s, c);
+}
+
+DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
+{
+	const Vector3 halfAngle = radiansXYZ * 0.5f;
+	const float t0 = std::cos(halfAngle.mVec128.z);
+	const float t1 = std::sin(halfAngle.mVec128.z);
+	const float t2 = std::cos(halfAngle.mVec128.x);
+	const float t3 = std::sin(halfAngle.mVec128.x);
+	const float t4 = std::cos(halfAngle.mVec128.y);
+	const float t5 = std::sin(halfAngle.mVec128.y);
+	return Quat(
+		t0 * t3 * t4 - t1 * t2 * t5,
+		t0 * t2 * t5 + t1 * t3 * t4,
+		t1 * t2 * t4 - t0 * t3 * t5,
+		t0 * t2 * t4 + t1 * t3 * t5
+	);
 }
 
 DESIRE_FORCE_INLINE Quat Quat::operator *(const Quat& quat) const

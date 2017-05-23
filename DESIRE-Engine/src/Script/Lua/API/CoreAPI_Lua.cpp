@@ -71,14 +71,7 @@ void RegisterVectormathFunctions_Lua(lua_State *L)
 	// Quat
 	luabridge::getGlobalNamespace(L).beginClass<Quat>("Quat")
 		.addConstructor<void(*)(float, float, float, float)>()
-//		.addConstructor<void(*)(const Vector3&, float)>()
 //		.addConstructor<void(*)(const Matrix3&)>()
-		.addFunction("SetXYZ", &Quat::SetXYZ)
-		.addFunction("GetXYZ", &Quat::GetXYZ)
-		.addProperty("x", &Quat::GetX, &Quat::SetX)
-		.addProperty("y", &Quat::GetY, &Quat::SetY)
-		.addProperty("z", &Quat::GetZ, &Quat::SetZ)
-		.addProperty("w", &Quat::GetW, &Quat::SetW)
 		.addFunction<Quat(Quat::*)() const>("__unm", &Quat::operator -)
 		.addFunction("__add", &Quat::operator +)
 		.addFunction<Quat(Quat::*)(const Quat&) const>("__sub", &Quat::operator -)
@@ -98,6 +91,7 @@ void RegisterVectormathFunctions_Lua(lua_State *L)
 		.addStaticFunction("CreateRotationX", &Quat::CreateRotationX)
 		.addStaticFunction("CreateRotationY", &Quat::CreateRotationY)
 		.addStaticFunction("CreateRotationZ", &Quat::CreateRotationZ)
+		.addStaticFunction("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles)
 		.endClass();
 
 	// Matrix3

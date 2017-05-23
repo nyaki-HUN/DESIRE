@@ -102,6 +102,24 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotationZ(float radians)
 	return _mm_blendv_ps(res, c, mask_w);
 }
 
+DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
+{
+	__m128 s, c;
+	sincosf4(radiansXYZ * 0.5f, &s, &c);
+	const float t0 = SIMD::GetZ(c);
+	const float t1 = SIMD::GetZ(s);
+	const float t2 = SIMD::GetX(c);
+	const float t3 = SIMD::GetX(s);
+	const float t4 = SIMD::GetY(c);
+	const float t5 = SIMD::GetY(s);
+	return Quat(
+		t0 * t3 * t4 - t1 * t2 * t5,
+		t0 * t2 * t5 + t1 * t3 * t4,
+		t1 * t2 * t4 - t0 * t3 * t5,
+		t0 * t2 * t4 + t1 * t3 * t5
+	);
+}
+
 DESIRE_FORCE_INLINE Quat Quat::operator *(const Quat& quat) const
 {
 	const __m128 tmp0 = _mm_shuffle_ps(mVec128, mVec128, _MM_SHUFFLE(3, 0, 2, 1));
