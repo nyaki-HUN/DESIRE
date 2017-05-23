@@ -11,12 +11,14 @@ namespace Math
 int RandInt(int rangeMin, int rangeMax);
 float RandFloat(float rangeMin, float rangeMax);
 
-inline float DegToRad(float deg)
+template<typename T>
+constexpr T DegToRad(T deg)
 {
 	return deg * 0.0174532925f;			// deg * (PI / 180.0f)
 }
 
-inline float RadToDeg(float rad)
+template<typename T>
+constexpr T RadToDeg(T rad)
 {
 	return rad * 57.2957795130f;		// rad * (180.0f / PI)
 }
