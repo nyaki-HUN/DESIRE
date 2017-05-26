@@ -31,19 +31,19 @@ public:
 
 	void Insert(HashedString key, const T& value)
 	{
-		auto it = core::binary_find_or_insert(elements, SKeyValuePair(key, value));
+		auto it = stl_utils::binary_find_or_insert(elements, SKeyValuePair(key, value));
 		ASSERT(it->value == value && "An other value is already added with this key");
 	}
 
 	T* Find(HashedString key)
 	{
-		auto it = core::binary_find(elements, key);
+		auto it = stl_utils::binary_find(elements, key);
 		return (it != elements.end()) ? &it->value : nullptr;
 	}
 
 	const T* Find(HashedString key) const
 	{
-		auto it = core::binary_find(elements, key);
+		auto it = stl_utils::binary_find(elements, key);
 		return (it != elements.end()) ? &it->value : nullptr;
 	}
 

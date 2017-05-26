@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace core
+namespace stl_utils
 {
 
 // Do a binary search on a vector to find an element and return an iterator to it.

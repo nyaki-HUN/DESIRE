@@ -10,7 +10,7 @@ InputMapping::InputMapping()
 
 void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
 {
-	auto it = core::binary_find_or_insert(userActions, userActionId);
+	auto it = stl_utils::binary_find_or_insert(userActions, userActionId);
 	for(SMappedInput& mappedInput : it->mappedButtons)
 	{
 		if(mappedInput.id == buttonId && mappedInput.inputDeviceHandle == inputDevice.handle)
@@ -28,7 +28,7 @@ void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, i
 
 void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int axisId)
 {
-	auto it = core::binary_find_or_insert(userActions, userActionId);
+	auto it = stl_utils::binary_find_or_insert(userActions, userActionId);
 	for(SMappedInput& mappedInput : it->mappedAxes)
 	{
 		if(mappedInput.id == axisId && mappedInput.inputDeviceHandle == inputDevice.handle)
@@ -47,7 +47,7 @@ void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int
 
 bool InputMapping::IsMapped(int userActionId) const
 {
-	auto it = core::binary_find(userActions, userActionId);
+	auto it = stl_utils::binary_find(userActions, userActionId);
 	return (it != userActions.end());
 }
 
@@ -66,7 +66,7 @@ bool InputMapping::IsDown(int userActionId) const
 
 bool InputMapping::WentDown(int userActionId) const
 {
-	auto it = core::binary_find(userActions, userActionId);
+	auto it = stl_utils::binary_find(userActions, userActionId);
 	if(it != userActions.end())
 	{
 		for(const SMappedInput& button : it->mappedButtons)
@@ -86,7 +86,7 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 {
 	uint8_t pressedCount = 0;
 
-	auto it = core::binary_find(userActions, userActionId);
+	auto it = stl_utils::binary_find(userActions, userActionId);
 	if(it != userActions.end())
 	{
 		for(const SMappedInput& button : it->mappedButtons)
@@ -104,7 +104,7 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 
 float InputMapping::GetFloatState(int userActionId) const
 {
-	auto it = core::binary_find(userActions, userActionId);
+	auto it = stl_utils::binary_find(userActions, userActionId);
 	if(it != userActions.end())
 	{
 		for(const SMappedInput& button : it->mappedButtons)
