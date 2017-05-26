@@ -149,10 +149,6 @@ public:
 		return Quat(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
-	// Construct a quaternion to rotate between two unit-length 3-D vectors
-	// NOTE: The result is unpredictable if unitVec0 and unitVec1 point in opposite directions.
-	static DESIRE_FORCE_INLINE Quat CreateRotation(const Vector3& unitVec0, const Vector3& unitVec1);
-
 	// Construct a quaternion to rotate around a unit-length 3-D vector
 	static DESIRE_FORCE_INLINE Quat CreateRotation(float radians, const Vector3& unitVec);
 
@@ -167,6 +163,10 @@ public:
 
 	// Construct a quaternion to rotate using Euler angles for each axis
 	static DESIRE_FORCE_INLINE Quat CreateRotationFromEulerAngles(const Vector3& radiansXYZ);
+
+	// Construct a quaternion to rotate between two unit-length 3-D vectors
+	// NOTE: The result is unpredictable if unitVec0 and unitVec1 point in opposite directions.
+	static DESIRE_FORCE_INLINE Quat CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo);
 
 private:
 	vec_float4_t mVec128;

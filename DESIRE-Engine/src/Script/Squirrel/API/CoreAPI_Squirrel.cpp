@@ -93,12 +93,12 @@ void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 		.StaticFunc("Slerp", &Quat::Slerp)
 		.StaticFunc("Squad", &Quat::Squad)
 		.StaticFunc("Identity", &Quat::Identity)
-//		.StaticFunc<Quat(*)(const Vector3&, const Vector3&)>("CreateRotation", &Quat::CreateRotation)
-		.StaticFunc<Quat(*)(float, const Vector3&)>("CreateRotation", &Quat::CreateRotation)
+		.StaticFunc("CreateRotation", &Quat::CreateRotation)
 		.StaticFunc("CreateRotationX", &Quat::CreateRotationX)
 		.StaticFunc("CreateRotationY", &Quat::CreateRotationY)
 		.StaticFunc("CreateRotationZ", &Quat::CreateRotationZ)
 		.StaticFunc("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles)
+		.StaticFunc("CreateRotationFromTo", &Quat::CreateRotationFromTo)
 	);
 
 	// Matrix3

@@ -18,8 +18,8 @@ DESIRE_FORCE_INLINE Vector3 Quat::RotateVec(const Vector3& vec) const
 DESIRE_FORCE_INLINE Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 {
 	Quat start;
-	float recipSinAngle, scale0, scale1, cosAngle, angle;
-	cosAngle = unitQuat0.Dot(unitQuat1);
+	float scale0, scale1;
+	float cosAngle = unitQuat0.Dot(unitQuat1);
 	if(cosAngle < 0.0f)
 	{
 		cosAngle = -cosAngle;
@@ -29,27 +29,21 @@ DESIRE_FORCE_INLINE Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat&
 	{
 		start = unitQuat0;
 	}
+
 	if(cosAngle < _VECTORMATH_SLERP_TOL)
 	{
-		angle = acosf(cosAngle);
-		recipSinAngle = (1.0f / sinf(angle));
-		scale0 = (sinf(((1.0f - t) * angle)) * recipSinAngle);
-		scale1 = (sinf((t * angle)) * recipSinAngle);
+		const float angle = std::acos(cosAngle);
+		const float recipSinAngle = (1.0f / std::sin(angle));
+		scale0 = (std::sin(((1.0f - t) * angle)) * recipSinAngle);
+		scale1 = (std::sin((t * angle)) * recipSinAngle);
 	}
 	else
 	{
 		scale0 = (1.0f - t);
 		scale1 = t;
 	}
-	return start * scale0 + unitQuat1 * scale1;
-}
 
-DESIRE_FORCE_INLINE Quat Quat::CreateRotation(const Vector3& unitVec0, const Vector3& unitVec1)
-{
-	float cosHalfAngleX2, recipCosHalfAngleX2;
-	cosHalfAngleX2 = sqrtf((2.0f * (1.0f + unitVec0.Dot(unitVec1))));
-	recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);
-	return Quat((unitVec0.Cross(unitVec1) * recipCosHalfAngleX2), (cosHalfAngleX2 * 0.5f));
+	return start * scale0 + unitQuat1 * scale1;
 }
 
 DESIRE_FORCE_INLINE Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
@@ -105,6 +99,13 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromEulerAngles(const Vector3& radi
 		cX * cYsZ - sX * sYcZ,
 		cX * cYcZ + sX * sYsZ
 	);
+}
+
+DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo)
+{
+	const float cosHalfAngleX2 = sqrtf((2.0f * (1.0f + unitVecFrom.Dot(unitVecTo))));
+	const float recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);
+	return Quat((unitVecFrom.Cross(unitVecTo) * recipCosHalfAngleX2), (cosHalfAngleX2 * 0.5f));
 }
 
 DESIRE_FORCE_INLINE Quat Quat::operator *(const Quat& quat) const

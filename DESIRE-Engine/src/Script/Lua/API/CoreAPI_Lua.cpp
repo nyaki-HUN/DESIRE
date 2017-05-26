@@ -86,12 +86,12 @@ void RegisterVectormathFunctions_Lua(lua_State *L)
 		.addStaticFunction("Slerp", &Quat::Slerp)
 		.addStaticFunction("Squad", &Quat::Squad)
 		.addStaticFunction("Identity", &Quat::Identity)
-//		.addStaticFunction<Quat(*)(const Vector3&, const Vector3&)>("CreateRotation", &Quat::CreateRotation)
-		.addStaticFunction<Quat(*)(float, const Vector3&)>("CreateRotation", &Quat::CreateRotation)
+		.addStaticFunction("CreateRotation", &Quat::CreateRotation)
 		.addStaticFunction("CreateRotationX", &Quat::CreateRotationX)
 		.addStaticFunction("CreateRotationY", &Quat::CreateRotationY)
 		.addStaticFunction("CreateRotationZ", &Quat::CreateRotationZ)
 		.addStaticFunction("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles)
+		.addStaticFunction("CreateRotationFromTo", &Quat::CreateRotationFromTo)
 		.endClass();
 
 	// Matrix3

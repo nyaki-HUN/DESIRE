@@ -134,12 +134,12 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterGlobalFunction("Quat@ Slerp(float, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, const Quat&, const Quat&, &Quat::Slerp>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ Squad(float, const Quat& in, const Quat& in, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, const Quat&, const Quat&, const Quat&, const Quat&, &Quat::Squad>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ Identity()", asFUNCTION(AngelScriptGenericAPI<Quat>::Func<&Quat::Identity>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ CreateRotation(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<const Vector3&, const Vector3&, &Quat::CreateRotation>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, const Vector3&, &Quat::CreateRotation>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationX>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationY>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationZ>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ CreateRotationFromEulerAngles(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<const Vector3&, &Quat::CreateRotationFromEulerAngles>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotationFromTo(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<const Vector3&, const Vector3&, &Quat::CreateRotationFromTo>)), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 
 	// Matrix3

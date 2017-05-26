@@ -44,19 +44,6 @@ DESIRE_FORCE_INLINE Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat&
 	return vec_madd(start, scale0, _mm_mul_ps(unitQuat1, scale1));
 }
 
-DESIRE_FORCE_INLINE Quat Quat::CreateRotation(const Vector3& unitVec0, const Vector3& unitVec1)
-{
-	const __m128 cosAngle = SIMD::Dot3(unitVec0, unitVec1);
-	const __m128 cosAngleX2Plus2 = vec_madd(cosAngle, _mm_set1_ps(2.0f), _mm_set1_ps(2.0f));
-	const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
-	const __m128 cosHalfAngleX2 = _mm_mul_ps(recipCosHalfAngleX2, cosAngleX2Plus2);
-	const Vector3 crossVec = unitVec0.Cross(unitVec1);
-	const __m128 res = _mm_mul_ps(crossVec, recipCosHalfAngleX2);
-	alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-	const __m128 mask_w = _mm_load_ps((float*)select_w);
-	return _mm_blendv_ps(res, _mm_mul_ps(cosHalfAngleX2, _mm_set1_ps(0.5f)), mask_w);
-}
-
 DESIRE_FORCE_INLINE Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 {
 	__m128 s, c;
@@ -124,6 +111,19 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromEulerAngles(const Vector3& radi
 		cX * cYsZ - sX * sYcZ,
 		cX * cYcZ + sX * sYsZ
 	);
+}
+
+DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo)
+{
+	const __m128 cosAngle = SIMD::Dot3(unitVecFrom, unitVecTo);
+	const __m128 cosAngleX2Plus2 = vec_madd(cosAngle, _mm_set1_ps(2.0f), _mm_set1_ps(2.0f));
+	const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
+	const __m128 cosHalfAngleX2 = _mm_mul_ps(recipCosHalfAngleX2, cosAngleX2Plus2);
+	const Vector3 crossVec = unitVecFrom.Cross(unitVecTo);
+	const __m128 res = _mm_mul_ps(crossVec, recipCosHalfAngleX2);
+	alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
+	const __m128 mask_w = _mm_load_ps((float*)select_w);
+	return _mm_blendv_ps(res, _mm_mul_ps(cosHalfAngleX2, _mm_set1_ps(0.5f)), mask_w);
 }
 
 DESIRE_FORCE_INLINE Quat Quat::operator *(const Quat& quat) const
