@@ -5,7 +5,7 @@
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/IReadFile.h"
 #include "Input/Input.h"
-#include "Render/Render.h"
+#include "Render/IRender.h"
 #include "UI/ImGuiImpl.h"
 #include "Resource/ResourceManager.h"
 #include "Script/IScriptSystem.h"
@@ -76,7 +76,7 @@ void SandBox::Init(IWindow *mainWindow)
 	Texture *texture = ResourceManager::Get()->LoadTexture("data/meshes/sibenik/mramor6x6.png");
 	if(texture != nullptr)
 	{
-		Render::Get()->Bind(texture);
+		IRender::Get()->Bind(texture);
 	}
 
 	//////////
@@ -122,7 +122,7 @@ void SandBox::Update()
 		LOG_MESSAGE("Fire is down");
 	}
 
-	Render::Get()->BeginFrame(window);
+	IRender::Get()->BeginFrame(window);
 	ImGuiImpl::Get()->NewFrame(window);
 
 	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
@@ -131,5 +131,5 @@ void SandBox::Update()
 	ImGui::End();
 
 	ImGuiImpl::Get()->EndFrame();
-	Render::Get()->EndFrame();
+	IRender::Get()->EndFrame();
 }
