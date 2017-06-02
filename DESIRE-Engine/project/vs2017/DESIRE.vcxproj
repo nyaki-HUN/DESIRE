@@ -245,8 +245,9 @@
     <ClInclude Include="..\..\src\Physics\PhysX\PhysXPhysics.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\DebugDraw.h" />
-    <ClInclude Include="..\..\src\Render\Render.h" />
+    <ClInclude Include="..\..\src\Render\IRender.h" />
     <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h" />
+    <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h" />
     <ClInclude Include="..\..\src\Resource\ErrorTexture.h" />
     <ClInclude Include="..\..\src\Resource\Mesh.h" />
     <ClInclude Include="..\..\src\Resource\MeshLoader\AssimpLoader.h" />
@@ -329,7 +330,8 @@
     <ClCompile Include="..\..\src\Physics\PhysX\PhysXPhysics.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp" />
-    <ClCompile Include="..\..\src\Render\Render.cpp" />
+    <ClCompile Include="..\..\src\Render\IRender.cpp" />
+    <ClCompile Include="..\..\src\Render\bgfx\RenderBgfx.cpp" />
     <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp" />
     <ClCompile Include="..\..\src\Resource\Mesh.cpp" />
     <ClCompile Include="..\..\src\Resource\MeshLoader\AssimpLoader.cpp" />

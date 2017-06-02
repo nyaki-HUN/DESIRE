@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Core/IWindow.h"
-#include "Render/Render.h"
+#include "Render/IRender.h"
 
 IWindow::IWindow(const SCreationParams& creationParams)
 	: isFullscreen(creationParams.isFullscreen)
@@ -38,5 +38,5 @@ void IWindow::SetSize(uint16_t i_width, uint16_t i_height)
 
 	width = i_width;
 	height = i_height;
-	Render::Get()->UpdateRenderWindow(this);
+	IRender::Get()->UpdateRenderWindow(this);
 }

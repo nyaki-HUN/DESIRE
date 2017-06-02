@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Render/Render.h"
+#include "Render/bgfx/RenderBgfx.h"
 #include "Render/bgfx/MeshRenderDataBgfx.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
@@ -9,18 +9,18 @@
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
 
-Render::Render()
+RenderBgfx::RenderBgfx()
 	: initialized(false)
 {
 
 }
 
-Render::~Render()
+RenderBgfx::~RenderBgfx()
 {
 
 }
 
-void Render::Init(IWindow *mainWindow)
+void RenderBgfx::Init(IWindow *mainWindow)
 {
 	bgfx::PlatformData pd = {};
 #if defined(DESIRE_PLATFORM_LINUX)
@@ -34,13 +34,13 @@ void Render::Init(IWindow *mainWindow)
 	bgfx::reset(mainWindow->GetWidth(), mainWindow->GetHeight(), BGFX_RESET_VSYNC);
 }
 
-void Render::Kill()
+void RenderBgfx::Kill()
 {
 	bgfx::shutdown();
 	initialized = false;
 }
 
-void Render::UpdateRenderWindow(IWindow *window)
+void RenderBgfx::UpdateRenderWindow(IWindow *window)
 {
 	if(!initialized)
 	{
@@ -50,7 +50,7 @@ void Render::UpdateRenderWindow(IWindow *window)
 	bgfx::reset(window->GetWidth(), window->GetHeight(), BGFX_RESET_VSYNC);
 }
 
-void Render::BeginFrame(IWindow *window)
+void RenderBgfx::BeginFrame(IWindow *window)
 {
 	bgfx::setViewRect(0, 0, 0, window->GetWidth(), window->GetHeight());
 
@@ -58,12 +58,12 @@ void Render::BeginFrame(IWindow *window)
 	bgfx::touch(0);
 }
 
-void Render::EndFrame()
+void RenderBgfx::EndFrame()
 {
 	bgfx::frame();
 }
 
-void Render::Bind(Mesh *mesh)
+void RenderBgfx::Bind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -88,7 +88,7 @@ void Render::Bind(Mesh *mesh)
 	renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, decl, BGFX_BUFFER_NONE);
 }
 
-void Render::UnBind(Mesh *mesh)
+void RenderBgfx::UnBind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -106,7 +106,7 @@ void Render::UnBind(Mesh *mesh)
 	mesh->renderData = nullptr;
 }
 
-void Render::Bind(Texture *texture)
+void RenderBgfx::Bind(Texture *texture)
 {
 	ASSERT(texture != nullptr);
 
@@ -134,7 +134,7 @@ void Render::Bind(Texture *texture)
 	}
 }
 
-void Render::Unbind(Texture *texture)
+void RenderBgfx::Unbind(Texture *texture)
 {
 	ASSERT(texture != nullptr);
 
@@ -156,22 +156,13 @@ bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const 
 	const char *shadersPath = nullptr;
 	switch(bgfx::getRendererType())
 	{
-		case bgfx::RendererType::Noop:			break;
-		case bgfx::RendererType::Direct3D9:		shadersPath = "data/shaders/dx9/"; break;
 		case bgfx::RendererType::Direct3D11:	shadersPath = "data/shaders/dx11/"; break;
 		case bgfx::RendererType::Direct3D12:	shadersPath = "data/shaders/dx11/"; break;
-		case bgfx::RendererType::Gnm:			shadersPath = "data/shaders/pssl/"; break;
 		case bgfx::RendererType::Metal:			shadersPath = "data/shaders/metal/"; break;
-		case bgfx::RendererType::OpenGLES:		shadersPath = "data/shaders/essl/"; break;
-		case bgfx::RendererType::OpenGL:		shadersPath = "data/shaders/glsl/"; break;
 		case bgfx::RendererType::Vulkan:		shadersPath = "data/shaders/spirv/"; break;
-		case bgfx::RendererType::Count:			ASSERT(false); break;
-	}
-
-	if(shadersPath == nullptr)
-	{
-		ASSERT(false && "Unhandled render type");
-		return bgfx::createProgram(BGFX_INVALID_HANDLE, BGFX_INVALID_HANDLE, false);
+		default:
+			ASSERT(false && "Not supported render type");
+			return bgfx::createProgram(BGFX_INVALID_HANDLE, BGFX_INVALID_HANDLE, false);
 	}
 
 	String filename = String::CreateFormattedString("%s%s.bin", shadersPath, vertexShaderFilename);

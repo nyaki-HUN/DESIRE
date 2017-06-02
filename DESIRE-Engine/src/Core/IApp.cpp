@@ -5,7 +5,7 @@
 #include "Core/Timer.h"
 #include "Input/Input.h"
 #include "Physics/IPhysics.h"
-#include "Render/Render.h"
+#include "Render/IRender.h"
 #include "Script/IScriptSystem.h"
 #include "UI/ImGuiImpl.h"
 
@@ -45,7 +45,7 @@ int IApp::Run(int argc, const char * const *argv)
 
 	SCreationParams params = IApp::Get()->GetCreationParams(argc, argv);
 	IWindow *mainWindow = IWindow::Create(params.windowParams);
-	Render::Get()->Init(mainWindow);
+	IRender::Get()->Init(mainWindow);
 	Input::Init(mainWindow);
 	ImGuiImpl::Get()->Init();
 
@@ -76,7 +76,7 @@ int IApp::Run(int argc, const char * const *argv)
 	// DeInit engine
 	ImGuiImpl::Get()->Kill();
 	Input::Kill();
-	Render::Get()->Kill();
+	IRender::Get()->Kill();
 	delete mainWindow;
 
 	return returnValue;

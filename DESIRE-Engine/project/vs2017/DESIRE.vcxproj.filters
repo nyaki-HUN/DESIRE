@@ -567,10 +567,13 @@
     <ClInclude Include="..\..\src\Render\DebugDraw.h">
       <Filter>src\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\Render.h">
+    <ClInclude Include="..\..\src\Render\IRender.h">
       <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h">
+      <Filter>src\Render\bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h">
       <Filter>src\Render\bgfx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\ErrorTexture.h">
@@ -815,8 +818,11 @@
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\Render.cpp">
+    <ClCompile Include="..\..\src\Render\IRender.cpp">
       <Filter>src\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Render\bgfx\RenderBgfx.cpp">
+      <Filter>src\Render\bgfx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp">
       <Filter>src\Resource</Filter>
