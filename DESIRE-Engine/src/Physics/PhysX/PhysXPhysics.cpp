@@ -60,10 +60,25 @@ PhysXPhysics::PhysXPhysics()
 
 PhysXPhysics::~PhysXPhysics()
 {
-	scene->release();
-	cooking->release();
-	physics->release();
-	foundation->release();
+	if(scene != nullptr)
+	{
+		scene->release();
+	}
+
+	if(cooking != nullptr)
+	{
+		cooking->release();
+	}
+
+	if(physics != nullptr)
+	{
+		physics->release();
+	}
+
+	if(foundation != nullptr)
+	{
+		foundation->release();
+	}
 }
 
 void PhysXPhysics::Update()

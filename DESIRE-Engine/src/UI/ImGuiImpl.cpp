@@ -51,6 +51,7 @@ void ImGuiImpl::Init()
 	// Setup font texture
 	unsigned char *data;
 	int width, height;
+	io.Fonts->AddFontDefault();
 	io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
 
 	fontTexture = bgfx::createTexture2D((uint16_t)width, (uint16_t)height, false, 1, bgfx::TextureFormat::BGRA8, BGFX_TEXTURE_NONE, bgfx::copy(data, width * height * 4u));
