@@ -151,15 +151,6 @@ void Render::Unbind(Texture *texture)
 	texture->renderData = nullptr;
 }
 
-bool Render::IsUsingOpenGL()
-{
-	const bool isOpenGL =
-		bgfx::getRendererType() == bgfx::RendererType::OpenGLES ||
-		bgfx::getRendererType() == bgfx::RendererType::OpenGL;
-
-	return isOpenGL;
-}
-
 bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename)
 {
 	const char *shadersPath = nullptr;

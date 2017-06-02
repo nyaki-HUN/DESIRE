@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Render/Camera.h"
-#include "Render/Render.h"
 #include "Core/math/math.h"
 
 Camera::Camera()
@@ -62,27 +61,23 @@ Matrix4 Camera::CreateViewMatrix(const Vector3& eyePos, const Vector3& lookAtPos
 
 Matrix4 Camera::CreatePerspectiveProjectionMatrix(float fov, float aspect, float zNear, float zFar)
 {
-	const bool isRenderOGL = Render::IsUsingOpenGL();
-
 	const float yScale = tanf(PI_2 - (Math::DegToRad(fov) * 0.5f));
 	const float xScale = yScale / aspect;
 	const float invFN = 1.0f / (zFar - zNear);
 	return Matrix4(
-		Vector4(xScale,	0.0f,	0.0f,													0.0f),
-		Vector4(0.0f,	yScale,	0.0f,													0.0f),
-		Vector4(0.0f,	0.0f,	(isRenderOGL ? (zFar + zNear) : zFar) * invFN,			1.0f),
-		Vector4(0.0f,	0.0f,	(isRenderOGL ? (2.0f * zNear) : -zNear) * zFar * invFN,	0.0f)
+		Vector4(xScale,	0.0f,	0.0f,					0.0f),
+		Vector4(0.0f,	yScale,	0.0f,					0.0f),
+		Vector4(0.0f,	0.0f,	zFar * invFN,			1.0f),
+		Vector4(0.0f,	0.0f,	-zNear * zFar * invFN,	0.0f)
 	);
 }
 
 Matrix4 Camera::CreateOrthographicProjectonMatrix(float width, float height, float zNear, float zFar)
 {
-	const bool isRenderOGL = Render::IsUsingOpenGL();
-
 	return Matrix4(
-		Vector4(2.0f / width,	0.0f,			0.0f,														0.0f),
-		Vector4(0.0f,			-2.0f / height,	0.0f,														0.0f),
-		Vector4(0.0f,			0.0f,			(isRenderOGL ? 2.0f : 1.0f) / (zFar - zNear),				0.0f),
-		Vector4(-1.0f,			1.0f,			(isRenderOGL ? (zNear + zFar) : zNear) / (zNear - zFar),	1.0f)
+		Vector4(2.0f / width,	0.0f,			0.0f,					0.0f),
+		Vector4(0.0f,			-2.0f / height,	0.0f,					0.0f),
+		Vector4(0.0f,			0.0f,			1.0f / (zFar - zNear),	0.0f),
+		Vector4(-1.0f,			1.0f,			zNear / (zNear - zFar),	1.0f)
 	);
 }

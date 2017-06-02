@@ -25,8 +25,6 @@ public:
 	void Bind(Texture *texture);
 	void Unbind(Texture *texture);
 
-	static bool IsUsingOpenGL();
-
 private:
 	bool initialized;
 };
