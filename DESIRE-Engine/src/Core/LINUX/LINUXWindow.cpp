@@ -7,6 +7,11 @@
 LINUXWindow::LINUXWindow(const IWindow::SCreationParams& creationParams)
 	: IWindow(creationParams)
 {
+	for(int i = 0; i < NUM_CURSORS; ++i)
+	{
+		cursors[i] = None;
+	}
+
 	// Create local X Display connection
 	display = XOpenDisplay(nullptr);
 	if(display == nullptr)
@@ -19,7 +24,7 @@ LINUXWindow::~LINUXWindow()
 {
 	if(display != nullptr)
 	{
-		for(uint8_t i = 0; i < NUM_CURSORS; i++)
+		for(int i = 0; i < NUM_CURSORS; ++i)
 		{
 			if(cursors[i] != None)
 			{

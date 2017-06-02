@@ -7,6 +7,11 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 	, hWnd(0)
 	, isInSizeMove(false)
 {
+	for(int i = 0; i < NUM_CURSORS; ++i)
+	{
+		cursors[i] = nullptr;
+	}
+
 	int posX = 0;
 	int posY = 0;
 	bool resizable = true;

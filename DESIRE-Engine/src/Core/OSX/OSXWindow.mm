@@ -4,12 +4,15 @@
 OSXWindow::OSXWindow(const IWindow::SCreationParams& creationParams)
 	: IWindow(creationParams)
 {
-
+	for(int i = 0; i < NUM_CURSORS; ++i)
+	{
+		cursors[i] = nullptr;
+	}
 }
 
 OSXWindow::~OSXWindow()
 {
-	for(uint8_t i = 0; i < NUM_CURSORS; i++)
+	for(int i = 0; i < NUM_CURSORS; ++i)
 	{
 		if(cursors[i] != nullptr)
 		{
