@@ -3,6 +3,8 @@
 #include "Render/bgfx/MeshRenderDataBgfx.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
+#include "Core/fs/FileSystem.h"
+#include "Core/fs/IReadFile.h"
 #include "Resource/Mesh.h"
 #include "Resource/Texture.h"
 
@@ -153,6 +155,9 @@ void RenderBgfx::Unbind(Texture *texture)
 
 bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename)
 {
+	bgfx::ShaderHandle vsh = BGFX_INVALID_HANDLE;
+	bgfx::ShaderHandle fsh = BGFX_INVALID_HANDLE;
+
 	const char *shadersPath = nullptr;
 	switch(bgfx::getRendererType())
 	{
@@ -162,13 +167,22 @@ bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const 
 		case bgfx::RendererType::Vulkan:		shadersPath = "data/shaders/spirv/"; break;
 		default:
 			ASSERT(false && "Not supported render type");
-			return bgfx::createProgram(BGFX_INVALID_HANDLE, BGFX_INVALID_HANDLE, false);
+			return bgfx::createProgram(vsh, fsh, false);
 	}
 
-	String filename = String::CreateFormattedString("%s%s.bin", shadersPath, vertexShaderFilename);
-	bgfx::Memory *content = nullptr;
-	bgfx::ShaderHandle vsh = bgfx::createShader(content);
-	filename = String::CreateFormattedString("%s%s.bin", shadersPath, fragmentShaderFilename);
-	bgfx::ShaderHandle fsh = bgfx::createShader(content);
+	{
+		String filename = String::CreateFormattedString("%s%s.bin", shadersPath, vertexShaderFilename);
+		ReadFilePtr file = FileSystem::Get()->Open(filename.c_str());
+		SMemoryBuffer content = file->ReadFileContent();
+		vsh = bgfx::createShader(bgfx::copy(content.data, (uint32_t)content.size));
+	}
+
+	{
+		String filename = String::CreateFormattedString("%s%s.bin", shadersPath, fragmentShaderFilename);
+		ReadFilePtr file = FileSystem::Get()->Open(filename.c_str());
+		SMemoryBuffer content = file->ReadFileContent();
+		fsh = bgfx::createShader(bgfx::copy(content.data, (uint32_t)content.size));
+	}
+
 	return bgfx::createProgram(vsh, fsh, true);
 }

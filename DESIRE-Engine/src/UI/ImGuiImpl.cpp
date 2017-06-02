@@ -66,21 +66,10 @@ void ImGuiImpl::Init()
 	const bgfx::Memory *fsmem = nullptr;
 	switch(bgfx::getRendererType())
 	{
-		case bgfx::RendererType::Noop:
-			break;
-
-		case bgfx::RendererType::Direct3D9:
-			vsmem = bgfx::makeRef(vs_ocornut_imgui_dx9, sizeof(vs_ocornut_imgui_dx9));
-			fsmem = bgfx::makeRef(fs_ocornut_imgui_dx9, sizeof(fs_ocornut_imgui_dx9));
-			break;
-
 		case bgfx::RendererType::Direct3D11:
 		case bgfx::RendererType::Direct3D12:
 			vsmem = bgfx::makeRef(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
 			fsmem = bgfx::makeRef(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
-			break;
-
-		case bgfx::RendererType::Gnm:
 			break;
 
 		case bgfx::RendererType::Metal:
@@ -88,17 +77,12 @@ void ImGuiImpl::Init()
 			fsmem = bgfx::makeRef(fs_ocornut_imgui_mtl, sizeof(fs_ocornut_imgui_mtl));
 			break;
 
-		case bgfx::RendererType::OpenGLES:
-		case bgfx::RendererType::OpenGL:
-			vsmem = bgfx::makeRef(vs_ocornut_imgui_glsl, sizeof(vs_ocornut_imgui_glsl));
-			fsmem = bgfx::makeRef(fs_ocornut_imgui_glsl, sizeof(fs_ocornut_imgui_glsl));
-
 		case bgfx::RendererType::Vulkan:
 			break;
 
-		case bgfx::RendererType::Count:
+		default:
 			ASSERT(false);
-			break;
+			return;
 	}
 
 	bgfx::ShaderHandle vsh = bgfx::createShader(vsmem);
