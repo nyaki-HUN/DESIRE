@@ -44,7 +44,7 @@ public:
 		return *(&col0 + idx);
 	}
 
-	// Set the row of a 3x3 matrix referred to by the specified index
+	// Set the first row of a 3x3 matrix
 	DESIRE_FORCE_INLINE void SetRow0(const Vector3& vec)
 	{
 		col0.SetX(vec.GetX());
@@ -52,10 +52,22 @@ public:
 		col2.SetX(vec.GetZ());
 	}
 
-	// Get the row of a 3x3 matrix
+	// Get the first row of a 3x3 matrix
 	DESIRE_FORCE_INLINE Vector3 GetRow0() const
 	{
 		return Vector3(col0.GetX(), col1.GetX(), col2.GetX());
+	}
+
+	// Get the second row of a 3x3 matrix
+	DESIRE_FORCE_INLINE Vector3 GetRow1() const
+	{
+		return Vector3(col0.GetY(), col1.GetY(), col2.GetY());
+	}
+
+	// Get the third row of a 3x3 matrix
+	DESIRE_FORCE_INLINE Vector3 GetRow2() const
+	{
+		return Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ());
 	}
 
 	// Assign one 3x3 matrix to another

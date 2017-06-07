@@ -115,7 +115,7 @@ public:
 		return *(&col0 + idx);
 	}
 
-	// Set the row of a 4x4 matrix referred to by the specified index
+	// Set the first row of a 4x4 matrix
 	DESIRE_FORCE_INLINE void SetRow0(const Vector4& vec)
 	{
 		col0.SetX(vec.GetX());
@@ -124,10 +124,28 @@ public:
 		col3.SetX(vec.GetW());
 	}
 
-	// Get the row of a 4x4 matrix
+	// Get the first row of a 4x4 matrix
 	DESIRE_FORCE_INLINE Vector4 GetRow0() const
 	{
 		return Vector4(col0.GetX(), col1.GetX(), col2.GetX(), col3.GetX());
+	}
+
+	// Get the second row of a 4x4 matrix
+	DESIRE_FORCE_INLINE Vector4 GetRow1() const
+	{
+		return Vector4(col0.GetY(), col1.GetY(), col2.GetY(), col3.GetY());
+	}
+
+	// Get the third row of a 4x4 matrix
+	DESIRE_FORCE_INLINE Vector4 GetRow2() const
+	{
+		return Vector4(col0.GetZ(), col1.GetZ(), col2.GetZ(), col3.GetZ());
+	}
+
+	// Get the fourth row of a 4x4 matrix
+	DESIRE_FORCE_INLINE Vector4 GetRow3() const
+	{
+		return Vector4(col0.GetW(), col1.GetW(), col2.GetW(), col3.GetW());
 	}
 
 	// Assign one 4x4 matrix to another
