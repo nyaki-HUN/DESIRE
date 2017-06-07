@@ -3,6 +3,13 @@
 #include "Core/math/math.h"
 
 Camera::Camera()
+	: position(0.0f)
+	, target(0.0f, 0.0, 0.5f)
+	, fov(60.0f)
+	, aspect(16.0f / 9.0f)
+	, zNear(0.1f)
+	, zFar(1000.0f)
+	, flags(ALL_MATRICES_ARE_DIRTY)
 {
 
 }
@@ -10,6 +17,18 @@ Camera::Camera()
 Camera::~Camera()
 {
 
+}
+
+void Camera::SetViewMatrix(const Matrix4& mat)
+{
+	viewMat = mat;
+	flags &= ~VIEW_MATRIX_IS_DIRTY;
+}
+
+void Camera::SetProjectionMatrix(const Matrix4& mat)
+{
+	projMat = mat;
+	flags &= PROJECTION_MATRIX_IS_DIRTY;
 }
 
 const Matrix4& Camera::GetViewMatrix() const
@@ -20,6 +39,71 @@ const Matrix4& Camera::GetViewMatrix() const
 const Matrix4& Camera::GetProjectionMatrix() const
 {
 	return projMat;
+}
+
+void Camera::SetPosition(const Vector3& pos)
+{
+	position = pos;
+	flags |= VIEW_MATRIX_IS_DIRTY;
+}
+
+void Camera::SetTarget(const Vector3& targetPos)
+{
+	target = targetPos;
+	flags |= VIEW_MATRIX_IS_DIRTY;
+}
+
+void Camera::SetFov(float newFov)
+{
+	if(fov != newFov)
+	{
+		fov = newFov;
+		flags |= PROJECTION_MATRIX_IS_DIRTY;
+	}
+}
+
+void Camera::SetAspectRatio(float aspectRatio)
+{
+	if(aspect != aspectRatio)
+	{
+		aspect = aspectRatio;
+		flags |= PROJECTION_MATRIX_IS_DIRTY;
+	}
+}
+
+const Vector3& Camera::GetPosition() const
+{
+	return position;
+}
+
+const Vector3& Camera::GetTarget() const
+{
+	return target;
+}
+
+float Camera::GetFov() const
+{
+	return fov;
+}
+
+float Camera::GetAspectRatio() const
+{
+	return aspect;
+}
+
+void Camera::RecalculateMatrices()
+{
+	if(flags & VIEW_MATRIX_IS_DIRTY)
+	{
+		viewMat = Camera::CreateViewMatrix(position, target);
+	}
+	
+	if(flags & PROJECTION_MATRIX_IS_DIRTY)
+	{
+		projMat = Camera::CreatePerspectiveProjectionMatrix(fov, aspect, zNear, zFar);
+	}
+
+	flags &= ~ALL_MATRICES_ARE_DIRTY;
 }
 
 void Camera::CalculateFrustum(Vector3(&points)[8]) const
@@ -51,7 +135,7 @@ Matrix4 Camera::CreateViewMatrix(const Vector3& eyePos, const Vector3& lookAtPos
 {
 	Vector3 v3Y = upVec;
 	v3Y.Normalize();
-	const Vector3 v3Z = (eyePos - lookAtPos).Normalize();
+	const Vector3 v3Z = (lookAtPos - eyePos).Normalize();
 	const Vector3 v3X = (v3Y.Cross(v3Z)).Normalize();
 	v3Y = v3Z.Cross(v3X);
 	Matrix4 matView = Matrix4(Vector4(v3X), Vector4(v3Y), Vector4(v3Z), Vector4(eyePos));
