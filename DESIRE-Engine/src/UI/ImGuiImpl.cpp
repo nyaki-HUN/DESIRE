@@ -138,23 +138,23 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	}
 
 	// Mouse
-	const std::vector<Mouse>& mouses = Input::Get()->GetMouses();
-	if(!mouses.empty())
+	io.MouseWheel = 0.0f;
+	for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 	{
-		const Mouse& mouse = mouses.back();
-		io.MouseWheel = mouse.GetAxisDelta(Mouse::WHEEL);
+		io.MouseDown[i] = false;
+	}
+
+	for(const Mouse& mouse : Input::Get()->GetMouses())
+	{
+		io.MouseWheel += mouse.GetAxisDelta(Mouse::WHEEL);
 		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 		{
-			io.MouseDown[i] = mouse.IsDown(i);
+			io.MouseDown[i] |= mouse.IsDown(i);
 		}
+	}
 
-		const SPoint<int16_t>& mousePos = Input::Get()->GetOsMouseCursorPos();
-		io.MousePos = ImVec2(mousePos.x, mousePos.y);
-	}
-	else
-	{
-		io.MousePos = ImVec2(-1, -1);
-	}
+	const SPoint<int16_t>& mousePos = Input::Get()->GetOsMouseCursorPos();
+	io.MousePos = ImVec2(mousePos.x, mousePos.y);
 
 	ImGui::NewFrame();
 }
