@@ -48,6 +48,7 @@ public:
 	uint16_t GetWidth() const;
 	uint16_t GetHeight() const;
 	bool IsFullscreen() const;
+	bool IsActive() const;
 
 	virtual void HandleWindowMessages() = 0;
 	virtual void* GetHandle() const = 0;
@@ -72,4 +73,5 @@ protected:
 	uint16_t width;
 	uint16_t height;
 	bool isFullscreen;
+	bool isActive;
 };

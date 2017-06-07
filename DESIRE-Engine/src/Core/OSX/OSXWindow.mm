@@ -77,11 +77,11 @@ bool OSXWindow::SetClipboardString(const char *str)
 {
 	ASSERT(str != nullptr);
 
-    NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
+	NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
 
-    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    [pasteboard declareTypes:types owner:nil];
-    [pasteboard setString:[NSString stringWithUTF8String:str] forType:NSStringPboardType];
+	NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+	[pasteboard declareTypes:types owner:nil];
+	[pasteboard setString:[NSString stringWithUTF8String:str] forType:NSStringPboardType];
 	return true;
 }
 

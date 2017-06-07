@@ -4,6 +4,7 @@
 
 IWindow::IWindow(const SCreationParams& creationParams)
 	: isFullscreen(creationParams.isFullscreen)
+	, isActive(false)
 {
 	width = std::max(WINDOW_MIN_SIZE, creationParams.width);
 	height = std::max(WINDOW_MIN_SIZE, creationParams.height);
@@ -27,6 +28,11 @@ uint16_t IWindow::GetHeight() const
 bool IWindow::IsFullscreen() const
 {
 	return isFullscreen;
+}
+
+bool IWindow::IsActive() const
+{
+	return isActive;
 }
 
 void IWindow::SetSize(uint16_t i_width, uint16_t i_height)

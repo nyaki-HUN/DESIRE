@@ -26,9 +26,6 @@ public:
 	void RegisterMessageHandler(UINT msgType, MessageHandler_t messageHandler);
 
 private:
-	void Activated();
-	void Deactivated();
-
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	HWND hWnd;

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Core/WINDOWS/WINDOWSWindow.h"
 #include "Core/IApp.h"
+#include "Core/EAppEventType.h"
 
 WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 	: IWindow(creationParams)
@@ -190,16 +191,6 @@ void WINDOWSWindow::RegisterMessageHandler(UINT msgType, MessageHandler_t messag
 	additionalMessageHandlers[msgType] = messageHandler;
 }
 
-void WINDOWSWindow::Activated()
-{
-
-}
-
-void WINDOWSWindow::Deactivated()
-{
-
-}
-
 LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	if(msg == WM_CREATE)
@@ -217,10 +208,13 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-	auto it = window->additionalMessageHandlers.find(msg);
-	if(it != window->additionalMessageHandlers.end())
+	if(window->isActive)
 	{
-		it->second(wParam, lParam);
+		auto it = window->additionalMessageHandlers.find(msg);
+		if(it != window->additionalMessageHandlers.end())
+		{
+			it->second(wParam, lParam);
+		}
 	}
 
 	switch(msg)
@@ -248,11 +242,13 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 		case WM_ACTIVATE:			// Sent to both the window being activated and the window being deactivated
 			if(wParam == WA_INACTIVE)
 			{
-				window->Deactivated();
+				window->isActive = false;
+				IApp::Get()->SendEvent(EAppEventType::ENTER_BACKGROUND);
 			}
 			else if(wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE)
 			{
-				window->Activated();
+				window->isActive = true;
+				IApp::Get()->SendEvent(EAppEventType::ENTER_FOREGROUND);
 			}
 			break;
 

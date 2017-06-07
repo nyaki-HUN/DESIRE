@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "LINUXWindow.h"
 #include "Core/IApp.h"
+#include "Core/EAppEventType.h"
 
 #include <X11/cursorfont.h>
 
@@ -49,20 +50,25 @@ void LINUXWindow::HandleWindowMessages()
 	{
 		XNextEvent(display, &event);
 
-		auto it = window->additionalMessageHandlers.find(event.type);
-		if(it != window->additionalMessageHandlers.end())
+		if(window->isActive)
 		{
-			it->second(event);
+			auto it = window->additionalMessageHandlers.find(event.type);
+			if(it != window->additionalMessageHandlers.end())
+			{
+				it->second(event);
+			}
 		}
 
 		switch(event.type)
 		{
 			case FocusIn:
-				window->Activated();
+				window->isActive = true;
+				IApp::Get()->SendEvent(EAppEventType::ENTER_FOREGROUND);
 				break;
 
 			case FocusOut:
-				window->Deactivated();
+				window->isActive = false;
+				IApp::Get()->SendEvent(EAppEventType::ENTER_BACKGROUND);
 				break;
 
 			case VisibilityNotify:
