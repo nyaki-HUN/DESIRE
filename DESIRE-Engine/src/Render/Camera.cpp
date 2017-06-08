@@ -3,15 +3,15 @@
 #include "Core/math/math.h"
 
 Camera::Camera()
-	: position(0.0f)
-	, target(0.0f, 0.0, 0.5f)
+	: position(0.0f, 0.0f, -0.5f)
+	, target(0.0f)
 	, fov(60.0f)
 	, aspect(16.0f / 9.0f)
 	, zNear(0.1f)
 	, zFar(1000.0f)
 	, flags(ALL_MATRICES_ARE_DIRTY)
 {
-
+	viewMat = Matrix4::Identity();
 }
 
 Camera::~Camera()
