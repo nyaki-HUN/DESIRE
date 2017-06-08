@@ -83,8 +83,8 @@ void RenderBgfx::Bind(Mesh *mesh)
 
 	MeshRenderDataBgfx *renderData = new MeshRenderDataBgfx();
 
-	const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices.data(), (uint32_t)mesh->indices.size());
-	const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices.data(), (uint32_t)mesh->vertices.size());
+	const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, (uint32_t)mesh->sizeOfIndices);
+	const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, (uint32_t)mesh->sizeOfVertices);
 
 	renderData->indexBuffer = bgfx::createIndexBuffer(indexData, BGFX_BUFFER_NONE);
 	renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, decl, BGFX_BUFFER_NONE);

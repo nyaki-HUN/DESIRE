@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 class Mesh
 {
 public:
@@ -11,6 +9,8 @@ public:
 	// Render engine specific data set at bind
 	void *renderData;
 
-	std::vector<uint16_t> indices;
-	std::vector<float> vertices;
+	uint16_t *indices;
+	float *vertices;
+	uint32_t sizeOfIndices;
+	uint32_t sizeOfVertices;
 };
