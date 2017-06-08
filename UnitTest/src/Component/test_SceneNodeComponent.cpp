@@ -163,7 +163,7 @@ TEST_CASE("SceneNodeComponent", "[Component]")
 	{
 		static bool Visit(SceneNodeComponent *node)
 		{
-			CHECK((node->GetTransform().GetFlags() & Transform::EFlags::HAS_SCALE) == 0);
+			CHECK((node->GetTransform().GetFlags() & Transform::EFlags::SCALE_CHANGED) == 0);
 			return true;
 		}
 	};
