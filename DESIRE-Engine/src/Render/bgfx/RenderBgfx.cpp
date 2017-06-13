@@ -88,6 +88,8 @@ void RenderBgfx::Bind(Mesh *mesh)
 
 	renderData->indexBuffer = bgfx::createIndexBuffer(indexData, BGFX_BUFFER_NONE);
 	renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, decl, BGFX_BUFFER_NONE);
+
+	mesh->renderData = renderData;
 }
 
 void RenderBgfx::UnBind(Mesh *mesh)
@@ -130,10 +132,8 @@ void RenderBgfx::Bind(Texture *texture)
 	}
 
 	bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 0, format, BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
-	if(bgfx::isValid(handle))
-	{
-		texture->renderData = new bgfx::TextureHandle(handle);
-	}
+
+	texture->renderData = new bgfx::TextureHandle(handle);
 }
 
 void RenderBgfx::Unbind(Texture *texture)
