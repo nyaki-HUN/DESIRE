@@ -2,6 +2,8 @@
 
 #include "Render/IRender.h"
 
+#include "bgfx/bgfx.h"
+
 class RenderBgfx : public IRender
 {
 public:
@@ -21,6 +23,8 @@ public:
 
 	void Bind(Texture *texture) override;
 	void Unbind(Texture *texture) override;
+
+	static bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename);
 
 private:
 	bool initialized;

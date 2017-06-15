@@ -8,7 +8,6 @@
 #include "Resource/Mesh.h"
 #include "Resource/Texture.h"
 
-#include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
 
 RenderBgfx::RenderBgfx()
@@ -153,7 +152,7 @@ void RenderBgfx::Unbind(Texture *texture)
 	texture->renderData = nullptr;
 }
 
-bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename)
+bgfx::ProgramHandle RenderBgfx::CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename)
 {
 	bgfx::ShaderHandle vsh = BGFX_INVALID_HANDLE;
 	bgfx::ShaderHandle fsh = BGFX_INVALID_HANDLE;
