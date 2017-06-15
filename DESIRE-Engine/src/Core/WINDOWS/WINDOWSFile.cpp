@@ -75,21 +75,19 @@ size_t WINDOWSFile::WriteBuffer(const void *buffer, size_t size)
 	return numBytesWritten;
 }
 
-ReadFilePtr FileSystem::OpenNative(const char *filename, ELocation location)
+ReadFilePtr FileSystem::OpenNative(const String& filename)
 {
-	ASSERT(location == ELocation::APP_DIR);
-
-	HANDLE hFile = CreateFileA(filename, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile = CreateFileA(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
-		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename);
+		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename.c_str());
 		return nullptr;
 	}
 
 	FILE_STANDARD_INFO finfo = {};
 	if(GetFileInformationByHandleEx(hFile, FileStandardInfo, &finfo, sizeof(finfo)) == 0)
 	{
-		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to get file size of %s", filename);
+		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to get file size of %s", filename.c_str());
 		CloseHandle(hFile);
 		return nullptr;
 	}
@@ -97,10 +95,8 @@ ReadFilePtr FileSystem::OpenNative(const char *filename, ELocation location)
 	return std::make_unique<WINDOWSFile>(hFile, finfo.EndOfFile.QuadPart);
 }
 
-WriteFilePtr FileSystem::CreateWriteFile(const char *filename, ELocation location)
+WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
 {
-	ASSERT(location == ELocation::APP_DIR);
-
 	HANDLE hFile = CreateFileA(filename, GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
@@ -109,4 +105,25 @@ WriteFilePtr FileSystem::CreateWriteFile(const char *filename, ELocation locatio
 	}
 
 	return std::make_unique<WINDOWSFile>(hFile, 0);
+}
+
+void FileSystem::SetupDirectories()
+{
+	char exePath[DESIRE_MAX_PATH_LEN] = {};
+	const DWORD len = GetModuleFileNameA(NULL, exePath, DESIRE_MAX_PATH_LEN);
+	if(len > 0 && len < DESIRE_MAX_PATH_LEN)
+	{
+		char *slash = std::strrchr(exePath, '\\');
+		if(slash != nullptr)
+		{
+			slash++;
+			*slash = '\0';
+		}
+	}
+	else
+	{
+		exePath[0] = '\0';
+	}
+
+	appDir = exePath;
 }

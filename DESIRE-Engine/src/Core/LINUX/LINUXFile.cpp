@@ -77,21 +77,19 @@ size_t LINUXFile::WriteBuffer(const void *buffer, size_t size)
 	return numBytesWritten;
 }
 
-ReadFilePtr FileSystem::OpenNative(const char *filename, ELocation location)
+ReadFilePtr FileSystem::OpenNative(const String& filename)
 {
-	ASSERT(location == ELocation::APP_DIR);
-
-	int fileDesc = open64(filename, O_RDONLY);
+	int fileDesc = open64(filename.c_str(), O_RDONLY);
 	if(fileDesc == -1)
 	{
-		LOG_ERROR("Failed to open file %s (Error: %d)", filename, errno);
+		LOG_ERROR("Failed to open file %s (Error: %d)", filename.c_str(), errno);
 		return nullptr;
 	}
 
 	stat64 fileStat;
 	if(fstat64(fileDesc, &fileStat) == -1)
 	{
-		LOG_ERROR("Failed to get file size of %s (Error: %d)", filename, errno);
+		LOG_ERROR("Failed to get file size of %s (Error: %d)", filename.c_str(), errno);
 		close(fileDesc);
 		return nullptr;
 	}
@@ -99,10 +97,8 @@ ReadFilePtr FileSystem::OpenNative(const char *filename, ELocation location)
 	return std::make_unique<LINUXFile>(fileDesc, fileStat.st_size);
 }
 
-WriteFilePtr FileSystem::CreateWriteFile(const char *filename, ELocation location)
+WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
 {
-	ASSERT(location == ELocation::APP_DIR);
-
 	// 0644 - RW for owner, R for group and others
 	int fileDesc = creat64(filename, 0644);
 	if(fileDesc == -1)
@@ -112,4 +108,32 @@ WriteFilePtr FileSystem::CreateWriteFile(const char *filename, ELocation locatio
 	}
 
 	return std::make_unique<LINUXFile>(fileDesc, 0);
+}
+
+void FileSystem::SetupDirectories()
+{
+	char exePath[DESIRE_MAX_PATH_LEN] = {};
+
+	// Find the real executable by reading the process symlink
+	char str[DESIRE_MAX_PATH_LEN] = { 0 };
+	snprintf(str, sizeof(str), "/proc/%d/exe", getpid());
+	const int len = readlink(str, exePath, DESIRE_MAX_PATH_LEN - 1);
+	if(len > 0)
+	{
+		// readlink() doesn't null-terminate
+		exePath[len] = '\0';
+
+		char *slash = std::strrchr(exePath, '/');
+		if(slash != nullptr)
+		{
+			slash++;
+			*slash = '\0';
+		}
+	}
+	else
+	{
+		exePath[0] = '\0';
+	}
+
+	appDir = exePath;
 }

@@ -5,7 +5,7 @@
 
 FileSystem::FileSystem()
 {
-
+	SetupDirectories();
 }
 
 FileSystem::~FileSystem()
@@ -26,7 +26,15 @@ ReadFilePtr FileSystem::Open(const char *filename, ELocation location)
 		}
 	}
 
-	return OpenNative(filename, location);
+	String filenameWithPath;
+	switch(location)
+	{
+		case ELocation::APP_DIR:	filenameWithPath = appDir + filename; break;
+		case ELocation::DATA_DIR:	filenameWithPath = dataDir + filename; break;
+		case ELocation::CACHE_DIR:	filenameWithPath = cacheDir + filename; break;
+	}
+
+	return OpenNative(filenameWithPath);
 }
 
 void FileSystem::AddFileSource(IFileSource *fileSource)

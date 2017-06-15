@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Singleton.h"
+#include "Core/String.h"
 #include "Core/fs/FilePtr_fwd.h"
 
 #include <vector>
@@ -40,7 +41,7 @@ public:
 	ReadFilePtr Open(const char *filename, ELocation location = ELocation::APP_DIR);
 	
 	// Creates a file for writing
-	WriteFilePtr CreateWriteFile(const char *filename, ELocation location = ELocation::DATA_DIR);
+	WriteFilePtr CreateWriteFile(const char *filename);
 
 	void AddFileSource(IFileSource *fileSource);
 
@@ -49,7 +50,12 @@ public:
 	bool AddZipFileSource(const char *zipFilename, int fileSourceFlags = 0);
 
 private:
-	ReadFilePtr OpenNative(const char *filename, ELocation location);
+	ReadFilePtr OpenNative(const String& filename);
+	void SetupDirectories();
 
 	std::vector<IFileSource*> fileSources;
+
+	String appDir;
+	String dataDir;
+	String cacheDir;
 };
