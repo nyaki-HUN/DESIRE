@@ -88,7 +88,11 @@ void InputDevice::HandleButton(int buttonId, bool isDown)
 	uint8_t& buttonState = (reinterpret_cast<uint8_t*>(this) + offsetOfButtonStatesInDerivedClass)[buttonId];
 	if(isDown)
 	{
-		buttonState++;
+		if((buttonState & InputDevice::BUTTON_STATE_DOWN_FLAG) == 0)
+		{
+			buttonState++;
+		}
+
 		buttonState |= InputDevice::BUTTON_STATE_DOWN_FLAG;
 	}
 	else
