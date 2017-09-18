@@ -130,4 +130,8 @@ void FileSystem::SetupDirectories()
 	}
 
 	appDir = exePath;
+
+	DESIRE_TODO("Set dataDir and cacheDir properly");
+	dataDir = appDir;
+	cacheDir = appDir;
 }
