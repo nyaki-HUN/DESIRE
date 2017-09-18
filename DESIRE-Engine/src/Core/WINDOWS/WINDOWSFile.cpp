@@ -75,6 +75,10 @@ size_t WINDOWSFile::WriteBuffer(const void *buffer, size_t size)
 	return numBytesWritten;
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+//	FileSystem
+// --------------------------------------------------------------------------------------------------------------------
+
 ReadFilePtr FileSystem::OpenNative(const String& filename)
 {
 	HANDLE hFile = CreateFileA(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);

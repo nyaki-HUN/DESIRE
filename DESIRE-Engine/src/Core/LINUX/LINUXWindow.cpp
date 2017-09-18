@@ -203,7 +203,10 @@ void LINUXWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHa
 	additionalMessageHandlers[msgType] = messageHandler;
 }
 
-// Create implementation
+// --------------------------------------------------------------------------------------------------------------------
+//	IWindow
+// --------------------------------------------------------------------------------------------------------------------
+
 IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
 {
 	return new LINUXWindow(creationParams);

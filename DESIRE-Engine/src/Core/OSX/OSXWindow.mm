@@ -102,7 +102,10 @@ String OSXWindow::GetClipboardString()
 	return str;
 }
 
-// Create implementation
+// --------------------------------------------------------------------------------------------------------------------
+//	IWindow
+// --------------------------------------------------------------------------------------------------------------------
+
 IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
 {
 	return new OSXWindow(creationParams);

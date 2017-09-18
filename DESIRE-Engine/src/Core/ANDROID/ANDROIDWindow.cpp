@@ -142,7 +142,10 @@ void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 	}
 }
 
-// Create implementation
+// --------------------------------------------------------------------------------------------------------------------
+//	IWindow
+// --------------------------------------------------------------------------------------------------------------------
+
 IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
 {
 	DESIRE_TODO("Return global instance");

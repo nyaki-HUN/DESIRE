@@ -39,7 +39,10 @@ String IOSWindow::GetClipboardString()
 	return str;
 }
 
-// Create implementation
+// --------------------------------------------------------------------------------------------------------------------
+//	IWindow
+// --------------------------------------------------------------------------------------------------------------------
+
 IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
 {
 	return new IOSWindow(creationParams);

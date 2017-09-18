@@ -77,6 +77,10 @@ size_t LINUXFile::WriteBuffer(const void *buffer, size_t size)
 	return numBytesWritten;
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+//	FileSystem
+// --------------------------------------------------------------------------------------------------------------------
+
 ReadFilePtr FileSystem::OpenNative(const String& filename)
 {
 	int fileDesc = open64(filename.c_str(), O_RDONLY);

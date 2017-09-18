@@ -307,7 +307,10 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-// Create implementation
+// --------------------------------------------------------------------------------------------------------------------
+//	IWindow
+// --------------------------------------------------------------------------------------------------------------------
+
 IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
 {
 	return new WINDOWSWindow(creationParams);
