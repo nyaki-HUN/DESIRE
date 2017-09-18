@@ -7,6 +7,7 @@ void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable)
 	HSQUIRRELVM vm = rootTable.GetVM();
 
 	// Render
-	DESIRE_UNUSED(vm);
+	rootTable.Bind("IRender", Sqrat::Class<IRender, Sqrat::NoConstructor<IRender>>(vm, "IRender")
+	);
 	rootTable.SetInstance("Render", IRender::Get());
 }
