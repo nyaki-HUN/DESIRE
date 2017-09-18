@@ -34,31 +34,25 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 		{
 			notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(thisPtr->buffer + offset);
 
-			FileSystemWatcher::EAction action = FileSystemWatcher::EAction::NUM;
+			// Convert filename to UTF-8
+			const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), filename, MAX_PATH - 1, nullptr, nullptr);
+			filename[count] = '\0';
+
 			switch(notify->Action)
 			{
 				case FILE_ACTION_ADDED:
 				case FILE_ACTION_RENAMED_NEW_NAME:
-					action = FileSystemWatcher::EAction::ADDED;
+					thisPtr->actionCallback(FileSystemWatcher::EAction::ADDED, filename);
 					break;
 
 				case FILE_ACTION_REMOVED:
 				case FILE_ACTION_RENAMED_OLD_NAME:
-					action = FileSystemWatcher::EAction::DELETED;
+					thisPtr->actionCallback(FileSystemWatcher::EAction::DELETED, filename);
 					break;
 
 				case FILE_ACTION_MODIFIED:
-					action = FileSystemWatcher::EAction::MODIFIED;
+					thisPtr->actionCallback(FileSystemWatcher::EAction::MODIFIED, filename);
 					break;
-			}
-
-			if(action != FileSystemWatcher::EAction::NUM)
-			{
-				// Convert filename to UTF-8
-				const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), filename, MAX_PATH - 1, nullptr, nullptr);
-				filename[count] = '\0';
-
-				thisPtr->actionCallback(action, filename);
 			}
 
 			offset += notify->NextEntryOffset;

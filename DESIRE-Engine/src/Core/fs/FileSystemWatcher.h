@@ -14,8 +14,7 @@ public:
 	{
 		ADDED,
 		DELETED,
-		MODIFIED,
-		NUM
+		MODIFIED
 	};
 
 	~FileSystemWatcher()
