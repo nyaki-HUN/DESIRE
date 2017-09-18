@@ -396,6 +396,9 @@
     <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSFile.h">
       <Filter>src\Core\WINDOWS</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSFileSystemWatcher.h">
+      <Filter>src\Core\WINDOWS</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSLoggerPolicies.h">
       <Filter>src\Core\WINDOWS</Filter>
     </ClInclude>
@@ -729,6 +732,9 @@
       <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSFile.cpp">
+      <Filter>src\Core\WINDOWS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSFileSystemWatcher.cpp">
       <Filter>src\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSLoggerPolicies.cpp">

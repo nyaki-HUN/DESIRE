@@ -3,6 +3,7 @@
 #include "Core/Object.h"
 #include "Core/Log.h"
 #include "Core/fs/FileSystem.h"
+#include "Core/fs/FileSystemWatcher.h"
 #include "Core/fs/IReadFile.h"
 #include "Input/Input.h"
 #include "Render/IRender.h"
@@ -101,6 +102,21 @@ void SandBox::Init(IWindow *mainWindow)
 
 	//////////
 
+	dataDirWatcher = FileSystemWatcher::Create(FileSystem::Get()->GetAppDirectory() + "data", [](FileSystemWatcher::EAction action, const char *filename)
+	{
+		const char *strAction = "";
+		switch(action)
+		{
+			case FileSystemWatcher::EAction::ADDED:		strAction = "added";  break;
+			case FileSystemWatcher::EAction::DELETED:	strAction = "deleted"; break;
+			case FileSystemWatcher::EAction::MODIFIED:	strAction = "modified"; break;
+		}
+		LOG_MESSAGE("%s %s", filename, strAction);
+	});
+
+	//////////
+
+
 	LOG_DEBUG("Init done");
 }
 
@@ -121,6 +137,8 @@ void SandBox::Update()
 	{
 		LOG_MESSAGE("Fire is down");
 	}
+
+	dataDirWatcher->Update();
 
 	IRender::Get()->BeginFrame(window);
 	ImGuiImpl::Get()->NewFrame(window);

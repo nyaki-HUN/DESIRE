@@ -65,3 +65,8 @@ bool FileSystem::AddZipFileSource(const char *zipFilename, int fileSourceFlags)
 
 	return false;
 }
+
+const String& FileSystem::GetAppDirectory()
+{
+	return appDir;
+}

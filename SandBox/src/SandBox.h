@@ -3,7 +3,10 @@
 #include "Core/IApp.h"
 #include "Input/InputMapping.h"
 
+#include <memory>
+
 class Object;
+class FileSystemWatcher;
 
 class SandBox : public IApp
 {
@@ -21,4 +24,6 @@ private:
 	Object *cubeObj;
 
 	InputMapping inputMapping;
+
+	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
 };

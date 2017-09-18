@@ -49,6 +49,8 @@ public:
 	bool AddDirectoryFileSource(const char *dir, int fileSourceFlags = 0);
 	bool AddZipFileSource(const char *zipFilename, int fileSourceFlags = 0);
 
+	const String& GetAppDirectory();
+
 private:
 	ReadFilePtr OpenNative(const String& filename);
 	void SetupDirectories();
