@@ -82,6 +82,7 @@ std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& direc
 
 	if(dirHandle == INVALID_HANDLE_VALUE)
 	{
+		LOG_ERROR("FileSystemWatcher error: directory not found (%s)", directory.c_str());
 		return std::unique_ptr<FileSystemWatcher>(nullptr);
 	}
 
