@@ -29,14 +29,6 @@ RAPIDJSON_DIAG_PUSH
 #ifdef _MSC_VER
 RAPIDJSON_DIAG_OFF(4127) // conditional expression is constant
 RAPIDJSON_DIAG_OFF(4244) // conversion from kXxxFlags to 'uint16_t', possible loss of data
-#ifdef _MINWINDEF_       // see: http://stackoverflow.com/questions/22744262/cant-call-stdmax-because-minwindef-h-defines-max
-#ifndef NOMINMAX
-#pragma push_macro("min")
-#pragma push_macro("max")
-#undef min
-#undef max
-#endif
-#endif
 #endif
 
 #ifdef __clang__
@@ -613,7 +605,7 @@ public:
             kNullFlag, kFalseFlag, kTrueFlag, kObjectFlag, kArrayFlag, kShortStringFlag,
             kNumberAnyFlag
         };
-        RAPIDJSON_ASSERT(type <= kNumberType);
+        RAPIDJSON_ASSERT(type >= kNullType && type <= kNumberType);
         data_.f.flags = defaultFlags[type];
 
         // Use ShortString to store empty string.
@@ -1018,14 +1010,14 @@ public:
             uint64_t u = GetUint64();
             volatile double d = static_cast<double>(u);
             return (d >= 0.0)
-                && (d < static_cast<double>(std::numeric_limits<uint64_t>::max()))
+                && (d < static_cast<double>((std::numeric_limits<uint64_t>::max)()))
                 && (u == static_cast<uint64_t>(d));
         }
         if (IsInt64()) {
             int64_t i = GetInt64();
             volatile double d = static_cast<double>(i);
-            return (d >= static_cast<double>(std::numeric_limits<int64_t>::min()))
-                && (d < static_cast<double>(std::numeric_limits<int64_t>::max()))
+            return (d >= static_cast<double>((std::numeric_limits<int64_t>::min)()))
+                && (d < static_cast<double>((std::numeric_limits<int64_t>::max)()))
                 && (i == static_cast<int64_t>(d));
         }
         return true; // double, int, uint are always lossless
@@ -1042,8 +1034,8 @@ public:
     bool IsLosslessFloat() const {
         if (!IsNumber()) return false;
         double a = GetDouble();
-        if (a < static_cast<double>(-std::numeric_limits<float>::max())
-                || a > static_cast<double>(std::numeric_limits<float>::max()))
+        if (a < static_cast<double>(-(std::numeric_limits<float>::max)())
+                || a > static_cast<double>((std::numeric_limits<float>::max)()))
             return false;
         double b = static_cast<double>(static_cast<float>(a));
         return a >= b && a <= b;    // Prevent -Wfloat-equal
@@ -2183,6 +2175,10 @@ public:
         return *this;
     }
 
+    // Allow Swap with ValueType.
+    // Refer to Effective C++ 3rd Edition/Item 33: Avoid hiding inherited names.
+    using ValueType::Swap;
+
     //! free-standing swap function helper
     /*!
         Helper function to enable support for common swap implementation pattern based on \c std::swap:
@@ -2612,12 +2608,6 @@ private:
 };
 
 RAPIDJSON_NAMESPACE_END
-#ifdef _MINWINDEF_       // see: http://stackoverflow.com/questions/22744262/cant-call-stdmax-because-minwindef-h-defines-max
-#ifndef NOMINMAX
-#pragma pop_macro("min")
-#pragma pop_macro("max")
-#endif
-#endif
 RAPIDJSON_DIAG_POP
 
 #endif // RAPIDJSON_DOCUMENT_H_
