@@ -15,7 +15,6 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 
 	int posX = 0;
 	int posY = 0;
-	bool resizable = true;
 	DWORD windowStyleFlags = 0;
 	RECT rect = { 0, 0, width, height };
 	if(isFullscreen)
@@ -24,6 +23,7 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 	}
 	else
 	{
+		bool resizable = true;
 		if(resizable)
 		{
 			windowStyleFlags = WS_OVERLAPPEDWINDOW;
