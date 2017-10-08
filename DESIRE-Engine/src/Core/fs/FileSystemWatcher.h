@@ -19,7 +19,7 @@ public:
 
 	~FileSystemWatcher()
 	{
-		Destroy();
+		OnDestroy();
 	}
 
 	static std::unique_ptr<FileSystemWatcher> Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const char *filename)> actionCallback);
@@ -27,7 +27,7 @@ public:
 	void Update();
 
 protected:
-	void Destroy();
+	void OnDestroy();
 
 	String dirName;
 	std::function<void(FileSystemWatcher::EAction action, const char *filename)> actionCallback;

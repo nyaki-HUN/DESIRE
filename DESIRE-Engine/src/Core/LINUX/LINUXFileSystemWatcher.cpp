@@ -2,6 +2,7 @@
 #include "Core/LINUX/LINUXFileSystemWatcher.h"
 
 #include <sys/inotify.h>
+#include <unistd.h>
 #include <errno.h>
 
 int LINUXFileSystemWatcher::inotifyFD = -1;
@@ -59,9 +60,9 @@ void FileSystemWatcher::Update()
 	{
 		char buffer[1024 * (sizeof(inotify_event) + FILENAME_MAX)] = {};
 
-		ssize_t numRead = read(inotifyFD, buff, BUFF_SIZE);
+		const ssize_t numRead = read(inotifyFD, buff, BUFF_SIZE);
 		ssize_t offset = 0;
-		while(i < len)
+		while(offset < numRead)
 		{
 			inotify_event *event = reinterpret_cast<inotify_event*>(buffer + offset);
 
@@ -88,7 +89,7 @@ void FileSystemWatcher::Update()
 	}
 }
 
-void FileSystemWatcher::Destroy()
+void FileSystemWatcher::OnDestroy()
 {
 	LINUXFileSystemWatcher *watcher = static_cast<LINUXFileSystemWatcher*>(this);
 

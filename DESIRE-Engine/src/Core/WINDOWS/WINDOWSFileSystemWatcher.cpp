@@ -103,7 +103,7 @@ void FileSystemWatcher::Update()
 	MsgWaitForMultipleObjectsEx(0, NULL, 0, QS_ALLINPUT, MWMO_ALERTABLE);
 }
 
-void FileSystemWatcher::Destroy()
+void FileSystemWatcher::OnDestroy()
 {
 	WINDOWSFileSystemWatcher *watcher = static_cast<WINDOWSFileSystemWatcher*>(this);
 
