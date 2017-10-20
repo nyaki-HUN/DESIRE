@@ -246,6 +246,8 @@
     <ClInclude Include="..\..\src\Physics\PhysX\PhysXPhysics.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\DebugDraw.h" />
+    <ClInclude Include="..\..\src\Render\Direct3D11\MeshRenderDataD3D11.h" />
+    <ClInclude Include="..\..\src\Render\Direct3D11\RenderD3D11.h" />
     <ClInclude Include="..\..\src\Render\IRender.h" />
     <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h" />
@@ -332,6 +334,7 @@
     <ClCompile Include="..\..\src\Physics\PhysX\PhysXPhysics.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp" />
+    <ClCompile Include="..\..\src\Render\Direct3D11\RenderD3D11.cpp" />
     <ClCompile Include="..\..\src\Render\IRender.cpp" />
     <ClCompile Include="..\..\src\Render\bgfx\RenderBgfx.cpp" />
     <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp" />
