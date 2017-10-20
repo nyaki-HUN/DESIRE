@@ -7,4 +7,6 @@ class MeshRenderDataBgfx
 public:
 	bgfx::IndexBufferHandle indexBuffer;
 	bgfx::VertexBufferHandle vertexBuffer;
+
+	bgfx::VertexDecl vertexDecl;
 };

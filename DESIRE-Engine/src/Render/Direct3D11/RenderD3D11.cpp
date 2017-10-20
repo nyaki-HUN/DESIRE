@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Render/Direct3D11/RenderD3D11.h"
 #include "Render/Direct3D11/MeshRenderDataD3D11.h"
+#include "Render/Direct3D11/TextureRenderDataD3D11.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
 #include "Core/fs/FileSystem.h"
@@ -52,20 +53,20 @@ void RenderD3D11::Init(IWindow *mainWindow)
 		&swapChain,
 		&d3dDevice,
 		NULL,
-		&immediateContext);
+		&deviceCtx);
 
 	initialized = SUCCEEDED(hr);
 
-	immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	// Create a back buffer render target, get a view on it to clear it later
 	ID3D11Texture2D *pBackBuffer = nullptr;
 	hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&pBackBuffer);
 
 	hr = d3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &renderTargetView);
-	immediateContext->OMSetRenderTargets(1, &renderTargetView, NULL);
+	deviceCtx->OMSetRenderTargets(1, &renderTargetView, NULL);
 
-	UpdateRenderWindow(mainWindow);
+	SetViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
 }
 
 void RenderD3D11::Kill()
@@ -80,15 +81,16 @@ void RenderD3D11::UpdateRenderWindow(IWindow *window)
 		return;
 	}
 
-	const D3D11_VIEWPORT vp = { 0.0f, 0.0f, (float)window->GetWidth(), (float)window->GetHeight(), 0, 1 };
-	immediateContext->RSSetViewports(1, &vp);
+	swapChain->ResizeBuffers(0, window->GetWidth(), window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+
+	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
 }
 
 void RenderD3D11::BeginFrame(IWindow *window)
 {
 	DESIRE_UNUSED(window);
 
-	immediateContext->ClearRenderTargetView(renderTargetView, clearColor);
+	deviceCtx->ClearRenderTargetView(renderTargetView, clearColor);
 }
 
 void RenderD3D11::EndFrame()
@@ -108,9 +110,22 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	MeshRenderDataD3D11 *renderData = new MeshRenderDataD3D11();
 
-//	HRESULT hr;
-//	hr = d3dDevice->CreateBuffer(&bufferDesc, &initData, &renderData->indexBuffer);
-//	hr = d3dDevice->CreateBuffer(&bufferDesc, &initData, &renderData->vertexBuffer);
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.ByteWidth = mesh->sizeOfIndices * sizeof(uint16_t);
+	indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, NULL, &renderData->indexBuffer);
+
+	uint32_t byteSizeOfVertex = 2 * sizeof(float) + 2 * sizeof(float) + 4 * sizeof(uint8_t);
+
+	D3D11_BUFFER_DESC vertexBufferDesc = {};
+	vertexBufferDesc.ByteWidth = mesh->sizeOfVertices * byteSizeOfVertex;
+	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	vertexBufferDesc.MiscFlags = 0;
+	hr = d3dDevice->CreateBuffer(&vertexBufferDesc, NULL, &renderData->vertexBuffer);
 
 	mesh->renderData = renderData;
 }
@@ -149,7 +164,82 @@ void RenderD3D11::Bind(Texture *texture)
 		return;
 	}
 
-//	texture->renderData = ;
+	TextureRenderDataD3D11 *renderData = new TextureRenderDataD3D11();
+
+	uint8_t bitsPerPixel = 0;
+	DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+	switch(texture->format)
+	{
+		case Texture::EFormat::UNKNOWN:
+			bitsPerPixel = 0;
+			format = DXGI_FORMAT_UNKNOWN;
+			break;
+
+		case Texture::EFormat::R8:
+			bitsPerPixel = 8;
+			format = DXGI_FORMAT_R8_UNORM;
+			break;
+
+		case Texture::EFormat::RG8:
+			bitsPerPixel = 16;
+			format = DXGI_FORMAT_R8G8_UNORM;
+			break;
+
+		case Texture::EFormat::RGB8:
+			bitsPerPixel = 24;
+			format = DXGI_FORMAT_UNKNOWN;
+			break;
+
+		case Texture::EFormat::RGBA8:
+			bitsPerPixel = 32;
+			format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			break;
+
+		case Texture::EFormat::RGBA32F:
+			bitsPerPixel = 128;
+			format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			break;
+	}
+
+	D3D11_SUBRESOURCE_DATA subResourceData;
+	subResourceData.pSysMem = texture->data.data;
+	subResourceData.SysMemPitch = texture->width * bitsPerPixel / 8;
+	subResourceData.SysMemSlicePitch = 0;
+
+	D3D11_TEXTURE2D_DESC desc = {};
+	desc.Width = texture->width;
+	desc.Height = texture->height;
+	desc.MipLevels = texture->numMipMaps + 1;
+	desc.ArraySize = 1;
+	desc.Format = format;
+	desc.SampleDesc.Count = 1;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+//	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+	ID3D11Texture2D *d3dTexture2D = nullptr;
+	d3dDevice->CreateTexture2D(&desc, &subResourceData, &d3dTexture2D);
+
+	// Create texture view
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = desc.MipLevels;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	d3dDevice->CreateShaderResourceView(d3dTexture2D, &srvDesc, &renderData->textureSRV);
+	
+	d3dTexture2D->Release();
+
+	// Create texture sampler
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	d3dDevice->CreateSamplerState(&samplerDesc, &renderData->samplerState);
+
+	texture->renderData = renderData;
 }
 
 void RenderD3D11::Unbind(Texture *texture)
@@ -162,7 +252,11 @@ void RenderD3D11::Unbind(Texture *texture)
 		return;
 	}
 
-//	delete renderData;
+	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
+	renderData->textureSRV->Release();
+	renderData->samplerState->Release();
+
+	delete renderData;
 	texture->renderData = nullptr;
 }
 
@@ -173,4 +267,23 @@ void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)
 		Bind(texture);
 	}
 
+	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
+
+	deviceCtx->VSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
+	deviceCtx->VSSetSamplers(samplerIdx, 1, &renderData->samplerState);
+
+	deviceCtx->PSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
+	deviceCtx->PSSetSamplers(samplerIdx, 1, &renderData->samplerState);
+}
+
+void RenderD3D11::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
+	deviceCtx->RSSetViewports(1, &vp);
+}
+
+void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	const D3D11_RECT rect = { x, y, x + width, y + height };
+	deviceCtx->RSSetScissorRects(1, &rect);
 }

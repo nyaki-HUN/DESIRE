@@ -25,11 +25,14 @@ public:
 	void Unbind(Texture *texture) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
+	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
+	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
+
 private:
 	ID3D11Device *d3dDevice;
 	IDXGISwapChain *swapChain;
 	ID3D11RenderTargetView *renderTargetView;
-	ID3D11DeviceContext *immediateContext;
+	ID3D11DeviceContext *deviceCtx;
 
 	float clearColor[4];
 

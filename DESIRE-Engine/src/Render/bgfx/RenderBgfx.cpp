@@ -33,7 +33,7 @@ void RenderBgfx::Init(IWindow *mainWindow)
 	pd.nwh = mainWindow->GetHandle();
 	bgfx::setPlatformData(pd);
 
-	initialized = bgfx::init(bgfx::RendererType::Count);
+	initialized = bgfx::init(bgfx::RendererType::Count, BGFX_PCI_ID_NONE);
 	bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
 
 	for(size_t i = 0; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
@@ -89,20 +89,19 @@ void RenderBgfx::Bind(Mesh *mesh)
 		return;
 	}
 
-	bgfx::VertexDecl decl;
-	decl.begin()
+	MeshRenderDataBgfx *renderData = new MeshRenderDataBgfx();
+
+	renderData->vertexDecl.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
 		.end();
 
-	MeshRenderDataBgfx *renderData = new MeshRenderDataBgfx();
-
 	const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, (uint32_t)mesh->sizeOfIndices);
 	const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, (uint32_t)mesh->sizeOfVertices);
 
 	renderData->indexBuffer = bgfx::createIndexBuffer(indexData, BGFX_BUFFER_NONE);
-	renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, decl, BGFX_BUFFER_NONE);
+	renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
 
 	mesh->renderData = renderData;
 }
@@ -177,6 +176,17 @@ void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
 
 	bgfx::TextureHandle *renderData = static_cast<bgfx::TextureHandle*>(texture->renderData);
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);
+}
+
+void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	const uint8_t viewId = 0;
+	bgfx::setViewRect(viewId, x, y, width, height);
+}
+
+void RenderBgfx::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	bgfx::setScissor(x, y, width, height);
 }
 
 bgfx::ProgramHandle RenderBgfx::CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename)

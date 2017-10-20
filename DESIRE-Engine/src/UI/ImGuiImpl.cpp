@@ -187,19 +187,17 @@ void ImGuiImpl::Render(ImDrawData *data)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	IRender *render = IRender::Get();
-	const uint8_t viewId = 0;
 
-	const float width = io.DisplaySize.x;
-	const float height = io.DisplaySize.y;
-	bgfx::setViewRect(viewId, 0, 0, (uint16_t)width, (uint16_t)height);
+	render->SetViewport(0, 0, (uint16_t)io.DisplaySize.x, (uint16_t)io.DisplaySize.y);
 
 	float ortho[16];
-	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(width, height, -1.0f, 1.0f);
+	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(io.DisplaySize.x, io.DisplaySize.y, -1.0f, 1.0f);
 	matOrtho.col0.StoreXYZW(&ortho[0]);
 	matOrtho.col1.StoreXYZW(&ortho[4]);
 	matOrtho.col2.StoreXYZW(&ortho[8]);
 	matOrtho.col3.StoreXYZW(&ortho[12]);
 
+	const uint8_t viewId = 0;
 	bgfx::setViewTransform(viewId, nullptr, ortho);
 
 	for(int i = 0; i < data->CmdListsCount; ++i)
@@ -248,7 +246,7 @@ void ImGuiImpl::Render(ImDrawData *data)
 
 			const uint16_t clipX = (uint16_t)std::fmax(pcmd.ClipRect.x, 0.0f);
 			const uint16_t clipY = (uint16_t)std::fmax(pcmd.ClipRect.y, 0.0f);
-			bgfx::setScissor(clipX, clipY, (uint16_t)(pcmd.ClipRect.z - clipX), (uint16_t)(pcmd.ClipRect.w - clipY));
+			render->SetScissor(clipX, clipY, (uint16_t)(pcmd.ClipRect.z - clipX), (uint16_t)(pcmd.ClipRect.w - clipY));
 
 			bgfx::setIndexBuffer(&tib, indexOffset, pcmd.ElemCount);
 			bgfx::setVertexBuffer(&tvb, 0, numVertices);

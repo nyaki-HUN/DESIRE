@@ -25,6 +25,9 @@ public:
 	void Unbind(Texture *texture) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
+	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
+	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
+
 	static bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename);
 
 private:
