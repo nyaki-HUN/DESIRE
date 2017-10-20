@@ -43,6 +43,13 @@ struct SMemoryBuffer
 		return *this;
 	}
 
+	static SMemoryBuffer CreateFromDataCopy(void *dataToCopy, size_t size)
+	{
+		SMemoryBuffer buffer(size);
+		memcpy(buffer.data, dataToCopy, size);
+		return buffer;
+	}
+
 private:
 	// Prevent copy
 	SMemoryBuffer(const SMemoryBuffer& other) = delete;
