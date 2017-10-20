@@ -3,9 +3,10 @@
 #include "Core/Singleton.h"
 
 #include "UI-imgui/include/imgui.h"
-#include "bgfx/bgfx.h"
+#include <memory>
 
 class IWindow;
+class Texture;
 
 class ImGuiImpl
 {
@@ -23,8 +24,5 @@ private:
 
 	static void RenderDrawListsCallback(ImDrawData *data);
 
-	bgfx::VertexDecl m_decl;
-	bgfx::TextureHandle fontTexture;
-	bgfx::ProgramHandle shaderProgram;
-	bgfx::UniformHandle s_tex;
+	std::unique_ptr<Texture> fontTexture;
 };

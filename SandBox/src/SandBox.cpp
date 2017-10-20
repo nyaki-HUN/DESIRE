@@ -143,7 +143,7 @@ void SandBox::Update()
 	IRender::Get()->BeginFrame(window);
 	ImGuiImpl::Get()->NewFrame(window);
 
-	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiSetCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Another Window");
 	ImGui::Text("Hello");
 	ImGui::End();

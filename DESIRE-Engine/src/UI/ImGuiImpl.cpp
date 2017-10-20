@@ -7,8 +7,14 @@
 #include "Core/Timer.h"
 #include "Input/Input.h"
 #include "Render/Camera.h"
+#include "Render/IRender.h"
+#include "Resource/Texture.h"
 
 #include "UI-imgui/include/imgui.h"
+
+/**/#include "bgfx/bgfx.h"
+/**/bgfx::VertexDecl m_decl;
+/**/bgfx::ProgramHandle imguiShaderProgram;
 
 ImGuiImpl::ImGuiImpl()
 {
@@ -49,13 +55,14 @@ void ImGuiImpl::Init()
 	io.RenderDrawListsFn = ImGuiImpl::RenderDrawListsCallback;
 
 	// Setup font texture
-	unsigned char *data;
+	unsigned char *textureData;
 	int width, height;
 	io.Fonts->AddFontDefault();
-	io.Fonts->GetTexDataAsRGBA32(&data, &width, &height);
+	io.Fonts->GetTexDataAsRGBA32(&textureData, &width, &height);
 
-	fontTexture = bgfx::createTexture2D((uint16_t)width, (uint16_t)height, false, 1, bgfx::TextureFormat::BGRA8, BGFX_TEXTURE_NONE, bgfx::copy(data, width * height * 4u));
-	io.Fonts->TexID = &fontTexture;
+	fontTexture = std::make_unique<Texture>((uint16_t)width, (uint16_t)height, Texture::EFormat::RGBA8);
+	fontTexture->data = SMemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
+	io.Fonts->TexID = fontTexture.get();
 
 	// Cleanup (don't clear the input data if you want to append new fonts later)
 	io.Fonts->ClearInputData();
@@ -87,24 +94,23 @@ void ImGuiImpl::Init()
 
 	bgfx::ShaderHandle vsh = bgfx::createShader(vsmem);
 	bgfx::ShaderHandle fsh = bgfx::createShader(fsmem);
-	shaderProgram = bgfx::createProgram(vsh, fsh, true);
+	imguiShaderProgram = bgfx::createProgram(vsh, fsh, true);
 
 	m_decl.begin()
 		.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
 		.end();
-
-	s_tex = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
 }
 
 void ImGuiImpl::Kill()
 {
 	ImGui::Shutdown();
 
-	bgfx::destroyUniform(s_tex);
-	bgfx::destroyProgram(shaderProgram);
-	bgfx::destroyTexture(fontTexture);
+	bgfx::destroyProgram(imguiShaderProgram);
+
+	IRender::Get()->Unbind(fontTexture.get());
+	fontTexture = nullptr;
 }
 
 void ImGuiImpl::NewFrame(IWindow *window)
@@ -180,10 +186,12 @@ void ImGuiImpl::EndFrame()
 void ImGuiImpl::Render(ImDrawData *data)
 {
 	ImGuiIO& io = ImGui::GetIO();
-	uint8_t viewId = 0;
+	IRender *render = IRender::Get();
+	const uint8_t viewId = 0;
 
 	const float width = io.DisplaySize.x;
 	const float height = io.DisplaySize.y;
+	bgfx::setViewRect(viewId, 0, 0, (uint16_t)width, (uint16_t)height);
 
 	float ortho[16];
 	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(width, height, -1.0f, 1.0f);
@@ -238,14 +246,14 @@ void ImGuiImpl::Render(ImDrawData *data)
 				| BGFX_STATE_MSAA
 			);
 
-			const uint16_t clipX = (uint16_t)fmaxf(pcmd.ClipRect.x, 0.0f);
-			const uint16_t clipY = (uint16_t)fmaxf(pcmd.ClipRect.y, 0.0f);
+			const uint16_t clipX = (uint16_t)std::fmax(pcmd.ClipRect.x, 0.0f);
+			const uint16_t clipY = (uint16_t)std::fmax(pcmd.ClipRect.y, 0.0f);
 			bgfx::setScissor(clipX, clipY, (uint16_t)(pcmd.ClipRect.z - clipX), (uint16_t)(pcmd.ClipRect.w - clipY));
 
 			bgfx::setIndexBuffer(&tib, indexOffset, pcmd.ElemCount);
 			bgfx::setVertexBuffer(&tvb, 0, numVertices);
-			bgfx::setTexture(0, s_tex, *(bgfx::TextureHandle*)pcmd.TextureId);
-			bgfx::submit(viewId, shaderProgram);
+			render->SetTexture(0, static_cast<Texture*>(pcmd.TextureId));
+			bgfx::submit(viewId, imguiShaderProgram);
 
 			indexOffset += pcmd.ElemCount;
 		}
