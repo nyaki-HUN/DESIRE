@@ -19,13 +19,16 @@ public:
 	void EndFrame() override;
 
 	void Bind(Mesh *mesh) override;
-	void UnBind(Mesh *mesh) override;
+	void Unbind(Mesh *mesh) override;
 
 	void Bind(Texture *texture) override;
 	void Unbind(Texture *texture) override;
+	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
 	static bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename);
 
 private:
 	bool initialized;
+
+	bgfx::UniformHandle samplerUniforms[8];
 };

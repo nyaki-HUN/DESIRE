@@ -13,7 +13,10 @@
 RenderBgfx::RenderBgfx()
 	: initialized(false)
 {
-
+	for(bgfx::UniformHandle& uniform : samplerUniforms)
+	{
+		uniform = BGFX_INVALID_HANDLE;
+	}
 }
 
 RenderBgfx::~RenderBgfx()
@@ -33,11 +36,22 @@ void RenderBgfx::Init(IWindow *mainWindow)
 	initialized = bgfx::init(bgfx::RendererType::Count);
 	bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
 
+	for(size_t i = 0; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
+	{
+		samplerUniforms[i] = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
+	}
+
 	UpdateRenderWindow(mainWindow);
 }
 
 void RenderBgfx::Kill()
 {
+	for(bgfx::UniformHandle& uniform : samplerUniforms)
+	{
+		bgfx::destroyUniform(uniform);
+		uniform = BGFX_INVALID_HANDLE;
+	}
+
 	bgfx::shutdown();
 	initialized = false;
 }
@@ -93,7 +107,7 @@ void RenderBgfx::Bind(Mesh *mesh)
 	mesh->renderData = renderData;
 }
 
-void RenderBgfx::UnBind(Mesh *mesh)
+void RenderBgfx::Unbind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -132,7 +146,7 @@ void RenderBgfx::Bind(Texture *texture)
 		case Texture::EFormat::RGBA32F:		format = bgfx::TextureFormat::RGBA32F; break;
 	}
 
-	bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 0, format, BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+	bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, format, BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
 
 	texture->renderData = new bgfx::TextureHandle(handle);
 }
@@ -152,6 +166,17 @@ void RenderBgfx::Unbind(Texture *texture)
 
 	delete renderData;
 	texture->renderData = nullptr;
+}
+
+void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
+{
+	if(texture->renderData == nullptr)
+	{
+		Bind(texture);
+	}
+
+	bgfx::TextureHandle *renderData = static_cast<bgfx::TextureHandle*>(texture->renderData);
+	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);
 }
 
 bgfx::ProgramHandle RenderBgfx::CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename)

@@ -2,7 +2,7 @@
 
 #include "Render/IRender.h"
 
-#include <D3D11.h>
+#include <d3d11.h>
 
 class RenderD3D11 : public IRender
 {
@@ -19,10 +19,11 @@ public:
 	void EndFrame() override;
 
 	void Bind(Mesh *mesh) override;
-	void UnBind(Mesh *mesh) override;
+	void Unbind(Mesh *mesh) override;
 
 	void Bind(Texture *texture) override;
 	void Unbind(Texture *texture) override;
+	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
 private:
 	ID3D11Device *d3dDevice;

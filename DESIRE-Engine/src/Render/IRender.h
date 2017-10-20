@@ -20,8 +20,9 @@ public:
 	virtual void EndFrame() = 0;
 
 	virtual void Bind(Mesh *mesh) = 0;
-	virtual void UnBind(Mesh *mesh) = 0;
+	virtual void Unbind(Mesh *mesh) = 0;
 
 	virtual void Bind(Texture *texture) = 0;
 	virtual void Unbind(Texture *texture) = 0;
+	virtual void SetTexture(uint8_t samplerIdx, Texture *texture) = 0;
 };

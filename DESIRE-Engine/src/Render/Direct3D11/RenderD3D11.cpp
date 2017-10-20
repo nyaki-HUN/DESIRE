@@ -86,6 +86,8 @@ void RenderD3D11::UpdateRenderWindow(IWindow *window)
 
 void RenderD3D11::BeginFrame(IWindow *window)
 {
+	DESIRE_UNUSED(window);
+
 	immediateContext->ClearRenderTargetView(renderTargetView, clearColor);
 }
 
@@ -106,14 +108,14 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	MeshRenderDataD3D11 *renderData = new MeshRenderDataD3D11();
 
-	HRESULT hr;
+//	HRESULT hr;
 //	hr = d3dDevice->CreateBuffer(&bufferDesc, &initData, &renderData->indexBuffer);
 //	hr = d3dDevice->CreateBuffer(&bufferDesc, &initData, &renderData->vertexBuffer);
 
 	mesh->renderData = renderData;
 }
 
-void RenderD3D11::UnBind(Mesh *mesh)
+void RenderD3D11::Unbind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -162,4 +164,13 @@ void RenderD3D11::Unbind(Texture *texture)
 
 //	delete renderData;
 	texture->renderData = nullptr;
+}
+
+void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)
+{
+	if(texture->renderData == nullptr)
+	{
+		Bind(texture);
+	}
+
 }
