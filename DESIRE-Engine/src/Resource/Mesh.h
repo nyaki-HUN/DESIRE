@@ -19,12 +19,17 @@ public:
 	// Render engine specific data set at bind
 	void *renderData;
 
+	// Index data
 	uint16_t *indices;
-	float *vertices;
 	uint32_t numIndices;
+	uint32_t indexOffset;
+
+	// Vertex data
+	float *vertices;
 	uint32_t numVertices;
 	uint32_t stride;
+	uint32_t vertexOffset;
 
-	EType type;
-	bool isUpdateRequiredForDynamicMesh;
+	const EType type;
+	bool isUpdateRequired;
 };

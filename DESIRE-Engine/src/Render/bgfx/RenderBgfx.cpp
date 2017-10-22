@@ -91,10 +91,16 @@ void RenderBgfx::Bind(Mesh *mesh)
 
 	MeshRenderDataBgfx *renderData = new MeshRenderDataBgfx();
 
-	renderData->vertexDecl.begin()
+/*	renderData->vertexDecl.begin()
 		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
 		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+		.end();
+*/
+	renderData->vertexDecl.begin()
+		.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
 		.end();
 
 	const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
@@ -126,38 +132,43 @@ void RenderBgfx::Unbind(Mesh *mesh)
 
 void RenderBgfx::SetMesh(Mesh *mesh)
 {
+	if(mesh->renderData == nullptr)
+	{
+		Bind(mesh);
+	}
+
 	MeshRenderDataBgfx *renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
 
-	switch(mesh->type)
+	// Update buffers
+	if(mesh->isUpdateRequired)
 	{
-		case Mesh::EType::STATIC:
-			// No update for static mesh
-			break;
-
-		case Mesh::EType::DYNAMIC:
-			if(mesh->isUpdateRequiredForDynamicMesh)
-			{
-				mesh->isUpdateRequiredForDynamicMesh = false;
-			}
-			break;
-
-		case Mesh::EType::TRANSIENT:
+		switch(mesh->type)
 		{
-			if(bgfx::getAvailTransientIndexBuffer(mesh->numIndices) != mesh->numIndices || bgfx::getAvailTransientVertexBuffer(mesh->numVertices, renderData->vertexDecl) != mesh->numVertices)
+			case Mesh::EType::STATIC:
+				// No update for static mesh
+				break;
+
+			case Mesh::EType::DYNAMIC:
+				break;
+
+			case Mesh::EType::TRANSIENT:
 			{
-				LOG_WARNING("Not enough space in transient buffer");
-				return;
+				if(bgfx::getAvailTransientIndexBuffer(mesh->numIndices) != mesh->numIndices || bgfx::getAvailTransientVertexBuffer(mesh->numVertices, renderData->vertexDecl) != mesh->numVertices)
+				{
+					LOG_WARNING("Not enough space in transient buffer");
+					return;
+				}
+
+				bgfx::allocTransientIndexBuffer(&renderData->transientIndexBuffer, mesh->numIndices);
+				memcpy(renderData->transientIndexBuffer.data, mesh->indices, mesh->GetSizeOfIndices());
+
+				bgfx::allocTransientVertexBuffer(&renderData->transientVertexBuffer, mesh->numVertices, renderData->vertexDecl);
+				memcpy(renderData->transientVertexBuffer.data, mesh->vertices, mesh->GetSizeOfVertices());
+				break;
 			}
-
-			bgfx::TransientIndexBuffer indexBuffer;
-			bgfx::TransientVertexBuffer vertexBuffer;
-			bgfx::allocTransientIndexBuffer(&indexBuffer, mesh->numIndices);
-			bgfx::allocTransientVertexBuffer(&vertexBuffer, mesh->numVertices, renderData->vertexDecl);
-
-			memcpy(indexBuffer.data, mesh->indices, mesh->GetSizeOfIndices());
-			memcpy(vertexBuffer.data, mesh->vertices, mesh->GetSizeOfVertices());
-			break;
 		}
+
+		mesh->isUpdateRequired = false;
 	}
 }
 

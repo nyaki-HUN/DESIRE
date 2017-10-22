@@ -4,11 +4,14 @@
 Mesh::Mesh(EType meshType)
 	: renderData(nullptr)
 	, indices(nullptr)
-	, vertices(nullptr)
 	, numIndices(0)
+	, indexOffset(0)
+	, vertices(nullptr)
 	, numVertices(0)
+	, stride(0)
+	, vertexOffset(0)
 	, type(meshType)
-	, isUpdateRequiredForDynamicMesh(false)
+	, isUpdateRequired(false)
 {
 
 }

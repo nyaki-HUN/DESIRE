@@ -8,12 +8,13 @@
 #include "Input/Input.h"
 #include "Render/Camera.h"
 #include "Render/IRender.h"
+#include "Resource/Mesh.h"
 #include "Resource/Texture.h"
 
 #include "UI-imgui/include/imgui.h"
 
 /**/#include "bgfx/bgfx.h"
-/**/bgfx::VertexDecl m_decl;
+/**/#include "Render/bgfx/MeshRenderDataBgfx.h"
 /**/bgfx::ProgramHandle imguiShaderProgram;
 
 ImGuiImpl::ImGuiImpl()
@@ -68,6 +69,10 @@ void ImGuiImpl::Init()
 	io.Fonts->ClearInputData();
 	io.Fonts->ClearTexData();
 
+	// Transient mesh for the draw list
+	mesh = std::make_unique<Mesh>(Mesh::EType::TRANSIENT);
+	mesh->stride = 2 * sizeof(float) + 2 * sizeof(float) + 4 * sizeof(uint8_t);
+
 	// Setup shader
 	const bgfx::Memory *vsmem = nullptr;
 	const bgfx::Memory *fsmem = nullptr;
@@ -95,12 +100,6 @@ void ImGuiImpl::Init()
 	bgfx::ShaderHandle vsh = bgfx::createShader(vsmem);
 	bgfx::ShaderHandle fsh = bgfx::createShader(fsmem);
 	imguiShaderProgram = bgfx::createProgram(vsh, fsh, true);
-
-	m_decl.begin()
-		.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-		.end();
 }
 
 void ImGuiImpl::Kill()
@@ -108,6 +107,9 @@ void ImGuiImpl::Kill()
 	ImGui::Shutdown();
 
 	bgfx::destroyProgram(imguiShaderProgram);
+
+	IRender::Get()->Unbind(mesh.get());
+	mesh = nullptr;
 
 	IRender::Get()->Unbind(fontTexture.get());
 	fontTexture = nullptr;
@@ -183,7 +185,7 @@ void ImGuiImpl::EndFrame()
 	ImGui::Render();
 }
 
-void ImGuiImpl::Render(ImDrawData *data)
+void ImGuiImpl::Render(ImDrawData *drawData)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	IRender *render = IRender::Get();
@@ -200,30 +202,45 @@ void ImGuiImpl::Render(ImDrawData *data)
 	const uint8_t viewId = 0;
 	bgfx::setViewTransform(viewId, nullptr, ortho);
 
-	for(int i = 0; i < data->CmdListsCount; ++i)
+	// Resize buffers if needed
+	if(mesh->numIndices != (uint32_t)drawData->TotalIdxCount)
 	{
-		const ImDrawList *drawList = data->CmdLists[i];
+		mesh->numIndices = drawData->TotalIdxCount;
+		mesh->indices = (uint16_t*)realloc(mesh->indices, mesh->GetSizeOfIndices());
+	}
 
-		const uint32_t numIndices = (uint32_t)drawList->IdxBuffer.size();
-		const uint32_t numVertices = (uint32_t)drawList->VtxBuffer.size();
+	if(mesh->numVertices != (uint32_t)drawData->TotalVtxCount)
+	{
+		mesh->numVertices = drawData->TotalVtxCount;
+		mesh->vertices = (float*)realloc(mesh->vertices, mesh->GetSizeOfVertices());
+	}
 
-		if(bgfx::getAvailTransientIndexBuffer(numIndices) != numIndices || bgfx::getAvailTransientVertexBuffer(numVertices, m_decl) != numVertices)
-		{
-			LOG_WARNING("Not enough space in transient buffer");
-			break;
-		}
+	ASSERT(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
+	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
+	uint8_t *indicesPtr = reinterpret_cast<uint8_t*>(mesh->indices);
+	uint8_t *verticesPtr = reinterpret_cast<uint8_t*>(mesh->vertices);
+	for(int i = 0; i < drawData->CmdListsCount; ++i)
+	{
+		const ImDrawList *drawList = drawData->CmdLists[i];
+		const size_t sizeOfIndices = (size_t)drawList->IdxBuffer.size() * sizeof(ImDrawIdx);
+		ASSERT(indicesPtr + sizeOfIndices <= reinterpret_cast<uint8_t*>(mesh->indices) + mesh->GetSizeOfIndices());
+		memcpy(indicesPtr, drawList->IdxBuffer.begin(), sizeOfIndices);
 
-		bgfx::TransientIndexBuffer tib;
-		bgfx::TransientVertexBuffer tvb;
-		bgfx::allocTransientIndexBuffer(&tib, numIndices);
-		bgfx::allocTransientVertexBuffer(&tvb, numVertices, m_decl);
+		const size_t sizeOfVertices = (size_t)drawList->VtxBuffer.size() * sizeof(ImDrawVert);
+		ASSERT(verticesPtr + sizeOfVertices <= reinterpret_cast<uint8_t*>(mesh->vertices) + mesh->GetSizeOfVertices());
+		memcpy(verticesPtr, drawList->VtxBuffer.begin(), sizeOfVertices);
 
-		ImDrawIdx *indices = (ImDrawIdx*)tib.data;
-		ImDrawVert *vertices = (ImDrawVert*)tvb.data;
-		memcpy(indices, drawList->IdxBuffer.begin(), numIndices * sizeof(ImDrawIdx));
-		memcpy(vertices, drawList->VtxBuffer.begin(), numVertices * sizeof(ImDrawVert));
+		indicesPtr += sizeOfIndices;
+		verticesPtr += sizeOfVertices;
+	}
+	mesh->isUpdateRequired = true;
 
-		uint32_t indexOffset = 0;
+	mesh->indexOffset = 0;
+	mesh->vertexOffset = 0;
+	for(int i = 0; i < drawData->CmdListsCount; ++i)
+	{
+		const ImDrawList *drawList = drawData->CmdLists[i];
+
 		for(const ImDrawCmd& pcmd : drawList->CmdBuffer)
 		{
 			if(pcmd.UserCallback)
@@ -237,6 +254,10 @@ void ImGuiImpl::Render(ImDrawData *data)
 				continue;
 			}
 
+			const uint16_t clipX = (uint16_t)std::fmax(pcmd.ClipRect.x, 0.0f);
+			const uint16_t clipY = (uint16_t)std::fmax(pcmd.ClipRect.y, 0.0f);
+			render->SetScissor(clipX, clipY, (uint16_t)(pcmd.ClipRect.z - clipX), (uint16_t)(pcmd.ClipRect.w - clipY));
+
 			bgfx::setState(0
 				| BGFX_STATE_RGB_WRITE
 				| BGFX_STATE_ALPHA_WRITE
@@ -244,17 +265,19 @@ void ImGuiImpl::Render(ImDrawData *data)
 				| BGFX_STATE_MSAA
 			);
 
-			const uint16_t clipX = (uint16_t)std::fmax(pcmd.ClipRect.x, 0.0f);
-			const uint16_t clipY = (uint16_t)std::fmax(pcmd.ClipRect.y, 0.0f);
-			render->SetScissor(clipX, clipY, (uint16_t)(pcmd.ClipRect.z - clipX), (uint16_t)(pcmd.ClipRect.w - clipY));
+			render->SetMesh(mesh.get());
+			MeshRenderDataBgfx *renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
+			bgfx::setIndexBuffer(&renderData->transientIndexBuffer, mesh->indexOffset, pcmd.ElemCount);
+			bgfx::setVertexBuffer(&renderData->transientVertexBuffer, mesh->vertexOffset, drawList->VtxBuffer.size());
 
-			bgfx::setIndexBuffer(&tib, indexOffset, pcmd.ElemCount);
-			bgfx::setVertexBuffer(&tvb, 0, numVertices);
 			render->SetTexture(0, static_cast<Texture*>(pcmd.TextureId));
+
 			bgfx::submit(viewId, imguiShaderProgram);
 
-			indexOffset += pcmd.ElemCount;
+			mesh->indexOffset += pcmd.ElemCount;
 		}
+
+		mesh->vertexOffset += drawList->VtxBuffer.size();
 	}
 }
 

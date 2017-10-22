@@ -154,42 +154,58 @@ void RenderD3D11::Unbind(Mesh *mesh)
 
 void RenderD3D11::SetMesh(Mesh *mesh)
 {
+	if(mesh->renderData == nullptr)
+	{
+		Bind(mesh);
+	}
+
 	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
-	switch(mesh->type)
+	// Update buffers
+	if(mesh->isUpdateRequired)
 	{
-		case Mesh::EType::STATIC:
-			break;
-
-		case Mesh::EType::DYNAMIC:
-			if(mesh->isUpdateRequiredForDynamicMesh)
-			{
-				mesh->isUpdateRequiredForDynamicMesh = false;
-			}
-			break;
-
-		case Mesh::EType::TRANSIENT:
+		switch(mesh->type)
 		{
-			D3D11_MAPPED_SUBRESOURCE mappedIndexBuffer;
-			if(FAILED(deviceCtx->Map(renderData->indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexBuffer)))
+			case Mesh::EType::STATIC:
+				// No update for static mesh
+				break;
+
+			case Mesh::EType::DYNAMIC:
+				break;
+
+			case Mesh::EType::TRANSIENT:
 			{
-				return;
+				D3D11_MAPPED_SUBRESOURCE mappedIndexBuffer;
+				if(FAILED(deviceCtx->Map(renderData->indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexBuffer)))
+				{
+					LOG_WARNING("Failed to map index buffer");
+					return;
+				}
+
+				D3D11_MAPPED_SUBRESOURCE mappedVertexBuffer;
+				if(FAILED(deviceCtx->Map(renderData->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexBuffer)))
+				{
+					LOG_WARNING("Failed to map vertex buffer");
+
+					deviceCtx->Unmap(renderData->indexBuffer, 0);
+					return;
+				}
+
+				memcpy(mappedIndexBuffer.pData, mesh->indices, mesh->GetSizeOfIndices());
+				deviceCtx->Unmap(renderData->indexBuffer, 0);
+
+				memcpy(mappedVertexBuffer.pData, mesh->vertices, mesh->GetSizeOfVertices());
+				deviceCtx->Unmap(renderData->vertexBuffer, 0);
+				break;
 			}
-
-			D3D11_MAPPED_SUBRESOURCE mappedVertexBuffer;
-			if(FAILED(deviceCtx->Map(renderData->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexBuffer)))
-			{
-				return;
-			}
-
-			memcpy(mappedIndexBuffer.pData, mesh->indices, mesh->GetSizeOfIndices());
-			memcpy(mappedVertexBuffer.pData, mesh->vertices, mesh->GetSizeOfVertices());
-
-			deviceCtx->Unmap(renderData->indexBuffer, 0);
-			deviceCtx->Unmap(renderData->vertexBuffer, 0);
-			break;
 		}
+
+		mesh->isUpdateRequired = false;
 	}
+
+	// Set buffers
+	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, mesh->indexOffset);
+	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &mesh->vertexOffset);
 }
 
 void RenderD3D11::Bind(Texture *texture)
