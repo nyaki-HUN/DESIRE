@@ -111,16 +111,14 @@ void RenderD3D11::Bind(Mesh *mesh)
 	MeshRenderDataD3D11 *renderData = new MeshRenderDataD3D11();
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
-	indexBufferDesc.ByteWidth = mesh->sizeOfIndices * sizeof(uint16_t);
+	indexBufferDesc.ByteWidth = mesh->GetSizeOfIndices();
 	indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, NULL, &renderData->indexBuffer);
 
-	uint32_t byteSizeOfVertex = 2 * sizeof(float) + 2 * sizeof(float) + 4 * sizeof(uint8_t);
-
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
-	vertexBufferDesc.ByteWidth = mesh->sizeOfVertices * byteSizeOfVertex;
+	vertexBufferDesc.ByteWidth = mesh->GetSizeOfVertices();
 	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -152,6 +150,46 @@ void RenderD3D11::Unbind(Mesh *mesh)
 
 	delete renderData;
 	mesh->renderData = nullptr;
+}
+
+void RenderD3D11::SetMesh(Mesh *mesh)
+{
+	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+
+	switch(mesh->type)
+	{
+		case Mesh::EType::STATIC:
+			break;
+
+		case Mesh::EType::DYNAMIC:
+			if(mesh->isUpdateRequiredForDynamicMesh)
+			{
+				mesh->isUpdateRequiredForDynamicMesh = false;
+			}
+			break;
+
+		case Mesh::EType::TRANSIENT:
+		{
+			D3D11_MAPPED_SUBRESOURCE mappedIndexBuffer;
+			if(FAILED(deviceCtx->Map(renderData->indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexBuffer)))
+			{
+				return;
+			}
+
+			D3D11_MAPPED_SUBRESOURCE mappedVertexBuffer;
+			if(FAILED(deviceCtx->Map(renderData->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexBuffer)))
+			{
+				return;
+			}
+
+			memcpy(mappedIndexBuffer.pData, mesh->indices, mesh->GetSizeOfIndices());
+			memcpy(mappedVertexBuffer.pData, mesh->vertices, mesh->GetSizeOfVertices());
+
+			deviceCtx->Unmap(renderData->indexBuffer, 0);
+			deviceCtx->Unmap(renderData->vertexBuffer, 0);
+			break;
+		}
+	}
 }
 
 void RenderD3D11::Bind(Texture *texture)

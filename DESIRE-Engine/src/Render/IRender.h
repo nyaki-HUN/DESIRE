@@ -21,6 +21,7 @@ public:
 
 	virtual void Bind(Mesh *mesh) = 0;
 	virtual void Unbind(Mesh *mesh) = 0;
+	virtual void SetMesh(Mesh *mesh) = 0;
 
 	virtual void Bind(Texture *texture) = 0;
 	virtual void Unbind(Texture *texture) = 0;

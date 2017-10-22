@@ -20,6 +20,7 @@ public:
 
 	void Bind(Mesh *mesh) override;
 	void Unbind(Mesh *mesh) override;
+	void SetMesh(Mesh *mesh) override;
 
 	void Bind(Texture *texture) override;
 	void Unbind(Texture *texture) override;
