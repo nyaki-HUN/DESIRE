@@ -48,7 +48,7 @@ void RenderBgfx::Kill()
 {
 	for(bgfx::UniformHandle& uniform : samplerUniforms)
 	{
-		bgfx::destroyUniform(uniform);
+		bgfx::destroy(uniform);
 		uniform = BGFX_INVALID_HANDLE;
 	}
 
@@ -91,17 +91,22 @@ void RenderBgfx::Bind(Mesh *mesh)
 
 	MeshRenderDataBgfx *renderData = new MeshRenderDataBgfx();
 
-/*	renderData->vertexDecl.begin()
-		.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-		.end();
-*/
-	renderData->vertexDecl.begin()
-		.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-		.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-		.end();
+	if(mesh->type == Mesh::EType::STATIC)
+	{
+		renderData->vertexDecl.begin()
+			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+			.end();
+	}
+	else
+	{
+		renderData->vertexDecl.begin()
+			.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
+			.end();
+	}
 
 	switch(mesh->type)
 	{
@@ -148,13 +153,13 @@ void RenderBgfx::Unbind(Mesh *mesh)
 	switch(mesh->type)
 	{
 		case Mesh::EType::STATIC:
-			bgfx::destroyIndexBuffer(renderData->indexBuffer);
-			bgfx::destroyVertexBuffer(renderData->vertexBuffer);
+			bgfx::destroy(renderData->indexBuffer);
+			bgfx::destroy(renderData->vertexBuffer);
 			break;
 
 		case Mesh::EType::DYNAMIC:
-			bgfx::destroyDynamicIndexBuffer(renderData->dynamicIndexBuffer);
-			bgfx::destroyDynamicVertexBuffer(renderData->dynamicVertexBuffer);
+			bgfx::destroy(renderData->dynamicIndexBuffer);
+			bgfx::destroy(renderData->dynamicVertexBuffer);
 			break;
 
 		case Mesh::EType::TRANSIENT:
@@ -181,7 +186,7 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 		case Mesh::EType::STATIC:
 			// Set buffers
 			bgfx::setIndexBuffer(renderData->indexBuffer, renderData->indexOffset, mesh->numIndices);
-			bgfx::setVertexBuffer(renderData->vertexBuffer, renderData->vertexOffset, mesh->numVertices);
+			bgfx::setVertexBuffer(0, renderData->vertexBuffer, renderData->vertexOffset, mesh->numVertices);
 			break;
 
 		case Mesh::EType::DYNAMIC:
@@ -193,7 +198,7 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 
 			// Set buffers
 			bgfx::setIndexBuffer(renderData->dynamicIndexBuffer, renderData->indexOffset, mesh->numIndices);
-			bgfx::setVertexBuffer(renderData->dynamicVertexBuffer, renderData->vertexOffset, mesh->numVertices);
+			bgfx::setVertexBuffer(0, renderData->dynamicVertexBuffer, renderData->vertexOffset, mesh->numVertices);
 			break;
 
 		case Mesh::EType::TRANSIENT:
@@ -211,7 +216,7 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 
 			// Set buffers
 			bgfx::setIndexBuffer(&renderData->transientIndexBuffer, renderData->indexOffset, mesh->numIndices);
-			bgfx::setVertexBuffer(&renderData->transientVertexBuffer, renderData->vertexOffset, mesh->numVertices);
+			bgfx::setVertexBuffer(0, &renderData->transientVertexBuffer, renderData->vertexOffset, mesh->numVertices);
 			break;
 	}
 }
@@ -257,7 +262,7 @@ void RenderBgfx::Unbind(Texture *texture)
 	}
 
 	bgfx::TextureHandle *renderData = static_cast<bgfx::TextureHandle*>(texture->renderData);
-	bgfx::destroyTexture(*renderData);
+	bgfx::destroy(*renderData);
 
 	delete renderData;
 	texture->renderData = nullptr;

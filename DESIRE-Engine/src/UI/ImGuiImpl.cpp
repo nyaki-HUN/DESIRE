@@ -113,7 +113,7 @@ void ImGuiImpl::Kill()
 {
 	ImGui::Shutdown();
 
-	bgfx::destroyProgram(imguiShaderProgram);
+	bgfx::destroy(imguiShaderProgram);
 
 	IRender::Get()->Unbind(mesh.get());
 	mesh = nullptr;
@@ -235,13 +235,10 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 			// Setup mesh
 			mesh->numIndices = (uint32_t)drawList->IdxBuffer.size();
 			mesh->indices = (uint16_t*)drawList->IdxBuffer.begin();
-			ASSERT(mesh->GetSizeOfIndices() == drawList->IdxBuffer.size() * sizeof(ImDrawIdx));
-
 			mesh->numVertices = (uint32_t)drawList->VtxBuffer.size();
 			mesh->vertices = (float*)drawList->VtxBuffer.begin();
-			ASSERT(mesh->GetSizeOfVertices() == drawList->VtxBuffer.size() * sizeof(ImDrawVert));
-
 			render->SetMesh(mesh.get());
+
 			render->SetTexture(0, static_cast<Texture*>(pcmd.TextureId));
 
 #if defined(RENDER_BGFX)
