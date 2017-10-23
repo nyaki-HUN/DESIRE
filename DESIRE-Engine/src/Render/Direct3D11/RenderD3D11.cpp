@@ -148,9 +148,7 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 void RenderD3D11::Unbind(Mesh *mesh)
 {
-	ASSERT(mesh != nullptr);
-
-	if(mesh->renderData == nullptr)
+	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
 		// Not yet bound
 		return;
@@ -172,6 +170,8 @@ void RenderD3D11::Unbind(Mesh *mesh)
 
 void RenderD3D11::SetMesh(Mesh *mesh)
 {
+	ASSERT(mesh != nullptr);
+
 	if(mesh->renderData == nullptr)
 	{
 		Bind(mesh);
@@ -245,6 +245,12 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	// Set buffers
 	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, renderData->indexOffset);
 	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
+}
+
+void RenderD3D11::SetMaterial(Material *material)
+{
+	ASSERT(material != nullptr);
+
 }
 
 void RenderD3D11::Bind(Texture *texture)
@@ -337,9 +343,7 @@ void RenderD3D11::Bind(Texture *texture)
 
 void RenderD3D11::Unbind(Texture *texture)
 {
-	ASSERT(texture != nullptr);
-
-	if(texture->renderData == nullptr)
+	if(texture == nullptr || texture->renderData == nullptr)
 	{
 		// Not yet bound
 		return;
@@ -355,6 +359,8 @@ void RenderD3D11::Unbind(Texture *texture)
 
 void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)
 {
+	ASSERT(texture != nullptr);
+
 	if(texture->renderData == nullptr)
 	{
 		Bind(texture);

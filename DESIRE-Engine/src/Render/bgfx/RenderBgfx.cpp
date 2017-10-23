@@ -137,9 +137,7 @@ void RenderBgfx::Bind(Mesh *mesh)
 
 void RenderBgfx::Unbind(Mesh *mesh)
 {
-	ASSERT(mesh != nullptr);
-
-	if(mesh->renderData == nullptr)
+	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
 		// Not yet bound
 		return;
@@ -169,6 +167,8 @@ void RenderBgfx::Unbind(Mesh *mesh)
 
 void RenderBgfx::SetMesh(Mesh *mesh)
 {
+	ASSERT(mesh != nullptr);
+
 	if(mesh->renderData == nullptr)
 	{
 		Bind(mesh);
@@ -216,6 +216,12 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	}
 }
 
+void RenderBgfx::SetMaterial(Material *material)
+{
+	ASSERT(material != nullptr);
+
+}
+
 void RenderBgfx::Bind(Texture *texture)
 {
 	ASSERT(texture != nullptr);
@@ -244,9 +250,7 @@ void RenderBgfx::Bind(Texture *texture)
 
 void RenderBgfx::Unbind(Texture *texture)
 {
-	ASSERT(texture != nullptr);
-
-	if(texture->renderData == nullptr)
+	if(texture == nullptr || texture->renderData == nullptr)
 	{
 		// Not yet bound
 		return;
@@ -261,6 +265,8 @@ void RenderBgfx::Unbind(Texture *texture)
 
 void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
 {
+	ASSERT(texture != nullptr);
+
 	if(texture->renderData == nullptr)
 	{
 		Bind(texture);
