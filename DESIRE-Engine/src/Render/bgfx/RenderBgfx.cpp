@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Render/bgfx/RenderBgfx.h"
 #include "Render/bgfx/MeshRenderDataBgfx.h"
+#include "Render/Material.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
 #include "Core/fs/FileSystem.h"
@@ -219,6 +220,28 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 			bgfx::setVertexBuffer(0, &renderData->transientVertexBuffer, renderData->vertexOffset, mesh->numVertices);
 			break;
 	}
+}
+
+void RenderBgfx::Bind(Material *material)
+{
+	ASSERT(material != nullptr);
+
+	if(material->renderData != nullptr)
+	{
+		// Already bound
+		return;
+	}
+
+}
+
+void RenderBgfx::Unbind(Material *material)
+{
+	if(material == nullptr || material->renderData == nullptr)
+	{
+		// Not yet bound
+		return;
+	}
+
 }
 
 void RenderBgfx::SetMaterial(Material *material)

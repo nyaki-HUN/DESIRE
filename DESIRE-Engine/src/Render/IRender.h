@@ -26,6 +26,8 @@ public:
 	virtual void SetMesh(Mesh *mesh) = 0;
 
 	// Material setup
+	virtual void Bind(Material *material) = 0;
+	virtual void Unbind(Material *material) = 0;
 	virtual void SetMaterial(Material *material) = 0;
 
 	// Texture setup

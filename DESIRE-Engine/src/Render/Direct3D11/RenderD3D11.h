@@ -22,6 +22,8 @@ public:
 	void Unbind(Mesh *mesh) override;
 	void SetMesh(Mesh *mesh) override;
 
+	void Bind(Material *material) override;
+	void Unbind(Material *material) override;
 	void SetMaterial(Material *material) override;
 
 	void Bind(Texture *texture) override;

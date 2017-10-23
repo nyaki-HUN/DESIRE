@@ -2,6 +2,7 @@
 #include "Render/Direct3D11/RenderD3D11.h"
 #include "Render/Direct3D11/MeshRenderDataD3D11.h"
 #include "Render/Direct3D11/TextureRenderDataD3D11.h"
+#include "Render/Material.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
 #include "Core/fs/FileSystem.h"
@@ -245,6 +246,28 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	// Set buffers
 	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, renderData->indexOffset);
 	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
+}
+
+void RenderD3D11::Bind(Material *material)
+{
+	ASSERT(material != nullptr);
+
+	if(material->renderData != nullptr)
+	{
+		// Already bound
+		return;
+	}
+
+}
+
+void RenderD3D11::Unbind(Material *material)
+{
+	if(material == nullptr || material->renderData == nullptr)
+	{
+		// Not yet bound
+		return;
+	}
+
 }
 
 void RenderD3D11::SetMaterial(Material *material)
