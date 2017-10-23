@@ -5,9 +5,9 @@ class Mesh
 public:
 	enum class EType
 	{
-		STATIC,			// Never changed
-		DYNAMIC,		// Sometimes changed
-		TRANSIENT		// Changed every frame
+		STATIC,			// Never updated
+		DYNAMIC,		// Sometimes updated (but can be used across multiple frames)
+		TRANSIENT		// Updated in each frame
 	};
 
 	Mesh(EType meshType = EType::STATIC);
@@ -22,14 +22,12 @@ public:
 	// Index data
 	uint16_t *indices;
 	uint32_t numIndices;
-	uint32_t indexOffset;
 
 	// Vertex data
 	float *vertices;
 	uint32_t numVertices;
 	uint32_t stride;
-	uint32_t vertexOffset;
 
 	const EType type;
-	bool isUpdateRequired;
+	bool isUpdateRequiredForDynamicMesh;
 };

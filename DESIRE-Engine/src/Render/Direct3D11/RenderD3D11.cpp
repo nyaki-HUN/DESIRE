@@ -112,17 +112,35 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.ByteWidth = mesh->GetSizeOfIndices();
-	indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, NULL, &renderData->indexBuffer);
 
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.ByteWidth = mesh->GetSizeOfVertices();
-	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vertexBufferDesc.MiscFlags = 0;
+
+	switch(mesh->type)
+	{
+		case Mesh::EType::STATIC:
+			indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			indexBufferDesc.CPUAccessFlags = 0;
+			break;
+
+		case Mesh::EType::DYNAMIC:
+			indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			break;
+
+		case Mesh::EType::TRANSIENT:
+			indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			break;
+	}
+
+	HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, NULL, &renderData->indexBuffer);
 	hr = d3dDevice->CreateBuffer(&vertexBufferDesc, NULL, &renderData->vertexBuffer);
 
 	mesh->renderData = renderData;
@@ -162,18 +180,14 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
 	// Update buffers
-	if(mesh->isUpdateRequired)
+	switch(mesh->type)
 	{
-		switch(mesh->type)
-		{
-			case Mesh::EType::STATIC:
-				// No update for static mesh
-				break;
+		case Mesh::EType::STATIC:
+			// No update for static mesh
+			break;
 
-			case Mesh::EType::DYNAMIC:
-				break;
-
-			case Mesh::EType::TRANSIENT:
+		case Mesh::EType::DYNAMIC:
+			if(mesh->isUpdateRequiredForDynamicMesh)
 			{
 				D3D11_MAPPED_SUBRESOURCE mappedIndexBuffer;
 				if(FAILED(deviceCtx->Map(renderData->indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexBuffer)))
@@ -196,16 +210,41 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 
 				memcpy(mappedVertexBuffer.pData, mesh->vertices, mesh->GetSizeOfVertices());
 				deviceCtx->Unmap(renderData->vertexBuffer, 0);
-				break;
-			}
-		}
 
-		mesh->isUpdateRequired = false;
+				mesh->isUpdateRequiredForDynamicMesh = false;
+			}
+			break;
+
+		case Mesh::EType::TRANSIENT:
+		{
+			D3D11_MAPPED_SUBRESOURCE mappedIndexBuffer;
+			if(FAILED(deviceCtx->Map(renderData->indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexBuffer)))
+			{
+				LOG_WARNING("Failed to map index buffer");
+				return;
+			}
+
+			D3D11_MAPPED_SUBRESOURCE mappedVertexBuffer;
+			if(FAILED(deviceCtx->Map(renderData->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexBuffer)))
+			{
+				LOG_WARNING("Failed to map vertex buffer");
+
+				deviceCtx->Unmap(renderData->indexBuffer, 0);
+				return;
+			}
+
+			memcpy(mappedIndexBuffer.pData, mesh->indices, mesh->GetSizeOfIndices());
+			deviceCtx->Unmap(renderData->indexBuffer, 0);
+
+			memcpy(mappedVertexBuffer.pData, mesh->vertices, mesh->GetSizeOfVertices());
+			deviceCtx->Unmap(renderData->vertexBuffer, 0);
+			break;
+		}
 	}
 
 	// Set buffers
-	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, mesh->indexOffset);
-	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &mesh->vertexOffset);
+	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, renderData->indexOffset);
+	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
 }
 
 void RenderD3D11::Bind(Texture *texture)

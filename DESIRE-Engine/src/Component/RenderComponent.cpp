@@ -11,6 +11,11 @@ RenderComponent::~RenderComponent()
 
 }
 
+void RenderComponent::SetMesh(const Mesh *i_mesh)
+{
+	mesh = i_mesh;
+}
+
 void RenderComponent::SetInstanceAlpha(float a)
 {
 	alpha = a;

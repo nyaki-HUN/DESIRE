@@ -13,9 +13,14 @@
 
 #include "UI-imgui/include/imgui.h"
 
-/**/#include "bgfx/bgfx.h"
-/**/#include "Render/bgfx/MeshRenderDataBgfx.h"
-/**/bgfx::ProgramHandle imguiShaderProgram;
+//--------------------------------------------------------------------------------*/
+#define RENDER_BGFX
+//--------------------------------------------------------------------------------*/
+#if defined(RENDER_BGFX)
+	#include "bgfx/bgfx.h"
+	bgfx::ProgramHandle imguiShaderProgram;
+#endif
+//--------------------------------------------------------------------------------*/
 
 ImGuiImpl::ImGuiImpl()
 {
@@ -72,6 +77,8 @@ void ImGuiImpl::Init()
 	// Transient mesh for the draw list
 	mesh = std::make_unique<Mesh>(Mesh::EType::TRANSIENT);
 	mesh->stride = 2 * sizeof(float) + 2 * sizeof(float) + 4 * sizeof(uint8_t);
+	ASSERT(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
+	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
 
 	// Setup shader
 	const bgfx::Memory *vsmem = nullptr;
@@ -199,44 +206,11 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 	matOrtho.col2.StoreXYZW(&ortho[8]);
 	matOrtho.col3.StoreXYZW(&ortho[12]);
 
+#if defined(RENDER_BGFX)
 	const uint8_t viewId = 0;
 	bgfx::setViewTransform(viewId, nullptr, ortho);
+#endif
 
-	// Resize buffers if needed
-	if(mesh->numIndices != (uint32_t)drawData->TotalIdxCount)
-	{
-		mesh->numIndices = drawData->TotalIdxCount;
-		mesh->indices = (uint16_t*)realloc(mesh->indices, mesh->GetSizeOfIndices());
-	}
-
-	if(mesh->numVertices != (uint32_t)drawData->TotalVtxCount)
-	{
-		mesh->numVertices = drawData->TotalVtxCount;
-		mesh->vertices = (float*)realloc(mesh->vertices, mesh->GetSizeOfVertices());
-	}
-
-	ASSERT(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
-	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
-	uint8_t *indicesPtr = reinterpret_cast<uint8_t*>(mesh->indices);
-	uint8_t *verticesPtr = reinterpret_cast<uint8_t*>(mesh->vertices);
-	for(int i = 0; i < drawData->CmdListsCount; ++i)
-	{
-		const ImDrawList *drawList = drawData->CmdLists[i];
-		const size_t sizeOfIndices = (size_t)drawList->IdxBuffer.size() * sizeof(ImDrawIdx);
-		ASSERT(indicesPtr + sizeOfIndices <= reinterpret_cast<uint8_t*>(mesh->indices) + mesh->GetSizeOfIndices());
-		memcpy(indicesPtr, drawList->IdxBuffer.begin(), sizeOfIndices);
-
-		const size_t sizeOfVertices = (size_t)drawList->VtxBuffer.size() * sizeof(ImDrawVert);
-		ASSERT(verticesPtr + sizeOfVertices <= reinterpret_cast<uint8_t*>(mesh->vertices) + mesh->GetSizeOfVertices());
-		memcpy(verticesPtr, drawList->VtxBuffer.begin(), sizeOfVertices);
-
-		indicesPtr += sizeOfIndices;
-		verticesPtr += sizeOfVertices;
-	}
-	mesh->isUpdateRequired = true;
-
-	mesh->indexOffset = 0;
-	mesh->vertexOffset = 0;
 	for(int i = 0; i < drawData->CmdListsCount; ++i)
 	{
 		const ImDrawList *drawList = drawData->CmdLists[i];
@@ -258,6 +232,19 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 			const uint16_t clipY = (uint16_t)std::fmax(pcmd.ClipRect.y, 0.0f);
 			render->SetScissor(clipX, clipY, (uint16_t)(pcmd.ClipRect.z - clipX), (uint16_t)(pcmd.ClipRect.w - clipY));
 
+			// Setup mesh
+			mesh->numIndices = (uint32_t)drawList->IdxBuffer.size();
+			mesh->indices = (uint16_t*)drawList->IdxBuffer.begin();
+			ASSERT(mesh->GetSizeOfIndices() == drawList->IdxBuffer.size() * sizeof(ImDrawIdx));
+
+			mesh->numVertices = (uint32_t)drawList->VtxBuffer.size();
+			mesh->vertices = (float*)drawList->VtxBuffer.begin();
+			ASSERT(mesh->GetSizeOfVertices() == drawList->VtxBuffer.size() * sizeof(ImDrawVert));
+
+			render->SetMesh(mesh.get());
+			render->SetTexture(0, static_cast<Texture*>(pcmd.TextureId));
+
+#if defined(RENDER_BGFX)
 			bgfx::setState(0
 				| BGFX_STATE_RGB_WRITE
 				| BGFX_STATE_ALPHA_WRITE
@@ -265,23 +252,21 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 				| BGFX_STATE_MSAA
 			);
 
-			render->SetMesh(mesh.get());
-			MeshRenderDataBgfx *renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
-			bgfx::setIndexBuffer(&renderData->transientIndexBuffer, mesh->indexOffset, pcmd.ElemCount);
-			bgfx::setVertexBuffer(&renderData->transientVertexBuffer, mesh->vertexOffset, drawList->VtxBuffer.size());
-
-			render->SetTexture(0, static_cast<Texture*>(pcmd.TextureId));
-
 			bgfx::submit(viewId, imguiShaderProgram);
+#else
+			deviceCtx->DrawIndexed(pcmd.ElemCount, indexOffset, vertexOffset);
+#endif
 
-			mesh->indexOffset += pcmd.ElemCount;
+			// Reset mesh
+			mesh->numIndices = 0;
+			mesh->indices = nullptr;
+			mesh->numVertices = 0;
+			mesh->vertices = nullptr;
 		}
-
-		mesh->vertexOffset += drawList->VtxBuffer.size();
 	}
 }
 
-void ImGuiImpl::RenderDrawListsCallback(ImDrawData *data)
+void ImGuiImpl::RenderDrawListsCallback(ImDrawData *drawData)
 {
-	ImGuiImpl::Get()->Render(data);
+	ImGuiImpl::Get()->Render(drawData);
 }
