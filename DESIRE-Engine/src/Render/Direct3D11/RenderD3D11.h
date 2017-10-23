@@ -4,6 +4,8 @@
 
 #include <d3d11.h>
 
+class MeshRenderDataD3D11;
+
 class RenderD3D11 : public IRender
 {
 public:
@@ -39,6 +41,7 @@ private:
 	ID3D11RenderTargetView *renderTargetView;
 	ID3D11DeviceContext *deviceCtx;
 
+	MeshRenderDataD3D11 *activeMeshRenderData;
 	float clearColor[4];
 
 	bool initialized;

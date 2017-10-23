@@ -92,50 +92,65 @@ void RenderBgfx::Bind(Mesh *mesh)
 
 	MeshRenderDataBgfx *renderData = new MeshRenderDataBgfx();
 
-	if(mesh->type == Mesh::EType::STATIC)
+	static const bgfx::Attrib::Enum attribConversionTable[] =
 	{
-		renderData->vertexDecl.begin()
-			.add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-			.end();
-	}
-	else
+		bgfx::Attrib::Position,		// Mesh::EAttrib::POSITION
+		bgfx::Attrib::Normal,		// Mesh::EAttrib::NORMAL
+		bgfx::Attrib::TexCoord0,	// Mesh::EAttrib::TEXCOORD0
+		bgfx::Attrib::TexCoord1,	// Mesh::EAttrib::TEXCOORD1
+		bgfx::Attrib::TexCoord2,	// Mesh::EAttrib::TEXCOORD2
+		bgfx::Attrib::Color0,		// Mesh::EAttrib::COLOR
+	};
+	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib);
+
+	static const bgfx::AttribType::Enum attribTypeConversionTable[] =
 	{
-		renderData->vertexDecl.begin()
-			.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-			.add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Uint8, true)
-			.end();
+		bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::FLOAT
+		bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::UINT8
+	};
+	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType);
+
+	renderData->vertexDecl.begin();
+	for(Mesh::SVertexDecl& decl : mesh->vertexDecl)
+	{
+		const bool isNormalized = (decl.type == Mesh::EAttribType::UINT8);
+		renderData->vertexDecl.add(attribConversionTable[(size_t)decl.attrib], decl.count, attribTypeConversionTable[(size_t)decl.type], isNormalized);
 	}
+	renderData->vertexDecl.end();
 
 	switch(mesh->type)
 	{
 		case Mesh::EType::STATIC:
-		{
-			const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
-			const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, mesh->GetSizeOfVertices());
+			if(mesh->numIndices != 0)
+			{
+				const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
+				renderData->indexBuffer = bgfx::createIndexBuffer(indexData, BGFX_BUFFER_NONE);
+			}
 
-			renderData->indexBuffer = bgfx::createIndexBuffer(indexData, BGFX_BUFFER_NONE);
-			renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
+			if(mesh->numVertices != 0)
+			{
+				const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, mesh->GetSizeOfVertices());
+				renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
+			}
 			break;
-		}
 
 		case Mesh::EType::DYNAMIC:
-		{
-			const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
-			const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, mesh->GetSizeOfVertices());
+			if(mesh->numIndices != 0)
+			{
+				const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
+				renderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(indexData, BGFX_BUFFER_NONE);
+			}
 
-			renderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(indexData, BGFX_BUFFER_NONE);
-			renderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
+			if(mesh->numVertices != 0)
+			{
+				const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, mesh->GetSizeOfVertices());
+				renderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
+			}
 			break;
-		}
 
 		case Mesh::EType::TRANSIENT:
-		{
 			// Transient buffers will be allocated in SetMesh() in each frame
 			break;
-		}
 	}
 
 	mesh->renderData = renderData;
@@ -323,12 +338,16 @@ bgfx::ProgramHandle RenderBgfx::CreateShaderProgram(const char *vertexShaderFile
 	const char *shadersPath = nullptr;
 	switch(bgfx::getRendererType())
 	{
+		case bgfx::RendererType::Direct3D9:		shadersPath = "data/shaders/dx9/"; break;
 		case bgfx::RendererType::Direct3D11:	shadersPath = "data/shaders/dx11/"; break;
 		case bgfx::RendererType::Direct3D12:	shadersPath = "data/shaders/dx11/"; break;
+		case bgfx::RendererType::Gnm:			shadersPath = "data/shaders/pssl/"; break;
 		case bgfx::RendererType::Metal:			shadersPath = "data/shaders/metal/"; break;
+		case bgfx::RendererType::OpenGLES:		shadersPath = "data/shaders/essl/"; break;
+		case bgfx::RendererType::OpenGL:		shadersPath = "data/shaders/glsl/"; break;
 		case bgfx::RendererType::Vulkan:		shadersPath = "data/shaders/spirv/"; break;
 		default:
-			ASSERT(false && "Not supported render type");
+			ASSERT(false && "Not supported renderer type");
 			return bgfx::createProgram(vsh, fsh, false);
 	}
 

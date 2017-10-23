@@ -76,7 +76,11 @@ void ImGuiImpl::Init()
 
 	// Transient mesh for the draw list
 	mesh = std::make_unique<Mesh>(Mesh::EType::TRANSIENT);
-	mesh->stride = 2 * sizeof(float) + 2 * sizeof(float) + 4 * sizeof(uint8_t);
+	mesh->vertexDecl.reserve(3);
+	mesh->vertexDecl.emplace_back(Mesh::EAttrib::POSITION, 2, Mesh::EAttribType::FLOAT);
+	mesh->vertexDecl.emplace_back(Mesh::EAttrib::TEXCOORD0, 2, Mesh::EAttribType::FLOAT);
+	mesh->vertexDecl.emplace_back(Mesh::EAttrib::COLOR, 4, Mesh::EAttribType::UINT8);
+	mesh->CalculateStrideFromVertexDecl();
 	ASSERT(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
 	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
 

@@ -11,7 +11,12 @@
 #include "Resource/Texture.h"
 
 RenderD3D11::RenderD3D11()
-	: initialized(false)
+	: d3dDevice(nullptr)
+	, swapChain(nullptr)
+	, renderTargetView(nullptr)
+	, deviceCtx(nullptr)
+	, activeMeshRenderData(nullptr)
+	, initialized(false)
 {
 	memset(clearColor, 0, sizeof(clearColor));
 }
@@ -111,6 +116,49 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	MeshRenderDataD3D11 *renderData = new MeshRenderDataD3D11();
 
+	static const D3D11_INPUT_ELEMENT_DESC attribConversionTable[] =
+	{
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::POSITION
+		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::NORMAL
+		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD0
+		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD1
+		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD2
+		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::COLOR
+	};
+	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib);
+
+	static const DXGI_FORMAT attribTypeConversionTable[][4] =
+	{
+		// Mesh::EAttribType::FLOAT
+		{
+			DXGI_FORMAT_R32_FLOAT,
+			DXGI_FORMAT_R32G32_FLOAT,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			DXGI_FORMAT_R32G32B32A32_FLOAT
+		},
+		// Mesh::EAttribType::UINT8
+		{
+			DXGI_FORMAT_R8_UNORM,
+			DXGI_FORMAT_R8G8_UNORM,
+			DXGI_FORMAT_UNKNOWN,
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+		},
+	};
+	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType);
+
+	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexDecl.size());
+	uint32_t offset = 0;
+	for(Mesh::SVertexDecl& decl : mesh->vertexDecl)
+	{
+		D3D11_INPUT_ELEMENT_DESC *elementDesc = &renderData->vertexElementDesc[renderData->vertexElementDescCount];
+		*elementDesc = attribConversionTable[(size_t)decl.attrib];
+		elementDesc->Format = attribTypeConversionTable[(size_t)decl.type][decl.count - 1];
+		elementDesc->AlignedByteOffset = offset;
+
+		renderData->vertexElementDescCount++;
+		offset += decl.GetSizeInBytes();
+	}
+
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.ByteWidth = mesh->GetSizeOfIndices();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -141,8 +189,17 @@ void RenderD3D11::Bind(Mesh *mesh)
 			break;
 	}
 
-	HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, NULL, &renderData->indexBuffer);
-	hr = d3dDevice->CreateBuffer(&vertexBufferDesc, NULL, &renderData->vertexBuffer);
+	if(mesh->numIndices != 0)
+	{
+		HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, NULL, &renderData->indexBuffer);
+		ASSERT(SUCCEEDED(hr));
+	}
+
+	if(mesh->numVertices != 0)
+	{
+		HRESULT hr = d3dDevice->CreateBuffer(&vertexBufferDesc, NULL, &renderData->vertexBuffer);
+		ASSERT(SUCCEEDED(hr));
+	}
 
 	mesh->renderData = renderData;
 }
@@ -274,6 +331,10 @@ void RenderD3D11::SetMaterial(Material *material)
 {
 	ASSERT(material != nullptr);
 
+	ID3D11InputLayout *vertexLayout = nullptr;
+	ID3DBlob *shaderCode = nullptr;
+	HRESULT hr = d3dDevice->CreateInputLayout(activeMeshRenderData->vertexElementDesc.get(), activeMeshRenderData->vertexElementDescCount, shaderCode->GetBufferPointer(), shaderCode->GetBufferSize(), &vertexLayout);
+	ASSERT(SUCCEEDED(hr));
 }
 
 void RenderD3D11::Bind(Texture *texture)
