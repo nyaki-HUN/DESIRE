@@ -24,7 +24,7 @@ public:
 
 	static std::unique_ptr<FileSystemWatcher> Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const char *filename)> actionCallback);
 
-	void Update();
+	static void Update();
 
 protected:
 	void OnDestroy();

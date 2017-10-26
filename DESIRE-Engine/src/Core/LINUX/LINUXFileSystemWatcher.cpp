@@ -39,8 +39,6 @@ std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& direc
 
 void FileSystemWatcher::Update()
 {
-	LINUXFileSystemWatcher *watcher = static_cast<LINUXFileSystemWatcher*>(this);
-
 	fd_set read;
 	struct timeval timeout;
 	timeout.tv_sec = 0;
@@ -65,23 +63,19 @@ void FileSystemWatcher::Update()
 		while(offset < numRead)
 		{
 			inotify_event *event = reinterpret_cast<inotify_event*>(buffer + offset);
-
-			if(event->wd == watcher->wd)
-			{
-				// ?
-			}
+			LINUXFileSystemWatcher *watcher = watchers[event->wd];
 
 			if(event->mask & IN_MOVED_TO || event->mask & IN_CREATE)
 			{
-				thisPtr->actionCallback(FileSystemWatcher::EAction::ADDED, event->name);
+				watcher->actionCallback(FileSystemWatcher::EAction::ADDED, event->name);
 			}
 			else if(event->mask & IN_MOVED_FROM || event->mask & IN_DELETE)
 			{
-				thisPtr->actionCallback(FileSystemWatcher::EAction::DELETED, event->name);
+				watcher->actionCallback(FileSystemWatcher::EAction::DELETED, event->name);
 			}
 			else if(event->mask & IN_CLOSE_WRITE)
 			{
-				thisPtr->actionCallback(FileSystemWatcher::EAction::MODIFIED, event->name);
+				watcher->actionCallback(FileSystemWatcher::EAction::MODIFIED, event->name);
 			}
 
 			offset += sizeof(inotify_event) + event->len;

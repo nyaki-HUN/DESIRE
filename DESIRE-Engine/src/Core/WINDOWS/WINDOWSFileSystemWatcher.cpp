@@ -23,7 +23,7 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 		return;
 	}
 
-	WINDOWSFileSystemWatcher *thisPtr = static_cast<WINDOWSFileSystemWatcher*>(lpOverlapped->hEvent);
+	WINDOWSFileSystemWatcher *watcher = static_cast<WINDOWSFileSystemWatcher*>(lpOverlapped->hEvent);
 
 	if(dwErrorCode == ERROR_SUCCESS)
 	{
@@ -32,7 +32,7 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 		size_t offset = 0;
 		do
 		{
-			notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(thisPtr->buffer + offset);
+			notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(watcher->buffer + offset);
 
 			// Convert filename to UTF-8
 			const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), filename, MAX_PATH - 1, nullptr, nullptr);
@@ -42,16 +42,16 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 			{
 				case FILE_ACTION_ADDED:
 				case FILE_ACTION_RENAMED_NEW_NAME:
-					thisPtr->actionCallback(FileSystemWatcher::EAction::ADDED, filename);
+					watcher->actionCallback(FileSystemWatcher::EAction::ADDED, filename);
 					break;
 
 				case FILE_ACTION_REMOVED:
 				case FILE_ACTION_RENAMED_OLD_NAME:
-					thisPtr->actionCallback(FileSystemWatcher::EAction::DELETED, filename);
+					watcher->actionCallback(FileSystemWatcher::EAction::DELETED, filename);
 					break;
 
 				case FILE_ACTION_MODIFIED:
-					thisPtr->actionCallback(FileSystemWatcher::EAction::MODIFIED, filename);
+					watcher->actionCallback(FileSystemWatcher::EAction::MODIFIED, filename);
 					break;
 			}
 
@@ -59,9 +59,9 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 		} while(notify->NextEntryOffset != 0);
 	}
 
-	if(thisPtr->isActive)
+	if(watcher->isActive)
 	{
-		thisPtr->RefreshWatch();
+		watcher->RefreshWatch();
 	}
 }
 
