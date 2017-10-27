@@ -2,6 +2,7 @@
 #include "Resource/Shader.h"
 
 Shader::Shader()
+	: renderData(nullptr)
 {
 
 }

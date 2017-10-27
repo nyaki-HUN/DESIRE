@@ -7,8 +7,10 @@
 #include "Core/Timer.h"
 #include "Input/Input.h"
 #include "Render/Camera.h"
+#include "Render/Material.h"
 #include "Render/IRender.h"
 #include "Resource/Mesh.h"
+#include "Resource/Shader.h"
 #include "Resource/Texture.h"
 
 #include "UI-imgui/include/imgui.h"
@@ -18,7 +20,6 @@
 //--------------------------------------------------------------------------------*/
 #if defined(RENDER_BGFX)
 	#include "bgfx/bgfx.h"
-	bgfx::ProgramHandle imguiShaderProgram;
 #endif
 //--------------------------------------------------------------------------------*/
 
@@ -60,20 +61,6 @@ void ImGuiImpl::Init()
 	io.IniFilename = nullptr;
 	io.RenderDrawListsFn = ImGuiImpl::RenderDrawListsCallback;
 
-	// Setup font texture
-	unsigned char *textureData;
-	int width, height;
-	io.Fonts->AddFontDefault();
-	io.Fonts->GetTexDataAsRGBA32(&textureData, &width, &height);
-
-	fontTexture = std::make_unique<Texture>((uint16_t)width, (uint16_t)height, Texture::EFormat::RGBA8);
-	fontTexture->data = SMemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
-	io.Fonts->TexID = fontTexture.get();
-
-	// Cleanup (don't clear the input data if you want to append new fonts later)
-	io.Fonts->ClearInputData();
-	io.Fonts->ClearTexData();
-
 	// Transient mesh for the draw list
 	mesh = std::make_unique<Mesh>(Mesh::EType::TRANSIENT);
 	mesh->vertexDecl.reserve(3);
@@ -84,46 +71,36 @@ void ImGuiImpl::Init()
 	ASSERT(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
 	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
 
+	// Setup material
+	material = std::make_unique<Material>();
+
 	// Setup shader
-	const bgfx::Memory *vsmem = nullptr;
-	const bgfx::Memory *fsmem = nullptr;
-	switch(bgfx::getRendererType())
-	{
-		case bgfx::RendererType::Direct3D11:
-		case bgfx::RendererType::Direct3D12:
-			vsmem = bgfx::makeRef(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
-			fsmem = bgfx::makeRef(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
-			break;
+	material->shader = std::make_shared<Shader>();
+	material->shader->vertexShaderData.CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
 
-		case bgfx::RendererType::Metal:
-			vsmem = bgfx::makeRef(vs_ocornut_imgui_mtl, sizeof(vs_ocornut_imgui_mtl));
-			fsmem = bgfx::makeRef(fs_ocornut_imgui_mtl, sizeof(fs_ocornut_imgui_mtl));
-			break;
+	// Setup font texture
+	unsigned char *textureData;
+	int width, height;
+	io.Fonts->AddFontDefault();
+	io.Fonts->GetTexDataAsRGBA32(&textureData, &width, &height);
 
-		case bgfx::RendererType::Vulkan:
-			break;
+	std::shared_ptr<Texture> fontTexture = std::make_shared<Texture>((uint16_t)width, (uint16_t)height, Texture::EFormat::RGBA8);
+	fontTexture->data = SMemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
+	material->textures.push_back(fontTexture);
 
-		default:
-			ASSERT(false);
-			return;
-	}
-
-	bgfx::ShaderHandle vsh = bgfx::createShader(vsmem);
-	bgfx::ShaderHandle fsh = bgfx::createShader(fsmem);
-	imguiShaderProgram = bgfx::createProgram(vsh, fsh, true);
+	// Cleanup (don't clear the input data if you want to append new fonts later)
+	io.Fonts->ClearInputData();
+	io.Fonts->ClearTexData();
 }
 
 void ImGuiImpl::Kill()
 {
 	ImGui::Shutdown();
 
-	bgfx::destroy(imguiShaderProgram);
-
 	IRender::Get()->Unbind(mesh.get());
 	mesh = nullptr;
 
-	IRender::Get()->Unbind(fontTexture.get());
-	fontTexture = nullptr;
+	material = nullptr;
 }
 
 void ImGuiImpl::NewFrame(IWindow *window)
@@ -203,17 +180,8 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 
 	render->SetViewport(0, 0, (uint16_t)io.DisplaySize.x, (uint16_t)io.DisplaySize.y);
 
-	float ortho[16];
 	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(io.DisplaySize.x, io.DisplaySize.y, -1.0f, 1.0f);
-	matOrtho.col0.StoreXYZW(&ortho[0]);
-	matOrtho.col1.StoreXYZW(&ortho[4]);
-	matOrtho.col2.StoreXYZW(&ortho[8]);
-	matOrtho.col3.StoreXYZW(&ortho[12]);
-
-#if defined(RENDER_BGFX)
-	const uint8_t viewId = 0;
-	bgfx::setViewTransform(viewId, nullptr, ortho);
-#endif
+	render->SetViewProjectionMatrices(Matrix4::Identity(), matOrtho);
 
 	for(int i = 0; i < drawData->CmdListsCount; ++i)
 	{
@@ -241,9 +209,6 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 			mesh->indices = (uint16_t*)drawList->IdxBuffer.begin();
 			mesh->numVertices = (uint32_t)drawList->VtxBuffer.size();
 			mesh->vertices = (float*)drawList->VtxBuffer.begin();
-			render->SetMesh(mesh.get());
-
-			render->SetTexture(0, static_cast<Texture*>(pcmd.TextureId));
 
 #if defined(RENDER_BGFX)
 			bgfx::setState(0
@@ -252,11 +217,9 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 				| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
 				| BGFX_STATE_MSAA
 			);
-
-			bgfx::submit(viewId, imguiShaderProgram);
-#else
-			deviceCtx->DrawIndexed(pcmd.ElemCount, indexOffset, vertexOffset);
 #endif
+
+			render->RenderMesh(mesh.get(), material.get());
 
 			// Reset mesh
 			mesh->numIndices = 0;

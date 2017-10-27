@@ -18,11 +18,12 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 		Bind(mesh);
 	}
 	SetMesh(mesh);
+	activeMesh = mesh;
 
 	// Shader
 	if(material->shader->renderData == nullptr)
 	{
-		Bind(mesh);
+		Bind(material->shader.get());
 	}
 	SetShader(material->shader.get());
 
@@ -37,6 +38,8 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 		}
 		SetTexture(i, texture);
 	}
+
+	activeMaterial = material;
 
 	// Render
 	DoRender();

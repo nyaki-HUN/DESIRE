@@ -43,7 +43,7 @@ struct SMemoryBuffer
 		return *this;
 	}
 
-	static SMemoryBuffer CreateFromDataCopy(void *dataToCopy, size_t size)
+	static SMemoryBuffer CreateFromDataCopy(const void *dataToCopy, size_t size)
 	{
 		SMemoryBuffer buffer(size);
 		memcpy(buffer.data, dataToCopy, size);

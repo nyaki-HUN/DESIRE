@@ -7,7 +7,7 @@
 
 class IWindow;
 class Mesh;
-class Texture;
+class Material;
 
 class ImGuiImpl
 {
@@ -26,5 +26,5 @@ private:
 	static void RenderDrawListsCallback(ImDrawData *data);
 
 	std::unique_ptr<Mesh> mesh;
-	std::unique_ptr<Texture> fontTexture;
+	std::unique_ptr<Material> material;
 };
