@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 namespace stl_utils
 {
@@ -42,4 +43,11 @@ inline auto binary_find_or_insert(std::vector<T1, A>& container, const T2& val)
 	return (it != container.end() && !(val < *reinterpret_cast<const T2*>(&*it))) ? it : container.insert(it, val);
 }
 
-}	// end of namespace core
+}	// end of namespace stl_utils
+
+// Checks whether weak_ptr 'a' equals to 'b'
+template<typename T>
+inline bool operator ==(const std::weak_ptr<T>& a, const std::weak_ptr<T>& b)
+{
+	return !a.owner_before(b) && !b.owner_before(a);
+}
