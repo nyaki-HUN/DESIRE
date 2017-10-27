@@ -4,9 +4,11 @@
 #include "Core/HashedStringMap.h"
 #include "Core/fs/FilePtr_fwd.h"
 
+#include <memory>
 #include <vector>
 
 class Mesh;
+class Shader;
 class Texture;
 
 class ResourceManager
@@ -14,17 +16,25 @@ class ResourceManager
 	DESIRE_DECLARE_SINGLETON(ResourceManager)
 
 public:
-	Mesh* LoadMesh(const char *filename);
-	Texture* LoadTexture(const char *filename);
+	std::shared_ptr<Mesh> GetMesh(const char *filename);
+	std::shared_ptr<Shader> GetShader(const char *filename);
+	std::shared_ptr<Texture> GetTexture(const char *filename);
 
 	typedef Mesh*(*MeshLoaderFunc_t)(const ReadFilePtr&);
+	typedef Shader*(*ShaderLoaderFunc_t)(const ReadFilePtr&);
 	typedef Texture*(*TextureLoaderFunc_t)(const ReadFilePtr&);
 
 private:
-	HashedStringMap<Mesh*> loadedMeshes;
-	HashedStringMap<Texture*> loadedTextures;
+	std::shared_ptr<Mesh> LoadMesh(const char *filename);
+	std::shared_ptr<Shader> LoadShader(const char *filename);
+	std::shared_ptr<Texture> LoadTexture(const char *filename);
+
+	HashedStringMap<std::weak_ptr<Mesh>> loadedMeshes;
+	HashedStringMap<std::weak_ptr<Shader>> loadedShaders;
+	HashedStringMap<std::weak_ptr<Texture>> loadedTextures;
 
 	// The loaders should be initialized in modules.cpp
 	static const std::vector<MeshLoaderFunc_t> meshLoaders;
+	static const std::vector<ShaderLoaderFunc_t> shaderLoaders;
 	static const std::vector<TextureLoaderFunc_t> textureLoaders;
 };

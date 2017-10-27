@@ -13,15 +13,77 @@ ResourceManager::~ResourceManager()
 
 }
 
-Mesh* ResourceManager::LoadMesh(const char *filename)
+std::shared_ptr<Mesh> ResourceManager::GetMesh(const char *filename)
 {
 	HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
-	Mesh **meshPtr = loadedMeshes.Find(filenameHash);
-	if(meshPtr != nullptr)
+	std::weak_ptr<Mesh> *meshPtr = loadedMeshes.Find(filenameHash);
+	if(meshPtr != nullptr && !meshPtr->expired())
 	{
-		return *meshPtr;
+		return meshPtr->lock();
 	}
 
+	std::shared_ptr<Mesh> mesh = LoadMesh(filename);
+
+	if(meshPtr != nullptr)
+	{
+		*meshPtr = mesh;
+	}
+	else
+	{
+		loadedMeshes.Insert(filenameHash, mesh);
+	}
+
+	return mesh;
+}
+
+std::shared_ptr<Shader> ResourceManager::GetShader(const char *filename)
+{
+	HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
+	std::weak_ptr<Shader> *shaderPtr = loadedShaders.Find(filenameHash);
+	if(shaderPtr != nullptr && !shaderPtr->expired())
+	{
+		return shaderPtr->lock();
+	}
+
+	std::shared_ptr<Shader> shader = LoadShader(filename);
+
+	if(shaderPtr != nullptr)
+	{
+		*shaderPtr = shader;
+	}
+	else
+	{
+		loadedShaders.Insert(filenameHash, shader);
+	}
+
+	return shader;
+}
+
+std::shared_ptr<Texture> ResourceManager::GetTexture(const char *filename)
+{
+	HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
+	std::weak_ptr<Texture> *texturePtr = loadedTextures.Find(filenameHash);
+	if(texturePtr != nullptr && !texturePtr->expired())
+	{
+		return texturePtr->lock();
+	}
+
+	std::shared_ptr<Texture> texture = LoadTexture(filename);
+
+	if(texturePtr != nullptr)
+	{
+		*texturePtr = texture;
+	}
+	else
+	{
+		loadedTextures.Insert(filenameHash, texture);
+	}
+
+	return texture;
+}
+
+std::shared_ptr<Mesh> ResourceManager::LoadMesh(const char *filename)
+{
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file)
 	{
@@ -30,8 +92,7 @@ Mesh* ResourceManager::LoadMesh(const char *filename)
 			Mesh *mesh = loaderFunc(file);
 			if(mesh != nullptr)
 			{
-				loadedMeshes.Insert(filenameHash, mesh);
-				return mesh;
+				return std::shared_ptr<Mesh>(mesh);
 			}
 
 			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
@@ -42,15 +103,29 @@ Mesh* ResourceManager::LoadMesh(const char *filename)
 	return nullptr;
 }
 
-Texture* ResourceManager::LoadTexture(const char *filename)
+std::shared_ptr<Shader> ResourceManager::LoadShader(const char *filename)
 {
-	HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
-	Texture **texturePtr = loadedTextures.Find(filenameHash);
-	if(texturePtr != nullptr)
+	ReadFilePtr file = FileSystem::Get()->Open(filename);
+	if(file)
 	{
-		return *texturePtr;
+		for(ShaderLoaderFunc_t loaderFunc : shaderLoaders)
+		{
+			Shader *shader = loaderFunc(file);
+			if(shader != nullptr)
+			{
+				return std::shared_ptr<Shader>(shader);
+			}
+
+			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+		}
 	}
 
+	LOG_ERROR("Failed to load texture from: %s", filename);
+	return nullptr;
+}
+
+std::shared_ptr<Texture> ResourceManager::LoadTexture(const char *filename)
+{
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file)
 	{
@@ -59,8 +134,7 @@ Texture* ResourceManager::LoadTexture(const char *filename)
 			Texture *texture = loaderFunc(file);
 			if(texture != nullptr)
 			{
-				loadedTextures.Insert(filenameHash, texture);
-				return texture;
+				return std::shared_ptr<Texture>(texture);
 			}
 
 			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);

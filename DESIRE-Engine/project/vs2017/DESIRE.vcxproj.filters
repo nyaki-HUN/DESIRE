@@ -579,6 +579,9 @@
     <ClInclude Include="..\..\src\Render\Direct3D11\RenderD3D11.h">
       <Filter>src\Render\Direct3D11</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Render\Direct3D11\ShaderRenderDataD3D11.h">
+      <Filter>src\Render\Direct3D11</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Render\Direct3D11\TextureRenderDataD3D11.h">
       <Filter>src\Render\Direct3D11</Filter>
     </ClInclude>
@@ -594,6 +597,9 @@
     <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h">
       <Filter>src\Render\bgfx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Render\bgfx\ShaderRenderDataBgfx.h">
+      <Filter>src\Render\bgfx</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Resource\ErrorTexture.h">
       <Filter>src\Resource</Filter>
     </ClInclude>
@@ -604,6 +610,9 @@
       <Filter>src\Resource\MeshLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\ResourceManager.h">
+      <Filter>src\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Resource\Shader.h">
       <Filter>src\Resource</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Resource\Texture.h">
@@ -861,6 +870,9 @@
       <Filter>src\Resource\MeshLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\ResourceManager.cpp">
+      <Filter>src\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Resource\Shader.cpp">
       <Filter>src\Resource</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\Texture.cpp">

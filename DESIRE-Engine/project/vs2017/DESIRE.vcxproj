@@ -254,15 +254,18 @@
     <ClInclude Include="..\..\src\Render\DebugDraw.h" />
     <ClInclude Include="..\..\src\Render\Direct3D11\MeshRenderDataD3D11.h" />
     <ClInclude Include="..\..\src\Render\Direct3D11\RenderD3D11.h" />
+    <ClInclude Include="..\..\src\Render\Direct3D11\ShaderRenderDataD3D11.h" />
     <ClInclude Include="..\..\src\Render\Direct3D11\TextureRenderDataD3D11.h" />
     <ClInclude Include="..\..\src\Render\IRender.h" />
     <ClInclude Include="..\..\src\Render\Material.h" />
     <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h" />
+    <ClInclude Include="..\..\src\Render\bgfx\ShaderRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\Resource\ErrorTexture.h" />
     <ClInclude Include="..\..\src\Resource\Mesh.h" />
     <ClInclude Include="..\..\src\Resource\MeshLoader\AssimpLoader.h" />
     <ClInclude Include="..\..\src\Resource\ResourceManager.h" />
+    <ClInclude Include="..\..\src\Resource\Shader.h" />
     <ClInclude Include="..\..\src\Resource\Texture.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\StbImageLoader.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h" />
@@ -350,6 +353,7 @@
     <ClCompile Include="..\..\src\Resource\Mesh.cpp" />
     <ClCompile Include="..\..\src\Resource\MeshLoader\AssimpLoader.cpp" />
     <ClCompile Include="..\..\src\Resource\ResourceManager.cpp" />
+    <ClCompile Include="..\..\src\Resource\Shader.cpp" />
     <ClCompile Include="..\..\src\Resource\Texture.cpp" />
     <ClCompile Include="..\..\src\Resource\TextureLoader\StbImageLoader.cpp" />
     <ClCompile Include="..\..\src\Resource\TextureLoader\TgaLoader.cpp" />
