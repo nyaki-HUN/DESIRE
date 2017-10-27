@@ -39,8 +39,6 @@ private:
 
 	void DoRender() override;
 
-	static bgfx::ProgramHandle CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename);
-
 	bgfx::UniformHandle samplerUniforms[8];
 
 	bool initialized;

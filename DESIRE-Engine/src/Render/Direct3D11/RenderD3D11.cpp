@@ -13,6 +13,8 @@
 #include "Resource/Shader.h"
 #include "Resource/Texture.h"
 
+#include <d3dcompiler.h>
+
 RenderD3D11::RenderD3D11()
 	: d3dDevice(nullptr)
 	, swapChain(nullptr)
@@ -36,7 +38,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 		{ 1, 0 },
 		DXGI_USAGE_RENDER_TARGET_OUTPUT,
 		1,
-		NULL,
+		nullptr,
 		TRUE,
 		DXGI_SWAP_EFFECT_DISCARD,
 		0
@@ -46,21 +48,21 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	swapChainDescTmp.OutputWindow = (HWND)mainWindow->GetHandle();
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(
-		NULL,					// might fail with two adapters in machine
+		nullptr,					// might fail with two adapters in machine
 		D3D_DRIVER_TYPE_HARDWARE,
-		NULL,
-#if defined(_DEBUG)
+		nullptr,
+#if defined(DESIRE_DEBUG)
 		D3D11_CREATE_DEVICE_DEBUG,
 #else
 		D3D11_CREATE_DEVICE_SINGLETHREADED,
 #endif
-		NULL,
+		nullptr,
 		0,
 		D3D11_SDK_VERSION,
 		&swapChainDescTmp,
 		&swapChain,
 		&d3dDevice,
-		NULL,
+		nullptr,
 		&deviceCtx);
 
 	initialized = SUCCEEDED(hr);
@@ -71,8 +73,8 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	ID3D11Texture2D *pBackBuffer = nullptr;
 	hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&pBackBuffer);
 
-	hr = d3dDevice->CreateRenderTargetView(pBackBuffer, NULL, &renderTargetView);
-	deviceCtx->OMSetRenderTargets(1, &renderTargetView, NULL);
+	hr = d3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &renderTargetView);
+	deviceCtx->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
 	SetViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
 }
@@ -210,13 +212,13 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	if(mesh->numIndices != 0)
 	{
-		HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, NULL, &renderData->indexBuffer);
+		HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, nullptr, &renderData->indexBuffer);
 		ASSERT(SUCCEEDED(hr));
 	}
 
 	if(mesh->numVertices != 0)
 	{
-		HRESULT hr = d3dDevice->CreateBuffer(&vertexBufferDesc, NULL, &renderData->vertexBuffer);
+		HRESULT hr = d3dDevice->CreateBuffer(&vertexBufferDesc, nullptr, &renderData->vertexBuffer);
 		ASSERT(SUCCEEDED(hr));
 	}
 
@@ -234,6 +236,35 @@ void RenderD3D11::Bind(Shader *shader)
 	}
 	
 	ShaderRenderDataD3D11 *renderData = new ShaderRenderDataD3D11();
+
+	ID3DBlob *errorBlob = nullptr;
+	HRESULT result = D3DCompile(shader->vertexShaderDataBuffer.data, shader->vertexShaderDataBuffer.size, nullptr, nullptr, nullptr, "vs", "vs_5_0", 0, 0, &renderData->vertexShaderCode, &errorBlob);
+	if(FAILED(result))
+	{
+		if(errorBlob != nullptr)
+		{
+			LOG_ERROR("Vertex shader compile error: %s", (char*)errorBlob->GetBufferPointer());
+			errorBlob->Release();
+		}
+	}
+	else
+	{
+		d3dDevice->CreateVertexShader(renderData->vertexShaderCode->GetBufferPointer(), renderData->vertexShaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
+	}
+
+	result = D3DCompile(shader->pixelShaderDataBuffer.data, shader->pixelShaderDataBuffer.size, nullptr, nullptr, nullptr, "ps", "vs_5_0", 0, 0, &renderData->pixelShaderCode, &errorBlob);
+	if(FAILED(result))
+	{
+		if(errorBlob != nullptr)
+		{
+			LOG_ERROR("Pixel shader compile error: %s", (char*)errorBlob->GetBufferPointer());
+			errorBlob->Release();
+		}
+	}
+	else
+	{
+		d3dDevice->CreatePixelShader(renderData->pixelShaderCode->GetBufferPointer(), renderData->pixelShaderCode->GetBufferSize(), nullptr, &renderData->pixelShader);
+	}
 
 	shader->renderData = renderData;
 }
@@ -458,7 +489,7 @@ void RenderD3D11::SetShader(Shader *shader)
 	const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
 
 	ID3D11InputLayout *vertexLayout = nullptr;
-	HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, shaderRenderData->shaderCode->GetBufferPointer(), shaderRenderData->shaderCode->GetBufferSize(), &vertexLayout);
+	HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, shaderRenderData->vertexShaderCode->GetBufferPointer(), shaderRenderData->vertexShaderCode->GetBufferSize(), &vertexLayout);
 	ASSERT(SUCCEEDED(hr));
 }
 

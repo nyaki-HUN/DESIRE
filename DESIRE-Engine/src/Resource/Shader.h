@@ -10,6 +10,6 @@ public:
 	// Render engine specific data set at bind
 	void *renderData;
 
-	SMemoryBuffer vertexShaderData;
-	SMemoryBuffer pixelShaderData;
+	SMemoryBuffer vertexShaderDataBuffer;
+	SMemoryBuffer pixelShaderDataBuffer;
 };

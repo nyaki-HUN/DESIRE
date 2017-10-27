@@ -76,7 +76,8 @@ void ImGuiImpl::Init()
 
 	// Setup shader
 	material->shader = std::make_shared<Shader>();
-	material->shader->vertexShaderData.CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
+	material->shader->vertexShaderDataBuffer = SMemoryBuffer::CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
+	material->shader->pixelShaderDataBuffer = SMemoryBuffer::CreateFromDataCopy(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
 
 	// Setup font texture
 	unsigned char *textureData;

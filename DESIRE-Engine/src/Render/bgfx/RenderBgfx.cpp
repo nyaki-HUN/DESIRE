@@ -193,7 +193,13 @@ void RenderBgfx::Bind(Shader *shader)
 	
 	ShaderRenderDataBgfx *renderData = new ShaderRenderDataBgfx();
 
-	renderData->shaderProgram = CreateShaderProgram("vs_picking_shaded", "fs_picking_shaded");
+	const bgfx::Memory *vsData = bgfx::makeRef(shader->vertexShaderDataBuffer.data, (uint32_t)shader->vertexShaderDataBuffer.size);
+	const bgfx::Memory *fsData = bgfx::makeRef(shader->pixelShaderDataBuffer.data, (uint32_t)shader->pixelShaderDataBuffer.size);
+
+	bgfx::ShaderHandle vsh = bgfx::createShader(vsData);
+	bgfx::ShaderHandle fsh = bgfx::createShader(fsData);
+	renderData->shaderProgram = bgfx::createProgram(vsh, fsh, true);
+
 	renderData->u_tint = bgfx::createUniform("u_tint", bgfx::UniformType::Vec4);
 
 	shader->renderData = renderData;
@@ -354,40 +360,3 @@ void RenderBgfx::DoRender()
 	bgfx::submit(viewId, shaderRenderData->shaderProgram);
 }
 
-bgfx::ProgramHandle RenderBgfx::CreateShaderProgram(const char *vertexShaderFilename, const char *fragmentShaderFilename)
-{
-	bgfx::ShaderHandle vsh = BGFX_INVALID_HANDLE;
-	bgfx::ShaderHandle fsh = BGFX_INVALID_HANDLE;
-
-	const char *shadersPath = nullptr;
-	switch(bgfx::getRendererType())
-	{
-		case bgfx::RendererType::Direct3D9:		shadersPath = "data/shaders/dx9/"; break;
-		case bgfx::RendererType::Direct3D11:	shadersPath = "data/shaders/dx11/"; break;
-		case bgfx::RendererType::Direct3D12:	shadersPath = "data/shaders/dx11/"; break;
-		case bgfx::RendererType::Gnm:			shadersPath = "data/shaders/pssl/"; break;
-		case bgfx::RendererType::Metal:			shadersPath = "data/shaders/metal/"; break;
-		case bgfx::RendererType::OpenGLES:		shadersPath = "data/shaders/essl/"; break;
-		case bgfx::RendererType::OpenGL:		shadersPath = "data/shaders/glsl/"; break;
-		case bgfx::RendererType::Vulkan:		shadersPath = "data/shaders/spirv/"; break;
-		default:
-			ASSERT(false && "Not supported renderer type");
-			return bgfx::createProgram(vsh, fsh, false);
-	}
-
-	{
-		String filename = String::CreateFormattedString("%s%s.bin", shadersPath, vertexShaderFilename);
-		ReadFilePtr file = FileSystem::Get()->Open(filename.c_str());
-		SMemoryBuffer content = file->ReadFileContent();
-		vsh = bgfx::createShader(bgfx::copy(content.data, (uint32_t)content.size));
-	}
-
-	{
-		String filename = String::CreateFormattedString("%s%s.bin", shadersPath, fragmentShaderFilename);
-		ReadFilePtr file = FileSystem::Get()->Open(filename.c_str());
-		SMemoryBuffer content = file->ReadFileContent();
-		fsh = bgfx::createShader(bgfx::copy(content.data, (uint32_t)content.size));
-	}
-
-	return bgfx::createProgram(vsh, fsh, true);
-}
