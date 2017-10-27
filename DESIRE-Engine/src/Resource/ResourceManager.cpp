@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "Resource/ResourceManager.h"
+#include "Resource/Mesh.h"
+#include "Resource/Shader.h"
+#include "Resource/Texture.h"
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/IReadFile.h"
 
