@@ -11,17 +11,22 @@ RenderComponent::~RenderComponent()
 
 }
 
-void RenderComponent::SetMesh(const Mesh *i_mesh)
+void RenderComponent::SetLayer(int layer)
 {
-	mesh = i_mesh;
+	renderLayer = layer;
 }
 
-void RenderComponent::SetInstanceAlpha(float a)
+int RenderComponent::GetLayer() const
 {
-	alpha = a;
+	return renderLayer;
 }
 
-float RenderComponent::GetInstanceAlpha() const
+void RenderComponent::SetMaterial(Material *i_material)
 {
-	return alpha;
+	material = i_material;
+}
+
+Material* RenderComponent::GetMaterial() const
+{
+	return material;
 }

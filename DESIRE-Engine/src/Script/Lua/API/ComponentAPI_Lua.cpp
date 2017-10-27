@@ -39,7 +39,7 @@ void RegisterComponentAPI_Lua(lua_State *L)
 
 	// RenderComponent
 	luabridge::getGlobalNamespace(L).deriveClass<RenderComponent, IComponent>("RenderComponent")
-		.addProperty("alpha", &RenderComponent::GetInstanceAlpha, &RenderComponent::SetInstanceAlpha)
+		.addProperty("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
 		.endClass();
 
 	// SceneNodeComponent

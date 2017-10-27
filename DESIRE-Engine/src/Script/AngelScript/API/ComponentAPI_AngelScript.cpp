@@ -35,8 +35,8 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 
 	// RenderComponent
 	SCRIPT_API_REGISTER_COMPONENT(RenderComponent);
-	engine->RegisterObjectMethod("RenderComponent", "void set_alpha(float)", asMETHODPR(RenderComponent, SetInstanceAlpha, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("RenderComponent", "float get_alpha() const", asMETHODPR(RenderComponent, GetInstanceAlpha, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("RenderComponent", "void set_layer(int)", asMETHODPR(RenderComponent, SetLayer, (int), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("RenderComponent", "int get_layer() const", asMETHODPR(RenderComponent, GetLayer, () const, int), asCALL_THISCALL);
 
 	// SceneNodeComponent
 	SCRIPT_API_REGISTER_COMPONENT(SceneNodeComponent);

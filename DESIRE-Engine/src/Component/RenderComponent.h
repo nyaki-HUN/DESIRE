@@ -3,6 +3,7 @@
 #include "Component/IComponent.h"
 
 class Mesh;
+class Material;
 
 class RenderComponent : public IComponent
 {
@@ -12,13 +13,15 @@ public:
 	RenderComponent();
 	~RenderComponent();
 
-	void SetMesh(const Mesh *mesh);
+	void SetLayer(int layer);
+	int GetLayer() const;
 
-	void SetInstanceAlpha(float a);
-	float GetInstanceAlpha() const;
+	void SetMaterial(Material *material);
+	Material* GetMaterial() const;
 
 private:
 	const Mesh *mesh;
+	Material *material;
 
-	float alpha;
+	int renderLayer;
 };

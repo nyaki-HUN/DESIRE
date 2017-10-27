@@ -41,7 +41,7 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 
 	// RenderComponent
 	rootTable.Bind("RenderComponent", Sqrat::DerivedClass<RenderComponent, IComponent, Sqrat::NoConstructor<RenderComponent>>(vm, "RenderComponent")
-		.Prop("alpha", &RenderComponent::GetInstanceAlpha, &RenderComponent::SetInstanceAlpha)
+		.Prop("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
 	);
 
 	// SceneNodeComponent
