@@ -454,7 +454,7 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 
 void RenderD3D11::SetShader(Shader *shader)
 {
-	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeMesh->renderData);
+	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(shader->renderData);
 	const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
 
 	ID3D11InputLayout *vertexLayout = nullptr;
