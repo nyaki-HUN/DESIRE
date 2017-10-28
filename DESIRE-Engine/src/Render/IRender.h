@@ -43,7 +43,7 @@ public:
 
 protected:
 	virtual void SetMesh(Mesh *mesh) = 0;
-	virtual void SetShader(Shader *vertexShader, Shader *pixelShader) = 0;
+	virtual void SetShadersFromMaterial(Material *material) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture) = 0;
 
 	// Submit draw command
@@ -51,7 +51,4 @@ protected:
 
 	const Mesh *activeMesh = nullptr;
 	const Material *activeMaterial = nullptr;
-
-	Shader *errorVertexShader = nullptr;
-	Shader *errorPixelShader = nullptr;
 };

@@ -36,7 +36,7 @@ public:
 
 private:
 	void SetMesh(Mesh *mesh) override;
-	void SetShader(Shader *vertexShader, Shader *pixelShader) override;
+	void SetShadersFromMaterial(Material *material) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
 	void DoRender() override;

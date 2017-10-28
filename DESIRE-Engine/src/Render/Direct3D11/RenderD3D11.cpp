@@ -248,6 +248,7 @@ void RenderD3D11::Bind(Shader *shader)
 
 	ID3DBlob *errorBlob = nullptr;
 	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "main", "vs_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
+//	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "ps", "ps_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
 	if(FAILED(hr))
 	{
 		if(errorBlob != nullptr)
@@ -268,14 +269,14 @@ void RenderD3D11::Bind(Shader *shader)
 	hr = D3DReflect(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize() , IID_ID3D11ShaderReflection, (void**)&reflection);
 	if(FAILED(hr))
 	{
-		LOG_ERROR("D3DReflect failed 0x%08x", (uint32_t)hr);
+		LOG_ERROR("D3DReflect failed 0x%08x\n", (uint32_t)hr);
 	}
 
 	D3D11_SHADER_DESC shaderDesc;
 	hr = reflection->GetDesc(&shaderDesc);
 	if(FAILED(hr))
 	{
-		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x", (uint32_t)hr);
+		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
 	}
 
 	uint32_t constantBufferSize = 0;
@@ -372,6 +373,7 @@ void RenderD3D11::Bind(Texture *texture)
 	srvDesc.Texture2D.MipLevels = desc.MipLevels;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	d3dDevice->CreateShaderResourceView(d3dTexture2D, &srvDesc, &renderData->textureSRV);
+//	renderData->textureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, size, temp);
 
 	d3dTexture2D->Release();
 
@@ -513,37 +515,29 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
 }
 
-void RenderD3D11::SetShader(Shader *vertexShader, Shader *pixelShader)
+void RenderD3D11::SetShadersFromMaterial(Material *material)
 {
-	if(vertexShader != nullptr)
+	// Vertex shader
+	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->vertexShader->renderData);
+	deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
+	if(vertexShaderRenderData->constantBuffer != nullptr)
 	{
-		const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader->renderData);
-
-		deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
 		deviceCtx->VSSetConstantBuffers(0, 1, &vertexShaderRenderData->constantBuffer);
-
-		const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
-		ID3D11InputLayout *vertexLayout = nullptr;
-		HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &vertexLayout);
-		ASSERT(SUCCEEDED(hr));
-
-		deviceCtx->IASetInputLayout(vertexLayout);
-	}
-	else
-	{
-		deviceCtx->VSSetShader(nullptr, nullptr, 0);
 	}
 
-	if(pixelShader != nullptr)
-	{
-		const ShaderRenderDataD3D11 *pixelShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(pixelShader->renderData);
+	const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
+	ID3D11InputLayout *vertexLayout = nullptr;
+	HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &vertexLayout);
+	ASSERT(SUCCEEDED(hr));
 
-		deviceCtx->PSSetShader(pixelShaderRenderData->pixelShader, nullptr, 0);
+	deviceCtx->IASetInputLayout(vertexLayout);
+
+	// Pixel shader
+	const ShaderRenderDataD3D11 *pixelShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->pixelShader->renderData);
+	deviceCtx->PSSetShader(pixelShaderRenderData->pixelShader, nullptr, 0);
+	if(pixelShaderRenderData->constantBuffer != nullptr)
+	{
 		deviceCtx->PSSetConstantBuffers(0, 1, &pixelShaderRenderData->constantBuffer);
-	}
-	else
-	{
-		deviceCtx->PSSetShader(nullptr, nullptr, 0);
 	}
 }
 

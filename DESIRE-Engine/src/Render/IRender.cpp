@@ -7,46 +7,56 @@
 
 void IRender::RenderMesh(Mesh *mesh, Material *material)
 {
-	if(mesh == nullptr || material == nullptr)
+	if(	mesh == nullptr ||
+		material == nullptr ||
+		material->vertexShader == nullptr ||
+		material->pixelShader == nullptr)
 	{
 		return;
 	}
 
 	// Mesh
-	if(mesh->renderData == nullptr)
+	if(activeMesh != mesh)
 	{
-		Bind(mesh);
-	}
-	SetMesh(mesh);
-	activeMesh = mesh;
-
-	// Shaders
-	Shader *vertexShader = (material->vertexShader != nullptr) ? material->vertexShader.get() : errorVertexShader;
-	if(vertexShader->renderData == nullptr)
-	{
-		Bind(vertexShader);
-	}
-
-	Shader *pixelShader = (material->pixelShader != nullptr) ? material->pixelShader.get() : errorPixelShader;
-	if(pixelShader->renderData == nullptr)
-	{
-		Bind(pixelShader);
-	}
-
-	SetShader(vertexShader, pixelShader);
-
-	// Textures
-	for(uint8_t i = 0; i < material->textures.size(); i++)
-	{
-		Texture *texture = material->textures[i].get();
-		if(texture->renderData == nullptr)
+		if(mesh->renderData == nullptr)
 		{
-			Bind(texture);
+			Bind(mesh);
 		}
-		SetTexture(i, texture);
+
+		SetMesh(mesh);
+		activeMesh = mesh;
 	}
 
-	activeMaterial = material;
+	// Material
+	if(activeMaterial != material)
+	{
+		// Shaders
+		if(material->vertexShader->renderData == nullptr)
+		{
+			Bind(material->vertexShader.get());
+		}
+
+		if(material->pixelShader->renderData == nullptr)
+		{
+			Bind(material->pixelShader.get());
+		}
+
+		SetShadersFromMaterial(material);
+
+		// Textures
+		for(uint8_t i = 0; i < material->textures.size(); i++)
+		{
+			Texture *texture = material->textures[i].get();
+			if(texture->renderData == nullptr)
+			{
+				Bind(texture);
+			}
+
+			SetTexture(i, texture);
+		}
+
+		activeMaterial = material;
+	}
 
 	// Render
 	DoRender();
