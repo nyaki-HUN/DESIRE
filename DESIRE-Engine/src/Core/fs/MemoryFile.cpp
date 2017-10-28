@@ -31,24 +31,6 @@ MemoryFile::~MemoryFile()
 	free(data);
 }
 
-void MemoryFile::ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback)
-{
-	// No need for real async read
-	ASSERT(callback != nullptr);
-	ReadBuffer(buffer, size);
-	callback();
-}
-
-size_t MemoryFile::ReadBuffer(void *buffer, size_t size)
-{
-	const size_t remainingSize = static_cast<size_t>(fileSize - position);
-	size = std::min(size, remainingSize);
-
-	memcpy(buffer, data + position, size);
-	position += size;
-	return size;
-}
-
 bool MemoryFile::Seek(int64_t offset, ESeekOrigin origin)
 {
 	int64_t newPos = -1;
@@ -66,4 +48,22 @@ bool MemoryFile::Seek(int64_t offset, ESeekOrigin origin)
 
 	position = newPos;
 	return true;
+}
+
+void MemoryFile::ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback)
+{
+	// No need for real async read
+	ASSERT(callback != nullptr);
+	ReadBuffer(buffer, size);
+	callback();
+}
+
+size_t MemoryFile::ReadBuffer(void *buffer, size_t size)
+{
+	const size_t remainingSize = static_cast<size_t>(fileSize - position);
+	size = std::min(size, remainingSize);
+
+	memcpy(buffer, data + position, size);
+	position += size;
+	return size;
 }

@@ -12,10 +12,10 @@ public:
 	MemoryFile(ReadFilePtr& file, int64_t size = -1);
 	~MemoryFile();
 
+	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) override;
+
 	void ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback) override;
 	size_t ReadBuffer(void *buffer, size_t size) override;
-
-	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) override;
 
 private:
 	char *data;
