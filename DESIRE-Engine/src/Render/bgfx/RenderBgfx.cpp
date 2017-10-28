@@ -15,7 +15,9 @@
 #include "bgfx/platform.h"
 
 RenderBgfx::RenderBgfx()
-	: initialized(false)
+	: activeShaderProgram(BGFX_INVALID_HANDLE)
+	, activeViewId(0)
+	, initialized(false)
 {
 	for(bgfx::UniformHandle& uniform : samplerUniforms)
 	{
@@ -109,14 +111,12 @@ void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matr
 	viewMatrix.Store(view);
 	projMatrix.Store(projection);
 
-	const uint8_t viewId = 0;
-	bgfx::setViewTransform(viewId, view, projection);
+	bgfx::setViewTransform(activeViewId, view, projection);
 }
 
 void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
-	const uint8_t viewId = 0;
-	bgfx::setViewRect(viewId, x, y, width, height);
+	bgfx::setViewRect(activeViewId, x, y, width, height);
 }
 
 void RenderBgfx::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -215,7 +215,6 @@ void RenderBgfx::Bind(Shader *shader)
 	const bgfx::Memory *shaderDara = bgfx::makeRef(shader->data.data, (uint32_t)shader->data.size);
 
 	renderData->shaderHandle = bgfx::createShader(shaderDara);
-
 	renderData->u_tint = bgfx::createUniform("u_tint", bgfx::UniformType::Vec4);
 
 	shader->renderData = renderData;
@@ -287,7 +286,7 @@ void RenderBgfx::Unbind(Shader *shader)
 
 	ShaderRenderDataBgfx *renderData = static_cast<ShaderRenderDataBgfx*>(shader->renderData);
 
-	bgfx::destroy(renderData->shaderProgram);
+	bgfx::destroy(renderData->shaderHandle);
 	bgfx::destroy(renderData->u_tint);
 
 	delete renderData;
@@ -353,28 +352,33 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	}
 }
 
-void RenderBgfx::SetShader(Shader *vertexShader, Shader *pixelShader)
+void RenderBgfx::SetShadersFromMaterial(Material *material)
 {
-	ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<ShaderRenderDataBgfx*>(vertexShader->renderData);
+	ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<ShaderRenderDataBgfx*>(material->vertexShader->renderData);
+//	const ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(material->vertexShader->renderData);
+	const ShaderRenderDataBgfx *pixelShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(material->pixelShader->renderData);
 
-	vertexShaderRenderData->shaderProgram = bgfx::createProgram(vertexShaderRenderData->shaderHandle, pixelShaderRenderData->shaderHandle);
+	if(!bgfx::isValid(vertexShaderRenderData->shaderProgram))
+	{
+		vertexShaderRenderData->shaderProgram = bgfx::createProgram(vertexShaderRenderData->shaderHandle, pixelShaderRenderData->shaderHandle);
+	}
+	activeShaderProgram = vertexShaderRenderData->shaderProgram;
 
 	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	//	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
-	bgfx::setUniform(vertexShaderRenderData->u_tint, color);
+//	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
+	bgfx::setUniform(pixelShaderRenderData->u_tint, color);
 }
 
 void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
 {
-	bgfx::TextureHandle *renderData = static_cast<bgfx::TextureHandle*>(texture->renderData);
-	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);
+	const bgfx::TextureHandle *renderData = static_cast<const bgfx::TextureHandle*>(texture->renderData);
+
+	uint32_t flags = BGFX_TEXTURE_NONE;
+	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData, flags);
 }
 
 void RenderBgfx::DoRender()
 {
-	const ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeMaterial->vertexShader->renderData);
-
-	const uint8_t viewId = 0;
-	bgfx::submit(viewId, vertexShaderRenderData->shaderProgram);
+	bgfx::submit(activeViewId, activeShaderProgram);
 }
 

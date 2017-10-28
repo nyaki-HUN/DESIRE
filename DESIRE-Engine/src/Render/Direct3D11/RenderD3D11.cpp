@@ -20,14 +20,31 @@ RenderD3D11::RenderD3D11()
 	, swapChain(nullptr)
 	, renderTargetView(nullptr)
 	, deviceCtx(nullptr)
+	, activeMesh(nullptr)
 	, initialized(false)
 {
 	memset(clearColor, 0, sizeof(clearColor));
+
+	const char vs_error[] =
+	{
+		"TODO"
+	};
+
+	const char ps_error[] =
+	{
+		"TODO"
+	};
+
+	errorVertexShader = std::make_unique<Shader>("vs_error");
+	errorVertexShader->data = SMemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
+	errorPixelShader = std::make_unique<Shader>("ps_error");
+	errorPixelShader->data = SMemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 }
 
 RenderD3D11::~RenderD3D11()
 {
-
+	errorVertexShader = nullptr;
+	errorPixelShader = nullptr;
 }
 
 void RenderD3D11::Init(IWindow *mainWindow)
@@ -77,7 +94,8 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	hr = d3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &renderTargetView);
 	deviceCtx->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
-	SetViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
+	Bind(errorVertexShader.get());
+	Bind(errorPixelShader.get());
 }
 
 void RenderD3D11::UpdateRenderWindow(IWindow *window)
@@ -93,6 +111,9 @@ void RenderD3D11::UpdateRenderWindow(IWindow *window)
 void RenderD3D11::Kill()
 {
 	initialized = false;
+
+	Unbind(errorVertexShader.get());
+	Unbind(errorPixelShader.get());
 }
 
 String RenderD3D11::GetShaderFilenameWithPath(const char *shaderFilename) const
@@ -184,50 +205,46 @@ void RenderD3D11::Bind(Mesh *mesh)
 		offset += decl.GetSizeInBytes();
 	}
 
-	D3D11_BUFFER_DESC indexBufferDesc = {};
-	indexBufferDesc.ByteWidth = mesh->GetSizeOfIndices();
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_BUFFER_DESC vertexBufferDesc = {};
-	vertexBufferDesc.ByteWidth = mesh->GetSizeOfVertices();
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
+	D3D11_BUFFER_DESC bufferDesc = {};
 	switch(mesh->type)
 	{
 		case Mesh::EType::STATIC:
-			indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-			vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-			indexBufferDesc.CPUAccessFlags = 0;
+			bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			bufferDesc.CPUAccessFlags = 0;
 			break;
 
 		case Mesh::EType::DYNAMIC:
-			indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-			vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-			indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			break;
 
 		case Mesh::EType::TRANSIENT:
-			indexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-			vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-			indexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			break;
 	}
 
 	if(mesh->numIndices != 0)
 	{
+		bufferDesc.ByteWidth = mesh->GetSizeOfIndices();
+		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
 		D3D11_SUBRESOURCE_DATA initialData = {};
 		initialData.pSysMem = mesh->indices;
 
-		HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, &initialData, &renderData->indexBuffer);
+		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialData, &renderData->indexBuffer);
 		ASSERT(SUCCEEDED(hr));
 	}
 
 	if(mesh->numVertices != 0)
 	{
+		bufferDesc.ByteWidth = mesh->GetSizeOfVertices();
+		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
 		D3D11_SUBRESOURCE_DATA initialData = {};
 		initialData.pSysMem = mesh->vertices;
 
-		HRESULT hr = d3dDevice->CreateBuffer(&vertexBufferDesc, &initialData, &renderData->vertexBuffer);
+		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialData, &renderData->vertexBuffer);
 		ASSERT(SUCCEEDED(hr));
 	}
 
@@ -248,7 +265,6 @@ void RenderD3D11::Bind(Shader *shader)
 
 	ID3DBlob *errorBlob = nullptr;
 	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "main", "vs_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
-//	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "ps", "ps_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
 	if(FAILED(hr))
 	{
 		if(errorBlob != nullptr)
@@ -256,14 +272,23 @@ void RenderD3D11::Bind(Shader *shader)
 			LOG_ERROR("Shader compile error: %s", (char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
+
+		delete renderData;
+		shader->renderData = errorVertexShader->renderData;
+		return;
+	}
+
+	if(true)
+	{
+		hr = d3dDevice->CreateVertexShader(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
 	}
 	else
 	{
-		hr = d3dDevice->CreateVertexShader(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
-		ASSERT(SUCCEEDED(hr));
+		hr = d3dDevice->CreatePixelShader(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), nullptr, &renderData->pixelShader);
 	}
+	ASSERT(SUCCEEDED(hr));
 
-	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, shader->name.Length(), shader->name.c_str());
+	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)shader->name.Length(), shader->name.c_str());
 
 	ID3D11ShaderReflection *reflection = nullptr;
 	hr = D3DReflect(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize() , IID_ID3D11ShaderReflection, (void**)&reflection);
@@ -283,19 +308,19 @@ void RenderD3D11::Bind(Shader *shader)
 	if(shaderDesc.ConstantBuffers > 0)
 	{
 		ID3D11ShaderReflectionConstantBuffer *cbuffer = reflection->GetConstantBufferByIndex(0);
-		D3D11_SHADER_BUFFER_DESC bufferDesc;
-		hr = cbuffer->GetDesc(&bufferDesc);
+		D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
+		hr = cbuffer->GetDesc(&shaderBufferDesc);
 		ASSERT(SUCCEEDED(hr));
 
-		constantBufferSize = bufferDesc.Size;
-	}
+		constantBufferSize = shaderBufferDesc.Size;
 
-	D3D11_BUFFER_DESC desc = {};
-	desc.ByteWidth = constantBufferSize;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	hr = d3dDevice->CreateBuffer(&desc, nullptr, &renderData->constantBuffer);
-	ASSERT(SUCCEEDED(hr));
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.ByteWidth = constantBufferSize;
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		hr = d3dDevice->CreateBuffer(&bufferDesc, nullptr, &renderData->constantBuffer);
+		ASSERT(SUCCEEDED(hr));
+	}
 
 	shader->renderData = renderData;
 }
@@ -361,6 +386,7 @@ void RenderD3D11::Bind(Texture *texture)
 	desc.SampleDesc.Count = 1;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	DESIRE_TODO("Support Cube texture");
 //	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	ID3D11Texture2D *d3dTexture2D = nullptr;
@@ -373,7 +399,6 @@ void RenderD3D11::Bind(Texture *texture)
 	srvDesc.Texture2D.MipLevels = desc.MipLevels;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	d3dDevice->CreateShaderResourceView(d3dTexture2D, &srvDesc, &renderData->textureSRV);
-//	renderData->textureSRV->SetPrivateData(WKPDID_D3DDebugObjectName, size, temp);
 
 	d3dTexture2D->Release();
 
@@ -445,6 +470,11 @@ void RenderD3D11::Unbind(Texture *texture)
 
 void RenderD3D11::SetMesh(Mesh *mesh)
 {
+	if(activeMesh == mesh)
+	{
+		return;
+	}
+
 	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
 	// Update buffers
@@ -513,6 +543,8 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	// Set buffers
 	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, renderData->indexOffset);
 	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
+
+	activeMesh = mesh;
 }
 
 void RenderD3D11::SetShadersFromMaterial(Material *material)

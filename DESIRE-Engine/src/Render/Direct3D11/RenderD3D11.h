@@ -3,6 +3,7 @@
 #include "Render/IRender.h"
 
 #include <d3d11.h>
+#include <memory>
 #include <unordered_map>
 
 class MeshRenderDataD3D11;
@@ -47,6 +48,10 @@ private:
 	ID3D11DeviceContext *deviceCtx;
 
 	std::unordered_map<uint64_t, ID3D11InputLayout*> inputLayoutCache;
+
+	const Mesh *activeMesh;
+	std::unique_ptr<Shader> errorVertexShader;
+	std::unique_ptr<Shader> errorPixelShader;
 
 	float clearColor[4];
 

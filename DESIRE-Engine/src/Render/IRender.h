@@ -48,7 +48,4 @@ protected:
 
 	// Submit draw command
 	virtual void DoRender() = 0;
-
-	const Mesh *activeMesh = nullptr;
-	const Material *activeMaterial = nullptr;
 };

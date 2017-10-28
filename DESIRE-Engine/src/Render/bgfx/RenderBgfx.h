@@ -40,7 +40,9 @@ private:
 
 	void DoRender() override;
 
+	bgfx::ProgramHandle activeShaderProgram;
 	bgfx::UniformHandle samplerUniforms[8];
 
+	uint8_t activeViewId;
 	bool initialized;
 };
