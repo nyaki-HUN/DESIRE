@@ -15,13 +15,7 @@
 
 #include "UI-imgui/include/imgui.h"
 
-//--------------------------------------------------------------------------------*/
-#define RENDER_BGFX
-//--------------------------------------------------------------------------------*/
-#if defined(RENDER_BGFX)
-	#include "bgfx/bgfx.h"
-#endif
-//--------------------------------------------------------------------------------*/
+/**/#include "bgfx/bgfx.h"
 
 ImGuiImpl::ImGuiImpl()
 {
@@ -211,14 +205,15 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 			mesh->numVertices = (uint32_t)drawList->VtxBuffer.size();
 			mesh->vertices = (float*)drawList->VtxBuffer.begin();
 
-#if defined(RENDER_BGFX)
-			bgfx::setState(0
-				| BGFX_STATE_RGB_WRITE
-				| BGFX_STATE_ALPHA_WRITE
-				| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
-				| BGFX_STATE_MSAA
-			);
-#endif
+			if(bgfx::getRendererType() != bgfx::RendererType::Noop)
+			{
+				bgfx::setState(0
+					| BGFX_STATE_RGB_WRITE
+					| BGFX_STATE_ALPHA_WRITE
+					| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
+					| BGFX_STATE_MSAA
+				);
+			}
 
 			render->RenderMesh(mesh.get(), material.get());
 

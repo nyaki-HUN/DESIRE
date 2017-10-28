@@ -212,13 +212,19 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	if(mesh->numIndices != 0)
 	{
-		HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, nullptr, &renderData->indexBuffer);
+		D3D11_SUBRESOURCE_DATA initialData = {};
+		initialData.pSysMem = mesh->indices;
+
+		HRESULT hr = d3dDevice->CreateBuffer(&indexBufferDesc, &initialData, &renderData->indexBuffer);
 		ASSERT(SUCCEEDED(hr));
 	}
 
 	if(mesh->numVertices != 0)
 	{
-		HRESULT hr = d3dDevice->CreateBuffer(&vertexBufferDesc, nullptr, &renderData->vertexBuffer);
+		D3D11_SUBRESOURCE_DATA initialData = {};
+		initialData.pSysMem = mesh->vertices;
+
+		HRESULT hr = d3dDevice->CreateBuffer(&vertexBufferDesc, &initialData, &renderData->vertexBuffer);
 		ASSERT(SUCCEEDED(hr));
 	}
 
@@ -491,6 +497,12 @@ void RenderD3D11::SetShader(Shader *shader)
 	ID3D11InputLayout *vertexLayout = nullptr;
 	HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, shaderRenderData->vertexShaderCode->GetBufferPointer(), shaderRenderData->vertexShaderCode->GetBufferSize(), &vertexLayout);
 	ASSERT(SUCCEEDED(hr));
+
+	deviceCtx->IASetInputLayout(vertexLayout);
+
+	deviceCtx->VSSetShader(shaderRenderData->vertexShader, nullptr, 0);
+	deviceCtx->PSSetShader(shaderRenderData->pixelShader, nullptr, 0);
+
 }
 
 void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)
