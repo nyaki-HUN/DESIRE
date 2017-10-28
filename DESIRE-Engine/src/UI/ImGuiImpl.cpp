@@ -69,9 +69,10 @@ void ImGuiImpl::Init()
 	material = std::make_unique<Material>();
 
 	// Setup shader
-	material->shader = std::make_shared<Shader>();
-	material->shader->vertexShaderDataBuffer = SMemoryBuffer::CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
-	material->shader->pixelShaderDataBuffer = SMemoryBuffer::CreateFromDataCopy(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
+	material->vertexShader = std::make_shared<Shader>("vs_ocornut_imgui_dx11");
+	material->vertexShader->data = SMemoryBuffer::CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
+	material->pixelShader = std::make_shared<Shader>("fs_ocornut_imgui_dx11");
+	material->pixelShader->data = SMemoryBuffer::CreateFromDataCopy(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
 
 	// Setup font texture
 	unsigned char *textureData;
@@ -173,8 +174,6 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 	ImGuiIO& io = ImGui::GetIO();
 	IRender *render = IRender::Get();
 
-	render->SetViewport(0, 0, (uint16_t)io.DisplaySize.x, (uint16_t)io.DisplaySize.y);
-
 	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(io.DisplaySize.x, io.DisplaySize.y, -1.0f, 1.0f);
 	render->SetViewProjectionMatrices(Matrix4::Identity(), matOrtho);
 
@@ -182,22 +181,22 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 	{
 		const ImDrawList *drawList = drawData->CmdLists[i];
 
-		for(const ImDrawCmd& pcmd : drawList->CmdBuffer)
+		for(const ImDrawCmd& cmd : drawList->CmdBuffer)
 		{
-			if(pcmd.UserCallback)
+			const uint16_t clipX = (uint16_t)std::fmax(cmd.ClipRect.x, 0.0f);
+			const uint16_t clipY = (uint16_t)std::fmax(cmd.ClipRect.y, 0.0f);
+			render->SetScissor(clipX, clipY, (uint16_t)(cmd.ClipRect.z - clipX), (uint16_t)(cmd.ClipRect.w - clipY));
+
+			if(cmd.UserCallback)
 			{
-				pcmd.UserCallback(drawList, &pcmd);
+				cmd.UserCallback(drawList, &cmd);
 				continue;
 			}
 
-			if(pcmd.ElemCount == 0)
+			if(cmd.ElemCount == 0)
 			{
 				continue;
 			}
-
-			const uint16_t clipX = (uint16_t)std::fmax(pcmd.ClipRect.x, 0.0f);
-			const uint16_t clipY = (uint16_t)std::fmax(pcmd.ClipRect.y, 0.0f);
-			render->SetScissor(clipX, clipY, (uint16_t)(pcmd.ClipRect.z - clipX), (uint16_t)(pcmd.ClipRect.w - clipY));
 
 			// Setup mesh
 			mesh->numIndices = (uint32_t)drawList->IdxBuffer.size();
