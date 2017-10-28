@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Singleton.h"
+#include "Core/String.h"
 
 class IWindow;
 class Mesh;
@@ -15,9 +16,10 @@ class IRender
 
 public:
 	virtual void Init(IWindow *mainWindow) = 0;
+	virtual void UpdateRenderWindow(IWindow *window) = 0;
 	virtual void Kill() = 0;
 
-	virtual void UpdateRenderWindow(IWindow *window) = 0;
+	virtual String GetShaderFilenameWithPath(const char *shaderFilename) const = 0;
 
 	virtual void BeginFrame(IWindow *window) = 0;
 	virtual void EndFrame() = 0;
@@ -41,12 +43,15 @@ public:
 
 protected:
 	virtual void SetMesh(Mesh *mesh) = 0;
-	virtual void SetShader(Shader *shader) = 0;
+	virtual void SetShader(Shader *vertexShader, Shader *pixelShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture) = 0;
 
 	// Submit draw command
 	virtual void DoRender() = 0;
 
-	const Mesh *activeMesh;
-	const Material *activeMaterial;
+	const Mesh *activeMesh = nullptr;
+	const Material *activeMaterial = nullptr;
+
+	Shader *errorVertexShader = nullptr;
+	Shader *errorPixelShader = nullptr;
 };

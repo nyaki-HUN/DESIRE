@@ -13,9 +13,10 @@ public:
 	~RenderBgfx();
 
 	void Init(IWindow *mainWindow) override;
+	void UpdateRenderWindow(IWindow *window) override;
 	void Kill() override;
 
-	void UpdateRenderWindow(IWindow *window) override;
+	String GetShaderFilenameWithPath(const char *shaderFilename) const override;
 
 	void BeginFrame(IWindow *window) override;
 	void EndFrame() override;
@@ -34,7 +35,7 @@ public:
 
 private:
 	void SetMesh(Mesh *mesh) override;
-	void SetShader(Shader *shader) override;
+	void SetShader(Shader *vertexShader, Shader *pixelShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
 	void DoRender() override;

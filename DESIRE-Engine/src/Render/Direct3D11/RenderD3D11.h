@@ -3,6 +3,7 @@
 #include "Render/IRender.h"
 
 #include <d3d11.h>
+#include <unordered_map>
 
 class MeshRenderDataD3D11;
 
@@ -13,9 +14,10 @@ public:
 	~RenderD3D11();
 
 	void Init(IWindow *mainWindow) override;
+	void UpdateRenderWindow(IWindow *window) override;
 	void Kill() override;
 
-	void UpdateRenderWindow(IWindow *window) override;
+	String GetShaderFilenameWithPath(const char *shaderFilename) const override;
 
 	void BeginFrame(IWindow *window) override;
 	void EndFrame() override;
@@ -34,7 +36,7 @@ public:
 
 private:
 	void SetMesh(Mesh *mesh) override;
-	void SetShader(Shader *shader) override;
+	void SetShader(Shader *vertexShader, Shader *pixelShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
 	void DoRender() override;
@@ -43,6 +45,8 @@ private:
 	IDXGISwapChain *swapChain;
 	ID3D11RenderTargetView *renderTargetView;
 	ID3D11DeviceContext *deviceCtx;
+
+	std::unordered_map<uint64_t, ID3D11InputLayout*> inputLayoutCache;
 
 	float clearColor[4];
 

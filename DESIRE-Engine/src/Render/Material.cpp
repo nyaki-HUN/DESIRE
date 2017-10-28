@@ -11,7 +11,8 @@ Material::~Material()
 {
 	IRender *render = IRender::Get();
 
-	render->Unbind(shader.get());
+	render->Unbind(vertexShader.get());
+	render->Unbind(pixelShader.get());
 
 	for(std::shared_ptr<Texture>& texture : textures)
 	{

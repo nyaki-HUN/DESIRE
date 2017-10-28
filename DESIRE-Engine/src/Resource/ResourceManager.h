@@ -17,7 +17,7 @@ class ResourceManager
 
 public:
 	std::shared_ptr<Mesh> GetMesh(const char *filename);
-	std::shared_ptr<Shader> GetShader(const char *filename);
+	std::shared_ptr<Shader> GetShader(const char *filename, const char *defines = "");
 	std::shared_ptr<Texture> GetTexture(const char *filename);
 
 	typedef Mesh*(*MeshLoaderFunc_t)(const ReadFilePtr&);

@@ -11,6 +11,7 @@ public:
 	Material();
 	~Material();
 
-	std::shared_ptr<Shader> shader;
+	std::shared_ptr<Shader> vertexShader;
+	std::shared_ptr<Shader> pixelShader;
 	std::vector<std::shared_ptr<Texture>> textures;
 };

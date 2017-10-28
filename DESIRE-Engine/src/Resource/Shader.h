@@ -1,15 +1,16 @@
 #pragma once
 
 #include "Core/SMemoryBuffer.h"
+#include "Core/String.h"
 
 class Shader
 {
 public:
-	Shader();
+	Shader(const String& name);
 
 	// Render engine specific data set at bind
 	void *renderData;
 
-	SMemoryBuffer vertexShaderDataBuffer;
-	SMemoryBuffer pixelShaderDataBuffer;
+	SMemoryBuffer data;
+	const String name;
 };

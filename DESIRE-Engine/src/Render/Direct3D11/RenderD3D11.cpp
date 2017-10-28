@@ -72,16 +72,12 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	// Create a back buffer render target, get a view on it to clear it later
 	ID3D11Texture2D *pBackBuffer = nullptr;
 	hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&pBackBuffer);
+	SUCCEEDED(hr);
 
 	hr = d3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &renderTargetView);
 	deviceCtx->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
 	SetViewport(0, 0, mainWindow->GetWidth(), mainWindow->GetHeight());
-}
-
-void RenderD3D11::Kill()
-{
-	initialized = false;
 }
 
 void RenderD3D11::UpdateRenderWindow(IWindow *window)
@@ -92,13 +88,21 @@ void RenderD3D11::UpdateRenderWindow(IWindow *window)
 	}
 
 	swapChain->ResizeBuffers(0, window->GetWidth(), window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+}
 
-	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
+void RenderD3D11::Kill()
+{
+	initialized = false;
+}
+
+String RenderD3D11::GetShaderFilenameWithPath(const char *shaderFilename) const
+{
+	return String::CreateFormattedString("data/shaders/hlsl/%s.hlsl", shaderFilename);
 }
 
 void RenderD3D11::BeginFrame(IWindow *window)
 {
-	DESIRE_UNUSED(window);
+	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
 
 	deviceCtx->ClearRenderTargetView(renderTargetView, clearColor);
 }
@@ -187,7 +191,6 @@ void RenderD3D11::Bind(Mesh *mesh)
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.ByteWidth = mesh->GetSizeOfVertices();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.MiscFlags = 0;
 
 	switch(mesh->type)
 	{
@@ -244,33 +247,54 @@ void RenderD3D11::Bind(Shader *shader)
 	ShaderRenderDataD3D11 *renderData = new ShaderRenderDataD3D11();
 
 	ID3DBlob *errorBlob = nullptr;
-	HRESULT result = D3DCompile(shader->vertexShaderDataBuffer.data, shader->vertexShaderDataBuffer.size, nullptr, nullptr, nullptr, "vs", "vs_5_0", 0, 0, &renderData->vertexShaderCode, &errorBlob);
-	if(FAILED(result))
+	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "main", "vs_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
+	if(FAILED(hr))
 	{
 		if(errorBlob != nullptr)
 		{
-			LOG_ERROR("Vertex shader compile error: %s", (char*)errorBlob->GetBufferPointer());
+			LOG_ERROR("Shader compile error: %s", (char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
 	}
 	else
 	{
-		d3dDevice->CreateVertexShader(renderData->vertexShaderCode->GetBufferPointer(), renderData->vertexShaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
+		hr = d3dDevice->CreateVertexShader(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
+		ASSERT(SUCCEEDED(hr));
 	}
 
-	result = D3DCompile(shader->pixelShaderDataBuffer.data, shader->pixelShaderDataBuffer.size, nullptr, nullptr, nullptr, "ps", "vs_5_0", 0, 0, &renderData->pixelShaderCode, &errorBlob);
-	if(FAILED(result))
+	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, shader->name.Length(), shader->name.c_str());
+
+	ID3D11ShaderReflection *reflection = nullptr;
+	hr = D3DReflect(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize() , IID_ID3D11ShaderReflection, (void**)&reflection);
+	if(FAILED(hr))
 	{
-		if(errorBlob != nullptr)
-		{
-			LOG_ERROR("Pixel shader compile error: %s", (char*)errorBlob->GetBufferPointer());
-			errorBlob->Release();
-		}
+		LOG_ERROR("D3DReflect failed 0x%08x", (uint32_t)hr);
 	}
-	else
+
+	D3D11_SHADER_DESC shaderDesc;
+	hr = reflection->GetDesc(&shaderDesc);
+	if(FAILED(hr))
 	{
-		d3dDevice->CreatePixelShader(renderData->pixelShaderCode->GetBufferPointer(), renderData->pixelShaderCode->GetBufferSize(), nullptr, &renderData->pixelShader);
+		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x", (uint32_t)hr);
 	}
+
+	uint32_t constantBufferSize = 0;
+	if(shaderDesc.ConstantBuffers > 0)
+	{
+		ID3D11ShaderReflectionConstantBuffer *cbuffer = reflection->GetConstantBufferByIndex(0);
+		D3D11_SHADER_BUFFER_DESC bufferDesc;
+		hr = cbuffer->GetDesc(&bufferDesc);
+		ASSERT(SUCCEEDED(hr));
+
+		constantBufferSize = bufferDesc.Size;
+	}
+
+	D3D11_BUFFER_DESC desc = {};
+	desc.ByteWidth = constantBufferSize;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	hr = d3dDevice->CreateBuffer(&desc, nullptr, &renderData->constantBuffer);
+	ASSERT(SUCCEEDED(hr));
 
 	shader->renderData = renderData;
 }
@@ -336,7 +360,7 @@ void RenderD3D11::Bind(Texture *texture)
 	desc.SampleDesc.Count = 1;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	//	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+//	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	ID3D11Texture2D *d3dTexture2D = nullptr;
 	d3dDevice->CreateTexture2D(&desc, &subResourceData, &d3dTexture2D);
@@ -489,20 +513,38 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
 }
 
-void RenderD3D11::SetShader(Shader *shader)
+void RenderD3D11::SetShader(Shader *vertexShader, Shader *pixelShader)
 {
-	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(shader->renderData);
-	const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
+	if(vertexShader != nullptr)
+	{
+		const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader->renderData);
 
-	ID3D11InputLayout *vertexLayout = nullptr;
-	HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, shaderRenderData->vertexShaderCode->GetBufferPointer(), shaderRenderData->vertexShaderCode->GetBufferSize(), &vertexLayout);
-	ASSERT(SUCCEEDED(hr));
+		deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
+		deviceCtx->VSSetConstantBuffers(0, 1, &vertexShaderRenderData->constantBuffer);
 
-	deviceCtx->IASetInputLayout(vertexLayout);
+		const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
+		ID3D11InputLayout *vertexLayout = nullptr;
+		HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &vertexLayout);
+		ASSERT(SUCCEEDED(hr));
 
-	deviceCtx->VSSetShader(shaderRenderData->vertexShader, nullptr, 0);
-	deviceCtx->PSSetShader(shaderRenderData->pixelShader, nullptr, 0);
+		deviceCtx->IASetInputLayout(vertexLayout);
+	}
+	else
+	{
+		deviceCtx->VSSetShader(nullptr, nullptr, 0);
+	}
 
+	if(pixelShader != nullptr)
+	{
+		const ShaderRenderDataD3D11 *pixelShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(pixelShader->renderData);
+
+		deviceCtx->PSSetShader(pixelShaderRenderData->pixelShader, nullptr, 0);
+		deviceCtx->PSSetConstantBuffers(0, 1, &pixelShaderRenderData->constantBuffer);
+	}
+	else
+	{
+		deviceCtx->PSSetShader(nullptr, nullptr, 0);
+	}
 }
 
 void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)

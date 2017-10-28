@@ -48,6 +48,16 @@ void RenderBgfx::Init(IWindow *mainWindow)
 	UpdateRenderWindow(mainWindow);
 }
 
+void RenderBgfx::UpdateRenderWindow(IWindow *window)
+{
+	if(!initialized)
+	{
+		return;
+	}
+
+	bgfx::reset(window->GetWidth(), window->GetHeight(), BGFX_RESET_VSYNC);
+}
+
 void RenderBgfx::Kill()
 {
 	for(bgfx::UniformHandle& uniform : samplerUniforms)
@@ -60,19 +70,28 @@ void RenderBgfx::Kill()
 	initialized = false;
 }
 
-void RenderBgfx::UpdateRenderWindow(IWindow *window)
+String RenderBgfx::GetShaderFilenameWithPath(const char *shaderFilename) const
 {
-	if(!initialized)
+	const char *shaderLanguage = "";
+	switch(bgfx::getRendererType())
 	{
-		return;
+		case bgfx::RendererType::Direct3D9:		shaderLanguage = "dx9"; break;
+		case bgfx::RendererType::Direct3D11:	shaderLanguage = "dx11"; break;
+		case bgfx::RendererType::Direct3D12:	shaderLanguage = "dx11"; break;
+		case bgfx::RendererType::Gnm:			shaderLanguage = "pssl"; break;
+		case bgfx::RendererType::Metal:			shaderLanguage = "metal"; break;
+		case bgfx::RendererType::OpenGLES:		shaderLanguage = "essl"; break;
+		case bgfx::RendererType::OpenGL:		shaderLanguage = "glsl"; break;
+		case bgfx::RendererType::Vulkan:		shaderLanguage = "spirv"; break;
+		default:								ASSERT(false && "Not supported renderer type"); break;
 	}
 
-	bgfx::reset(window->GetWidth(), window->GetHeight(), BGFX_RESET_VSYNC);
+	return String::CreateFormattedString("data/shaders/bgfx/%s/%s.bin", shaderLanguage, shaderFilename);
 }
 
 void RenderBgfx::BeginFrame(IWindow *window)
 {
-	bgfx::setViewRect(0, 0, 0, window->GetWidth(), window->GetHeight());
+	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
 
 	// This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0
 	bgfx::touch(0);
@@ -193,12 +212,9 @@ void RenderBgfx::Bind(Shader *shader)
 	
 	ShaderRenderDataBgfx *renderData = new ShaderRenderDataBgfx();
 
-	const bgfx::Memory *vsData = bgfx::makeRef(shader->vertexShaderDataBuffer.data, (uint32_t)shader->vertexShaderDataBuffer.size);
-	const bgfx::Memory *fsData = bgfx::makeRef(shader->pixelShaderDataBuffer.data, (uint32_t)shader->pixelShaderDataBuffer.size);
+	const bgfx::Memory *shaderDara = bgfx::makeRef(shader->data.data, (uint32_t)shader->data.size);
 
-	bgfx::ShaderHandle vsh = bgfx::createShader(vsData);
-	bgfx::ShaderHandle fsh = bgfx::createShader(fsData);
-	renderData->shaderProgram = bgfx::createProgram(vsh, fsh, true);
+	renderData->shaderHandle = bgfx::createShader(shaderDara);
 
 	renderData->u_tint = bgfx::createUniform("u_tint", bgfx::UniformType::Vec4);
 
@@ -337,13 +353,15 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	}
 }
 
-void RenderBgfx::SetShader(Shader *shader)
+void RenderBgfx::SetShader(Shader *vertexShader, Shader *pixelShader)
 {
-	const ShaderRenderDataBgfx *renderData = static_cast<const ShaderRenderDataBgfx*>(shader->renderData);
+	ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<ShaderRenderDataBgfx*>(vertexShader->renderData);
+
+	vertexShaderRenderData->shaderProgram = bgfx::createProgram(vertexShaderRenderData->shaderHandle, pixelShaderRenderData->shaderHandle);
 
 	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	//	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
-	bgfx::setUniform(renderData->u_tint, color);
+	bgfx::setUniform(vertexShaderRenderData->u_tint, color);
 }
 
 void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
@@ -354,9 +372,9 @@ void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
 
 void RenderBgfx::DoRender()
 {
-	const ShaderRenderDataBgfx *shaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeMaterial->shader->renderData);
+	const ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeMaterial->vertexShader->renderData);
 
 	const uint8_t viewId = 0;
-	bgfx::submit(viewId, shaderRenderData->shaderProgram);
+	bgfx::submit(viewId, vertexShaderRenderData->shaderProgram);
 }
 

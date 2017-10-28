@@ -7,7 +7,7 @@
 
 void IRender::RenderMesh(Mesh *mesh, Material *material)
 {
-	if(mesh == nullptr || material == nullptr || material->shader == nullptr)
+	if(mesh == nullptr || material == nullptr)
 	{
 		return;
 	}
@@ -20,18 +20,25 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 	SetMesh(mesh);
 	activeMesh = mesh;
 
-	// Shader
-	if(material->shader->renderData == nullptr)
+	// Shaders
+	Shader *vertexShader = (material->vertexShader != nullptr) ? material->vertexShader.get() : errorVertexShader;
+	if(vertexShader->renderData == nullptr)
 	{
-		Bind(material->shader.get());
+		Bind(vertexShader);
 	}
-	SetShader(material->shader.get());
+
+	Shader *pixelShader = (material->pixelShader != nullptr) ? material->pixelShader.get() : errorPixelShader;
+	if(pixelShader->renderData == nullptr)
+	{
+		Bind(pixelShader);
+	}
+
+	SetShader(vertexShader, pixelShader);
 
 	// Textures
 	for(uint8_t i = 0; i < material->textures.size(); i++)
 	{
 		Texture *texture = material->textures[i].get();
-
 		if(texture->renderData == nullptr)
 		{
 			Bind(texture);

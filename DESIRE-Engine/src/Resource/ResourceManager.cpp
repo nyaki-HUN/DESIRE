@@ -5,6 +5,7 @@
 #include "Resource/Texture.h"
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/IReadFile.h"
+#include "Render/IRender.h"
 
 ResourceManager::ResourceManager()
 {
@@ -18,7 +19,9 @@ ResourceManager::~ResourceManager()
 
 std::shared_ptr<Mesh> ResourceManager::GetMesh(const char *filename)
 {
-	HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
+	ASSERT(filename != nullptr);
+
+	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
 	std::weak_ptr<Mesh> *meshPtr = loadedMeshes.Find(filenameHash);
 	if(meshPtr != nullptr && !meshPtr->expired())
 	{
@@ -39,9 +42,13 @@ std::shared_ptr<Mesh> ResourceManager::GetMesh(const char *filename)
 	return mesh;
 }
 
-std::shared_ptr<Shader> ResourceManager::GetShader(const char *filename)
+std::shared_ptr<Shader> ResourceManager::GetShader(const char *filename, const char *defines)
 {
-	HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
+	ASSERT(filename != nullptr);
+	ASSERT(defines != nullptr);
+
+	const String name = String::CreateFormattedString("%s|%s", filename, defines);
+	const HashedString filenameHash = HashedString::CreateFromDynamicString(name.c_str());
 	std::weak_ptr<Shader> *shaderPtr = loadedShaders.Find(filenameHash);
 	if(shaderPtr != nullptr && !shaderPtr->expired())
 	{
@@ -64,7 +71,9 @@ std::shared_ptr<Shader> ResourceManager::GetShader(const char *filename)
 
 std::shared_ptr<Texture> ResourceManager::GetTexture(const char *filename)
 {
-	HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
+	ASSERT(filename != nullptr);
+
+	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
 	std::weak_ptr<Texture> *texturePtr = loadedTextures.Find(filenameHash);
 	if(texturePtr != nullptr && !texturePtr->expired())
 	{
@@ -108,7 +117,9 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const char *filename)
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const char *filename)
 {
-	ReadFilePtr file = FileSystem::Get()->Open(filename);
+	const String filenameWithPath = IRender::Get()->GetShaderFilenameWithPath(filename);
+
+	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath.c_str());
 	if(file)
 	{
 		for(ShaderLoaderFunc_t loaderFunc : shaderLoaders)
@@ -123,7 +134,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const char *filename)
 		}
 	}
 
-	LOG_ERROR("Failed to load texture from: %s", filename);
+	LOG_ERROR("Failed to load texture from: %s", filenameWithPath.c_str());
 	return nullptr;
 }
 

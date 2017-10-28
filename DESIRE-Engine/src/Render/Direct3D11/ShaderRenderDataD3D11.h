@@ -5,9 +5,15 @@
 class ShaderRenderDataD3D11
 {
 public:
-	ID3DBlob *vertexShaderCode = nullptr;
-	ID3DBlob *pixelShaderCode = nullptr;
+	union
+	{
+		ID3D11VertexShader *vertexShader;
+		ID3D11PixelShader *pixelShader;
+		ID3D11ComputeShader *computeShader;
 
-	ID3D11VertexShader *vertexShader = nullptr;
-	ID3D11PixelShader *pixelShader = nullptr;
+		ID3D11DeviceChild *ptr;			// Generic base class pointer
+	};
+
+	ID3D11Buffer *constantBuffer = nullptr;
+	ID3DBlob *shaderCode = nullptr;
 };
