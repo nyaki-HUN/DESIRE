@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "Core/fs/IReadFile.h"
 
-IReadFile::IReadFile(int64_t fileSize)
+IReadFile::IReadFile(int64_t fileSize, const String& filename)
 	: fileSize(fileSize)
 	, position(0)
+	, filename(filename)
 {
 
 }
@@ -11,6 +12,11 @@ IReadFile::IReadFile(int64_t fileSize)
 IReadFile::~IReadFile()
 {
 
+}
+
+const String& IReadFile::GetFilename() const
+{
+	return filename;
 }
 
 size_t IReadFile::ReadString(char **str)
@@ -35,9 +41,8 @@ SMemoryBuffer IReadFile::ReadFileContent()
 		return SMemoryBuffer();
 	}
 
-
 	SMemoryBuffer buffer = SMemoryBuffer((size_t)(fileSize - position));
-	size_t numBytesRead = ReadBuffer(buffer.data, buffer.size);
+	const size_t numBytesRead = ReadBuffer(buffer.data, buffer.size);
 	ASSERT(numBytesRead == buffer.size);
 	return buffer;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/SMemoryBuffer.h"
+#include "Core/String.h"
 
 #include <functional>
 
@@ -14,8 +15,10 @@ public:
 		END,
 	};
 
-	IReadFile(int64_t fileSize);
+	IReadFile(int64_t fileSize, const String& filename = String::emptyString);
 	virtual ~IReadFile();
+
+	const String& GetFilename() const;
 
 	virtual bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) = 0;
 
@@ -39,4 +42,5 @@ public:
 protected:
 	int64_t fileSize;
 	int64_t position;
+	String filename;
 };

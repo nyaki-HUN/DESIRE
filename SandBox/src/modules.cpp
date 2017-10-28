@@ -31,8 +31,10 @@ const std::vector<ResourceManager::MeshLoaderFunc_t> ResourceManager::meshLoader
 	&AssimpLoader::Load,
 };
 
+#include "Resource/ShaderLoader/FileShaderLoader.h"
 const std::vector<ResourceManager::ShaderLoaderFunc_t> ResourceManager::shaderLoaders =
 {
+	&FileShaderLoader::Load,
 };
 
 #include "Resource/TextureLoader/TgaLoader.h"

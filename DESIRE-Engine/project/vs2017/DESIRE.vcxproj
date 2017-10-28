@@ -266,6 +266,7 @@
     <ClInclude Include="..\..\src\Resource\MeshLoader\AssimpLoader.h" />
     <ClInclude Include="..\..\src\Resource\ResourceManager.h" />
     <ClInclude Include="..\..\src\Resource\Shader.h" />
+    <ClInclude Include="..\..\src\Resource\ShaderLoader\FileShaderLoader.h" />
     <ClInclude Include="..\..\src\Resource\Texture.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\StbImageLoader.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h" />
@@ -354,6 +355,7 @@
     <ClCompile Include="..\..\src\Resource\MeshLoader\AssimpLoader.cpp" />
     <ClCompile Include="..\..\src\Resource\ResourceManager.cpp" />
     <ClCompile Include="..\..\src\Resource\Shader.cpp" />
+    <ClCompile Include="..\..\src\Resource\ShaderLoader\FileShaderLoader.cpp" />
     <ClCompile Include="..\..\src\Resource\Texture.cpp" />
     <ClCompile Include="..\..\src\Resource\TextureLoader\StbImageLoader.cpp" />
     <ClCompile Include="..\..\src\Resource\TextureLoader\TgaLoader.cpp" />

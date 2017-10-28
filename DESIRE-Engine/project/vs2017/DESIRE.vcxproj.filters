@@ -94,6 +94,9 @@
     <Filter Include="src\Resource\MeshLoader">
       <UniqueIdentifier>{77A3D3A9-E3DA-1B41-ECE4-7F64589B423A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Resource\ShaderLoader">
+      <UniqueIdentifier>{E18D89D1-4D50-BD5B-9600-4CE802029639}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Resource\TextureLoader">
       <UniqueIdentifier>{9BB3CB76-87C3-7747-F07C-DC65DCAB66E0}</UniqueIdentifier>
     </Filter>
@@ -615,6 +618,9 @@
     <ClInclude Include="..\..\src\Resource\Shader.h">
       <Filter>src\Resource</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Resource\ShaderLoader\FileShaderLoader.h">
+      <Filter>src\Resource\ShaderLoader</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Resource\Texture.h">
       <Filter>src\Resource</Filter>
     </ClInclude>
@@ -874,6 +880,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\Shader.cpp">
       <Filter>src\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Resource\ShaderLoader\FileShaderLoader.cpp">
+      <Filter>src\Resource\ShaderLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\Texture.cpp">
       <Filter>src\Resource</Filter>
