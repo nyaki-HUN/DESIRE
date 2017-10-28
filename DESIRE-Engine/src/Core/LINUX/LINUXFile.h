@@ -6,7 +6,7 @@
 class LINUXFile : public IReadFile, public IWriteFile
 {
 public:
-	LINUXFile(int fileDesc, int64_t fileSize);
+	LINUXFile(int fileDesc, int64_t fileSize, const String& filename);
 	~LINUXFile();
 
 	// IReadFile

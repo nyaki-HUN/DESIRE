@@ -2,8 +2,8 @@
 #include "Core/WINDOWS/WINDOWSFile.h"
 #include "Core/fs/FileSystem.h"
 
-WINDOWSFile::WINDOWSFile(HANDLE hFile, int64_t fileSize)
-	: IReadFile(fileSize)
+WINDOWSFile::WINDOWSFile(HANDLE hFile, int64_t fileSize, const String& filename)
+	: IReadFile(fileSize, filename)
 	, hFile(hFile)
 {
 	ASSERT(hFile != INVALID_HANDLE_VALUE);
@@ -96,7 +96,7 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 		return nullptr;
 	}
 
-	return std::make_unique<WINDOWSFile>(hFile, finfo.EndOfFile.QuadPart);
+	return std::make_unique<WINDOWSFile>(hFile, finfo.EndOfFile.QuadPart, filename);
 }
 
 WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
@@ -108,7 +108,7 @@ WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
 		return nullptr;
 	}
 
-	return std::make_unique<WINDOWSFile>(hFile, 0);
+	return std::make_unique<WINDOWSFile>(hFile, 0, filename);
 }
 
 void FileSystem::SetupDirectories()

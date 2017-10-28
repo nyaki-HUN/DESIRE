@@ -7,7 +7,7 @@
 class WINDOWSFile : public IReadFile, public IWriteFile
 {
 public:
-	WINDOWSFile(HANDLE hFile, int64_t fileSize);
+	WINDOWSFile(HANDLE hFile, int64_t fileSize, const String& filename);
 	~WINDOWSFile();
 
 	// IReadFile

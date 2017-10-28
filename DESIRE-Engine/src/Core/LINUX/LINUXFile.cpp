@@ -9,8 +9,8 @@
 #include <unistd.h>
 #include <errno.h>
 
-LINUXFile::LINUXFile(int fileDesc, int64_t fileSize)
-	: IReadFile(fileSize)
+LINUXFile::LINUXFile(int fileDesc, int64_t fileSize, const String& filename)
+	: IReadFile(fileSize, filename)
 	, fileDesc(fileDesc)
 {
 	ASSERT(fileDesc != -1);
@@ -98,7 +98,7 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 		return nullptr;
 	}
 
-	return std::make_unique<LINUXFile>(fileDesc, fileStat.st_size);
+	return std::make_unique<LINUXFile>(fileDesc, fileStat.st_size, filename);
 }
 
 WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
@@ -111,7 +111,7 @@ WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
 		return nullptr;
 	}
 
-	return std::make_unique<LINUXFile>(fileDesc, 0);
+	return std::make_unique<LINUXFile>(fileDesc, 0, filename);
 }
 
 void FileSystem::SetupDirectories()
