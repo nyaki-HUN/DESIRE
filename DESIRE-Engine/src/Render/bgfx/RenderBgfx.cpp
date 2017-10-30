@@ -40,7 +40,8 @@ void RenderBgfx::Init(IWindow *mainWindow)
 	bgfx::setPlatformData(pd);
 
 	initialized = bgfx::init(bgfx::RendererType::Count, BGFX_PCI_ID_NONE);
-	bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
+	activeViewId = 0;
+	bgfx::setViewClear(activeViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
 
 	for(size_t i = 0; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
 	{
@@ -93,6 +94,7 @@ String RenderBgfx::GetShaderFilenameWithPath(const char *shaderFilename) const
 
 void RenderBgfx::BeginFrame(IWindow *window)
 {
+	activeViewId = 0;
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
 
 	// This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0
@@ -102,6 +104,11 @@ void RenderBgfx::BeginFrame(IWindow *window)
 void RenderBgfx::EndFrame()
 {
 	bgfx::frame();
+}
+
+void RenderBgfx::SetView(uint8_t viewId)
+{
+	activeViewId = viewId;
 }
 
 void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
@@ -165,6 +172,7 @@ void RenderBgfx::Bind(Mesh *mesh)
 	switch(mesh->type)
 	{
 		case Mesh::EType::STATIC:
+		{
 			if(mesh->numIndices != 0)
 			{
 				const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
@@ -177,24 +185,25 @@ void RenderBgfx::Bind(Mesh *mesh)
 				renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
 			}
 			break;
+		}
 
 		case Mesh::EType::DYNAMIC:
-			if(mesh->numIndices != 0)
+		{
+			DynamicMesh *dynamicMesh = static_cast<DynamicMesh*>(mesh);
+
+			if(dynamicMesh->maxNumOfIndices != 0)
 			{
-				const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
+				const bgfx::Memory *indexData = bgfx::copy(dynamicMesh->indices, dynamicMesh->GetMaxSizeOfIndices());
 				renderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(indexData, BGFX_BUFFER_NONE);
 			}
 
-			if(mesh->numVertices != 0)
+			if(dynamicMesh->maxNumOfVertices != 0)
 			{
-				const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, mesh->GetSizeOfVertices());
+				const bgfx::Memory *vertexData = bgfx::copy(dynamicMesh->vertices, dynamicMesh->GetMaxSizeOfVertices());
 				renderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
 			}
 			break;
-
-		case Mesh::EType::TRANSIENT:
-			// Transient buffers will be allocated in SetMesh() in each frame
-			break;
+		}
 	}
 
 	mesh->renderData = renderData;
@@ -267,9 +276,6 @@ void RenderBgfx::Unbind(Mesh *mesh)
 			bgfx::destroy(renderData->dynamicIndexBuffer);
 			bgfx::destroy(renderData->dynamicVertexBuffer);
 			break;
-
-		case Mesh::EType::TRANSIENT:
-			break;
 	}
 
 	delete renderData;
@@ -308,6 +314,29 @@ void RenderBgfx::Unbind(Texture *texture)
 	texture->renderData = nullptr;
 }
 
+void RenderBgfx::UpdateDynamicMesh(DynamicMesh *mesh)
+{
+	if(mesh == nullptr || mesh->renderData == nullptr)
+	{
+		// Not yet bound
+		return;
+	}
+
+	MeshRenderDataBgfx *renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
+
+	if(mesh->isIndexDataUpdateRequired)
+	{
+		bgfx::updateDynamicIndexBuffer(renderData->dynamicIndexBuffer, 0, bgfx::copy(mesh->indices, mesh->GetSizeOfIndices()));
+		mesh->isIndexDataUpdateRequired = false;
+	}
+
+	if(mesh->isVertexDataUpdateRequired)
+	{
+		bgfx::updateDynamicVertexBuffer(renderData->dynamicVertexBuffer, 0, bgfx::copy(mesh->vertices, mesh->GetSizeOfVertices()));
+		mesh->isVertexDataUpdateRequired = false;
+	}
+}
+
 void RenderBgfx::SetMesh(Mesh *mesh)
 {
 	MeshRenderDataBgfx *renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
@@ -315,40 +344,19 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	switch(mesh->type)
 	{
 		case Mesh::EType::STATIC:
-			// Set buffers
+		{
 			bgfx::setIndexBuffer(renderData->indexBuffer, renderData->indexOffset, mesh->numIndices);
 			bgfx::setVertexBuffer(0, renderData->vertexBuffer, renderData->vertexOffset, mesh->numVertices);
 			break;
+		}
 
 		case Mesh::EType::DYNAMIC:
-			if(mesh->isUpdateRequiredForDynamicMesh)
-			{
-				DESIRE_TODO("Update dynamic mesh");
-				mesh->isUpdateRequiredForDynamicMesh = false;
-			}
-
-			// Set buffers
-			bgfx::setIndexBuffer(renderData->dynamicIndexBuffer, renderData->indexOffset, mesh->numIndices);
-			bgfx::setVertexBuffer(0, renderData->dynamicVertexBuffer, renderData->vertexOffset, mesh->numVertices);
+		{
+			const DynamicMesh *dynamicMesh = static_cast<const DynamicMesh*>(mesh);
+			bgfx::setIndexBuffer(renderData->dynamicIndexBuffer, dynamicMesh->indexOffset + renderData->indexOffset, mesh->numIndices);
+			bgfx::setVertexBuffer(0, renderData->dynamicVertexBuffer, dynamicMesh->vertexOffset + renderData->vertexOffset, mesh->numVertices);
 			break;
-
-		case Mesh::EType::TRANSIENT:
-			if(bgfx::getAvailTransientIndexBuffer(mesh->numIndices) != mesh->numIndices || bgfx::getAvailTransientVertexBuffer(mesh->numVertices, renderData->vertexDecl) != mesh->numVertices)
-			{
-				LOG_WARNING("Not enough space in transient buffer");
-				return;
-			}
-
-			bgfx::allocTransientIndexBuffer(&renderData->transientIndexBuffer, mesh->numIndices);
-			memcpy(renderData->transientIndexBuffer.data, mesh->indices, mesh->GetSizeOfIndices());
-
-			bgfx::allocTransientVertexBuffer(&renderData->transientVertexBuffer, mesh->numVertices, renderData->vertexDecl);
-			memcpy(renderData->transientVertexBuffer.data, mesh->vertices, mesh->GetSizeOfVertices());
-
-			// Set buffers
-			bgfx::setIndexBuffer(&renderData->transientIndexBuffer, renderData->indexOffset, mesh->numIndices);
-			bgfx::setVertexBuffer(0, &renderData->transientVertexBuffer, renderData->vertexOffset, mesh->numVertices);
-			break;
+		}
 	}
 }
 
@@ -372,9 +380,7 @@ void RenderBgfx::SetShadersFromMaterial(Material *material)
 void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
 {
 	const bgfx::TextureHandle *renderData = static_cast<const bgfx::TextureHandle*>(texture->renderData);
-
-	uint32_t flags = BGFX_TEXTURE_NONE;
-	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData, flags);
+	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);
 }
 
 void RenderBgfx::DoRender()

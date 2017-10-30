@@ -133,6 +133,11 @@ void RenderD3D11::EndFrame()
 	swapChain->Present(1, 0);
 }
 
+void RenderD3D11::SetView(uint8_t viewId)
+{
+
+}
+
 void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
 
@@ -214,11 +219,6 @@ void RenderD3D11::Bind(Mesh *mesh)
 			break;
 
 		case Mesh::EType::DYNAMIC:
-			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-			break;
-
-		case Mesh::EType::TRANSIENT:
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			break;
@@ -468,6 +468,29 @@ void RenderD3D11::Unbind(Texture *texture)
 	texture->renderData = nullptr;
 }
 
+void RenderD3D11::UpdateDynamicMesh(DynamicMesh *mesh)
+{
+	if(mesh == nullptr || mesh->renderData == nullptr)
+	{
+		// Not yet bound
+		return;
+	}
+
+	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+
+	if(mesh->isIndexDataUpdateRequired)
+	{
+		UpdateD3D11Resource(renderData->indexBuffer, mesh->indices, mesh->GetSizeOfIndices());
+		mesh->isIndexDataUpdateRequired = false;
+	}
+
+	if(mesh->isVertexDataUpdateRequired)
+	{
+		UpdateD3D11Resource(renderData->vertexBuffer, mesh->vertices, mesh->GetSizeOfVertices());
+		mesh->isVertexDataUpdateRequired = false;
+	}
+}
+
 void RenderD3D11::SetMesh(Mesh *mesh)
 {
 	if(activeMesh == mesh)
@@ -476,71 +499,6 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	}
 
 	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
-
-	// Update buffers
-	switch(mesh->type)
-	{
-		case Mesh::EType::STATIC:
-			// No update for static mesh
-			break;
-
-		case Mesh::EType::DYNAMIC:
-			if(mesh->isUpdateRequiredForDynamicMesh)
-			{
-				D3D11_MAPPED_SUBRESOURCE mappedIndexBuffer;
-				if(FAILED(deviceCtx->Map(renderData->indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexBuffer)))
-				{
-					LOG_WARNING("Failed to map index buffer");
-					return;
-				}
-
-				D3D11_MAPPED_SUBRESOURCE mappedVertexBuffer;
-				if(FAILED(deviceCtx->Map(renderData->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexBuffer)))
-				{
-					LOG_WARNING("Failed to map vertex buffer");
-
-					deviceCtx->Unmap(renderData->indexBuffer, 0);
-					return;
-				}
-
-				memcpy(mappedIndexBuffer.pData, mesh->indices, mesh->GetSizeOfIndices());
-				deviceCtx->Unmap(renderData->indexBuffer, 0);
-
-				memcpy(mappedVertexBuffer.pData, mesh->vertices, mesh->GetSizeOfVertices());
-				deviceCtx->Unmap(renderData->vertexBuffer, 0);
-
-				mesh->isUpdateRequiredForDynamicMesh = false;
-			}
-			break;
-
-		case Mesh::EType::TRANSIENT:
-		{
-			D3D11_MAPPED_SUBRESOURCE mappedIndexBuffer;
-			if(FAILED(deviceCtx->Map(renderData->indexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedIndexBuffer)))
-			{
-				LOG_WARNING("Failed to map index buffer");
-				return;
-			}
-
-			D3D11_MAPPED_SUBRESOURCE mappedVertexBuffer;
-			if(FAILED(deviceCtx->Map(renderData->vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedVertexBuffer)))
-			{
-				LOG_WARNING("Failed to map vertex buffer");
-
-				deviceCtx->Unmap(renderData->indexBuffer, 0);
-				return;
-			}
-
-			memcpy(mappedIndexBuffer.pData, mesh->indices, mesh->GetSizeOfIndices());
-			deviceCtx->Unmap(renderData->indexBuffer, 0);
-
-			memcpy(mappedVertexBuffer.pData, mesh->vertices, mesh->GetSizeOfVertices());
-			deviceCtx->Unmap(renderData->vertexBuffer, 0);
-			break;
-		}
-	}
-
-	// Set buffers
 	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, renderData->indexOffset);
 	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
 
@@ -597,3 +555,18 @@ void RenderD3D11::DoRender()
 		deviceCtx->Draw(activeMesh->numVertices, 0);
 	}
 }
+
+void RenderD3D11::UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size)
+{
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	HRESULT hr = deviceCtx->Map(resource, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if(FAILED(hr))
+	{
+		LOG_WARNING("Failed to map index buffer");
+		return;
+	}
+
+	memcpy(mappedResource.pData, data, size);
+	deviceCtx->Unmap(resource, 0);
+}
+

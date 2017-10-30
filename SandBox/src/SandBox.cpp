@@ -72,13 +72,8 @@ void SandBox::Init(IWindow *mainWindow)
 
 	//////////
 
-	Mesh *mesh = ResourceManager::Get()->LoadMesh("data/meshes/sibenik/sibenik.obj");
-
-	Texture *texture = ResourceManager::Get()->LoadTexture("data/meshes/sibenik/mramor6x6.png");
-	if(texture != nullptr)
-	{
-		IRender::Get()->Bind(texture);
-	}
+	std::shared_ptr<Mesh> mesh = ResourceManager::Get()->GetMesh("data/meshes/sibenik/sibenik.obj");
+	std::shared_ptr<Texture> texture = ResourceManager::Get()->GetTexture("data/meshes/sibenik/mramor6x6.png");
 
 	//////////
 

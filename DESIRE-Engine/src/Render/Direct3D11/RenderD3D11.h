@@ -23,6 +23,7 @@ public:
 	void BeginFrame(IWindow *window) override;
 	void EndFrame() override;
 
+	void SetView(uint8_t viewId) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
@@ -35,12 +36,16 @@ public:
 	void Unbind(Shader *shader) override;
 	void Unbind(Texture *texture) override;
 
+	void UpdateDynamicMesh(DynamicMesh *mesh) override;
+
 private:
 	void SetMesh(Mesh *mesh) override;
 	void SetShadersFromMaterial(Material *material) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
 
 	void DoRender() override;
+
+	void UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size);
 
 	ID3D11Device *d3dDevice;
 	IDXGISwapChain *swapChain;

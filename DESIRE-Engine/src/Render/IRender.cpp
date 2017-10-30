@@ -20,6 +20,10 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 	{
 		Bind(mesh);
 	}
+	else if(mesh->type == Mesh::EType::DYNAMIC)
+	{
+		UpdateDynamicMesh(static_cast<DynamicMesh*>(mesh));
+	}
 
 	SetMesh(mesh);
 

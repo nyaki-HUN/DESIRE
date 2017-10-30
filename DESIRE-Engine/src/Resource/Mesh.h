@@ -6,8 +6,7 @@ public:
 	enum class EType
 	{
 		STATIC,			// Never updated
-		DYNAMIC,		// Sometimes updated (but can be used across multiple frames)
-		TRANSIENT		// Updated in each frame
+		DYNAMIC			// Sometimes updated (but can be used across multiple frames)
 	};
 
 	enum class EAttrib
@@ -67,5 +66,39 @@ public:
 	std::vector<SVertexDecl> vertexDecl;
 
 	const EType type;
-	bool isUpdateRequiredForDynamicMesh;
+};
+
+class DynamicMesh : public Mesh
+{
+public:
+	DynamicMesh()
+		: Mesh(Mesh::EType::DYNAMIC)
+		, maxNumOfIndices(0)
+		, maxNumOfVertices(0)
+		, indexOffset(0)
+		, vertexOffset(0)
+		, isIndexDataUpdateRequired(false)
+		, isVertexDataUpdateRequired(false)
+	{
+
+	}
+
+	uint32_t GetMaxSizeOfIndices() const
+	{
+		return maxNumOfIndices * sizeof(uint16_t);
+	}
+
+	uint32_t GetMaxSizeOfVertices() const
+	{
+		return maxNumOfVertices * stride;
+	}
+
+	uint32_t maxNumOfIndices;
+	uint32_t maxNumOfVertices;
+
+	uint32_t indexOffset;
+	uint32_t vertexOffset;
+
+	bool isIndexDataUpdateRequired;
+	bool isVertexDataUpdateRequired;
 };

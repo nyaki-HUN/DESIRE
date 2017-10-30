@@ -6,8 +6,9 @@
 #include <memory>
 
 class IWindow;
-class Mesh;
+class DynamicMesh;
 class Material;
+class Texture;
 
 class ImGuiImpl
 {
@@ -25,6 +26,7 @@ private:
 
 	static void RenderDrawListsCallback(ImDrawData *data);
 
-	std::unique_ptr<Mesh> mesh;
+	std::unique_ptr<DynamicMesh> mesh;
 	std::unique_ptr<Material> material;
+	std::shared_ptr<Texture> fontTexture;
 };

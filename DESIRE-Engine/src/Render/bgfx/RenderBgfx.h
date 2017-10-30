@@ -21,6 +21,7 @@ public:
 	void BeginFrame(IWindow *window) override;
 	void EndFrame() override;
 
+	void SetView(uint8_t viewId) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
@@ -32,6 +33,8 @@ public:
 	void Unbind(Mesh *mesh) override;
 	void Unbind(Shader *shader) override;
 	void Unbind(Texture *texture) override;
+
+	void UpdateDynamicMesh(DynamicMesh *mesh) override;
 
 private:
 	void SetMesh(Mesh *mesh) override;

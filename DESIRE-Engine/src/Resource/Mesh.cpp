@@ -20,7 +20,6 @@ Mesh::Mesh(EType meshType)
 	, vertices(nullptr)
 	, numVertices(0)
 	, type(meshType)
-	, isUpdateRequiredForDynamicMesh(false)
 {
 
 }
