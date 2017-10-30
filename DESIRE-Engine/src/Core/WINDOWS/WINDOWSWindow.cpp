@@ -81,7 +81,7 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 
 WINDOWSWindow::~WINDOWSWindow()
 {
-
+	SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)nullptr);
 }
 
 void WINDOWSWindow::HandleWindowMessages()
