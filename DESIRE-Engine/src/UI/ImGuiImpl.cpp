@@ -15,8 +15,6 @@
 
 #include "UI-imgui/include/imgui.h"
 
-/**/#include "bgfx/bgfx.h"
-
 ImGuiImpl::ImGuiImpl()
 {
 
@@ -101,9 +99,6 @@ void ImGuiImpl::Init()
 void ImGuiImpl::Kill()
 {
 	ImGui::Shutdown();
-
-	IRender::Get()->Unbind(mesh.get());
-	IRender::Get()->Unbind(fontTexture.get());
 
 	mesh = nullptr;
 	material = nullptr;
@@ -233,16 +228,6 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 
 			mesh->numIndices = cmd.ElemCount;
 			material->textures[0] = *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId);
-
-			if(bgfx::getRendererType() != bgfx::RendererType::Noop)
-			{
-				bgfx::setState(0
-					| BGFX_STATE_RGB_WRITE
-					| BGFX_STATE_ALPHA_WRITE
-					| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
-					| BGFX_STATE_MSAA
-				);
-			}
 
 			render->RenderMesh(mesh.get(), material.get());
 

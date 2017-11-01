@@ -1,6 +1,6 @@
 #pragma once
 
-#include <D3D11.h>
+#include <d3d11.h>
 
 class TextureRenderDataD3D11
 {

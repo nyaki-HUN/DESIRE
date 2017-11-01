@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <algorithm>
-#include <memory>
+#include <memory>		// for std::weak_ptr
 
 namespace stl_utils
 {
