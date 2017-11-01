@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Resource/Mesh.h"
+#include "Render/IRender.h"
 
 uint32_t Mesh::SVertexDecl::GetSizeInBytes() const
 {
@@ -26,7 +27,7 @@ Mesh::Mesh(EType meshType)
 
 Mesh::~Mesh()
 {
-	ASSERT(renderData == nullptr && "Call IRender::Unbind() before destroying the Mesh");
+	IRender::Get()->Unbind(this);
 
 	free(indices);
 	free(vertices);

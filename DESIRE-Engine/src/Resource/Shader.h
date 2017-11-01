@@ -7,6 +7,7 @@ class Shader
 {
 public:
 	Shader(const String& name);
+	~Shader();
 
 	// Render engine specific data set at bind
 	void *renderData;
