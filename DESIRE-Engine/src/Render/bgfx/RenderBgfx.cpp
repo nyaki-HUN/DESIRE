@@ -120,6 +120,14 @@ void RenderBgfx::SetView(View *view)
 	}
 }
 
+void RenderBgfx::SetWorldMatrix(const Matrix4& matrix)
+{
+	float world[16];
+	matrix.Store(world);
+
+	bgfx::setTransform(world);
+}
+
 void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
 	float view[16];
@@ -128,11 +136,6 @@ void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matr
 	projMatrix.Store(projection);
 
 	bgfx::setViewTransform(activeViewId, view, projection);
-}
-
-void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-	bgfx::setViewRect(activeViewId, x, y, width, height);
 }
 
 void RenderBgfx::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -386,12 +389,29 @@ void RenderBgfx::SetShadersFromMaterial(Material *material)
 	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 //	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
 	bgfx::setUniform(pixelShaderRenderData->u_tint, color);
+
+	// TODO: proper render state handling
+/**/if(activeViewId == 0)
+	{
+		bgfx::setState(activeViewId
+			| BGFX_STATE_RGB_WRITE
+			| BGFX_STATE_ALPHA_WRITE
+			| BGFX_STATE_DEPTH_TEST_LESS
+			| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
+			| BGFX_STATE_MSAA
+		);
+	}
 }
 
 void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
 {
 	const bgfx::TextureHandle *renderData = static_cast<const bgfx::TextureHandle*>(texture->renderData);
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);
+}
+
+void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	bgfx::setViewRect(activeViewId, x, y, width, height);
 }
 
 void RenderBgfx::DoRender()

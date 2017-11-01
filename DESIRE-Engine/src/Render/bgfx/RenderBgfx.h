@@ -22,8 +22,9 @@ public:
 	void EndFrame() override;
 
 	void SetView(View *view) override;
+
+	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
-	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void Bind(Mesh *mesh) override;
@@ -40,6 +41,8 @@ private:
 	void SetMesh(Mesh *mesh) override;
 	void SetShadersFromMaterial(Material *material) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
+
+	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void DoRender() override;
 

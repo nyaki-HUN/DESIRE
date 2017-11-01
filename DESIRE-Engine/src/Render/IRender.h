@@ -28,9 +28,11 @@ public:
 
 	void RenderMesh(Mesh *mesh, Material *material);
 
+	// Sets the current view that the rendering will happen on. (Use nullptr to set the default view which is using the frame buffer)
 	virtual void SetView(View *view) = 0;
+
+	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
-	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 	virtual void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 
 	// Resource bind
@@ -50,6 +52,8 @@ protected:
 	virtual void SetMesh(Mesh *mesh) = 0;
 	virtual void SetShadersFromMaterial(Material *material) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture) = 0;
+
+	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 
 	// Submit draw command
 	virtual void DoRender() = 0;

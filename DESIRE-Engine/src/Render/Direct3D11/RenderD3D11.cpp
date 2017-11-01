@@ -142,15 +142,14 @@ void RenderD3D11::SetView(View *view)
 	}
 }
 
-void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
+void RenderD3D11::SetWorldMatrix(const Matrix4& matrix)
 {
 
 }
 
-void RenderD3D11::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
-	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
-	deviceCtx->RSSetViewports(1, &vp);
+
 }
 
 void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -546,6 +545,12 @@ void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)
 
 	deviceCtx->PSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
 	deviceCtx->PSSetSamplers(samplerIdx, 1, &renderData->samplerState);
+}
+
+void RenderD3D11::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
+	deviceCtx->RSSetViewports(1, &vp);
 }
 
 void RenderD3D11::DoRender()

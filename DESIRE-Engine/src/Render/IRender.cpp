@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Render/IRender.h"
 #include "Render/Material.h"
+#include "Core/math/vectormath.h"
 #include "Resource/Mesh.h"
 #include "Resource/Shader.h"
 #include "Resource/Texture.h"
