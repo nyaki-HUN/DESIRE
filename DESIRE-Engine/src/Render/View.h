@@ -5,8 +5,11 @@ class Texture;
 class View
 {
 public:
-	View(uint16_t width, uint16_t height);
+	View(uint16_t renderTextureWidth, uint16_t renderTextureHeight);
 	~View();
+
+	void SetSize(uint16_t newWidth, uint16_t newHeight);
+	void ResizeRenderTexture(uint16_t newRenderTextureWidth, uint16_t newRenderTextureHeight);
 
 	uint16_t GetPosX() const;
 	uint16_t GetPosY() const;
