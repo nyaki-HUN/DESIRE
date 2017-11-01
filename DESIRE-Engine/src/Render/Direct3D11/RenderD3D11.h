@@ -3,6 +3,7 @@
 #include "Render/IRender.h"
 
 #include <d3d11.h>
+#include <DirectXMath.h>
 #include <memory>
 #include <unordered_map>
 
@@ -61,6 +62,7 @@ private:
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;
 
+	DirectX::XMMATRIX worldMatrix;
 	float clearColor[4];
 
 	bool initialized;

@@ -252,6 +252,7 @@
     <ClInclude Include="..\..\src\Physics\PhysX\PhysXPhysics.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\DebugDraw.h" />
+    <ClInclude Include="..\..\src\Render\Direct3D11\DirectXMathExt.h" />
     <ClInclude Include="..\..\src\Render\Direct3D11\MeshRenderDataD3D11.h" />
     <ClInclude Include="..\..\src\Render\Direct3D11\RenderD3D11.h" />
     <ClInclude Include="..\..\src\Render\Direct3D11\ShaderRenderDataD3D11.h" />

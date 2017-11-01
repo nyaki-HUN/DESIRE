@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Render/Direct3D11/RenderD3D11.h"
+#include "Render/Direct3D11/DirectXMathExt.h"
 #include "Render/Direct3D11/MeshRenderDataD3D11.h"
 #include "Render/Direct3D11/ShaderRenderDataD3D11.h"
 #include "Render/Direct3D11/TextureRenderDataD3D11.h"
@@ -144,7 +145,10 @@ void RenderD3D11::SetView(View *view)
 
 void RenderD3D11::SetWorldMatrix(const Matrix4& matrix)
 {
-
+	worldMatrix.r[0] = GetXMVECTOR(matrix.col0);
+	worldMatrix.r[1] = GetXMVECTOR(matrix.col1);
+	worldMatrix.r[2] = GetXMVECTOR(matrix.col2);
+	worldMatrix.r[3] = GetXMVECTOR(matrix.col3);
 }
 
 void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)

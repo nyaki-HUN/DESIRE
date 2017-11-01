@@ -576,6 +576,9 @@
     <ClInclude Include="..\..\src\Render\DebugDraw.h">
       <Filter>src\Render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Render\Direct3D11\DirectXMathExt.h">
+      <Filter>src\Render\Direct3D11</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Render\Direct3D11\MeshRenderDataD3D11.h">
       <Filter>src\Render\Direct3D11</Filter>
     </ClInclude>
