@@ -9,8 +9,14 @@
 #include "Script/IScriptSystem.h"
 #include "UI/ImGuiImpl.h"
 
+IApp* IApp::instance = nullptr;
 bool IApp::isMainLoopRunning = false;
 int IApp::returnValue = 0;
+
+IApp* IApp::Get()
+{
+	return instance;
+}
 
 void IApp::SendEvent(const CoreAppEvent& event)
 {
@@ -29,7 +35,8 @@ int IApp::Run(int argc, const char * const *argv)
 {
 	ASSERT(!isMainLoopRunning);
 
-	if(IApp::Get() == nullptr)
+	CreateInstance();
+	if(instance == nullptr)
 	{
 		ASSERT(false && "Application instance not found");
 		return -1;
@@ -50,7 +57,7 @@ int IApp::Run(int argc, const char * const *argv)
 	ImGuiImpl::Get()->Init();
 
 	// Run App
-	IApp::Get()->Init(mainWindow);
+	instance->Init(mainWindow);
 	isMainLoopRunning = true;
 	while(isMainLoopRunning)
 	{
@@ -69,9 +76,11 @@ int IApp::Run(int argc, const char * const *argv)
 			physics->Update();
 		}
 
-		IApp::Get()->Update();
+		instance->Update();
 	}
-	IApp::Get()->Kill();
+	instance->Kill();
+	delete instance;
+	instance = nullptr;
 
 	// DeInit engine
 	ImGuiImpl::Get()->Kill();

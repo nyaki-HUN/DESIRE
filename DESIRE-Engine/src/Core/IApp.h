@@ -11,6 +11,7 @@ enum class EAppEventType;
 class IApp
 {
 	DESIRE_DECLARE_SINGLETON_INTERFACE(IApp)
+	static void CreateInstance();
 
 public:
 	virtual void Init(IWindow *mainWindow) = 0;
@@ -53,6 +54,7 @@ protected:
 private:
 	virtual SCreationParams GetCreationParams(int argc, const char * const *argv);
 
+	static IApp* instance;
 	static bool isMainLoopRunning;
 	static int returnValue;
 };
