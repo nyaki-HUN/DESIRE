@@ -21,7 +21,7 @@ public:
 	void BeginFrame(IWindow *window) override;
 	void EndFrame() override;
 
-	void SetView(uint8_t viewId) override;
+	void SetView(View *view) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;

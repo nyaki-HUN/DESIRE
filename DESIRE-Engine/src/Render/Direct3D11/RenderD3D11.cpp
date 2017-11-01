@@ -4,6 +4,7 @@
 #include "Render/Direct3D11/ShaderRenderDataD3D11.h"
 #include "Render/Direct3D11/TextureRenderDataD3D11.h"
 #include "Render/Material.h"
+#include "Render/View.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
 #include "Core/fs/FileSystem.h"
@@ -133,9 +134,12 @@ void RenderD3D11::EndFrame()
 	swapChain->Present(1, 0);
 }
 
-void RenderD3D11::SetView(uint8_t viewId)
+void RenderD3D11::SetView(View *view)
 {
-
+	if(view != nullptr)
+	{
+		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
+	}
 }
 
 void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)

@@ -258,6 +258,7 @@
     <ClInclude Include="..\..\src\Render\Direct3D11\TextureRenderDataD3D11.h" />
     <ClInclude Include="..\..\src\Render\IRender.h" />
     <ClInclude Include="..\..\src\Render\Material.h" />
+    <ClInclude Include="..\..\src\Render\View.h" />
     <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h" />
     <ClInclude Include="..\..\src\Render\bgfx\ShaderRenderDataBgfx.h" />
@@ -349,6 +350,7 @@
     <ClCompile Include="..\..\src\Render\Direct3D11\RenderD3D11.cpp" />
     <ClCompile Include="..\..\src\Render\IRender.cpp" />
     <ClCompile Include="..\..\src\Render\Material.cpp" />
+    <ClCompile Include="..\..\src\Render\View.cpp" />
     <ClCompile Include="..\..\src\Render\bgfx\RenderBgfx.cpp" />
     <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp" />
     <ClCompile Include="..\..\src\Resource\Mesh.cpp" />

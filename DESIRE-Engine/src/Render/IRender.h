@@ -4,6 +4,7 @@
 #include "Core/String.h"
 
 class IWindow;
+class View;
 class Mesh;
 class DynamicMesh;
 class Material;
@@ -27,7 +28,7 @@ public:
 
 	void RenderMesh(Mesh *mesh, Material *material);
 
-	virtual void SetView(uint8_t viewId) = 0;
+	virtual void SetView(View *view) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
 	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 	virtual void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;

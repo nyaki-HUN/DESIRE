@@ -3,6 +3,7 @@
 #include "Render/bgfx/MeshRenderDataBgfx.h"
 #include "Render/bgfx/ShaderRenderDataBgfx.h"
 #include "Render/Material.h"
+#include "Render/View.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
 #include "Core/fs/FileSystem.h"
@@ -106,9 +107,17 @@ void RenderBgfx::EndFrame()
 	bgfx::frame();
 }
 
-void RenderBgfx::SetView(uint8_t viewId)
+void RenderBgfx::SetView(View *view)
 {
-	activeViewId = viewId;
+	if(view != nullptr)
+	{
+		activeViewId = view->GetID();
+		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
+	}
+	else
+	{
+		activeViewId = 0;
+	}
 }
 
 void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
@@ -224,6 +233,8 @@ void RenderBgfx::Bind(Shader *shader)
 	const bgfx::Memory *shaderDara = bgfx::makeRef(shader->data.data, (uint32_t)shader->data.size);
 
 	renderData->shaderHandle = bgfx::createShader(shaderDara);
+	bgfx::setName(renderData->shaderHandle, shader->name.c_str());
+
 	renderData->u_tint = bgfx::createUniform("u_tint", bgfx::UniformType::Vec4);
 
 	shader->renderData = renderData;

@@ -594,6 +594,9 @@
     <ClInclude Include="..\..\src\Render\Material.h">
       <Filter>src\Render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Render\View.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h">
       <Filter>src\Render\bgfx</Filter>
     </ClInclude>
@@ -861,6 +864,9 @@
       <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\Material.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Render\View.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\bgfx\RenderBgfx.cpp">

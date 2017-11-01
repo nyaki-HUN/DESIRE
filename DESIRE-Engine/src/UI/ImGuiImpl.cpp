@@ -232,7 +232,7 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 			}
 
 			mesh->numIndices = cmd.ElemCount;
-			material->textures[0] = *static_cast<std::shared_ptr<Texture>*>(cmd.TextureId);
+			material->textures[0] = *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId);
 
 			if(bgfx::getRendererType() != bgfx::RendererType::Noop)
 			{
