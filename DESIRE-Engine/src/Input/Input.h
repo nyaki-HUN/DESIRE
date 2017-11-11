@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Singleton.h"
-#include "Core/math/SPoint.h"
+#include "Core/math/Point.h"
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
 #include "Input/GameController.h"
@@ -48,10 +48,10 @@ public:
 	// Returns a string from the characters typed since the last frame (maximized by MAX_NUM_TYPING_CHARACTERS)
 	const char* GetTypingCharacters() const;
 
-	const SPoint<int16_t>& GetOsMouseCursorPos() const;
+	const Point<int16_t>& GetOsMouseCursorPos() const;
 
 private:
-	struct SHotkey
+	struct Hotkey
 	{
 		EKeyCode keyCode;
 		uint8_t modifiers;
@@ -59,7 +59,7 @@ private:
 		void *userData;
 	};
 
-	std::vector<SHotkey> hotkeys;
+	std::vector<Hotkey> hotkeys;
 
 	std::vector<Keyboard> keyboards;
 	std::vector<Mouse> mouses;
@@ -67,5 +67,5 @@ private:
 
 	char typingCharacters[MAX_NUM_TYPING_CHARACTERS];
 
-	SPoint<int16_t> mouseCursorPos;
+	Point<int16_t> mouseCursorPos;
 };

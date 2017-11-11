@@ -5,7 +5,7 @@
 
 #include <time.h>
 
-void ConsoleOutputPolicy::Process(const Log::SLogData& logData)
+void ConsoleOutputPolicy::Process(const Log::LogData& logData)
 {
 	printf("[%s] %s\n", logData.logType, logData.message);
 	fflush(0);
@@ -17,7 +17,7 @@ FileOutputPolicy::FileOutputPolicy()
 	ASSERT(logFile != nullptr);
 }
 
-void FileOutputPolicy::Process(const Log::SLogData& logData)
+void FileOutputPolicy::Process(const Log::LogData& logData)
 {
 	if(logFile == nullptr)
 	{

@@ -37,24 +37,31 @@ protected:
 		ORIENTATION_ALL					= ORIENTATION_PORTRAIT | ORIENTATION_PORTRAIT_REVERSE | ORIENTATION_LANDSCAPE_LEFT | ORIENTATION_LANDSCAPE_RIGHT
 	};
 
-	struct SCreationParams
+	struct CreationParams
 	{
-		SCreationParams()
+		CreationParams()
 			: defaultOrientation(ORIENTATION_PORTRAIT)
 			, supportedOrientations(ORIENTATION_ALL)
 		{
 
 		}
 
-		IWindow::SCreationParams windowParams;
+		IWindow::CreationParams windowParams;
 		EOrientation defaultOrientation;
 		uint8_t supportedOrientations;
 	};
 
 private:
-	virtual SCreationParams GetCreationParams(int argc, const char * const *argv);
+	virtual CreationParams GetCreationParams(int argc, const char * const *argv);
 
 	static IApp* instance;
 	static bool isMainLoopRunning;
 	static int returnValue;
 };
+
+
+#define DESIRE_APP_CLASS(APP_CLASS)			\
+	void IApp::CreateInstance()				\
+	{										\
+		instance = new APP_CLASS();		\
+	}

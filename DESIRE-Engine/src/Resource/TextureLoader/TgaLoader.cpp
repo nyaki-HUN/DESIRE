@@ -7,7 +7,7 @@
 	#include <PshPack1.h>
 #endif
 
-struct STgaHeader
+struct TgaHeader
 {
 	enum class EImageType : uint8_t
 	{
@@ -50,12 +50,12 @@ struct STgaHeader
 
 Texture* TgaLoader::Load(const ReadFilePtr& file)
 {
-	STgaHeader header;
+	TgaHeader header;
 	size_t bytesRead = file->ReadBuffer(&header, sizeof(header));
 
 	if(bytesRead != sizeof(header) ||
 		header.colorMapType != 0 ||
-		(header.imageType != STgaHeader::EImageType::TRUE_COLOR && header.imageType != STgaHeader::EImageType::RLE_TRUE_COLOR) ||
+		(header.imageType != TgaHeader::EImageType::TRUE_COLOR && header.imageType != TgaHeader::EImageType::RLE_TRUE_COLOR) ||
 		(header.bitsPerPixel != 24 && header.bitsPerPixel != 32))
 	{
 		// Not supported
@@ -68,14 +68,14 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 	uint8_t *data = (uint8_t*)malloc(dataSize);
 	switch(header.imageType)
 	{
-		case STgaHeader::EImageType::TRUE_COLOR:
+		case TgaHeader::EImageType::TRUE_COLOR:
 		{
 			bytesRead = file->ReadBuffer(data, dataSize);
 			ASSERT(bytesRead == dataSize);
 			break;
 		}
 
-		case STgaHeader::EImageType::RLE_TRUE_COLOR:
+		case TgaHeader::EImageType::RLE_TRUE_COLOR:
 		{
 			uint8_t rlePacket[5];
 			uint8_t *dataPtr = data;
@@ -115,22 +115,22 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 			break;
 		}
 
-		case STgaHeader::EImageType::COLOR_MAPPED:
-		case STgaHeader::EImageType::GRAYSCALE:
-		case STgaHeader::EImageType::RLE_COLOR_MAPPED:
-		case STgaHeader::EImageType::RLE_GRAYSCALE:
+		case TgaHeader::EImageType::COLOR_MAPPED:
+		case TgaHeader::EImageType::GRAYSCALE:
+		case TgaHeader::EImageType::RLE_COLOR_MAPPED:
+		case TgaHeader::EImageType::RLE_GRAYSCALE:
 			ASSERT(false && "Not supported");
 			break;
 	}
 
 	// Check vertical direction
-	if(header.descriptor & STgaHeader::DIRECTION_RIGHT_TO_LEFT)
+	if(header.descriptor & TgaHeader::DIRECTION_RIGHT_TO_LEFT)
 	{
 		ASSERT(false && "Not supported");
 	}
 
 	// Check horizontal direction
-	if(!(header.descriptor & STgaHeader::DIRECTION_TOP_TO_BOTTOM))
+	if(!(header.descriptor & TgaHeader::DIRECTION_TOP_TO_BOTTOM))
 	{
 		// Flip the image horizontally
 		const size_t rowSize = (size_t)(header.width * numComponents);
@@ -149,6 +149,6 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 	Texture::EFormat format = (numComponents == 3) ? Texture::EFormat::RGB8 : Texture::EFormat::RGBA8;
 
 	Texture *texture = new Texture(header.width, header.height, format);
-	texture->data = SMemoryBuffer(data, dataSize);
+	texture->data = MemoryBuffer(data, dataSize);
 	return texture;
 }

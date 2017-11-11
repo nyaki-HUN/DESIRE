@@ -35,7 +35,7 @@ WIN32ConsoleOutputPolicy::WIN32ConsoleOutputPolicy()
 	freopen_s(&file, "CONOUT$", "w", stderr);
 }
 
-void WIN32ConsoleOutputPolicy::Process(const Log::SLogData& logData)
+void WIN32ConsoleOutputPolicy::Process(const Log::LogData& logData)
 {
 	bool hasToRestoreColor = true;
 	switch(logData.logType[0])
@@ -60,7 +60,7 @@ void WIN32ConsoleOutputPolicy::Process(const Log::SLogData& logData)
 	}
 }
 
-void VisualStudioOutputPolicy::Process(const Log::SLogData& logData)
+void VisualStudioOutputPolicy::Process(const Log::LogData& logData)
 {
 	// VisualStudio is using the "file(line): message" format for clickable messages
 	wchar_t logLine[Log::MAX_MESSAGE_LENGTH];

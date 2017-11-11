@@ -186,8 +186,8 @@
     <ClInclude Include="..\..\src\Core\LockFreeRingBuffer.h" />
     <ClInclude Include="..\..\src\Core\Log.h" />
     <ClInclude Include="..\..\src\Core\Logger.h" />
+    <ClInclude Include="..\..\src\Core\MemoryBuffer.h" />
     <ClInclude Include="..\..\src\Core\Object.h" />
-    <ClInclude Include="..\..\src\Core\SMemoryBuffer.h" />
     <ClInclude Include="..\..\src\Core\STL_utils.h" />
     <ClInclude Include="..\..\src\Core\Singleton.h" />
     <ClInclude Include="..\..\src\Core\StrUtils.h" />
@@ -208,7 +208,7 @@
     <ClInclude Include="..\..\src\Core\fs\IWriteFile.h" />
     <ClInclude Include="..\..\src\Core\fs\MemoryFile.h" />
     <ClInclude Include="..\..\src\Core\math\AABB.h" />
-    <ClInclude Include="..\..\src\Core\math\SPoint.h" />
+    <ClInclude Include="..\..\src\Core\math\Point.h" />
     <ClInclude Include="..\..\src\Core\math\math.h" />
     <ClInclude Include="..\..\src\Core\math\vectormath.h" />
     <ClInclude Include="..\..\src\Core\math\vectormath\Matrix3.h" />
@@ -275,7 +275,7 @@
     <ClInclude Include="..\..\src\Scene\ISceneManager.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeLeaf.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeSceneManager.h" />
-    <ClInclude Include="..\..\src\Scene\SSceneGraphTraversal.h" />
+    <ClInclude Include="..\..\src\Scene\SceneGraphTraversal.h" />
     <ClInclude Include="..\..\src\Scene\Transform.h" />
     <ClInclude Include="..\..\src\Script\AngelScript\API\AngelScriptAPI.h" />
     <ClInclude Include="..\..\src\Script\AngelScript\AngelScriptComponent.h" />

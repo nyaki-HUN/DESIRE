@@ -5,7 +5,7 @@
 class IOSWindow : public IWindow
 {
 public:
-	IOSWindow(const IWindow::SCreationParams& creationParams);
+	IOSWindow(const IWindow::CreationParams& creationParams);
 	~IOSWindow();
 
 	void HandleWindowMessages() override;

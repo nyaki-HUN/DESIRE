@@ -3,7 +3,7 @@
 #include "Core/IApp.h"
 #include "Core/EAppEventType.h"
 
-WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
+WINDOWSWindow::WINDOWSWindow(const IWindow::CreationParams& creationParams)
 	: IWindow(creationParams)
 	, hWnd(0)
 	, isInSizeMove(false)
@@ -53,8 +53,8 @@ WINDOWSWindow::WINDOWSWindow(const IWindow::SCreationParams& creationParams)
 			h = screenHeight;
 		}
 
-		posX = (creationParams.posX != SCreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posX : (screenWidth - w) / 2;
-		posY = (creationParams.posY != SCreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posY : (screenHeight - h) / 2;
+		posX = (creationParams.posX != CreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posX : (screenWidth - w) / 2;
+		posY = (creationParams.posY != CreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posY : (screenHeight - h) / 2;
 	}
 
 	HINSTANCE hInstance = GetModuleHandle(nullptr);
@@ -311,7 +311,7 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
+IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
 {
 	return new WINDOWSWindow(creationParams);
 }

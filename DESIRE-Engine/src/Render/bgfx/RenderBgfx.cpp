@@ -174,7 +174,7 @@ void RenderBgfx::Bind(Mesh *mesh)
 	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType);
 
 	renderData->vertexDecl.begin();
-	for(Mesh::SVertexDecl& decl : mesh->vertexDecl)
+	for(Mesh::VertexDecl& decl : mesh->vertexDecl)
 	{
 		const bool isNormalized = (decl.type == Mesh::EAttribType::UINT8);
 		renderData->vertexDecl.add(attribConversionTable[(size_t)decl.attrib], (uint8_t)decl.count, attribTypeConversionTable[(size_t)decl.type], isNormalized);

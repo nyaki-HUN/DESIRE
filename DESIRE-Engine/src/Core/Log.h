@@ -5,7 +5,7 @@ class Log
 public:
 	static const size_t MAX_MESSAGE_LENGTH = 2048;
 
-	struct SLogData
+	struct LogData
 	{
 		const char *file;
 		int line;
@@ -13,9 +13,9 @@ public:
 		char message[MAX_MESSAGE_LENGTH];
 	};
 
-	typedef void(*LogFunction_t)(const Log::SLogData& logData);
+	typedef void(*LogFunction_t)(const Log::LogData& logData);
 
-	static void LogWithData(const Log::SLogData& logData);
+	static void LogWithData(const Log::LogData& logData);
 	static void LogWithFormat(const char *file, int line, const char *logType, const char *format, ...);
 	static void SetUserDefinedLogFunction(LogFunction_t func);
 };

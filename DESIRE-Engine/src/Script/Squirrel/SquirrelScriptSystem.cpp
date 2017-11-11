@@ -124,7 +124,7 @@ void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
 		return;
 	}
 
-	SMemoryBuffer content = file->ReadFileContent();
+	MemoryBuffer content = file->ReadFileContent();
 	String scriptSrc = String::CreateFormattedString(
 		"class %s"
 		"{"
@@ -157,7 +157,7 @@ void SquirrelScriptSystem::PrintCallback(HSQUIRRELVM vm, const SQChar *format, .
 {
 	DESIRE_UNUSED(vm);
 
-	Log::SLogData logData;
+	Log::LogData logData;
 	logData.file = __FILE__;
 	logData.line = __LINE__;
 	logData.logType = "DBG";
@@ -174,7 +174,7 @@ void SquirrelScriptSystem::ErrorCallback(HSQUIRRELVM vm, const SQChar *format, .
 {
 	DESIRE_UNUSED(vm);
 
-	Log::SLogData logData;
+	Log::LogData logData;
 	logData.file = __FILE__;
 	logData.line = __LINE__;
 	logData.logType = "ERR";

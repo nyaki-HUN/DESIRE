@@ -119,7 +119,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 		return nullptr;
 	}
 
-	SMemoryBuffer content = file->ReadFileContent();
+	MemoryBuffer content = file->ReadFileContent();
 	String scriptSrc = String::CreateFormattedString(
 		"class %s"
 		"{"

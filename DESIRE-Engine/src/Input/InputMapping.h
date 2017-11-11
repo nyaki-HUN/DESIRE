@@ -25,29 +25,29 @@ public:
 	float GetFloatState(int userActionId) const;
 
 private:
-	struct SMappedInput
+	struct MappedInput
 	{
 		int id;
 		const void *inputDeviceHandle;
 	};
 
-	struct SMappedAxis : public SMappedInput
+	struct MappedAxis : public MappedInput
 	{
 		float deadZone;
 	};
 
-	struct SUserAction
+	struct UserAction
 	{
 		int id;
-		std::vector<SMappedInput> mappedButtons;
-		std::vector<SMappedAxis> mappedAxes;
+		std::vector<MappedInput> mappedButtons;
+		std::vector<MappedAxis> mappedAxes;
 
-		SUserAction(int userActionId)
+		UserAction(int userActionId)
 			: id(userActionId)
 		{
 
 		}
 	};
 
-	std::vector<SUserAction> userActions;
+	std::vector<UserAction> userActions;
 };

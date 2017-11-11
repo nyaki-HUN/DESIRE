@@ -8,7 +8,7 @@ struct ANativeWindow;
 class ANDROIDWindow : public IWindow
 {
 public:
-	ANDROIDWindow(const IWindow::SCreationParams& creationParams, ANativeWindow *nativeWindow);
+	ANDROIDWindow(const IWindow::CreationParams& creationParams, ANativeWindow *nativeWindow);
 	~ANDROIDWindow();
 
 	void HandleWindowMessages() override;

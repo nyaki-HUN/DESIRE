@@ -2,7 +2,7 @@
 #include "Resource/Mesh.h"
 #include "Render/IRender.h"
 
-uint32_t Mesh::SVertexDecl::GetSizeInBytes() const
+uint32_t Mesh::VertexDecl::GetSizeInBytes() const
 {
 	static const uint32_t sizePerAttribType[] =
 	{
@@ -46,7 +46,7 @@ uint32_t Mesh::GetSizeOfVertices() const
 void Mesh::CalculateStrideFromVertexDecl()
 {
 	stride = 0;
-	for(const SVertexDecl& decl : vertexDecl)
+	for(const VertexDecl& decl : vertexDecl)
 	{
 		stride += decl.GetSizeInBytes();
 	}

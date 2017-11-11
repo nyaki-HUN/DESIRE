@@ -62,6 +62,6 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 	}
 
 	Texture *texture = new Texture((uint16_t)width, (uint16_t)height, format);
-	texture->data = SMemoryBuffer(data, (size_t)(width * height * numComponents));
+	texture->data = MemoryBuffer(data, (size_t)(width * height * numComponents));
 	return texture;
 }

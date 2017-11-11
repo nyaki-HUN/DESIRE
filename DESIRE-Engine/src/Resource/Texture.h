@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/SMemoryBuffer.h"
+#include "Core/MemoryBuffer.h"
 
 class Texture
 {
@@ -28,5 +28,5 @@ public:
 	const EFormat format;
 	const uint8_t numMipMaps;
 
-	SMemoryBuffer data;
+	MemoryBuffer data;
 };

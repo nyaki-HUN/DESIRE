@@ -31,7 +31,7 @@ public:
 
 	void Insert(HashedString key, const T& value)
 	{
-		auto it = stl_utils::binary_find_or_insert(elements, SKeyValuePair(key, value));
+		auto it = stl_utils::binary_find_or_insert(elements, KeyValuePair(key, value));
 		ASSERT(it->value == value && "An other value is already added with this key");
 	}
 
@@ -54,23 +54,23 @@ public:
 	}
 
 private:
-	struct SKeyValuePair
+	struct KeyValuePair
 	{
 		HashedString key;
 		T value;
 
-		SKeyValuePair(HashedString key, const T& value)
+		KeyValuePair(HashedString key, const T& value)
 			: key(key)
 			, value(value)
 		{
 
 		}
 
-		inline bool operator <(const SKeyValuePair& other) const
+		inline bool operator <(const KeyValuePair& other) const
 		{
 			return key < other.key;
 		}
 	};
 
-	std::vector<SKeyValuePair> elements;
+	std::vector<KeyValuePair> elements;
 };

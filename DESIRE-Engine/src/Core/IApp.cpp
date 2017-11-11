@@ -50,7 +50,7 @@ int IApp::Run(int argc, const char * const *argv)
 	IPhysics *physics = IPhysics::Get();
 	IScriptSystem *scriptSystem = IScriptSystem::Get();
 
-	SCreationParams params = IApp::Get()->GetCreationParams(argc, argv);
+	CreationParams params = IApp::Get()->GetCreationParams(argc, argv);
 	IWindow *mainWindow = IWindow::Create(params.windowParams);
 	IRender::Get()->Init(mainWindow);
 	Input::Init(mainWindow);
@@ -97,9 +97,9 @@ void IApp::Stop(int i_returnValue)
 	isMainLoopRunning = false;
 }
 
-IApp::SCreationParams IApp::GetCreationParams(int argc, const char * const *argv)
+IApp::CreationParams IApp::GetCreationParams(int argc, const char * const *argv)
 {
 	DESIRE_UNUSED(argc);
 	DESIRE_UNUSED(argv);
-	return SCreationParams();
+	return CreationParams();
 }

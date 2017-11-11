@@ -16,7 +16,7 @@ public:
 	ReadFilePtr OpenFile(const char *filename) override;
 
 private:
-	struct SZipFileEntry
+	struct ZipFileEntry
 	{
 		int64_t offsetInFile;		// Position of compressed data in the file
 		uint32_t compressedSize;
@@ -27,7 +27,7 @@ private:
 	void ProcessLocalHeaders();
 	String ConvertFilename(const char *filename);
 
-	std::map<String, SZipFileEntry> fileList;
+	std::map<String, ZipFileEntry> fileList;
 	ReadFilePtr zipFile;
 	int flags;
 };

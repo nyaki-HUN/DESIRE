@@ -15,7 +15,7 @@ public:
 	Logger() {}
 	~Logger() {}
 
-	inline void Log(const Log::SLogData& logData)
+	inline void Log(const Log::LogData& logData)
 	{
 		if(filterPolicy.Filter(logData))
 		{
@@ -34,7 +34,7 @@ private:
 
 struct NoFilterPolicy
 {
-	inline bool Filter(const Log::SLogData& /*logData*/)
+	inline bool Filter(const Log::LogData& /*logData*/)
 	{
 		return true;
 	}
@@ -43,7 +43,7 @@ struct NoFilterPolicy
 template<class Policy1, class Policy2>
 class CombinedFilterPolicy
 {
-	inline bool Filter(const Log::SLogData& logData)
+	inline bool Filter(const Log::LogData& logData)
 	{
 		return (policy1.Filter(logData) && policy2.Filter(logData));
 	}
@@ -59,13 +59,13 @@ private:
 
 struct ConsoleOutputPolicy
 {
-	void Process(const Log::SLogData& logData);
+	void Process(const Log::LogData& logData);
 };
 
 struct FileOutputPolicy
 {
 	FileOutputPolicy();
-	void Process(const Log::SLogData& logData);
+	void Process(const Log::LogData& logData);
 
 	WriteFilePtr logFile;
 };

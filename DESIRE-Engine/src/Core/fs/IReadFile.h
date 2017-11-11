@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/SMemoryBuffer.h"
+#include "Core/MemoryBuffer.h"
 #include "Core/String.h"
 
 #include <functional>
@@ -29,7 +29,7 @@ public:
 	virtual void ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback) = 0;
 	virtual size_t ReadBuffer(void *buffer, size_t size) = 0;
 	size_t ReadString(char **str);
-	SMemoryBuffer ReadFileContent();
+	MemoryBuffer ReadFileContent();
 
 	template<typename T>
 	bool Read(T& val)

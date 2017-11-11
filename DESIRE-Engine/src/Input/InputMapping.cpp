@@ -11,7 +11,7 @@ InputMapping::InputMapping()
 void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
 {
 	auto it = stl_utils::binary_find_or_insert(userActions, userActionId);
-	for(SMappedInput& mappedInput : it->mappedButtons)
+	for(MappedInput& mappedInput : it->mappedButtons)
 	{
 		if(mappedInput.id == buttonId && mappedInput.inputDeviceHandle == inputDevice.handle)
 		{
@@ -20,7 +20,7 @@ void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, i
 		}
 	}
 
-	SMappedInput button;
+	MappedInput button;
 	button.id = buttonId;
 	button.inputDeviceHandle = inputDevice.handle;
 	it->mappedButtons.push_back(button);
@@ -29,7 +29,7 @@ void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, i
 void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int axisId)
 {
 	auto it = stl_utils::binary_find_or_insert(userActions, userActionId);
-	for(SMappedInput& mappedInput : it->mappedAxes)
+	for(MappedInput& mappedInput : it->mappedAxes)
 	{
 		if(mappedInput.id == axisId && mappedInput.inputDeviceHandle == inputDevice.handle)
 		{
@@ -38,7 +38,7 @@ void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int
 		}
 	}
 
-	SMappedAxis axis;
+	MappedAxis axis;
 	axis.id = axisId;
 	axis.inputDeviceHandle = inputDevice.handle;
 	axis.deadZone = 0;
@@ -69,7 +69,7 @@ bool InputMapping::WentDown(int userActionId) const
 	auto it = stl_utils::binary_find(userActions, userActionId);
 	if(it != userActions.end())
 	{
-		for(const SMappedInput& button : it->mappedButtons)
+		for(const MappedInput& button : it->mappedButtons)
 		{
 			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr && inputDevice->WentDown(button.id))
@@ -89,7 +89,7 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 	auto it = stl_utils::binary_find(userActions, userActionId);
 	if(it != userActions.end())
 	{
-		for(const SMappedInput& button : it->mappedButtons)
+		for(const MappedInput& button : it->mappedButtons)
 		{
 			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr)
@@ -107,7 +107,7 @@ float InputMapping::GetFloatState(int userActionId) const
 	auto it = stl_utils::binary_find(userActions, userActionId);
 	if(it != userActions.end())
 	{
-		for(const SMappedInput& button : it->mappedButtons)
+		for(const MappedInput& button : it->mappedButtons)
 		{
 			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr && inputDevice->IsDown(button.id))
@@ -116,7 +116,7 @@ float InputMapping::GetFloatState(int userActionId) const
 			}
 		}
 
-		for(const SMappedAxis& axis : it->mappedAxes)
+		for(const MappedAxis& axis : it->mappedAxes)
 		{
 			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(axis.inputDeviceHandle);
 			if(inputDevice != nullptr)

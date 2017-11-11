@@ -48,7 +48,7 @@ float InputDevice::GetAxisPos(int axisId) const
 		return 0.0f;
 	}
 
-	const SAxisState& axis = reinterpret_cast<const SAxisState*>(reinterpret_cast<const uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
+	const AxisState& axis = reinterpret_cast<const AxisState*>(reinterpret_cast<const uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
 	return axis.pos;
 }
 
@@ -60,7 +60,7 @@ float InputDevice::GetAxisDelta(int axisId) const
 		return 0.0f;
 	}
 
-	const SAxisState& axis = reinterpret_cast<const SAxisState*>(reinterpret_cast<const uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
+	const AxisState& axis = reinterpret_cast<const AxisState*>(reinterpret_cast<const uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
 	return axis.delta;
 }
 
@@ -76,7 +76,7 @@ void InputDevice::Update()
 	// Reset axis deltas
 	for(uint16_t i = 0; i < numAxisStates; ++i)
 	{
-		SAxisState& axis = reinterpret_cast<SAxisState*>(reinterpret_cast<uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[i];
+		AxisState& axis = reinterpret_cast<AxisState*>(reinterpret_cast<uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[i];
 		axis.delta = 0.0f;
 	}
 }
@@ -105,7 +105,7 @@ void InputDevice::HandleAxis(int axisId, float delta)
 {
 	ASSERT(axisId >= 0 && axisId < numAxisStates);
 
-	SAxisState& axis = reinterpret_cast<SAxisState*>(reinterpret_cast<uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
+	AxisState& axis = reinterpret_cast<AxisState*>(reinterpret_cast<uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
 	axis.delta += delta;
 	axis.pos += delta;
 }
@@ -114,7 +114,7 @@ void InputDevice::HandleAxisAbsolute(int axisId, float newPos)
 {
 	ASSERT(axisId >= 0 && axisId < numAxisStates);
 
-	SAxisState& axis = reinterpret_cast<SAxisState*>(reinterpret_cast<uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
+	AxisState& axis = reinterpret_cast<AxisState*>(reinterpret_cast<uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[axisId];
 	axis.delta += newPos - axis.pos;
 	axis.pos = newPos;
 }

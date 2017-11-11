@@ -60,7 +60,7 @@ void ImGuiImpl::Init()
 	mesh->vertexDecl.emplace_back(Mesh::EAttrib::TEXCOORD0, 2, Mesh::EAttribType::FLOAT);
 	mesh->vertexDecl.emplace_back(Mesh::EAttrib::COLOR, 4, Mesh::EAttribType::UINT8);
 	mesh->CalculateStrideFromVertexDecl();
-	mesh->maxNumOfIndices = 20000;
+	mesh->maxNumOfIndices = 30000;
 	mesh->maxNumOfVertices = 10000;
 
 	mesh->indices = (uint16_t*)malloc(mesh->GetMaxSizeOfIndices());
@@ -76,9 +76,9 @@ void ImGuiImpl::Init()
 
 	// Setup shader
 	material->vertexShader = std::make_shared<Shader>("vs_ocornut_imgui_dx11");
-	material->vertexShader->data = SMemoryBuffer::CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
+	material->vertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
 	material->pixelShader = std::make_shared<Shader>("fs_ocornut_imgui_dx11");
-	material->pixelShader->data = SMemoryBuffer::CreateFromDataCopy(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
+	material->pixelShader->data = MemoryBuffer::CreateFromDataCopy(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
 
 	// Setup font texture
 	unsigned char *textureData;
@@ -87,7 +87,7 @@ void ImGuiImpl::Init()
 	io.Fonts->GetTexDataAsRGBA32(&textureData, &width, &height);
 
 	fontTexture = std::make_shared<Texture>((uint16_t)width, (uint16_t)height, Texture::EFormat::RGBA8);
-	fontTexture->data = SMemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
+	fontTexture->data = MemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
 	material->textures.push_back(fontTexture);
 	io.Fonts->TexID = &fontTexture;
 	
@@ -151,7 +151,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 		}
 	}
 
-	const SPoint<int16_t>& mousePos = Input::Get()->GetOsMouseCursorPos();
+	const Point<int16_t>& mousePos = Input::Get()->GetOsMouseCursorPos();
 	io.MousePos = ImVec2(mousePos.x, mousePos.y);
 
 	ImGui::NewFrame();

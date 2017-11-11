@@ -5,7 +5,7 @@
 
 #include <android_native_app_glue.h>
 
-ANDROIDWindow::ANDROIDWindow(const IWindow::SCreationParams& creationParams, ANativeWindow *nativeWindow)
+ANDROIDWindow::ANDROIDWindow(const IWindow::CreationParams& creationParams, ANativeWindow *nativeWindow)
 	: IWindow(creationParams)
 	, nativeWindow(nativeWindow)
 {
@@ -146,7 +146,7 @@ void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
+IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
 {
 	DESIRE_TODO("Return global instance");
 	return nullptr;

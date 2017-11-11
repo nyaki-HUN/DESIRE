@@ -4,5 +4,5 @@
 
 struct NSLogOutputPolicy
 {
-	void Process(const Log::SLogData& logData);
+	void Process(const Log::LogData& logData);
 };

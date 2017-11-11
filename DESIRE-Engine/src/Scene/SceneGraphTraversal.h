@@ -8,7 +8,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 template<typename VisitPolicy>
-struct SSceneGraphTraversal : public VisitPolicy
+struct SceneGraphTraversal : public VisitPolicy
 {
 	static size_t Traverse(SceneNodeComponent *rootNode)
 	{

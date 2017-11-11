@@ -34,5 +34,5 @@ public:
 
 private:
 	uint8_t buttons[NUM_BUTTONS];
-	SAxisState axes[NUM_AXES];
+	AxisState axes[NUM_AXES];
 };

@@ -9,7 +9,7 @@ ErrorTexture::ErrorTexture()
 
 void ErrorTexture::FillData()
 {
-	data = SMemoryBuffer(128 * 128 * 4);
+	data = MemoryBuffer(128 * 128 * 4);
 	uint32_t *pixel = reinterpret_cast<uint32_t*>(data.data);
 	for(int i = 0; i < width * height; ++i)
 	{

@@ -2,7 +2,7 @@
 #include "Core/IWindow.h"
 #include "Render/IRender.h"
 
-IWindow::IWindow(const SCreationParams& creationParams)
+IWindow::IWindow(const CreationParams& creationParams)
 	: isFullscreen(creationParams.isFullscreen)
 	, isActive(false)
 {

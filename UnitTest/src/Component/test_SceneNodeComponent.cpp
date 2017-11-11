@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Component/SceneNodeComponent.h"
 #include "Scene/Transform.h"
-#include "Scene/SSceneGraphTraversal.h"
+#include "Scene/SceneGraphTraversal.h"
 
 extern Transform preallocatedTransforms[10000];
 
@@ -159,7 +159,7 @@ TEST_CASE("SceneNodeComponent", "[Component]")
 		CHECK_FLOATS(worldPos.GetZ(), 3.0f);
 	}
 
-	struct STestPolicy
+	struct TestPolicy
 	{
 		static bool Visit(SceneNodeComponent *node)
 		{
@@ -168,6 +168,6 @@ TEST_CASE("SceneNodeComponent", "[Component]")
 		}
 	};
 
-	const size_t traversedCount = SSceneGraphTraversal<STestPolicy>::Traverse(rootNode);
+	const size_t traversedCount = SceneGraphTraversal<TestPolicy>::Traverse(rootNode);
 	CHECK(traversedCount == 3);
 }

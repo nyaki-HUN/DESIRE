@@ -38,9 +38,9 @@ RenderD3D11::RenderD3D11()
 	};
 
 	errorVertexShader = std::make_unique<Shader>("vs_error");
-	errorVertexShader->data = SMemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
+	errorVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
 	errorPixelShader = std::make_unique<Shader>("ps_error");
-	errorPixelShader->data = SMemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
+	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 }
 
 RenderD3D11::~RenderD3D11()
@@ -206,7 +206,7 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexDecl.size());
 	uint32_t offset = 0;
-	for(Mesh::SVertexDecl& decl : mesh->vertexDecl)
+	for(Mesh::VertexDecl& decl : mesh->vertexDecl)
 	{
 		D3D11_INPUT_ELEMENT_DESC& elementDesc = renderData->vertexElementDesc[renderData->vertexElementDescCount];
 		elementDesc = attribConversionTable[(size_t)decl.attrib];

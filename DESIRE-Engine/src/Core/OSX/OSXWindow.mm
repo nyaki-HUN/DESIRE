@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Core/OSX/OSXWindow.h"
 
-OSXWindow::OSXWindow(const IWindow::SCreationParams& creationParams)
+OSXWindow::OSXWindow(const IWindow::CreationParams& creationParams)
 	: IWindow(creationParams)
 {
 	for(int i = 0; i < NUM_CURSORS; ++i)
@@ -106,7 +106,7 @@ String OSXWindow::GetClipboardString()
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
+IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
 {
 	return new OSXWindow(creationParams);
 }

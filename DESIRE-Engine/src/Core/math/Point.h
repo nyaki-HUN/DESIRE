@@ -5,20 +5,21 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 template<typename T>
-struct SPoint
+class Point
 {
-	SPoint<T>()
+public:
+	Point<T>()
 	{
 
 	}
 
-	SPoint<T>(T x_, T y_)
+	Point<T>(T x_, T y_)
 	{
 		x = x_;
 		y = y_;
 	}
 
-	SPoint<T>(const SPoint<T>& p)
+	Point<T>(const Point<T>& p)
 	{
 		x = p.x;
 		y = p.y;
@@ -30,23 +31,23 @@ struct SPoint
 		y = y_;
 	}
 
-	inline bool operator ==(const SPoint<T>& p) const
+	inline bool operator ==(const Point<T>& p) const
 	{
 		return (x == p.x && y == p.y);
 	}
 
-	inline bool operator !=(const SPoint<T>& p) const
+	inline bool operator !=(const Point<T>& p) const
 	{
 		return (x != p.x || y != p.y);
 	}
 
-	inline void operator +=(const SPoint<T>& p)
+	inline void operator +=(const Point<T>& p)
 	{
 		x += p.x;
 		y += p.y;
 	}
 
-	inline void operator -=(const SPoint<T>& p)
+	inline void operator -=(const Point<T>& p)
 	{
 		x -= p.x;
 		y -= p.y;
@@ -56,13 +57,13 @@ struct SPoint
 };
 
 template<typename T>
-inline SPoint<T> operator +(const SPoint<T>& p1, const SPoint<T>& p2)
+inline Point<T> operator +(const Point<T>& p1, const Point<T>& p2)
 {
-	return SPoint<T>(p1.x + p2.x, p1.y + p2.y);
+	return Point<T>(p1.x + p2.x, p1.y + p2.y);
 }
 
 template<typename T>
-inline SPoint<T> operator -(const SPoint<T>& p1, const SPoint<T>& p2)
+inline Point<T> operator -(const Point<T>& p1, const Point<T>& p2)
 {
-	return SPoint<T>(p1.x - p2.x, p1.y - p2.y);
+	return Point<T>(p1.x - p2.x, p1.y - p2.y);
 }

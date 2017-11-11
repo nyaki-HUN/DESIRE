@@ -30,14 +30,14 @@ static const int ZIP_SIGNATURE_END_OF_CENTRAL_DIRECTORY			= 0x06054b50;	//'PK56'
 		Bits 09-15: years from 1980
 */
 
-struct SZipDataDescriptor
+struct ZipDataDescriptor
 {
 	int crc32;
 	uint32_t compressedSize;
 	uint32_t uncompressedSize;
 } DESIRE_ATTRIBUTE_PACKED;
 
-struct SZipLocalFileHeader
+struct ZipLocalFileHeader
 {
 	enum EFlag
 	{
@@ -58,12 +58,12 @@ struct SZipLocalFileHeader
 	int16_t compressionMethod;
 	uint16_t fileModificationTime;
 	uint16_t fileModificationDate;
-	SZipDataDescriptor dataDescriptor;
+	ZipDataDescriptor dataDescriptor;
 	uint16_t filenameLength;
 	uint16_t extraFieldLength;
 } DESIRE_ATTRIBUTE_PACKED;
 
-struct SZipCentralDirectoryFileHeader
+struct ZipCentralDirectoryFileHeader
 {
 	int32_t signature;
 	int16_t versionMadeBy;
@@ -72,7 +72,7 @@ struct SZipCentralDirectoryFileHeader
 	int16_t compressionMethod;
 	uint16_t fileModificationTime;
 	uint16_t fileModificationDate;
-	SZipDataDescriptor dataDescriptor;
+	ZipDataDescriptor dataDescriptor;
 	uint16_t filenameLength;
 	uint16_t extraFieldLength;
 	uint16_t commentLength;
@@ -82,7 +82,7 @@ struct SZipCentralDirectoryFileHeader
 	int32_t offsetOfLocalHeader;
 } DESIRE_ATTRIBUTE_PACKED;
 
-struct SZipEndOfCentralDirectoryRecord
+struct ZipEndOfCentralDirectoryRecord
 {
 	int32_t signature;
 	int16_t diskNumber;
@@ -118,9 +118,9 @@ bool FileSourceZip::Load()
 	}
 
 	// Load central directory record
-	zipFile->Seek(-(int64_t)sizeof(SZipEndOfCentralDirectoryRecord), IReadFile::ESeekOrigin::END);
-	SZipEndOfCentralDirectoryRecord record;
-	zipFile->ReadBuffer(&record, sizeof(SZipEndOfCentralDirectoryRecord));
+	zipFile->Seek(-(int64_t)sizeof(ZipEndOfCentralDirectoryRecord), IReadFile::ESeekOrigin::END);
+	ZipEndOfCentralDirectoryRecord record;
+	zipFile->ReadBuffer(&record, sizeof(ZipEndOfCentralDirectoryRecord));
 	if(record.signature != ZIP_SIGNATURE_END_OF_CENTRAL_DIRECTORY)
 	{
 		LOG_ERROR("The zip file contains comment which is not supported");
@@ -132,8 +132,8 @@ bool FileSourceZip::Load()
 	for(int16_t i = 0; i < record.numCentralDirectories; ++i)
 	{
 		// Process the Central Directory Header
-		SZipCentralDirectoryFileHeader centralDirHeader;
-		zipFile->ReadBuffer(&centralDirHeader, sizeof(SZipCentralDirectoryFileHeader));
+		ZipCentralDirectoryFileHeader centralDirHeader;
+		zipFile->ReadBuffer(&centralDirHeader, sizeof(ZipCentralDirectoryFileHeader));
 		ASSERT(centralDirHeader.signature == ZIP_SIGNATURE_CENTRAL_DIRECTORY_FILE_HEADER);
 		if(centralDirHeader.signature == ZIP_SIGNATURE_CENTRAL_DIRECTORY_FILE_HEADER)
 		{
@@ -155,7 +155,7 @@ ReadFilePtr FileSourceZip::OpenFile(const char *filename)
 		return nullptr;
 	}
 
-	const SZipFileEntry& entry = it->second;
+	const ZipFileEntry& entry = it->second;
 
 	// 00 : No compression
 	// 01 : Shrunk
@@ -263,7 +263,7 @@ ReadFilePtr FileSourceZip::OpenFile(const char *filename)
 
 void FileSourceZip::ProcessLocalHeaders()
 {
-	SZipLocalFileHeader header;
+	ZipLocalFileHeader header;
 	zipFile->ReadBuffer(&header, sizeof(header));
 	if(header.signature != ZIP_SIGNATURE_LOCAL_FILE_HEADER || header.filenameLength == 0)
 	{
@@ -290,12 +290,12 @@ void FileSourceZip::ProcessLocalHeaders()
 	}
 
 	// Read data descriptor
-	if(header.flags & SZipLocalFileHeader::FLAG_DATA_DESCRIPTOR)
+	if(header.flags & ZipLocalFileHeader::FLAG_DATA_DESCRIPTOR)
 	{
-		zipFile->ReadBuffer(&header.dataDescriptor, sizeof(SZipDataDescriptor));
+		zipFile->ReadBuffer(&header.dataDescriptor, sizeof(ZipDataDescriptor));
 	}
 
-	SZipFileEntry entry;
+	ZipFileEntry entry;
 	entry.offsetInFile = zipFile->Tell();
 	entry.compressedSize = header.dataDescriptor.compressedSize;
 	entry.uncompressedSize = header.dataDescriptor.uncompressedSize;

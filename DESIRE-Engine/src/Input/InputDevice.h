@@ -23,7 +23,7 @@ public:
 	void *handle;
 
 protected:
-	struct SAxisState
+	struct AxisState
 	{
 		float delta;
 		float pos;

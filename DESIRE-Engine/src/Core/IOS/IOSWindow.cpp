@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Core/IOS/IOSWindow.h"
 
-IOSWindow::IOSWindow(const IWindow::SCreationParams& creationParams)
+IOSWindow::IOSWindow(const IWindow::CreationParams& creationParams)
 	: IWindow(creationParams)
 {
 
@@ -43,7 +43,7 @@ String IOSWindow::GetClipboardString()
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::SCreationParams& creationParams)
+IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
 {
 	return new IOSWindow(creationParams);
 }

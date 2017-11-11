@@ -27,13 +27,13 @@ public:
 		NUM
 	};
 
-	struct SVertexDecl
+	struct VertexDecl
 	{
 		EAttrib attrib;
 		EAttribType type;
 		uint32_t count;
 
-		SVertexDecl(EAttrib attrib, uint32_t count, EAttribType type)
+		VertexDecl(EAttrib attrib, uint32_t count, EAttribType type)
 			: attrib(attrib)
 			, type(type)
 			, count(count)
@@ -63,7 +63,7 @@ public:
 	float *vertices;
 	uint32_t numVertices;
 	uint32_t stride;
-	std::vector<SVertexDecl> vertexDecl;
+	std::vector<VertexDecl> vertexDecl;
 
 	const EType type;
 };

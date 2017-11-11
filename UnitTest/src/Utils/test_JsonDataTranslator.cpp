@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Utils/JsonDataTranslator.h"
 
-struct STestData
+struct TestData
 {
 	int testInt;
 	float testFloat;
@@ -14,14 +14,14 @@ struct STestData
 
 TEST_CASE("JsonDataTranslator", "[Utils]")
 {
-	JsonDataTranslator<STestData> translator;
-	translator.Add("intValue", &STestData::testInt)
-		.Add("floatValue", &STestData::testFloat)
-		.Add("boolValue", &STestData::testBool)
-		.Add("stringValue", &STestData::testString)
-		.Add("stringArray", &STestData::testStringArray);
+	JsonDataTranslator<TestData> translator;
+	translator.Add("intValue", &TestData::testInt)
+		.Add("floatValue", &TestData::testFloat)
+		.Add("boolValue", &TestData::testBool)
+		.Add("stringValue", &TestData::testString)
+		.Add("stringArray", &TestData::testStringArray);
 
-	STestData data = {};
+	TestData data = {};
 
 	SECTION("Test with missing values")
 	{

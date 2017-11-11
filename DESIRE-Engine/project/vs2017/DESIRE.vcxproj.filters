@@ -378,10 +378,10 @@
     <ClInclude Include="..\..\src\Core\Logger.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\Object.h">
+    <ClInclude Include="..\..\src\Core\MemoryBuffer.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\SMemoryBuffer.h">
+    <ClInclude Include="..\..\src\Core\Object.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\STL_utils.h">
@@ -444,7 +444,7 @@
     <ClInclude Include="..\..\src\Core\math\AABB.h">
       <Filter>src\Core\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\SPoint.h">
+    <ClInclude Include="..\..\src\Core\math\Point.h">
       <Filter>src\Core\math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\math\math.h">
@@ -645,7 +645,7 @@
     <ClInclude Include="..\..\src\Scene\QuadTreeSceneManager.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Scene\SSceneGraphTraversal.h">
+    <ClInclude Include="..\..\src\Scene\SceneGraphTraversal.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Scene\Transform.h">

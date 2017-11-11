@@ -10,7 +10,7 @@ class WINDOWSWindow : public IWindow
 public:
 	typedef void(*MessageHandler_t)(WPARAM wParam, LPARAM lParam);
 
-	WINDOWSWindow(const IWindow::SCreationParams& creationParams);
+	WINDOWSWindow(const IWindow::CreationParams& creationParams);
 	~WINDOWSWindow();
 
 	void HandleWindowMessages() override;

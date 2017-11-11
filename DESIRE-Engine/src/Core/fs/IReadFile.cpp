@@ -34,14 +34,14 @@ size_t IReadFile::ReadString(char **str)
 	return ReadBuffer(*str, len);
 }
 
-SMemoryBuffer IReadFile::ReadFileContent()
+MemoryBuffer IReadFile::ReadFileContent()
 {
 	if(IsEof())
 	{
-		return SMemoryBuffer();
+		return MemoryBuffer();
 	}
 
-	SMemoryBuffer buffer = SMemoryBuffer((size_t)(fileSize - position));
+	MemoryBuffer buffer = MemoryBuffer((size_t)(fileSize - position));
 	const size_t numBytesRead = ReadBuffer(buffer.data, buffer.size);
 	ASSERT(numBytesRead == buffer.size);
 	return buffer;

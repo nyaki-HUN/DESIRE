@@ -18,7 +18,7 @@ void Input::Update()
 	{
 		// Handle hotkeys
 		const uint8_t modifiers = keyboard.GetModifierMask();
-		for(const SHotkey& hotkey : hotkeys)
+		for(const Hotkey& hotkey : hotkeys)
 		{
 			if(keyboard.WentDown(hotkey.keyCode) && (hotkey.modifiers == MODIFIER_DONT_CARE || hotkey.modifiers == modifiers))
 			{
@@ -48,7 +48,7 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 {
 	ASSERT(callback != nullptr);
 
-	for(const SHotkey& hotkey : hotkeys)
+	for(const Hotkey& hotkey : hotkeys)
 	{
 		if(hotkey.keyCode == keyCode && hotkey.modifiers == modifiers)
 		{
@@ -56,7 +56,7 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 		}
 	}
 
-	SHotkey hotkey;
+	Hotkey hotkey;
 	hotkey.keyCode = keyCode;
 	hotkey.modifiers = modifiers;
 	hotkey.callback = callback;
@@ -68,7 +68,7 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 
 void Input::UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers)
 {
-	hotkeys.erase(std::remove_if(hotkeys.begin(), hotkeys.end(), [keyCode, modifiers](const SHotkey& hotkey)
+	hotkeys.erase(std::remove_if(hotkeys.begin(), hotkeys.end(), [keyCode, modifiers](const Hotkey& hotkey)
 	{
 		return (hotkey.keyCode == keyCode && hotkey.modifiers == modifiers);
 	}), hotkeys.end());
@@ -123,7 +123,7 @@ const char* Input::GetTypingCharacters() const
 	return typingCharacters;
 }
 
-const SPoint<int16_t>& Input::GetOsMouseCursorPos() const
+const Point<int16_t>& Input::GetOsMouseCursorPos() const
 {
 	return mouseCursorPos;
 }

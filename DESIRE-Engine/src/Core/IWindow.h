@@ -21,11 +21,11 @@ public:
 		NUM_CURSORS
 	};
 
-	struct SCreationParams
+	struct CreationParams
 	{
 		static const int POS_CENTERED_ON_SCREEN = INT32_MAX;
 
-		SCreationParams()
+		CreationParams()
 			: posX(POS_CENTERED_ON_SCREEN)
 			, posY(POS_CENTERED_ON_SCREEN)
 			, width(1366)
@@ -42,7 +42,7 @@ public:
 		bool isFullscreen;
 	};
 
-	IWindow(const SCreationParams& creationParams);
+	IWindow(const CreationParams& creationParams);
 	virtual ~IWindow();
 
 	uint16_t GetWidth() const;
@@ -63,7 +63,7 @@ public:
 	virtual String GetClipboardString() = 0;
 
 	// Create a new IWindow
-	static IWindow* Create(const SCreationParams& creationParams);
+	static IWindow* Create(const CreationParams& creationParams);
 
 protected:
 	void SetSize(uint16_t width, uint16_t height);

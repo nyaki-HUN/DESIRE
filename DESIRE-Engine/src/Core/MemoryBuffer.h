@@ -1,25 +1,23 @@
 #pragma once
 
-struct SMemoryBuffer
+class MemoryBuffer
 {
-	char *data;
-	size_t size;
-
-	SMemoryBuffer(void *data = nullptr, size_t size = 0)
+public:
+	MemoryBuffer(void *data = nullptr, size_t size = 0)
 		: data(static_cast<char*>(data))
 		, size(size)
 	{
 
 	}
 
-	SMemoryBuffer(size_t size)
+	MemoryBuffer(size_t size)
 		: data(static_cast<char*>(malloc(size)))
 		, size(size)
 	{
 
 	}
 
-	SMemoryBuffer(SMemoryBuffer&& other)
+	MemoryBuffer(MemoryBuffer&& other)
 	{
 		data = other.data;
 		size = other.size;
@@ -27,12 +25,12 @@ struct SMemoryBuffer
 		other.size = 0;
 	}
 
-	~SMemoryBuffer()
+	~MemoryBuffer()
 	{
 		free(data);
 	}
 
-	SMemoryBuffer& operator =(SMemoryBuffer&& other)
+	MemoryBuffer& operator =(MemoryBuffer&& other)
 	{
 		free(data);
 	
@@ -43,15 +41,18 @@ struct SMemoryBuffer
 		return *this;
 	}
 
-	static SMemoryBuffer CreateFromDataCopy(const void *dataToCopy, size_t size)
+	static MemoryBuffer CreateFromDataCopy(const void *dataToCopy, size_t size)
 	{
-		SMemoryBuffer buffer(size);
+		MemoryBuffer buffer(size);
 		memcpy(buffer.data, dataToCopy, size);
 		return buffer;
 	}
 
+	char *data;
+	size_t size;
+
 private:
 	// Prevent copy
-	SMemoryBuffer(const SMemoryBuffer& other) = delete;
-	SMemoryBuffer& operator=(const SMemoryBuffer& other) = delete;
+	MemoryBuffer(const MemoryBuffer& other) = delete;
+	MemoryBuffer& operator=(const MemoryBuffer& other) = delete;
 };
