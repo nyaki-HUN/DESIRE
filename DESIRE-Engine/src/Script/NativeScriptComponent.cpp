@@ -35,7 +35,7 @@ bool NativeScriptComponent::PrepareFunctionCall(const char *functionName)
 		return false;
 	}
 
-	functionArgs.fill({ IScript::SArg::EType::UNDEFINED, 0 });
+	functionArgs.fill({ IScript::Arg::EType::UNDEFINED, 0 });
 	numFunctionCallArgs = 0;
 	return true;
 }
@@ -51,7 +51,7 @@ bool NativeScriptComponent::AddFunctionCallArg(int arg)
 {
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 
-	functionArgs[numFunctionCallArgs].type = IScript::SArg::EType::INT;
+	functionArgs[numFunctionCallArgs].type = IScript::Arg::EType::INT;
 	functionArgs[numFunctionCallArgs].inVal = arg;
 	numFunctionCallArgs++;
 	return true;
@@ -61,7 +61,7 @@ bool NativeScriptComponent::AddFunctionCallArg(float arg)
 {
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 
-	functionArgs[numFunctionCallArgs].type = IScript::SArg::EType::FLOAT;
+	functionArgs[numFunctionCallArgs].type = IScript::Arg::EType::FLOAT;
 	functionArgs[numFunctionCallArgs].floatVal = arg;
 	numFunctionCallArgs++;
 	return true;
@@ -71,7 +71,7 @@ bool NativeScriptComponent::AddFunctionCallArg(double arg)
 {
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 
-	functionArgs[numFunctionCallArgs].type = IScript::SArg::EType::DOUBLE;
+	functionArgs[numFunctionCallArgs].type = IScript::Arg::EType::DOUBLE;
 	functionArgs[numFunctionCallArgs].doubleVal = arg;
 	numFunctionCallArgs++;
 	return true;
@@ -81,7 +81,7 @@ bool NativeScriptComponent::AddFunctionCallArg(bool arg)
 {
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 
-	functionArgs[numFunctionCallArgs].type = IScript::SArg::EType::BOOL;
+	functionArgs[numFunctionCallArgs].type = IScript::Arg::EType::BOOL;
 	functionArgs[numFunctionCallArgs].boolVal = arg;
 	numFunctionCallArgs++;
 	return true;
@@ -91,7 +91,7 @@ bool NativeScriptComponent::AddFunctionCallArg(void *arg)
 {
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 
-	functionArgs[numFunctionCallArgs].type = IScript::SArg::EType::VOID_PTR;
+	functionArgs[numFunctionCallArgs].type = IScript::Arg::EType::VOID_PTR;
 	functionArgs[numFunctionCallArgs].voidPtrVal = arg;
 	numFunctionCallArgs++;
 	return true;
@@ -101,7 +101,7 @@ bool NativeScriptComponent::AddFunctionCallArg(const String& arg)
 {
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 
-	functionArgs[numFunctionCallArgs].type = IScript::SArg::EType::STRING;
+	functionArgs[numFunctionCallArgs].type = IScript::Arg::EType::STRING;
 	functionArgs[numFunctionCallArgs].stringVal = arg.c_str();
 	numFunctionCallArgs++;
 	return true;

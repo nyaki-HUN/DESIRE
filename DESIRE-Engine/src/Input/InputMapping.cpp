@@ -53,7 +53,7 @@ bool InputMapping::IsMapped(int userActionId) const
 
 void InputMapping::Unmap(int userActionId)
 {
-	userActions.erase(std::remove_if(userActions.begin(), userActions.end(), [userActionId](const SUserAction& action)
+	userActions.erase(std::remove_if(userActions.begin(), userActions.end(), [userActionId](const UserAction& action)
 	{
 		return (action.id == userActionId);
 	}), userActions.end());
