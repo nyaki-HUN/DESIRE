@@ -20,6 +20,7 @@ public:
 	void SetID(uint32_t id);
 
 	void SetActive(bool active);
+	void SetVisible(bool visible);
 
 	void AddComponent(IComponent *component);
 

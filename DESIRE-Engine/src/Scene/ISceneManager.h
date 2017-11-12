@@ -2,7 +2,7 @@
 
 #include "Core/Singleton.h"
 
-class SceneNodeComponent;
+class Object;
 class Camera;
 
 class ISceneManager
@@ -10,8 +10,8 @@ class ISceneManager
 	DESIRE_DECLARE_SINGLETON_INTERFACE(ISceneManager)
 
 public:
-	virtual void AddComponent(SceneNodeComponent *component, bool dynamic) = 0;
-	virtual void RemoveComponent(SceneNodeComponent *component) = 0;
+	virtual void AddObject(Object *obj, bool dynamic) = 0;
+	virtual void RemoveObject(Object *obj) = 0;
 
 	virtual void SetActiveCamera(Camera *camera) = 0;
 

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-class SceneNodeComponent;
+class Object;
 
 class QuadTreeLeaf
 {
@@ -12,13 +12,13 @@ public:
 	QuadTreeLeaf(uint8_t level);
 	~QuadTreeLeaf();
 
-	void AddComponent(SceneNodeComponent *component);
-	bool RemoveComponent(SceneNodeComponent *component);
+	void AddObject(Object *obj);
+	bool RemoveObject(Object *obj);
 
 	void Init();
 
 	QuadTreeLeaf *leafs[4];
-	std::vector<SceneNodeComponent*> components;
+	std::vector<Object*> objects;
 	uint8_t level;
 
 	AABB aabb;
@@ -28,7 +28,7 @@ private:
 	static const int QUAD_TREE_MAX_LEVEL = 30;
 	static const int QUAD_TREE_MIN_OBJECT_PER_LEAF = 5;
 
-	bool TryToInsertComponent(SceneNodeComponent *component);
+	bool TryToInsertObject(Object *obj);
 
 	float maxSizeX;
 	float maxSizeZ;

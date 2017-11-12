@@ -52,6 +52,11 @@ void Object::SetActive(bool active)
 
 }
 
+void Object::SetVisible(bool visible)
+{
+
+}
+
 void Object::AddComponent(IComponent *component)
 {
 	if(component == nullptr)

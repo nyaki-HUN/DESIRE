@@ -23,25 +23,25 @@ QuadTreeLeaf::~QuadTreeLeaf()
 	}
 }
 
-void QuadTreeLeaf::AddComponent(SceneNodeComponent *component)
+void QuadTreeLeaf::AddObject(Object *obj)
 {
-	aabb.AddAABB(component->GetAABB());
-	components.push_back(component);
+	aabb.AddAABB(obj->GetAABB());
+	objects.push_back(obj);
 }
 
-bool QuadTreeLeaf::RemoveComponent(SceneNodeComponent *component)
+bool QuadTreeLeaf::RemoveObject(Object *obj)
 {
-	auto it = std::remove(components.begin(), components.end(), component);
-	const bool isRemoved = (it != components.end());
+	auto it = std::remove(objects.begin(), objects.end(), obj);
+	const bool isRemoved = (it != objects.end());
 	if(isRemoved)
 	{
-		components.erase(it, components.end());
+		objects.erase(it, objects.end());
 		return true;
 	}
 
 	for(QuadTreeLeaf *childLeaf : leafs)
 	{
-		if(childLeaf != nullptr && childLeaf->RemoveComponent(component))
+		if(childLeaf != nullptr && childLeaf->RemoveObject(obj))
 		{
 			return true;
 		}
@@ -58,7 +58,7 @@ void QuadTreeLeaf::Init()
 	maxSizeX = size.GetX() * MAX_RESIZE_FACTOR;
 	maxSizeZ = size.GetZ() * MAX_RESIZE_FACTOR;
 
-	if(components.size() <= QUAD_TREE_MIN_OBJECT_PER_LEAF)
+	if(objects.size() <= QUAD_TREE_MIN_OBJECT_PER_LEAF)
 	{
 		return;
 	}
@@ -90,15 +90,15 @@ void QuadTreeLeaf::Init()
 		}
 	}
 
-	// Try to insert components into child leafs
-	std::vector<SceneNodeComponent*> componentsToAdd;
-	componentsToAdd.swap(components);
-	for(SceneNodeComponent *comp : componentsToAdd)
+	// Try to insert objects into child leafs
+	std::vector<Object*> objectsToAdd;
+	objectsToAdd.swap(objects);
+	for(Object *comp : objectsToAdd)
 	{
 		bool addedToChild = false;
 		for(QuadTreeLeaf *childLeaf : leafs)
 		{
-			if(childLeaf->TryToInsertComponent(comp))
+			if(childLeaf->TryToInsertObject(comp))
 			{
 				addedToChild = true;
 				break;
@@ -108,7 +108,7 @@ void QuadTreeLeaf::Init()
 		if(!addedToChild)
 		{
 			// Add back to the current leaf
-			components.push_back(comp);
+			objects.push_back(comp);
 		}
 	}
 
@@ -118,7 +118,7 @@ void QuadTreeLeaf::Init()
 	// Init child leafs
 	for(int i = 0; i < 4; i++)
 	{
-		if(leafs[i]->components.empty())
+		if(leafs[i]->objects.empty())
 		{
 			delete leafs[i];
 			leafs[i] = nullptr;
@@ -130,9 +130,9 @@ void QuadTreeLeaf::Init()
 	}
 }
 
-bool QuadTreeLeaf::TryToInsertComponent(SceneNodeComponent *component)
+bool QuadTreeLeaf::TryToInsertObject(Object *obj)
 {
-	const AABB& compAABB = component->GetAABB();
+	const AABB& compAABB = obj->GetAABB();
 	if(!aabb.IsAABBFullyInside2D(compAABB))
 	{
 		// Don't insert if the center is otside of the box
@@ -154,6 +154,6 @@ bool QuadTreeLeaf::TryToInsertComponent(SceneNodeComponent *component)
 		aabb = newAABB;
 	}
 
-	components.push_back(component);
+	objects.push_back(obj);
 	return true;
 }

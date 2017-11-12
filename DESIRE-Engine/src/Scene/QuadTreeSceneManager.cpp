@@ -25,8 +25,8 @@ QuadTreeSceneManager::QuadTreeSceneManager()
 	visibleLeafList.reserve(256);
 	tmpLeafList.reserve(256);
 
-	visibleDynamicObjects = (SceneNodeComponent**)malloc(numAllocatedVisibleDynamicObjects * sizeof(SceneNodeComponent*));
-	invisibleDynamicObjects = (SceneNodeComponent**)malloc(numAllocatedInvisibleDynamicObjects * sizeof(SceneNodeComponent*));
+	visibleDynamicObjects = (Object**)malloc(numAllocatedVisibleDynamicObjects * sizeof(Object*));
+	invisibleDynamicObjects = (Object**)malloc(numAllocatedInvisibleDynamicObjects * sizeof(Object*));
 }
 
 QuadTreeSceneManager::~QuadTreeSceneManager()
@@ -37,7 +37,7 @@ QuadTreeSceneManager::~QuadTreeSceneManager()
 	free(invisibleDynamicObjects);
 }
 
-void QuadTreeSceneManager::AddComponent(SceneNodeComponent *component, bool dynamic)
+void QuadTreeSceneManager::AddObject(Object *obj, bool dynamic)
 {
 	if(dynamic)
 	{
@@ -45,24 +45,24 @@ void QuadTreeSceneManager::AddComponent(SceneNodeComponent *component, bool dyna
 		if(numVisibleDynamicObjects > numAllocatedVisibleDynamicObjects)
 		{
 			numAllocatedVisibleDynamicObjects *= 2;
-			visibleDynamicObjects = (SceneNodeComponent**)realloc(visibleDynamicObjects, sizeof(SceneNodeComponent*) * numAllocatedVisibleDynamicObjects);
+			visibleDynamicObjects = (Object**)realloc(visibleDynamicObjects, sizeof(Object*) * numAllocatedVisibleDynamicObjects);
 		}
-		visibleDynamicObjects[numVisibleDynamicObjects - 1] = component;
+		visibleDynamicObjects[numVisibleDynamicObjects - 1] = obj;
 	}
 	else
 	{
-		rootLeaf->AddComponent(component);
+		rootLeaf->AddObject(obj);
 		needToPlaceObjectsInsideQuadTree = true;
 	}
 
-	component->SetVisible(true);
+	obj->SetVisible(true);
 }
 
-void QuadTreeSceneManager::RemoveComponent(SceneNodeComponent *component)
+void QuadTreeSceneManager::RemoveObject(Object *obj)
 {
 	for(uint32_t i = 0; i < numVisibleDynamicObjects; i++)
 	{
-		if(visibleDynamicObjects[i] == component)
+		if(visibleDynamicObjects[i] == obj)
 		{
 			visibleDynamicObjects[i] = visibleDynamicObjects[numVisibleDynamicObjects - 1];
 			numVisibleDynamicObjects--;
@@ -72,7 +72,7 @@ void QuadTreeSceneManager::RemoveComponent(SceneNodeComponent *component)
 
 	for(uint32_t i = 0; i < numInvisibleDynamicObjects; i++)
 	{
-		if(invisibleDynamicObjects[i] == component)
+		if(invisibleDynamicObjects[i] == obj)
 		{
 			invisibleDynamicObjects[i] = invisibleDynamicObjects[numInvisibleDynamicObjects - 1];
 			numInvisibleDynamicObjects--;
@@ -80,14 +80,14 @@ void QuadTreeSceneManager::RemoveComponent(SceneNodeComponent *component)
 		}
 	}
 
-	rootLeaf->RemoveComponent(component);
+	rootLeaf->RemoveObject(obj);
 }
 
 void QuadTreeSceneManager::SetActiveCamera(Camera *camera)
 {
 	activeCamera = camera;
 
-	// Set all dynamic components visible
+	// Set all dynamic objects visible
 	for(uint32_t i = 0; i < numInvisibleDynamicObjects; i++)
 	{
 		invisibleDynamicObjects[i]->SetVisible(true);
@@ -96,7 +96,7 @@ void QuadTreeSceneManager::SetActiveCamera(Camera *camera)
 		if(numVisibleDynamicObjects > numAllocatedVisibleDynamicObjects)
 		{
 			numAllocatedVisibleDynamicObjects *= 2;
-			visibleDynamicObjects = (SceneNodeComponent**)realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(SceneNodeComponent*));
+			visibleDynamicObjects = (Object**)realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(Object*));
 		}
 
 		visibleDynamicObjects[numVisibleDynamicObjects - 1] = invisibleDynamicObjects[i];
@@ -295,23 +295,23 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 
 	for(int j = 0; j < (int)numVisibleDynamicObjects; j++)
 	{
-		SceneNodeComponent *comp = visibleDynamicObjects[j];
+		Object *obj = visibleDynamicObjects[j];
 
 		Vector3 points[4];
-		comp->GetAABB().GetPoints2D(points);
+		obj->GetAABB().GetPoints2D(points);
 
 		EState state = IsAabbVisible(points, nNormal, normals, pointDotNormal, aabbNPVertex);
 		if(state == EState::OUTSIDE)
 		{
-			comp->SetVisible(false);
+			obj->SetVisible(false);
 
 			numInvisibleDynamicObjects++;
 			if(numInvisibleDynamicObjects > numAllocatedInvisibleDynamicObjects)
 			{
 				numAllocatedInvisibleDynamicObjects *= 2;
-				invisibleDynamicObjects = (SceneNodeComponent**)realloc(invisibleDynamicObjects, numAllocatedInvisibleDynamicObjects * sizeof(SceneNodeComponent*));
+				invisibleDynamicObjects = (Object**)realloc(invisibleDynamicObjects, numAllocatedInvisibleDynamicObjects * sizeof(Object*));
 			}
-			invisibleDynamicObjects[numInvisibleDynamicObjects - 1] = comp;
+			invisibleDynamicObjects[numInvisibleDynamicObjects - 1] = obj;
 			numVisibleDynamicObjects--;
 			visibleDynamicObjects[j] = visibleDynamicObjects[numVisibleDynamicObjects];
 			j--;
@@ -336,10 +336,10 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 		{
 			visibleLeafList.push_back(ltmp);
 
-			// Set components visible
-			for(SceneNodeComponent *comp : ltmp->components)
+			// Set objects visible
+			for(Object *obj : ltmp->objects)
 			{
-				comp->SetVisible(true);
+				obj->SetVisible(true);
 			}
 
 			// Add child leafs to list
@@ -381,9 +381,9 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			if(state != EState::OUTSIDE)
 			{
 				const Vector3 objectColor(0.0f, 0.5f, 1.0f);
-				for(const SceneNodeComponent *comp : ltmp->components)
+				for(const Object *obj : ltmp->objects)
 				{
-					debugDraw->AddAABB(comp->GetAABB(), objectColor);
+					debugDraw->AddAABB(obj->GetAABB(), objectColor);
 				}
 			}
 		}
@@ -399,22 +399,22 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 
 	for(int j = 0; j < (int)numInvisibleDynamicObjects; j++)
 	{
-		SceneNodeComponent *comp = invisibleDynamicObjects[j];
+		Object *obj = invisibleDynamicObjects[j];
 		Vector3 points[4];
-		comp->GetAABB().GetPoints2D(points);
+		obj->GetAABB().GetPoints2D(points);
 
 		EState state = IsAabbVisible(points, nNormal, normals, pointDotNormal, aabbNPVertex);
 		if(state == EState::INSIDE || state == EState::INTERSECT)
 		{
-			comp->SetVisible(true);
+			obj->SetVisible(true);
 
 			numVisibleDynamicObjects++;
 			if(numVisibleDynamicObjects > numAllocatedVisibleDynamicObjects)
 			{
 				numAllocatedVisibleDynamicObjects *= 2;
-				visibleDynamicObjects = (SceneNodeComponent**)realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(SceneNodeComponent*));
+				visibleDynamicObjects = (Object**)realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(Object*));
 			}
-			visibleDynamicObjects[numVisibleDynamicObjects - 1] = comp;
+			visibleDynamicObjects[numVisibleDynamicObjects - 1] = obj;
 			numInvisibleDynamicObjects--;
 			invisibleDynamicObjects[j] = invisibleDynamicObjects[numInvisibleDynamicObjects];
 			j--;
@@ -424,9 +424,9 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 
 void QuadTreeSceneManager::SetLeafsVisible_recursive(QuadTreeLeaf *leaf, bool visible)
 {
-	for(SceneNodeComponent *comp : leaf->components)
+	for(Object *obj : leaf->objects)
 	{
-		comp->SetVisible(visible);
+		obj->SetVisible(visible);
 	}
 
 	for(uint8_t i = 0; i < 4; i++)

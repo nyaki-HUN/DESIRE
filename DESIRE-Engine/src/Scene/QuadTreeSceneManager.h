@@ -16,8 +16,8 @@ public:
 	QuadTreeSceneManager();
 	~QuadTreeSceneManager();
 
-	void AddComponent(SceneNodeComponent *component, bool dynamic) override;
-	void RemoveComponent(SceneNodeComponent *component) override;
+	void AddObject(Object *obj, bool dynamic) override;
+	void RemoveObject(Object *obj) override;
 
 	void SetActiveCamera(Camera *camera) override;
 
@@ -43,8 +43,8 @@ private:
 	QuadTreeLeaf *rootLeaf;
 	Camera *activeCamera;
 
-	SceneNodeComponent **visibleDynamicObjects;
-	SceneNodeComponent **invisibleDynamicObjects;
+	Object **visibleDynamicObjects;
+	Object **invisibleDynamicObjects;
 	uint32_t numVisibleDynamicObjects;
 	uint32_t numInvisibleDynamicObjects;
 	uint32_t numAllocatedVisibleDynamicObjects;
