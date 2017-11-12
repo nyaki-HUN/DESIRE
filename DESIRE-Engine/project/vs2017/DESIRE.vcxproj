@@ -172,7 +172,6 @@
     <ClInclude Include="..\..\src\Component\IComponent.h" />
     <ClInclude Include="..\..\src\Component\PhysicsComponent.h" />
     <ClInclude Include="..\..\src\Component\RenderComponent.h" />
-    <ClInclude Include="..\..\src\Component\SceneNodeComponent.h" />
     <ClInclude Include="..\..\src\Component\ScriptComponent.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueInt.h" />
@@ -187,7 +186,6 @@
     <ClInclude Include="..\..\src\Core\Log.h" />
     <ClInclude Include="..\..\src\Core\Logger.h" />
     <ClInclude Include="..\..\src\Core\MemoryBuffer.h" />
-    <ClInclude Include="..\..\src\Core\Object.h" />
     <ClInclude Include="..\..\src\Core\STL_utils.h" />
     <ClInclude Include="..\..\src\Core\Singleton.h" />
     <ClInclude Include="..\..\src\Core\StrUtils.h" />
@@ -273,6 +271,7 @@
     <ClInclude Include="..\..\src\Resource\TextureLoader\StbImageLoader.h" />
     <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h" />
     <ClInclude Include="..\..\src\Scene\ISceneManager.h" />
+    <ClInclude Include="..\..\src\Scene\Object.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeLeaf.h" />
     <ClInclude Include="..\..\src\Scene\QuadTreeSceneManager.h" />
     <ClInclude Include="..\..\src\Scene\SceneGraphTraversal.h" />
@@ -304,7 +303,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Component\PhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\Component\RenderComponent.cpp" />
-    <ClCompile Include="..\..\src\Component\SceneNodeComponent.cpp" />
     <ClCompile Include="..\..\src\Component\ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueInt.cpp" />
@@ -313,7 +311,6 @@
     <ClCompile Include="..\..\src\Core\IWindow.cpp" />
     <ClCompile Include="..\..\src\Core\Log.cpp" />
     <ClCompile Include="..\..\src\Core\Logger.cpp" />
-    <ClCompile Include="..\..\src\Core\Object.cpp" />
     <ClCompile Include="..\..\src\Core\StrUtils.cpp" />
     <ClCompile Include="..\..\src\Core\String.cpp" />
     <ClCompile Include="..\..\src\Core\Timer.cpp" />
@@ -362,6 +359,7 @@
     <ClCompile Include="..\..\src\Resource\Texture.cpp" />
     <ClCompile Include="..\..\src\Resource\TextureLoader\StbImageLoader.cpp" />
     <ClCompile Include="..\..\src\Resource\TextureLoader\TgaLoader.cpp" />
+    <ClCompile Include="..\..\src\Scene\Object.cpp" />
     <ClCompile Include="..\..\src\Scene\QuadTreeLeaf.cpp" />
     <ClCompile Include="..\..\src\Scene\QuadTreeSceneManager.cpp" />
     <ClCompile Include="..\..\src\Scene\Transform.cpp" />

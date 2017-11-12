@@ -1,14 +1,12 @@
 #include "stdafx.h"
 #include "Scene/Transform.h"
 
-const Transform Transform::identityTransform;
-
 Transform::Transform()
 	: position(0.0f)
 	, rotation(0.0f, 0.0f, 0.0f, 1.0f)
 	, scale(1.0f)
 	, worldMatrix(Matrix4::Identity())
-	, parent(&identityTransform)
+	, parentWorldMatrix(nullptr)
 	, owner(nullptr)
 	, flags(IS_IDENTITY)
 {
@@ -20,9 +18,9 @@ Transform::~Transform()
 
 }
 
-void Transform::SetParent(const Transform *i_parent)
+void Transform::SetParent(const Transform *parent)
 {
-	parent = (i_parent != nullptr) ? i_parent : &identityTransform;
+	parentWorldMatrix = (parent != nullptr) ? &parent->worldMatrix : nullptr;
 	flags |= WORLD_MATRIX_DIRTY;
 }
 
@@ -81,11 +79,23 @@ void Transform::UpdateWorldMatrix()
 {
 	if(flags & IS_IDENTITY)
 	{
-		worldMatrix = parent->worldMatrix;
+		if(parentWorldMatrix != nullptr)
+		{
+			worldMatrix = *parentWorldMatrix;
+		}
+		else
+		{
+			worldMatrix = Matrix4::Identity();
+		}
 	}
 	else
 	{
-		worldMatrix = ConstructLocalMatrix() * parent->worldMatrix;
+		worldMatrix = ConstructLocalMatrix();
+
+		if(parentWorldMatrix != nullptr)
+		{
+			worldMatrix *= *parentWorldMatrix;
+		}
 	}
 
 	flags &= ~WORLD_MATRIX_DIRTY;

@@ -2,8 +2,8 @@
 #include "stdafx.h"
 #include "Scene/QuadTreeSceneManager.h"
 #include "Scene/QuadTreeLeaf.h"
+#include "Scene/Object.h"
 #include "Core/math/AABB.h"
-#include "Component/SceneNodeComponent.h"
 #include "Render/Camera.h"
 #include "Render/DebugDraw.h"
 

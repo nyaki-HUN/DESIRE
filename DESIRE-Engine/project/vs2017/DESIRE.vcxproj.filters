@@ -336,9 +336,6 @@
     <ClInclude Include="..\..\src\Component\RenderComponent.h">
       <Filter>src\Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Component\SceneNodeComponent.h">
-      <Filter>src\Component</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Component\ScriptComponent.h">
       <Filter>src\Component</Filter>
     </ClInclude>
@@ -379,9 +376,6 @@
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\MemoryBuffer.h">
-      <Filter>src\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\Object.h">
       <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\STL_utils.h">
@@ -639,6 +633,9 @@
     <ClInclude Include="..\..\src\Scene\ISceneManager.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Scene\Object.h">
+      <Filter>src\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Scene\QuadTreeLeaf.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
@@ -728,9 +725,6 @@
     <ClCompile Include="..\..\src\Component\RenderComponent.cpp">
       <Filter>src\Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Component\SceneNodeComponent.cpp">
-      <Filter>src\Component</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Component\ScriptComponent.cpp">
       <Filter>src\Component</Filter>
     </ClCompile>
@@ -753,9 +747,6 @@
       <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\Logger.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\Object.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\StrUtils.cpp">
@@ -901,6 +892,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\TextureLoader\TgaLoader.cpp">
       <Filter>src\Resource\TextureLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Scene\Object.cpp">
+      <Filter>src\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Scene\QuadTreeLeaf.cpp">
       <Filter>src\Scene</Filter>

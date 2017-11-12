@@ -3,30 +3,31 @@
 #include "Script/Squirrel/SquirrelScriptComponent.h"
 #include "Component/PhysicsComponent.h"
 #include "Component/RenderComponent.h"
-#include "Component/SceneNodeComponent.h"
-#include "Core/Object.h"
+#include "Scene/Object.h"
 #include "Scene/Transform.h"
 
 void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
 	HSQUIRRELVM vm = rootTable.GetVM();
 
-	// Object
-	rootTable.Bind("Object", Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object")
-		.Func("GetObjectName", &Object::GetObjectName)
-		.Func("GetID", &Object::GetID)
-		.Func<IComponent*(Object::*)(int)>("GetComponent", &Object::GetComponentByTypeID)
-		.Func<PhysicsComponent*(Object::*)()>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
-		.Func<RenderComponent*(Object::*)()>("GetRenderComponent", &Object::GetComponent<RenderComponent>)
-		.Func<SceneNodeComponent*(Object::*)()>("GetSceneNodeComponent", &Object::GetComponent<SceneNodeComponent>)
-		.Func<SquirrelScriptComponent*(Object::*)()>("GetScriptComponent", &Object::GetComponent<SquirrelScriptComponent>)
-	);
-
 	// Transform
 	rootTable.Bind("Transform", Sqrat::Class<Transform, Sqrat::NoConstructor<Transform>>(vm, "Transform")
 		.Prop("position", &Transform::GetPosition, &Transform::SetPosition)
 		.Prop("rotation", &Transform::GetRotation, &Transform::SetRotation)
 		.Prop("scale", &Transform::GetScale, &Transform::SetScale)
+	);
+
+	// Object
+	rootTable.Bind("Object", Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object")
+		.Func("GetObjectName", &Object::GetObjectName)
+		.Func("GetID", &Object::GetID)
+		.Func("SetActive", &Object::SetActive)
+		.Func<IComponent*(Object::*)(int)>("GetComponent", &Object::GetComponentByTypeID)
+		.Func<PhysicsComponent*(Object::*)()>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
+		.Func<RenderComponent*(Object::*)()>("GetRenderComponent", &Object::GetComponent<RenderComponent>)
+		.Func<SquirrelScriptComponent*(Object::*)()>("GetScriptComponent", &Object::GetComponent<SquirrelScriptComponent>)
+		.Prop("transform", &Object::GetTransform)
+		.Func("GetParent", &Object::GetParent)
 	);
 
 	// IComponent
@@ -42,13 +43,6 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 	// RenderComponent
 	rootTable.Bind("RenderComponent", Sqrat::DerivedClass<RenderComponent, IComponent, Sqrat::NoConstructor<RenderComponent>>(vm, "RenderComponent")
 		.Prop("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
-	);
-
-	// SceneNodeComponent
-	rootTable.Bind("SceneNodeComponent", Sqrat::DerivedClass<SceneNodeComponent, IComponent, Sqrat::NoConstructor<SceneNodeComponent>>(vm, "SceneNodeComponent")
-		.Func("SetVisible", &SceneNodeComponent::SetVisible)
-		.Prop("transform", &SceneNodeComponent::GetTransform)
-		.Func("GetParent", &SceneNodeComponent::GetParent)
 	);
 
 	// ScriptComponent

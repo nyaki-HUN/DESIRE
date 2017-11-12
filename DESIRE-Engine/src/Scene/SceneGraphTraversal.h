@@ -1,23 +1,26 @@
 #pragma once
 
-#include "Component/SceneNodeComponent.h"
+#include "Scene/Object.h"
+
+#include <functional>
 
 // --------------------------------------------------------------------------------------------------------------------
-//	Recursive depth-first scene graph traversal which uses the VisitPolicy for traversed nodes.
-//	You can create custom visit policy by simply creating a struct with the method: bool Visit(SceneNodeComponent *node);
+//	Recursive depth-first scene graph traversal which uses the 'visitFunc' for traversed nodes.
+//	Return false from 'visitFunc' if you don't want to go deeper
 // --------------------------------------------------------------------------------------------------------------------
 
-template<typename VisitPolicy>
-struct SceneGraphTraversal : public VisitPolicy
+class SceneGraphTraversal
 {
-	static size_t Traverse(SceneNodeComponent *rootNode)
+public:
+	
+	static size_t Traverse(Object *rootObject, const std::function<bool(Object*)>& visitFunc)
 	{
 		size_t traversedNodeCount = 1;
-		if(VisitPolicy::Visit(rootNode))
+		if(visitFunc(rootObject))
 		{
-			for(SceneNodeComponent *node : rootNode->GetChildren())
+			for(Object *obj : rootObject->GetChildren())
 			{
-				traversedNodeCount += Traverse(node);
+				traversedNodeCount += Traverse(obj, visitFunc);
 			}
 		}
 		return traversedNodeCount;

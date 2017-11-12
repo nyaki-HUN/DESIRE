@@ -2,11 +2,11 @@
 
 #include "Core/math/vectormath.h"
 
-class SceneNodeComponent;
+class Object;
 
 class Transform
 {
-	friend class SceneNodeComponent;
+	friend class Object;
 
 public:
 	enum EFlags
@@ -53,9 +53,7 @@ private:
 
 	Matrix4 worldMatrix;
 
-	const Transform *parent;
-	SceneNodeComponent *owner;
+	const Matrix4 *parentWorldMatrix;
+	Object *owner;
 	uint8_t flags;
-
-	static const Transform identityTransform;
 };

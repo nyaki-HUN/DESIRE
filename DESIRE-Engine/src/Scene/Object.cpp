@@ -1,35 +1,101 @@
 #include "stdafx.h"
-#include "Component/SceneNodeComponent.h"
-#include "Core/math/AABB.h"
+#include "Scene/Object.h"
 #include "Scene/Transform.h"
+#include "Core/math/AABB.h"
+#include "Core/StrUtils.h"
 
 #define MAX_TRANSFORMS	10000
-Transform preallocatedTransforms[MAX_TRANSFORMS];
+static Transform preallocatedTransforms[MAX_TRANSFORMS];
 uint32_t numTransforms;
 
-SceneNodeComponent::SceneNodeComponent()
+Object::Object(const char *name)
 	: transform(nullptr)
 	, aabb(nullptr)
 	, numTransformsInHierarchy(1)
 	, parent(nullptr)
-	, flags(0)
+	, objectID(0)
+	, objectName(StrUtils::Duplicate(name))
 {
-	ASSERT(numTransforms < MAX_TRANSFORMS);
-	transform = &preallocatedTransforms[numTransforms];
-	numTransforms++;
 
-	transform->owner = this;
-	transform->ResetToIdentity();
-
-	aabb = new AABB();
 }
 
-SceneNodeComponent::~SceneNodeComponent()
+Object::~Object()
 {
 	Remove();
+
+	free(objectName);
 }
 
-void SceneNodeComponent::Remove()
+void Object::SetObjectName(const char *name)
+{
+	free(objectName);
+	objectName = StrUtils::Duplicate(name);
+}
+
+const char* Object::GetObjectName() const
+{
+	return objectName;
+}
+
+void Object::SetID(uint32_t id)
+{
+	objectID = id;
+}
+
+uint32_t Object::GetID() const
+{
+	return objectID;
+}
+
+void Object::SetActive(bool active)
+{
+
+}
+
+void Object::AddComponent(IComponent *component)
+{
+	if(component == nullptr)
+	{
+		return;
+	}
+
+#if defined(DESIRE_DEBUG)
+	const int typeID = component->GetTypeID();
+	for(const auto& pair : components)
+	{
+		ASSERT(pair.first != typeID);
+	}
+#endif
+
+	component->object = this;
+	components.emplace_back(component->GetTypeID(), component);
+}
+
+IComponent* Object::GetComponentByTypeID(int typeID)
+{
+	for(const auto& pair : components)
+	{
+		if(pair.first == typeID)
+		{
+			return pair.second;
+		}
+	}
+	return nullptr;
+}
+
+const IComponent* Object::GetComponentByTypeID(int typeID) const
+{
+	for(const auto& pair : components)
+	{
+		if(pair.first == typeID)
+		{
+			return pair.second;
+		}
+	}
+	return nullptr;
+}
+
+void Object::Remove()
 {
 	if(parent != nullptr)
 	{
@@ -37,12 +103,7 @@ void SceneNodeComponent::Remove()
 	}
 }
 
-void SceneNodeComponent::SetVisible(bool visible)
-{
-
-}
-
-void SceneNodeComponent::AddChild(SceneNodeComponent *child)
+void Object::AddChild(Object *child)
 {
 	ASSERT(child != this);
 
@@ -53,67 +114,67 @@ void SceneNodeComponent::AddChild(SceneNodeComponent *child)
 
 	if(child->parent != nullptr)
 	{
-		SceneNodeComponent *node = child->parent;
+		Object *obj = child->parent;
 		do
 		{
-			ASSERT(node->numTransformsInHierarchy > child->numTransformsInHierarchy);
-			node->numTransformsInHierarchy -= child->numTransformsInHierarchy;
-			node = node->parent;
-		} while(node != nullptr);
+			ASSERT(obj->numTransformsInHierarchy > child->numTransformsInHierarchy);
+			obj->numTransformsInHierarchy -= child->numTransformsInHierarchy;
+			obj = obj->parent;
+		} while(obj != nullptr);
 
 		child->parent->children.erase(std::remove(child->parent->children.begin(), child->parent->children.end(), child), child->parent->children.end());
 	}
 
 	child->SetNewParent(this);
 
-	SceneNodeComponent *node = this;
+	Object *obj = this;
 	do
 	{
-		node->numTransformsInHierarchy += child->numTransformsInHierarchy;
-		node = node->parent;
-	} while(node != nullptr);
+		obj->numTransformsInHierarchy += child->numTransformsInHierarchy;
+		obj = obj->parent;
+	} while(obj != nullptr);
 
 	children.push_back(child);
 }
 
-void SceneNodeComponent::RemoveChild(SceneNodeComponent *child)
+void Object::RemoveChild(Object *child)
 {
 	ASSERT(child->GetParent() == this);
 
-	SceneNodeComponent *node = this;
+	Object *obj = this;
 	do
 	{
-		ASSERT(node->numTransformsInHierarchy > child->numTransformsInHierarchy);
-		node->numTransformsInHierarchy -= child->numTransformsInHierarchy;
-		node = node->parent;
-	} while(node != nullptr);
+		ASSERT(obj->numTransformsInHierarchy > child->numTransformsInHierarchy);
+		obj->numTransformsInHierarchy -= child->numTransformsInHierarchy;
+		obj = obj->parent;
+	} while(obj != nullptr);
 
 	children.erase(std::remove(children.begin(), children.end(), child), children.end());
 
 	child->SetNewParent(nullptr);
 }
 
-Transform& SceneNodeComponent::GetTransform()
+Transform& Object::GetTransform()
 {
 	return *transform;
 }
 
-const AABB& SceneNodeComponent::GetAABB() const
+const AABB& Object::GetAABB() const
 {
 	return *aabb;
 }
 
-SceneNodeComponent* SceneNodeComponent::GetParent()
+Object* Object::GetParent()
 {
 	return parent;
 }
 
-const std::vector<SceneNodeComponent*>& SceneNodeComponent::GetChildren() const
+const std::vector<Object*>& Object::GetChildren() const
 {
 	return children;
 }
 
-void SceneNodeComponent::UpdateAllTransformsInHierarchy()
+void Object::UpdateAllTransformsInHierarchy()
 {
 	Transform *transformTmp = transform;
 	for(size_t i = 0; i < numTransformsInHierarchy; i++)
@@ -123,7 +184,7 @@ void SceneNodeComponent::UpdateAllTransformsInHierarchy()
 	}
 }
 
-void SceneNodeComponent::SetNewParent(SceneNodeComponent *newParent)
+void Object::SetNewParent(Object *newParent)
 {
 	Transform *oldTransform = transform;
 	transform = (newParent != nullptr) ? newParent->transform + newParent->numTransformsInHierarchy : &preallocatedTransforms[numTransforms];
@@ -151,27 +212,27 @@ void SceneNodeComponent::SetNewParent(SceneNodeComponent *newParent)
 			memmove(movedTransformTmp, transform, numToMove * sizeof(Transform));
 		}
 
-		// Refresh transform pointers in moved transforms
+		// Refresh parentWorldMatrix pointers in moved transforms
 		for(; numToMove > 0; numToMove--)
 		{
 			movedTransformTmp->owner->transform = movedTransformTmp;
 			if(movedTransformTmp->owner->parent != nullptr)
 			{
-				movedTransformTmp->parent = &movedTransformTmp->owner->parent->GetTransform();
+				movedTransformTmp->parentWorldMatrix = &movedTransformTmp->owner->parent->GetTransform().GetWorldMatrix();
 			}
 			movedTransformTmp++;
 		}
 
 		memcpy(transform, savedTransforms, numTransformsInHierarchy * sizeof(Transform));
 
-		// Refresh transform pointers in own hierarchy
+		// Refresh parentWorldMatrix pointers in own hierarchy
 		movedTransformTmp = transform;
 		for(size_t i = 0; i < numTransformsInHierarchy; i++)
 		{
 			movedTransformTmp->owner->transform = movedTransformTmp;
 			if(movedTransformTmp->owner->parent != nullptr)
 			{
-				movedTransformTmp->parent = &movedTransformTmp->owner->parent->GetTransform();
+				movedTransformTmp->parentWorldMatrix = &movedTransformTmp->owner->parent->GetTransform().GetWorldMatrix();
 			}
 			movedTransformTmp++;
 		}

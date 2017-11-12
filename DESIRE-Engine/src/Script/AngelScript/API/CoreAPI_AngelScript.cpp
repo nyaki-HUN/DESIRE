@@ -3,7 +3,6 @@
 #include "Core/math/vectormath.h"
 #include "Core/math/math.h"
 #include "Core/Timer.h"
-#include "Core/Object.h"
 #include "Core/String.h"
 
 Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)
@@ -289,10 +288,4 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("ITimer", "uint64 GetMicroDelta() const", asMETHODPR(Timer, GetMicroDelta, () const, uint64_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("ITimer", "uint GetMilliDelta() const", asMETHODPR(Timer, GetMilliDelta, () const, uint32_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("ITimer", "float GetSecDelta() const", asMETHODPR(Timer, GetSecDelta, () const, float), asCALL_THISCALL);
-
-	// Object
-	engine->RegisterObjectType("Object", 0, asOBJ_REF | asOBJ_NOCOUNT);
-	engine->RegisterObjectMethod("Object", "String GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromFunc<&Object::GetObjectName>)), asCALL_GENERIC);
-	engine->RegisterObjectMethod("Object", "uint32 GetID() const", asMETHODPR(Object, GetID, () const, uint32_t), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "IComponent@ GetComponent(EComponentTypeID typeID)", asMETHODPR(Object, GetComponentByTypeID, (int), IComponent*), asCALL_THISCALL);
 }

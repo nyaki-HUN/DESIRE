@@ -4,19 +4,24 @@
 
 #include <vector>
 
+class Transform;
+class AABB;
+
 class Object
 {
 public:
 	Object(const char *name = nullptr);
 	~Object();
 
-	void AddComponent(IComponent *component);
-
 	const char* GetObjectName() const;
 	void SetObjectName(const char *name);
 
 	uint32_t GetID() const;
 	void SetID(uint32_t id);
+
+	void SetActive(bool active);
+
+	void AddComponent(IComponent *component);
 
 	IComponent* GetComponentByTypeID(int typeID);
 	const IComponent* GetComponentByTypeID(int typeID) const;
@@ -33,8 +38,33 @@ public:
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
 	}
 
+	// Remove from scene hierarchy
+	void Remove();
+
+	// Add the child to this object (if the child already has a parent, it is removed first)
+	void AddChild(Object *child);
+
+	// Remove the child from this object
+	void RemoveChild(Object *child);
+
+	Transform& GetTransform();
+	const AABB& GetAABB() const;
+	Object* GetParent();
+	const std::vector<Object*>& GetChildren() const;
+
+	void UpdateAllTransformsInHierarchy();
+
 private:
+	void SetNewParent(Object *newParent);
+
 	std::vector<std::pair<int, IComponent*>> components;
+	Transform *transform;
+	AABB *aabb;
+	size_t numTransformsInHierarchy;
+
+	Object *parent;
+	std::vector<Object*> children;
+
 	uint32_t objectID;
 	char *objectName;
 };
