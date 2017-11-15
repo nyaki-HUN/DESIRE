@@ -714,6 +714,9 @@
     <ClInclude Include="..\..\src\Utils\JsonDataTranslator.h">
       <Filter>src\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Utils\TaskManager.h">
+      <Filter>src\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\stdafx.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -1006,6 +1009,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\UI\ImGuiImpl.cpp">
       <Filter>src\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Utils\TaskManager.cpp">
+      <Filter>src\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\stdafx.cpp">
       <Filter>src</Filter>

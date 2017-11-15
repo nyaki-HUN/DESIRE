@@ -298,6 +298,7 @@
     <ClInclude Include="..\..\src\Utils\Enumerator.h" />
     <ClInclude Include="..\..\src\Utils\GuardedCallbackFactory.h" />
     <ClInclude Include="..\..\src\Utils\JsonDataTranslator.h" />
+    <ClInclude Include="..\..\src\Utils\TaskManager.h" />
     <ClInclude Include="..\..\src\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -397,6 +398,7 @@
     <ClCompile Include="..\..\src\Sound\OpenAL\OpenALSound.cpp" />
     <ClCompile Include="..\..\src\Sound\Wwise\WwiseSound.cpp" />
     <ClCompile Include="..\..\src\UI\ImGuiImpl.cpp" />
+    <ClCompile Include="..\..\src\Utils\TaskManager.cpp" />
     <ClCompile Include="..\..\src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
