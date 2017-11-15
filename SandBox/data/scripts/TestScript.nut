@@ -33,12 +33,14 @@ function Update()
 	pos += pos2;
 	pos = -pos;
 
-	local sceneNode = self.object.GetSceneNodeComponent();
-	if(sceneNode != null)
+	local renderComp = self.object.GetRenderComponent();
+	if(renderComp != null)
 	{
-		sceneNode.transform.position = pos;
-		print("x = " + sceneNode.transform.position.x);
+		
 	}
+
+	self.object.transform.position = pos;
+	print("x = " + self.object.transform.position.x);
 
 	// Static function test
 	local mat = Matrix4.CreateTranslation(Vector3(100.0, 2.0, 0.0));

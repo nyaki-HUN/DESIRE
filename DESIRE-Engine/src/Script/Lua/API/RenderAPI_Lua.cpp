@@ -5,6 +5,8 @@
 void RegisterRenderAPI_Lua(lua_State *L)
 {
 	// Render
-	DESIRE_UNUSED(L);
+	luabridge::getGlobalNamespace(L).beginClass<IRender>("IRender")
+		.endClass();
+
 	luabridge::setGlobal(L, IRender::Get(), "Render");
 }

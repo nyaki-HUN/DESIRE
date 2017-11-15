@@ -12,7 +12,7 @@ public:
 	void Kill() override;
 	void Update() override;
 
-	std::function<void(std::array<IScript::SArg, 6>)> GetFunctionToCall(const char *functionName) override;
+	std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const char *functionName) override;
 
 private:
 	float rot;

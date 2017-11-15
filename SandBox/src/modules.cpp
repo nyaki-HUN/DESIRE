@@ -16,7 +16,7 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, BulletPhysics)
 //	Render
 // --------------------------------------------------------------------------------------------------------------------
 #include "Render/bgfx/RenderBgfx.h"
-#include "Render/Direct3D11/RenderD3D11.h"
+//#include "Render/Direct3D11/RenderD3D11.h"
 DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, RenderBgfx)
 //DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, RenderD3D11)
 

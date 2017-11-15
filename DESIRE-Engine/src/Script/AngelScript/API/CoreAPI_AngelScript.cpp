@@ -266,9 +266,9 @@ void RegisterMathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterGlobalFunction("float RandFloat(float, float)", asFUNCTION(Math::RandFloat), asCALL_CDECL);
 	engine->RegisterGlobalFunction("int RandInt(int, int)", asFUNCTION(Math::RandInt), asCALL_CDECL);
 	engine->RegisterGlobalFunction("int Round32(float)", asFUNCTION(Math::Round32), asCALL_CDECL);
-	engine->RegisterGlobalFunction("int RoundUp", asFUNCTION(Math::RoundUp), asCALL_CDECL);
-	engine->RegisterGlobalFunction("Clamp", asFUNCTION(Math::Clamp), asCALL_CDECL);
-	engine->RegisterGlobalFunction("Clamp01", asFUNCTION(Math::Clamp01), asCALL_CDECL);
+	engine->RegisterGlobalFunction("int RoundUp(float, int)", asFUNCTION(Math::RoundUp), asCALL_CDECL);
+	engine->RegisterGlobalFunction("float Clamp(float, float, float)", asFUNCTION(Math::Clamp), asCALL_CDECL);
+	engine->RegisterGlobalFunction("float Clamp01(float)", asFUNCTION(Math::Clamp01), asCALL_CDECL);
 	engine->SetDefaultNamespace("");
 }
 

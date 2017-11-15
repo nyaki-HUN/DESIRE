@@ -28,11 +28,13 @@ function Update()
 	pos = pos + pos2;
 	pos = -pos;
 
-	local sceneNode = self.object:GetSceneNodeComponent();
-	if(sceneNode ~= nil) then
-		sceneNode.transform.position = pos;
-		print("x = ", sceneNode.transform.position.x);
+	local renderComp = self.object:GetRenderComponent();
+	if(renderComp ~= nil) then
+		
 	end
+
+	self.object.transform.position = pos;
+	print("x = ", self.object.transform.position.x);
 
 	-- Static function test
 	local mat = Matrix4.CreateTranslation(Vector3(100.0, 2.0, 0.0));

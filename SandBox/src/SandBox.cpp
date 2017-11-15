@@ -1,6 +1,5 @@
 #include "SandBox.h"
 #include "SimpleRotateScript.h"
-#include "Core/Object.h"
 #include "Core/Log.h"
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/FileSystemWatcher.h"
@@ -9,8 +8,8 @@
 #include "Render/IRender.h"
 #include "UI/ImGuiImpl.h"
 #include "Resource/ResourceManager.h"
+#include "Scene/Object.h"
 #include "Script/IScriptSystem.h"
-#include "Component/SceneNodeComponent.h"
 #include "Component/ScriptComponent.h"
 
 enum EAction
@@ -49,7 +48,6 @@ void SandBox::Init(IWindow *mainWindow)
 
 	scriptedObject = new Object("Obj_1");
 	scriptedObject->AddComponent(IScriptSystem::Get()->CreateScriptComponent("TestScript"));
-	scriptedObject->AddComponent(new SceneNodeComponent());
 
 	ScriptComponent *scriptComp = scriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
@@ -68,7 +66,6 @@ void SandBox::Init(IWindow *mainWindow)
 
 	cubeObj = new Object("Obj_2");
 	cubeObj->AddComponent(IScriptSystem::Get()->CreateScriptComponent("SimpleRotateScript"));
-	cubeObj->AddComponent(new SceneNodeComponent());
 
 	//////////
 

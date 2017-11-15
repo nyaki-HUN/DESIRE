@@ -3,6 +3,7 @@
 #include "Component/IComponent.h"
 
 #include <vector>
+#include <memory>
 
 class Transform;
 class AABB;

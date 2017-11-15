@@ -109,7 +109,6 @@
     <ClInclude Include="..\..\src\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\Component\test_SceneNodeComponent.cpp" />
     <ClCompile Include="..\..\src\Component\test_ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\test_IConfigValue.cpp" />
     <ClCompile Include="..\..\src\Core\math\test_Matrix4.cpp" />
@@ -122,6 +121,7 @@
     <ClCompile Include="..\..\src\Core\test_HashedStringMap.cpp" />
     <ClCompile Include="..\..\src\Core\test_LockFreeRingBuffer.cpp" />
     <ClCompile Include="..\..\src\Core\test_String.cpp" />
+    <ClCompile Include="..\..\src\Scene\test_Object.cpp" />
     <ClCompile Include="..\..\src\UnitTest.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

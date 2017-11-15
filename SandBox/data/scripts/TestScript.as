@@ -33,12 +33,14 @@ void Update()
 	pos += pos2;
 	pos = -pos;
 
-	SceneNodeComponent @sceneNode = self.object.GetComponent(SceneNodeComponent);
-	if(@sceneNode != null)
+	RenderComponent @renderComp = self.object.GetComponent(RenderComponent);
+	if(@renderComp != null)
 	{
-		sceneNode.transform.position = pos;
-		print("x = " + sceneNode.transform.position.x);
+		
 	}
+
+	self.object.transform.position = pos;
+	print("x = " + self.object.transform.position.x);
 
 	// Static function test
 	Matrix4 mat = Matrix4::CreateTranslation(Vector3(100.0, 2.0, 0.0));
