@@ -6,22 +6,40 @@
 
 #define MAX_TRANSFORMS	10000
 static Transform preallocatedTransforms[MAX_TRANSFORMS];
-uint32_t numTransforms;
+static size_t numTransforms;
 
 Object::Object(const char *name)
 	: transform(nullptr)
-	, aabb(nullptr)
+	, aabb(std::make_unique<AABB>())
 	, numTransformsInHierarchy(1)
 	, parent(nullptr)
 	, objectID(0)
 	, objectName(StrUtils::Duplicate(name))
 {
-
+	ASSERT(numTransforms < MAX_TRANSFORMS);
+	transform = &preallocatedTransforms[numTransforms++];
+	transform->parentWorldMatrix = nullptr;
+	transform->owner = this;
+	transform->ResetToIdentity();
 }
 
 Object::~Object()
 {
-	Remove();
+	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and we can skip the following block
+	if(transform->owner != nullptr)
+	{
+		Remove();
+		numTransforms -= numTransformsInHierarchy;
+
+		for(Object *child : children)
+		{
+			child->transform->owner = nullptr;
+			delete child;
+		}
+	}
+
+	transform->parentWorldMatrix = nullptr;
+	transform->owner = nullptr;
 
 	free(objectName);
 }
@@ -243,6 +261,8 @@ void Object::SetNewParent(Object *newParent)
 		}
 	}
 
-	transform->SetParent((newParent != nullptr) ? newParent->transform : nullptr);
+	transform->parentWorldMatrix = (newParent != nullptr) ? &newParent->transform->worldMatrix : nullptr;
+	transform->flags |= Transform::WORLD_MATRIX_DIRTY;
+
 	parent = newParent;
 }

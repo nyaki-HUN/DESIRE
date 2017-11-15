@@ -60,7 +60,7 @@ private:
 
 	std::vector<std::pair<int, IComponent*>> components;
 	Transform *transform;
-	AABB *aabb;
+	std::unique_ptr<AABB> aabb;
 	size_t numTransformsInHierarchy;
 
 	Object *parent;
