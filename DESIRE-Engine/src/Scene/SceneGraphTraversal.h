@@ -12,7 +12,6 @@
 class SceneGraphTraversal
 {
 public:
-	
 	static size_t Traverse(Object *rootObject, const std::function<bool(Object*)>& visitFunc)
 	{
 		size_t traversedNodeCount = 1;

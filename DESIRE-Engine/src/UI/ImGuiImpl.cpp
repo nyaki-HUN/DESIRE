@@ -61,7 +61,7 @@ void ImGuiImpl::Init()
 	mesh->vertexDecl.emplace_back(Mesh::EAttrib::COLOR, 4, Mesh::EAttribType::UINT8);
 	mesh->CalculateStrideFromVertexDecl();
 	mesh->maxNumOfIndices = 30000;
-	mesh->maxNumOfVertices = 10000;
+	mesh->maxNumOfVertices = 20000;
 
 	mesh->indices = (uint16_t*)malloc(mesh->GetMaxSizeOfIndices());
 	mesh->vertices = (float*)malloc(mesh->GetMaxSizeOfVertices());

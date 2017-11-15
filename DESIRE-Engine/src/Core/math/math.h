@@ -91,7 +91,7 @@ inline int IntSel(int condition, int x, int y)
 	return x + ((y - x) & mask);
 }
 
-// Clamp 'x' to the specified minimum and maximum range
+// Clamp 'x' to the [min, max] range
 inline float Clamp(float x, float min, float max)
 {
 	ASSERT(!isnan(x));

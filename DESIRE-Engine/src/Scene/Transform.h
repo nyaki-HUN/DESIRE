@@ -21,8 +21,6 @@ public:
 	Transform();
 	~Transform();
 
-	void SetParent(const Transform *parent);
-
 	// Reset the matrix to have the elements of the identity matrix
 	void ResetToIdentity();
 

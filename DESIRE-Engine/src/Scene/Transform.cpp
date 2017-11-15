@@ -18,12 +18,6 @@ Transform::~Transform()
 
 }
 
-void Transform::SetParent(const Transform *parent)
-{
-	parentWorldMatrix = (parent != nullptr) ? &parent->worldMatrix : nullptr;
-	flags |= WORLD_MATRIX_DIRTY;
-}
-
 void Transform::ResetToIdentity()
 {
 	position = Vector3(0.0f);

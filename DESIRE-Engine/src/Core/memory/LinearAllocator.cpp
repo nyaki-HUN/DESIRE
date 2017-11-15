@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Core/memory/LinearAllocator.h"
 
-#include <memory>		// for std::align
-
 LinearAllocator::LinearAllocator(void *memoryStart, size_t memorySize, IAllocator& fallbackAllocator)
 	: memoryStart((char*)memoryStart)
 	, memorySize(memorySize)
