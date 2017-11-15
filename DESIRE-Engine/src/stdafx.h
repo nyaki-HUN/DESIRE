@@ -11,23 +11,30 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string.h>
-#include <float.h>
+#include <cfloat>
 #include <cmath>
 #include <cctype>
 #include <algorithm>
 #include <functional>
-#include <memory>
 #include <utility>
+#include <memory>
 
 // Containers
-#include <vector>
 #include <array>
+#include <vector>
+#include <map>
+#include <set>
+#include <queue>
+#include <deque>
+#include <unordered_map>
 
-// Multi-threading
-#include <atomic>
-#include <condition_variable>
-#include <mutex>
+// Thread support
 #include <thread>
+#include <atomic>
+#include <mutex>
+#include <shared_mutex>
+#include <condition_variable>
+#include <future>
 
 // SIMD intrinsics
 #if defined(DESIRE_USE_SSE)
