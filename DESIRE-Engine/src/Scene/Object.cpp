@@ -118,6 +118,11 @@ const IComponent* Object::GetComponentByTypeID(int typeID) const
 	return nullptr;
 }
 
+const std::vector<std::pair<int, IComponent*>>& Object::GetComponents() const
+{
+	return components;
+}
+
 void Object::Remove()
 {
 	if(parent != nullptr)

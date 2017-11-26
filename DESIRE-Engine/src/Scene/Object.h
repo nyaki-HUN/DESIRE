@@ -40,6 +40,8 @@ public:
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
 	}
 
+	const std::vector<std::pair<int, IComponent*>>& GetComponents() const;
+
 	// Remove from scene hierarchy
 	void Remove();
 
