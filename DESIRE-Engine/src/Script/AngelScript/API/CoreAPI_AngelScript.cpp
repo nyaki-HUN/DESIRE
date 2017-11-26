@@ -35,23 +35,23 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector3", "void subAssign(const Vector3& in)", asFUNCTION(AngelScriptAPI<Vector3>::OpSubAssign<const Vector3&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "void opMulAssign(float)", asFUNCTION(AngelScriptAPI<Vector3>::OpMulAssign<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "void opDivAssign(float)", asFUNCTION(AngelScriptAPI<Vector3>::OpDivAssign<float>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Vector3", "float GetMaxElem()", asMETHODPR(Vector3, GetMaxElem, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "float GetMinElem()", asMETHODPR(Vector3, GetMinElem, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "float Dot(const Vector3& in)", asMETHODPR(Vector3, Dot, (const Vector3&) const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "Vector3@ Cross(const Vector3& in)", asFUNCTION(Vector3_Cross), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Vector3", "float LengthSqr()", asMETHODPR(Vector3, LengthSqr, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "float Length()", asMETHODPR(Vector3, Length, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "float GetMaxElem() const", asMETHODPR(Vector3, GetMaxElem, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "float GetMinElem() const", asMETHODPR(Vector3, GetMinElem, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "float Dot(const Vector3& in) const", asMETHODPR(Vector3, Dot, (const Vector3&) const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "Vector3@ Cross(const Vector3& in) const", asFUNCTION(Vector3_Cross), asCALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod("Vector3", "float LengthSqr() const", asMETHODPR(Vector3, LengthSqr, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "float Length() const", asMETHODPR(Vector3, Length, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector3", "void Normalize()", asMETHODPR(Vector3, Normalize, (), Vector3&), asCALL_THISCALL);
 //	Vector3 MulPerElem(const Vector3& vec) const;
 //	Vector3 DivPerElem(const Vector3& vec) const;
 //	Vector3 AbsPerElem() const;
 	engine->SetDefaultNamespace("Vector3");
-	engine->RegisterGlobalFunction("Vector3@ MaxPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::Func<const Vector3&, const Vector3&, &Vector3::MaxPerElem>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector3@ MinPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::Func<const Vector3&, const Vector3&, &Vector3::MinPerElem>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector3@ Slerp(float, const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::Func<float, const Vector3&, const Vector3&, &Vector3::Slerp>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector3@ AxisX()", asFUNCTION(AngelScriptGenericAPI<Vector3>::Func<&Vector3::AxisX>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector3@ AxisY()", asFUNCTION(AngelScriptGenericAPI<Vector3>::Func<&Vector3::AxisY>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector3@ AxisZ()", asFUNCTION(AngelScriptGenericAPI<Vector3>::Func<&Vector3::AxisZ>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ MaxPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<const Vector3&, const Vector3&, &Vector3::MaxPerElem>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ MinPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<const Vector3&, const Vector3&, &Vector3::MinPerElem>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ Slerp(float, const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<float, const Vector3&, const Vector3&, &Vector3::Slerp>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ AxisX()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::AxisX>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ AxisY()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::AxisY>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ AxisZ()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::AxisZ>), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 
 	// Vector4
@@ -84,23 +84,23 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector4", "void subAssign(const Vector4& in)", asFUNCTION(AngelScriptAPI<Vector4>::OpSubAssign<const Vector4&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "void opMulAssign(float)", asFUNCTION(AngelScriptAPI<Vector4>::OpMulAssign<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "void opDivAssign(float)", asFUNCTION(AngelScriptAPI<Vector4>::OpDivAssign<float>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Vector4", "float GetMaxElem()", asMETHODPR(Vector4, GetMaxElem, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float GetMinElem()", asMETHODPR(Vector4, GetMinElem, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float Dot(const Vector4& in)", asMETHODPR(Vector4, Dot, (const Vector4&) const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float LengthSqr()", asMETHODPR(Vector4, LengthSqr, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float Length()", asMETHODPR(Vector4, Length, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float GetMaxElem() const", asMETHODPR(Vector4, GetMaxElem, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float GetMinElem() const", asMETHODPR(Vector4, GetMinElem, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float Dot(const Vector4& in) const", asMETHODPR(Vector4, Dot, (const Vector4&) const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float LengthSqr() const", asMETHODPR(Vector4, LengthSqr, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float Length() const", asMETHODPR(Vector4, Length, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector4", "void Normalize()", asMETHODPR(Vector4, Normalize, (), Vector4&), asCALL_THISCALL);
 //	Vector4 MulPerElem(const Vector4& vec) const
 //	Vector4 DivPerElem(const Vector4& vec) const
 //	Vector4 AbsPerElem() const
 	engine->SetDefaultNamespace("Vector4");
-	engine->RegisterGlobalFunction("Vector4@ MaxPerElem(const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptGenericAPI<Vector4>::Func<const Vector4&, const Vector4&, &Vector4::MaxPerElem>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector4@ MinPerElem(const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptGenericAPI<Vector4>::Func<const Vector4&, const Vector4&, &Vector4::MinPerElem>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector4@ Slerp(float, const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptGenericAPI<Vector4>::Func<float, const Vector4&, const Vector4&, &Vector4::Slerp>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector4@ AxisX()", asFUNCTION(AngelScriptGenericAPI<Vector4>::Func<&Vector4::AxisX>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector4@ AxisY()", asFUNCTION(AngelScriptGenericAPI<Vector4>::Func<&Vector4::AxisY>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector4@ AxisZ()", asFUNCTION(AngelScriptGenericAPI<Vector4>::Func<&Vector4::AxisZ>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Vector4@ AxisW()", asFUNCTION(AngelScriptGenericAPI<Vector4>::Func<&Vector4::AxisW>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector4@ MaxPerElem(const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptGenericAPI<Vector4>::StaticFunc<const Vector4&, const Vector4&, &Vector4::MaxPerElem>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector4@ MinPerElem(const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptGenericAPI<Vector4>::StaticFunc<const Vector4&, const Vector4&, &Vector4::MinPerElem>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector4@ Slerp(float, const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptGenericAPI<Vector4>::StaticFunc<float, const Vector4&, const Vector4&, &Vector4::Slerp>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector4@ AxisX()", asFUNCTION(AngelScriptGenericAPI<Vector4>::StaticFunc<&Vector4::AxisX>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector4@ AxisY()", asFUNCTION(AngelScriptGenericAPI<Vector4>::StaticFunc<&Vector4::AxisY>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector4@ AxisZ()", asFUNCTION(AngelScriptGenericAPI<Vector4>::StaticFunc<&Vector4::AxisZ>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector4@ AxisW()", asFUNCTION(AngelScriptGenericAPI<Vector4>::StaticFunc<&Vector4::AxisW>), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 
 	// Quat
@@ -122,22 +122,22 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Quat", "void opMulAssign(const Quat& in)", asFUNCTION(AngelScriptAPI<Quat>::OpMulAssign<const Quat&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "void opMulAssign(float)", asFUNCTION(AngelScriptAPI<Quat>::OpMulAssign<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "void opDivAssign(float)", asFUNCTION(AngelScriptAPI<Quat>::OpDivAssign<float>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Quat", "float Dot(const Quat& in)", asMETHODPR(Quat, Dot, (const Quat&) const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Quat", "float Dot(const Quat& in) const", asMETHODPR(Quat, Dot, (const Quat&) const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Quat", "float Norm()", asMETHODPR(Quat, Norm, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Quat", "float Length()", asMETHODPR(Quat, Length, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Quat", "float Length() const", asMETHODPR(Quat, Length, () const, float), asCALL_THISCALL);
 //	Quat Conjugate() const;
 //	Vector3 RotateVec(const Vector3& vec) const;
 	engine->RegisterObjectMethod("Quat", "void Normalize()", asMETHODPR(Quat, Normalize, (), Quat&), asCALL_THISCALL);
 	engine->SetDefaultNamespace("Quat");
-	engine->RegisterGlobalFunction("Quat@ Slerp(float, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, const Quat&, const Quat&, &Quat::Slerp>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ Squad(float, const Quat& in, const Quat& in, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, const Quat&, const Quat&, const Quat&, const Quat&, &Quat::Squad>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ Identity()", asFUNCTION(AngelScriptGenericAPI<Quat>::Func<&Quat::Identity>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, const Vector3&, &Quat::CreateRotation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationX>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationY>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<float, &Quat::CreateRotationZ>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ CreateRotationFromEulerAngles(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<const Vector3&, &Quat::CreateRotationFromEulerAngles>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Quat@ CreateRotationFromTo(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::Func<const Vector3&, const Vector3&, &Quat::CreateRotationFromTo>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ Slerp(float, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, const Quat&, const Quat&, &Quat::Slerp>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ Squad(float, const Quat& in, const Quat& in, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, const Quat&, const Quat&, const Quat&, const Quat&, &Quat::Squad>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ Identity()", asFUNCTION(AngelScriptGenericAPI<Quat>::StaticFunc<&Quat::Identity>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, const Vector3&, &Quat::CreateRotation>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, &Quat::CreateRotationX>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, &Quat::CreateRotationY>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, &Quat::CreateRotationZ>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotationFromEulerAngles(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<const Vector3&, &Quat::CreateRotationFromEulerAngles>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Quat@ CreateRotationFromTo(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<const Vector3&, const Vector3&, &Quat::CreateRotationFromTo>)), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 
 	// Matrix3
@@ -172,14 +172,14 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Matrix3", "void Invert()", asMETHODPR(Matrix3, Invert, (), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Matrix3", "float CalculateDeterminant() const", asMETHODPR(Matrix3, CalculateDeterminant, () const, float), asCALL_THISCALL);
 	engine->SetDefaultNamespace("Matrix3");
-	engine->RegisterGlobalFunction("Matrix3@ Identity()", asFUNCTION(AngelScriptGenericAPI<Matrix3>::Func<&Matrix3::Identity>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::Func<float, &Matrix3::CreateRotationX>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::Func<float, &Matrix3::CreateRotationY>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::Func<float, &Matrix3::CreateRotationZ>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateRotationZYX(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::Func<const Vector3&, &Matrix3::CreateRotationZYX>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::Func<float, const Vector3&, &Matrix3::CreateRotation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateRotation(const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::Func<const Quat&, &Matrix3::CreateRotation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateScale(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::Func<const Vector3&, &Matrix3::CreateScale>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ Identity()", asFUNCTION(AngelScriptGenericAPI<Matrix3>::StaticFunc<&Matrix3::Identity>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<float, &Matrix3::CreateRotationX>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<float, &Matrix3::CreateRotationY>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<float, &Matrix3::CreateRotationZ>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ CreateRotationZYX(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<const Vector3&, &Matrix3::CreateRotationZYX>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<float, const Vector3&, &Matrix3::CreateRotation>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ CreateRotation(const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<const Quat&, &Matrix3::CreateRotation>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix3@ CreateScale(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<const Vector3&, &Matrix3::CreateScale>)), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 
 	engine->RegisterObjectBehaviour("Quat", asBEHAVE_FACTORY, "Quat@ f(const Matrix3& in)", asFUNCTION((AngelScriptAPI<Quat>::FactoryWithArgs<const Matrix3&>)), asCALL_CDECL);
@@ -225,15 +225,15 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Matrix4", "void OrthoInvert()", asMETHODPR(Matrix4, OrthoInvert, (), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Matrix4", "float CalculateDeterminant() const", asMETHODPR(Matrix4, CalculateDeterminant, () const, float), asCALL_THISCALL);
 	engine->SetDefaultNamespace("Matrix4");
-	engine->RegisterGlobalFunction("Matrix4@ Identity()", asFUNCTION(AngelScriptGenericAPI<Matrix4>::Func<&Matrix4::Identity>), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateTranslation(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<const Vector3&, &Matrix4::CreateTranslation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<float, &Matrix4::CreateRotationX>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<float, &Matrix4::CreateRotationY>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<float, &Matrix4::CreateRotationZ>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateRotationZYX(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<const Vector3&, &Matrix4::CreateRotationZYX>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<float, const Vector3&, &Matrix4::CreateRotation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateRotation(const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<const Quat&, &Matrix4::CreateRotation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateScale(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::Func<const Vector3&, &Matrix4::CreateScale>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ Identity()", asFUNCTION(AngelScriptGenericAPI<Matrix4>::StaticFunc<&Matrix4::Identity>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateTranslation(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<const Vector3&, &Matrix4::CreateTranslation>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateRotationX(float)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<float, &Matrix4::CreateRotationX>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<float, &Matrix4::CreateRotationY>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<float, &Matrix4::CreateRotationZ>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateRotationZYX(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<const Vector3&, &Matrix4::CreateRotationZYX>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<float, const Vector3&, &Matrix4::CreateRotation>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateRotation(const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<const Quat&, &Matrix4::CreateRotation>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Matrix4@ CreateScale(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<const Vector3&, &Matrix4::CreateScale>)), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 }
 

@@ -122,7 +122,7 @@ class AngelScriptGenericAPI
 {
 public:
 	template<const char* (T::*func)() const>
-	static void MakeStringRvFromFunc(asIScriptGeneric *gen)
+	static void MakeStringRvFromMemberFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 0);
 		const T *self = static_cast<const T*>(gen->GetObject());
@@ -131,14 +131,14 @@ public:
 	}
 
 	template<T(*func)()>
-	static void Func(asIScriptGeneric *gen)
+	static void StaticFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 0);
 		*(T**)gen->GetAddressOfReturnLocation() = new T(func());
 	}
 
 	template<class A0, T(*func)(A0)>
-	static void Func(asIScriptGeneric *gen)
+	static void StaticFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 1);
 		std::remove_reference<A0>::type *a0 = (std::is_reference<A0>::value) ? *(std::remove_reference<A0>::type**)gen->GetAddressOfArg(0) : (std::remove_reference<A0>::type*)gen->GetAddressOfArg(0);
@@ -146,7 +146,7 @@ public:
 	}
 
 	template<class A0, class A1, T(*func)(A0, A1)>
-	static void Func(asIScriptGeneric *gen)
+	static void StaticFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 2);
 		std::remove_reference<A0>::type *a0 = (std::is_reference<A0>::value) ? *(std::remove_reference<A0>::type**)gen->GetAddressOfArg(0) : (std::remove_reference<A0>::type*)gen->GetAddressOfArg(0);
@@ -155,7 +155,7 @@ public:
 	}
 
 	template<class A0, class A1, class A2, T(*func)(A0, A1, A2)>
-	static void Func(asIScriptGeneric *gen)
+	static void StaticFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 3);
 		std::remove_reference<A0>::type *a0 = (std::is_reference<A0>::value) ? *(std::remove_reference<A0>::type**)gen->GetAddressOfArg(0) : (std::remove_reference<A0>::type*)gen->GetAddressOfArg(0);
@@ -165,7 +165,7 @@ public:
 	}
 
 	template<class A0, class A1, class A2, class A3, T(*func)(A0, A1, A2, A3)>
-	static void Func(asIScriptGeneric *gen)
+	static void StaticFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 4);
 		std::remove_reference<A0>::type *a0 = (std::is_reference<A0>::value) ? *(std::remove_reference<A0>::type**)gen->GetAddressOfArg(0) : (std::remove_reference<A0>::type*)gen->GetAddressOfArg(0);
@@ -176,7 +176,7 @@ public:
 	}
 
 	template<class A0, class A1, class A2, class A3, class A4, T(*func)(A0, A1, A2, A3, A4)>
-	static void Func(asIScriptGeneric *gen)
+	static void StaticFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 5);
 		std::remove_reference<A0>::type *a0 = (std::is_reference<A0>::value) ? *(std::remove_reference<A0>::type**)gen->GetAddressOfArg(0) : (std::remove_reference<A0>::type*)gen->GetAddressOfArg(0);
@@ -188,7 +188,7 @@ public:
 	}
 
 	template<class A0, class A1, class A2, class A3, class A4, class A5, T(*func)(A0, A1, A2, A3, A4, A5)>
-	static void Func(asIScriptGeneric *gen)
+	static void StaticFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 6);
 		std::remove_reference<A0>::type *a0 = (std::is_reference<A0>::value) ? *(std::remove_reference<A0>::type**)gen->GetAddressOfArg(0) : (std::remove_reference<A0>::type*)gen->GetAddressOfArg(0);

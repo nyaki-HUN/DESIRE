@@ -177,7 +177,7 @@ void Object::RemoveChild(Object *child)
 	child->SetNewParent(nullptr);
 }
 
-Transform& Object::GetTransform()
+Transform& Object::GetTransform() const
 {
 	return *transform;
 }

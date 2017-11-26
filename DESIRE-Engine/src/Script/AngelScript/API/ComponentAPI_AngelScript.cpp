@@ -18,20 +18,22 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 {
 	// Transform
 	engine->RegisterObjectType("Transform", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterObjectMethod("Transform", "const Vector3& get_position() const", asMETHODPR(Transform, GetPosition, () const, const Vector3&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Transform", "const Vector3& get_localPosition() const", asMETHODPR(Transform, GetLocalPosition, () const, const Vector3&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Transform", "void set_localPosition(const Vector3& in)", asMETHODPR(Transform, SetLocalPosition, (const Vector3&), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Transform", "const Quat& get_localRotation() const", asMETHODPR(Transform, GetLocalRotation, () const, const Quat&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Transform", "void set_localRotation(const Quat& in)", asMETHODPR(Transform, SetLocalRotation, (const Quat&), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Transform", "const Vector3& get_localScale() const", asMETHODPR(Transform, GetLocalScale, () const, const Vector3&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Transform", "void set_localScale(const Vector3& in)", asMETHODPR(Transform, SetLocalScale, (const Vector3&), void), asCALL_THISCALL);
+//	engine->RegisterObjectMethod("Transform", "Vector3@ get_position()", asMETHODPR(), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Transform", "void set_position(const Vector3& in)", asMETHODPR(Transform, SetPosition, (const Vector3&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "const Quat& get_rotation() const", asMETHODPR(Transform, GetRotation, () const, const Quat&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "void set_rotation(const Quat& in)", asMETHODPR(Transform, SetRotation, (const Quat&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "const Vector3& get_scale() const", asMETHODPR(Transform, GetScale, () const, const Vector3&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "void set_scale(const Vector3& in)", asMETHODPR(Transform, SetScale, (const Vector3&), void), asCALL_THISCALL);
 
 	// Object
 	engine->RegisterObjectType("Object", 0, asOBJ_REF | asOBJ_NOCOUNT);
-	engine->RegisterObjectMethod("Object", "String GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromFunc<&Object::GetObjectName>)), asCALL_GENERIC);
+	engine->RegisterObjectMethod("Object", "String GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);
 	engine->RegisterObjectMethod("Object", "uint32 GetID() const", asMETHODPR(Object, GetID, () const, uint32_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "IComponent@ GetComponent(EComponentTypeID typeID)", asMETHODPR(Object, GetComponentByTypeID, (int), IComponent*), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "Transform& get_transform()", asMETHODPR(Object, GetTransform, (), Transform&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "Transform& get_transform() const", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Object@ GetParent()", asMETHODPR(Object, GetParent, (), Object*), asCALL_THISCALL);
 
 	// IComponent

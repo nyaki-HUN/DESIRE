@@ -49,7 +49,7 @@ public:
 	// Remove the child from this object
 	void RemoveChild(Object *child);
 
-	Transform& GetTransform();
+	Transform& GetTransform() const;
 	const AABB& GetAABB() const;
 	Object* GetParent();
 	const std::vector<Object*>& GetChildren() const;

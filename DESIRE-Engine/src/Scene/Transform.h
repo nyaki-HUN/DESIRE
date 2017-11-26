@@ -24,33 +24,37 @@ public:
 	// Reset the matrix to have the elements of the identity matrix
 	void ResetToIdentity();
 
-	void SetPosition(const Vector3& newPosition);
-	void SetRotation(const Quat& newRotation);
-	void SetScale(const Vector3& newScale);
+	void SetLocalPosition(const Vector3& position);
+	void SetLocalRotation(const Quat& rotation);
+	void SetLocalScale(const Vector3& scale);
 
-	inline const Vector3& GetPosition() const		{ return position; }
-	inline const Quat& GetRotation() const			{ return rotation; }
-	inline const Vector3& GetScale() const			{ return scale; }
+	inline const Vector3& GetLocalPosition() const		{ return localPosition; }
+	inline const Quat& GetLocalRotation() const			{ return localRotation; }
+	inline const Vector3& GetLocalScale() const			{ return localScale; }
 
 	// Returns the rotation as Euler angles in degrees
-	Vector3 GetRotationEulerAngles() const;
+	Vector3 GetLocalRotationEulerAngles() const;
+
+	// Returns the absolute transformation matrix from the last UpdateWorldMatrix() call
+	const Matrix4& GetWorldMatrix() const;
+
+	// Sets the the absolute position
+	void SetPosition(const Vector3& position);
+
+	// Returns the absolute position
+	Vector3 GetPosition() const;
 
 	// Returns a combination of flags from EFlags
 	uint8_t GetFlags() const;
 
 	Matrix4 ConstructLocalMatrix() const;
 
-	// Returns the absolute transformation matrix from the last UpdateWorldMatrix() call
-	const Matrix4& GetWorldMatrix() const;
-	// Returns the position from the world matrix
-	Vector3 GetWorldPosition() const;
-
 	void UpdateWorldMatrix();
 
 private:
-	Vector3 position;
-	Quat rotation;
-	Vector3 scale;
+	Vector3 localPosition;
+	Quat localRotation;
+	Vector3 localScale;
 
 	Matrix4 worldMatrix;
 

@@ -12,9 +12,10 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 
 	// Transform
 	rootTable.Bind("Transform", Sqrat::Class<Transform, Sqrat::NoConstructor<Transform>>(vm, "Transform")
+		.Prop("localPosition", &Transform::GetLocalPosition, &Transform::SetLocalPosition)
+		.Prop("localRotation", &Transform::GetLocalRotation, &Transform::SetLocalRotation)
+		.Prop("localScale", &Transform::GetLocalScale, &Transform::SetLocalScale)
 		.Prop("position", &Transform::GetPosition, &Transform::SetPosition)
-		.Prop("rotation", &Transform::GetRotation, &Transform::SetRotation)
-		.Prop("scale", &Transform::GetScale, &Transform::SetScale)
 	);
 
 	// Object
