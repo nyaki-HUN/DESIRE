@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Scene/Transform.h"
+#include "Core/math/math.h"
 
 Transform::Transform()
 	: position(0.0f)
@@ -45,6 +46,25 @@ void Transform::SetScale(const Vector3& newScale)
 	scale = newScale;
 	flags |= SCALE_CHANGED;
 	flags &= ~IS_IDENTITY;
+}
+
+Vector3 Transform::GetRotationEulerAngles() const
+{
+	const float ysqr = rotation.GetY() * rotation.GetY();
+
+	const float t0 = 2.0f * (rotation.GetW() * rotation.GetX() + rotation.GetY() * rotation.GetZ());
+	const float t1 = 1.0f - 2.0f * (rotation.GetX() * rotation.GetX() + ysqr);
+	const float x = std::atan2(t0, t1);
+
+	const float t2 = 2.0f * (rotation.GetW() * rotation.GetY() - rotation.GetZ() * rotation.GetX());
+	const float y = std::asin(Math::Clamp(t2, -1.0f, 1.0f));
+
+	const float t3 = 2.0f * (rotation.GetW() * rotation.GetZ() + rotation.GetX() * rotation.GetY());
+	const float t4 = 1.0f - 2.0f * (ysqr + rotation.GetZ() * rotation.GetZ());
+	const float z = std::atan2(t3, t4);
+
+	Vector3 eulerAngles(x, y, z);
+	return Math::RadToDeg(eulerAngles);
 }
 
 uint8_t Transform::GetFlags() const

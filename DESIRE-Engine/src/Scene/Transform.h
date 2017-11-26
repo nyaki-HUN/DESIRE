@@ -32,6 +32,9 @@ public:
 	inline const Quat& GetRotation() const			{ return rotation; }
 	inline const Vector3& GetScale() const			{ return scale; }
 
+	// Returns the rotation as Euler angles in degrees
+	Vector3 GetRotationEulerAngles() const;
+
 	// Returns a combination of flags from EFlags
 	uint8_t GetFlags() const;
 
