@@ -14,6 +14,11 @@
 	engine->RegisterObjectMethod(#CLASS, "IComponent@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<IComponent>)), asCALL_CDECL_OBJLAST);		\
 	engine->RegisterObjectMethod("IComponent", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<IComponent>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST)
 
+static Vector3* Transform_GetPosition(const Transform& transform)
+{
+	return new Vector3(transform.GetPosition());
+}
+
 void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 {
 	// Transform
@@ -24,7 +29,7 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Transform", "void set_localRotation(const Quat& in)", asMETHODPR(Transform, SetLocalRotation, (const Quat&), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Transform", "const Vector3& get_localScale() const", asMETHODPR(Transform, GetLocalScale, () const, const Vector3&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Transform", "void set_localScale(const Vector3& in)", asMETHODPR(Transform, SetLocalScale, (const Vector3&), void), asCALL_THISCALL);
-//	engine->RegisterObjectMethod("Transform", "Vector3@ get_position()", asMETHODPR(), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Transform", "Vector3@ get_position()", asFUNCTION(Transform_GetPosition), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Transform", "void set_position(const Vector3& in)", asMETHODPR(Transform, SetPosition, (const Vector3&), void), asCALL_THISCALL);
 
 	// Object
