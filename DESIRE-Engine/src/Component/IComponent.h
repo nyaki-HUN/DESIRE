@@ -30,6 +30,8 @@ public:
 		return object;
 	}
 
+	virtual void OnGUI() {}
+
 protected:
 	Object *object;
 };
