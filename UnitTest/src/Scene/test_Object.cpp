@@ -149,12 +149,12 @@ TEST_CASE("Object", "[Component]")
 		CHECK((rootObj->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) == 0);
 		CHECK((child1->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) == 0);
 
-		Vector3 worldPos = rootObj->GetTransform().GetWorldPosition();
+		Vector3 worldPos = rootObj->GetTransform().GetPosition();
 		CHECK_FLOATS(worldPos.GetX(), 1.0f);
 		CHECK_FLOATS(worldPos.GetY(), 1.0f);
 		CHECK_FLOATS(worldPos.GetZ(), 1.0f);
 
-		worldPos = child1->GetTransform().GetWorldPosition();
+		worldPos = child1->GetTransform().GetPosition();
 		CHECK_FLOATS(worldPos.GetX(), 3.0f);
 		CHECK_FLOATS(worldPos.GetY(), 3.0f);
 		CHECK_FLOATS(worldPos.GetZ(), 3.0f);

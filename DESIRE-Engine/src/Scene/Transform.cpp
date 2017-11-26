@@ -3,9 +3,9 @@
 #include "Core/math/math.h"
 
 Transform::Transform()
-	: position(0.0f)
-	, rotation(0.0f, 0.0f, 0.0f, 1.0f)
-	, scale(1.0f)
+	: localPosition(0.0f)
+	, localRotation(0.0f, 0.0f, 0.0f, 1.0f)
+	, localScale(1.0f)
 	, worldMatrix(Matrix4::Identity())
 	, parentWorldMatrix(nullptr)
 	, owner(nullptr)
@@ -21,50 +21,65 @@ Transform::~Transform()
 
 void Transform::ResetToIdentity()
 {
-	position = Vector3(0.0f);
-	rotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
-	scale = Vector3(1.0f);
+	localPosition = Vector3(0.0f);
+	localRotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
+	localScale = Vector3(1.0f);
 	flags = IS_IDENTITY | POSITION_CHANGED | ROTATION_CHANGED | SCALE_CHANGED;
 }
 
-void Transform::SetPosition(const Vector3& newPosition)
+void Transform::SetLocalPosition(const Vector3& position)
 {
-	position = newPosition;
+	localPosition = position;
 	flags |= POSITION_CHANGED;
 	flags &= ~IS_IDENTITY;
 }
 
-void Transform::SetRotation(const Quat& newRotation)
+void Transform::SetLocalRotation(const Quat& rotation)
 {
-	rotation = newRotation;
+	localRotation = rotation;
 	flags |= ROTATION_CHANGED;
 	flags &= ~IS_IDENTITY;
 }
 
-void Transform::SetScale(const Vector3& newScale)
+void Transform::SetLocalScale(const Vector3& scale)
 {
-	scale = newScale;
+	localScale = scale;
 	flags |= SCALE_CHANGED;
 	flags &= ~IS_IDENTITY;
 }
 
-Vector3 Transform::GetRotationEulerAngles() const
+Vector3 Transform::GetLocalRotationEulerAngles() const
 {
-	const float ysqr = rotation.GetY() * rotation.GetY();
+	const float ysqr = localRotation.GetY() * localRotation.GetY();
 
-	const float t0 = 2.0f * (rotation.GetW() * rotation.GetX() + rotation.GetY() * rotation.GetZ());
-	const float t1 = 1.0f - 2.0f * (rotation.GetX() * rotation.GetX() + ysqr);
+	const float t0 = 2.0f * (localRotation.GetW() * localRotation.GetX() + localRotation.GetY() * localRotation.GetZ());
+	const float t1 = 1.0f - 2.0f * (localRotation.GetX() * localRotation.GetX() + ysqr);
 	const float x = std::atan2(t0, t1);
 
-	const float t2 = 2.0f * (rotation.GetW() * rotation.GetY() - rotation.GetZ() * rotation.GetX());
+	const float t2 = 2.0f * (localRotation.GetW() * localRotation.GetY() - localRotation.GetZ() * localRotation.GetX());
 	const float y = std::asin(Math::Clamp(t2, -1.0f, 1.0f));
 
-	const float t3 = 2.0f * (rotation.GetW() * rotation.GetZ() + rotation.GetX() * rotation.GetY());
-	const float t4 = 1.0f - 2.0f * (ysqr + rotation.GetZ() * rotation.GetZ());
+	const float t3 = 2.0f * (localRotation.GetW() * localRotation.GetZ() + localRotation.GetX() * localRotation.GetY());
+	const float t4 = 1.0f - 2.0f * (ysqr + localRotation.GetZ() * localRotation.GetZ());
 	const float z = std::atan2(t3, t4);
 
 	Vector3 eulerAngles(x, y, z);
 	return Math::RadToDeg(eulerAngles);
+}
+
+const Matrix4& Transform::GetWorldMatrix() const
+{
+	return worldMatrix;
+}
+
+void Transform::SetPosition(const Vector3& position)
+{
+	// TODO
+}
+
+Vector3 Transform::GetPosition() const
+{
+	return worldMatrix.GetTranslation();
 }
 
 uint8_t Transform::GetFlags() const
@@ -74,19 +89,9 @@ uint8_t Transform::GetFlags() const
 
 Matrix4 Transform::ConstructLocalMatrix() const
 {
-	Matrix4 mat = Matrix4(rotation, position);
-	mat.AppendScale(scale);
+	Matrix4 mat = Matrix4(localRotation, localPosition);
+	mat.AppendScale(localScale);
 	return mat;
-}
-
-const Matrix4& Transform::GetWorldMatrix() const
-{
-	return worldMatrix;
-}
-
-Vector3 Transform::GetWorldPosition() const
-{
-	return worldMatrix.GetTranslation();
 }
 
 void Transform::UpdateWorldMatrix()
