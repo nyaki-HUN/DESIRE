@@ -4,7 +4,9 @@
 #include "Render/Direct3D11/MeshRenderDataD3D11.h"
 #include "Render/Direct3D11/ShaderRenderDataD3D11.h"
 #include "Render/Direct3D11/TextureRenderDataD3D11.h"
+#include "Render/Direct3D11/RenderTargetRenderDataD3D11.h"
 #include "Render/Material.h"
+#include "Render/RenderTarget.h"
 #include "Render/View.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
@@ -18,15 +20,7 @@
 #include <d3dcompiler.h>
 
 RenderD3D11::RenderD3D11()
-	: d3dDevice(nullptr)
-	, swapChain(nullptr)
-	, renderTargetView(nullptr)
-	, deviceCtx(nullptr)
-	, activeMesh(nullptr)
-	, initialized(false)
 {
-	memset(clearColor, 0, sizeof(clearColor));
-
 	const char vs_error[] =
 	{
 		"TODO"
@@ -160,6 +154,14 @@ void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 {
 	const D3D11_RECT rect = { x, y, x + width, y + height };
 	deviceCtx->RSSetScissorRects(1, &rect);
+}
+
+void RenderD3D11::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	clearColor[0] = r / 255.0f;
+	clearColor[1] = g / 255.0f;
+	clearColor[2] = b / 255.0f;
+	clearColor[3] = a / 255.0f;
 }
 
 void RenderD3D11::Bind(Mesh *mesh)
@@ -397,7 +399,8 @@ void RenderD3D11::Bind(Texture *texture)
 //	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	ID3D11Texture2D *d3dTexture2D = nullptr;
-	d3dDevice->CreateTexture2D(&desc, &subResourceData, &d3dTexture2D);
+	HRESULT hr = d3dDevice->CreateTexture2D(&desc, &subResourceData, &d3dTexture2D);
+	ASSERT(SUCCEEDED(hr));
 
 	// Create texture view
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -405,7 +408,8 @@ void RenderD3D11::Bind(Texture *texture)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = desc.MipLevels;
 	srvDesc.Texture2D.MostDetailedMip = 0;
-	d3dDevice->CreateShaderResourceView(d3dTexture2D, &srvDesc, &renderData->textureSRV);
+	hr = d3dDevice->CreateShaderResourceView(d3dTexture2D, &srvDesc, &renderData->textureSRV);
+	ASSERT(SUCCEEDED(hr));
 
 	d3dTexture2D->Release();
 
@@ -416,9 +420,25 @@ void RenderD3D11::Bind(Texture *texture)
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	d3dDevice->CreateSamplerState(&samplerDesc, &renderData->samplerState);
+	hr = d3dDevice->CreateSamplerState(&samplerDesc, &renderData->samplerState);
+	ASSERT(SUCCEEDED(hr));
 
 	texture->renderData = renderData;
+}
+
+void RenderD3D11::Bind(RenderTarget *renderTarget)
+{
+	ASSERT(renderTarget != nullptr);
+
+	if(renderTarget->renderData != nullptr)
+	{
+		// Already bound
+		return;
+	}
+
+	RenderTargetRenderDataD3D11 *renderData = new RenderTargetRenderDataD3D11();
+
+	renderTarget->renderData = renderData;
 }
 
 void RenderD3D11::Unbind(Mesh *mesh)
@@ -473,6 +493,20 @@ void RenderD3D11::Unbind(Texture *texture)
 
 	delete renderData;
 	texture->renderData = nullptr;
+}
+
+void RenderD3D11::Unbind(RenderTarget *renderTarget)
+{
+	if(renderTarget == nullptr || renderTarget->renderData == nullptr)
+	{
+		// Not yet bound
+		return;
+	}
+
+	RenderTargetRenderDataD3D11 *renderData = static_cast<RenderTargetRenderDataD3D11*>(renderTarget->renderData);
+
+	delete renderData;
+	renderTarget->renderData = nullptr;
 }
 
 void RenderD3D11::UpdateDynamicMesh(DynamicMesh *mesh)

@@ -10,6 +10,7 @@ class DynamicMesh;
 class Material;
 class Shader;
 class Texture;
+class RenderTarget;
 class Matrix4;
 
 class IRender
@@ -34,16 +35,19 @@ public:
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
 	virtual void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
+	virtual void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
 
 	// Resource bind
 	virtual void Bind(Mesh *mesh) = 0;
 	virtual void Bind(Shader *shader) = 0;
 	virtual void Bind(Texture *texture) = 0;
+	virtual void Bind(RenderTarget *renderTarget) = 0;
 
 	// Resource unbind
 	virtual void Unbind(Mesh *mesh) = 0;
 	virtual void Unbind(Shader *shader) = 0;
 	virtual void Unbind(Texture *texture) = 0;
+	virtual void Unbind(RenderTarget *renderTarget) = 0;
 
 	// Resource update
 	virtual void UpdateDynamicMesh(DynamicMesh *mesh) = 0;

@@ -14,14 +14,17 @@ public:
 		RGB8,
 		RGBA8,
 
-		RGBA32F
+		RGBA32F,
+
+		// Depth buffer formats
+		D24S8
 	};
 
 	Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMipMaps = 0);
 	~Texture();
 
 	// Render engine specific data set at bind
-	void *renderData;
+	void *renderData = nullptr;
 
 	const uint16_t width;
 	const uint16_t height;

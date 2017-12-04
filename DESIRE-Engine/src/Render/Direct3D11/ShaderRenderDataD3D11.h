@@ -11,7 +11,7 @@ public:
 		ID3D11PixelShader *pixelShader;
 		ID3D11ComputeShader *computeShader;
 
-		ID3D11DeviceChild *ptr;			// Generic base class pointer
+		ID3D11DeviceChild *ptr = nullptr;			// Generic base class pointer
 	};
 
 	ID3D11Buffer *constantBuffer = nullptr;

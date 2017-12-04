@@ -3,8 +3,7 @@
 #include "Render/IRender.h"
 
 Texture::Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMipMaps)
-	: renderData(nullptr)
-	, width(width)
+	: width(width)
 	, height(height)
 	, format(format)
 	, numMipMaps(numMipMaps)

@@ -579,6 +579,9 @@
     <ClInclude Include="..\..\src\Render\Direct3D11\RenderD3D11.h">
       <Filter>src\Render\Direct3D11</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Render\Direct3D11\RenderTargetRenderDataD3D11.h">
+      <Filter>src\Render\Direct3D11</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Render\Direct3D11\ShaderRenderDataD3D11.h">
       <Filter>src\Render\Direct3D11</Filter>
     </ClInclude>
@@ -591,6 +594,9 @@
     <ClInclude Include="..\..\src\Render\Material.h">
       <Filter>src\Render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Render\RenderTarget.h">
+      <Filter>src\Render</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Render\View.h">
       <Filter>src\Render</Filter>
     </ClInclude>
@@ -598,6 +604,9 @@
       <Filter>src\Render\bgfx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h">
+      <Filter>src\Render\bgfx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Render\bgfx\RenderTargetRenderDataBgfx.h">
       <Filter>src\Render\bgfx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\bgfx\ShaderRenderDataBgfx.h">
@@ -861,6 +870,9 @@
       <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\Material.cpp">
+      <Filter>src\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Render\RenderTarget.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\View.cpp">

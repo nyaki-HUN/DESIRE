@@ -2,7 +2,9 @@
 #include "Render/bgfx/RenderBgfx.h"
 #include "Render/bgfx/MeshRenderDataBgfx.h"
 #include "Render/bgfx/ShaderRenderDataBgfx.h"
+#include "Render/bgfx/RenderTargetRenderDataBgfx.h"
 #include "Render/Material.h"
+#include "Render/RenderTarget.h"
 #include "Render/View.h"
 #include "Core/IWindow.h"
 #include "Core/String.h"
@@ -11,9 +13,9 @@
 #include "Core/math/vectormath.h"
 #include "Resource/Mesh.h"
 #include "Resource/Shader.h"
-#include "Resource/Texture.h"
 
 #include "bgfx/platform.h"
+#include "Render-bgfx/src/config.h"
 
 RenderBgfx::RenderBgfx()
 	: activeShaderProgram(BGFX_INVALID_HANDLE)
@@ -42,7 +44,11 @@ void RenderBgfx::Init(IWindow *mainWindow)
 
 	initialized = bgfx::init(bgfx::RendererType::Count, BGFX_PCI_ID_NONE);
 	activeViewId = 0;
-	bgfx::setViewClear(activeViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f, 0);
+
+	for(uint8_t i = 0; i < BGFX_CONFIG_MAX_VIEWS; ++i)
+	{
+		bgfx::setViewClear(i, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, 0x000000ff, 1.0f, 0);
+	}
 
 	for(size_t i = 0; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
 	{
@@ -111,13 +117,23 @@ void RenderBgfx::SetView(View *view)
 {
 	if(view != nullptr)
 	{
-		activeViewId = view->GetID();
+		RenderTarget *rt = view->GetRenderTarget();
+		if(rt->renderData == nullptr)
+		{
+			Bind(rt);
+		}
+
+		RenderTargetRenderDataBgfx *renderData = static_cast<RenderTargetRenderDataBgfx*>(rt->renderData);
+		ASSERT(renderData->id < BGFX_CONFIG_MAX_VIEWS);
+		activeViewId = renderData->id;
 		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
 	}
 	else
 	{
 		activeViewId = 0;
 	}
+
+	bgfx::setViewClear(activeViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColor, 1.0f, 0);
 }
 
 void RenderBgfx::SetWorldMatrix(const Matrix4& matrix)
@@ -136,6 +152,11 @@ void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matr
 	projMatrix.Store(projection);
 
 	bgfx::setViewTransform(activeViewId, view, projection);
+}
+
+void RenderBgfx::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+	clearColor = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
 void RenderBgfx::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -253,20 +274,47 @@ void RenderBgfx::Bind(Texture *texture)
 		return;
 	}
 
-	bgfx::TextureFormat::Enum format = bgfx::TextureFormat::Unknown;
-	switch(texture->format)
-	{
-		case Texture::EFormat::UNKNOWN:		format = bgfx::TextureFormat::Unknown; break;
-		case Texture::EFormat::R8:			format = bgfx::TextureFormat::R8; break;
-		case Texture::EFormat::RG8:			format = bgfx::TextureFormat::RG8; break;
-		case Texture::EFormat::RGB8:		format = bgfx::TextureFormat::RGB8; break;
-		case Texture::EFormat::RGBA8:		format = bgfx::TextureFormat::RGBA8; break;
-		case Texture::EFormat::RGBA32F:		format = bgfx::TextureFormat::RGBA32F; break;
-	}
-
-	bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, format, BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+	bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
 
 	texture->renderData = new bgfx::TextureHandle(handle);
+}
+
+void RenderBgfx::Bind(RenderTarget *renderTarget)
+{
+	ASSERT(renderTarget != nullptr);
+
+	if(renderTarget->renderData != nullptr)
+	{
+		// Already bound
+		return;
+	}
+
+	RenderTargetRenderDataBgfx *renderData = new RenderTargetRenderDataBgfx();
+
+	const uint32_t flags = BGFX_TEXTURE_RT
+		| BGFX_TEXTURE_MIN_POINT
+		| BGFX_TEXTURE_MAG_POINT
+		| BGFX_TEXTURE_MIP_POINT
+		| BGFX_TEXTURE_U_CLAMP
+		| BGFX_TEXTURE_V_CLAMP;
+
+	bgfx::TextureHandle renderTargetTextures[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
+	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
+	for(uint8_t i = 0; i < textureCount; ++i)
+	{
+		const std::shared_ptr<Texture>& texture = renderTarget->GetTexture(i);
+		ASSERT(texture->renderData == nullptr);
+
+		bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), flags);
+		texture->renderData = new bgfx::TextureHandle(handle);
+		renderTargetTextures[i] = handle;
+	}
+
+	renderData->frameBuffer = bgfx::createFrameBuffer(textureCount, renderTargetTextures);
+
+	bgfx::setViewFrameBuffer(renderData->id, renderData->frameBuffer);
+
+	renderTarget->renderData = renderData;
 }
 
 void RenderBgfx::Unbind(Mesh *mesh)
@@ -326,6 +374,20 @@ void RenderBgfx::Unbind(Texture *texture)
 
 	delete renderData;
 	texture->renderData = nullptr;
+}
+
+void RenderBgfx::Unbind(RenderTarget *renderTarget)
+{
+	if(renderTarget == nullptr || renderTarget->renderData == nullptr)
+	{
+		// Not yet bound
+		return;
+	}
+
+	RenderTargetRenderDataBgfx *renderData = static_cast<RenderTargetRenderDataBgfx*>(renderTarget->renderData);
+
+	delete renderData;
+	renderTarget->renderData = nullptr;
 }
 
 void RenderBgfx::UpdateDynamicMesh(DynamicMesh *mesh)
@@ -419,3 +481,18 @@ void RenderBgfx::DoRender()
 	bgfx::submit(activeViewId, activeShaderProgram);
 }
 
+bgfx::TextureFormat::Enum RenderBgfx::ConvertTextureFormat(Texture::EFormat textureFormat)
+{
+	switch(textureFormat)
+	{
+		case Texture::EFormat::UNKNOWN:		return bgfx::TextureFormat::Unknown;
+		case Texture::EFormat::R8:			return bgfx::TextureFormat::R8;
+		case Texture::EFormat::RG8:			return bgfx::TextureFormat::RG8;
+		case Texture::EFormat::RGB8:		return bgfx::TextureFormat::RGB8;
+		case Texture::EFormat::RGBA8:		return bgfx::TextureFormat::RGBA8;
+		case Texture::EFormat::RGBA32F:		return bgfx::TextureFormat::RGBA32F;
+		case Texture::EFormat::D24S8:		return bgfx::TextureFormat::D24S8;
+	}
+
+	return bgfx::TextureFormat::Unknown;
+}
