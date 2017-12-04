@@ -14,8 +14,17 @@ Object::Object(const char *name)
 	, numTransformsInHierarchy(1)
 	, parent(nullptr)
 	, objectID(0)
-	, objectName(StrUtils::Duplicate(name))
+	, objectName(nullptr)
 {
+	if(name == nullptr)
+	{
+		objectName = StrUtils::Duplicate("Object");
+	}
+	else
+	{
+		objectName = StrUtils::Duplicate(name);
+	}
+
 	ASSERT(numTransforms < MAX_TRANSFORMS);
 	transform = &preallocatedTransforms[numTransforms++];
 	transform->parentWorldMatrix = nullptr;
