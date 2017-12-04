@@ -46,10 +46,10 @@ private:
 
 	Vector3 position;
 	Vector3 target;
-	float fov;
-	float aspect;
-	float zNear;
-	float zFar;
+	float fov = 60.0f;
+	float aspect = 16.0f / 9.0f;
+	float zNear = 0.1f;
+	float zFar = 1000.0f;
 
-	int flags;
+	int flags = 0;
 };
