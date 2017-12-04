@@ -302,16 +302,17 @@ void RenderBgfx::Bind(RenderTarget *renderTarget)
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
+		// Bind texture
 		const std::shared_ptr<Texture>& texture = renderTarget->GetTexture(i);
 		ASSERT(texture->renderData == nullptr);
 
 		bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), flags);
 		texture->renderData = new bgfx::TextureHandle(handle);
+
 		renderTargetTextures[i] = handle;
 	}
 
 	renderData->frameBuffer = bgfx::createFrameBuffer(textureCount, renderTargetTextures);
-
 	bgfx::setViewFrameBuffer(renderData->id, renderData->frameBuffer);
 
 	renderTarget->renderData = renderData;
