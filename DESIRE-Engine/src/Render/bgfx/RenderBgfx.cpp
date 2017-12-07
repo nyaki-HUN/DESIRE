@@ -387,6 +387,14 @@ void RenderBgfx::Unbind(RenderTarget *renderTarget)
 
 	RenderTargetRenderDataBgfx *renderData = static_cast<RenderTargetRenderDataBgfx*>(renderTarget->renderData);
 
+	bgfx::destroy(renderData->frameBuffer);
+
+	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
+	for(uint8_t i = 0; i < textureCount; ++i)
+	{
+		Unbind(renderTarget->GetTexture(i).get());
+	}
+
 	delete renderData;
 	renderTarget->renderData = nullptr;
 }

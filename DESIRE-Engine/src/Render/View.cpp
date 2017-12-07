@@ -18,7 +18,7 @@ View::~View()
 
 void View::SetSize(uint16_t newWidth, uint16_t newHeight)
 {
-	if(renderTarget->GetWidth() < newWidth && renderTarget->GetHeight() < newHeight)
+	if(renderTarget->GetWidth() < newWidth || renderTarget->GetHeight() < newHeight)
 	{
 		renderTarget = nullptr;
 		renderTarget = std::make_unique<RenderTarget>(newWidth, newHeight);
