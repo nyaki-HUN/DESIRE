@@ -30,9 +30,14 @@ RenderD3D11::RenderD3D11()
 {
 	const char vs_error[] =
 	{
-		"float4 main(float4 pos : POSITION) : SV_POSITION\n"
+		"cbuffer CB : register(b0)\n"
 		"{\n"
-		"	return pos;\n"
+		"	float4x4 matWorldViewProj;\n"
+		"};\n"
+		"float4 main(float3 pos : POSITION) : SV_POSITION\n"
+		"{\n"
+		"	float4 position = mul(matWorldViewProj, float4(pos, 1.0));\n"
+		"	return position;\n"
 		"}"
 	};
 
@@ -48,6 +53,10 @@ RenderD3D11::RenderD3D11()
 	errorVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
 	errorPixelShader = std::make_unique<Shader>("ps_error");
 	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
+
+	worldMatrix = DirectX::XMMatrixIdentity();
+	viewMatrix = DirectX::XMMatrixIdentity();
+	projMatrix = DirectX::XMMatrixIdentity();
 }
 
 RenderD3D11::~RenderD3D11()
@@ -196,7 +205,15 @@ void RenderD3D11::SetWorldMatrix(const Matrix4& matrix)
 
 void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
+	this->viewMatrix.r[0] = GetXMVECTOR(viewMatrix.col0);
+	this->viewMatrix.r[1] = GetXMVECTOR(viewMatrix.col1);
+	this->viewMatrix.r[2] = GetXMVECTOR(viewMatrix.col2);
+	this->viewMatrix.r[3] = GetXMVECTOR(viewMatrix.col3);
 
+	this->projMatrix.r[0] = GetXMVECTOR(projMatrix.col0);
+	this->projMatrix.r[1] = GetXMVECTOR(projMatrix.col1);
+	this->projMatrix.r[2] = GetXMVECTOR(projMatrix.col2);
+	this->projMatrix.r[3] = GetXMVECTOR(projMatrix.col3);
 }
 
 void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -387,22 +404,41 @@ void RenderD3D11::Bind(Shader *shader)
 		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
 	}
 
-	uint32_t constantBufferSize = 0;
-	if(shaderDesc.ConstantBuffers > 0)
+	renderData->constantBuffers.reserve(shaderDesc.ConstantBuffers);
+	renderData->constantBuffersData.reserve(shaderDesc.ConstantBuffers);
+	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		ID3D11ShaderReflectionConstantBuffer *cbuffer = reflection->GetConstantBufferByIndex(0);
+		ID3D11ShaderReflectionConstantBuffer *cbuffer = reflection->GetConstantBufferByIndex(i);
 		D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
 		hr = cbuffer->GetDesc(&shaderBufferDesc);
 		ASSERT(SUCCEEDED(hr));
 
-		constantBufferSize = shaderBufferDesc.Size;
+		// Create constant buffer
+		renderData->constantBuffers.push_back(nullptr);
 
 		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.ByteWidth = constantBufferSize;
+		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = d3dDevice->CreateBuffer(&bufferDesc, nullptr, &renderData->constantBuffer);
+		hr = d3dDevice->CreateBuffer(&bufferDesc, nullptr, &renderData->constantBuffers[i]);
 		ASSERT(SUCCEEDED(hr));
+
+		// Create constant buffer data
+		renderData->constantBuffersData.push_back(MemoryBuffer(shaderBufferDesc.Size));
+
+		for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
+		{
+			ID3D11ShaderReflectionVariable* var = cbuffer->GetVariableByIndex(j);
+			ID3D11ShaderReflectionType *type = var->GetType();
+			D3D11_SHADER_VARIABLE_DESC varDesc;
+			hr = var->GetDesc(&varDesc);
+			ASSERT(SUCCEEDED(hr));
+
+			if(varDesc.uFlags & D3D_SVF_USED)
+			{
+
+			}
+		}
 	}
 
 	shader->renderData = renderData;
@@ -638,10 +674,15 @@ void RenderD3D11::SetShadersFromMaterial(Material *material)
 	// Vertex shader
 	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->vertexShader->renderData);
 	deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
-	if(vertexShaderRenderData->constantBuffer != nullptr)
+	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
 	{
-		deviceCtx->VSSetConstantBuffers(0, 1, &vertexShaderRenderData->constantBuffer);
+/**/	DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(worldMatrix, viewMatrix);
+/**/	DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, projMatrix);
+/**/	memcpy(vertexShaderRenderData->constantBuffersData[i].data, &matWorldViewProj.r[0], vertexShaderRenderData->constantBuffersData[i].size);
+
+		deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, vertexShaderRenderData->constantBuffersData[i].data, 0, 0);
 	}
+	deviceCtx->VSSetConstantBuffers(0, (UINT)vertexShaderRenderData->constantBuffers.size(), vertexShaderRenderData->constantBuffers.data());
 
 	const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
 	ID3D11InputLayout *vertexLayout = nullptr;
@@ -653,10 +694,12 @@ void RenderD3D11::SetShadersFromMaterial(Material *material)
 	// Pixel shader
 	const ShaderRenderDataD3D11 *pixelShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->pixelShader->renderData);
 	deviceCtx->PSSetShader(pixelShaderRenderData->pixelShader, nullptr, 0);
-	if(pixelShaderRenderData->constantBuffer != nullptr)
+
+	for(size_t i = 0; i < pixelShaderRenderData->constantBuffers.size(); ++i)
 	{
-		deviceCtx->PSSetConstantBuffers(0, 1, &pixelShaderRenderData->constantBuffer);
+		deviceCtx->UpdateSubresource(pixelShaderRenderData->constantBuffers[i], 0, nullptr, pixelShaderRenderData->constantBuffersData[i].data, 0, 0);
 	}
+	deviceCtx->PSSetConstantBuffers(0, (UINT)pixelShaderRenderData->constantBuffers.size(), pixelShaderRenderData->constantBuffers.data());
 }
 
 void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)

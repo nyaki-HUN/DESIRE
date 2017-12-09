@@ -68,6 +68,8 @@ private:
 	std::unique_ptr<Shader> errorPixelShader;
 
 	DirectX::XMMATRIX worldMatrix;
+	DirectX::XMMATRIX viewMatrix;
+	DirectX::XMMATRIX projMatrix;
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	bool initialized = false;
