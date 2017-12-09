@@ -19,16 +19,29 @@
 
 #include <d3dcompiler.h>
 
+#define DX_RELEASE(ptr)		\
+	if(ptr != nullptr)		\
+	{						\
+		ptr->Release();		\
+		ptr = nullptr;		\
+	}
+
 RenderD3D11::RenderD3D11()
 {
 	const char vs_error[] =
 	{
-		"TODO"
+		"float4 main(float4 pos : POSITION) : SV_POSITION\n"
+		"{\n"
+		"	return pos;\n"
+		"}"
 	};
 
 	const char ps_error[] =
 	{
-		"TODO"
+		"float3 main() : SV_TARGET\n"
+		"{\n"
+		"	return float3(1, 0, 1);\n"
+		"}"
 	};
 
 	errorVertexShader = std::make_unique<Shader>("vs_error");
@@ -45,20 +58,21 @@ RenderD3D11::~RenderD3D11()
 
 void RenderD3D11::Init(IWindow *mainWindow)
 {
-	static const DXGI_SWAP_CHAIN_DESC swapChainDesc =
-	{
-		{ mainWindow->GetWidth(), mainWindow->GetHeight(), { 60, 1 }, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED, DXGI_MODE_SCALING_UNSPECIFIED },
-		{ 1, 0 },
-		DXGI_USAGE_RENDER_TARGET_OUTPUT,
-		1,
-		nullptr,
-		TRUE,
-		DXGI_SWAP_EFFECT_DISCARD,
-		0
-	};
-
-	DXGI_SWAP_CHAIN_DESC swapChainDescTmp = swapChainDesc;
-	swapChainDescTmp.OutputWindow = (HWND)mainWindow->GetHandle();
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+	swapChainDesc.BufferDesc.Width = mainWindow->GetWidth();
+	swapChainDesc.BufferDesc.Height = mainWindow->GetHeight();
+	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Quality = 0;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount = 1;
+	swapChainDesc.OutputWindow = (HWND)mainWindow->GetHandle();
+	swapChainDesc.Windowed = TRUE;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(
 		nullptr,					// might fail with two adapters in machine
@@ -72,7 +86,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 		nullptr,
 		0,
 		D3D11_SDK_VERSION,
-		&swapChainDescTmp,
+		&swapChainDesc,
 		&swapChain,
 		&d3dDevice,
 		nullptr,
@@ -82,13 +96,35 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	// Create a back buffer render target, get a view on it to clear it later
-	ID3D11Texture2D *pBackBuffer = nullptr;
-	hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&pBackBuffer);
-	SUCCEEDED(hr);
+	// Create back buffer render target view
+	ID3D11Texture2D *backBufferTexture = nullptr;
+	hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&backBufferTexture);
+	ASSERT(SUCCEEDED(hr));
+	hr = d3dDevice->CreateRenderTargetView(backBufferTexture, nullptr, &backBufferRenderTargetView);
+	ASSERT(SUCCEEDED(hr));
+	DX_RELEASE(backBufferTexture);
 
-	hr = d3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &renderTargetView);
-	deviceCtx->OMSetRenderTargets(1, &renderTargetView, nullptr);
+	// Create back buffer depth stencil view
+	D3D11_TEXTURE2D_DESC desc = {};
+	desc.Width = swapChainDesc.BufferDesc.Width;
+	desc.Height = swapChainDesc.BufferDesc.Height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	desc.SampleDesc = swapChainDesc.SampleDesc;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+	ID3D11Texture2D *depthStencilTexture = nullptr;
+	hr = d3dDevice->CreateTexture2D(&desc, nullptr, &depthStencilTexture);
+	ASSERT(SUCCEEDED(hr));
+	
+	hr = d3dDevice->CreateDepthStencilView(depthStencilTexture, nullptr, &backBufferDepthStencilView);
+	ASSERT(SUCCEEDED(hr));
+	
+	DX_RELEASE(depthStencilTexture);
+
+	deviceCtx->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
@@ -110,6 +146,9 @@ void RenderD3D11::Kill()
 
 	Unbind(errorVertexShader.get());
 	Unbind(errorPixelShader.get());
+
+	DX_RELEASE(backBufferDepthStencilView);
+	DX_RELEASE(backBufferRenderTargetView);
 }
 
 String RenderD3D11::GetShaderFilenameWithPath(const char *shaderFilename) const
@@ -121,7 +160,8 @@ void RenderD3D11::BeginFrame(IWindow *window)
 {
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
 
-	deviceCtx->ClearRenderTargetView(renderTargetView, clearColor);
+	deviceCtx->ClearRenderTargetView(backBufferRenderTargetView, clearColor);
+	deviceCtx->ClearDepthStencilView(backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void RenderD3D11::EndFrame()
@@ -133,6 +173,15 @@ void RenderD3D11::SetView(View *view)
 {
 	if(view != nullptr)
 	{
+		RenderTarget *rt = view->GetRenderTarget();
+		if(rt->renderData == nullptr)
+		{
+			Bind(rt);
+		}
+
+		RenderTargetRenderDataD3D11 *renderData = static_cast<RenderTargetRenderDataD3D11*>(rt->renderData);
+		deviceCtx->OMSetRenderTargets((UINT)renderData->renderTargetViews.size(), renderData->renderTargetViews.data(), renderData->depthStencilView);
+
 		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
 	}
 }
@@ -269,11 +318,13 @@ void RenderD3D11::Bind(Shader *shader)
 		// Already bound
 		return;
 	}
+
+	const bool isVertexShader = shader->name.StartsWith("vs_");
 	
 	ShaderRenderDataD3D11 *renderData = new ShaderRenderDataD3D11();
 
 	ID3DBlob *errorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "main", "vs_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
+	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "main", isVertexShader ? "vs_5_0" : "ps_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
 	if(FAILED(hr))
 	{
 		if(errorBlob != nullptr)
@@ -287,7 +338,7 @@ void RenderD3D11::Bind(Shader *shader)
 		return;
 	}
 
-	if(true)
+	if(isVertexShader)
 	{
 		hr = d3dDevice->CreateVertexShader(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
 	}
@@ -379,6 +430,11 @@ void RenderD3D11::Bind(Texture *texture)
 			bitsPerPixel = 128;
 			format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 			break;
+
+		case Texture::EFormat::D24S8:
+			bitsPerPixel = 32;
+			format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+			break;
 	}
 
 	D3D11_SUBRESOURCE_DATA subResourceData;
@@ -407,11 +463,10 @@ void RenderD3D11::Bind(Texture *texture)
 	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = desc.MipLevels;
-	srvDesc.Texture2D.MostDetailedMip = 0;
 	hr = d3dDevice->CreateShaderResourceView(d3dTexture2D, &srvDesc, &renderData->textureSRV);
 	ASSERT(SUCCEEDED(hr));
 
-	d3dTexture2D->Release();
+	DX_RELEASE(d3dTexture2D);
 
 	// Create texture sampler
 	D3D11_SAMPLER_DESC samplerDesc = {};
@@ -437,6 +492,13 @@ void RenderD3D11::Bind(RenderTarget *renderTarget)
 	}
 
 	RenderTargetRenderDataD3D11 *renderData = new RenderTargetRenderDataD3D11();
+
+	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
+	renderData->renderTargetViews.reserve(textureCount);
+	for(uint8_t i = 0; i < textureCount; ++i)
+	{
+		const std::shared_ptr<Texture>& texture = renderTarget->GetTexture(i);
+	}
 
 	renderTarget->renderData = renderData;
 }

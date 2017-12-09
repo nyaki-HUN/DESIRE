@@ -55,9 +55,11 @@ private:
 	void UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size);
 
 	ID3D11Device *d3dDevice = nullptr;
-	IDXGISwapChain *swapChain = nullptr;
-	ID3D11RenderTargetView *renderTargetView = nullptr;
 	ID3D11DeviceContext *deviceCtx = nullptr;
+	IDXGISwapChain *swapChain = nullptr;
+
+	ID3D11RenderTargetView *backBufferRenderTargetView = nullptr;
+	ID3D11DepthStencilView *backBufferDepthStencilView = nullptr;
 
 	std::unordered_map<uint64_t, ID3D11InputLayout*> inputLayoutCache;
 
