@@ -599,6 +599,8 @@ void RenderD3D11::UpdateDynamicMesh(DynamicMesh *mesh)
 	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
 		// Not yet bound
+		mesh->isIndexDataUpdateRequired = false;
+		mesh->isVertexDataUpdateRequired = false;
 		return;
 	}
 
