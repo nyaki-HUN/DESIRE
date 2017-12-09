@@ -268,42 +268,65 @@ void RenderD3D11::Bind(Mesh *mesh)
 		offset += decl.GetSizeInBytes();
 	}
 
+	D3D11_SUBRESOURCE_DATA initialIndexData = {};
+	initialIndexData.pSysMem = mesh->indices;
+
+	D3D11_SUBRESOURCE_DATA initialVertexData = {};
+	initialVertexData.pSysMem = mesh->vertices;
+
 	D3D11_BUFFER_DESC bufferDesc = {};
 	switch(mesh->type)
 	{
 		case Mesh::EType::STATIC:
+		{
 			bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 			bufferDesc.CPUAccessFlags = 0;
+
+			if(mesh->numIndices != 0)
+			{
+				bufferDesc.ByteWidth = mesh->GetSizeOfIndices();
+				bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &renderData->indexBuffer);
+				ASSERT(SUCCEEDED(hr));
+			}
+
+			if(mesh->numVertices != 0)
+			{
+				bufferDesc.ByteWidth = mesh->GetSizeOfVertices();
+				bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &renderData->vertexBuffer);
+				ASSERT(SUCCEEDED(hr));
+			}
 			break;
+		}
 
 		case Mesh::EType::DYNAMIC:
+		{
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+			DynamicMesh *dynamicMesh = static_cast<DynamicMesh*>(mesh);
+			if(dynamicMesh->maxNumOfIndices != 0)
+			{
+				bufferDesc.ByteWidth = dynamicMesh->GetMaxSizeOfIndices();
+				bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &renderData->indexBuffer);
+				ASSERT(SUCCEEDED(hr));
+			}
+
+			if(dynamicMesh->maxNumOfVertices != 0)
+			{
+				bufferDesc.ByteWidth = dynamicMesh->GetMaxSizeOfVertices();
+				bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &renderData->vertexBuffer);
+				ASSERT(SUCCEEDED(hr));
+			}
 			break;
-	}
-
-	if(mesh->numIndices != 0)
-	{
-		bufferDesc.ByteWidth = mesh->GetSizeOfIndices();
-		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA initialData = {};
-		initialData.pSysMem = mesh->indices;
-
-		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialData, &renderData->indexBuffer);
-		ASSERT(SUCCEEDED(hr));
-	}
-
-	if(mesh->numVertices != 0)
-	{
-		bufferDesc.ByteWidth = mesh->GetSizeOfVertices();
-		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA initialData = {};
-		initialData.pSysMem = mesh->vertices;
-
-		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialData, &renderData->vertexBuffer);
-		ASSERT(SUCCEEDED(hr));
+		}
 	}
 
 	mesh->renderData = renderData;
@@ -334,7 +357,7 @@ void RenderD3D11::Bind(Shader *shader)
 		}
 
 		delete renderData;
-		shader->renderData = errorVertexShader->renderData;
+		shader->renderData = isVertexShader ? errorVertexShader->renderData : errorPixelShader->renderData;
 		return;
 	}
 
@@ -678,4 +701,3 @@ void RenderD3D11::UpdateD3D11Resource(ID3D11Resource *resource, const void *data
 	memcpy(mappedResource.pData, data, size);
 	deviceCtx->Unmap(resource, 0);
 }
-
