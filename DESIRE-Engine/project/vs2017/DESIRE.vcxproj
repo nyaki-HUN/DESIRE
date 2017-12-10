@@ -297,8 +297,6 @@
     <ClInclude Include="..\..\src\Sound\OpenAL\OpenALSound.h" />
     <ClInclude Include="..\..\src\Sound\Wwise\WwiseSound.h" />
     <ClInclude Include="..\..\src\UI\ImGuiImpl.h" />
-    <ClInclude Include="..\..\src\UI\fs_ocornut_imgui.bin.h" />
-    <ClInclude Include="..\..\src\UI\vs_ocornut_imgui.bin.h" />
     <ClInclude Include="..\..\src\Utils\Enumerator.h" />
     <ClInclude Include="..\..\src\Utils\GuardedCallbackFactory.h" />
     <ClInclude Include="..\..\src\Utils\JsonDataTranslator.h" />

@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "UI/ImGuiImpl.h"
-#include "UI/fs_ocornut_imgui.bin.h"
-#include "UI/vs_ocornut_imgui.bin.h"
 #include "Core/platform.h"
 #include "Core/IWindow.h"
 #include "Core/Timer.h"
@@ -9,6 +7,7 @@
 #include "Render/Camera.h"
 #include "Render/Material.h"
 #include "Render/IRender.h"
+#include "Resource/ResourceManager.h"
 #include "Resource/Mesh.h"
 #include "Resource/Shader.h"
 #include "Resource/Texture.h"
@@ -73,12 +72,8 @@ void ImGuiImpl::Init()
 
 	// Setup material
 	material = std::make_unique<Material>();
-
-	// Setup shader
-	material->vertexShader = std::make_shared<Shader>("vs_ocornut_imgui_dx11");
-	material->vertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_ocornut_imgui_dx11, sizeof(vs_ocornut_imgui_dx11));
-	material->pixelShader = std::make_shared<Shader>("fs_ocornut_imgui_dx11");
-	material->pixelShader->data = MemoryBuffer::CreateFromDataCopy(fs_ocornut_imgui_dx11, sizeof(fs_ocornut_imgui_dx11));
+	material->vertexShader = ResourceManager::Get()->GetShader("vs_ocornut_imgui");
+	material->pixelShader = ResourceManager::Get()->GetShader("fs_ocornut_imgui");
 
 	// Setup font texture
 	unsigned char *textureData;
