@@ -11,7 +11,7 @@ buildoptions { "/Gw", "/Zc:rvalueCast" }
 flags { "StaticRuntime", "MultiProcessorCompile", "C++11" }
 
 if _ACTION == "vs2017" then
-	systemversion "10.0.10240.0"
+	systemversion "10.0.15063.0"
 	defines { "WIN32", "_HAS_EXCEPTIONS=0" }
 	links { "d3d11", "d3dcompiler", "dxgi", "dxguid" }
 end

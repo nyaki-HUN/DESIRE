@@ -189,6 +189,9 @@
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h">
       <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\cursorstreamwrapper.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\document.h">
       <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
     </ClInclude>
