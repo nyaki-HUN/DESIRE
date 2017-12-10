@@ -52,10 +52,10 @@ private:
 
 	static bgfx::TextureFormat::Enum ConvertTextureFormat(Texture::EFormat textureFormat);
 
-	bgfx::ProgramHandle activeShaderProgram;
+	bgfx::ProgramHandle activeShaderProgram = BGFX_INVALID_HANDLE;
 	bgfx::UniformHandle samplerUniforms[8];
-	uint32_t clearColor;
+	uint32_t clearColor = 0x000000FF;
 
-	uint8_t activeViewId;
-	bool initialized;
+	bgfx::ViewId activeViewId = 0;
+	bool initialized = false;
 };

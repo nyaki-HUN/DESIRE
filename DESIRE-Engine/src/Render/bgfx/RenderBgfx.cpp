@@ -18,9 +18,6 @@
 #include "Render-bgfx/src/config.h"
 
 RenderBgfx::RenderBgfx()
-	: activeShaderProgram(BGFX_INVALID_HANDLE)
-	, activeViewId(0)
-	, initialized(false)
 {
 	for(bgfx::UniformHandle& uniform : samplerUniforms)
 	{
@@ -45,9 +42,9 @@ void RenderBgfx::Init(IWindow *mainWindow)
 	initialized = bgfx::init(bgfx::RendererType::Count, BGFX_PCI_ID_NONE);
 	activeViewId = 0;
 
-	for(uint8_t i = 0; i < BGFX_CONFIG_MAX_VIEWS; ++i)
+	for(bgfx::ViewId viewId = 0; viewId < BGFX_CONFIG_MAX_VIEWS; ++viewId)
 	{
-		bgfx::setViewClear(i, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, 0x000000ff, 1.0f, 0);
+		bgfx::setViewClear(viewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, 0x000000ff, 1.0f, 0);
 	}
 
 	for(size_t i = 0; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
