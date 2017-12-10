@@ -103,7 +103,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	initialized = SUCCEEDED(hr);
 
-	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Create back buffer render target view
 	ID3D11Texture2D *backBufferTexture = nullptr;
@@ -114,18 +114,18 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	DX_RELEASE(backBufferTexture);
 
 	// Create back buffer depth stencil view
-	D3D11_TEXTURE2D_DESC desc = {};
-	desc.Width = swapChainDesc.BufferDesc.Width;
-	desc.Height = swapChainDesc.BufferDesc.Height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	desc.SampleDesc = swapChainDesc.SampleDesc;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = swapChainDesc.BufferDesc.Width;
+	textureDesc.Height = swapChainDesc.BufferDesc.Height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	textureDesc.SampleDesc = swapChainDesc.SampleDesc;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 	ID3D11Texture2D *depthStencilTexture = nullptr;
-	hr = d3dDevice->CreateTexture2D(&desc, nullptr, &depthStencilTexture);
+	hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &depthStencilTexture);
 	ASSERT(SUCCEEDED(hr));
 	
 	hr = d3dDevice->CreateDepthStencilView(depthStencilTexture, nullptr, &backBufferDepthStencilView);
@@ -137,6 +137,56 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
+
+	// TODO: proper render state handling
+
+	D3D11_RASTERIZER_DESC desc = {};
+	desc.FillMode = D3D11_FILL_SOLID;
+	desc.CullMode = D3D11_CULL_NONE;
+	desc.FrontCounterClockwise = false;
+	desc.DepthClipEnable = true;
+	desc.ScissorEnable = true;
+	desc.MultisampleEnable = true;
+	desc.AntialiasedLineEnable = false;
+	ID3D11RasterizerState *rs = nullptr;
+	hr = d3dDevice->CreateRasterizerState(&desc, &rs);
+	deviceCtx->RSSetState(rs);
+
+	D3D11_BLEND_DESC blendDesc = {};
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	ID3D11BlendState *blendState = nullptr;
+	d3dDevice->CreateBlendState(&blendDesc, &blendState);
+	deviceCtx->OMSetBlendState(blendState, nullptr, 0xffffffff);
+
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	// Depth test parameters
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	// Stencil test parameters
+	dsDesc.StencilEnable = false;
+	dsDesc.StencilReadMask = 0xFF;
+	dsDesc.StencilWriteMask = 0xFF;
+	// Stencil operations if pixel is front-facing
+	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	// Stencil operations if pixel is back-facing
+	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	ID3D11DepthStencilState *depthStencilState = nullptr;
+	d3dDevice->CreateDepthStencilState(&dsDesc, &depthStencilState);
+	deviceCtx->OMSetDepthStencilState(depthStencilState, 0);
 }
 
 void RenderD3D11::UpdateRenderWindow(IWindow *window)
@@ -657,14 +707,34 @@ void RenderD3D11::UpdateDynamicMesh(DynamicMesh *mesh)
 
 void RenderD3D11::SetMesh(Mesh *mesh)
 {
-	if(activeMesh == mesh)
+	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+
+	uint32_t indexByteOffset = renderData->indexOffset * sizeof(uint16_t);
+	uint32_t vertexByteOffset = renderData->vertexOffset * mesh->stride;
+
+	switch(mesh->type)
 	{
-		return;
+		case Mesh::EType::STATIC:
+		{
+			if(activeMesh == mesh)
+			{
+				// No need to set the buffers again
+				return;
+			}
+			break;
+		}
+
+		case Mesh::EType::DYNAMIC:
+		{
+			const DynamicMesh *dynamicMesh = static_cast<const DynamicMesh*>(mesh);
+			indexByteOffset += dynamicMesh->indexOffset * sizeof(uint16_t);
+			vertexByteOffset += dynamicMesh->vertexOffset * mesh->stride;
+			break;
+		}
 	}
 
-	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
-	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, renderData->indexOffset);
-	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &renderData->vertexOffset);
+	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, indexByteOffset);
+	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &vertexByteOffset);
 
 	activeMesh = mesh;
 }
@@ -690,6 +760,7 @@ void RenderD3D11::SetShadersFromMaterial(Material *material)
 	ASSERT(SUCCEEDED(hr));
 
 	deviceCtx->IASetInputLayout(vertexLayout);
+	DX_RELEASE(vertexLayout);
 
 	// Pixel shader
 	const ShaderRenderDataD3D11 *pixelShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->pixelShader->renderData);
