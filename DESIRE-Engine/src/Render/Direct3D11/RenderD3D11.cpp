@@ -15,7 +15,6 @@
 #include "Core/math/vectormath.h"
 #include "Resource/Mesh.h"
 #include "Resource/Shader.h"
-#include "Resource/Texture.h"
 
 #include <d3dcompiler.h>
 
@@ -54,9 +53,9 @@ RenderD3D11::RenderD3D11()
 	errorPixelShader = std::make_unique<Shader>("ps_error");
 	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
-	worldMatrix = DirectX::XMMatrixIdentity();
-	viewMatrix = DirectX::XMMatrixIdentity();
-	projMatrix = DirectX::XMMatrixIdentity();
+	matWorld = DirectX::XMMatrixIdentity();
+	matView = DirectX::XMMatrixIdentity();
+	matProj = DirectX::XMMatrixIdentity();
 }
 
 RenderD3D11::~RenderD3D11()
@@ -76,7 +75,6 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.OutputWindow = (HWND)mainWindow->GetHandle();
@@ -247,23 +245,23 @@ void RenderD3D11::SetView(View *view)
 
 void RenderD3D11::SetWorldMatrix(const Matrix4& matrix)
 {
-	worldMatrix.r[0] = GetXMVECTOR(matrix.col0);
-	worldMatrix.r[1] = GetXMVECTOR(matrix.col1);
-	worldMatrix.r[2] = GetXMVECTOR(matrix.col2);
-	worldMatrix.r[3] = GetXMVECTOR(matrix.col3);
+	matWorld.r[0] = GetXMVECTOR(matrix.col0);
+	matWorld.r[1] = GetXMVECTOR(matrix.col1);
+	matWorld.r[2] = GetXMVECTOR(matrix.col2);
+	matWorld.r[3] = GetXMVECTOR(matrix.col3);
 }
 
 void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
-	this->viewMatrix.r[0] = GetXMVECTOR(viewMatrix.col0);
-	this->viewMatrix.r[1] = GetXMVECTOR(viewMatrix.col1);
-	this->viewMatrix.r[2] = GetXMVECTOR(viewMatrix.col2);
-	this->viewMatrix.r[3] = GetXMVECTOR(viewMatrix.col3);
+	matView.r[0] = GetXMVECTOR(viewMatrix.col0);
+	matView.r[1] = GetXMVECTOR(viewMatrix.col1);
+	matView.r[2] = GetXMVECTOR(viewMatrix.col2);
+	matView.r[3] = GetXMVECTOR(viewMatrix.col3);
 
-	this->projMatrix.r[0] = GetXMVECTOR(projMatrix.col0);
-	this->projMatrix.r[1] = GetXMVECTOR(projMatrix.col1);
-	this->projMatrix.r[2] = GetXMVECTOR(projMatrix.col2);
-	this->projMatrix.r[3] = GetXMVECTOR(projMatrix.col3);
+	matProj.r[0] = GetXMVECTOR(projMatrix.col0);
+	matProj.r[1] = GetXMVECTOR(projMatrix.col1);
+	matProj.r[2] = GetXMVECTOR(projMatrix.col2);
+	matProj.r[3] = GetXMVECTOR(projMatrix.col3);
 }
 
 void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -506,76 +504,36 @@ void RenderD3D11::Bind(Texture *texture)
 
 	TextureRenderDataD3D11 *renderData = new TextureRenderDataD3D11();
 
-	uint8_t bitsPerPixel = 0;
-	DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
-	switch(texture->format)
-	{
-		case Texture::EFormat::UNKNOWN:
-			bitsPerPixel = 0;
-			format = DXGI_FORMAT_UNKNOWN;
-			break;
-
-		case Texture::EFormat::R8:
-			bitsPerPixel = 8;
-			format = DXGI_FORMAT_R8_UNORM;
-			break;
-
-		case Texture::EFormat::RG8:
-			bitsPerPixel = 16;
-			format = DXGI_FORMAT_R8G8_UNORM;
-			break;
-
-		case Texture::EFormat::RGB8:
-			bitsPerPixel = 24;
-			format = DXGI_FORMAT_UNKNOWN;
-			break;
-
-		case Texture::EFormat::RGBA8:
-			bitsPerPixel = 32;
-			format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			break;
-
-		case Texture::EFormat::RGBA32F:
-			bitsPerPixel = 128;
-			format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-			break;
-
-		case Texture::EFormat::D24S8:
-			bitsPerPixel = 32;
-			format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-			break;
-	}
-
 	D3D11_SUBRESOURCE_DATA subResourceData;
 	subResourceData.pSysMem = texture->data.data;
-	subResourceData.SysMemPitch = texture->width * bitsPerPixel / 8;
+	subResourceData.SysMemPitch = texture->data.size / texture->height;
 	subResourceData.SysMemSlicePitch = 0;
 
-	D3D11_TEXTURE2D_DESC desc = {};
-	desc.Width = texture->width;
-	desc.Height = texture->height;
-	desc.MipLevels = texture->numMipMaps + 1;
-	desc.ArraySize = 1;
-	desc.Format = format;
-	desc.SampleDesc.Count = 1;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = texture->width;
+	textureDesc.Height = texture->height;
+	textureDesc.MipLevels = texture->numMipMaps + 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = ConvertTextureFormat(texture->format);
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	DESIRE_TODO("Support Cube texture");
-//	desc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+//	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
-	ID3D11Texture2D *d3dTexture2D = nullptr;
-	HRESULT hr = d3dDevice->CreateTexture2D(&desc, &subResourceData, &d3dTexture2D);
+	ID3D11Texture2D *d3dTexture = nullptr;
+	HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, &subResourceData, &d3dTexture);
 	ASSERT(SUCCEEDED(hr));
 
 	// Create texture view
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.Format = textureDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = desc.MipLevels;
-	hr = d3dDevice->CreateShaderResourceView(d3dTexture2D, &srvDesc, &renderData->textureSRV);
+	srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
+	hr = d3dDevice->CreateShaderResourceView(d3dTexture, &srvDesc, &renderData->textureSRV);
 	ASSERT(SUCCEEDED(hr));
 
-	DX_RELEASE(d3dTexture2D);
+	DX_RELEASE(d3dTexture);
 
 	// Create texture sampler
 	D3D11_SAMPLER_DESC samplerDesc = {};
@@ -606,7 +564,13 @@ void RenderD3D11::Bind(RenderTarget *renderTarget)
 	renderData->renderTargetViews.reserve(textureCount);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
+		// Bind texture
 		const std::shared_ptr<Texture>& texture = renderTarget->GetTexture(i);
+		ASSERT(texture->renderData == nullptr);
+
+		TextureRenderDataD3D11 *textureRenderData = new TextureRenderDataD3D11();
+
+		texture->renderData = textureRenderData;
 	}
 
 	renderTarget->renderData = renderData;
@@ -675,6 +639,14 @@ void RenderD3D11::Unbind(RenderTarget *renderTarget)
 	}
 
 	RenderTargetRenderDataD3D11 *renderData = static_cast<RenderTargetRenderDataD3D11*>(renderTarget->renderData);
+
+	for(ID3D11RenderTargetView *renderTargetView : renderData->renderTargetViews)
+	{
+		renderTargetView->Release();
+	}
+	renderData->renderTargetViews.clear();
+
+	DX_RELEASE(renderData->depthStencilView);
 
 	delete renderData;
 	renderTarget->renderData = nullptr;
@@ -746,8 +718,8 @@ void RenderD3D11::SetShadersFromMaterial(Material *material)
 	deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
 	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
 	{
-/**/	DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(worldMatrix, viewMatrix);
-/**/	DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, projMatrix);
+/**/	DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
+/**/	DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
 /**/	memcpy(vertexShaderRenderData->constantBuffersData[i].data, &matWorldViewProj.r[0], vertexShaderRenderData->constantBuffersData[i].size);
 
 		deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, vertexShaderRenderData->constantBuffersData[i].data, 0, 0);
@@ -816,4 +788,20 @@ void RenderD3D11::UpdateD3D11Resource(ID3D11Resource *resource, const void *data
 
 	memcpy(mappedResource.pData, data, size);
 	deviceCtx->Unmap(resource, 0);
+}
+
+DXGI_FORMAT RenderD3D11::ConvertTextureFormat(Texture::EFormat textureFormat)
+{
+	switch(textureFormat)
+	{
+		case Texture::EFormat::UNKNOWN:		return DXGI_FORMAT_UNKNOWN;
+		case Texture::EFormat::R8:			return DXGI_FORMAT_R8_UNORM;
+		case Texture::EFormat::RG8:			return DXGI_FORMAT_R8G8_UNORM;
+		case Texture::EFormat::RGB8:		return DXGI_FORMAT_UNKNOWN;
+		case Texture::EFormat::RGBA8:		return DXGI_FORMAT_R8G8B8A8_UNORM;
+		case Texture::EFormat::RGBA32F:		return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case Texture::EFormat::D24S8:		return DXGI_FORMAT_D24_UNORM_S8_UINT;
+	}
+
+	return DXGI_FORMAT_UNKNOWN;
 }

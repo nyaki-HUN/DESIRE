@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Render/IRender.h"
+#include "Resource/Texture.h"
 
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -54,6 +55,8 @@ private:
 
 	void UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size);
 
+	static DXGI_FORMAT ConvertTextureFormat(Texture::EFormat textureFormat);
+
 	ID3D11Device *d3dDevice = nullptr;
 	ID3D11DeviceContext *deviceCtx = nullptr;
 	IDXGISwapChain *swapChain = nullptr;
@@ -67,9 +70,9 @@ private:
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;
 
-	DirectX::XMMATRIX worldMatrix;
-	DirectX::XMMATRIX viewMatrix;
-	DirectX::XMMATRIX projMatrix;
+	DirectX::XMMATRIX matWorld;
+	DirectX::XMMATRIX matView;
+	DirectX::XMMATRIX matProj;
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	bool initialized = false;
