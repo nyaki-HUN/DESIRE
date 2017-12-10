@@ -10,7 +10,7 @@ public:
 	~Shader();
 
 	// Render engine specific data set at bind
-	void *renderData;
+	void *renderData = nullptr;
 
 	MemoryBuffer data;
 	const String name;

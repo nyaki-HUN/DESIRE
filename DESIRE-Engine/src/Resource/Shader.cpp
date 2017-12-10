@@ -3,8 +3,7 @@
 #include "Render/IRender.h"
 
 Shader::Shader(const String& name)
-	: renderData(nullptr)
-	, name(name)
+	: name(name)
 {
 
 }
