@@ -66,6 +66,7 @@ private:
 
 	std::unordered_map<uint64_t, ID3D11InputLayout*> inputLayoutCache;
 
+	const IWindow *activeWindow = nullptr;
 	const Mesh *activeMesh = nullptr;
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;

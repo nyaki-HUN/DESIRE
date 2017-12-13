@@ -215,6 +215,7 @@ String RenderD3D11::GetShaderFilenameWithPath(const char *shaderFilename) const
 
 void RenderD3D11::BeginFrame(IWindow *window)
 {
+	activeWindow = window;
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
 
 	deviceCtx->ClearRenderTargetView(backBufferRenderTargetView, clearColor);
@@ -238,8 +239,21 @@ void RenderD3D11::SetView(View *view)
 
 		RenderTargetRenderDataD3D11 *renderData = static_cast<RenderTargetRenderDataD3D11*>(rt->renderData);
 		deviceCtx->OMSetRenderTargets((UINT)renderData->renderTargetViews.size(), renderData->renderTargetViews.data(), renderData->depthStencilView);
-
 		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
+
+		for(ID3D11RenderTargetView *renderTargetView : renderData->renderTargetViews)
+		{
+			deviceCtx->ClearRenderTargetView(renderTargetView, clearColor);
+		}
+		if(renderData->depthStencilView != nullptr)
+		{
+			deviceCtx->ClearDepthStencilView(renderData->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		}
+	}
+	else
+	{
+		deviceCtx->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
+		SetViewport(0, 0, activeWindow->GetWidth(), activeWindow->GetHeight());
 	}
 }
 
@@ -506,7 +520,7 @@ void RenderD3D11::Bind(Texture *texture)
 
 	D3D11_SUBRESOURCE_DATA subResourceData;
 	subResourceData.pSysMem = texture->data.data;
-	subResourceData.SysMemPitch = texture->data.size / texture->height;
+	subResourceData.SysMemPitch = (UINT)(texture->data.size / texture->height);
 	subResourceData.SysMemSlicePitch = 0;
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -570,6 +584,49 @@ void RenderD3D11::Bind(RenderTarget *renderTarget)
 
 		TextureRenderDataD3D11 *textureRenderData = new TextureRenderDataD3D11();
 
+		const bool isDepth = (texture->format == Texture::EFormat::D24S8);
+
+		D3D11_TEXTURE2D_DESC textureDesc = {};
+		textureDesc.Width = texture->width;
+		textureDesc.Height = texture->height;
+		textureDesc.MipLevels = 1;
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = ConvertTextureFormat(texture->format);
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.BindFlags = isDepth ? D3D11_BIND_DEPTH_STENCIL : (D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
+
+		ID3D11Texture2D *d3dTexture = nullptr;
+		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &d3dTexture);
+		ASSERT(SUCCEEDED(hr));
+
+		if(isDepth)
+		{
+			hr = d3dDevice->CreateDepthStencilView(d3dTexture, nullptr, &renderData->depthStencilView);
+			ASSERT(SUCCEEDED(hr));
+		}
+		else
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.Format = textureDesc.Format;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
+			hr = d3dDevice->CreateShaderResourceView(d3dTexture, &srvDesc, &textureRenderData->textureSRV);
+			ASSERT(SUCCEEDED(hr));
+
+			D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
+			renderTargetViewDesc.Format = textureDesc.Format;
+			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			renderTargetViewDesc.Texture2D.MipSlice = 0;
+			ID3D11RenderTargetView *renderTargetView = nullptr;
+			hr = d3dDevice->CreateRenderTargetView(d3dTexture, &renderTargetViewDesc, &renderTargetView);
+			ASSERT(SUCCEEDED(hr));
+
+			renderData->renderTargetViews.push_back(renderTargetView);
+		}
+
+		DX_RELEASE(d3dTexture);
+
 		texture->renderData = textureRenderData;
 	}
 
@@ -623,8 +680,8 @@ void RenderD3D11::Unbind(Texture *texture)
 	}
 
 	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
-	renderData->textureSRV->Release();
-	renderData->samplerState->Release();
+	DX_RELEASE(renderData->textureSRV);
+	DX_RELEASE(renderData->samplerState);
 
 	delete renderData;
 	texture->renderData = nullptr;
@@ -642,11 +699,17 @@ void RenderD3D11::Unbind(RenderTarget *renderTarget)
 
 	for(ID3D11RenderTargetView *renderTargetView : renderData->renderTargetViews)
 	{
-		renderTargetView->Release();
+		DX_RELEASE(renderTargetView);
 	}
 	renderData->renderTargetViews.clear();
 
 	DX_RELEASE(renderData->depthStencilView);
+
+	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
+	for(uint8_t i = 0; i < textureCount; ++i)
+	{
+		Unbind(renderTarget->GetTexture(i).get());
+	}
 
 	delete renderData;
 	renderTarget->renderData = nullptr;
