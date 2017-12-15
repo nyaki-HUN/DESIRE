@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdlib.h>		// for malloc and free
+#include <string.h>		// for memcpy
+
 class MemoryBuffer
 {
 public:
