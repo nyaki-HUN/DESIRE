@@ -101,10 +101,10 @@ TEST_CASE("Matrix4", "[Core][math]")
 			float matVec[4];
 			mat.GetCol(i).StoreXYZW(matVec);
 
-			CHECK_FLOATS(matVec[0], matResult[i][0]);
-			CHECK_FLOATS(matVec[1], matResult[i][1]);
-			CHECK_FLOATS(matVec[2], matResult[i][2]);
-			CHECK_FLOATS(matVec[3], matResult[i][3]);
+			CHECK(matVec[0] == Approx(matResult[i][0]));
+			CHECK(matVec[1] == Approx(matResult[i][1]));
+			CHECK(matVec[2] == Approx(matResult[i][2]));
+			CHECK(matVec[3] == Approx(matResult[i][3]));
 		}
 	}
 
@@ -126,7 +126,7 @@ TEST_CASE("Matrix4", "[Core][math]")
 		const float dw = mat.col1.GetW() * tmp2 + mat.col1.GetZ() * tmp4 - mat.col1.GetY() * tmp0;
 		const float det = mat.col0.GetX() * dx + mat.col1.GetX() * dy + mat.col2.GetX() * dz + mat.col3.GetX() * dw;
 
-		CHECK_FLOATS(mat.CalculateDeterminant(), det);
+		CHECK(mat.CalculateDeterminant() == Approx(det));
 	}
 
 //	SECTION("CreateRotationX()")

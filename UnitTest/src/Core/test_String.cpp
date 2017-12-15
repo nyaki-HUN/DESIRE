@@ -248,13 +248,13 @@ TEST_CASE("String", "[Core]")
 		String floatInString = "  123.45  ";
 		CHECK(floatInString.FloatValue() == FLT_MAX);
 		floatInString.Trim();
-		CHECK_FLOATS(floatInString.FloatValue(), 123.45f);
+		CHECK(floatInString.FloatValue() == Approx(123.45f));
 		floatInString = "123";
-		CHECK_FLOATS(floatInString.FloatValue(), 123.0f);
+		CHECK(floatInString.FloatValue() == Approx(123.0f));
 		floatInString = "000.1200";
-		CHECK_FLOATS(floatInString.FloatValue(), 0.12f);
+		CHECK(floatInString.FloatValue() == Approx(0.12f));
 		floatInString = ".5";
-		CHECK_FLOATS(floatInString.FloatValue(), 0.5f);
+		CHECK(floatInString.FloatValue() == Approx(0.5f));
 		floatInString = "123.0asd";
 		CHECK(floatInString.FloatValue() == FLT_MAX);
 		floatInString = "asd123.0";

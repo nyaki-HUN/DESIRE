@@ -150,14 +150,14 @@ TEST_CASE("Object", "[Component]")
 		CHECK((child1->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) == 0);
 
 		Vector3 worldPos = rootObj->GetTransform().GetPosition();
-		CHECK_FLOATS(worldPos.GetX(), 1.0f);
-		CHECK_FLOATS(worldPos.GetY(), 1.0f);
-		CHECK_FLOATS(worldPos.GetZ(), 1.0f);
+		CHECK(worldPos.GetX() == Approx(1.0f));
+		CHECK(worldPos.GetY() == Approx(1.0f));
+		CHECK(worldPos.GetZ() == Approx(1.0f));
 
 		worldPos = child1->GetTransform().GetPosition();
-		CHECK_FLOATS(worldPos.GetX(), 3.0f);
-		CHECK_FLOATS(worldPos.GetY(), 3.0f);
-		CHECK_FLOATS(worldPos.GetZ(), 3.0f);
+		CHECK(worldPos.GetX() == Approx(3.0f));
+		CHECK(worldPos.GetY() == Approx(3.0f));
+		CHECK(worldPos.GetZ() == Approx(3.0f));
 	}
 
 	const size_t traversedCount = SceneGraphTraversal::Traverse(rootObj, [](Object *node)

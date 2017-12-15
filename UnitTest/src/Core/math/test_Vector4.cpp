@@ -15,10 +15,10 @@ TEST_CASE("Vector4", "[Core][math]")
 
 		vec0.LoadXYZW(floatVec);
 
-		CHECK_FLOATS(vec0.GetX(), floatVec[0]);
-		CHECK_FLOATS(vec0.GetY(), floatVec[1]);
-		CHECK_FLOATS(vec0.GetZ(), floatVec[2]);
-		CHECK_FLOATS(vec0.GetW(), floatVec[3]);
+		CHECK(vec0.GetX() == Approx(floatVec[0]));
+		CHECK(vec0.GetY() == Approx(floatVec[1]));
+		CHECK(vec0.GetZ() == Approx(floatVec[2]));
+		CHECK(vec0.GetW() == Approx(floatVec[3]));
 	}
 
 	SECTION("StoreXYZW()")
@@ -26,20 +26,20 @@ TEST_CASE("Vector4", "[Core][math]")
 		float result[4] = {};
 		vec0.StoreXYZW(result);
 
-		CHECK_FLOATS(vec0.GetX(), result[0]);
-		CHECK_FLOATS(vec0.GetY(), result[1]);
-		CHECK_FLOATS(vec0.GetZ(), result[2]);
-		CHECK_FLOATS(vec0.GetW(), result[3]);
+		CHECK(vec0.GetX() == Approx(result[0]));
+		CHECK(vec0.GetY() == Approx(result[1]));
+		CHECK(vec0.GetZ() == Approx(result[2]));
+		CHECK(vec0.GetW() == Approx(result[3]));
 	}
 
 	SECTION("SetXYZ()")
 	{
 		vec0.SetXYZ(vec1.GetXYZ());
 
-		CHECK_FLOATS(vec0.GetX(), vec1.GetX());
-		CHECK_FLOATS(vec0.GetY(), vec1.GetY());
-		CHECK_FLOATS(vec0.GetZ(), vec1.GetZ());
-		CHECK_FLOATS(vec0.GetW(), 1.0f);
+		CHECK(vec0.GetX() == Approx(vec1.GetX()));
+		CHECK(vec0.GetY() == Approx(vec1.GetY()));
+		CHECK(vec0.GetZ() == Approx(vec1.GetZ()));
+		CHECK(vec0.GetW() == Approx(1.0f));
 	}
 
 	SECTION("Set element & Get element")
@@ -49,50 +49,50 @@ TEST_CASE("Vector4", "[Core][math]")
 		vec0.SetZ(123.0f);
 		vec0.SetW(123.0f);
 
-		CHECK_FLOATS(vec0.GetX(), 123.0f);
-		CHECK_FLOATS(vec0.GetY(), 123.0f);
-		CHECK_FLOATS(vec0.GetZ(), 123.0f);
-		CHECK_FLOATS(vec0.GetW(), 123.0f);
+		CHECK(vec0.GetX() == Approx(123.0f));
+		CHECK(vec0.GetY() == Approx(123.0f));
+		CHECK(vec0.GetZ() == Approx(123.0f));
+		CHECK(vec0.GetW() == Approx(123.0f));
 	}
 
 	SECTION("operator -()")
 	{
 		const Vector4 result = -vec0;
 
-		CHECK_FLOATS(result.GetX(), -vec0.GetX());
-		CHECK_FLOATS(result.GetY(), -vec0.GetY());
-		CHECK_FLOATS(result.GetZ(), -vec0.GetZ());
-		CHECK_FLOATS(result.GetW(), -vec0.GetW());
+		CHECK(result.GetX() == Approx(-vec0.GetX()));
+		CHECK(result.GetY() == Approx(-vec0.GetY()));
+		CHECK(result.GetZ() == Approx(-vec0.GetZ()));
+		CHECK(result.GetW() == Approx(-vec0.GetW()));
 	}
 
 	SECTION("operator +")
 	{
 		const Vector4 result = vec0 + vec1;
 
-		CHECK_FLOATS(result.GetX(), vec0.GetX() + vec1.GetX());
-		CHECK_FLOATS(result.GetY(), vec0.GetY() + vec1.GetY());
-		CHECK_FLOATS(result.GetZ(), vec0.GetZ() + vec1.GetZ());
-		CHECK_FLOATS(result.GetW(), vec0.GetW() + vec1.GetW());
+		CHECK(result.GetX() == Approx(vec0.GetX() + vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() + vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() + vec1.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW() + vec1.GetW()));
 	}
 
 	SECTION("operator -")
 	{
 		const Vector4 result = vec0 - vec1;
 
-		CHECK_FLOATS(result.GetX(), vec0.GetX() - vec1.GetX());
-		CHECK_FLOATS(result.GetY(), vec0.GetY() - vec1.GetY());
-		CHECK_FLOATS(result.GetZ(), vec0.GetZ() - vec1.GetZ());
-		CHECK_FLOATS(result.GetW(), vec0.GetW() - vec1.GetW());
+		CHECK(result.GetX() == Approx(vec0.GetX() - vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() - vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() - vec1.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW() - vec1.GetW()));
 	}
 
 	SECTION("operator *(float)")
 	{
 		const Vector4 result = vec0 * 123.0f;
 
-		CHECK_FLOATS(result.GetX(), vec0.GetX() * 123.0f);
-		CHECK_FLOATS(result.GetY(), vec0.GetY() * 123.0f);
-		CHECK_FLOATS(result.GetZ(), vec0.GetZ() * 123.0f);
-		CHECK_FLOATS(result.GetW(), vec0.GetW() * 123.0f);
+		CHECK(result.GetX() == Approx(vec0.GetX() * 123.0f));
+		CHECK(result.GetY() == Approx(vec0.GetY() * 123.0f));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() * 123.0f));
+		CHECK(result.GetW() == Approx(vec0.GetW() * 123.0f));
 	}
 
 	SECTION("GetMaxElem()")
@@ -102,7 +102,7 @@ TEST_CASE("Vector4", "[Core][math]")
 		result = (vec0.GetZ() > result) ? vec0.GetZ() : result;
 		result = (vec0.GetW() > result) ? vec0.GetW() : result;
 
-		CHECK_FLOATS(vec0.GetMaxElem(), result);
+		CHECK(vec0.GetMaxElem() == Approx(result));
 	}
 
 	SECTION("GetMinElem()")
@@ -112,22 +112,22 @@ TEST_CASE("Vector4", "[Core][math]")
 		result = (vec0.GetZ() < result) ? vec0.GetZ() : result;
 		result = (vec0.GetW() < result) ? vec0.GetW() : result;
 
-		CHECK_FLOATS(vec0.GetMinElem(), result);
+		CHECK(vec0.GetMinElem() == Approx(result));
 	}
 
 	SECTION("Dot()")
 	{
-		CHECK_FLOATS(vec0.Dot(vec1), (vec0.GetX() * vec1.GetX() + vec0.GetY() * vec1.GetY() + vec0.GetZ() * vec1.GetZ() + vec0.GetW() * vec1.GetW()));
+		CHECK(vec0.Dot(vec1) == Approx(vec0.GetX() * vec1.GetX() + vec0.GetY() * vec1.GetY() + vec0.GetZ() * vec1.GetZ() + vec0.GetW() * vec1.GetW()));
 	}
 
 	SECTION("LengthSqr()")
 	{
-		CHECK_FLOATS(vec0.LengthSqr(), vec0.Dot(vec0));
+		CHECK(vec0.LengthSqr() == Approx(vec0.Dot(vec0)));
 	}
 
 	SECTION("Length()")
 	{
-		CHECK_FLOATS(vec0.Length(), std::sqrtf(vec0.LengthSqr()));
+		CHECK(vec0.Length() == Approx(std::sqrtf(vec0.LengthSqr())));
 	}
 
 	SECTION("Normalize()")
@@ -136,59 +136,59 @@ TEST_CASE("Vector4", "[Core][math]")
 		result.Normalize();
 
 		const float length = vec0.Length();
-		CHECK_FLOATS(result.GetX(), vec0.GetX() / length);
-		CHECK_FLOATS(result.GetY(), vec0.GetY() / length);
-		CHECK_FLOATS(result.GetZ(), vec0.GetZ() / length);
-		CHECK_FLOATS(result.GetW(), vec0.GetW() / length);
+		CHECK(result.GetX() == Approx(vec0.GetX() / length));
+		CHECK(result.GetY() == Approx(vec0.GetY() / length));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() / length));
+		CHECK(result.GetW() == Approx(vec0.GetW() / length));
 	}
 
 	SECTION("MulPerElem()")
 	{
 		const Vector4 result = vec0.MulPerElem(vec1);
 
-		CHECK_FLOATS(result.GetX(), vec0.GetX() * vec1.GetX());
-		CHECK_FLOATS(result.GetY(), vec0.GetY() * vec1.GetY());
-		CHECK_FLOATS(result.GetZ(), vec0.GetZ() * vec1.GetZ());
-		CHECK_FLOATS(result.GetW(), vec0.GetW() * vec1.GetW());
+		CHECK(result.GetX() == Approx(vec0.GetX() * vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() * vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() * vec1.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW() * vec1.GetW()));
 	}
 
 	SECTION("DivPerElem()")
 	{
 		const Vector4 result = vec0.DivPerElem(vec1);
 
-		CHECK_FLOATS(result.GetX(), vec0.GetX() / vec1.GetX());
-		CHECK_FLOATS(result.GetY(), vec0.GetY() / vec1.GetY());
-		CHECK_FLOATS(result.GetZ(), vec0.GetZ() / vec1.GetZ());
-		CHECK_FLOATS(result.GetW(), vec0.GetW() / vec1.GetW());
+		CHECK(result.GetX() == Approx(vec0.GetX() / vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() / vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() / vec1.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW() / vec1.GetW()));
 	}
 
 	SECTION("AbsPerElem()")
 	{
 		const Vector4 result = vec0.AbsPerElem();
 
-		CHECK_FLOATS(result.GetX(), std::fabsf(vec0.GetX()));
-		CHECK_FLOATS(result.GetY(), std::fabsf(vec0.GetY()));
-		CHECK_FLOATS(result.GetZ(), std::fabsf(vec0.GetZ()));
-		CHECK_FLOATS(result.GetW(), std::fabsf(vec0.GetW()));
+		CHECK(result.GetX() == Approx(std::fabsf(vec0.GetX())));
+		CHECK(result.GetY() == Approx(std::fabsf(vec0.GetY())));
+		CHECK(result.GetZ() == Approx(std::fabsf(vec0.GetZ())));
+		CHECK(result.GetW() == Approx(std::fabsf(vec0.GetW())));
 	}
 
 	SECTION("MaxPerElem()")
 	{
 		const Vector4 result = Vector4::MaxPerElem(vec0, vec1);
 
-		CHECK_FLOATS(result.GetX(), std::max(vec0.GetX(), vec1.GetX()));
-		CHECK_FLOATS(result.GetY(), std::max(vec0.GetY(), vec1.GetY()));
-		CHECK_FLOATS(result.GetZ(), std::max(vec0.GetZ(), vec1.GetZ()));
-		CHECK_FLOATS(result.GetW(), std::max(vec0.GetW(), vec1.GetW()));
+		CHECK(result.GetX() == Approx(std::max(vec0.GetX(), vec1.GetX())));
+		CHECK(result.GetY() == Approx(std::max(vec0.GetY(), vec1.GetY())));
+		CHECK(result.GetZ() == Approx(std::max(vec0.GetZ(), vec1.GetZ())));
+		CHECK(result.GetW() == Approx(std::max(vec0.GetW(), vec1.GetW())));
 	}
 
 	SECTION("MinPerElem()")
 	{
 		const Vector4 result = Vector4::MinPerElem(vec0, vec1);
 
-		CHECK_FLOATS(result.GetX(), std::min(vec0.GetX(), vec1.GetX()));
-		CHECK_FLOATS(result.GetY(), std::min(vec0.GetY(), vec1.GetY()));
-		CHECK_FLOATS(result.GetZ(), std::min(vec0.GetZ(), vec1.GetZ()));
-		CHECK_FLOATS(result.GetW(), std::min(vec0.GetW(), vec1.GetW()));
+		CHECK(result.GetX() == Approx(std::min(vec0.GetX(), vec1.GetX())));
+		CHECK(result.GetY() == Approx(std::min(vec0.GetY(), vec1.GetY())));
+		CHECK(result.GetZ() == Approx(std::min(vec0.GetZ(), vec1.GetZ())));
+		CHECK(result.GetW() == Approx(std::min(vec0.GetW(), vec1.GetW())));
 	}
 }

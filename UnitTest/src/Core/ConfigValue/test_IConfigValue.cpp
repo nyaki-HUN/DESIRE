@@ -28,7 +28,7 @@ TEST_CASE("IConfigValue", "[Core]")
 		intVal = 10;
 		CHECK(intVal == 10);
 		floatVal = 5.0f;
-		CHECK_FLOATS(floatVal, 5.0f);
+		CHECK(floatVal == Approx(5.0f));
 
 		// Clamp to [min, max] range
 		intVal = -100;
@@ -38,6 +38,6 @@ TEST_CASE("IConfigValue", "[Core]")
 		intVal = INT32_MAX;
 		CHECK(intVal == 100);
 		floatVal = 100.0f;
-		CHECK_FLOATS(floatVal, 10.0f);
+		CHECK(floatVal == Approx(10.0f));
 	}
 }

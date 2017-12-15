@@ -39,5 +39,3 @@ extern size_t globalMemoryDeallocationCount;
 		const size_t numAllocEnd = globalMemoryAllocationCount;	\
 		CHECK((NUM_ALLOC_BEGIN) == numAllocEnd);				\
 	}
-
-#define CHECK_FLOATS(NUM1, NUM2)			CHECK(std::fabsf((NUM1) - (NUM2)) < FLT_EPSILON)

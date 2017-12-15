@@ -15,9 +15,9 @@ TEST_CASE("Vector3", "[Core][math]")
 
 		vec0.LoadXYZ(floatVec);
 
-		CHECK_FLOATS(vec0.GetX(), floatVec[0]);
-		CHECK_FLOATS(vec0.GetY(), floatVec[1]);
-		CHECK_FLOATS(vec0.GetZ(), floatVec[2]);
+		CHECK(vec0.GetX() == Approx(floatVec[0]));
+		CHECK(vec0.GetY() == Approx(floatVec[1]));
+		CHECK(vec0.GetZ() == Approx(floatVec[2]));
 	}
 
 	SECTION("StoreXYZ()")
@@ -25,9 +25,9 @@ TEST_CASE("Vector3", "[Core][math]")
 		float result[3] = {};
 		vec0.StoreXYZ(result);
 
-		CHECK_FLOATS(vec0.GetX(), result[0]);
-		CHECK_FLOATS(vec0.GetY(), result[1]);
-		CHECK_FLOATS(vec0.GetZ(), result[2]);
+		CHECK(vec0.GetX() == Approx(result[0]));
+		CHECK(vec0.GetY() == Approx(result[1]));
+		CHECK(vec0.GetZ() == Approx(result[2]));
 	}
 
 	SECTION("operator >=")
@@ -70,7 +70,7 @@ TEST_CASE("Vector3", "[Core][math]")
 		result = (vec0.GetX() > vec0.GetY()) ? vec0.GetX() : vec0.GetY();
 		result = (vec0.GetZ() > result) ? vec0.GetZ() : result;
 
-		CHECK_FLOATS(vec0.GetMaxElem(), result);
+		CHECK(vec0.GetMaxElem() == Approx(result));
 	}
 
 	SECTION("GetMinElem()")
@@ -79,31 +79,31 @@ TEST_CASE("Vector3", "[Core][math]")
 		result = (vec0.GetX() < vec0.GetY()) ? vec0.GetX() : vec0.GetY();
 		result = (vec0.GetZ() < result) ? vec0.GetZ() : result;
 
-		CHECK_FLOATS(vec0.GetMinElem(), result);
+		CHECK(vec0.GetMinElem() == Approx(result));
 	}
 
 	SECTION("Dot()")
 	{
-		CHECK_FLOATS(vec0.Dot(vec1), (vec0.GetX() * vec1.GetX() + vec0.GetY() * vec1.GetY() + vec0.GetZ() * vec1.GetZ()));
+		CHECK(vec0.Dot(vec1) == Approx(vec0.GetX() * vec1.GetX() + vec0.GetY() * vec1.GetY() + vec0.GetZ() * vec1.GetZ()));
 	}
 
 	SECTION("Cross()")
 	{
 		Vector3 result = vec0.Cross(vec1);
 
-		CHECK_FLOATS(result.GetX(), (vec0.GetY() * vec1.GetZ() - vec0.GetZ() * vec1.GetY()));
-		CHECK_FLOATS(result.GetY(), (vec0.GetZ() * vec1.GetX() - vec0.GetX() * vec1.GetZ()));
-		CHECK_FLOATS(result.GetZ(), (vec0.GetX() * vec1.GetY() - vec0.GetY() * vec1.GetX()));
+		CHECK(result.GetX() == Approx(vec0.GetY() * vec1.GetZ() - vec0.GetZ() * vec1.GetY()));
+		CHECK(result.GetY() == Approx(vec0.GetZ() * vec1.GetX() - vec0.GetX() * vec1.GetZ()));
+		CHECK(result.GetZ() == Approx(vec0.GetX() * vec1.GetY() - vec0.GetY() * vec1.GetX()));
 	}
 
 	SECTION("LengthSqr()")
 	{
-		CHECK_FLOATS(vec0.LengthSqr(), vec0.Dot(vec0));
+		CHECK(vec0.LengthSqr() == Approx(vec0.Dot(vec0)));
 	}
 
 	SECTION("Length()")
 	{
-		CHECK_FLOATS(vec0.Length(), std::sqrtf(vec0.LengthSqr()));
+		CHECK(vec0.Length() == Approx(std::sqrtf(vec0.LengthSqr())));
 	}
 
 	SECTION("Normalize()")
@@ -112,8 +112,8 @@ TEST_CASE("Vector3", "[Core][math]")
 		result.Normalize();
 
 		const float length = vec0.Length();
-		CHECK_FLOATS(result.GetX(), vec0.GetX() / length);
-		CHECK_FLOATS(result.GetY(), vec0.GetY() / length);
-		CHECK_FLOATS(result.GetZ(), vec0.GetZ() / length);
+		CHECK(result.GetX() == Approx(vec0.GetX() / length));
+		CHECK(result.GetY() == Approx(vec0.GetY() / length));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() / length));
 	}
 }
