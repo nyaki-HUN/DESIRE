@@ -237,7 +237,6 @@
     <ClInclude Include="..\..\src\Network\NetworkFileSource.h" />
     <ClInclude Include="..\..\src\Physics\Collision.h" />
     <ClInclude Include="..\..\src\Physics\IPhysics.h" />
-    <ClInclude Include="..\..\src\Physics\PhysX\PhysXPhysics.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\DebugDraw.h" />
     <ClInclude Include="..\..\src\Render\Direct3D11\DirectXMathExt.h" />
@@ -327,7 +326,6 @@
     <ClCompile Include="..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp" />
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp" />
-    <ClCompile Include="..\..\src\Physics\PhysX\PhysXPhysics.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp" />
     <ClCompile Include="..\..\src\Render\Direct3D11\RenderD3D11.cpp" />

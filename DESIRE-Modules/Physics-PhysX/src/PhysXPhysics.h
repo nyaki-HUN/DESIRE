@@ -2,7 +2,7 @@
 
 #include "Physics/IPhysics.h"
 
-#include "Physics-PhysX/include/PxPhysicsAPI.h"
+#include "../Externals/PhysX/include/PxPhysicsAPI.h"
 
 class PhysXPhysics : public IPhysics
 {

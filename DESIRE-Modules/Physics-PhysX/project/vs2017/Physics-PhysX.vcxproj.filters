@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GeomUtils">
+      <UniqueIdentifier>{BE0E9FDB-2A79-5352-73B7-04F8DF6031A7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="characterkinematic">
+      <UniqueIdentifier>{07D15FCB-F3B4-2021-5C15-1B7448180BA3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cloth">
+      <UniqueIdentifier>{7F9A3B0F-EBAE-63C0-B430-0720200460F1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="collision">
+      <UniqueIdentifier>{D13AF3EB-3DA5-A762-86E3-5808F28C85B7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{AEFEE3F6-9AA0-0ECD-835B-22216F9C951D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\windows">
+      <UniqueIdentifier>{080FECF3-F4DC-DFF9-DD70-5020C9DDBB5E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cooking">
+      <UniqueIdentifier>{8FD386D3-FBB2-056F-04CB-904570296CD0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cudamanager">
+      <UniqueIdentifier>{BDC0730D-2976-EC02-B26A-E6D91E1FE306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="extensions">
+      <UniqueIdentifier>{9579B0DD-8131-F22A-EA38-CB86D60F8D1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="filebuf">
+      <UniqueIdentifier>{62E53CAC-CEC4-BB47-D7DC-461E433B22A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="foundation">
+      <UniqueIdentifier>{BCA8D551-A860-179F-1168-F0FAFD3EB28F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="foundation\unix">
+      <UniqueIdentifier>{2F08BD5B-9B93-2A20-A4A4-AD1410AF8620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="foundation\windows">
+      <UniqueIdentifier>{16E7B5B1-02CB-7607-6B2B-715A572E6189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="geometry">
+      <UniqueIdentifier>{5154C4F3-3D21-1FFF-663A-0DA75266548D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gpu">
+      <UniqueIdentifier>{F177880B-5D81-887C-E6FC-9E7C5205947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="particles">
+      <UniqueIdentifier>{8C4A29CB-F8B4-DD41-41F3-8EE7AD9CBB96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pvd">
+      <UniqueIdentifier>{EF9E880B-5BA8-887C-E423-9F7C502C947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pvd\windows">
+      <UniqueIdentifier>{4960C9C6-B515-42BC-3E0A-3C93AABE38C0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="solver">
+      <UniqueIdentifier>{6021361C-4CC3-60F2-357E-744621BFE742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="task">
+      <UniqueIdentifier>{58579E7C-448E-9F0D-ED7A-8510D9901B0F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vehicle">
+      <UniqueIdentifier>{85E14572-F1C0-C40D-FAD8-4FE466372B6F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\GeomUtils\GuContactBuffer.h">
+      <Filter>GeomUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\GeomUtils\GuContactPoint.h">
+      <Filter>GeomUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\PxActor.h" />
+    <ClInclude Include="..\..\include\PxAggregate.h" />
+    <ClInclude Include="..\..\include\PxArticulation.h" />
+    <ClInclude Include="..\..\include\PxArticulationJoint.h" />
+    <ClInclude Include="..\..\include\PxArticulationLink.h" />
+    <ClInclude Include="..\..\include\PxBatchQuery.h" />
+    <ClInclude Include="..\..\include\PxBatchQueryDesc.h" />
+    <ClInclude Include="..\..\include\PxBroadPhase.h" />
+    <ClInclude Include="..\..\include\PxClient.h" />
+    <ClInclude Include="..\..\include\PxConstraint.h" />
+    <ClInclude Include="..\..\include\PxConstraintDesc.h" />
+    <ClInclude Include="..\..\include\PxContact.h" />
+    <ClInclude Include="..\..\include\PxContactModifyCallback.h" />
+    <ClInclude Include="..\..\include\PxDeletionListener.h" />
+    <ClInclude Include="..\..\include\PxFiltering.h" />
+    <ClInclude Include="..\..\include\PxForceMode.h" />
+    <ClInclude Include="..\..\include\PxImmediateMode.h" />
+    <ClInclude Include="..\..\include\PxLockedData.h" />
+    <ClInclude Include="..\..\include\PxMaterial.h" />
+    <ClInclude Include="..\..\include\PxPhysXConfig.h" />
+    <ClInclude Include="..\..\include\PxPhysics.h" />
+    <ClInclude Include="..\..\include\PxPhysicsAPI.h" />
+    <ClInclude Include="..\..\include\PxPhysicsSerialization.h" />
+    <ClInclude Include="..\..\include\PxPhysicsVersion.h" />
+    <ClInclude Include="..\..\include\PxPruningStructure.h" />
+    <ClInclude Include="..\..\include\PxQueryFiltering.h" />
+    <ClInclude Include="..\..\include\PxQueryReport.h" />
+    <ClInclude Include="..\..\include\PxRigidActor.h" />
+    <ClInclude Include="..\..\include\PxRigidBody.h" />
+    <ClInclude Include="..\..\include\PxRigidDynamic.h" />
+    <ClInclude Include="..\..\include\PxRigidStatic.h" />
+    <ClInclude Include="..\..\include\PxScene.h" />
+    <ClInclude Include="..\..\include\PxSceneDesc.h" />
+    <ClInclude Include="..\..\include\PxSceneLock.h" />
+    <ClInclude Include="..\..\include\PxShape.h" />
+    <ClInclude Include="..\..\include\PxSimulationEventCallback.h" />
+    <ClInclude Include="..\..\include\PxSimulationStatistics.h" />
+    <ClInclude Include="..\..\include\PxSpatialIndex.h" />
+    <ClInclude Include="..\..\include\PxVisualizationParameter.h" />
+    <ClInclude Include="..\..\include\PxVolumeCache.h" />
+    <ClInclude Include="..\..\include\characterkinematic\PxBoxController.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\characterkinematic\PxCapsuleController.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\characterkinematic\PxCharacter.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\characterkinematic\PxController.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\characterkinematic\PxControllerBehavior.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\characterkinematic\PxControllerManager.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\characterkinematic\PxControllerObstacles.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\characterkinematic\PxExtended.h">
+      <Filter>characterkinematic</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cloth\PxCloth.h">
+      <Filter>cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cloth\PxClothCollisionData.h">
+      <Filter>cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cloth\PxClothFabric.h">
+      <Filter>cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cloth\PxClothParticleData.h">
+      <Filter>cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cloth\PxClothTypes.h">
+      <Filter>cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\collision\PxCollisionDefs.h">
+      <Filter>collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxBase.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxCollection.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxCoreUtilityTypes.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxMetaData.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxMetaDataFlags.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxPhysXCommonConfig.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxPhysicsInsertionCallback.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxRenderBuffer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxSerialFramework.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxSerializer.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxStringTable.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxTolerancesScale.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\PxTypeInfo.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\common\windows\PxWindowsDelayLoadHook.h">
+      <Filter>common\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cooking\PxBVH33MidphaseDesc.h">
+      <Filter>cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cooking\PxBVH34MidphaseDesc.h">
+      <Filter>cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cooking\PxConvexMeshDesc.h">
+      <Filter>cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cooking\PxCooking.h">
+      <Filter>cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cooking\PxMidphaseDesc.h">
+      <Filter>cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cooking\PxTriangleMeshDesc.h">
+      <Filter>cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cooking\Pxc.h">
+      <Filter>cooking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cudamanager\PxCudaContextManager.h">
+      <Filter>cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cudamanager\PxCudaMemoryManager.h">
+      <Filter>cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cudamanager\PxGpuCopyDesc.h">
+      <Filter>cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\cudamanager\PxGpuCopyDescQueue.h">
+      <Filter>cudamanager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxBinaryConverter.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxBroadPhaseExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxClothFabricCooker.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxClothMeshDesc.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxClothMeshQuadifier.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxClothTetherCooker.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxCollectionExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxConstraintExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxConvexMeshExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxD6Joint.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxDefaultAllocator.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxDefaultCpuDispatcher.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxDefaultErrorCallback.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxDefaultSimulationFilterShader.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxDefaultStreams.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxDistanceJoint.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxExtensionsAPI.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxFixedJoint.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxJoint.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxJointLimit.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxMassProperties.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxParticleExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxPrismaticJoint.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxRaycastCCD.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxRepXSerializer.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxRepXSimpleType.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxRevoluteJoint.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxRigidActorExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxRigidBodyExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxSceneQueryExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxSerialization.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxShapeExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxSimpleFactory.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxSmoothNormals.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxSphericalJoint.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxStringTableExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\extensions\PxTriangleMeshExt.h">
+      <Filter>extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\filebuf\PxFileBuf.h">
+      <Filter>filebuf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\Px.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxAllocatorCallback.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxAssert.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxBitAndData.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxBounds3.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxErrorCallback.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxErrors.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxFlags.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxFoundation.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxFoundationVersion.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxIO.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxIntrinsics.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxMat33.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxMat44.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxMath.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxMathUtils.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxMemory.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxPlane.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxPreprocessor.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxProfiler.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxQuat.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxSimpleTypes.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxStrideIterator.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxTransform.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxUnionCast.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxVec2.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxVec3.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\PxVec4.h">
+      <Filter>foundation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\unix\PxUnixIntrinsics.h">
+      <Filter>foundation\unix</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\windows\PxWindowsFoundationDelayLoadHook.h">
+      <Filter>foundation\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\foundation\windows\PxWindowsIntrinsics.h">
+      <Filter>foundation\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxBoxGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxCapsuleGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxConvexMesh.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxConvexMeshGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxGeometryHelpers.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxGeometryQuery.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxHeightField.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxHeightFieldDesc.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxHeightFieldFlag.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxHeightFieldGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxHeightFieldSample.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxMeshQuery.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxMeshScale.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxPlaneGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxSimpleTriangleMesh.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxSphereGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxTriangle.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxTriangleMesh.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\geometry\PxTriangleMeshGeometry.h">
+      <Filter>geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\gpu\PxGpu.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\gpu\PxParticleGpu.h">
+      <Filter>gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleBase.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleBaseFlag.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleCreationData.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleFlag.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleFluid.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleFluidReadData.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleReadData.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\particles\PxParticleSystem.h">
+      <Filter>particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pvd\PxPvd.h">
+      <Filter>pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pvd\PxPvdSceneClient.h">
+      <Filter>pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pvd\PxPvdTransport.h">
+      <Filter>pvd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\pvd\windows\PxWindowsPvdDelayLoadHook.h">
+      <Filter>pvd\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\solver\PxSolverDefs.h">
+      <Filter>solver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\task\PxCpuDispatcher.h">
+      <Filter>task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\task\PxGpuDispatcher.h">
+      <Filter>task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\task\PxGpuTask.h">
+      <Filter>task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\task\PxTask.h">
+      <Filter>task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\task\PxTaskDefine.h">
+      <Filter>task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\task\PxTaskManager.h">
+      <Filter>task</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleComponents.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleDrive.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleDrive4W.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleDriveNW.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleDriveTank.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleNoDrive.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleSDK.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleShaders.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleTireFriction.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleUpdate.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleUtil.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleUtilControl.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleUtilSetup.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleUtilTelemetry.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\vehicle\PxVehicleWheels.h">
+      <Filter>vehicle</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

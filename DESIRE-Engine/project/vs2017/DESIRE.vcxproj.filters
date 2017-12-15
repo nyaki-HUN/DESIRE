@@ -73,9 +73,6 @@
     <Filter Include="src\Physics">
       <UniqueIdentifier>{9F8B9316-0B41-0C0C-9435-06E300EA0210}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Physics\PhysX">
-      <UniqueIdentifier>{0ABEC09A-76D4-BE30-BF4B-4A522BA18FB8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Render">
       <UniqueIdentifier>{FC94E62B-E84C-2879-5154-01D53D2BC369}</UniqueIdentifier>
     </Filter>
@@ -543,9 +540,6 @@
     <ClInclude Include="..\..\src\Physics\IPhysics.h">
       <Filter>src\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Physics\PhysX\PhysXPhysics.h">
-      <Filter>src\Physics\PhysX</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Render\Camera.h">
       <Filter>src\Render</Filter>
     </ClInclude>
@@ -808,9 +802,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp">
       <Filter>src\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Physics\PhysX\PhysXPhysics.cpp">
-      <Filter>src\Physics\PhysX</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\Camera.cpp">
       <Filter>src\Render</Filter>

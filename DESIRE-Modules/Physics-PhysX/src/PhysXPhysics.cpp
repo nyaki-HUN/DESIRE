@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Physics/PhysX/PhysXPhysics.h"
+#include "PhysXPhysics.h"
 
 #if defined(DESIRE_DEBUG)
 	#pragma comment(lib, "PhysX3DEBUG_x64.lib")
