@@ -4,7 +4,10 @@ project "SandBox"
 	kind "WindowedApp"
 	targetdir("../")
 
-	flags { "WinMain" }
+	flags
+	{
+		"WinMain"
+	}
 
 	includedirs
 	{

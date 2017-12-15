@@ -7,16 +7,16 @@ DESIRE_APP_CLASS(SandBox)
 // --------------------------------------------------------------------------------------------------------------------
 //	Physics
 // --------------------------------------------------------------------------------------------------------------------
-#include "Physics/Bullet/BulletPhysics.h"
-#include "Physics/PhysX/PhysXPhysics.h"
+#include "Physics-Bullet/src/BulletPhysics.h"
+//#include "Physics-PhysX/src/PhysXPhysics.h"
 DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, BulletPhysics)
 //DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, PhysXPhysics)
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Render
 // --------------------------------------------------------------------------------------------------------------------
-#include "Render/bgfx/RenderBgfx.h"
-//#include "Render/Direct3D11/RenderD3D11.h"
+#include "Render-bgfx/src/RenderBgfx.h"
+//#include "Render-Direct3D11/src/RenderD3D11.h"
 DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, RenderBgfx)
 //DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, RenderD3D11)
 
@@ -25,7 +25,7 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, RenderBgfx)
 // --------------------------------------------------------------------------------------------------------------------
 #include "Resource/ResourceManager.h"
 
-#include "Resource/MeshLoader/AssimpLoader.h"
+#include "ResourceLoader-Assimp/src/AssimpLoader.h"
 const std::vector<ResourceManager::MeshLoaderFunc_t> ResourceManager::meshLoaders =
 {
 	&AssimpLoader::Load,
@@ -48,9 +48,9 @@ const std::vector<ResourceManager::TextureLoaderFunc_t> ResourceManager::texture
 // --------------------------------------------------------------------------------------------------------------------
 //	Script System
 // --------------------------------------------------------------------------------------------------------------------
-#include "Script/AngelScript/AngelScriptSystem.h"
-#include "Script/Lua/LuaScriptSystem.h"
-#include "Script/Squirrel/SquirrelScriptSystem.h"
+#include "Script-AngelScript/src/AngelScriptSystem.h"
+#include "Script-Lua/src/LuaScriptSystem.h"
+#include "Script-Squirrel/src/SquirrelScriptSystem.h"
 //DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, AngelScriptSystem)
 //DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, LuaScriptSystem)
 DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, SquirrelScriptSystem)
@@ -58,5 +58,5 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, SquirrelScriptSystem)
 // --------------------------------------------------------------------------------------------------------------------
 //	Sound
 // --------------------------------------------------------------------------------------------------------------------
-#include "Sound/OpenAL/OpenALSound.h"
-DESIRE_DEFINE_SINGLETON_INSTANCE(ISound, OpenALSound)
+#include "Sound/ISound.h"
+DESIRE_DEFINE_EMPTY_SINGLETON_INSTANCE(ISound)
