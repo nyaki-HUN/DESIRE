@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9E4F710B-37CB-4F12-ABB8-6A09B0538C17}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Script-Lua</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\lib\vs2017\</OutDir>
+    <IntDir>obj\Debug\</IntDir>
+    <TargetName>Script-Lua_d</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\..\lib\vs2017\</OutDir>
+    <IntDir>obj\Release\</IntDir>
+    <TargetName>Script-Lua</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\lua\src;..\..\Externals\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Gw /Zc:rvalueCast /Zc:inline %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\lua\src;..\..\Externals\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ExceptionHandling>false</ExceptionHandling>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Gw /Zc:rvalueCast /Zc:strictStrings %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\LuaBridge.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\CFunctions.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\ClassInfo.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Constructor.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\FuncTraits.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Iterator.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaException.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaHelpers.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaRef.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Namespace.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Stack.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeList.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeTraits.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Userdata.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lapi.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lauxlib.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lcode.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lctype.h" />
+    <ClInclude Include="..\..\Externals\lua\src\ldebug.h" />
+    <ClInclude Include="..\..\Externals\lua\src\ldo.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lfunc.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lgc.h" />
+    <ClInclude Include="..\..\Externals\lua\src\llex.h" />
+    <ClInclude Include="..\..\Externals\lua\src\llimits.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lmem.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lobject.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lopcodes.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lparser.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lprefix.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lstate.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lstring.h" />
+    <ClInclude Include="..\..\Externals\lua\src\ltable.h" />
+    <ClInclude Include="..\..\Externals\lua\src\ltm.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lua.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lua.hpp" />
+    <ClInclude Include="..\..\Externals\lua\src\luaconf.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lualib.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lundump.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lvm.h" />
+    <ClInclude Include="..\..\Externals\lua\src\lzio.h" />
+    <ClInclude Include="..\..\src\API\LuaScriptAPI.h" />
+    <ClInclude Include="..\..\src\LuaScriptComponent.h" />
+    <ClInclude Include="..\..\src\LuaScriptSystem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Externals\lua\src\lapi.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lauxlib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lbaselib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lcode.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lcorolib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lctype.c" />
+    <ClCompile Include="..\..\Externals\lua\src\ldblib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\ldebug.c" />
+    <ClCompile Include="..\..\Externals\lua\src\ldo.c" />
+    <ClCompile Include="..\..\Externals\lua\src\ldump.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lfunc.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lgc.c" />
+    <ClCompile Include="..\..\Externals\lua\src\llex.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lmathlib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lmem.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lobject.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lopcodes.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lparser.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lstate.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lstring.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lstrlib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\ltable.c" />
+    <ClCompile Include="..\..\Externals\lua\src\ltablib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\ltm.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lundump.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lutf8lib.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lvm.c" />
+    <ClCompile Include="..\..\Externals\lua\src\lzio.c" />
+    <ClCompile Include="..\..\src\API\ComponentAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\CoreAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\InputAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\NetworkAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\PhysicsAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\RenderAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\SoundAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\LuaScriptComponent.cpp" />
+    <ClCompile Include="..\..\src\LuaScriptSystem.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
