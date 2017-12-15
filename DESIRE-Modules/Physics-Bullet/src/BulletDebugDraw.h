@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Render/DebugDraw.h"
-#include "Physics/Bullet/BulletVectormathExt.h"
+#include "BulletVectormathExt.h"
 
-#include "Physics-Bullet/src/LinearMath/btIDebugDraw.h"
+#include "Render/DebugDraw.h"
+
+#include "LinearMath/btIDebugDraw.h"
 
 class BulletDebugDraw : public btIDebugDraw
 {

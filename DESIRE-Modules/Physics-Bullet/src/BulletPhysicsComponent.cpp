@@ -1,10 +1,11 @@
 #include "stdafx.h"
-#include "Physics/Bullet/BulletPhysicsComponent.h"
-#include "Physics/Bullet/BulletPhysics.h"
-#include "Physics/Bullet/BulletVectormathExt.h"
+#include "BulletPhysicsComponent.h"
+#include "BulletPhysics.h"
+#include "BulletVectormathExt.h"
+
 #include "Core/math/AABB.h"
 
-#include "Physics-Bullet/src/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
+#include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
 
 BulletPhysicsComponent::BulletPhysicsComponent(bool dynamic)
 	: body(nullptr)

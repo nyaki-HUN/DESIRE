@@ -1,9 +1,10 @@
 #include "stdafx.h"
-#include "Physics/Bullet/BulletVehicleRaycaster.h"
+#include "BulletVehicleRaycaster.h"
+
 #include "Physics/IPhysics.h"
 
-#include "Physics-Bullet/src/BulletDynamics/Dynamics/btDynamicsWorld.h"
-#include "Physics-Bullet/src/BulletDynamics/Dynamics/btRigidBody.h"
+#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
+#include "BulletDynamics/Dynamics/btRigidBody.h"
 
 BulletVehicleRaycaster::BulletVehicleRaycaster(btDynamicsWorld *world)
 	: dynamicsWorld(world)

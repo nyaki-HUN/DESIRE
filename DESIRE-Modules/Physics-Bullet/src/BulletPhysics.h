@@ -4,7 +4,7 @@
 #include "Physics/IPhysics.h"
 
 DESIRE_DISABLE_WARNINGS
-#include "Physics-Bullet/src/btBulletDynamicsCommon.h"
+#include "../Externals/Bullet/src/btBulletDynamicsCommon.h"
 DESIRE_ENABLE_WARNINGS
 
 class BulletDebugDraw;

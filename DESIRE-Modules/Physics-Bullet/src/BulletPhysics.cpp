@@ -1,12 +1,13 @@
 #include "stdafx.h"
-#include "Physics/Bullet/BulletPhysics.h"
-#include "Physics/Bullet/BulletPhysicsComponent.h"
-#include "Physics/Bullet/BulletDebugDraw.h"
-#include "Physics/Bullet/BulletVectormathExt.h"
-#include "Physics/Collision.h"
-#include "Core/Timer.h"
+#include "BulletPhysics.h"
+#include "BulletPhysicsComponent.h"
+#include "BulletDebugDraw.h"
+#include "BulletVectormathExt.h"
 
-#include "Physics-Bullet/src/BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+#include "Core/Timer.h"
+#include "Physics/Collision.h"
+
+#include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 BulletPhysics::BulletPhysics()
 	: dynamicsWorld(nullptr)
