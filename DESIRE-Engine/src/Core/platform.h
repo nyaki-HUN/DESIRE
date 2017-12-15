@@ -71,6 +71,10 @@
 //	Macros
 // --------------------------------------------------------------------------------------------------------------------
 
+#if defined(_DEBUG) || defined(DEBUG)
+	#define DESIRE_DEBUG
+#endif
+
 // Stringify utility macro
 #define _DESIRE_STRINGIFY(STR)				#STR
 #define DESIRE_STRINGIFY(STR)				_DESIRE_STRINGIFY(STR)
