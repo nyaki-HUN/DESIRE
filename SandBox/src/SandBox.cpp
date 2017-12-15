@@ -6,11 +6,12 @@
 #include "Core/fs/IReadFile.h"
 #include "Input/Input.h"
 #include "Render/IRender.h"
-#include "UI/ImGuiImpl.h"
 #include "Resource/ResourceManager.h"
 #include "Scene/Object.h"
 #include "Script/IScriptSystem.h"
 #include "Component/ScriptComponent.h"
+
+#include "UI-imgui/src/ImGuiImpl.h"
 
 enum EAction
 {
@@ -36,6 +37,8 @@ SandBox::~SandBox()
 void SandBox::Init(IWindow *mainWindow)
 {
 	window = mainWindow;
+
+	ImGuiImpl::Get()->Init();
 
 	FileSystem::Get()->AddZipFileSource("zip.zip");
 //	FileSystem::Get()->AddZipFileSource("zip.zip", FileSystem::FLAG_IGNORE_CASE | FileSystem::FLAG_IGNORE_PATH);
@@ -115,6 +118,8 @@ void SandBox::Init(IWindow *mainWindow)
 void SandBox::Kill()
 {
 	delete scriptedObject;
+
+	ImGuiImpl::Get()->Kill();
 }
 
 void SandBox::Update()

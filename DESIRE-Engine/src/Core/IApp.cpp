@@ -7,7 +7,6 @@
 #include "Physics/IPhysics.h"
 #include "Render/IRender.h"
 #include "Script/IScriptSystem.h"
-#include "UI/ImGuiImpl.h"
 
 IApp* IApp::instance = nullptr;
 bool IApp::isMainLoopRunning = false;
@@ -54,7 +53,6 @@ int IApp::Run(int argc, const char * const *argv)
 	IWindow *mainWindow = IWindow::Create(params.windowParams);
 	IRender::Get()->Init(mainWindow);
 	Input::Init(mainWindow);
-	ImGuiImpl::Get()->Init();
 
 	// Run App
 	instance->Init(mainWindow);
@@ -83,7 +81,6 @@ int IApp::Run(int argc, const char * const *argv)
 	instance = nullptr;
 
 	// DeInit engine
-	ImGuiImpl::Get()->Kill();
 	Input::Kill();
 	IRender::Get()->Kill();
 	delete mainWindow;
