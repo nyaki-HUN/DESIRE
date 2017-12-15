@@ -91,38 +91,8 @@
     <Filter Include="src\Script">
       <UniqueIdentifier>{D1D4192E-BD8C-5B7B-2694-34D7126BF66B}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Script\AngelScript">
-      <UniqueIdentifier>{3C294988-2823-72DA-1190-08EBFD28D846}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Script\AngelScript\API">
-      <UniqueIdentifier>{254C0E6F-115C-BA3F-7A15-1F5E6644A9D8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Script\Lua">
-      <UniqueIdentifier>{E2EDC49D-CEBB-B8A3-B74F-29CAA3BC9408}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Script\Lua\API">
-      <UniqueIdentifier>{CBF387B0-B7D7-4806-2038-43590C3B3388}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Script\Squirrel">
-      <UniqueIdentifier>{57794636-C3DA-2344-4C48-6AF6B8A85A03}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Script\Squirrel\API">
-      <UniqueIdentifier>{C0311C7D-2C69-6414-3573-C837A1298B0D}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Sound">
       <UniqueIdentifier>{A5DED8B3-1149-8D2A-5A87-3ED0C6306B7F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Sound\FMOD">
-      <UniqueIdentifier>{FA017138-E6CF-643E-CF63-D564BBD040A3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Sound\OpenAL">
-      <UniqueIdentifier>{73FB3D30-5FF4-5C82-8826-4207747E3C8E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Sound\Wwise">
-      <UniqueIdentifier>{C35EDC47-2FEA-490C-38FB-CC00A405A60C}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\UI">
-      <UniqueIdentifier>{3A4B661C-26ED-90F2-0FA8-A446FBE81743}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Utils">
       <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
@@ -594,56 +564,17 @@
     <ClInclude Include="..\..\src\Scene\Transform.h">
       <Filter>src\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Script\AngelScript\API\AngelScriptAPI.h">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\AngelScript\AngelScriptComponent.h">
-      <Filter>src\Script\AngelScript</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\AngelScript\AngelScriptSystem.h">
-      <Filter>src\Script\AngelScript</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Script\IScript.h">
       <Filter>src\Script</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Script\IScriptSystem.h">
       <Filter>src\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\API\LuaScriptAPI.h">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaScriptComponent.h">
-      <Filter>src\Script\Lua</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Lua\LuaScriptSystem.h">
-      <Filter>src\Script\Lua</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Script\NativeScriptComponent.h">
       <Filter>src\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\API\SquirrelScriptAPI.h">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\SquirrelScriptComponent.h">
-      <Filter>src\Script\Squirrel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Script\Squirrel\SquirrelScriptSystem.h">
-      <Filter>src\Script\Squirrel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Sound\FMOD\FMODSound.h">
-      <Filter>src\Sound\FMOD</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Sound\ISound.h">
       <Filter>src\Sound</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Sound\OpenAL\OpenALSound.h">
-      <Filter>src\Sound\OpenAL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Sound\Wwise\WwiseSound.h">
-      <Filter>src\Sound\Wwise</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\UI\ImGuiImpl.h">
-      <Filter>src\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Utils\Enumerator.h">
       <Filter>src\Utils</Filter>
@@ -830,107 +761,11 @@
     <ClCompile Include="..\..\src\Scene\Transform.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\ComponentAPI_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\CoreAPI_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\InputAPI_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\NetworkAPI_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\PhysicsAPI_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\RenderAPI_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\SoundAPI_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\API\String_AngelScript.cpp">
-      <Filter>src\Script\AngelScript\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\AngelScriptComponent.cpp">
-      <Filter>src\Script\AngelScript</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\AngelScript\AngelScriptSystem.cpp">
-      <Filter>src\Script\AngelScript</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Script\IScriptSystem.cpp">
       <Filter>src\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\API\ComponentAPI_Lua.cpp">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\API\CoreAPI_Lua.cpp">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\API\InputAPI_Lua.cpp">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\API\NetworkAPI_Lua.cpp">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\API\PhysicsAPI_Lua.cpp">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\API\RenderAPI_Lua.cpp">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\API\SoundAPI_Lua.cpp">
-      <Filter>src\Script\Lua\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\LuaScriptComponent.cpp">
-      <Filter>src\Script\Lua</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Lua\LuaScriptSystem.cpp">
-      <Filter>src\Script\Lua</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Script\NativeScriptComponent.cpp">
       <Filter>src\Script</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\API\ComponentAPI_Squirrel.cpp">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\API\CoreAPI_Squirrel.cpp">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\API\InputAPI_Squirrel.cpp">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\API\NetworkAPI_Squirrel.cpp">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\API\PhysicsAPI_Squirrel.cpp">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\API\RenderAPI_Squirrel.cpp">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\API\SoundAPI_Squirrel.cpp">
-      <Filter>src\Script\Squirrel\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\SquirrelScriptComponent.cpp">
-      <Filter>src\Script\Squirrel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Script\Squirrel\SquirrelScriptSystem.cpp">
-      <Filter>src\Script\Squirrel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Sound\FMOD\FMODSound.cpp">
-      <Filter>src\Sound\FMOD</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Sound\OpenAL\OpenALSound.cpp">
-      <Filter>src\Sound\OpenAL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Sound\Wwise\WwiseSound.cpp">
-      <Filter>src\Sound\Wwise</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\UI\ImGuiImpl.cpp">
-      <Filter>src\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Utils\TaskManager.cpp">
       <Filter>src\Utils</Filter>

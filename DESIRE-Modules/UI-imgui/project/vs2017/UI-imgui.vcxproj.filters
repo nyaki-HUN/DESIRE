@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Externals">
+      <UniqueIdentifier>{7B3ECCEB-E7A8-8062-30E7-31089C905EB7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\imgui">
+      <UniqueIdentifier>{25FC09A1-9187-7765-9A98-FA5906A3D365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Externals\imgui\imconfig.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\imgui\imgui.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\imgui\imgui_internal.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\imgui\stb_rect_pack.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\imgui\stb_textedit.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\imgui\stb_truetype.h">
+      <Filter>Externals\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ImGuiImpl.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Externals\imgui\imgui.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\imgui\imgui_demo.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\imgui\imgui_draw.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ImGuiImpl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

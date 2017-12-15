@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "UI/ImGuiImpl.h"
+#include "ImGuiImpl.h"
+
 #include "Core/platform.h"
 #include "Core/IWindow.h"
 #include "Core/Timer.h"
@@ -12,7 +13,7 @@
 #include "Resource/Shader.h"
 #include "Resource/Texture.h"
 
-#include "UI-imgui/include/imgui.h"
+#include "imgui.h"
 
 ImGuiImpl::ImGuiImpl()
 {
@@ -174,6 +175,8 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	IRender *render = IRender::Get();
+
+/**/render->SetWorldMatrix(Matrix4::Identity());
 
 	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(io.DisplaySize.x, io.DisplaySize.y, -1.0f, 1.0f);
 	render->SetViewProjectionMatrices(Matrix4::Identity(), matOrtho);
