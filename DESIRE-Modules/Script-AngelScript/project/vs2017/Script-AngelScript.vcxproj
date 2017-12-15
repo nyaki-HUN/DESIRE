@@ -217,6 +217,9 @@
     <ClInclude Include="..\..\Externals\AngelScript\src\as_tokenizer.h" />
     <ClInclude Include="..\..\Externals\AngelScript\src\as_typeinfo.h" />
     <ClInclude Include="..\..\Externals\AngelScript\src\as_variablescope.h" />
+    <ClInclude Include="..\..\src\API\AngelScriptAPI.h" />
+    <ClInclude Include="..\..\src\AngelScriptComponent.h" />
+    <ClInclude Include="..\..\src\AngelScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\AngelScript\src\as_atomic.cpp" />
@@ -257,6 +260,16 @@
     <ClCompile Include="..\..\Externals\AngelScript\src\as_tokenizer.cpp" />
     <ClCompile Include="..\..\Externals\AngelScript\src\as_typeinfo.cpp" />
     <ClCompile Include="..\..\Externals\AngelScript\src\as_variablescope.cpp" />
+    <ClCompile Include="..\..\src\API\ComponentAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\CoreAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\InputAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\NetworkAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\PhysicsAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\RenderAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\String_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\AngelScriptComponent.cpp" />
+    <ClCompile Include="..\..\src\AngelScriptSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\Externals\AngelScript\src\as_callfunc_x64_msvc_asm.asm">
