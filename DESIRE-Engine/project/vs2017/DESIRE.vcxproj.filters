@@ -79,9 +79,6 @@
     <Filter Include="src\Resource">
       <UniqueIdentifier>{E46F59CC-D0D2-E870-7958-2127659AB4F3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Resource\MeshLoader">
-      <UniqueIdentifier>{77A3D3A9-E3DA-1B41-ECE4-7F64589B423A}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Resource\ShaderLoader">
       <UniqueIdentifier>{E18D89D1-4D50-BD5B-9600-4CE802029639}</UniqueIdentifier>
     </Filter>
@@ -561,9 +558,6 @@
     <ClInclude Include="..\..\src\Resource\Mesh.h">
       <Filter>src\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\MeshLoader\AssimpLoader.h">
-      <Filter>src\Resource\MeshLoader</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Resource\ResourceManager.h">
       <Filter>src\Resource</Filter>
     </ClInclude>
@@ -805,9 +799,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\Mesh.cpp">
       <Filter>src\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Resource\MeshLoader\AssimpLoader.cpp">
-      <Filter>src\Resource\MeshLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\ResourceManager.cpp">
       <Filter>src\Resource</Filter>

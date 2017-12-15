@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "Resource/MeshLoader/AssimpLoader.h"
+#include "AssimpLoader.h"
+
 #include "Core/fs/IReadFile.h"
 
 #include "assimp/Importer.hpp"
