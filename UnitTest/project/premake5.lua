@@ -24,4 +24,8 @@ project "UnitTest"
 	links
 	{
 		"DESIRE",
+		"d3d11",
+		"d3dcompiler",
+		"dxgi",
+		"dxguid",
 	}

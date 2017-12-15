@@ -30,6 +30,10 @@ project "SandBox"
 	links
 	{
 		"DESIRE",
+		"d3d11",
+		"d3dcompiler",
+		"dxgi",
+		"dxguid",
 	}
 
 	configuration "Debug"

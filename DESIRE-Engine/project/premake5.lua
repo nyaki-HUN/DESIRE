@@ -1,5 +1,6 @@
 project "DESIRE"
 	AddCommonLibConfig()
+	warnings "Extra"
 	uuid "74923478-6D8D-4892-A013-C2B759A870EC"
 
 	pchheader "stdafx.h"
