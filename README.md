@@ -1,33 +1,60 @@
 [DESIRE](https://github.com/nyaki-HUN/DESIRE)
 =============================================
 
-Development Experiment for a Simple Innovative and Roboust Engine
+Development Experiment for a Simple and Robust Engine
 
 What is it?
 -----------
-This is an experimental porject to create an Engine which makes game development easier.
+This is an experimental project to create an Engine which makes game development easier.
 The main focus is on creating a simple to use and powerful framework.
 
 This is not a plug-and-play engine. If you think about cars, other game engines are like having the whole car, changing parts, painting and customizing it. DESIRE is more like a high-performance engine where you still need to build the car around.  
 
-Features
---------
-
- * TODO
- * Modular design - each module can be easily disabled or replaced with a different (or even a custom) implementation
- * All project files are generated and maintained via premake5
-
-### Supported platforms
-
-(DESIRE is meant to be a cross-platform engine, but it is under heavly development)
-
- * Windows 10
-
 Documentation
 -------------
 
- * TODO
- * Check [DESIRE-modules](https://github.com/nyaki-HUN/DESIRE-modules) for the supported external modules
+### Module support
+The architecture of the engine emphasizes separating the functionalities into independent, interchangeable pieces that we call modules.  
+Each module contains everything necessary to execute only one aspect of the desired functionality.
+
+### Supported platforms
+
+(DESIRE is meant to be a cross-platform engine, but it is under development)
+
+ * Windows 10
+
+Modules
+-------
+
+### Compression
+
+ * [LZ4](http://lz4.github.io/lz4)
+ * [zlib-ng](https://github.com/Dead2/zlib-ng)
+ * [zstd](http://www.zstd.net)
+
+### Physics
+
+* [Bullet](http://bulletphysics.org)
+* [PhysX](https://developer.nvidia.com/physx-sdk)
+
+### Render
+
+ * [bgfx](https://bkaradzic.github.io/bgfx)
+ * Direct3D11
+
+### Resource loader
+
+ * [Assimp](http://www.assimp.org)
+
+### Script
+
+ * [AngelScript](http://www.angelcode.com/angelscript)
+ * [Lua](https://www.lua.org)
+ * [Squirrel](http://www.squirrel-lang.org)
+
+### UI
+
+ * [imgui](https://github.com/ocornut/imgui)
 
 Contact
 -------
@@ -35,7 +62,7 @@ Contact
 nyakacska.zoltan@gmail.com
 
 [License (BSD 2-Clause)](../master/LICENSE)
----------------------------------------------------------------------
+-------------------------------------------
 
 <a href="http://opensource.org/licenses/BSD-2-Clause" target="_blank">
 <img align="right" src="http://opensource.org/trademarks/opensource/OSI-Approved-License-100x137.png">
