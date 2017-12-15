@@ -102,20 +102,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\LuaBridge.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\CFunctions.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\ClassInfo.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Constructor.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\FuncTraits.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Iterator.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaException.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaHelpers.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaRef.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Namespace.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Stack.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeList.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeTraits.h" />
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Userdata.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\cursorstreamwrapper.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\document.h" />
@@ -152,17 +138,6 @@
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\stream.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\stringbuffer.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\writer.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratAllocator.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratClass.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratClassType.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratConst.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratGlobalMethods.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratMemberMethods.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratObject.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratOverloadMethods.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratTable.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratTypes.h" />
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratUtil.h" />
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h" />
     <ClInclude Include="..\..\src\Component\IComponent.h" />
     <ClInclude Include="..\..\src\Component\PhysicsComponent.h" />

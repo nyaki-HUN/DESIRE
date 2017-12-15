@@ -1,0 +1,3 @@
+[submodule "DESIRE-Modules/Script-Squirrel/Externals/squirrel"]
+	path = DESIRE-Modules/Script-Squirrel/Externals/squirrel
+	url = https://github.com/albertodemichelis/squirrel.git

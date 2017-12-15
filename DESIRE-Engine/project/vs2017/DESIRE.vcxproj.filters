@@ -4,12 +4,6 @@
     <Filter Include="3rdparty">
       <UniqueIdentifier>{3E7DA5C5-2A4A-00D1-5363-EE783F8F355F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3rdparty\LuaBridge">
-      <UniqueIdentifier>{DCD1E182-C8B5-A2D8-3116-9D2B1D198D5A}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="3rdparty\LuaBridge\detail">
-      <UniqueIdentifier>{1E9AB935-8A5C-EDBF-D30C-7C4C3F0EC69D}</UniqueIdentifier>
-    </Filter>
     <Filter Include="3rdparty\rapidjson">
       <UniqueIdentifier>{772CDC34-6310-9D8A-CC70-97DDB873870C}</UniqueIdentifier>
     </Filter>
@@ -27,9 +21,6 @@
     </Filter>
     <Filter Include="3rdparty\rapidjson\include\rapidjson\msinttypes">
       <UniqueIdentifier>{12BD6F89-7EF8-CF4C-87ED-4CDCF3A7547D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="3rdparty\sqrat">
-      <UniqueIdentifier>{F853ADF7-E421-A1FD-CDB5-1124B9227D62}</UniqueIdentifier>
     </Filter>
     <Filter Include="3rdparty\stb">
       <UniqueIdentifier>{96AA99EA-820D-298F-2B93-614517D5F411}</UniqueIdentifier>
@@ -99,48 +90,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\LuaBridge.h">
-      <Filter>3rdparty\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\CFunctions.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\ClassInfo.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Constructor.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\FuncTraits.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Iterator.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaException.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaHelpers.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\LuaRef.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Namespace.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Stack.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeList.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\TypeTraits.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\LuaBridge\detail\Userdata.h">
-      <Filter>3rdparty\LuaBridge\detail</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h">
       <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
     </ClInclude>
@@ -248,39 +197,6 @@
     </ClInclude>
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\writer.h">
       <Filter>3rdparty\rapidjson\include\rapidjson</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratAllocator.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratClass.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratClassType.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratConst.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratGlobalMethods.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratMemberMethods.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratObject.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratOverloadMethods.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratTable.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratTypes.h">
-      <Filter>3rdparty\sqrat</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rdparty\sqrat\sqratUtil.h">
-      <Filter>3rdparty\sqrat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h">
       <Filter>3rdparty\stb</Filter>
