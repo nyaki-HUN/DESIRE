@@ -59,7 +59,7 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\3rdparty;..\..\..\..\DESIRE-modules;..\..\..\..\DESIRE-modules\Physics-Bullet\src;..\..\..\..\DESIRE-modules\Render-bgfx\include;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -81,7 +81,7 @@
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>WIN32;_HAS_EXCEPTIONS=0;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\3rdparty;..\..\..\..\DESIRE-modules;..\..\..\..\DESIRE-modules\Physics-Bullet\src;..\..\..\..\DESIRE-modules\Render-bgfx\include;..\..\..\..\DESIRE-modules\ResourceLoader-Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -235,11 +235,6 @@
     <ClInclude Include="..\..\src\Input\WINDOWS\WINDOWSInput.h" />
     <ClInclude Include="..\..\src\Input\keyCodes.h" />
     <ClInclude Include="..\..\src\Network\NetworkFileSource.h" />
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletDebugDraw.h" />
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletPhysics.h" />
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletPhysicsComponent.h" />
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletVectormathExt.h" />
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletVehicleRaycaster.h" />
     <ClInclude Include="..\..\src\Physics\Collision.h" />
     <ClInclude Include="..\..\src\Physics\IPhysics.h" />
     <ClInclude Include="..\..\src\Physics\PhysX\PhysXPhysics.h" />
@@ -332,9 +327,6 @@
     <ClCompile Include="..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp" />
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp" />
-    <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysics.cpp" />
-    <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysicsComponent.cpp" />
-    <ClCompile Include="..\..\src\Physics\Bullet\BulletVehicleRaycaster.cpp" />
     <ClCompile Include="..\..\src\Physics\PhysX\PhysXPhysics.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp" />

@@ -73,9 +73,6 @@
     <Filter Include="src\Physics">
       <UniqueIdentifier>{9F8B9316-0B41-0C0C-9435-06E300EA0210}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Physics\Bullet">
-      <UniqueIdentifier>{764814D3-622C-D528-CB8C-CF7BB78FBFAA}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Physics\PhysX">
       <UniqueIdentifier>{0ABEC09A-76D4-BE30-BF4B-4A522BA18FB8}</UniqueIdentifier>
     </Filter>
@@ -540,21 +537,6 @@
     <ClInclude Include="..\..\src\Network\NetworkFileSource.h">
       <Filter>src\Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletDebugDraw.h">
-      <Filter>src\Physics\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletPhysics.h">
-      <Filter>src\Physics\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletPhysicsComponent.h">
-      <Filter>src\Physics\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletVectormathExt.h">
-      <Filter>src\Physics\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Physics\Bullet\BulletVehicleRaycaster.h">
-      <Filter>src\Physics\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Physics\Collision.h">
       <Filter>src\Physics</Filter>
     </ClInclude>
@@ -826,15 +808,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp">
       <Filter>src\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysics.cpp">
-      <Filter>src\Physics\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Physics\Bullet\BulletPhysicsComponent.cpp">
-      <Filter>src\Physics\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Physics\Bullet\BulletVehicleRaycaster.cpp">
-      <Filter>src\Physics\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Physics\PhysX\PhysXPhysics.cpp">
       <Filter>src\Physics\PhysX</Filter>

@@ -10,21 +10,20 @@ project "SandBox"
 	{
 		"../../DESIRE-Engine/src",
 		"../../DESIRE-Engine/3rdparty",
-		"../../../DESIRE-modules",
-		"../../../DESIRE-modules/Render-bgfx/include",
+		"../../DESIRE-modules",
 	}
 
 	libdirs
 	{
-		"../../../DESIRE-modules/Compression-zlib-ng/lib/" .. _ACTION,
-		"../../../DESIRE-modules/Physics-Bullet/lib/" .. _ACTION,
-		"../../../DESIRE-modules/Physics-PhysX/lib/" .. _ACTION,
-		"../../../DESIRE-modules/Render-bgfx/lib/" .. _ACTION,
-		"../../../DESIRE-modules/ResourceLoader-Assimp/lib/".. _ACTION,
-		"../../../DESIRE-modules/Script-AngelScript/lib/" .. _ACTION,
-		"../../../DESIRE-modules/Script-Lua/lib/" .. _ACTION,
-		"../../../DESIRE-modules/Script-Squirrel/lib/" .. _ACTION,
-		"../../../DESIRE-modules/UI-imgui/lib/" .. _ACTION,
+		"../../DESIRE-modules/Compression-zlib-ng/lib/" .. _ACTION,
+		"../../DESIRE-modules/Physics-Bullet/lib/" .. _ACTION,
+		"../../DESIRE-modules/Physics-PhysX/lib/" .. _ACTION,
+		"../../DESIRE-modules/Render-bgfx/lib/" .. _ACTION,
+		"../../DESIRE-modules/ResourceLoader-Assimp/lib/".. _ACTION,
+		"../../DESIRE-modules/Script-AngelScript/lib/" .. _ACTION,
+		"../../DESIRE-modules/Script-Lua/lib/" .. _ACTION,
+		"../../DESIRE-modules/Script-Squirrel/lib/" .. _ACTION,
+		"../../DESIRE-modules/UI-imgui/lib/" .. _ACTION,
 	}
 
 	links
