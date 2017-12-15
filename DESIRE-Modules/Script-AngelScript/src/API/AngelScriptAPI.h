@@ -3,7 +3,7 @@
 #include "Core/String.h"
 
 DESIRE_DISABLE_WARNINGS
-#include "Script-AngelScript/include/angelscript.h"
+#include "angelscript.h"
 DESIRE_ENABLE_WARNINGS
 
 // Engine API register functions

@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "Script/AngelScript/API/AngelScriptAPI.h"
+#include "API/AngelScriptAPI.h"
+
 #include "Core/math/vectormath.h"
 #include "Core/math/math.h"
 #include "Core/Timer.h"

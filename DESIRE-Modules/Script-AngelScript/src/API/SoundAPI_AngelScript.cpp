@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "Script/AngelScript/API/AngelScriptAPI.h"
+#include "API/AngelScriptAPI.h"
+
 #include "Sound/ISound.h"
 
 void RegisterSoundAPI_AngelScript(asIScriptEngine *engine)

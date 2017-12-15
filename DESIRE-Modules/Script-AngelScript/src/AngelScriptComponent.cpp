@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "Script/AngelScript/AngelScriptComponent.h"
+#include "AngelScriptComponent.h"
+
 #include "Core/String.h"
 
 AngelScriptComponent::AngelScriptComponent()

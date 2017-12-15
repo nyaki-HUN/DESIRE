@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "Script/AngelScript/API/AngelScriptAPI.h"
-#include "Script/AngelScript/AngelScriptComponent.h"
+#include "API/AngelScriptAPI.h"
+#include "AngelScriptComponent.h"
+
 #include "Component/PhysicsComponent.h"
 #include "Component/RenderComponent.h"
 #include "Scene/Object.h"

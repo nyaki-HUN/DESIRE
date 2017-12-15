@@ -1,5 +1,6 @@
 #include "stdafx.h"
-#include "Script/AngelScript/API/AngelScriptAPI.h"
+#include "API/AngelScriptAPI.h"
+
 #include "Render/IRender.h"
 
 void RegisterRenderAPI_AngelScript(asIScriptEngine *engine)

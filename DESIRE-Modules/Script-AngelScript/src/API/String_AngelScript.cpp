@@ -1,6 +1,7 @@
 #include "stdafx.h"
+#include "API/AngelScriptAPI.h"
+
 #include "Core/String.h"
-#include "Script/AngelScript/API/AngelScriptAPI.h"
 
 #include <unordered_map> 
 

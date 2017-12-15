@@ -1,7 +1,8 @@
 #pragma once
 
+#include "AngelScriptSystem.h"
+
 #include "Component/ScriptComponent.h"
-#include "Script/AngelScript/AngelScriptSystem.h"
 
 class AngelScriptComponent : public ScriptComponent
 {
