@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{E5D74254-D18F-84A1-3A97-5DFD266E1F92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\compress">
+      <UniqueIdentifier>{C83C9070-B49F-1F15-5D25-58CB4967EB97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\decompress">
+      <UniqueIdentifier>{11B250BA-FD7F-44C0-E613-B5E6D2802025}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Externals\zstd\include\zstd.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\bitstream.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\compiler.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\error_private.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\fse.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\huf.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\mem.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\pool.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\threading.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\xxhash.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\zstd_errors.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\zstd_internal.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress.h">
+      <Filter>src\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_double_fast.h">
+      <Filter>src\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_fast.h">
+      <Filter>src\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_lazy.h">
+      <Filter>src\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_ldm.h">
+      <Filter>src\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_opt.h">
+      <Filter>src\compress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstdmt_compress.h">
+      <Filter>src\compress</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Externals\zstd\src\common\entropy_common.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\common\error_private.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\common\fse_decompress.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\common\pool.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\common\threading.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\common\xxhash.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\common\zstd_common.c">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\fse_compress.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\huf_compress.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_compress.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_double_fast.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_fast.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_lazy.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_ldm.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_opt.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\zstdmt_compress.c">
+      <Filter>src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\decompress\huf_decompress.c">
+      <Filter>src\decompress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\decompress\zstd_decompress.c">
+      <Filter>src\decompress</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
