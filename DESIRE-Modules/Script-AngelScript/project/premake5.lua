@@ -11,6 +11,12 @@ solution "Script-AngelScript"
 			"../Externals/AngelScript/include",
 		}
 
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.cpp",
+		}
+
 		filter "system:windows"
 			files
 			{

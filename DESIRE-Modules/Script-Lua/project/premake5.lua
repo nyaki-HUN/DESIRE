@@ -10,3 +10,11 @@ solution "Script-Lua"
 			"../Externals/lua/src",
 			"../Externals/LuaBridge/Source"
 		}
+
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.hpp",
+			"../Externals/**.c",
+			"../Externals/**.cpp",
+		}

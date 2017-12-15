@@ -15,6 +15,12 @@ solution "Render-bgfx"
 			"../Externals/bx/include",
 		}
 
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.cpp",
+		}
+
 		removefiles
 		{
 			"../Externals/**/amalgamated.*",

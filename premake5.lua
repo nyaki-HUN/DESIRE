@@ -111,14 +111,6 @@ function AddModuleConfig()
 	{
 		"../../../DESIRE-Engine/src",
 	}
-
-	files
-	{
-		"../Externals/**.h",
-		"../Externals/**.hpp",
-		"../Externals/**.c",
-		"../Externals/**.cpp",
-	}
 end
 
 -- Engine solution and projects

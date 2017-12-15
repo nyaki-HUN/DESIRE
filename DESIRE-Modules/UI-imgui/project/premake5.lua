@@ -9,3 +9,9 @@ solution "UI-imgui"
 		{
 			"../Externals/imgui",
 		}
+
+		files
+		{
+			"../Externals/imgui/**.h",
+			"../Externals/imgui/**.cpp",
+		}

@@ -9,3 +9,8 @@ solution "Physics-PhysX"
 		{
 			"../Externals/PhysX/include",
 		}
+
+		files
+		{
+			"../Externals/**.h",
+		}

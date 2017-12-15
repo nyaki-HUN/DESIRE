@@ -11,3 +11,9 @@ solution "Compression-zlib-ng"
 		{
 			"../Externals/zlib-ng/include",
 		}
+
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.c",
+		}

@@ -15,3 +15,10 @@ solution "ResourceLoader-Assimp"
 			"../Externals/Assimp/contrib/openddlparser/include",
 			"../../Compression-zlib-ng/Externals/zlib-ng/include",
 		}
+
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.hpp",
+			"../Externals/**.cpp",
+		}

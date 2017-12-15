@@ -9,3 +9,9 @@ solution "Compression-LZ4"
 		{
 			"../Externals/LZ4/include",
 		}
+
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.c",
+		}

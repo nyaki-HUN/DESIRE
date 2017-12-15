@@ -9,3 +9,9 @@ solution "Physics-Bullet"
 		{
 			"../Externals/Bullet/src",
 		}
+
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.cpp",
+		}

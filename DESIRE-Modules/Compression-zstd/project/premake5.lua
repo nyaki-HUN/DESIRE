@@ -10,3 +10,9 @@ solution "Compression-zstd"
 			"../Externals/zstd/include",
 			"../Externals/zstd/src/common",
 		}
+
+		files
+		{
+			"../Externals/**.h",
+			"../Externals/**.c",
+		}
