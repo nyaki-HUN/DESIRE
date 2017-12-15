@@ -85,9 +85,6 @@
     <Filter Include="src\Render\Direct3D11">
       <UniqueIdentifier>{BFE0D9EA-2B4D-95E5-F440-2D43606CB74D}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Render\bgfx">
-      <UniqueIdentifier>{12138116-7E9E-EEDA-87AF-71CFF3B94ADB}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Resource">
       <UniqueIdentifier>{E46F59CC-D0D2-E870-7958-2127659AB4F3}</UniqueIdentifier>
     </Filter>
@@ -603,18 +600,6 @@
     <ClInclude Include="..\..\src\Render\View.h">
       <Filter>src\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\bgfx\MeshRenderDataBgfx.h">
-      <Filter>src\Render\bgfx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Render\bgfx\RenderBgfx.h">
-      <Filter>src\Render\bgfx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Render\bgfx\RenderTargetRenderDataBgfx.h">
-      <Filter>src\Render\bgfx</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Render\bgfx\ShaderRenderDataBgfx.h">
-      <Filter>src\Render\bgfx</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Resource\ErrorTexture.h">
       <Filter>src\Resource</Filter>
     </ClInclude>
@@ -874,9 +859,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Render\View.cpp">
       <Filter>src\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Render\bgfx\RenderBgfx.cpp">
-      <Filter>src\Render\bgfx</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp">
       <Filter>src\Resource</Filter>
