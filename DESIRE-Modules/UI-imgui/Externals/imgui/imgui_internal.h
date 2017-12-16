@@ -48,7 +48,6 @@ typedef int ImGuiButtonFlags;       // flags: for ButtonEx(), ButtonBehavior()  
 typedef int ImGuiItemFlags;         // flags: for PushItemFlag()                // enum ImGuiItemFlags_
 typedef int ImGuiSeparatorFlags;    // flags: for Separator() - internal        // enum ImGuiSeparatorFlags_
 typedef int ImGuiSliderFlags;       // flags: for SliderBehavior()              // enum ImGuiSliderFlags_
-typedef int ImGuiComboFlags;        // flags: for BeginCombo()                  // enum ImGuiComboFlags_
 
 //-------------------------------------------------------------------------
 // STB libraries
@@ -170,6 +169,9 @@ inline void operator delete(void*, ImPlacementNewDummy, void*) {}
 // Types
 //-----------------------------------------------------------------------------
 
+// Internal Drag and Drop payload types. String starting with '_' are reserved for Dear ImGui.
+#define IMGUI_PAYLOAD_TYPE_DOCKABLE         "_IMDOCK"   // ImGuiWindow* // [Internal] Docking/tabs
+
 enum ImGuiButtonFlags_
 {
     ImGuiButtonFlags_Repeat                 = 1 << 0,   // hold to repeat
@@ -177,13 +179,14 @@ enum ImGuiButtonFlags_
     ImGuiButtonFlags_PressedOnClick         = 1 << 2,   // return true on click (default requires click+release)
     ImGuiButtonFlags_PressedOnRelease       = 1 << 3,   // return true on release (default requires click+release)
     ImGuiButtonFlags_PressedOnDoubleClick   = 1 << 4,   // return true on double-click (default requires click+release)
-    ImGuiButtonFlags_FlattenChilds          = 1 << 5,   // allow interactions even if a child window is overlapping
-    ImGuiButtonFlags_DontClosePopups        = 1 << 6,   // disable automatically closing parent popup on press // [UNUSED]
-    ImGuiButtonFlags_Disabled               = 1 << 7,   // disable interactions
-    ImGuiButtonFlags_AlignTextBaseLine      = 1 << 8,   // vertically align button to match text baseline (ButtonEx() only)
-    ImGuiButtonFlags_NoKeyModifiers         = 1 << 9,   // disable interaction if a key modifier is held
-    ImGuiButtonFlags_AllowOverlapMode       = 1 << 10,  // require previous frame HoveredId to either match id or be null before being usable
-    ImGuiButtonFlags_NoHoldingActiveID      = 1 << 11   // don't set ActiveId while holding the mouse (ImGuiButtonFlags_PressedOnClick only)
+    ImGuiButtonFlags_FlattenChildren        = 1 << 5,   // allow interactions even if a child window is overlapping
+    ImGuiButtonFlags_AllowItemOverlap       = 1 << 6,   // require previous frame HoveredId to either match id or be null before being usable, use along with SetItemAllowOverlap()
+    ImGuiButtonFlags_DontClosePopups        = 1 << 7,   // disable automatically closing parent popup on press // [UNUSED]
+    ImGuiButtonFlags_Disabled               = 1 << 8,   // disable interactions
+    ImGuiButtonFlags_AlignTextBaseLine      = 1 << 9,   // vertically align button to match text baseline - ButtonEx() only // FIXME: Should be removed and handled by SmallButton(), not possible currently because of DC.CursorPosPrevLine
+    ImGuiButtonFlags_NoKeyModifiers         = 1 << 10,  // disable interaction if a key modifier is held
+    ImGuiButtonFlags_NoHoldingActiveID      = 1 << 11,  // don't set ActiveId while holding the mouse (ImGuiButtonFlags_PressedOnClick only)
+    ImGuiButtonFlags_PressedOnDragDropHold  = 1 << 12   // press when held into while we are drag and dropping another item (used by e.g. tree nodes, collapsing headers)
 };
 
 enum ImGuiSliderFlags_
@@ -198,28 +201,16 @@ enum ImGuiColumnsFlags_
     ImGuiColumnsFlags_NoResize              = 1 << 1,   // Disable resizing columns when clicking on the dividers
     ImGuiColumnsFlags_NoPreserveWidths      = 1 << 2,   // Disable column width preservation when adjusting columns
     ImGuiColumnsFlags_NoForceWithinWindow   = 1 << 3,   // Disable forcing columns to fit within window
-    ImGuiColumnsFlags_GrowParentContentsSize= 1 << 4,   // (WIP) Restore pre-1.51 behavior of extending the parent window contents size but _without affecting the columns width at all_. Will eventually remove.
+    ImGuiColumnsFlags_GrowParentContentsSize= 1 << 4    // (WIP) Restore pre-1.51 behavior of extending the parent window contents size but _without affecting the columns width at all_. Will eventually remove.
 };
 
 enum ImGuiSelectableFlagsPrivate_
 {
     // NB: need to be in sync with last value of ImGuiSelectableFlags_
-    ImGuiSelectableFlags_Menu               = 1 << 3,
-    ImGuiSelectableFlags_MenuItem           = 1 << 4,
+    ImGuiSelectableFlags_Menu               = 1 << 3,   // -> PressedOnClick
+    ImGuiSelectableFlags_MenuItem           = 1 << 4,   // -> PressedOnRelease
     ImGuiSelectableFlags_Disabled           = 1 << 5,
     ImGuiSelectableFlags_DrawFillAvailWidth = 1 << 6
-};
-
-enum ImGuiComboFlags_
-{
-    ImGuiComboFlags_PopupAlignLeft      = 1 << 0,   // Align the popup toward the left by default
-
-    // If you want your combo popup to be a specific size you can use SetNextWindowSizeConstraints() prior to calling BeginCombo()
-    ImGuiComboFlags_HeightSmall         = 1 << 1,   // Max ~4 items visible
-    ImGuiComboFlags_HeightRegular       = 1 << 2,   // Max ~8 items visible (default)
-    ImGuiComboFlags_HeightLarge         = 1 << 3,   // Max ~20 items visible
-    ImGuiComboFlags_HeightLargest       = 1 << 4,   // As many fitting items as possible
-    ImGuiComboFlags_HeightMask_         = ImGuiComboFlags_HeightSmall | ImGuiComboFlags_HeightRegular | ImGuiComboFlags_HeightLarge | ImGuiComboFlags_HeightLargest
 };
 
 enum ImGuiSeparatorFlags_
@@ -340,14 +331,6 @@ struct ImGuiGroupData
     bool        AdvanceCursor;
 };
 
-// Per column data for Columns()
-struct ImGuiColumnData
-{
-    float       OffsetNorm; // Column start offset, normalized 0.0 (far left) -> 1.0 (far right)
-    ImRect      ClipRect;
-    //float     IndentX;
-};
-
 // Simple column measurement currently used for MenuItem() only. This is very short-sighted/throw-away code and NOT a generic helper.
 struct IMGUI_API ImGuiSimpleColumns
 {
@@ -420,13 +403,54 @@ struct ImGuiMouseCursorData
 // Storage for current popup stack
 struct ImGuiPopupRef
 {
-    ImGuiID         PopupId;        // Set on OpenPopup()
-    ImGuiWindow*    Window;         // Resolved on BeginPopup() - may stay unresolved if user never calls OpenPopup()
-    ImGuiWindow*    ParentWindow;   // Set on OpenPopup()
-    ImGuiID         ParentMenuSet;  // Set on OpenPopup()
-    ImVec2          MousePosOnOpen; // Copy of mouse position at the time of opening popup
+    ImGuiID             PopupId;        // Set on OpenPopup()
+    ImGuiWindow*        Window;         // Resolved on BeginPopup() - may stay unresolved if user never calls OpenPopup()
+    ImGuiWindow*        ParentWindow;   // Set on OpenPopup()
+    ImGuiID             ParentMenuSet;  // Set on OpenPopup()
+    ImVec2              MousePosOnOpen; // Copy of mouse position at the time of opening popup
 
     ImGuiPopupRef(ImGuiID id, ImGuiWindow* parent_window, ImGuiID parent_menu_set, const ImVec2& mouse_pos) { PopupId = id; Window = NULL; ParentWindow = parent_window; ParentMenuSet = parent_menu_set; MousePosOnOpen = mouse_pos; }
+};
+
+struct ImGuiColumnData
+{
+    float               OffsetNorm;         // Column start offset, normalized 0.0 (far left) -> 1.0 (far right)
+    float               OffsetNormBeforeResize;
+    ImGuiColumnsFlags   Flags;              // Not exposed
+    ImRect              ClipRect;
+
+    ImGuiColumnData()   { OffsetNorm = OffsetNormBeforeResize = 0.0f; Flags = 0; }
+};
+
+struct ImGuiColumnsSet
+{
+    ImGuiID             ID;
+    ImGuiColumnsFlags   Flags;
+    bool                IsFirstFrame;
+    bool                IsBeingResized;
+    int                 Current;
+    int                 Count;
+    float               MinX, MaxX;
+    float               StartPosY;
+    float               StartMaxPosX;       // Backup of CursorMaxPos
+    float               CellMinY, CellMaxY;
+    ImVector<ImGuiColumnData> Columns;
+
+    ImGuiColumnsSet()   { Clear(); }
+    void Clear()
+    {
+        ID = 0;
+        Flags = 0;
+        IsFirstFrame = false;
+        IsBeingResized = false;
+        Current = 0;
+        Count = 1;
+        MinX = MaxX = 0.0f;
+        StartPosY = 0.0f;
+        StartMaxPosX = 0.0f;
+        CellMinY = CellMaxY = 0.0f;
+        Columns.clear();
+    }
 };
 
 // Main state for ImGui
@@ -448,6 +472,7 @@ struct ImGuiContext
     ImVector<ImGuiWindow*>  WindowsSortBuffer;
     ImVector<ImGuiWindow*>  CurrentWindowStack;
     ImGuiStorage            WindowsById;
+    int                     WindowsActiveCount;
     ImGuiWindow*            CurrentWindow;                      // Being drawn into
     ImGuiWindow*            NavWindow;                          // Nav/focused window for navigation
     ImGuiWindow*            HoveredWindow;                      // Will catch mouse inputs
@@ -498,6 +523,20 @@ struct ImGuiContext
     ImGuiMouseCursor        MouseCursor;
     ImGuiMouseCursorData    MouseCursorData[ImGuiMouseCursor_Count_];
 
+    // Drag and Drop
+    bool                    DragDropActive;
+    ImGuiDragDropFlags      DragDropSourceFlags;
+    int                     DragDropMouseButton;
+    ImGuiPayload            DragDropPayload;
+    ImRect                  DragDropTargetRect;
+    ImGuiID                 DragDropTargetId;
+    float                   DragDropAcceptIdCurrRectSurface;
+    ImGuiID                 DragDropAcceptIdCurr;               // Target item id (set at the time of accepting the payload)
+    ImGuiID                 DragDropAcceptIdPrev;               // Target item id from previous frame (we need to store this to allow for overlapping drag and drop targets)
+    int                     DragDropAcceptFrameCount;           // Last time a target expressed a desire to accept the source
+    ImVector<unsigned char> DragDropPayloadBufHeap;             // We don't expose the ImVector<> directly
+    unsigned char           DragDropPayloadBufLocal[8];
+
     // Widget state
     ImGuiTextEditState      InputTextState;
     ImFont                  InputTextPasswordFont;
@@ -545,6 +584,7 @@ struct ImGuiContext
         Time = 0.0f;
         FrameCount = 0;
         FrameCountEnded = FrameCountRendered = -1;
+        WindowsActiveCount = 0;
         CurrentWindow = NULL;
         NavWindow = NULL;
         HoveredWindow = NULL;
@@ -578,6 +618,14 @@ struct ImGuiContext
         SetNextWindowFocus = false;
         SetNextTreeNodeOpenVal = false;
         SetNextTreeNodeOpenCond = 0;
+
+        DragDropActive = false;
+        DragDropSourceFlags = 0;
+        DragDropMouseButton = -1;
+        DragDropTargetId = 0;
+        DragDropAcceptIdPrev = DragDropAcceptIdCurr = 0;
+        DragDropAcceptFrameCount = -1;
+        memset(DragDropPayloadBufLocal, 0, sizeof(DragDropPayloadBufLocal));
 
         ScalarAsInputTextId = 0;
         ColorEditOptions = ImGuiColorEditFlags__OptionsDefault;
@@ -630,7 +678,7 @@ struct IMGUI_API ImGuiDrawContext
     ImVec2                  CursorPos;
     ImVec2                  CursorPosPrevLine;
     ImVec2                  CursorStartPos;
-    ImVec2                  CursorMaxPos;           // Implicitly calculate the size of our contents, always extending. Saved into window->SizeContents at the end of the frame
+    ImVec2                  CursorMaxPos;           // Used to implicitly calculate the size of our contents, always growing during the frame. Turned into window->SizeContents at the beginning of next frame
     float                   CurrentLineHeight;
     float                   CurrentLineTextBaseOffset;
     float                   PrevLineHeight;
@@ -659,17 +707,7 @@ struct IMGUI_API ImGuiDrawContext
     float                   IndentX;                // Indentation / start position from left of window (increased by TreePush/TreePop, etc.)
     float                   GroupOffsetX;
     float                   ColumnsOffsetX;         // Offset to the current column (if ColumnsCurrent > 0). FIXME: This and the above should be a stack to allow use cases like Tree->Column->Tree. Need revamp columns API.
-    int                     ColumnsCurrent;
-    int                     ColumnsCount;
-    float                   ColumnsMinX;
-    float                   ColumnsMaxX;
-    float                   ColumnsStartPosY;
-    float                   ColumnsStartMaxPosX;   // Backup of CursorMaxPos
-    float                   ColumnsCellMinY;
-    float                   ColumnsCellMaxY;
-    ImGuiColumnsFlags       ColumnsFlags;
-    ImGuiID                 ColumnsSetId;
-    ImVector<ImGuiColumnData> ColumnsData;
+    ImGuiColumnsSet*        ColumnsSet;             // Current columns set
 
     ImGuiDrawContext()
     {
@@ -693,14 +731,7 @@ struct IMGUI_API ImGuiDrawContext
         IndentX = 0.0f;
         GroupOffsetX = 0.0f;
         ColumnsOffsetX = 0.0f;
-        ColumnsCurrent = 0;
-        ColumnsCount = 1;
-        ColumnsMinX = ColumnsMaxX = 0.0f;
-        ColumnsStartPosY = 0.0f;
-        ColumnsStartMaxPosX = 0.0f;
-        ColumnsCellMinY = ColumnsCellMaxY = 0.0f;
-        ColumnsFlags = 0;
-        ColumnsSetId = 0;
+        ColumnsSet = NULL;
     }
 };
 
@@ -710,13 +741,12 @@ struct IMGUI_API ImGuiWindow
     char*                   Name;
     ImGuiID                 ID;                                 // == ImHash(Name)
     ImGuiWindowFlags        Flags;                              // See enum ImGuiWindowFlags_
-    int                     OrderWithinParent;                  // Order within immediate parent window, if we are a child window. Otherwise 0.
     ImVec2                  PosFloat;
     ImVec2                  Pos;                                // Position rounded-up to nearest pixel
     ImVec2                  Size;                               // Current size (==SizeFull or collapsed title bar size)
     ImVec2                  SizeFull;                           // Size when non collapsed
     ImVec2                  SizeFullAtLastBegin;                // Copy of SizeFull at the end of Begin. This is the reference value we'll use on the next frame to decide if we need scrollbars.
-    ImVec2                  SizeContents;                       // Size of contents (== extents reach of the drawing cursor) from previous frame
+    ImVec2                  SizeContents;                       // Size of contents (== extents reach of the drawing cursor) from previous frame. Include decoration, window title, border, menu, etc.
     ImVec2                  SizeContentsExplicit;               // Size of contents explicitly set by the user via SetNextWindowContentSize()
     ImRect                  ContentsRegionRect;                 // Maximum visible content position in window coordinates. ~~ (SizeContentsExplicit ? SizeContentsExplicit : Size - ScrollbarSizes) - CursorStartPos, per axis
     ImVec2                  WindowPadding;                      // Window padding at the time of begin.
@@ -735,6 +765,8 @@ struct IMGUI_API ImGuiWindow
     bool                    SkipItems;                          // Set when items can safely be all clipped (e.g. window not visible or collapsed)
     bool                    Appearing;                          // Set during the frame where the window is appearing (or re-appearing)
     bool                    CloseButton;                        // Set when the window has a close button (p_open != NULL)
+    int                     BeginOrderWithinParent;             // Order within immediate parent window, if we are a child window. Otherwise 0.
+    int                     BeginOrderWithinContext;            // Order within entire imgui context. This is mostly used for debugging submission order related issues.
     int                     BeginCount;                         // Number of Begin() during the current frame (generally 0 or 1, 1+ if appending via multiple Begin/End pairs)
     ImGuiID                 PopupId;                            // ID in the popup stack when this window is used as a popup/menu (because we use generic Name/ID for recycling)
     int                     AutoFitFramesX, AutoFitFramesY;
@@ -757,9 +789,10 @@ struct IMGUI_API ImGuiWindow
     float                   ItemWidthDefault;
     ImGuiSimpleColumns      MenuColumns;                        // Simplified columns storage for menu items
     ImGuiStorage            StateStorage;
+    ImVector<ImGuiColumnsSet> ColumnsStorage;
     float                   FontWindowScale;                    // Scale multiplier per-window
     ImDrawList*             DrawList;
-    ImGuiWindow*            ParentWindow;                       // Immediate parent in the window stack *regardless* of whether this window is a child window or not)
+    ImGuiWindow*            ParentWindow;                       // If we are a child _or_ popup window, this is pointing to our parent. Otherwise NULL.
     ImGuiWindow*            RootWindow;                         // Generally point to ourself. If we are a child window, this is pointing to the first non-child parent window.
     ImGuiWindow*            RootNonPopupWindow;                 // Generally point to ourself. Used to display TitleBgActive color and for selecting which window to use for NavWindowing
 
@@ -778,6 +811,7 @@ public:
     ImGuiID     GetID(const char* str, const char* str_end = NULL);
     ImGuiID     GetID(const void* ptr);
     ImGuiID     GetIDNoKeepAlive(const char* str, const char* str_end = NULL);
+    ImGuiID     GetIDFromRectangle(const ImRect& r_abs);
 
     // We don't use g.FontSize because the window may be != g.CurrentWidow.
     ImRect      Rect() const                            { return ImRect(Pos.x, Pos.y, Pos.x+Size.x, Pos.y+Size.y); }
@@ -795,8 +829,9 @@ struct ImGuiItemHoveredDataBackup
     ImRect      LastItemRect;
     bool        LastItemRectHoveredRect;
 
-    void Backup()  { ImGuiWindow* window = GImGui->CurrentWindow; LastItemId = window->DC.LastItemId; LastItemRect = window->DC.LastItemRect; LastItemRectHoveredRect = window->DC.LastItemRectHoveredRect; }
-    void Restore() { ImGuiWindow* window = GImGui->CurrentWindow; window->DC.LastItemId = LastItemId; window->DC.LastItemRect = LastItemRect; window->DC.LastItemRectHoveredRect = LastItemRectHoveredRect; }
+    ImGuiItemHoveredDataBackup() { Backup(); }
+    void Backup()        { ImGuiWindow* window = GImGui->CurrentWindow; LastItemId = window->DC.LastItemId; LastItemRect = window->DC.LastItemRect; LastItemRectHoveredRect = window->DC.LastItemRectHoveredRect; }
+    void Restore() const { ImGuiWindow* window = GImGui->CurrentWindow; window->DC.LastItemId = LastItemId; window->DC.LastItemRect = LastItemRect; window->DC.LastItemRectHoveredRect = LastItemRectHoveredRect; }
 };
 
 //-----------------------------------------------------------------------------
@@ -812,11 +847,11 @@ namespace ImGui
     // - You are calling ImGui functions after ImGui::Render() and before the next ImGui::NewFrame(), which is also illegal.
     inline    ImGuiWindow*  GetCurrentWindowRead()      { ImGuiContext& g = *GImGui; return g.CurrentWindow; }
     inline    ImGuiWindow*  GetCurrentWindow()          { ImGuiContext& g = *GImGui; g.CurrentWindow->WriteAccessed = true; return g.CurrentWindow; }
-    IMGUI_API ImGuiWindow*  GetParentWindow();
     IMGUI_API ImGuiWindow*  FindWindowByName(const char* name);
     IMGUI_API void          FocusWindow(ImGuiWindow* window);
     IMGUI_API void          BringWindowToFront(ImGuiWindow* window);
     IMGUI_API void          BringWindowToBack(ImGuiWindow* window);
+    IMGUI_API bool          IsWindowChildOf(ImGuiWindow* window, ImGuiWindow* potential_parent);
 
     IMGUI_API void          Initialize();
 
@@ -854,14 +889,14 @@ namespace ImGui
     IMGUI_API void          VerticalSeparator();        // Vertical separator, for menu bars (use current line height). not exposed because it is misleading what it doesn't have an effect on regular layout.
     IMGUI_API bool          SplitterBehavior(ImGuiID id, const ImRect& bb, ImGuiAxis axis, float* size1, float* size2, float min_size1, float min_size2, float hover_extend = 0.0f);
 
-    // FIXME-WIP: New Columns API
-    IMGUI_API void          BeginColumns(const char* id, int count, ImGuiColumnsFlags flags = 0); // setup number of columns. use an identifier to distinguish multiple column sets. close with EndColumns().
-    IMGUI_API void          EndColumns();                                                         // close columns
-    IMGUI_API void          PushColumnClipRect(int column_index = -1);
+    IMGUI_API bool          BeginDragDropTargetCustom(const ImRect& bb, ImGuiID id);
+    IMGUI_API void          ClearDragDrop();
+    IMGUI_API bool          IsDragDropPayloadBeingAccepted();
 
-    // FIXME-WIP: New Combo API
-    IMGUI_API bool          BeginCombo(const char* label, const char* preview_value, ImGuiComboFlags flags = 0);
-    IMGUI_API void          EndCombo();
+    // FIXME-WIP: New Columns API
+    IMGUI_API void          BeginColumns(const char* str_id, int count, ImGuiColumnsFlags flags = 0); // setup number of columns. use an identifier to distinguish multiple column sets. close with EndColumns().
+    IMGUI_API void          EndColumns();                                                             // close columns
+    IMGUI_API void          PushColumnClipRect(int column_index = -1);
 
     // NB: All position are in absolute pixels coordinates (never using window coordinates internally)
     // AVOID USING OUTSIDE OF IMGUI.CPP! NOT FOR PUBLIC CONSUMPTION. THOSE FUNCTIONS ARE A MESS. THEIR SIGNATURE AND BEHAVIOR WILL CHANGE, THEY NEED TO BE REFACTORED INTO SOMETHING DECENT.
