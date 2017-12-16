@@ -152,6 +152,8 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	deviceCtx->RSSetState(rs);
 
 	D3D11_BLEND_DESC blendDesc = {};
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.IndependentBlendEnable = false;
 	blendDesc.RenderTarget[0].BlendEnable = true;
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
@@ -162,7 +164,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 	ID3D11BlendState *blendState = nullptr;
 	d3dDevice->CreateBlendState(&blendDesc, &blendState);
-	deviceCtx->OMSetBlendState(blendState, nullptr, 0xffffffff);
+	deviceCtx->OMSetBlendState(blendState, blendFactor, 0xffffffff);
 
 	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
 	// Depth test parameters
@@ -291,6 +293,64 @@ void RenderD3D11::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	clearColor[1] = g / 255.0f;
 	clearColor[2] = b / 255.0f;
 	clearColor[3] = a / 255.0f;
+}
+
+void RenderD3D11::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
+{
+	D3D11_BLEND_DESC blendDesc = {};
+
+	if(rgbWriteEnabled)
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE;
+	}
+
+	if(alphaWriteEnabled)
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
+	}
+
+	DESIRE_TODO("Implement SetColorWriteEnabled()");
+}
+
+void RenderD3D11::SetDepthWriteEnabled(bool enabled)
+{
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+
+	dsDesc.DepthWriteMask = enabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+
+	DESIRE_TODO("Implement SetDepthWriteEnabled()");
+}
+
+void RenderD3D11::SetDepthTest(EDepthTest depthTest)
+{
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+
+	dsDesc.DepthEnable = (depthTest != EDepthTest::DISABLED);
+	switch(depthTest)
+	{
+		case EDepthTest::LESS:			dsDesc.DepthFunc = D3D11_COMPARISON_LESS; break;
+		case EDepthTest::LESS_EQUAL:	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; break;
+		case EDepthTest::GREATER:		dsDesc.DepthFunc = D3D11_COMPARISON_GREATER; break;
+		case EDepthTest::GREATER_EQUAL:	dsDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; break;
+		case EDepthTest::EQUAL:			dsDesc.DepthFunc = D3D11_COMPARISON_EQUAL; break;
+		case EDepthTest::NOT_EQUAL:		dsDesc.DepthFunc = D3D11_COMPARISON_NOT_EQUAL; break;
+	}
+
+	DESIRE_TODO("Implement SetDepthTest()");
+}
+
+void RenderD3D11::SetCullMode(ECullMode cullMode)
+{
+	D3D11_RASTERIZER_DESC desc = {};
+
+	switch(cullMode)
+	{
+		case IRender::ECullMode::NONE:	desc.CullMode = D3D11_CULL_NONE; break;
+		case IRender::ECullMode::CCW:	desc.CullMode = D3D11_CULL_BACK; break;
+		case IRender::ECullMode::CW:	desc.CullMode = D3D11_CULL_FRONT; break;
+	}
+
+	DESIRE_TODO("Implement SetCullMode()");
 }
 
 void RenderD3D11::Bind(Mesh *mesh)

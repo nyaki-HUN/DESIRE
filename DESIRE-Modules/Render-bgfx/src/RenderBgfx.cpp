@@ -42,10 +42,11 @@ void RenderBgfx::Init(IWindow *mainWindow)
 
 	initialized = bgfx::init(bgfx::RendererType::Count, BGFX_PCI_ID_NONE);
 	activeViewId = 0;
+	renderState = BGFX_STATE_DEFAULT;
 
 	for(bgfx::ViewId viewId = 0; viewId < BGFX_CONFIG_MAX_VIEWS; ++viewId)
 	{
-		bgfx::setViewClear(viewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, 0x000000ff, 1.0f, 0);
+		bgfx::setViewClear(viewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColor, 1.0f, 0);
 	}
 
 	for(size_t i = 0; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
@@ -152,14 +153,75 @@ void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matr
 	bgfx::setViewTransform(activeViewId, view, projection);
 }
 
+void RenderBgfx::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	bgfx::setScissor(x, y, width, height);
+}
+
 void RenderBgfx::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	clearColor = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
-void RenderBgfx::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+void RenderBgfx::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
 {
-	bgfx::setScissor(x, y, width, height);
+	if(rgbWriteEnabled)
+	{
+		renderState |= BGFX_STATE_RGB_WRITE;
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_RGB_WRITE;
+	}
+
+	if(alphaWriteEnabled)
+	{
+		renderState |= BGFX_STATE_ALPHA_WRITE;
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_ALPHA_WRITE;
+	}
+}
+
+void RenderBgfx::SetDepthWriteEnabled(bool enabled)
+{
+	if(enabled)
+	{
+		renderState |= BGFX_STATE_DEPTH_WRITE;
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_DEPTH_WRITE;
+	}
+}
+
+void RenderBgfx::SetDepthTest(EDepthTest depthTest)
+{
+	renderState &= ~BGFX_STATE_DEPTH_TEST_MASK;
+
+	switch(depthTest)
+	{
+		case EDepthTest::DISABLED:		break;
+		case EDepthTest::LESS:			renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
+		case EDepthTest::LESS_EQUAL:	renderState |= BGFX_STATE_DEPTH_TEST_LEQUAL; break;
+		case EDepthTest::GREATER:		renderState |= BGFX_STATE_DEPTH_TEST_GREATER; break;
+		case EDepthTest::GREATER_EQUAL:	renderState |= BGFX_STATE_DEPTH_TEST_GEQUAL; break;
+		case EDepthTest::EQUAL:			renderState |= BGFX_STATE_DEPTH_TEST_EQUAL; break;
+		case EDepthTest::NOT_EQUAL:		renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
+	}
+}
+
+void RenderBgfx::SetCullMode(ECullMode cullMode)
+{
+	renderState &= ~BGFX_STATE_CULL_MASK;
+
+	switch(cullMode)
+	{
+		case IRender::ECullMode::NONE:	break;
+		case IRender::ECullMode::CCW:	renderState |= BGFX_STATE_CULL_CCW; break;
+		case IRender::ECullMode::CW:	renderState |= BGFX_STATE_CULL_CW; break;
+	}
 }
 
 void RenderBgfx::Bind(Mesh *mesh)
@@ -464,13 +526,11 @@ void RenderBgfx::SetShadersFromMaterial(Material *material)
 	// TODO: proper render state handling
 /**/if(activeViewId == 0)
 	{
-		bgfx::setState(activeViewId
-			| BGFX_STATE_RGB_WRITE
-			| BGFX_STATE_ALPHA_WRITE
-			| BGFX_STATE_DEPTH_TEST_LESS
-			| BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA)
-			| BGFX_STATE_MSAA
-		);
+		renderState |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_BLEND_MASK;
 	}
 }
 
@@ -487,6 +547,7 @@ void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 
 void RenderBgfx::DoRender()
 {
+	bgfx::setState(renderState, blendFactor);
 	bgfx::submit(activeViewId, activeShaderProgram);
 }
 

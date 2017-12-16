@@ -18,6 +18,24 @@ class IRender
 	DESIRE_DECLARE_SINGLETON_INTERFACE(IRender)
 
 public:
+	enum class EDepthTest
+	{
+		DISABLED,
+		LESS,
+		LESS_EQUAL,
+		GREATER,
+		GREATER_EQUAL,
+		EQUAL,
+		NOT_EQUAL
+	};
+
+	enum class ECullMode
+	{
+		NONE,
+		CCW,
+		CW
+	};
+
 	virtual void Init(IWindow *mainWindow) = 0;
 	virtual void UpdateRenderWindow(IWindow *window) = 0;
 	virtual void Kill() = 0;
@@ -34,8 +52,14 @@ public:
 
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
+
+	// Render state setup
 	virtual void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 	virtual void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
+	virtual void SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled) = 0;
+	virtual void SetDepthWriteEnabled(bool enabled) = 0;
+	virtual void SetDepthTest(EDepthTest deptTest) = 0;
+	virtual void SetCullMode(ECullMode cullMode) = 0;
 
 	// Resource bind
 	virtual void Bind(Mesh *mesh) = 0;

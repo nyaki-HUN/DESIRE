@@ -181,6 +181,9 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(io.DisplaySize.x, io.DisplaySize.y, -1.0f, 1.0f);
 	render->SetViewProjectionMatrices(Matrix4::Identity(), matOrtho);
 
+	render->SetDepthWriteEnabled(false);
+	render->SetCullMode(IRender::ECullMode::NONE);
+
 	// Update mesh with packed buffers for contiguous indices and vertices
 	ASSERT((uint32_t)drawData->TotalIdxCount <= mesh->maxNumOfIndices);
 	ASSERT((uint32_t)drawData->TotalVtxCount <= mesh->maxNumOfVertices);

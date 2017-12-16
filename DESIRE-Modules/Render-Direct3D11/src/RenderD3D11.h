@@ -29,8 +29,13 @@ public:
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
+
 	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 	void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
+	void SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled) override;
+	void SetDepthWriteEnabled(bool enabled) override;
+	void SetDepthTest(EDepthTest deptTest) override;
+	void SetCullMode(ECullMode cullMode) override;
 
 	void Bind(Mesh *mesh) override;
 	void Bind(Shader *shader) override;
@@ -60,21 +65,22 @@ private:
 	ID3D11Device *d3dDevice = nullptr;
 	ID3D11DeviceContext *deviceCtx = nullptr;
 	IDXGISwapChain *swapChain = nullptr;
-
 	ID3D11RenderTargetView *backBufferRenderTargetView = nullptr;
 	ID3D11DepthStencilView *backBufferDepthStencilView = nullptr;
 
-	std::unordered_map<uint64_t, ID3D11InputLayout*> inputLayoutCache;
-
 	const IWindow *activeWindow = nullptr;
 	const Mesh *activeMesh = nullptr;
-	std::unique_ptr<Shader> errorVertexShader;
-	std::unique_ptr<Shader> errorPixelShader;
 
 	DirectX::XMMATRIX matWorld;
 	DirectX::XMMATRIX matView;
 	DirectX::XMMATRIX matProj;
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+	std::unordered_map<uint64_t, ID3D11InputLayout*> inputLayoutCache;
+
+	std::unique_ptr<Shader> errorVertexShader;
+	std::unique_ptr<Shader> errorPixelShader;
 
 	bool initialized = false;
 };
