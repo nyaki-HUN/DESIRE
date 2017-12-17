@@ -5,7 +5,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 // Enable usage of zlib library
-#define DESIRE_ENABLE_ZLIB
+//#define DESIRE_ENABLE_ZLIB
 
 // Distribution mode
 //#define DESIRE_DISTRIBUTION
