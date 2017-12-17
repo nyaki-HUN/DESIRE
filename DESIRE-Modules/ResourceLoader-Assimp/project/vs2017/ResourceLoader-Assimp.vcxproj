@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AE7FBF83-FF16-4E32-9844-6CFB79B22929}</ProjectGuid>
+    <ProjectGuid>{19E05838-5A9C-421F-9102-F3F5A1ED488A}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>ResourceLoader-Assimp</RootNamespace>
