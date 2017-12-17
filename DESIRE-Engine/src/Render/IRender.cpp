@@ -56,3 +56,11 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 	// Render
 	DoRender();
 }
+
+void IRender::SetDefaultRenderStates()
+{
+	SetColorWriteEnabled(true, true);
+	SetDepthWriteEnabled(true);
+	SetDepthTest(EDepthTest::LESS);
+	SetCullMode(ECullMode::CCW);
+}

@@ -77,11 +77,14 @@ public:
 	virtual void UpdateDynamicMesh(DynamicMesh *mesh) = 0;
 
 protected:
+	void SetDefaultRenderStates();
+
+	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
+
+private:
 	virtual void SetMesh(Mesh *mesh) = 0;
 	virtual void SetShadersFromMaterial(Material *material) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture) = 0;
-
-	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 
 	// Submit draw command
 	virtual void DoRender() = 0;

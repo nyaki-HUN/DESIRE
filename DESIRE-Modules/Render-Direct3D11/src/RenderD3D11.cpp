@@ -54,39 +54,27 @@ RenderD3D11::RenderD3D11()
 	errorPixelShader = std::make_unique<Shader>("ps_error");
 	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
-	// Depth test parameters
-	depthStencilDesc.DepthEnable = true;
-	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	// Stencil test parameters
-	depthStencilDesc.StencilEnable = false;
-	depthStencilDesc.StencilReadMask = 0xFF;
-	depthStencilDesc.StencilWriteMask = 0xFF;
+	depthStencilDesc.StencilEnable = FALSE;
+	depthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+	depthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
 	// Stencil operations if pixel is front-facing
 	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 	// Stencil operations if pixel is back-facing
 	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
 	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	rasterizerDesc.FrontCounterClockwise = false;
-	rasterizerDesc.DepthBias = 0;
-	rasterizerDesc.DepthBiasClamp = 0.0f;
-	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
-	rasterizerDesc.DepthClipEnable = true;
-	rasterizerDesc.ScissorEnable = true;
-	rasterizerDesc.MultisampleEnable = true;
-	rasterizerDesc.AntialiasedLineEnable = false;
+	rasterizerDesc.DepthClipEnable = TRUE;
+	rasterizerDesc.MultisampleEnable = TRUE;
+	rasterizerDesc.AntialiasedLineEnable = TRUE;
 
-	blendDesc.AlphaToCoverageEnable = false;
-	blendDesc.IndependentBlendEnable = false;
-	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
@@ -177,6 +165,8 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
+
+	SetDefaultRenderStates();
 }
 
 void RenderD3D11::UpdateRenderWindow(IWindow *window)
@@ -822,6 +812,12 @@ void RenderD3D11::UpdateDynamicMesh(DynamicMesh *mesh)
 	}
 }
 
+void RenderD3D11::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
+	deviceCtx->RSSetViewports(1, &vp);
+}
+
 void RenderD3D11::SetMesh(Mesh *mesh)
 {
 	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
@@ -901,12 +897,6 @@ void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)
 
 	deviceCtx->PSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
 	deviceCtx->PSSetSamplers(samplerIdx, 1, &renderData->samplerState);
-}
-
-void RenderD3D11::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
-	deviceCtx->RSSetViewports(1, &vp);
 }
 
 void RenderD3D11::DoRender()

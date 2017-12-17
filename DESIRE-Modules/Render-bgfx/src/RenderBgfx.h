@@ -45,11 +45,11 @@ public:
 	void UpdateDynamicMesh(DynamicMesh *mesh) override;
 
 private:
+	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
+
 	void SetMesh(Mesh *mesh) override;
 	void SetShadersFromMaterial(Material *material) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
-
-	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void DoRender() override;
 

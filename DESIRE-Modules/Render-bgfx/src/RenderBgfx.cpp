@@ -42,7 +42,6 @@ void RenderBgfx::Init(IWindow *mainWindow)
 
 	initialized = bgfx::init(bgfx::RendererType::Count, BGFX_PCI_ID_NONE);
 	activeViewId = 0;
-	renderState = BGFX_STATE_DEFAULT;
 
 	for(bgfx::ViewId viewId = 0; viewId < BGFX_CONFIG_MAX_VIEWS; ++viewId)
 	{
@@ -54,7 +53,10 @@ void RenderBgfx::Init(IWindow *mainWindow)
 		samplerUniforms[i] = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
 	}
 
-	UpdateRenderWindow(mainWindow);
+	renderState = BGFX_STATE_MSAA;
+	SetDefaultRenderStates();
+
+	bgfx::reset(mainWindow->GetWidth(), mainWindow->GetHeight(), BGFX_RESET_VSYNC);
 }
 
 void RenderBgfx::UpdateRenderWindow(IWindow *window)
@@ -484,6 +486,11 @@ void RenderBgfx::UpdateDynamicMesh(DynamicMesh *mesh)
 	}
 }
 
+void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	bgfx::setViewRect(activeViewId, x, y, width, height);
+}
+
 void RenderBgfx::SetMesh(Mesh *mesh)
 {
 	MeshRenderDataBgfx *renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
@@ -538,11 +545,6 @@ void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
 {
 	const bgfx::TextureHandle *renderData = static_cast<const bgfx::TextureHandle*>(texture->renderData);
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);
-}
-
-void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-	bgfx::setViewRect(activeViewId, x, y, width, height);
 }
 
 void RenderBgfx::DoRender()

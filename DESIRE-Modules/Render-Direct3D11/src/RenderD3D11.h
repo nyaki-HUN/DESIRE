@@ -50,11 +50,11 @@ public:
 	void UpdateDynamicMesh(DynamicMesh *mesh) override;
 
 private:
+	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
+
 	void SetMesh(Mesh *mesh) override;
 	void SetShadersFromMaterial(Material *material) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
-
-	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void DoRender() override;
 
@@ -71,9 +71,9 @@ private:
 	ID3D11RenderTargetView *backBufferRenderTargetView = nullptr;
 	ID3D11DepthStencilView *backBufferDepthStencilView = nullptr;
 
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
-	D3D11_RASTERIZER_DESC rasterizerDesc;
-	D3D11_BLEND_DESC blendDesc;
+	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
+	D3D11_RASTERIZER_DESC rasterizerDesc = {};
+	D3D11_BLEND_DESC blendDesc = {};
 
 	const ID3D11DepthStencilState *activeDepthStencilState = nullptr;
 	const ID3D11RasterizerState *activeRasterizerState = nullptr;
