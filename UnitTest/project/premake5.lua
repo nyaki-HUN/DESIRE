@@ -5,7 +5,6 @@ project "UnitTest"
 	targetdir("../")
 
 	rtti "On"
-	flags { "WinMain" }
 
 	pchheader "stdafx.h"
 	pchsource "../src/stdafx.cpp"
@@ -24,8 +23,4 @@ project "UnitTest"
 	links
 	{
 		"DESIRE",
-		"d3d11",
-		"d3dcompiler",
-		"dxgi",
-		"dxguid",
 	}

@@ -4,11 +4,6 @@ project "SandBox"
 	kind "WindowedApp"
 	targetdir("../")
 
-	flags
-	{
-		"WinMain"
-	}
-
 	includedirs
 	{
 		"../../DESIRE-Engine/src",
@@ -19,7 +14,6 @@ project "SandBox"
 	links
 	{
 		"DESIRE",
-
 		"Compression-zlib-ng",
 		"Physics-Bullet",
 		"Render-bgfx",

@@ -1,6 +1,7 @@
 configurations { "Debug", "Release" }
 architecture "x86_64"
 language "C++"
+cppdialect "C++14"
 characterset "MBCS"
 floatingpoint "Fast"
 rtti "Off"
@@ -16,7 +17,6 @@ flags
 {
 	"StaticRuntime",
 	"MultiProcessorCompile",
-	"C++11",
 }
 
 if _ACTION == "vs2017" then
@@ -24,7 +24,6 @@ if _ACTION == "vs2017" then
 	defines
 	{
 		"WIN32",
-		"_HAS_EXCEPTIONS=0",
 		"_CRT_SECURE_NO_DEPRECATE",
 	}
 end
@@ -113,7 +112,7 @@ function AddModuleConfig()
 	}
 end
 
--- Engine solution and projects
+-- Solution and projects
 solution "DESIRE"
 	startproject "SandBox"
 
