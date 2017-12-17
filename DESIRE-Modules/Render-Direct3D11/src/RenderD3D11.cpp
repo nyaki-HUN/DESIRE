@@ -867,13 +867,7 @@ void RenderD3D11::SetShadersFromMaterial(Material *material)
 	}
 	deviceCtx->VSSetConstantBuffers(0, (UINT)vertexShaderRenderData->constantBuffers.size(), vertexShaderRenderData->constantBuffers.data());
 
-	const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
-	ID3D11InputLayout *vertexLayout = nullptr;
-	HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &vertexLayout);
-	ASSERT(SUCCEEDED(hr));
-
-	deviceCtx->IASetInputLayout(vertexLayout);
-	DX_RELEASE(vertexLayout);
+	SetInputLayout(vertexShaderRenderData);
 
 	// Pixel shader
 	const ShaderRenderDataD3D11 *pixelShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->pixelShader->renderData);
@@ -1034,6 +1028,35 @@ void RenderD3D11::SetBlendState()
 		deviceCtx->OMSetBlendState(blendState, blendFactor, 0xffffffff);
 		activeBlendState = blendState;
 	}
+}
+
+void RenderD3D11::SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRenderData)
+{
+	ID3D11InputLayout *inputLayout = nullptr;
+
+	uint64_t layoutKey = 0;
+
+	auto it = inputLayoutCache.find(layoutKey);
+	if(it != inputLayoutCache.end())
+	{
+		inputLayout = it->second;
+	}
+	else
+	{
+		const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
+		HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), meshRenderData->vertexElementDescCount, vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &inputLayout);
+		ASSERT(SUCCEEDED(hr));
+//		inputLayoutCache.insert(std::make_pair(layoutKey, inputLayout));
+	}
+
+	if(activeInputLayout != inputLayout)
+	{
+		deviceCtx->IASetInputLayout(inputLayout);
+		activeInputLayout = inputLayout;
+	}
+
+	DESIRE_TODO("Use inputLayoutCache instead of releasing every time");
+	DX_RELEASE(inputLayout);
 }
 
 DXGI_FORMAT RenderD3D11::ConvertTextureFormat(Texture::EFormat textureFormat)

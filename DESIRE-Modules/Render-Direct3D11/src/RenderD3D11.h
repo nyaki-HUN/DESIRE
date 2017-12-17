@@ -9,6 +9,7 @@
 #include <unordered_map>
 
 class MeshRenderDataD3D11;
+class ShaderRenderDataD3D11;
 
 class RenderD3D11 : public IRender
 {
@@ -62,6 +63,7 @@ private:
 	void SetDepthStencilState();
 	void SetRasterizerState();
 	void SetBlendState();
+	void SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRenderData);
 
 	static DXGI_FORMAT ConvertTextureFormat(Texture::EFormat textureFormat);
 
@@ -78,6 +80,7 @@ private:
 	const ID3D11DepthStencilState *activeDepthStencilState = nullptr;
 	const ID3D11RasterizerState *activeRasterizerState = nullptr;
 	const ID3D11BlendState *activeBlendState = nullptr;
+	const ID3D11InputLayout *activeInputLayout = nullptr;
 	const IWindow *activeWindow = nullptr;
 	const Mesh *activeMesh = nullptr;
 
