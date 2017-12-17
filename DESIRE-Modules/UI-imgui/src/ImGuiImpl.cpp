@@ -237,6 +237,8 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 
 		mesh->vertexOffset += mesh->numVertices;
 	}
+
+	render->SetScissor();
 }
 
 void ImGuiImpl::RenderDrawListsCallback(ImDrawData *drawData)

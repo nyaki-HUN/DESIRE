@@ -25,7 +25,7 @@ public:
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 
-	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
+	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
 	void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
 	void SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled) override;
 	void SetDepthWriteEnabled(bool enabled) override;

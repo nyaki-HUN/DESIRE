@@ -54,7 +54,7 @@ public:
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
 
 	// Render state setup
-	virtual void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
+	virtual void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) = 0;
 	virtual void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
 	virtual void SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled) = 0;
 	virtual void SetDepthWriteEnabled(bool enabled) = 0;
