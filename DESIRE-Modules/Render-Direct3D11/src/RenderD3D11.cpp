@@ -54,6 +54,47 @@ RenderD3D11::RenderD3D11()
 	errorPixelShader = std::make_unique<Shader>("ps_error");
 	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
+	// Depth test parameters
+	depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	// Stencil test parameters
+	depthStencilDesc.StencilEnable = false;
+	depthStencilDesc.StencilReadMask = 0xFF;
+	depthStencilDesc.StencilWriteMask = 0xFF;
+	// Stencil operations if pixel is front-facing
+	depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	// Stencil operations if pixel is back-facing
+	depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	rasterizerDesc.FrontCounterClockwise = false;
+	rasterizerDesc.DepthBias = 0;
+	rasterizerDesc.DepthBiasClamp = 0.0f;
+	rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+	rasterizerDesc.DepthClipEnable = true;
+	rasterizerDesc.ScissorEnable = true;
+	rasterizerDesc.MultisampleEnable = true;
+	rasterizerDesc.AntialiasedLineEnable = false;
+
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.IndependentBlendEnable = false;
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
 	matWorld = DirectX::XMMatrixIdentity();
 	matView = DirectX::XMMatrixIdentity();
 	matProj = DirectX::XMMatrixIdentity();
@@ -136,58 +177,6 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
-
-	// TODO: proper render state handling
-
-	D3D11_RASTERIZER_DESC desc = {};
-	desc.FillMode = D3D11_FILL_SOLID;
-	desc.CullMode = D3D11_CULL_NONE;
-	desc.FrontCounterClockwise = false;
-	desc.DepthClipEnable = true;
-	desc.ScissorEnable = true;
-	desc.MultisampleEnable = true;
-	desc.AntialiasedLineEnable = false;
-	ID3D11RasterizerState *rs = nullptr;
-	hr = d3dDevice->CreateRasterizerState(&desc, &rs);
-	deviceCtx->RSSetState(rs);
-
-	D3D11_BLEND_DESC blendDesc = {};
-	blendDesc.AlphaToCoverageEnable = false;
-	blendDesc.IndependentBlendEnable = false;
-	blendDesc.RenderTarget[0].BlendEnable = true;
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-	ID3D11BlendState *blendState = nullptr;
-	d3dDevice->CreateBlendState(&blendDesc, &blendState);
-	deviceCtx->OMSetBlendState(blendState, blendFactor, 0xffffffff);
-
-	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-	// Depth test parameters
-	dsDesc.DepthEnable = true;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	// Stencil test parameters
-	dsDesc.StencilEnable = false;
-	dsDesc.StencilReadMask = 0xFF;
-	dsDesc.StencilWriteMask = 0xFF;
-	// Stencil operations if pixel is front-facing
-	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-	// Stencil operations if pixel is back-facing
-	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-	ID3D11DepthStencilState *depthStencilState = nullptr;
-	d3dDevice->CreateDepthStencilState(&dsDesc, &depthStencilState);
-	deviceCtx->OMSetDepthStencilState(depthStencilState, 0);
 }
 
 void RenderD3D11::UpdateRenderWindow(IWindow *window)
@@ -203,6 +192,30 @@ void RenderD3D11::UpdateRenderWindow(IWindow *window)
 void RenderD3D11::Kill()
 {
 	initialized = false;
+
+	for(auto& pair : depthStencilStateCache)
+	{
+		DX_RELEASE(pair.second);
+	}
+	depthStencilStateCache.clear();
+
+	for(auto& pair : rasterizerStateCache)
+	{
+		DX_RELEASE(pair.second);
+	}
+	rasterizerStateCache.clear();
+
+	for(auto& pair : blendStateCache)
+	{
+		DX_RELEASE(pair.second);
+	}
+	blendStateCache.clear();
+
+	for(auto& pair : inputLayoutCache)
+	{
+		DX_RELEASE(pair.second);
+	}
+	inputLayoutCache.clear();
 
 	Unbind(errorVertexShader.get());
 	Unbind(errorPixelShader.get());
@@ -283,8 +296,17 @@ void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Mat
 
 void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
-	const D3D11_RECT rect = { x, y, x + width, y + height };
-	deviceCtx->RSSetScissorRects(1, &rect);
+	if(x == 0 && y == 0 && width == 0 && height == 0)
+	{
+		rasterizerDesc.ScissorEnable = FALSE;
+	}
+	else
+	{
+		rasterizerDesc.ScissorEnable = TRUE;
+
+		const D3D11_RECT rect = { x, y, x + width, y + height };
+		deviceCtx->RSSetScissorRects(1, &rect);
+	}
 }
 
 void RenderD3D11::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -297,60 +319,59 @@ void RenderD3D11::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 
 void RenderD3D11::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
 {
-	D3D11_BLEND_DESC blendDesc = {};
+	ASSERT(!blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
 
 	if(rgbWriteEnabled)
 	{
 		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE;
+	}
+	else
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~(D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE);
 	}
 
 	if(alphaWriteEnabled)
 	{
 		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
 	}
-
-	DESIRE_TODO("Implement SetColorWriteEnabled()");
+	else
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D11_COLOR_WRITE_ENABLE_ALPHA;
+	}
 }
 
 void RenderD3D11::SetDepthWriteEnabled(bool enabled)
 {
-	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-
-	dsDesc.DepthWriteMask = enabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
-
-	DESIRE_TODO("Implement SetDepthWriteEnabled()");
+	depthStencilDesc.DepthWriteMask = enabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
 }
 
 void RenderD3D11::SetDepthTest(EDepthTest depthTest)
 {
-	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-
-	dsDesc.DepthEnable = (depthTest != EDepthTest::DISABLED);
 	switch(depthTest)
 	{
-		case EDepthTest::LESS:			dsDesc.DepthFunc = D3D11_COMPARISON_LESS; break;
-		case EDepthTest::LESS_EQUAL:	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; break;
-		case EDepthTest::GREATER:		dsDesc.DepthFunc = D3D11_COMPARISON_GREATER; break;
-		case EDepthTest::GREATER_EQUAL:	dsDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; break;
-		case EDepthTest::EQUAL:			dsDesc.DepthFunc = D3D11_COMPARISON_EQUAL; break;
-		case EDepthTest::NOT_EQUAL:		dsDesc.DepthFunc = D3D11_COMPARISON_NOT_EQUAL; break;
+		case EDepthTest::DISABLED:
+			depthStencilDesc.DepthEnable = FALSE;
+			return;
+
+		case EDepthTest::LESS:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS; break;
+		case EDepthTest::LESS_EQUAL:	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; break;
+		case EDepthTest::GREATER:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER; break;
+		case EDepthTest::GREATER_EQUAL:	depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; break;
+		case EDepthTest::EQUAL:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_EQUAL; break;
+		case EDepthTest::NOT_EQUAL:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_NOT_EQUAL; break;
 	}
 
-	DESIRE_TODO("Implement SetDepthTest()");
+	depthStencilDesc.DepthEnable = TRUE;
 }
 
 void RenderD3D11::SetCullMode(ECullMode cullMode)
 {
-	D3D11_RASTERIZER_DESC desc = {};
-
 	switch(cullMode)
 	{
-		case IRender::ECullMode::NONE:	desc.CullMode = D3D11_CULL_NONE; break;
-		case IRender::ECullMode::CCW:	desc.CullMode = D3D11_CULL_BACK; break;
-		case IRender::ECullMode::CW:	desc.CullMode = D3D11_CULL_FRONT; break;
+		case IRender::ECullMode::NONE:	rasterizerDesc.CullMode = D3D11_CULL_NONE; break;
+		case IRender::ECullMode::CCW:	rasterizerDesc.CullMode = D3D11_CULL_BACK; break;
+		case IRender::ECullMode::CW:	rasterizerDesc.CullMode = D3D11_CULL_FRONT; break;
 	}
-
-	DESIRE_TODO("Implement SetCullMode()");
 }
 
 void RenderD3D11::Bind(Mesh *mesh)
@@ -890,6 +911,10 @@ void RenderD3D11::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t h
 
 void RenderD3D11::DoRender()
 {
+	SetDepthStencilState();
+	SetRasterizerState();
+	SetBlendState();
+
 	if(activeMesh->numIndices != 0)
 	{
 		deviceCtx->DrawIndexed(activeMesh->numIndices, 0, 0);
@@ -912,6 +937,113 @@ void RenderD3D11::UpdateD3D11Resource(ID3D11Resource *resource, const void *data
 
 	memcpy(mappedResource.pData, data, size);
 	deviceCtx->Unmap(resource, 0);
+}
+
+void RenderD3D11::SetDepthStencilState()
+{
+	ID3D11DepthStencilState *depthStencilState = nullptr;
+
+	uint64_t stateKey = 0;
+	stateKey |= (uint64_t)depthStencilDesc.DepthEnable					<< 0;	// 1 bit
+	stateKey |= (uint64_t)depthStencilDesc.DepthWriteMask				<< 1;	// 1 bit
+	stateKey |= (uint64_t)depthStencilDesc.DepthFunc					<< 2;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.StencilEnable				<< 6;	// 1 bit
+	stateKey |= (uint64_t)depthStencilDesc.StencilReadMask				<< 7;	// 8 bits
+	stateKey |= (uint64_t)depthStencilDesc.StencilWriteMask				<< 15;	// 8 bits
+	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilFailOp		<< 23;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilDepthFailOp	<< 27;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilPassOp		<< 31;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilFunc		<< 35;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilFailOp		<< 39;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilDepthFailOp	<< 43;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilPassOp		<< 47;	// 4 bits
+	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilFunc			<< 51;	// 4 bits
+
+	auto it = depthStencilStateCache.find(stateKey);
+	if(it != depthStencilStateCache.end())
+	{
+		depthStencilState = it->second;
+	}
+	else
+	{
+		HRESULT hr = d3dDevice->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
+		ASSERT(SUCCEEDED(hr));
+		depthStencilStateCache.insert(std::make_pair(stateKey, depthStencilState));
+	}
+
+	if(activeDepthStencilState != depthStencilState)
+	{
+		deviceCtx->OMSetDepthStencilState(depthStencilState, 0);
+		activeDepthStencilState = depthStencilState;
+	}
+}
+
+void RenderD3D11::SetRasterizerState()
+{
+	ID3D11RasterizerState *rasterizerState = nullptr;
+
+	uint64_t stateKey = 0;
+	stateKey |= (uint64_t)rasterizerDesc.FillMode				<< 0;	// 2 bits
+	stateKey |= (uint64_t)rasterizerDesc.CullMode				<< 2;	// 2 bits
+//	stateKey |= (uint64_t)rasterizerDesc.FrontCounterClockwise	<< // Constant
+	stateKey |= (uint64_t)rasterizerDesc.DepthBias				<< 4;	// 32 bits
+//	stateKey |= (uint64_t)rasterizerDesc.DepthBiasClamp			<< // Constant
+//	stateKey |= (uint64_t)rasterizerDesc.SlopeScaledDepthBias	<< // Constant
+//	stateKey |= (uint64_t)rasterizerDesc.DepthClipEnable 		<< // Constant
+	stateKey |= (uint64_t)rasterizerDesc.ScissorEnable			<< 36;	// 1 bit
+//	stateKey |= (uint64_t)rasterizerDesc.MultisampleEnable		<< // Constant
+//	stateKey |= (uint64_t)rasterizerDesc.AntialiasedLineEnable	<< // Constant
+
+	auto it = rasterizerStateCache.find(stateKey);
+	if(it != rasterizerStateCache.end())
+	{
+		rasterizerState = it->second;
+	}
+	else
+	{
+		HRESULT hr = d3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+		ASSERT(SUCCEEDED(hr));
+	}
+
+	if(activeRasterizerState != rasterizerState)
+	{
+		deviceCtx->RSSetState(rasterizerState);
+		activeRasterizerState = rasterizerState;
+	}
+}
+
+void RenderD3D11::SetBlendState()
+{
+	ID3D11BlendState *blendState = nullptr;
+
+	uint64_t stateKey = 0;
+	stateKey |= (uint64_t)blendDesc.AlphaToCoverageEnable					<< 0;	// 1 bit
+	stateKey |= (uint64_t)blendDesc.IndependentBlendEnable					<< 1;	// 1 bit
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].BlendEnable				<< 2;	// 1 bit
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].SrcBlend				<< 3;	// 5 bits
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].DestBlend				<< 8;	// 5 bits
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].BlendOp					<< 13;	// 3 bits
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].SrcBlendAlpha			<< 16;	// 5 bits
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].DestBlendAlpha			<< 21;	// 5 bits
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].BlendOpAlpha			<< 26;	// 3 bits
+	stateKey |= (uint64_t)blendDesc.RenderTarget[0].RenderTargetWriteMask	<< 29;	// 4 bits
+
+	auto it = blendStateCache.find(stateKey);
+	if(it != blendStateCache.end())
+	{
+		blendState = it->second;
+	}
+	else
+	{
+		HRESULT hr = d3dDevice->CreateBlendState(&blendDesc, &blendState);
+		ASSERT(SUCCEEDED(hr));
+	}
+
+	if(activeBlendState != blendState)
+	{
+		deviceCtx->OMSetBlendState(blendState, blendFactor, 0xffffffff);
+		activeBlendState = blendState;
+	}
 }
 
 DXGI_FORMAT RenderD3D11::ConvertTextureFormat(Texture::EFormat textureFormat)
