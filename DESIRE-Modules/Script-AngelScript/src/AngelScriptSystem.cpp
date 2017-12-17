@@ -181,13 +181,13 @@ bool AngelScriptSystem::IsBreakpoint(const char *scriptSection, int line, asIScr
 	DESIRE_UNUSED(line);
 	DESIRE_UNUSED(function);
 
-	DESIRE_TODO("AngelScript debugging");
+	// TODO: Add debugging functionality
 	return false;
 }
 
 void AngelScriptSystem::PrintCallback(const String& message)
 {
-	LOG_DEBUG("%s", message.c_str());
+	LOG_MESSAGE("%s", message.c_str());
 }
 
 void AngelScriptSystem::MessageCallback(const asSMessageInfo *msg, void *thisPtr)
@@ -265,7 +265,7 @@ void AngelScriptSystem::LineCallback(asIScriptContext *ctx)
 		{
 			asIScriptFunction *func = ctx->GetFunction(i);
 			line = ctx->GetLineNumber(i, &column, &scriptSection);
-			LOG_DEBUG("%s:%s:%d,%d\n", scriptSection, func->GetDeclaration(), line, column);
+			LOG_MESSAGE("%s:%s:%d,%d\n", scriptSection, func->GetDeclaration(), line, column);
 		}
 	}
 }

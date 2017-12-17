@@ -3,6 +3,13 @@ project "Script-AngelScript"
 	warnings "Extra"
 	uuid "AE7FBF83-FF16-4E32-9844-6CFB79B22929"
 
+	exceptionhandling "On"
+
+	flags
+	{
+		"FatalCompileWarnings",
+	}
+
 	includedirs
 	{
 		"../Externals/AngelScript/include",
