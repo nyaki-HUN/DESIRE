@@ -121,26 +121,26 @@ solution "DESIRE"
 	include "SandBox/project/premake5.lua"
 	include "UnitTest/project/premake5.lua"
 
--- Compression modules
-include "DESIRE-Modules/Compression-LZ4/project/premake5.lua"
-include "DESIRE-Modules/Compression-zlib-ng/project/premake5.lua"
-include "DESIRE-Modules/Compression-zstd/project/premake5.lua"
+	-- Compression modules
+	include "DESIRE-Modules/Compression-LZ4/project/premake5.lua"
+	include "DESIRE-Modules/Compression-zlib-ng/project/premake5.lua"
+	include "DESIRE-Modules/Compression-zstd/project/premake5.lua"
 
--- Physics modules
-include "DESIRE-Modules/Physics-Bullet/project/premake5.lua"
-include "DESIRE-Modules/Physics-PhysX/project/premake5.lua"
+	-- Physics modules
+	include "DESIRE-Modules/Physics-Bullet/project/premake5.lua"
+--	include "DESIRE-Modules/Physics-PhysX/project/premake5.lua"
 
--- Render modules
-include "DESIRE-Modules/Render-bgfx/project/premake5.lua"
-include "DESIRE-Modules/Render-Direct3D11/project/premake5.lua"
+	-- Render modules
+	include "DESIRE-Modules/Render-bgfx/project/premake5.lua"
+	include "DESIRE-Modules/Render-Direct3D11/project/premake5.lua"
 
--- ResourceLoader modules
-include "DESIRE-Modules/ResourceLoader-Assimp/project/premake5.lua"
+	-- ResourceLoader modules
+	include "DESIRE-Modules/ResourceLoader-Assimp/project/premake5.lua"
 
--- Script modules
-include "DESIRE-Modules/Script-AngelScript/project/premake5.lua"
-include "DESIRE-Modules/Script-Lua/project/premake5.lua"
-include "DESIRE-Modules/Script-Squirrel/project/premake5.lua"
+	-- Script modules
+	include "DESIRE-Modules/Script-AngelScript/project/premake5.lua"
+	include "DESIRE-Modules/Script-Lua/project/premake5.lua"
+	include "DESIRE-Modules/Script-Squirrel/project/premake5.lua"
 
--- UI modules
-include "DESIRE-Modules/UI-imgui/project/premake5.lua"
+	-- UI modules
+	include "DESIRE-Modules/UI-imgui/project/premake5.lua"

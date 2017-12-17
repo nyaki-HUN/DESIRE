@@ -74,8 +74,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;Compression-zlib-ng_d.lib;Physics-Bullet_d.lib;Render-bgfx_d.lib;ResourceLoader-Assimp_d.lib;Script-AngelScript_d.lib;Script-Lua_d.lib;Script-Squirrel_d.lib;UI-imgui_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\DESIRE-modules\Physics-PhysX\lib\vs2017;..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -101,8 +100,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;Compression-zlib-ng.lib;Physics-Bullet.lib;ResourceLoader-Assimp.lib;Render-bgfx.lib;Script-AngelScript.lib;Script-Lua.lib;Script-Squirrel.lib;UI-imgui.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\..\DESIRE-modules\Compression-zlib-ng\lib\vs2017;..\..\..\DESIRE-modules\Physics-Bullet\lib\vs2017;..\..\..\DESIRE-modules\Physics-PhysX\lib\vs2017;..\..\..\DESIRE-modules\Render-bgfx\lib\vs2017;..\..\..\DESIRE-modules\ResourceLoader-Assimp\lib\vs2017;..\..\..\DESIRE-modules\Script-AngelScript\lib\vs2017;..\..\..\DESIRE-modules\Script-Lua\lib\vs2017;..\..\..\DESIRE-modules\Script-Squirrel\lib\vs2017;..\..\..\DESIRE-modules\UI-imgui\lib\vs2017;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -117,6 +115,33 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\DESIRE-Engine\project\vs2017\DESIRE.vcxproj">
       <Project>{74923478-6D8D-4892-A013-C2B759A870EC}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Compression-zlib-ng\project\vs2017\Compression-zlib-ng.vcxproj">
+      <Project>{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Physics-Bullet\project\vs2017\Physics-Bullet.vcxproj">
+      <Project>{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Render-bgfx\project\vs2017\Render-bgfx.vcxproj">
+      <Project>{39620121-0C61-49D9-9BF4-B67638336D45}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Render-Direct3D11\project\vs2017\Render-Direct3D11.vcxproj">
+      <Project>{E43F8824-C03E-469C-8C0D-64F609E14E0D}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\ResourceLoader-Assimp\project\vs2017\ResourceLoader-Assimp.vcxproj">
+      <Project>{19E05838-5A9C-421F-9102-F3F5A1ED488A}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Script-AngelScript\project\vs2017\Script-AngelScript.vcxproj">
+      <Project>{AE7FBF83-FF16-4E32-9844-6CFB79B22929}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Script-Lua\project\vs2017\Script-Lua.vcxproj">
+      <Project>{9E4F710B-37CB-4F12-ABB8-6A09B0538C17}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Script-Squirrel\project\vs2017\Script-Squirrel.vcxproj">
+      <Project>{05885A51-71F1-4606-A989-2AA3C69EEA91}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\UI-imgui\project\vs2017\UI-imgui.vcxproj">
+      <Project>{9791305E-BF1B-486C-8405-CFF7B54C98FE}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
