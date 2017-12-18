@@ -142,24 +142,17 @@ void Object::Remove()
 
 void Object::AddChild(Object *child)
 {
-	ASSERT(child != this);
+	ASSERT(child != nullptr);
 
 	if(child->parent == this)
 	{
+		// Already added
 		return;
 	}
 
 	if(child->parent != nullptr)
 	{
-		Object *obj = child->parent;
-		do
-		{
-			ASSERT(obj->numTransformsInHierarchy > child->numTransformsInHierarchy);
-			obj->numTransformsInHierarchy -= child->numTransformsInHierarchy;
-			obj = obj->parent;
-		} while(obj != nullptr);
-
-		child->parent->children.erase(std::remove(child->parent->children.begin(), child->parent->children.end(), child), child->parent->children.end());
+		child->parent->RemoveChild_Internal(child);
 	}
 
 	child->SetNewParent(this);
@@ -176,17 +169,14 @@ void Object::AddChild(Object *child)
 
 void Object::RemoveChild(Object *child)
 {
-	ASSERT(child->GetParent() == this);
+	ASSERT(child != nullptr);
 
-	Object *obj = this;
-	do
+	if(child->parent != this)
 	{
-		ASSERT(obj->numTransformsInHierarchy > child->numTransformsInHierarchy);
-		obj->numTransformsInHierarchy -= child->numTransformsInHierarchy;
-		obj = obj->parent;
-	} while(obj != nullptr);
+		return;
+	}
 
-	children.erase(std::remove(children.begin(), children.end(), child), children.end());
+	RemoveChild_Internal(child);
 
 	child->SetNewParent(nullptr);
 }
@@ -201,7 +191,7 @@ const AABB& Object::GetAABB() const
 	return *aabb;
 }
 
-Object* Object::GetParent()
+Object* Object::GetParent() const
 {
 	return parent;
 }
@@ -209,6 +199,22 @@ Object* Object::GetParent()
 const std::vector<Object*>& Object::GetChildren() const
 {
 	return children;
+}
+
+bool Object::HasObjectInParentHierarchy(const Object *obj) const
+{
+	const Object *otmp = parent;
+	while(otmp != nullptr)
+	{
+		if(otmp == obj)
+		{
+			return true;
+		}
+
+		otmp = otmp->parent;
+	}
+
+	return false;
 }
 
 void Object::UpdateAllTransformsInHierarchy()
@@ -219,6 +225,19 @@ void Object::UpdateAllTransformsInHierarchy()
 		transformTmp->UpdateWorldMatrix();
 		transformTmp++;
 	}
+}
+
+void Object::RemoveChild_Internal(Object *child)
+{
+	Object *obj = this;
+	do
+	{
+		ASSERT(obj->numTransformsInHierarchy > child->numTransformsInHierarchy);
+		obj->numTransformsInHierarchy -= child->numTransformsInHierarchy;
+		obj = obj->parent;
+	} while(obj != nullptr);
+
+	children.erase(std::remove(children.begin(), children.end(), child), children.end());
 }
 
 void Object::SetNewParent(Object *newParent)

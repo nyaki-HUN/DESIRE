@@ -53,12 +53,15 @@ public:
 
 	Transform& GetTransform() const;
 	const AABB& GetAABB() const;
-	Object* GetParent();
+	Object* GetParent() const;
 	const std::vector<Object*>& GetChildren() const;
+
+	bool HasObjectInParentHierarchy(const Object *obj) const;
 
 	void UpdateAllTransformsInHierarchy();
 
 private:
+	void RemoveChild_Internal(Object *child);
 	void SetNewParent(Object *newParent);
 
 	std::vector<std::pair<int, IComponent*>> components;
