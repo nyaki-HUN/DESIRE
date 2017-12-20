@@ -2,6 +2,16 @@
 #include "Resource/Mesh.h"
 #include "Render/IRender.h"
 
+Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
+	: attrib(attrib)
+	, type(type)
+	, count((uint8_t)count)
+{
+	ASSERT(attrib != EAttrib::NUM);
+	ASSERT(type != EAttribType::NUM);
+	ASSERT(0 < count && count <= 4);
+}
+
 uint32_t Mesh::VertexDecl::GetSizeInBytes() const
 {
 	static const uint32_t sizePerAttribType[] =

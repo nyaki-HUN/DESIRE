@@ -378,12 +378,17 @@ void RenderD3D11::Bind(Mesh *mesh)
 
 	static const D3D11_INPUT_ELEMENT_DESC attribConversionTable[] =
 	{
-		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::POSITION
-		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::NORMAL
-		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD0
-		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD1
-		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD2
-		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::COLOR
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::POSITION
+		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::NORMAL
+		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::COLOR
+		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD0
+		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD1
+		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD2
+		{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD3
+		{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD4
+		{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD5
+		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD6
+		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD7
 	};
 	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib);
 
@@ -407,16 +412,13 @@ void RenderD3D11::Bind(Mesh *mesh)
 	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType);
 
 	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexDecl.size());
-	uint32_t offset = 0;
-	for(Mesh::VertexDecl& decl : mesh->vertexDecl)
+	for(size_t i = 0; i < mesh->vertexDecl.size(); ++i)
 	{
-		D3D11_INPUT_ELEMENT_DESC& elementDesc = renderData->vertexElementDesc[renderData->vertexElementDescCount];
+		const Mesh::VertexDecl& decl = mesh->vertexDecl[i];
+
+		D3D11_INPUT_ELEMENT_DESC& elementDesc = renderData->vertexElementDesc[i];
 		elementDesc = attribConversionTable[(size_t)decl.attrib];
 		elementDesc.Format = attribTypeConversionTable[(size_t)decl.type][decl.count - 1];
-		elementDesc.AlignedByteOffset = offset;
-
-		renderData->vertexElementDescCount++;
-		offset += decl.GetSizeInBytes();
 	}
 
 	D3D11_SUBRESOURCE_DATA initialIndexData = {};
@@ -574,6 +576,8 @@ void RenderD3D11::Bind(Shader *shader)
 			}
 		}
 	}
+
+	DX_RELEASE(reflection);
 
 	shader->renderData = renderData;
 }

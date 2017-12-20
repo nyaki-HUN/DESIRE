@@ -242,10 +242,15 @@ void RenderBgfx::Bind(Mesh *mesh)
 	{
 		bgfx::Attrib::Position,		// Mesh::EAttrib::POSITION
 		bgfx::Attrib::Normal,		// Mesh::EAttrib::NORMAL
+		bgfx::Attrib::Color0,		// Mesh::EAttrib::COLOR
 		bgfx::Attrib::TexCoord0,	// Mesh::EAttrib::TEXCOORD0
 		bgfx::Attrib::TexCoord1,	// Mesh::EAttrib::TEXCOORD1
 		bgfx::Attrib::TexCoord2,	// Mesh::EAttrib::TEXCOORD2
-		bgfx::Attrib::Color0,		// Mesh::EAttrib::COLOR
+		bgfx::Attrib::TexCoord3,	// Mesh::EAttrib::TEXCOORD3
+		bgfx::Attrib::TexCoord4,	// Mesh::EAttrib::TEXCOORD4
+		bgfx::Attrib::TexCoord5,	// Mesh::EAttrib::TEXCOORD5
+		bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::TEXCOORD6
+		bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::TEXCOORD7
 	};
 	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib);
 
@@ -260,7 +265,7 @@ void RenderBgfx::Bind(Mesh *mesh)
 	for(Mesh::VertexDecl& decl : mesh->vertexDecl)
 	{
 		const bool isNormalized = (decl.type == Mesh::EAttribType::UINT8);
-		renderData->vertexDecl.add(attribConversionTable[(size_t)decl.attrib], (uint8_t)decl.count, attribTypeConversionTable[(size_t)decl.type], isNormalized);
+		renderData->vertexDecl.add(attribConversionTable[(size_t)decl.attrib], decl.count, attribTypeConversionTable[(size_t)decl.type], isNormalized);
 	}
 	renderData->vertexDecl.end();
 

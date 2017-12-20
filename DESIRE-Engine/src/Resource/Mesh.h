@@ -13,10 +13,15 @@ public:
 	{
 		POSITION,
 		NORMAL,
+		COLOR,
 		TEXCOORD0,
 		TEXCOORD1,
 		TEXCOORD2,
-		COLOR,
+		TEXCOORD3,
+		TEXCOORD4,
+		TEXCOORD5,
+		TEXCOORD6,
+		TEXCOORD7,
 		NUM
 	};
 
@@ -29,18 +34,11 @@ public:
 
 	struct VertexDecl
 	{
-		EAttrib attrib;
-		EAttribType type;
-		uint32_t count;
+		EAttrib attrib = EAttrib::NUM;
+		EAttribType type = EAttribType::NUM;
+		uint8_t count = 0;
 
-		VertexDecl(EAttrib attrib, uint32_t count, EAttribType type)
-			: attrib(attrib)
-			, type(type)
-			, count(count)
-		{
-
-		}
-
+		VertexDecl(EAttrib attrib, int count, EAttribType type);
 		uint32_t GetSizeInBytes() const;
 	};
 
