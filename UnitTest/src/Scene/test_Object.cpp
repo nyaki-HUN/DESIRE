@@ -8,6 +8,15 @@ TEST_CASE("Object", "[Scene]")
 	Object *rootObj = new Object();
 	const Transform *preallocatedTransforms = &rootObj->GetTransform();
 
+/*	   R
+	  /|\
+	 / | \
+	1  2  3
+	|    / \
+	A   B   C
+	|   |
+	X   Y
+*/
 	Object *child1 = new Object("1");
 	Object *child2 = new Object("2");
 	Object *child3 = new Object("3");
