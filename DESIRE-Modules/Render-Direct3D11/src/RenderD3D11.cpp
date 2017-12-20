@@ -1039,7 +1039,7 @@ void RenderD3D11::SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRender
 	ID3D11InputLayout *inputLayout = nullptr;
 
 	uint64_t key = 0;
-	ASSERT(activeMesh->vertexDecl.size() <= 4 && "TODO: FIXME - It is only possible to encode 4 vertex declarations into 32-bit");
+	ASSERT(activeMesh->vertexDecl.size() <= 9 && "It is possible to encode maximum of 9 vertex declarations into 64-bit");
 	for(size_t i = 0; i < activeMesh->vertexDecl.size(); ++i)
 	{
 		const Mesh::VertexDecl& decl = activeMesh->vertexDecl[i];
@@ -1047,7 +1047,7 @@ void RenderD3D11::SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRender
 		key |= (uint64_t)decl.type			<< (i * 7 + 4);	// 1 bit
 		key |= (uint64_t)(decl.count - 1)	<< (i * 7 + 5);	// 2 bits
 	}
-	key |= (uint64_t)vertexShaderRenderData	<< 32;	// 32 bits
+	key ^= (uint64_t)vertexShaderRenderData;
 
 	auto it = inputLayoutCache.find(key);
 	if(it != inputLayoutCache.end())
