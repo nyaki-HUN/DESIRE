@@ -63,6 +63,8 @@ public:
 private:
 	void RemoveChild_Internal(Object *child);
 	void SetNewParent(Object *newParent);
+	
+	static void RefreshParentWorldMatrixPointersInTransforms(Transform *firstTransform, size_t transformCount);
 
 	std::vector<std::pair<int, IComponent*>> components;
 	Transform *transform;

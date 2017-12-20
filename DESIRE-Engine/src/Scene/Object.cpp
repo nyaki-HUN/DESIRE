@@ -265,49 +265,46 @@ void Object::SetNewParent(Object *newParent)
 		ASSERT(numTransformsInHierarchy <= DESIRE_ASIZEOF(preallocatedTransforms) - numTransforms);
 		memcpy(savedTransforms, oldTransform, numTransformsInHierarchy * sizeof(Transform));
 
-		Transform *movedTransformTmp = nullptr;
+		Transform *movedTransformDst = nullptr;
+		Transform *movedTransformSrc = nullptr;
 		if(numToMove < 0)
 		{
 			numToMove = std::abs(numToMove);
 			// Move data to the left in the array (our transforms will be placed after it)
-			movedTransformTmp = oldTransform;
-			memmove(movedTransformTmp, oldTransform + numTransformsInHierarchy, numToMove * sizeof(Transform));
+			movedTransformDst = oldTransform;
+			movedTransformSrc = oldTransform + numTransformsInHierarchy;
 		}
 		else
 		{
 			// Move data to the right in the array (our transforms will be placed before it)
-			movedTransformTmp = transform + numTransformsInHierarchy;
-			memmove(movedTransformTmp, transform, numToMove * sizeof(Transform));
+			movedTransformDst = transform + numTransformsInHierarchy;
+			movedTransformSrc = transform;
 		}
 
-		// Refresh parentWorldMatrix pointers in moved transforms
-		for(; numToMove > 0; numToMove--)
-		{
-			movedTransformTmp->owner->transform = movedTransformTmp;
-			if(movedTransformTmp->owner->parent != nullptr)
-			{
-				movedTransformTmp->parentWorldMatrix = &movedTransformTmp->owner->parent->GetTransform().GetWorldMatrix();
-			}
-			movedTransformTmp++;
-		}
+		memmove(movedTransformDst, movedTransformSrc, numToMove * sizeof(Transform));
+		RefreshParentWorldMatrixPointersInTransforms(movedTransformDst, numToMove);
 
 		memcpy(transform, savedTransforms, numTransformsInHierarchy * sizeof(Transform));
-
-		// Refresh parentWorldMatrix pointers in own hierarchy
-		movedTransformTmp = transform;
-		for(size_t i = 0; i < numTransformsInHierarchy; i++)
-		{
-			movedTransformTmp->owner->transform = movedTransformTmp;
-			if(movedTransformTmp->owner->parent != nullptr)
-			{
-				movedTransformTmp->parentWorldMatrix = &movedTransformTmp->owner->parent->GetTransform().GetWorldMatrix();
-			}
-			movedTransformTmp++;
-		}
+		RefreshParentWorldMatrixPointersInTransforms(transform, numTransformsInHierarchy);
 	}
 
 	transform->parentWorldMatrix = (newParent != nullptr) ? &newParent->transform->worldMatrix : nullptr;
 	transform->flags |= Transform::WORLD_MATRIX_DIRTY;
 
 	parent = newParent;
+}
+
+void Object::RefreshParentWorldMatrixPointersInTransforms(Transform *firstTransform, size_t transformCount)
+{
+	Transform *transformTmp = firstTransform;
+	for(size_t i = 0; i < transformCount; ++i)
+	{
+		transformTmp->owner->transform = transformTmp;
+		if(transformTmp->owner->parent != nullptr)
+		{
+			transformTmp->parentWorldMatrix = &transformTmp->owner->parent->GetTransform().GetWorldMatrix();
+		}
+
+		transformTmp++;
+	}
 }
