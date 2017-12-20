@@ -3,14 +3,14 @@
 #include "Scene/Transform.h"
 #include "Scene/SceneGraphTraversal.h"
 
-TEST_CASE("Object", "[Component]")
+TEST_CASE("Object", "[Scene]")
 {
 	Object *rootObj = new Object();
 	const Transform *preallocatedTransforms = &rootObj->GetTransform();
 
-	Object *child1 = new Object();
-	Object *child2 = new Object();
-	Object *child3 = new Object();
+	Object *child1 = new Object("1");
+	Object *child2 = new Object("2");
+	Object *child3 = new Object("3");
 	rootObj->AddChild(child1);
 	rootObj->AddChild(child2);
 	rootObj->AddChild(child3);
@@ -19,7 +19,7 @@ TEST_CASE("Object", "[Component]")
 	REQUIRE((preallocatedTransforms + 2) == &child2->GetTransform());
 	REQUIRE((preallocatedTransforms + 3) == &child3->GetTransform());
 
-	Object *childA = new Object();
+	Object *childA = new Object("A");
 	child1->AddChild(childA);
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
@@ -27,8 +27,8 @@ TEST_CASE("Object", "[Component]")
 	REQUIRE((preallocatedTransforms + 3) == &child2->GetTransform());
 	REQUIRE((preallocatedTransforms + 4) == &child3->GetTransform());
 
-	Object *childB = new Object();
-	Object *childC = new Object();
+	Object *childB = new Object("B");
+	Object *childC = new Object("C");
 	child3->AddChild(childB);
 	child3->AddChild(childC);
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
@@ -39,8 +39,8 @@ TEST_CASE("Object", "[Component]")
 	REQUIRE((preallocatedTransforms + 5) == &childB->GetTransform());
 	REQUIRE((preallocatedTransforms + 6) == &childC->GetTransform());
 
-	Object *childX = new Object();
-	Object *childY = new Object();
+	Object *childX = new Object("X");
+	Object *childY = new Object("Y");
 	childA->AddChild(childX);
 	childB->AddChild(childY);
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
@@ -96,6 +96,59 @@ TEST_CASE("Object", "[Component]")
 
 		// Move 'A' back
 		child1->AddChild(childA);
+		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
+		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
+		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
+		REQUIRE((preallocatedTransforms + 3) == &childX->GetTransform());
+		REQUIRE((preallocatedTransforms + 4) == &child2->GetTransform());
+		REQUIRE((preallocatedTransforms + 5) == &child3->GetTransform());
+		REQUIRE((preallocatedTransforms + 6) == &childB->GetTransform());
+		REQUIRE((preallocatedTransforms + 7) == &childY->GetTransform());
+		REQUIRE((preallocatedTransforms + 8) == &childC->GetTransform());
+	}
+
+	{
+		// Move 'B' under root (2 nodes)
+		rootObj->AddChild(childB);
+		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
+		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
+		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
+		REQUIRE((preallocatedTransforms + 3) == &childX->GetTransform());
+		REQUIRE((preallocatedTransforms + 4) == &child2->GetTransform());
+		REQUIRE((preallocatedTransforms + 5) == &child3->GetTransform());
+		REQUIRE((preallocatedTransforms + 6) == &childC->GetTransform());
+		REQUIRE((preallocatedTransforms + 7) == &childB->GetTransform());
+		REQUIRE((preallocatedTransforms + 8) == &childY->GetTransform());
+
+		// Move 'C' under root (1 node)
+		rootObj->AddChild(childC);
+		// The transform order goes back to the original one (dipite that it is a different hierarchy)
+		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
+		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
+		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
+		REQUIRE((preallocatedTransforms + 3) == &childX->GetTransform());
+		REQUIRE((preallocatedTransforms + 4) == &child2->GetTransform());
+		REQUIRE((preallocatedTransforms + 5) == &child3->GetTransform());
+		REQUIRE((preallocatedTransforms + 6) == &childB->GetTransform());
+		REQUIRE((preallocatedTransforms + 7) == &childY->GetTransform());
+		REQUIRE((preallocatedTransforms + 8) == &childC->GetTransform());
+
+		// Move 'B' back
+		child3->AddChild(childB);
+		// The transform order should stay the same
+		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
+		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
+		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
+		REQUIRE((preallocatedTransforms + 3) == &childX->GetTransform());
+		REQUIRE((preallocatedTransforms + 4) == &child2->GetTransform());
+		REQUIRE((preallocatedTransforms + 5) == &child3->GetTransform());
+		REQUIRE((preallocatedTransforms + 6) == &childB->GetTransform());
+		REQUIRE((preallocatedTransforms + 7) == &childY->GetTransform());
+		REQUIRE((preallocatedTransforms + 8) == &childC->GetTransform());
+
+		// Move 'C' back
+		child3->AddChild(childC);
+		// The transform order should stay the same
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());

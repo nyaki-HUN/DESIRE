@@ -243,7 +243,21 @@ void Object::RemoveChild_Internal(Object *child)
 void Object::SetNewParent(Object *newParent)
 {
 	Transform *oldTransform = transform;
-	transform = (newParent != nullptr) ? newParent->transform + newParent->numTransformsInHierarchy : &preallocatedTransforms[numTransforms];
+	if(newParent != nullptr)
+	{
+		transform = newParent->transform + newParent->numTransformsInHierarchy;
+
+		// If the parent transform will be moved, we need to apply correction
+		if(newParent->transform > oldTransform)
+		{
+			transform -= numTransformsInHierarchy;
+		}
+	}
+	else
+	{
+		transform = &preallocatedTransforms[numTransforms];
+	}
+
 	ptrdiff_t numToMove = oldTransform - transform;
 	if(numToMove != 0)
 	{
@@ -254,16 +268,14 @@ void Object::SetNewParent(Object *newParent)
 		Transform *movedTransformTmp = nullptr;
 		if(numToMove < 0)
 		{
-			transform -= numTransformsInHierarchy;
-			numToMove = transform - oldTransform;
-			ASSERT(numToMove > 0);
-			// Move data backward in array (our transforms will move forward)
+			numToMove = std::abs(numToMove);
+			// Move data to the left in the array (our transforms will be placed after it)
 			movedTransformTmp = oldTransform;
-			memmove(oldTransform, oldTransform + numTransformsInHierarchy, numToMove * sizeof(Transform));
+			memmove(movedTransformTmp, oldTransform + numTransformsInHierarchy, numToMove * sizeof(Transform));
 		}
 		else
 		{
-			// Move data forward in array (our transforms will move backward)
+			// Move data to the right in the array (our transforms will be placed before it)
 			movedTransformTmp = transform + numTransformsInHierarchy;
 			memmove(movedTransformTmp, transform, numToMove * sizeof(Transform));
 		}
