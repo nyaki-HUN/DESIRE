@@ -2,6 +2,7 @@
 
 #include "Render/IRender.h"
 #include "Resource/Texture.h"
+#include "Core/STL_utils.h"
 
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -93,7 +94,7 @@ private:
 	std::unordered_map<uint64_t, ID3D11DepthStencilState*> depthStencilStateCache;
 	std::unordered_map<uint64_t, ID3D11RasterizerState*> rasterizerStateCache;
 	std::unordered_map<uint64_t, ID3D11BlendState*> blendStateCache;
-	std::unordered_map<uint64_t, ID3D11InputLayout*> inputLayoutCache;
+	std::unordered_map<std::pair<uint64_t, uint64_t>, ID3D11InputLayout*, stl_utils::hash_pair<uint64_t, uint64_t>> inputLayoutCache;
 
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;

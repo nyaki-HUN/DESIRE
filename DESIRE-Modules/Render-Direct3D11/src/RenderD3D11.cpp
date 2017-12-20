@@ -1038,16 +1038,17 @@ void RenderD3D11::SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRender
 {
 	ID3D11InputLayout *inputLayout = nullptr;
 
-	uint64_t key = 0;
+	uint64_t layoutKey = 0;
 	ASSERT(activeMesh->vertexDecl.size() <= 9 && "It is possible to encode maximum of 9 vertex declarations into 64-bit");
 	for(size_t i = 0; i < activeMesh->vertexDecl.size(); ++i)
 	{
 		const Mesh::VertexDecl& decl = activeMesh->vertexDecl[i];
-		key |= (uint64_t)decl.attrib		<< (i * 7 + 0);	// 4 bits
-		key |= (uint64_t)decl.type			<< (i * 7 + 4);	// 1 bit
-		key |= (uint64_t)(decl.count - 1)	<< (i * 7 + 5);	// 2 bits
+		layoutKey |= (uint64_t)decl.attrib		<< (i * 7 + 0);	// 4 bits
+		layoutKey |= (uint64_t)decl.type		<< (i * 7 + 4);	// 1 bit
+		layoutKey |= (uint64_t)(decl.count - 1)	<< (i * 7 + 5);	// 2 bits
 	}
-	key ^= (uint64_t)vertexShaderRenderData;
+
+	const std::pair<uint64_t, uint64_t> key = std::make_pair(layoutKey, (uint64_t)vertexShaderRenderData);
 
 	auto it = inputLayoutCache.find(key);
 	if(it != inputLayoutCache.end())
