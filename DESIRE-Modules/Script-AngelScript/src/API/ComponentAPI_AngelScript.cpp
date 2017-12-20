@@ -40,7 +40,7 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "IComponent@ GetComponent(EComponentTypeID typeID)", asMETHODPR(Object, GetComponentByTypeID, (int), IComponent*), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Transform& get_transform() const", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "Object@ GetParent()", asMETHODPR(Object, GetParent, (), Object*), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHODPR(Object, GetParent, () const, Object*), asCALL_THISCALL);
 
 	// IComponent
 	engine->RegisterInterfaceMethod("IComponent", "Object@ get_object()");
