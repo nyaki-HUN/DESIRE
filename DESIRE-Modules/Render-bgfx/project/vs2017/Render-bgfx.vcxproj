@@ -216,6 +216,7 @@
     <ClInclude Include="..\..\src\RenderBgfx.h" />
     <ClInclude Include="..\..\src\RenderTargetRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\ShaderRenderDataBgfx.h" />
+    <ClInclude Include="..\..\src\TextureRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\bx_custom_config.h" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include "MeshRenderDataBgfx.h"
 #include "ShaderRenderDataBgfx.h"
 #include "RenderTargetRenderDataBgfx.h"
+#include "TextureRenderDataBgfx.h"
 
 #include "Core/IWindow.h"
 #include "Core/String.h"
@@ -341,9 +342,11 @@ void RenderBgfx::Bind(Texture *texture)
 		return;
 	}
 
-	bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+	TextureRenderDataBgfx *renderData = new TextureRenderDataBgfx();
 
-	texture->renderData = new bgfx::TextureHandle(handle);
+	renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+
+	texture->renderData = renderData;
 }
 
 void RenderBgfx::Bind(RenderTarget *renderTarget)
@@ -373,10 +376,11 @@ void RenderBgfx::Bind(RenderTarget *renderTarget)
 		const std::shared_ptr<Texture>& texture = renderTarget->GetTexture(i);
 		ASSERT(texture->renderData == nullptr);
 
-		bgfx::TextureHandle handle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), flags);
-		texture->renderData = new bgfx::TextureHandle(handle);
+		TextureRenderDataBgfx *textureRenderData = new TextureRenderDataBgfx();
+		textureRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), flags);
+		texture->renderData = textureRenderData;
 
-		renderTargetTextures[i] = handle;
+		renderTargetTextures[i] = textureRenderData->textureHandle;
 	}
 
 	renderData->frameBuffer = bgfx::createFrameBuffer(textureCount, renderTargetTextures);
@@ -437,8 +441,9 @@ void RenderBgfx::Unbind(Texture *texture)
 		return;
 	}
 
-	bgfx::TextureHandle *renderData = static_cast<bgfx::TextureHandle*>(texture->renderData);
-	bgfx::destroy(*renderData);
+	TextureRenderDataBgfx *renderData = static_cast<TextureRenderDataBgfx*>(texture->renderData);
+
+	bgfx::destroy(renderData->textureHandle);
 
 	delete renderData;
 	texture->renderData = nullptr;

@@ -447,6 +447,9 @@
     <ClInclude Include="..\..\src\ShaderRenderDataBgfx.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\TextureRenderDataBgfx.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\bx_custom_config.h">
       <Filter>src</Filter>
     </ClInclude>
