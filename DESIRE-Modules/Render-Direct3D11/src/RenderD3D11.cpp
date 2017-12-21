@@ -506,7 +506,7 @@ void RenderD3D11::Bind(Shader *shader)
 		if(errorBlob != nullptr)
 		{
 			LOG_ERROR("Shader compile error: %s", (char*)errorBlob->GetBufferPointer());
-			errorBlob->Release();
+			DX_RELEASE(errorBlob);
 		}
 
 		delete renderData;
@@ -594,10 +594,8 @@ void RenderD3D11::Bind(Texture *texture)
 
 	TextureRenderDataD3D11 *renderData = new TextureRenderDataD3D11();
 
-	D3D11_SUBRESOURCE_DATA subResourceData;
-	subResourceData.pSysMem = texture->data.data;
-	subResourceData.SysMemPitch = (UINT)(texture->data.size / texture->height);
-	subResourceData.SysMemSlicePitch = 0;
+	const bool isDepth = (texture->format == Texture::EFormat::D24S8);
+	const bool isRenderTarget = (texture->data.data == nullptr);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = texture->width;
@@ -607,23 +605,57 @@ void RenderD3D11::Bind(Texture *texture)
 	textureDesc.Format = ConvertTextureFormat(texture->format);
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	DESIRE_TODO("Support Cube texture");
-//	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	if(isDepth)
+	{
+		textureDesc.BindFlags |= D3D11_BIND_DEPTH_STENCIL;
+	}
+	else if(isRenderTarget)
+	{
+		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		if(texture->numMipMaps > 0)
+		{
+			textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		}
+	}
+	else
+	{
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	}
 
-	ID3D11Texture2D *d3dTexture = nullptr;
-	HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, &subResourceData, &d3dTexture);
-	ASSERT(SUCCEEDED(hr));
+	{
+		DESIRE_TODO("Support Cube texture");
+//		textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE;
+	}
 
-	// Create texture view
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = textureDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
-	hr = d3dDevice->CreateShaderResourceView(d3dTexture, &srvDesc, &renderData->textureSRV);
-	ASSERT(SUCCEEDED(hr));
+	if(isRenderTarget)
+	{
+		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &renderData->texture2D);
+		ASSERT(SUCCEEDED(hr));
+	}
+	else
+	{
+		std::unique_ptr<D3D11_SUBRESOURCE_DATA[]> subResourceData = std::make_unique<D3D11_SUBRESOURCE_DATA[]>(textureDesc.MipLevels * textureDesc.ArraySize);
+		ASSERT(textureDesc.MipLevels * textureDesc.ArraySize == 1 && "TODO: Set initial data properly in the loop below");
+		for(size_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
+		{
+			subResourceData[i].pSysMem = texture->data.data;
+			subResourceData[i].SysMemPitch = (UINT)(texture->data.size / texture->height);
+			subResourceData[i].SysMemSlicePitch = 0;
+		}
 
-	DX_RELEASE(d3dTexture);
+		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &renderData->texture2D);
+		ASSERT(SUCCEEDED(hr));
+	}
+
+	if(textureDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = textureDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
+		HRESULT hr = d3dDevice->CreateShaderResourceView(renderData->texture2D, &srvDesc, &renderData->textureSRV);
+		ASSERT(SUCCEEDED(hr));
+	}
 
 	texture->renderData = renderData;
 }
@@ -647,51 +679,28 @@ void RenderD3D11::Bind(RenderTarget *renderTarget)
 		// Bind texture
 		const std::shared_ptr<Texture>& texture = renderTarget->GetTexture(i);
 		ASSERT(texture->renderData == nullptr);
+		Bind(texture.get());
 
-		TextureRenderDataD3D11 *textureRenderData = new TextureRenderDataD3D11();
+		TextureRenderDataD3D11 *textureRenderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 
 		const bool isDepth = (texture->format == Texture::EFormat::D24S8);
-
-		D3D11_TEXTURE2D_DESC textureDesc = {};
-		textureDesc.Width = texture->width;
-		textureDesc.Height = texture->height;
-		textureDesc.MipLevels = 1;
-		textureDesc.ArraySize = 1;
-		textureDesc.Format = ConvertTextureFormat(texture->format);
-		textureDesc.SampleDesc.Count = 1;
-		textureDesc.Usage = D3D11_USAGE_DEFAULT;
-		textureDesc.BindFlags = isDepth ? D3D11_BIND_DEPTH_STENCIL : (D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE);
-
-		ID3D11Texture2D *d3dTexture = nullptr;
-		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &d3dTexture);
-		ASSERT(SUCCEEDED(hr));
-
 		if(isDepth)
 		{
-			hr = d3dDevice->CreateDepthStencilView(d3dTexture, nullptr, &renderData->depthStencilView);
+			HRESULT hr = d3dDevice->CreateDepthStencilView(textureRenderData->texture2D, nullptr, &renderData->depthStencilView);
 			ASSERT(SUCCEEDED(hr));
 		}
 		else
 		{
-			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-			srvDesc.Format = textureDesc.Format;
-			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
-			hr = d3dDevice->CreateShaderResourceView(d3dTexture, &srvDesc, &textureRenderData->textureSRV);
-			ASSERT(SUCCEEDED(hr));
-
 			D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
-			renderTargetViewDesc.Format = textureDesc.Format;
+			renderTargetViewDesc.Format = ConvertTextureFormat(texture->format);
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
 			ID3D11RenderTargetView *renderTargetView = nullptr;
-			hr = d3dDevice->CreateRenderTargetView(d3dTexture, &renderTargetViewDesc, &renderTargetView);
+			HRESULT hr = d3dDevice->CreateRenderTargetView(textureRenderData->texture2D, &renderTargetViewDesc, &renderTargetView);
 			ASSERT(SUCCEEDED(hr));
 
 			renderData->renderTargetViews.push_back(renderTargetView);
 		}
-
-		DX_RELEASE(d3dTexture);
 
 		texture->renderData = textureRenderData;
 	}
@@ -708,16 +717,8 @@ void RenderD3D11::Unbind(Mesh *mesh)
 	}
 
 	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
-
-	if(renderData->indexBuffer != nullptr)
-	{
-		renderData->indexBuffer->Release();
-	}
-
-	if(renderData->vertexBuffer != nullptr)
-	{
-		renderData->vertexBuffer->Release();
-	}
+	DX_RELEASE(renderData->indexBuffer);
+	DX_RELEASE(renderData->vertexBuffer);
 
 	delete renderData;
 	mesh->renderData = nullptr;
@@ -747,6 +748,7 @@ void RenderD3D11::Unbind(Texture *texture)
 
 	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 	DX_RELEASE(renderData->textureSRV);
+	DX_RELEASE(renderData->texture2D);
 
 	delete renderData;
 	texture->renderData = nullptr;

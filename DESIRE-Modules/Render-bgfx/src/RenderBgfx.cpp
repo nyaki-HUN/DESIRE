@@ -425,7 +425,6 @@ void RenderBgfx::Unbind(Shader *shader)
 	}
 
 	ShaderRenderDataBgfx *renderData = static_cast<ShaderRenderDataBgfx*>(shader->renderData);
-
 	bgfx::destroy(renderData->shaderHandle);
 	bgfx::destroy(renderData->u_tint);
 
@@ -442,7 +441,6 @@ void RenderBgfx::Unbind(Texture *texture)
 	}
 
 	TextureRenderDataBgfx *renderData = static_cast<TextureRenderDataBgfx*>(texture->renderData);
-
 	bgfx::destroy(renderData->textureHandle);
 
 	delete renderData;
