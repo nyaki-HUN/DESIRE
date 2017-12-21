@@ -631,7 +631,10 @@ void RenderD3D11::Bind(Texture *texture)
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.MinLOD = 0.0f;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	hr = d3dDevice->CreateSamplerState(&samplerDesc, &renderData->samplerState);
 	ASSERT(SUCCEEDED(hr));
 
