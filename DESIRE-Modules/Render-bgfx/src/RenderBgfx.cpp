@@ -344,7 +344,16 @@ void RenderBgfx::Bind(Texture *texture)
 
 	TextureRenderDataBgfx *renderData = new TextureRenderDataBgfx();
 
-	renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+	const bool isRenderTarget = (texture->data.data == nullptr);
+
+	if(isRenderTarget)
+	{
+		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_RT);
+	}
+	else
+	{
+		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+	}
 
 	texture->renderData = renderData;
 }
@@ -361,13 +370,6 @@ void RenderBgfx::Bind(RenderTarget *renderTarget)
 
 	RenderTargetRenderDataBgfx *renderData = new RenderTargetRenderDataBgfx();
 
-	const uint32_t flags = BGFX_TEXTURE_RT
-		| BGFX_TEXTURE_MIN_POINT
-		| BGFX_TEXTURE_MAG_POINT
-		| BGFX_TEXTURE_MIP_POINT
-		| BGFX_TEXTURE_U_CLAMP
-		| BGFX_TEXTURE_V_CLAMP;
-
 	bgfx::TextureHandle renderTargetTextures[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
 	for(uint8_t i = 0; i < textureCount; ++i)
@@ -375,11 +377,9 @@ void RenderBgfx::Bind(RenderTarget *renderTarget)
 		// Bind texture
 		const std::shared_ptr<Texture>& texture = renderTarget->GetTexture(i);
 		ASSERT(texture->renderData == nullptr);
+		Bind(texture.get());
 
-		TextureRenderDataBgfx *textureRenderData = new TextureRenderDataBgfx();
-		textureRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), flags);
-		texture->renderData = textureRenderData;
-
+		const TextureRenderDataBgfx *textureRenderData = static_cast<const TextureRenderDataBgfx*>(texture->renderData);
 		renderTargetTextures[i] = textureRenderData->textureHandle;
 	}
 
