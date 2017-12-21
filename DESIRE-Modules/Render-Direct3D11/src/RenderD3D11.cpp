@@ -886,8 +886,9 @@ void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode f
 	{
 		D3D11_TEXTURE_ADDRESS_WRAP,			// ETextureWrapMode::REPEAT
 		D3D11_TEXTURE_ADDRESS_CLAMP,		// ETextureWrapMode::CLAMP
-		D3D11_TEXTURE_ADDRESS_MIRROR,		// ETextureWrapMode::MIRROR
-		D3D11_TEXTURE_ADDRESS_MIRROR_ONCE	// ETextureWrapMode::MIRROR_ONCE
+		D3D11_TEXTURE_ADDRESS_MIRROR,		// ETextureWrapMode::MIRRORED_REPEAT
+		D3D11_TEXTURE_ADDRESS_MIRROR_ONCE,	// ETextureWrapMode::MIRROR_ONCE
+		D3D11_TEXTURE_ADDRESS_BORDER,		// ETextureWrapMode::BORDER
 	};
 
 	D3D11_SAMPLER_DESC samplerDesc = {};

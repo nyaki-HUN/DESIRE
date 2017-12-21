@@ -553,8 +553,26 @@ void RenderBgfx::SetShadersFromMaterial(Material *material)
 
 void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
 {
-	const bgfx::TextureHandle *renderData = static_cast<const bgfx::TextureHandle*>(texture->renderData);
-	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);
+	uint32_t flags = BGFX_TEXTURE_NONE;
+	switch(filterMode)
+	{
+		case EFilterMode::POINT:		flags |= BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT | BGFX_TEXTURE_MIP_POINT; break;
+		case EFilterMode::BILINEAR:		flags |= BGFX_TEXTURE_MIP_POINT; break;
+		case EFilterMode::TRILINEAR:	break;
+		case EFilterMode::ANISOTROPIC:	flags |= BGFX_TEXTURE_MIN_ANISOTROPIC | BGFX_TEXTURE_MAG_ANISOTROPIC; break;
+	}
+	switch(addressMode)
+	{
+		case EAddressMode::REPEAT:			break;
+		case EAddressMode::CLAMP:			flags |= BGFX_TEXTURE_U_CLAMP | BGFX_TEXTURE_V_CLAMP | BGFX_TEXTURE_W_CLAMP; break;
+		case EAddressMode::MIRRORED_REPEAT:	flags |= BGFX_TEXTURE_U_MIRROR | BGFX_TEXTURE_V_MIRROR | BGFX_TEXTURE_W_MIRROR; break;
+		case EAddressMode::MIRROR_ONCE:		flags |= BGFX_TEXTURE_U_MIRROR | BGFX_TEXTURE_V_MIRROR | BGFX_TEXTURE_W_MIRROR; break;
+		case EAddressMode::BORDER:			flags |= BGFX_TEXTURE_U_BORDER | BGFX_TEXTURE_V_BORDER | BGFX_TEXTURE_W_BORDER; break;
+	}
+
+	const TextureRenderDataBgfx *renderData = static_cast<const TextureRenderDataBgfx*>(texture->renderData);
+
+	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], renderData->textureHandle, flags);
 }
 
 void RenderBgfx::DoRender()

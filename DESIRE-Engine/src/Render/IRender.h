@@ -40,8 +40,9 @@ public:
 	{
 		REPEAT,
 		CLAMP,
-		MIRROR,
+		MIRRORED_REPEAT,
 		MIRROR_ONCE,
+		BORDER
 	};
 
 	enum class EFilterMode
