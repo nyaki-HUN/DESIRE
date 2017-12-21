@@ -546,7 +546,7 @@ void RenderBgfx::SetShadersFromMaterial(Material *material)
 	}
 }
 
-void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture)
+void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	const bgfx::TextureHandle *renderData = static_cast<const bgfx::TextureHandle*>(texture->renderData);
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], *renderData);

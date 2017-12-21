@@ -49,7 +49,7 @@ private:
 
 	void SetMesh(Mesh *mesh) override;
 	void SetShadersFromMaterial(Material *material) override;
-	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
+	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
 
 	void DoRender() override;
 

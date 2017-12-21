@@ -36,6 +36,22 @@ public:
 		CW
 	};
 
+	enum class EAddressMode
+	{
+		REPEAT,
+		CLAMP,
+		MIRROR,
+		MIRROR_ONCE,
+	};
+
+	enum class EFilterMode
+	{
+		POINT,			// No filtering, the texel with coordinates nearest to the desired pixel value is used (at most 1 texel being sampled)
+		BILINEAR,		// Texture samples are averaged (at most 4 samples)
+		TRILINEAR,		// Texture samples are averaged and also blended between mipmap levels (at most 8 samples)
+		ANISOTROPIC,	// Use anisotropic interpolation
+	};
+
 	virtual void Init(IWindow *mainWindow) = 0;
 	virtual void UpdateRenderWindow(IWindow *window) = 0;
 	virtual void Kill() = 0;
@@ -84,7 +100,7 @@ protected:
 private:
 	virtual void SetMesh(Mesh *mesh) = 0;
 	virtual void SetShadersFromMaterial(Material *material) = 0;
-	virtual void SetTexture(uint8_t samplerIdx, Texture *texture) = 0;
+	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::REPEAT) = 0;
 
 	// Submit draw command
 	virtual void DoRender() = 0;

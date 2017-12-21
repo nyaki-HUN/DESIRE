@@ -50,7 +50,7 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 			Bind(texture);
 		}
 
-		SetTexture(i, texture);
+		SetTexture(i, texture, EFilterMode::TRILINEAR, EAddressMode::REPEAT);
 	}
 
 	// Render

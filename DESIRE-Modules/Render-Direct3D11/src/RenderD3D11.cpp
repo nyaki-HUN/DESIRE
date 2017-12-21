@@ -625,19 +625,6 @@ void RenderD3D11::Bind(Texture *texture)
 
 	DX_RELEASE(d3dTexture);
 
-	// Create texture sampler
-	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	samplerDesc.MinLOD = 0.0f;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	hr = d3dDevice->CreateSamplerState(&samplerDesc, &renderData->samplerState);
-	ASSERT(SUCCEEDED(hr));
-
 	texture->renderData = renderData;
 }
 
@@ -760,7 +747,6 @@ void RenderD3D11::Unbind(Texture *texture)
 
 	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 	DX_RELEASE(renderData->textureSRV);
-	DX_RELEASE(renderData->samplerState);
 
 	delete renderData;
 	texture->renderData = nullptr;
@@ -887,17 +873,39 @@ void RenderD3D11::SetShadersFromMaterial(Material *material)
 	deviceCtx->PSSetConstantBuffers(0, (UINT)pixelShaderRenderData->constantBuffers.size(), pixelShaderRenderData->constantBuffers.data());
 }
 
-void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture)
+void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	ASSERT(samplerIdx < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
 	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 
 	deviceCtx->VSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
-	deviceCtx->VSSetSamplers(samplerIdx, 1, &renderData->samplerState);
-
 	deviceCtx->PSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
-	deviceCtx->PSSetSamplers(samplerIdx, 1, &renderData->samplerState);
+
+	static const D3D11_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
+	{
+		D3D11_TEXTURE_ADDRESS_WRAP,			// ETextureWrapMode::REPEAT
+		D3D11_TEXTURE_ADDRESS_CLAMP,		// ETextureWrapMode::CLAMP
+		D3D11_TEXTURE_ADDRESS_MIRROR,		// ETextureWrapMode::MIRROR
+		D3D11_TEXTURE_ADDRESS_MIRROR_ONCE	// ETextureWrapMode::MIRROR_ONCE
+	};
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	switch(filterMode)
+	{
+		case EFilterMode::POINT:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		case EFilterMode::BILINEAR:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		case EFilterMode::TRILINEAR:	samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		case EFilterMode::ANISOTROPIC:	samplerDesc.Filter = D3D11_ENCODE_ANISOTROPIC_FILTER(D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+	};
+	samplerDesc.AddressU = addressModeConversionTable[(size_t)addressMode];
+	samplerDesc.AddressV = addressModeConversionTable[(size_t)addressMode];
+	samplerDesc.AddressW = addressModeConversionTable[(size_t)addressMode];
+	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	SetSamplerState(samplerIdx, samplerDesc);
 }
 
 void RenderD3D11::DoRender()
@@ -934,23 +942,23 @@ void RenderD3D11::SetDepthStencilState()
 {
 	ID3D11DepthStencilState *depthStencilState = nullptr;
 
-	uint64_t stateKey = 0;
-	stateKey |= (uint64_t)depthStencilDesc.DepthEnable					<< 0;	// 1 bit
-	stateKey |= (uint64_t)depthStencilDesc.DepthWriteMask				<< 1;	// 1 bit
-	stateKey |= (uint64_t)depthStencilDesc.DepthFunc					<< 2;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.StencilEnable				<< 6;	// 1 bit
-	stateKey |= (uint64_t)depthStencilDesc.StencilReadMask				<< 7;	// 8 bits
-	stateKey |= (uint64_t)depthStencilDesc.StencilWriteMask				<< 15;	// 8 bits
-	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilFailOp		<< 23;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilDepthFailOp	<< 27;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilPassOp		<< 31;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.FrontFace.StencilFunc		<< 35;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilFailOp		<< 39;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilDepthFailOp	<< 43;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilPassOp		<< 47;	// 4 bits
-	stateKey |= (uint64_t)depthStencilDesc.BackFace.StencilFunc			<< 51;	// 4 bits
+	uint64_t key = 0;
+	key |= (uint64_t)depthStencilDesc.DepthEnable					<< 0;	// 1 bit
+	key |= (uint64_t)depthStencilDesc.DepthWriteMask				<< 1;	// 1 bit
+	key |= (uint64_t)depthStencilDesc.DepthFunc						<< 2;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.StencilEnable					<< 6;	// 1 bit
+	key |= (uint64_t)depthStencilDesc.StencilReadMask				<< 7;	// 8 bits
+	key |= (uint64_t)depthStencilDesc.StencilWriteMask				<< 15;	// 8 bits
+	key |= (uint64_t)depthStencilDesc.FrontFace.StencilFailOp		<< 23;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.FrontFace.StencilDepthFailOp	<< 27;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.FrontFace.StencilPassOp		<< 31;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.FrontFace.StencilFunc			<< 35;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.BackFace.StencilFailOp		<< 39;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.BackFace.StencilDepthFailOp	<< 43;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.BackFace.StencilPassOp		<< 47;	// 4 bits
+	key |= (uint64_t)depthStencilDesc.BackFace.StencilFunc			<< 51;	// 4 bits
 
-	auto it = depthStencilStateCache.find(stateKey);
+	auto it = depthStencilStateCache.find(key);
 	if(it != depthStencilStateCache.end())
 	{
 		depthStencilState = it->second;
@@ -959,7 +967,7 @@ void RenderD3D11::SetDepthStencilState()
 	{
 		HRESULT hr = d3dDevice->CreateDepthStencilState(&depthStencilDesc, &depthStencilState);
 		ASSERT(SUCCEEDED(hr));
-		depthStencilStateCache.insert(std::make_pair(stateKey, depthStencilState));
+		depthStencilStateCache.insert(std::make_pair(key, depthStencilState));
 	}
 
 	if(activeDepthStencilState != depthStencilState)
@@ -973,19 +981,19 @@ void RenderD3D11::SetRasterizerState()
 {
 	ID3D11RasterizerState *rasterizerState = nullptr;
 
-	uint64_t stateKey = 0;
-	stateKey |= (uint64_t)rasterizerDesc.FillMode				<< 0;	// 2 bits
-	stateKey |= (uint64_t)rasterizerDesc.CullMode				<< 2;	// 2 bits
-//	stateKey |= (uint64_t)rasterizerDesc.FrontCounterClockwise	<< // Constant
-	stateKey |= (uint64_t)rasterizerDesc.DepthBias				<< 4;	// 32 bits
-//	stateKey |= (uint64_t)rasterizerDesc.DepthBiasClamp			<< // Constant
-//	stateKey |= (uint64_t)rasterizerDesc.SlopeScaledDepthBias	<< // Constant
-//	stateKey |= (uint64_t)rasterizerDesc.DepthClipEnable 		<< // Constant
-	stateKey |= (uint64_t)rasterizerDesc.ScissorEnable			<< 36;	// 1 bit
-//	stateKey |= (uint64_t)rasterizerDesc.MultisampleEnable		<< // Constant
-//	stateKey |= (uint64_t)rasterizerDesc.AntialiasedLineEnable	<< // Constant
+	uint64_t key = 0;
+	key |= (uint64_t)rasterizerDesc.FillMode				<< 0;	// 2 bits
+	key |= (uint64_t)rasterizerDesc.CullMode				<< 2;	// 2 bits
+//	key |= (uint64_t)rasterizerDesc.FrontCounterClockwise	<< // Constant
+	key |= (uint64_t)rasterizerDesc.DepthBias				<< 4;	// 32 bits
+//	key |= (uint64_t)rasterizerDesc.DepthBiasClamp			<< // Constant
+//	key |= (uint64_t)rasterizerDesc.SlopeScaledDepthBias	<< // Constant
+//	key |= (uint64_t)rasterizerDesc.DepthClipEnable 		<< // Constant
+	key |= (uint64_t)rasterizerDesc.ScissorEnable			<< 36;	// 1 bit
+//	key |= (uint64_t)rasterizerDesc.MultisampleEnable		<< // Constant
+//	key |= (uint64_t)rasterizerDesc.AntialiasedLineEnable	<< // Constant
 
-	auto it = rasterizerStateCache.find(stateKey);
+	auto it = rasterizerStateCache.find(key);
 	if(it != rasterizerStateCache.end())
 	{
 		rasterizerState = it->second;
@@ -994,6 +1002,7 @@ void RenderD3D11::SetRasterizerState()
 	{
 		HRESULT hr = d3dDevice->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
 		ASSERT(SUCCEEDED(hr));
+		rasterizerStateCache.insert(std::make_pair(key, rasterizerState));
 	}
 
 	if(activeRasterizerState != rasterizerState)
@@ -1007,19 +1016,19 @@ void RenderD3D11::SetBlendState()
 {
 	ID3D11BlendState *blendState = nullptr;
 
-	uint64_t stateKey = 0;
-	stateKey |= (uint64_t)blendDesc.AlphaToCoverageEnable					<< 0;	// 1 bit
-	stateKey |= (uint64_t)blendDesc.IndependentBlendEnable					<< 1;	// 1 bit
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].BlendEnable				<< 2;	// 1 bit
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].SrcBlend				<< 3;	// 5 bits
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].DestBlend				<< 8;	// 5 bits
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].BlendOp					<< 13;	// 3 bits
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].SrcBlendAlpha			<< 16;	// 5 bits
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].DestBlendAlpha			<< 21;	// 5 bits
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].BlendOpAlpha			<< 26;	// 3 bits
-	stateKey |= (uint64_t)blendDesc.RenderTarget[0].RenderTargetWriteMask	<< 29;	// 4 bits
+	uint64_t key = 0;
+	key |= (uint64_t)blendDesc.AlphaToCoverageEnable					<< 0;	// 1 bit
+	key |= (uint64_t)blendDesc.IndependentBlendEnable					<< 1;	// 1 bit
+	key |= (uint64_t)blendDesc.RenderTarget[0].BlendEnable				<< 2;	// 1 bit
+	key |= (uint64_t)blendDesc.RenderTarget[0].SrcBlend					<< 3;	// 5 bits
+	key |= (uint64_t)blendDesc.RenderTarget[0].DestBlend				<< 8;	// 5 bits
+	key |= (uint64_t)blendDesc.RenderTarget[0].BlendOp					<< 13;	// 3 bits
+	key |= (uint64_t)blendDesc.RenderTarget[0].SrcBlendAlpha			<< 16;	// 5 bits
+	key |= (uint64_t)blendDesc.RenderTarget[0].DestBlendAlpha			<< 21;	// 5 bits
+	key |= (uint64_t)blendDesc.RenderTarget[0].BlendOpAlpha				<< 26;	// 3 bits
+	key |= (uint64_t)blendDesc.RenderTarget[0].RenderTargetWriteMask	<< 29;	// 4 bits [0, 15], see D3D11_COLOR_WRITE_ENABLE
 
-	auto it = blendStateCache.find(stateKey);
+	auto it = blendStateCache.find(key);
 	if(it != blendStateCache.end())
 	{
 		blendState = it->second;
@@ -1028,6 +1037,7 @@ void RenderD3D11::SetBlendState()
 	{
 		HRESULT hr = d3dDevice->CreateBlendState(&blendDesc, &blendState);
 		ASSERT(SUCCEEDED(hr));
+		blendStateCache.insert(std::make_pair(key, blendState));
 	}
 
 	if(activeBlendState != blendState)
@@ -1048,7 +1058,7 @@ void RenderD3D11::SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRender
 		const Mesh::VertexDecl& decl = activeMesh->vertexDecl[i];
 		layoutKey |= (uint64_t)decl.attrib		<< (i * 7 + 0);	// 4 bits
 		layoutKey |= (uint64_t)decl.type		<< (i * 7 + 4);	// 1 bit
-		layoutKey |= (uint64_t)(decl.count - 1)	<< (i * 7 + 5);	// 2 bits
+		layoutKey |= (uint64_t)(decl.count - 1)	<< (i * 7 + 5);	// 2 bits [0, 3]
 	}
 
 	const std::pair<uint64_t, uint64_t> key = std::make_pair(layoutKey, (uint64_t)vertexShaderRenderData);
@@ -1071,6 +1081,38 @@ void RenderD3D11::SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRender
 		deviceCtx->IASetInputLayout(inputLayout);
 		activeInputLayout = inputLayout;
 	}
+}
+
+void RenderD3D11::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc)
+{
+	ID3D11SamplerState *samplerState = nullptr;
+
+	uint64_t key = 0;
+	key |= (uint64_t)samplerDesc.Filter			<< 0;	// 9 bits
+	key |= (uint64_t)samplerDesc.AddressU		<< 9;	// 3 bits
+	key |= (uint64_t)samplerDesc.AddressV		<< 12;	// 3 bits
+	key |= (uint64_t)samplerDesc.AddressW		<< 15;	// 3 bits
+//	key |= (uint64_t)samplerDesc.MipLODBias		<< // Constant
+	key |= (uint64_t)samplerDesc.MaxAnisotropy	<< 18;	// 5 bits [1, 16]
+	key |= (uint64_t)samplerDesc.ComparisonFunc << 23;	// 4 bits
+//	key |= (uint64_t)samplerDesc.BorderColor	<< // Constant
+//	key |= (uint64_t)samplerDesc.MinLOD			<< // Constant
+//	key |= (uint64_t)samplerDesc.MaxLOD			<< // Constant
+
+	auto it = samplerStateCache.find(key);
+	if(it != samplerStateCache.end())
+	{
+		samplerState = it->second;
+	}
+	else
+	{
+		HRESULT hr = d3dDevice->CreateSamplerState(&samplerDesc, &samplerState);
+		ASSERT(SUCCEEDED(hr));
+		samplerStateCache.insert(std::make_pair(key, samplerState));
+	}
+
+	deviceCtx->VSSetSamplers(samplerIdx, 1, &samplerState);
+	deviceCtx->PSSetSamplers(samplerIdx, 1, &samplerState);
 }
 
 DXGI_FORMAT RenderD3D11::ConvertTextureFormat(Texture::EFormat textureFormat)

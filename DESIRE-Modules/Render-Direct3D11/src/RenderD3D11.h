@@ -56,7 +56,7 @@ private:
 
 	void SetMesh(Mesh *mesh) override;
 	void SetShadersFromMaterial(Material *material) override;
-	void SetTexture(uint8_t samplerIdx, Texture *texture) override;
+	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
 
 	void DoRender() override;
 
@@ -65,6 +65,7 @@ private:
 	void SetRasterizerState();
 	void SetBlendState();
 	void SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRenderData);
+	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 
 	static DXGI_FORMAT ConvertTextureFormat(Texture::EFormat textureFormat);
 
@@ -95,6 +96,7 @@ private:
 	std::unordered_map<uint64_t, ID3D11RasterizerState*> rasterizerStateCache;
 	std::unordered_map<uint64_t, ID3D11BlendState*> blendStateCache;
 	std::unordered_map<std::pair<uint64_t, uint64_t>, ID3D11InputLayout*, stl_utils::hash_pair<uint64_t, uint64_t>> inputLayoutCache;
+	std::unordered_map<uint64_t, ID3D11SamplerState*> samplerStateCache;
 
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;
