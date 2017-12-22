@@ -23,6 +23,8 @@ public:
 	Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMipMaps = 0);
 	~Texture();
 
+	bool IsDepthFormat() const;
+
 	// Render engine specific data set at bind
 	void *renderData = nullptr;
 

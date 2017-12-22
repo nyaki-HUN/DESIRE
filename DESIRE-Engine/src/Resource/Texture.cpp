@@ -15,3 +15,8 @@ Texture::~Texture()
 {
 	IRender::Get()->Unbind(this);
 }
+
+bool Texture::IsDepthFormat() const
+{
+	return (format == Texture::EFormat::D24S8);
+}

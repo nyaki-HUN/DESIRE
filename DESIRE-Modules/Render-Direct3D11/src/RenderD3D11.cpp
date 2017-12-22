@@ -594,7 +594,6 @@ void RenderD3D11::Bind(Texture *texture)
 
 	TextureRenderDataD3D11 *renderData = new TextureRenderDataD3D11();
 
-	const bool isDepth = (texture->format == Texture::EFormat::D24S8);
 	const bool isRenderTarget = (texture->data.data == nullptr);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -605,7 +604,7 @@ void RenderD3D11::Bind(Texture *texture)
 	textureDesc.Format = ConvertTextureFormat(texture->format);
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	if(isDepth)
+	if(texture->IsDepthFormat())
 	{
 		textureDesc.BindFlags |= D3D11_BIND_DEPTH_STENCIL;
 	}
@@ -683,9 +682,10 @@ void RenderD3D11::Bind(RenderTarget *renderTarget)
 
 		TextureRenderDataD3D11 *textureRenderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 
-		const bool isDepth = (texture->format == Texture::EFormat::D24S8);
-		if(isDepth)
+		if(texture->IsDepthFormat())
 		{
+			ASSERT(renderData->depthStencilView == nullptr && "RenderTargets can have only 1 depth attachment");
+
 			HRESULT hr = d3dDevice->CreateDepthStencilView(textureRenderData->texture2D, nullptr, &renderData->depthStencilView);
 			ASSERT(SUCCEEDED(hr));
 		}
@@ -701,8 +701,6 @@ void RenderD3D11::Bind(RenderTarget *renderTarget)
 
 			renderData->renderTargetViews.push_back(renderTargetView);
 		}
-
-		texture->renderData = textureRenderData;
 	}
 
 	renderTarget->renderData = renderData;
