@@ -78,6 +78,9 @@ void RenderBgfx::Kill()
 		uniform = BGFX_INVALID_HANDLE;
 	}
 
+	activeVertexShader = nullptr;
+	activeFragmentShader = nullptr;
+
 	bgfx::shutdown();
 	initialized = false;
 }

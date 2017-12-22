@@ -188,24 +188,40 @@ void RenderD3D11::Kill()
 		DX_RELEASE(pair.second);
 	}
 	depthStencilStateCache.clear();
+	activeDepthStencilState = nullptr;
 
 	for(auto& pair : rasterizerStateCache)
 	{
 		DX_RELEASE(pair.second);
 	}
 	rasterizerStateCache.clear();
+	activeRasterizerState = nullptr;
 
 	for(auto& pair : blendStateCache)
 	{
 		DX_RELEASE(pair.second);
 	}
 	blendStateCache.clear();
+	activeBlendState = nullptr;
 
 	for(auto& pair : inputLayoutCache)
 	{
 		DX_RELEASE(pair.second);
 	}
 	inputLayoutCache.clear();
+	activeInputLayout = nullptr;
+
+	for(auto& pair : samplerStateCache)
+	{
+		DX_RELEASE(pair.second);
+	}
+	samplerStateCache.clear();
+	memset(activeSamplerStates, 0, sizeof(activeSamplerStates));
+
+	activeWindow = nullptr;
+	activeMesh = nullptr;
+	activeVertexShader = nullptr;
+	activeFragmentShader = nullptr;
 
 	Unbind(errorVertexShader.get());
 	Unbind(errorPixelShader.get());
