@@ -13,7 +13,7 @@ class AngelScriptSystem : public IScriptSystem
 {
 public:
 	AngelScriptSystem();
-	~AngelScriptSystem();
+	~AngelScriptSystem() override;
 
 private:
 	ScriptComponent* CreateScriptComponent_Internal(const char *scriptName) override;

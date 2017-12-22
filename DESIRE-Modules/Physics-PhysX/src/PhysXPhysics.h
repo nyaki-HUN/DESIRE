@@ -8,7 +8,7 @@ class PhysXPhysics : public IPhysics
 {
 public:
 	PhysXPhysics();
-	~PhysXPhysics();
+	~PhysXPhysics() override;
 
 	void Update() override;
 

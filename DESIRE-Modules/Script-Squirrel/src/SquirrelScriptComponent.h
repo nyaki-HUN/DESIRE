@@ -8,7 +8,7 @@ class SquirrelScriptComponent : public ScriptComponent
 {
 public:
 	SquirrelScriptComponent(HSQUIRRELVM vm);
-	~SquirrelScriptComponent();
+	~SquirrelScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 

@@ -8,7 +8,7 @@ class OSXWindow : public IWindow
 {
 public:
 	OSXWindow(const IWindow::CreationParams& creationParams);
-	~OSXWindow();
+	~OSXWindow() override;
 
 	void HandleWindowMessages() override;
 	void* GetHandle() const override;

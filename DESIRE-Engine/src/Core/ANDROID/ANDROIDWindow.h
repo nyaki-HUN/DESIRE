@@ -9,7 +9,7 @@ class ANDROIDWindow : public IWindow
 {
 public:
 	ANDROIDWindow(const IWindow::CreationParams& creationParams, ANativeWindow *nativeWindow);
-	~ANDROIDWindow();
+	~ANDROIDWindow() override;
 
 	void HandleWindowMessages() override;
 	void* GetHandle() const override;

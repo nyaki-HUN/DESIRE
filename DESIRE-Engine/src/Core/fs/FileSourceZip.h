@@ -9,7 +9,7 @@ class FileSourceZip : public IFileSource
 {
 public:
 	FileSourceZip(ReadFilePtr zipFile, int flags);
-	~FileSourceZip();
+	~FileSourceZip() override;
 
 	bool Load();
 

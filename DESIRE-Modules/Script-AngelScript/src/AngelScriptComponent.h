@@ -8,7 +8,7 @@ class AngelScriptComponent : public ScriptComponent
 {
 public:
 	AngelScriptComponent();
-	~AngelScriptComponent();
+	~AngelScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 

@@ -10,7 +10,8 @@ public:
 	MemoryFile(void *buffer, int64_t size);
 	// Create MemoryFile by loading the given amount of data from the file into memory (when size is -1 the entire file is loaded)
 	MemoryFile(ReadFilePtr& file, int64_t size = -1);
-	~MemoryFile();
+
+	~MemoryFile() override;
 
 	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) override;
 

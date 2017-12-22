@@ -14,7 +14,7 @@ class QuadTreeSceneManager : public ISceneManager
 {
 public:
 	QuadTreeSceneManager();
-	~QuadTreeSceneManager();
+	~QuadTreeSceneManager() override;
 
 	void AddObject(Object *obj, bool dynamic) override;
 	void RemoveObject(Object *obj) override;

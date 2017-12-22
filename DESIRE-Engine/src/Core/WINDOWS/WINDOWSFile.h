@@ -8,7 +8,7 @@ class WINDOWSFile : public IReadFile, public IWriteFile
 {
 public:
 	WINDOWSFile(HANDLE hFile, int64_t fileSize, const String& filename);
-	~WINDOWSFile();
+	~WINDOWSFile() override;
 
 	// IReadFile
 	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) override;

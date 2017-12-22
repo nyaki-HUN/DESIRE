@@ -11,7 +11,7 @@ class RenderComponent : public IComponent
 
 public:
 	RenderComponent();
-	~RenderComponent();
+	~RenderComponent() override;
 
 	void SetLayer(int layer);
 	int GetLayer() const;

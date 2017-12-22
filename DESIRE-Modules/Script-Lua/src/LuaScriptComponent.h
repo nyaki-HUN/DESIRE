@@ -8,7 +8,7 @@ class LuaScriptComponent : public ScriptComponent
 {
 public:
 	LuaScriptComponent(lua_State *L);
-	~LuaScriptComponent();
+	~LuaScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 

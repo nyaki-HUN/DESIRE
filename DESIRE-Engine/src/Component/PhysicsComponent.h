@@ -10,7 +10,7 @@ class PhysicsComponent : public IComponent
 
 public:
 	PhysicsComponent();
-	virtual ~PhysicsComponent();
+	~PhysicsComponent() override;
 
 	virtual void SetCollisionGroup(EPhysicsCollisionGroup collisionGroup);
 	virtual void SetMass(float mass) = 0;

@@ -7,7 +7,7 @@ class LINUXFile : public IReadFile, public IWriteFile
 {
 public:
 	LINUXFile(int fileDesc, int64_t fileSize, const String& filename);
-	~LINUXFile();
+	~LINUXFile() override;
 
 	// IReadFile
 	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) override;

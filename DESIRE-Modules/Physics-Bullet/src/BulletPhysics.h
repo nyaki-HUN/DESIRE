@@ -13,7 +13,7 @@ class BulletPhysics : public IPhysics
 {
 public:
 	BulletPhysics();
-	~BulletPhysics();
+	~BulletPhysics() override;
 
 	void Update() override;
 

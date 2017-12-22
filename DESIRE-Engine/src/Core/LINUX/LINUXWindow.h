@@ -11,7 +11,7 @@ public:
 	typedef void(*MessageHandler_t)(const XEvent& event);
 
 	LINUXWindow(const IWindow::CreationParams& creationParams);
-	~LINUXWindow();
+	~LINUXWindow() override;
 
 	void HandleWindowMessages() override;
 	void* GetHandle() const override;

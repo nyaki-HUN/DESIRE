@@ -8,7 +8,7 @@ class SquirrelScriptSystem : public IScriptSystem
 {
 public:
 	SquirrelScriptSystem();
-	~SquirrelScriptSystem();
+	~SquirrelScriptSystem() override;
 
 private:
 	ScriptComponent* CreateScriptComponent_Internal(const char *scriptName) override;

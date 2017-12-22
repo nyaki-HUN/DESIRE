@@ -12,7 +12,7 @@ class SandBox : public IApp
 {
 public:
 	SandBox();
-	~SandBox();
+	~SandBox() override;
 
 	void Init(IWindow *mainWindow) override;
 	void Kill() override;

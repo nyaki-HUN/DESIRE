@@ -20,7 +20,7 @@ public:
 	};
 
 	ScriptComponent();
-	virtual ~ScriptComponent();
+	~ScriptComponent() override;
 
 	// Call a built-in function (this is usually faster as the function pointer is cached)
 	virtual void CallByType(EBuiltinFuncType funcType) = 0;

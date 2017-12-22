@@ -8,7 +8,7 @@ class LuaScriptSystem : public IScriptSystem
 {
 public:
 	LuaScriptSystem();
-	~LuaScriptSystem();
+	~LuaScriptSystem() override;
 
 private:
 	ScriptComponent* CreateScriptComponent_Internal(const char *scriptName) override;

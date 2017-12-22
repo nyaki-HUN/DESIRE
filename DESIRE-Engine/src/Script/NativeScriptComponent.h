@@ -7,7 +7,7 @@ class NativeScriptComponent : public ScriptComponent
 {
 public:
 	NativeScriptComponent(std::unique_ptr<IScript> script);
-	~NativeScriptComponent();
+	~NativeScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 

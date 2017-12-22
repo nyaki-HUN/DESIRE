@@ -6,7 +6,7 @@ class IOSWindow : public IWindow
 {
 public:
 	IOSWindow(const IWindow::CreationParams& creationParams);
-	~IOSWindow();
+	~IOSWindow() override;
 
 	void HandleWindowMessages() override;
 	void* GetHandle() const override;

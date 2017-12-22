@@ -11,7 +11,7 @@ public:
 	typedef void(*MessageHandler_t)(WPARAM wParam, LPARAM lParam);
 
 	WINDOWSWindow(const IWindow::CreationParams& creationParams);
-	~WINDOWSWindow();
+	~WINDOWSWindow() override;
 
 	void HandleWindowMessages() override;
 	void* GetHandle() const override;
