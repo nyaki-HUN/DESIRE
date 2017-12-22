@@ -13,6 +13,6 @@ public:
 	~Material();
 
 	std::shared_ptr<Shader> vertexShader;
-	std::shared_ptr<Shader> pixelShader;
+	std::shared_ptr<Shader> fragmentShader;
 	std::vector<std::shared_ptr<Texture>> textures;
 };
