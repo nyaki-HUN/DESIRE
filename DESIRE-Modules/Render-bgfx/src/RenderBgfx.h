@@ -2,8 +2,10 @@
 
 #include "Render/IRender.h"
 #include "Resource/Texture.h"
+#include "Core/STL_utils.h"
 
 #include "../Externals/bgfx/include/bgfx/bgfx.h"
+#include <unordered_map>
 
 class RenderBgfx : public IRender
 {
@@ -60,6 +62,8 @@ private:
 	bgfx::ViewId activeViewId = 0;
 	const Shader *activeVertexShader = nullptr;
 	const Shader *activeFragmentShader = nullptr;
+
+	std::unordered_map<std::pair<uint64_t, uint64_t>, bgfx::ProgramHandle, stl_utils::hash_pair<uint64_t, uint64_t>> shaderProgramCache;
 
 	uint64_t renderState = 0;
 	uint32_t blendFactor = 0;

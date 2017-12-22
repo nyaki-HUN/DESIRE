@@ -78,6 +78,12 @@ void RenderBgfx::Kill()
 		uniform = BGFX_INVALID_HANDLE;
 	}
 
+	for(auto& pair : shaderProgramCache)
+	{
+		bgfx::destroy(pair.second);
+	}
+	shaderProgramCache.clear();
+
 	activeVertexShader = nullptr;
 	activeFragmentShader = nullptr;
 
@@ -541,11 +547,11 @@ void RenderBgfx::SetVertexShader(Shader *vertexShader)
 
 void RenderBgfx::SetFragmentShader(Shader *fragmentShader)
 {
-	const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(fragmentShader->renderData);
+	const ShaderRenderDataBgfx *shaderRenderData = static_cast<const ShaderRenderDataBgfx*>(fragmentShader->renderData);
 
 	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 //	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
-	bgfx::setUniform(fragmentShaderRenderData->u_tint, color);
+	bgfx::setUniform(shaderRenderData->u_tint, color);
 
 	// TODO: proper render state handling
 /**/if(activeViewId == 0)
@@ -587,7 +593,25 @@ void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 void RenderBgfx::DoRender()
 {
 	bgfx::setState(renderState, blendFactor);
-	bgfx::submit(activeViewId, activeShaderProgram);
+
+	bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;
+
+	const std::pair<uint64_t, uint64_t> key = std::make_pair((uint64_t)activeVertexShader->renderData, (uint64_t)activeFragmentShader->renderData);
+	auto it = shaderProgramCache.find(key);
+	if(it != shaderProgramCache.end())
+	{
+		shaderProgram = it->second;
+	}
+	else
+	{
+		const ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<ShaderRenderDataBgfx*>(activeVertexShader->renderData);
+		const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeFragmentShader->renderData);
+		shaderProgram = bgfx::createProgram(vertexShaderRenderData->shaderHandle, fragmentShaderRenderData->shaderHandle);
+
+		shaderProgramCache.insert(std::make_pair(key, shaderProgram));
+	}
+
+	bgfx::submit(activeViewId, shaderProgram);
 }
 
 bgfx::TextureFormat::Enum RenderBgfx::ConvertTextureFormat(Texture::EFormat textureFormat)
