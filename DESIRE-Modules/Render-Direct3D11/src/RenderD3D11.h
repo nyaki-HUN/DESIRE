@@ -106,6 +106,7 @@ private:
 
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;
+	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
 
 	bool initialized = false;
 };

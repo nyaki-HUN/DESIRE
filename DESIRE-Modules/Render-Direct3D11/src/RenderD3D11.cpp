@@ -49,10 +49,28 @@ RenderD3D11::RenderD3D11()
 		"}"
 	};
 
+	const char vs_screenSpaceQuad[] =
+	{
+		"struct v2f\n"
+		"{\n"
+		"	float4 pos : SV_Position;\n"
+		"	float2 uv : TEXCOORD0;\n"
+		"};\n"
+		"v2f main(uint idx : SV_VertexID)\n"
+		"{\n"
+		"	v2f Out;\n"
+		"	Out.uv = float2(idx & 1, idx >> 1);\n"
+		"	Out.pos = float4((Out.uv.x - 0.5) * 2.0, -(Out.uv.y - 0.5) * 2.0, 0.0, 1.0);\n"
+		"	return Out;\n"
+		"}\n"
+	};
+
 	errorVertexShader = std::make_unique<Shader>("vs_error");
 	errorVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
 	errorPixelShader = std::make_unique<Shader>("ps_error");
 	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
+	screenSpaceQuadVertexShader = std::make_unique<Shader>("vs_screenSpaceQuad");
+	screenSpaceQuadVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_screenSpaceQuad, sizeof(vs_screenSpaceQuad));
 
 	// Stencil test parameters
 	depthStencilDesc.StencilEnable = FALSE;
@@ -92,6 +110,7 @@ RenderD3D11::~RenderD3D11()
 {
 	errorVertexShader = nullptr;
 	errorPixelShader = nullptr;
+	screenSpaceQuadVertexShader = nullptr;
 }
 
 void RenderD3D11::Init(IWindow *mainWindow)
@@ -131,7 +150,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	initialized = SUCCEEDED(hr);
 
-	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	// Create back buffer render target view
 	ID3D11Texture2D *backBufferTexture = nullptr;
@@ -165,6 +184,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
+	Bind(screenSpaceQuadVertexShader.get());
 
 	SetDefaultRenderStates();
 }
@@ -225,6 +245,7 @@ void RenderD3D11::Kill()
 
 	Unbind(errorVertexShader.get());
 	Unbind(errorPixelShader.get());
+	Unbind(screenSpaceQuadVertexShader.get());
 
 	DX_RELEASE(backBufferDepthStencilView);
 	DX_RELEASE(backBufferRenderTargetView);
@@ -872,12 +893,27 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, indexByteOffset);
 	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &vertexByteOffset);
 
+	if(activeMesh == nullptr)
+	{
+		deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+
 	activeMesh = mesh;
 }
 
 void RenderD3D11::SetScreenSpaceQuadMeshAndVertexShader()
 {
-	ASSERT(false && "Not yet supported");
+	if(activeMesh != nullptr)
+	{
+		deviceCtx->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+		deviceCtx->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+
+		deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+		activeMesh = nullptr;
+	}
+
+	SetVertexShader(screenSpaceQuadVertexShader.get());
 }
 
 void RenderD3D11::SetVertexShader(Shader *vertexShader)
