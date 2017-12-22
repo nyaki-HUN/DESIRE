@@ -60,8 +60,8 @@ private:
 };
 
 
-#define DESIRE_APP_CLASS(APP_CLASS)			\
-	void IApp::CreateInstance()				\
-	{										\
+#define DESIRE_APP_CLASS(APP_CLASS)		\
+	void IApp::CreateInstance()			\
+	{									\
 		instance = new APP_CLASS();		\
 	}
