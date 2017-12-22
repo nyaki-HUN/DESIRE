@@ -100,7 +100,8 @@ protected:
 
 private:
 	virtual void SetMesh(Mesh *mesh) = 0;
-	virtual void SetShadersFromMaterial(Material *material) = 0;
+	virtual void SetVertexShader(Shader *vertexShader) = 0;
+	virtual void SetFragmentShader(Shader *fragmentShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::REPEAT) = 0;
 
 	// Submit draw command

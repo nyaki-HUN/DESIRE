@@ -11,7 +11,7 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 	if(	mesh == nullptr ||
 		material == nullptr ||
 		material->vertexShader == nullptr ||
-		material->pixelShader == nullptr)
+		material->fragmentShader == nullptr)
 	{
 		return;
 	}
@@ -33,13 +33,13 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 	{
 		Bind(material->vertexShader.get());
 	}
+	SetVertexShader(material->vertexShader.get());
 
-	if(material->pixelShader->renderData == nullptr)
+	if(material->fragmentShader->renderData == nullptr)
 	{
-		Bind(material->pixelShader.get());
+		Bind(material->fragmentShader.get());
 	}
-
-	SetShadersFromMaterial(material);
+	SetFragmentShader(material->fragmentShader.get());
 
 	// Textures
 	for(uint8_t i = 0; i < material->textures.size(); i++)

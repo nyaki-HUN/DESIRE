@@ -34,7 +34,7 @@ RenderD3D11::RenderD3D11()
 		"{\n"
 		"	float4x4 matWorldViewProj;\n"
 		"};\n"
-		"float4 main(float3 pos : POSITION) : SV_POSITION\n"
+		"float4 main(float3 pos : POSITION) : SV_Position\n"
 		"{\n"
 		"	float4 position = mul(matWorldViewProj, float4(pos, 1.0));\n"
 		"	return position;\n"
@@ -43,7 +43,7 @@ RenderD3D11::RenderD3D11()
 
 	const char ps_error[] =
 	{
-		"float3 main() : SV_TARGET\n"
+		"float3 main() : SV_Target\n"
 		"{\n"
 		"	return float3(1, 0, 1);\n"
 		"}"
@@ -720,6 +720,11 @@ void RenderD3D11::Unbind(Mesh *mesh)
 
 	delete renderData;
 	mesh->renderData = nullptr;
+
+	if(activeMesh == mesh)
+	{
+		activeMesh = nullptr;
+	}
 }
 
 void RenderD3D11::Unbind(Shader *shader)
@@ -734,6 +739,15 @@ void RenderD3D11::Unbind(Shader *shader)
 
 	delete renderData;
 	shader->renderData = nullptr;
+
+	if(activeVertexShader == shader)
+	{
+		activeVertexShader = nullptr;
+	}
+	if(activeFragmentShader == shader)
+	{
+		activeFragmentShader = nullptr;
+	}
 }
 
 void RenderD3D11::Unbind(Texture *texture)
@@ -845,32 +859,45 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	activeMesh = mesh;
 }
 
-void RenderD3D11::SetShadersFromMaterial(Material *material)
+void RenderD3D11::SetVertexShader(Shader *vertexShader)
 {
-	// Vertex shader
-	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->vertexShader->renderData);
-	deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
-	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
+	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader->renderData);
+
+	if(activeVertexShader != vertexShader)
+	{
+		deviceCtx->VSSetShader(shaderRenderData->vertexShader, nullptr, 0);
+		deviceCtx->VSSetConstantBuffers(0, (UINT)shaderRenderData->constantBuffers.size(), shaderRenderData->constantBuffers.data());
+		SetInputLayout(shaderRenderData);
+
+		activeVertexShader = vertexShader;
+	}
+
+	for(size_t i = 0; i < shaderRenderData->constantBuffers.size(); ++i)
 	{
 /**/	DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 /**/	DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-/**/	memcpy(vertexShaderRenderData->constantBuffersData[i].data, &matWorldViewProj.r[0], vertexShaderRenderData->constantBuffersData[i].size);
+/**/	memcpy(shaderRenderData->constantBuffersData[i].data, &matWorldViewProj.r[0], shaderRenderData->constantBuffersData[i].size);
 
-		deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, vertexShaderRenderData->constantBuffersData[i].data, 0, 0);
+		deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, shaderRenderData->constantBuffersData[i].data, 0, 0);
 	}
-	deviceCtx->VSSetConstantBuffers(0, (UINT)vertexShaderRenderData->constantBuffers.size(), vertexShaderRenderData->constantBuffers.data());
+}
 
-	SetInputLayout(vertexShaderRenderData);
+void RenderD3D11::SetFragmentShader(Shader *fragmentShader)
+{
+	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(fragmentShader->renderData);
 
-	// Pixel shader
-	const ShaderRenderDataD3D11 *pixelShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material->pixelShader->renderData);
-	deviceCtx->PSSetShader(pixelShaderRenderData->pixelShader, nullptr, 0);
-
-	for(size_t i = 0; i < pixelShaderRenderData->constantBuffers.size(); ++i)
+	if(activeFragmentShader != fragmentShader)
 	{
-		deviceCtx->UpdateSubresource(pixelShaderRenderData->constantBuffers[i], 0, nullptr, pixelShaderRenderData->constantBuffersData[i].data, 0, 0);
+		deviceCtx->PSSetShader(shaderRenderData->pixelShader, nullptr, 0);
+		deviceCtx->PSSetConstantBuffers(0, (UINT)shaderRenderData->constantBuffers.size(), shaderRenderData->constantBuffers.data());
+
+		activeFragmentShader = fragmentShader;
 	}
-	deviceCtx->PSSetConstantBuffers(0, (UINT)pixelShaderRenderData->constantBuffers.size(), pixelShaderRenderData->constantBuffers.data());
+
+	for(size_t i = 0; i < shaderRenderData->constantBuffers.size(); ++i)
+	{
+		deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, shaderRenderData->constantBuffersData[i].data, 0, 0);
+	}
 }
 
 void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)

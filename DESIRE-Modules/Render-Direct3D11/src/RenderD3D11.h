@@ -55,7 +55,8 @@ private:
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void SetMesh(Mesh *mesh) override;
-	void SetShadersFromMaterial(Material *material) override;
+	void SetVertexShader(Shader *vertexShader) override;
+	void SetFragmentShader(Shader *fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
 
 	void DoRender() override;
@@ -86,6 +87,8 @@ private:
 	const ID3D11SamplerState *activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
 	const IWindow *activeWindow = nullptr;
 	const Mesh *activeMesh = nullptr;
+	const Shader *activeVertexShader = nullptr;
+	const Shader *activeFragmentShader = nullptr;
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

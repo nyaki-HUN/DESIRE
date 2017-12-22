@@ -430,6 +430,15 @@ void RenderBgfx::Unbind(Shader *shader)
 
 	delete renderData;
 	shader->renderData = nullptr;
+
+	if(activeVertexShader == shader)
+	{
+		activeVertexShader = nullptr;
+	}
+	if(activeFragmentShader == shader)
+	{
+		activeFragmentShader = nullptr;
+	}
 }
 
 void RenderBgfx::Unbind(Texture *texture)
@@ -522,21 +531,18 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	}
 }
 
-void RenderBgfx::SetShadersFromMaterial(Material *material)
+void RenderBgfx::SetVertexShader(Shader *vertexShader)
 {
-	ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<ShaderRenderDataBgfx*>(material->vertexShader->renderData);
-//	const ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(material->vertexShader->renderData);
-	const ShaderRenderDataBgfx *pixelShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(material->pixelShader->renderData);
+	activeVertexShader = vertexShader;
+}
 
-	if(!bgfx::isValid(vertexShaderRenderData->shaderProgram))
-	{
-		vertexShaderRenderData->shaderProgram = bgfx::createProgram(vertexShaderRenderData->shaderHandle, pixelShaderRenderData->shaderHandle);
-	}
-	activeShaderProgram = vertexShaderRenderData->shaderProgram;
+void RenderBgfx::SetFragmentShader(Shader *fragmentShader)
+{
+	const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(fragmentShader->renderData);
 
 	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 //	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
-	bgfx::setUniform(pixelShaderRenderData->u_tint, color);
+	bgfx::setUniform(fragmentShaderRenderData->u_tint, color);
 
 	// TODO: proper render state handling
 /**/if(activeViewId == 0)
@@ -547,6 +553,8 @@ void RenderBgfx::SetShadersFromMaterial(Material *material)
 	{
 		renderState &= ~BGFX_STATE_BLEND_MASK;
 	}
+
+	activeFragmentShader = fragmentShader;
 }
 
 void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)

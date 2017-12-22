@@ -48,16 +48,18 @@ private:
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void SetMesh(Mesh *mesh) override;
-	void SetShadersFromMaterial(Material *material) override;
+	void SetVertexShader(Shader *vertexShader) override;
+	void SetFragmentShader(Shader *fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
 
 	void DoRender() override;
 
 	static bgfx::TextureFormat::Enum ConvertTextureFormat(Texture::EFormat textureFormat);
 
-	bgfx::ProgramHandle activeShaderProgram = BGFX_INVALID_HANDLE;
 	bgfx::UniformHandle samplerUniforms[8];
 	bgfx::ViewId activeViewId = 0;
+	const Shader *activeVertexShader = nullptr;
+	const Shader *activeFragmentShader = nullptr;
 
 	uint64_t renderState = 0;
 	uint32_t blendFactor = 0;

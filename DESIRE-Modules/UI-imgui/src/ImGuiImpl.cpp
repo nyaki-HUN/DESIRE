@@ -74,7 +74,7 @@ void ImGuiImpl::Init()
 	// Setup material
 	material = std::make_unique<Material>();
 	material->vertexShader = ResourceManager::Get()->GetShader("vs_ocornut_imgui");
-	material->pixelShader = ResourceManager::Get()->GetShader("fs_ocornut_imgui");
+	material->fragmentShader = ResourceManager::Get()->GetShader("fs_ocornut_imgui");
 
 	// Setup font texture
 	unsigned char *textureData;
