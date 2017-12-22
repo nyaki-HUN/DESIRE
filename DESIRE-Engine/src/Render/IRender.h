@@ -63,6 +63,7 @@ public:
 	virtual void EndFrame() = 0;
 
 	void RenderMesh(Mesh *mesh, Material *material);
+	void RenderScreenSpaceQuad(Material *material);
 
 	// Sets the current view that the rendering will happen on. (Use nullptr to set the default view which is using the frame buffer)
 	virtual void SetView(View *view) = 0;
@@ -100,9 +101,12 @@ protected:
 
 private:
 	virtual void SetMesh(Mesh *mesh) = 0;
+	void SetMaterial(Material *material);
+	virtual void SetScreenSpaceQuadMeshAndVertexShader() = 0;
 	virtual void SetVertexShader(Shader *vertexShader) = 0;
 	virtual void SetFragmentShader(Shader *fragmentShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::REPEAT) = 0;
+	virtual void UpdateShaderParams() = 0;
 
 	// Submit draw command
 	virtual void DoRender() = 0;

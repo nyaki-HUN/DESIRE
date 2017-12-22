@@ -875,45 +875,39 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	activeMesh = mesh;
 }
 
+void RenderD3D11::SetScreenSpaceQuadMeshAndVertexShader()
+{
+	ASSERT(false && "Not yet supported");
+}
+
 void RenderD3D11::SetVertexShader(Shader *vertexShader)
 {
-	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader->renderData);
-
-	if(activeVertexShader != vertexShader)
+	if(activeVertexShader == vertexShader)
 	{
-		deviceCtx->VSSetShader(shaderRenderData->vertexShader, nullptr, 0);
-		deviceCtx->VSSetConstantBuffers(0, (UINT)shaderRenderData->constantBuffers.size(), shaderRenderData->constantBuffers.data());
-		SetInputLayout(shaderRenderData);
-
-		activeVertexShader = vertexShader;
+		return;
 	}
 
-	for(size_t i = 0; i < shaderRenderData->constantBuffers.size(); ++i)
-	{
-/**/	DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-/**/	DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-/**/	memcpy(shaderRenderData->constantBuffersData[i].data, &matWorldViewProj.r[0], shaderRenderData->constantBuffersData[i].size);
+	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader->renderData);
 
-		deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, shaderRenderData->constantBuffersData[i].data, 0, 0);
-	}
+	deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
+	deviceCtx->VSSetConstantBuffers(0, (UINT)vertexShaderRenderData->constantBuffers.size(), vertexShaderRenderData->constantBuffers.data());
+
+	activeVertexShader = vertexShader;
 }
 
 void RenderD3D11::SetFragmentShader(Shader *fragmentShader)
 {
+	if(activeFragmentShader == fragmentShader)
+	{
+		return;
+	}
+
 	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(fragmentShader->renderData);
 
-	if(activeFragmentShader != fragmentShader)
-	{
-		deviceCtx->PSSetShader(shaderRenderData->pixelShader, nullptr, 0);
-		deviceCtx->PSSetConstantBuffers(0, (UINT)shaderRenderData->constantBuffers.size(), shaderRenderData->constantBuffers.data());
+	deviceCtx->PSSetShader(shaderRenderData->pixelShader, nullptr, 0);
+	deviceCtx->PSSetConstantBuffers(0, (UINT)shaderRenderData->constantBuffers.size(), shaderRenderData->constantBuffers.data());
 
-		activeFragmentShader = fragmentShader;
-	}
-
-	for(size_t i = 0; i < shaderRenderData->constantBuffers.size(); ++i)
-	{
-		deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, shaderRenderData->constantBuffersData[i].data, 0, 0);
-	}
+	activeFragmentShader = fragmentShader;
 }
 
 void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
@@ -952,19 +946,48 @@ void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode f
 	SetSamplerState(samplerIdx, samplerDesc);
 }
 
+void RenderD3D11::UpdateShaderParams()
+{
+	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
+
+	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
+	{
+/**/	DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
+/**/	DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
+/**/	memcpy(vertexShaderRenderData->constantBuffersData[i].data, &matWorldViewProj.r[0], vertexShaderRenderData->constantBuffersData[i].size);
+
+		deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, vertexShaderRenderData->constantBuffersData[i].data, 0, 0);
+	}
+
+	const ShaderRenderDataD3D11 *fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeFragmentShader->renderData);
+
+	for(size_t i = 0; i < fragmentShaderRenderData->constantBuffers.size(); ++i)
+	{
+		deviceCtx->UpdateSubresource(fragmentShaderRenderData->constantBuffers[i], 0, nullptr, fragmentShaderRenderData->constantBuffersData[i].data, 0, 0);
+	}
+}
+
 void RenderD3D11::DoRender()
 {
 	SetDepthStencilState();
 	SetRasterizerState();
 	SetBlendState();
+	SetInputLayout();
 
-	if(activeMesh->numIndices != 0)
+	if(activeMesh != nullptr)
 	{
-		deviceCtx->DrawIndexed(activeMesh->numIndices, 0, 0);
+		if(activeMesh->numIndices != 0)
+		{
+			deviceCtx->DrawIndexed(activeMesh->numIndices, 0, 0);
+		}
+		else
+		{
+			deviceCtx->Draw(activeMesh->numVertices, 0);
+		}
 	}
 	else
 	{
-		deviceCtx->Draw(activeMesh->numVertices, 0);
+		deviceCtx->Draw(4, 0);
 	}
 }
 
@@ -1091,33 +1114,37 @@ void RenderD3D11::SetBlendState()
 	}
 }
 
-void RenderD3D11::SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRenderData)
+void RenderD3D11::SetInputLayout()
 {
 	ID3D11InputLayout *inputLayout = nullptr;
 
-	uint64_t layoutKey = 0;
-	ASSERT(activeMesh->vertexDecl.size() <= 9 && "It is possible to encode maximum of 9 vertex declarations into 64-bit");
-	for(size_t i = 0; i < activeMesh->vertexDecl.size(); ++i)
+	if(activeMesh != nullptr)
 	{
-		const Mesh::VertexDecl& decl = activeMesh->vertexDecl[i];
-		layoutKey |= (uint64_t)decl.attrib		<< (i * 7 + 0);	// 4 bits
-		layoutKey |= (uint64_t)decl.type		<< (i * 7 + 4);	// 1 bit
-		layoutKey |= (uint64_t)(decl.count - 1)	<< (i * 7 + 5);	// 2 bits [0, 3]
-	}
+		uint64_t layoutKey = 0;
+		ASSERT(activeMesh->vertexDecl.size() <= 9 && "It is possible to encode maximum of 9 vertex declarations into 64-bit");
+		for(size_t i = 0; i < activeMesh->vertexDecl.size(); ++i)
+		{
+			const Mesh::VertexDecl& decl = activeMesh->vertexDecl[i];
+			layoutKey |= (uint64_t)decl.attrib << (i * 7 + 0);	// 4 bits
+			layoutKey |= (uint64_t)decl.type << (i * 7 + 4);	// 1 bit
+			layoutKey |= (uint64_t)(decl.count - 1) << (i * 7 + 5);	// 2 bits [0, 3]
+		}
 
-	const std::pair<uint64_t, uint64_t> key = std::make_pair(layoutKey, (uint64_t)vertexShaderRenderData);
+		const std::pair<uint64_t, uint64_t> key = std::make_pair(layoutKey, (uint64_t)activeVertexShader->renderData);
 
-	auto it = inputLayoutCache.find(key);
-	if(it != inputLayoutCache.end())
-	{
-		inputLayout = it->second;
-	}
-	else
-	{
-		const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
-		HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), (UINT)activeMesh->vertexDecl.size(), vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &inputLayout);
-		ASSERT(SUCCEEDED(hr));
-		inputLayoutCache.insert(std::make_pair(key, inputLayout));
+		auto it = inputLayoutCache.find(key);
+		if(it != inputLayoutCache.end())
+		{
+			inputLayout = it->second;
+		}
+		else
+		{
+			const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
+			const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
+			HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), (UINT)activeMesh->vertexDecl.size(), vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &inputLayout);
+			ASSERT(SUCCEEDED(hr));
+			inputLayoutCache.insert(std::make_pair(key, inputLayout));
+		}
 	}
 
 	if(activeInputLayout != inputLayout)

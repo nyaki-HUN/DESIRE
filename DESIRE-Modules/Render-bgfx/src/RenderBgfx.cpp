@@ -540,6 +540,11 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	}
 }
 
+void RenderBgfx::SetScreenSpaceQuadMeshAndVertexShader()
+{
+	ASSERT(false && "Not yet supported");
+}
+
 void RenderBgfx::SetVertexShader(Shader *vertexShader)
 {
 	activeVertexShader = vertexShader;
@@ -547,22 +552,6 @@ void RenderBgfx::SetVertexShader(Shader *vertexShader)
 
 void RenderBgfx::SetFragmentShader(Shader *fragmentShader)
 {
-	const ShaderRenderDataBgfx *shaderRenderData = static_cast<const ShaderRenderDataBgfx*>(fragmentShader->renderData);
-
-	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-//	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
-	bgfx::setUniform(shaderRenderData->u_tint, color);
-
-	// TODO: proper render state handling
-/**/if(activeViewId == 0)
-	{
-		renderState |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
-	}
-	else
-	{
-		renderState &= ~BGFX_STATE_BLEND_MASK;
-	}
-
 	activeFragmentShader = fragmentShader;
 }
 
@@ -590,8 +579,27 @@ void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], renderData->textureHandle, flags);
 }
 
+void RenderBgfx::UpdateShaderParams()
+{
+	const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeFragmentShader->renderData);
+
+	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
+	bgfx::setUniform(fragmentShaderRenderData->u_tint, color);
+}
+
 void RenderBgfx::DoRender()
 {
+/**/DESIRE_TODO("proper blend state handling");
+/**/if(activeViewId == 0)
+	{
+		renderState |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_BLEND_MASK;
+	}
+
 	bgfx::setState(renderState, blendFactor);
 
 	bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;

@@ -55,9 +55,11 @@ private:
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void SetMesh(Mesh *mesh) override;
+	void SetScreenSpaceQuadMeshAndVertexShader() override;
 	void SetVertexShader(Shader *vertexShader) override;
 	void SetFragmentShader(Shader *fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
+	void UpdateShaderParams() override;
 
 	void DoRender() override;
 
@@ -65,7 +67,7 @@ private:
 	void SetDepthStencilState();
 	void SetRasterizerState();
 	void SetBlendState();
-	void SetInputLayout(const ShaderRenderDataD3D11 *vertexShaderRenderData);
+	void SetInputLayout();
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 
 	static DXGI_FORMAT ConvertTextureFormat(Texture::EFormat textureFormat);

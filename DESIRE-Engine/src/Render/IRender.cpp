@@ -8,15 +8,15 @@
 
 void IRender::RenderMesh(Mesh *mesh, Material *material)
 {
-	if(	mesh == nullptr ||
-		material == nullptr ||
-		material->vertexShader == nullptr ||
-		material->fragmentShader == nullptr)
+	ASSERT(mesh != nullptr);
+	ASSERT(material != nullptr);
+
+	if(material->vertexShader == nullptr || material->fragmentShader == nullptr)
 	{
+		ASSERT(false && "Invalid material");
 		return;
 	}
 
-	// Mesh
 	if(mesh->renderData == nullptr)
 	{
 		Bind(mesh);
@@ -27,19 +27,60 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 	}
 
 	SetMesh(mesh);
+	SetMaterial(material);
+	UpdateShaderParams();
 
-	// Shaders
-	if(material->vertexShader->renderData == nullptr)
-	{
-		Bind(material->vertexShader.get());
-	}
-	SetVertexShader(material->vertexShader.get());
+	DoRender();
+}
 
-	if(material->fragmentShader->renderData == nullptr)
+void IRender::RenderScreenSpaceQuad(Material *material)
+{
+	ASSERT(material != nullptr);
+
+	if(material->vertexShader != nullptr || material->fragmentShader == nullptr)
 	{
-		Bind(material->fragmentShader.get());
+		ASSERT(false && "Invalid material");
+		return;
 	}
-	SetFragmentShader(material->fragmentShader.get());
+
+	SetMaterial(material);
+	SetScreenSpaceQuadMeshAndVertexShader();
+	UpdateShaderParams();
+
+	DoRender();
+}
+
+void IRender::SetDefaultRenderStates()
+{
+	SetColorWriteEnabled(true, true);
+	SetDepthWriteEnabled(true);
+	SetDepthTest(EDepthTest::LESS);
+	SetCullMode(ECullMode::CCW);
+}
+
+void IRender::SetMaterial(Material *material)
+{
+	// Vertex shader
+	if(material->vertexShader != nullptr)
+	{
+		if(material->vertexShader != nullptr && material->vertexShader->renderData == nullptr)
+		{
+			Bind(material->vertexShader.get());
+		}
+
+		SetVertexShader(material->vertexShader.get());
+	}
+
+	// Fragment shader
+	if(material->fragmentShader != nullptr)
+	{
+		if(material->fragmentShader->renderData == nullptr)
+		{
+			Bind(material->fragmentShader.get());
+		}
+
+		SetFragmentShader(material->fragmentShader.get());
+	}
 
 	// Textures
 	for(uint8_t i = 0; i < material->textures.size(); i++)
@@ -52,15 +93,4 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 
 		SetTexture(i, texture, EFilterMode::TRILINEAR, EAddressMode::REPEAT);
 	}
-
-	// Render
-	DoRender();
-}
-
-void IRender::SetDefaultRenderStates()
-{
-	SetColorWriteEnabled(true, true);
-	SetDepthWriteEnabled(true);
-	SetDepthTest(EDepthTest::LESS);
-	SetCullMode(ECullMode::CCW);
 }
