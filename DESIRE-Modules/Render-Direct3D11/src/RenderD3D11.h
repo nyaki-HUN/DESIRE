@@ -83,6 +83,7 @@ private:
 	const ID3D11RasterizerState *activeRasterizerState = nullptr;
 	const ID3D11BlendState *activeBlendState = nullptr;
 	const ID3D11InputLayout *activeInputLayout = nullptr;
+	const ID3D11SamplerState *activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
 	const IWindow *activeWindow = nullptr;
 	const Mesh *activeMesh = nullptr;
 

@@ -1114,8 +1114,12 @@ void RenderD3D11::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& 
 		samplerStateCache.insert(std::make_pair(key, samplerState));
 	}
 
-	deviceCtx->VSSetSamplers(samplerIdx, 1, &samplerState);
-	deviceCtx->PSSetSamplers(samplerIdx, 1, &samplerState);
+	if(activeSamplerStates[samplerIdx] != samplerState)
+	{
+		deviceCtx->VSSetSamplers(samplerIdx, 1, &samplerState);
+		deviceCtx->PSSetSamplers(samplerIdx, 1, &samplerState);
+		activeSamplerStates[samplerIdx] = samplerState;
+	}
 }
 
 DXGI_FORMAT RenderD3D11::ConvertTextureFormat(Texture::EFormat textureFormat)
