@@ -37,7 +37,10 @@ Mesh::Mesh(EType meshType)
 
 Mesh::~Mesh()
 {
-	IRender::Get()->Unbind(this);
+	if(renderData != nullptr)
+	{
+		IRender::Get()->Unbind(this);
+	}
 
 	free(indices);
 	free(vertices);

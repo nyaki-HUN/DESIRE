@@ -13,7 +13,10 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMip
 
 Texture::~Texture()
 {
-	IRender::Get()->Unbind(this);
+	if(renderData != nullptr)
+	{
+		IRender::Get()->Unbind(this);
+	}
 }
 
 bool Texture::IsDepthFormat() const

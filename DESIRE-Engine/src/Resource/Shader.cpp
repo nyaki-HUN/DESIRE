@@ -10,5 +10,8 @@ Shader::Shader(const String& name)
 
 Shader::~Shader()
 {
-	IRender::Get()->Unbind(this);
+	if(renderData != nullptr)
+	{
+		IRender::Get()->Unbind(this);
+	}
 }

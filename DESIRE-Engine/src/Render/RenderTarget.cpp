@@ -11,7 +11,10 @@ RenderTarget::RenderTarget(uint16_t width, uint16_t height)
 
 RenderTarget::~RenderTarget()
 {
-	IRender::Get()->Unbind(this);
+	if(renderData != nullptr)
+	{
+		IRender::Get()->Unbind(this);
+	}
 }
 
 uint16_t RenderTarget::GetWidth() const
