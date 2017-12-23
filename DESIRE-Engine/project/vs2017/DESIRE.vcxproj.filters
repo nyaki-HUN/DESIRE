@@ -623,6 +623,9 @@
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp">
       <Filter>src\Network</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Physics\IPhysics.cpp">
+      <Filter>src\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Render\Camera.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
@@ -682,6 +685,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Script\NativeScriptComponent.cpp">
       <Filter>src\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Sound\ISound.cpp">
+      <Filter>src\Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Utils\TaskManager.cpp">
       <Filter>src\Utils</Filter>
