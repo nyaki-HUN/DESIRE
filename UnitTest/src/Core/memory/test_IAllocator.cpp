@@ -7,7 +7,7 @@ TEST_CASE("IAllocator", "[Core][memory]")
 	IAllocator& frameAllocator = IAllocator::GetFrameAllocator();
 }
 
-TEST_CASE("DESIRE_ALLOCATOR_NEW && DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
+TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
 {
 	class TestClass
 	{

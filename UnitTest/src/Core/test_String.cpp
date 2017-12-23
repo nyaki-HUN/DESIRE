@@ -11,7 +11,7 @@ TEST_CASE("String", "[Core]")
 	const char *charSeq2 = "String1234567890 QWE1234567890 asd1234567890";
 	String bigString = charSeq2;
 
-	SECTION("Constructors && Equals()")
+	SECTION("Constructors | Equals()")
 	{
 		String stringEmpty;
 		CHECK(strcmp(stringEmpty.c_str(), "") == 0);
@@ -70,7 +70,7 @@ TEST_CASE("String", "[Core]")
 		CHECK(s.Equals(charSeq2));
 	}
 
-	SECTION("ToLower() && EqualsIgnoreCase()")
+	SECTION("ToLower() and EqualsIgnoreCase()")
 	{
 		string.ToLower();
 		CHECK(string.Equals("string asd"));
@@ -81,7 +81,7 @@ TEST_CASE("String", "[Core]")
 		CHECK(bigString.EqualsIgnoreCase(charSeq2));
 	}
 
-	SECTION("ToUpper() && EqualsIgnoreCase()")
+	SECTION("ToUpper() and EqualsIgnoreCase()")
 	{
 		string.ToUpper();
 		CHECK(string.Equals("STRING ASD"));
@@ -109,7 +109,7 @@ TEST_CASE("String", "[Core]")
 		CHECK(trimString.Length() == 0);
 	}
 
-	SECTION("operator += && Append()")
+	SECTION("operator += | Append()")
 	{
 		String numberString = string;
 		numberString += -12;
@@ -195,7 +195,7 @@ TEST_CASE("String", "[Core]")
 //		size_t FindLast(char search) const;
 	}
 
-	SECTION("Replace() && ReplaceAll()")
+	SECTION("Replace() | ReplaceAll()")
 	{
 		String replaceStr = "aabbc";
 		replaceStr.Replace("b", "XX");
@@ -271,7 +271,7 @@ TEST_CASE("String", "[Core]")
 		CHECK(operator_plus.Equals("String ASD123 qwe!"));
 	}
 
-	SECTION("Compare() && CompareIgnoreCase() && operator <")
+	SECTION("Compare() | CompareIgnoreCase() | operator <")
 	{
 		String s("XXX");
 
@@ -288,17 +288,20 @@ TEST_CASE("String", "[Core]")
 		CHECK((bigString < s) == (bigString.Compare(s) < 0));
 	}
 
-	SECTION("StartsWith() && EndsWith()")
+	SECTION("StartsWith()")
 	{
 		CHECK(string.StartsWith(String("Str")));
 		CHECK(string.StartsWith("Str"));
 		CHECK(string.StartsWith(charSeq));
+	}
 
+	SECTION("EndsWith()")
+	{
 		CHECK(string.EndsWith(String(" ASD")));
 		CHECK(string.EndsWith(" ASD"));
 		CHECK(string.EndsWith(charSeq));
 	}
-	
+
 	SECTION("CreateFormattedString()")
 	{
 		string = String::CreateFormattedString("%d %05d %.1f %c %s", 123, 123, 1.5f, 'X', "test");
