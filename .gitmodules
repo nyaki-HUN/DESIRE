@@ -1,3 +1,6 @@
 [submodule "DESIRE-Modules/Script-Squirrel/Externals/squirrel"]
 	path = DESIRE-Modules/Script-Squirrel/Externals/squirrel
 	url = https://github.com/albertodemichelis/squirrel.git
+[submodule "DESIRE-Modules/Compression-zlib-ng/Externals/zlib-ng"]
+	path = DESIRE-Modules/Compression-zlib-ng/Externals/zlib-ng
+	url = https://github.com/Dead2/zlib-ng.git
