@@ -202,7 +202,6 @@
     <ClInclude Include="..\..\src\Core\memory\StackAllocator.h" />
     <ClInclude Include="..\..\src\Core\memory\StdAllocatorWrapper.h" />
     <ClInclude Include="..\..\src\Core\platform.h" />
-    <ClInclude Include="..\..\src\DESIRE_config.h" />
     <ClInclude Include="..\..\src\Input\GameController.h" />
     <ClInclude Include="..\..\src\Input\Input.h" />
     <ClInclude Include="..\..\src\Input\InputDevice.h" />

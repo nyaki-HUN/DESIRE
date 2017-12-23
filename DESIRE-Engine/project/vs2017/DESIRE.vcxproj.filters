@@ -384,9 +384,6 @@
     <ClInclude Include="..\..\src\Core\platform.h">
       <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\DESIRE_config.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Input\GameController.h">
       <Filter>src\Input</Filter>
     </ClInclude>
