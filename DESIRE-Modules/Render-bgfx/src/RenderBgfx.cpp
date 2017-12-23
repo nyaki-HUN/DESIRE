@@ -33,6 +33,10 @@ RenderBgfx::RenderBgfx()
 	{
 		uniform = BGFX_INVALID_HANDLE;
 	}
+
+	screenSpaceQuadMeshVertexDecl.begin();
+	screenSpaceQuadMeshVertexDecl.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float);
+	screenSpaceQuadMeshVertexDecl.end();
 }
 
 RenderBgfx::~RenderBgfx()
@@ -555,7 +559,33 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 
 void RenderBgfx::SetScreenSpaceQuadMesh()
 {
-	ASSERT(false && "Not yet supported");
+	bgfx::TransientIndexBuffer indexBuffer;
+	bgfx::TransientVertexBuffer vertexBuffer;
+	if(bgfx::allocTransientBuffers(&vertexBuffer, screenSpaceQuadMeshVertexDecl, 4, &indexBuffer, 6))
+	{
+		// Vertices
+		const float vertices[] =
+		{
+			-1.0f,	 1.0f,
+			1.0f,	 1.0f,
+			-1.0f,	-1.0f,
+			1.0f,	-1.0f,
+		};
+		memcpy(vertexBuffer.data, vertices, sizeof(vertices));
+
+		// Indices
+		uint16_t *indices = (uint16_t*)indexBuffer.data;
+		indices[0] = 0;
+		indices[1] = 1;
+		indices[2] = 2;
+
+		indices[3] = 3;
+		indices[4] = 2;
+		indices[5] = 1;
+	}
+
+	bgfx::setIndexBuffer(&indexBuffer);
+	bgfx::setVertexBuffer(0, &vertexBuffer);
 }
 
 void RenderBgfx::SetVertexShader(Shader *vertexShader)
