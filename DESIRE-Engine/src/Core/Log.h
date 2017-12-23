@@ -18,21 +18,18 @@ public:
 	static void LogWithData(const Log::LogData& logData);
 	static void LogWithFormat(const char *file, int line, const char *logType, const char *format, ...);
 	static void SetUserDefinedLogFunction(LogFunction_t func);
+
+private:
+	static Log::LogFunction_t userDefinedLogFunction;
 };
 
 // Log helper macros
-#if defined(DESIRE_DISTRIBUTION)
-	#define DESIRE_LOG(type, format, ...)
-#else
-	#define DESIRE_LOG(type, format, ...)		Log::LogWithFormat(__FILE__, __LINE__, type, format, __VA_ARGS__)
-#endif
-
-#define LOG_ERROR(format, ...)					DESIRE_LOG("ERR", format, __VA_ARGS__)
-#define LOG_WARNING(format, ...)				DESIRE_LOG("WRN", format, __VA_ARGS__)
-#define LOG_MESSAGE(format, ...)				DESIRE_LOG("MSG", format, __VA_ARGS__)
+#define LOG_ERROR(format, ...)					Log::LogWithFormat(__FILE__, __LINE__, "ERR", format, __VA_ARGS__)
+#define LOG_WARNING(format, ...)				Log::LogWithFormat(__FILE__, __LINE__, "WRN", format, __VA_ARGS__)
+#define LOG_MESSAGE(format, ...)				Log::LogWithFormat(__FILE__, __LINE__, "MSG", format, __VA_ARGS__)
 
 #if defined(DESIRE_DEBUG)
-	#define LOG_DEBUG(format, ...)				DESIRE_LOG("DBG", format, __VA_ARGS__)
+	#define LOG_DEBUG(format, ...)				Log::LogWithFormat(__FILE__, __LINE__, "DBG", format, __VA_ARGS__)
 #else
 	#define LOG_DEBUG(format, ...)
 #endif

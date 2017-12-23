@@ -12,13 +12,13 @@
 
 #include <stdarg.h>
 
-Log::LogFunction_t desireUserDefinedLogFunction = nullptr;
+Log::LogFunction_t Log::userDefinedLogFunction = nullptr;
 
 void Log::LogWithData(const Log::LogData& logData)
 {
-	if(desireUserDefinedLogFunction != nullptr)
+	if(userDefinedLogFunction != nullptr)
 	{
-		desireUserDefinedLogFunction(logData);
+		userDefinedLogFunction(logData);
 	}
 	else
 	{
@@ -56,5 +56,5 @@ void Log::LogWithFormat(const char *file, int line, const char *logType, const c
 
 void Log::SetUserDefinedLogFunction(LogFunction_t func)
 {
-	desireUserDefinedLogFunction = func;
+	userDefinedLogFunction = func;
 }
