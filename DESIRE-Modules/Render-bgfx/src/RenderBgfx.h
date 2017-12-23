@@ -59,6 +59,7 @@ private:
 	void DoRender() override;
 
 	static bgfx::TextureFormat::Enum ConvertTextureFormat(Texture::EFormat textureFormat);
+	static void BindEmbeddedShader(Shader *shader, const char *name);
 
 	bgfx::UniformHandle samplerUniforms[8];
 	bgfx::ViewId activeViewId = 0;

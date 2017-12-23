@@ -212,6 +212,7 @@
     <ClInclude Include="..\..\Externals\bx\include\compat\msvc\dirent.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\osx\malloc.h" />
     <ClInclude Include="..\..\Externals\bx\src\bx_p.h" />
+    <ClInclude Include="..\..\src\Embedded_shaders\vs_screenSpaceQuad.bin.h" />
     <ClInclude Include="..\..\src\MeshRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\RenderBgfx.h" />
     <ClInclude Include="..\..\src\RenderTargetRenderDataBgfx.h" />

@@ -4,6 +4,7 @@
 #include "ShaderRenderDataBgfx.h"
 #include "RenderTargetRenderDataBgfx.h"
 #include "TextureRenderDataBgfx.h"
+#include "Embedded_shaders/vs_screenSpaceQuad.bin.h"
 
 #include "Core/IWindow.h"
 #include "Core/String.h"
@@ -17,7 +18,14 @@
 #include "Resource/Shader.h"
 
 #include "bgfx/platform.h"
+#include "bgfx/embedded_shader.h"
 #include "bgfx/../../src/config.h"
+
+static const bgfx::EmbeddedShader s_embeddedShaders[] =
+{
+	BGFX_EMBEDDED_SHADER(vs_screenSpaceQuad),
+	BGFX_EMBEDDED_SHADER_END()
+};
 
 RenderBgfx::RenderBgfx()
 {
@@ -57,6 +65,8 @@ void RenderBgfx::Init(IWindow *mainWindow)
 	renderState = BGFX_STATE_MSAA;
 	SetDefaultRenderStates();
 
+	BindEmbeddedShader(screenSpaceQuadVertexShader.get(), "vs_screenSpaceQuad");
+
 	bgfx::reset(mainWindow->GetWidth(), mainWindow->GetHeight(), BGFX_RESET_VSYNC);
 }
 
@@ -86,6 +96,8 @@ void RenderBgfx::Kill()
 
 	activeVertexShader = nullptr;
 	activeFragmentShader = nullptr;
+
+	Unbind(screenSpaceQuadVertexShader.get());
 
 	bgfx::shutdown();
 	initialized = false;
@@ -334,6 +346,7 @@ void RenderBgfx::Bind(Shader *shader)
 	const bgfx::Memory *shaderDara = bgfx::makeRef(shader->data.data, (uint32_t)shader->data.size);
 
 	renderData->shaderHandle = bgfx::createShader(shaderDara);
+	ASSERT(bgfx::isValid(renderData->shaderHandle));
 	bgfx::setName(renderData->shaderHandle, shader->name.c_str());
 
 	renderData->u_tint = bgfx::createUniform("u_tint", bgfx::UniformType::Vec4);
@@ -636,4 +649,21 @@ bgfx::TextureFormat::Enum RenderBgfx::ConvertTextureFormat(Texture::EFormat text
 	}
 
 	return bgfx::TextureFormat::Unknown;
+}
+
+void RenderBgfx::BindEmbeddedShader(Shader *shader, const char *name)
+{
+	ASSERT(shader != nullptr);
+
+	if(shader->renderData != nullptr)
+	{
+		// Already bound
+		return;
+	}
+
+	ShaderRenderDataBgfx *renderData = new ShaderRenderDataBgfx();
+	renderData->shaderHandle = bgfx::createEmbeddedShader(s_embeddedShaders, bgfx::getRendererType(), "vs_screenSpaceQuad");
+	ASSERT(bgfx::isValid(renderData->shaderHandle));
+
+	shader->renderData = renderData;
 }

@@ -103,6 +103,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Embedded_shaders">
+      <UniqueIdentifier>{2F9E9C7E-1B2D-2648-C44B-3A43B0B936EE}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\dxsdk\include\d3dx12.h">
@@ -434,6 +437,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\bx\src\bx_p.h">
       <Filter>Externals\bx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Embedded_shaders\vs_screenSpaceQuad.bin.h">
+      <Filter>src\Embedded_shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\MeshRenderDataBgfx.h">
       <Filter>src</Filter>
