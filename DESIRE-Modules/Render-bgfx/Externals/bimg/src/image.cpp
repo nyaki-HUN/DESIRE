@@ -26,7 +26,7 @@ namespace bimg
 		{   8, 4, 4, 16, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Unorm) }, // BC3
 		{   4, 4, 4,  8, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Unorm) }, // BC4
 		{   8, 4, 4, 16, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Unorm) }, // BC5
-		{   8, 4, 4, 16, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Unorm) }, // BC6H
+		{   8, 4, 4, 16, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Float) }, // BC6H
 		{   8, 4, 4, 16, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Unorm) }, // BC7
 		{   4, 4, 4,  8, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Unorm) }, // ETC1
 		{   4, 4, 4,  8, 1, 1,  0, 0,  0,  0,  0,  0, uint8_t(bx::EncodingType::Unorm) }, // ETC2
@@ -206,6 +206,11 @@ namespace bimg
 			&& _format != TextureFormat::UnknownDepth
 			&& _format != TextureFormat::Count
 			;
+	}
+
+	bool isFloat(TextureFormat::Enum _format)
+	{
+		return uint8_t(bx::EncodingType::Float) == s_imageBlockInfo[_format].encoding;
 	}
 
 	uint8_t getBitsPerPixel(TextureFormat::Enum _format)
@@ -697,19 +702,22 @@ namespace bimg
 		}
 	}
 
-	void imageCopy(void* _dst, uint32_t _height, uint32_t _srcPitch, const void* _src, uint32_t _dstPitch)
+	void imageCopy(void* _dst, uint32_t _height, uint32_t _srcPitch, uint32_t _depth, const void* _src, uint32_t _dstPitch)
 	{
 		const uint32_t pitch = bx::uint32_min(_srcPitch, _dstPitch);
 		const uint8_t* src = (uint8_t*)_src;
 		uint8_t* dst = (uint8_t*)_dst;
 
-		bx::memCopy(dst, src, pitch, _height, _srcPitch, _dstPitch);
+		for (uint32_t zz = 0; zz < _depth; ++zz, src += _srcPitch*_height, dst += _dstPitch*_height)
+		{
+			bx::memCopy(dst, src, pitch, _height, _srcPitch, _dstPitch);
+		}
 	}
 
-	void imageCopy(void* _dst, uint32_t _width, uint32_t _height, uint32_t _bpp, uint32_t _srcPitch, const void* _src)
+	void imageCopy(void* _dst, uint32_t _width, uint32_t _height, uint32_t _depth, uint32_t _bpp, uint32_t _srcPitch, const void* _src)
 	{
 		const uint32_t dstPitch = _width*_bpp/8;
-		imageCopy(_dst, _height, _srcPitch, _src, dstPitch);
+		imageCopy(_dst, _height, _srcPitch, _depth, _src, dstPitch);
 	}
 
 	struct PackUnpack
@@ -2727,6 +2735,10 @@ namespace bimg
 		else if (PVR3_MAGIC == magic)
 		{
 			return imageParsePvr3(_imageContainer, _reader, _err);
+		}
+		else if (BIMG_CHUNK_MAGIC_GNF == magic)
+		{
+			return imageParseGnf(_imageContainer, _reader, _err);
 		}
 		else if (BIMG_CHUNK_MAGIC_TEX == magic)
 		{

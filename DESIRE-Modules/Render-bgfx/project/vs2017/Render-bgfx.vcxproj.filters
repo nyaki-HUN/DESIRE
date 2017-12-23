@@ -530,6 +530,9 @@
     <ClCompile Include="..\..\Externals\bimg\src\image.cpp">
       <Filter>Externals\bimg\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\src\image_gnf.cpp">
+      <Filter>Externals\bimg\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\bx\src\allocator.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>

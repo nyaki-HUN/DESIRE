@@ -244,6 +244,7 @@
     <ClCompile Include="..\..\Externals\bgfx\src\topology.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\vertexdecl.cpp" />
     <ClCompile Include="..\..\Externals\bimg\src\image.cpp" />
+    <ClCompile Include="..\..\Externals\bimg\src\image_gnf.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\allocator.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\bx.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\crtnone.cpp" />
