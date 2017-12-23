@@ -23,6 +23,14 @@ public:
 		elements.swap(otherMap.elements);
 	}
 
+	HashedStringMap(std::initializer_list<std::pair<HashedString, T>> initList)
+	{
+		for(const std::pair<HashedString, T>& pair : initList)
+		{
+			Insert(pair.first, pair.second);
+		}
+	}
+
 	HashedStringMap& operator =(HashedStringMap&& otherMap)
 	{
 		elements.swap(otherMap.elements);
