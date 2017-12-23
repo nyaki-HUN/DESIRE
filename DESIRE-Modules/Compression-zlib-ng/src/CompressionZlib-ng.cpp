@@ -23,20 +23,10 @@ size_t CompressionZlib::Compress(const void *data, size_t dataSize, void *compre
 	stream.avail_in = (uint32_t)dataSize;
 	stream.next_out = static_cast<uint8_t*>(compressedDataBuffer);
 	stream.avail_out = (uint32_t)compressedDataBufferSize;
+	stream.zalloc = &CompressionZlib::zlib_alloc;
+	stream.zfree = &CompressionZlib::zlib_free;
 	stream.opaque = &IAllocator::GetDefaultAllocator();
 	DESIRE_TODO("Test and use a LinearAllocator");
-
-	stream.zalloc = [](void *opaque, uint32_t items, uint32_t size)
-	{
-		IAllocator *allocator = static_cast<IAllocator*>(opaque);
-		return allocator->Allocate(items * size);
-	};
-
-	stream.zfree = [](void *opaque, void *address)
-	{
-		IAllocator *allocator = static_cast<IAllocator*>(opaque);
-		allocator->Deallocate(address);
-	};
 
 	// Compression with windowBits < 0 for raw deflate (no zlib or gzip header)
 	int result = deflateInit2(&stream, compressionLevel, Z_DEFLATED, -MAX_WBITS, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
@@ -71,20 +61,10 @@ size_t CompressionZlib::Decompress(const void *data, size_t dataSize, void *deco
 	stream.avail_in = (uint32_t)dataSize;
 	stream.next_out = static_cast<uint8_t*>(decompressedDataBuffer);
 	stream.avail_out = (uint32_t)decompressedDataBufferSize;
+	stream.zalloc = &CompressionZlib::zlib_alloc;
+	stream.zfree = &CompressionZlib::zlib_free;
 	stream.opaque = &IAllocator::GetDefaultAllocator();
 	DESIRE_TODO("Test and use a LinearAllocator");
-
-	stream.zalloc = [](void *opaque, uint32_t items, uint32_t size)
-	{
-		IAllocator *allocator = static_cast<IAllocator*>(opaque);
-		return allocator->Allocate(items * size);
-	};
-
-	stream.zfree = [](void *opaque, void *address)
-	{
-		IAllocator *allocator = static_cast<IAllocator*>(opaque);
-		allocator->Deallocate(address);
-	};
 
 	// Decompression with windowBits < 0 for raw inflate (no zlib or gzip header)
 	int result = inflateInit2(&stream, -MAX_WBITS);
@@ -104,4 +84,16 @@ size_t CompressionZlib::Decompress(const void *data, size_t dataSize, void *deco
 	inflateEnd(&stream);
 
 	return stream.total_out;
+}
+
+void* CompressionZlib::zlib_alloc(void *opaque, uint32_t items, uint32_t size)
+{
+	IAllocator *allocator = static_cast<IAllocator*>(opaque);
+	return allocator->Allocate(items * size);
+}
+
+void CompressionZlib::zlib_free(void *opaque, void *address)
+{
+	IAllocator *allocator = static_cast<IAllocator*>(opaque);
+	allocator->Deallocate(address);
 }
