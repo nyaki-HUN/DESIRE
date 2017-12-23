@@ -6,6 +6,16 @@
 #include "Resource/Shader.h"
 #include "Resource/Texture.h"
 
+IRender::IRender()
+{
+	screenSpaceQuadVertexShader = std::make_unique<Shader>("vs_screenSpaceQuad");
+}
+
+IRender::~IRender()
+{
+
+}
+
 void IRender::RenderMesh(Mesh *mesh, Material *material)
 {
 	ASSERT(mesh != nullptr);

@@ -12,6 +12,16 @@ IApp* IApp::instance = nullptr;
 bool IApp::isMainLoopRunning = false;
 int IApp::returnValue = 0;
 
+IApp::IApp()
+{
+
+}
+
+IApp::~IApp()
+{
+
+}
+
 IApp* IApp::Get()
 {
 	return instance;

@@ -2,6 +2,16 @@
 #include "Script/IScriptSystem.h"
 #include "Script/NativeScriptComponent.h"
 
+IScriptSystem::IScriptSystem()
+{
+
+}
+
+IScriptSystem::~IScriptSystem()
+{
+
+}
+
 void IScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory_t factory)
 {
 	ASSERT(factory != nullptr);

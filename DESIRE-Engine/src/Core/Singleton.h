@@ -27,8 +27,8 @@ private:												\
 public:													\
 	static Class* Get();								\
 protected:												\
-	Class() {}											\
-	virtual ~Class() {}									\
+	Class();											\
+	virtual ~Class();									\
 	Class(const Class&) = delete;						\
 	Class(Class&&) = delete;							\
 	Class& operator=(const Class&) = delete;			\
