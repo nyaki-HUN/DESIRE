@@ -31,6 +31,9 @@
     <Filter Include="src\Component">
       <UniqueIdentifier>{CF1FD8F2-3BE0-5329-041B-9DA6709A9805}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Compression">
+      <UniqueIdentifier>{0E8D4FDC-7A18-BDA0-8329-4095EF3319A1}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Core">
       <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
     </Filter>
@@ -212,6 +215,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Component\ScriptComponent.h">
       <Filter>src\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Compression\CompressionManager.h">
+      <Filter>src\Compression</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Compression\ICompression.h">
+      <Filter>src\Compression</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueFloat.h">
       <Filter>src\Core\ConfigValue</Filter>
@@ -514,6 +523,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Component\ScriptComponent.cpp">
       <Filter>src\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Compression\CompressionManager.cpp">
+      <Filter>src\Compression</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueFloat.cpp">
       <Filter>src\Core\ConfigValue</Filter>

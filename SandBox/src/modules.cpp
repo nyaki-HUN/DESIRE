@@ -5,6 +5,17 @@
 DESIRE_APP_CLASS(SandBox)
 
 // --------------------------------------------------------------------------------------------------------------------
+//	Compression
+// --------------------------------------------------------------------------------------------------------------------
+#include "Compression/CompressionManager.h"
+
+#include "Compression-zlib-ng/src/CompressionZlib-ng.h"
+const HashedStringMap<CompressionManager::CompressionFactoryFunc_t> CompressionManager::compressionFactories =
+{
+	{ "zlib", &CompressionFactory<CompressionZlib> },
+};
+
+// --------------------------------------------------------------------------------------------------------------------
 //	Physics
 // --------------------------------------------------------------------------------------------------------------------
 #include "Physics-Bullet/src/BulletPhysics.h"
