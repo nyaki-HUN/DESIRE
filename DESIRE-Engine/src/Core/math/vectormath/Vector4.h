@@ -157,10 +157,16 @@ public:
 
 	// Normalize a 4-D vector
 	// NOTE: The result is unpredictable when all elements of vec are at or near zero
-	DESIRE_FORCE_INLINE Vector4& Normalize()
+	DESIRE_FORCE_INLINE void Normalize()
 	{
 		mVec128 = SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
-		return *this;
+	}
+
+	// Get normalized 4-D vector
+	// NOTE: The result is unpredictable when all elements of vec are at or near zero
+	DESIRE_FORCE_INLINE Vector4 Normalized() const
+	{
+		return SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
 
 	// Multiply two 4-D vectors per element

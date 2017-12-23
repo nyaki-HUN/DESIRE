@@ -4,7 +4,7 @@
 TEST_CASE("Vector3", "[Core][math]")
 {
 	Vector3 vec0(1.0f, 2.0f, 3.0f);
-	Vector3 vec1(10.0f, 5.0f, 2.0f);
+	Vector3 vec1(10.0f, 5.0f, -2.0f);
 
 	SECTION("LoadXYZ()")
 	{
@@ -28,6 +28,53 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(vec0.GetX() == Approx(result[0]));
 		CHECK(vec0.GetY() == Approx(result[1]));
 		CHECK(vec0.GetZ() == Approx(result[2]));
+	}
+
+	SECTION("Set element | Get element")
+	{
+		vec0.SetX(123.0f);
+		vec0.SetY(123.0f);
+		vec0.SetZ(123.0f);
+
+		CHECK(vec0.GetX() == Approx(123.0f));
+		CHECK(vec0.GetY() == Approx(123.0f));
+		CHECK(vec0.GetZ() == Approx(123.0f));
+	}
+
+	SECTION("operator -()")
+	{
+		const Vector3 result = -vec0;
+
+		CHECK(result.GetX() == Approx(-vec0.GetX()));
+		CHECK(result.GetY() == Approx(-vec0.GetY()));
+		CHECK(result.GetZ() == Approx(-vec0.GetZ()));
+	}
+
+	SECTION("operator +")
+	{
+		const Vector3 result = vec0 + vec1;
+
+		CHECK(result.GetX() == Approx(vec0.GetX() + vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() + vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() + vec1.GetZ()));
+	}
+
+	SECTION("operator -")
+	{
+		const Vector3 result = vec0 - vec1;
+
+		CHECK(result.GetX() == Approx(vec0.GetX() - vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() - vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() - vec1.GetZ()));
+	}
+
+	SECTION("operator *(float)")
+	{
+		const Vector3 result = vec0 * 123.0f;
+
+		CHECK(result.GetX() == Approx(vec0.GetX() * 123.0f));
+		CHECK(result.GetY() == Approx(vec0.GetY() * 123.0f));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() * 123.0f));
 	}
 
 	SECTION("operator >=")
@@ -106,7 +153,7 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(vec0.Length() == Approx(std::sqrtf(vec0.LengthSqr())));
 	}
 
-	SECTION("Normalize()")
+	SECTION("Normalize() | Normalized()")
 	{
 		Vector3 result = vec0;
 		result.Normalize();
@@ -115,5 +162,55 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(result.GetX() == Approx(vec0.GetX() / length));
 		CHECK(result.GetY() == Approx(vec0.GetY() / length));
 		CHECK(result.GetZ() == Approx(vec0.GetZ() / length));
+
+		Vector3 result2 = vec0.Normalized();
+		CHECK(result2.GetX() == Approx(result.GetX()));
+		CHECK(result2.GetY() == Approx(result.GetY()));
+		CHECK(result2.GetZ() == Approx(result.GetZ()));
+	}
+
+	SECTION("MulPerElem()")
+	{
+		const Vector3 result = vec0.MulPerElem(vec1);
+
+		CHECK(result.GetX() == Approx(vec0.GetX() * vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() * vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() * vec1.GetZ()));
+	}
+
+	SECTION("DivPerElem()")
+	{
+		const Vector3 result = vec0.DivPerElem(vec1);
+
+		CHECK(result.GetX() == Approx(vec0.GetX() / vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() / vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() / vec1.GetZ()));
+	}
+
+	SECTION("AbsPerElem()")
+	{
+		const Vector3 result = vec0.AbsPerElem();
+
+		CHECK(result.GetX() == Approx(std::fabsf(vec0.GetX())));
+		CHECK(result.GetY() == Approx(std::fabsf(vec0.GetY())));
+		CHECK(result.GetZ() == Approx(std::fabsf(vec0.GetZ())));
+	}
+
+	SECTION("MaxPerElem()")
+	{
+		const Vector3 result = Vector3::MaxPerElem(vec0, vec1);
+
+		CHECK(result.GetX() == Approx(std::max(vec0.GetX(), vec1.GetX())));
+		CHECK(result.GetY() == Approx(std::max(vec0.GetY(), vec1.GetY())));
+		CHECK(result.GetZ() == Approx(std::max(vec0.GetZ(), vec1.GetZ())));
+	}
+
+	SECTION("MinPerElem()")
+	{
+		const Vector3 result = Vector3::MinPerElem(vec0, vec1);
+
+		CHECK(result.GetX() == Approx(std::min(vec0.GetX(), vec1.GetX())));
+		CHECK(result.GetY() == Approx(std::min(vec0.GetY(), vec1.GetY())));
+		CHECK(result.GetZ() == Approx(std::min(vec0.GetZ(), vec1.GetZ())));
 	}
 }

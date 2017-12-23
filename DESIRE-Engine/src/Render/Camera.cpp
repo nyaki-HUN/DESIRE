@@ -129,11 +129,9 @@ void Camera::CalculateFrustum(Vector3(&points)[8]) const
 
 Matrix4 Camera::CreateViewMatrix(const Vector3& eyePos, const Vector3& lookAtPos, const Vector3& upVec)
 {
-	Vector3 y = upVec;
-	y.Normalize();
-
-	const Vector3 z = (lookAtPos - eyePos).Normalize();
-	const Vector3 x = (y.Cross(z)).Normalize();
+	Vector3 y = upVec.Normalized();
+	const Vector3 z = (lookAtPos - eyePos).Normalized();
+	const Vector3 x = (y.Cross(z)).Normalized();
 	y = z.Cross(x);
 
 	Matrix4 matView = Matrix4(Vector4(x), Vector4(y), Vector4(z), Vector4(eyePos));

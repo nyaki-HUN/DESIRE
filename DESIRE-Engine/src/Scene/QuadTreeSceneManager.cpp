@@ -193,7 +193,7 @@ void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera *camera, Vector3 
 	for(uint8_t i = 0; i < 4; i++)
 	{
 		vec = points[i] - points[i + 4];
-		n = up.Cross(vec).Normalize();
+		n = up.Cross(vec).Normalized();
 
 		uint8_t j = 0;
 		if(j == i)

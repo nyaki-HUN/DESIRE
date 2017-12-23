@@ -42,7 +42,8 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector3", "Vector3@ Cross(const Vector3& in) const", asFUNCTION(Vector3_Cross), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "float LengthSqr() const", asMETHODPR(Vector3, LengthSqr, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector3", "float Length() const", asMETHODPR(Vector3, Length, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "void Normalize()", asMETHODPR(Vector3, Normalize, (), Vector3&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "void Normalize()", asMETHOD(Vector3, Normalize), asCALL_THISCALL);
+//	engine->RegisterObjectMethod("Vector3", "Vector3@ Normalized() const", asMETHODPR(Vector3, Normalize, () const, Vector3), asCALL_THISCALL);
 //	Vector3 MulPerElem(const Vector3& vec) const;
 //	Vector3 DivPerElem(const Vector3& vec) const;
 //	Vector3 AbsPerElem() const;
@@ -90,7 +91,8 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector4", "float Dot(const Vector4& in) const", asMETHODPR(Vector4, Dot, (const Vector4&) const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector4", "float LengthSqr() const", asMETHODPR(Vector4, LengthSqr, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector4", "float Length() const", asMETHODPR(Vector4, Length, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "void Normalize()", asMETHODPR(Vector4, Normalize, (), Vector4&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "void Normalize()", asMETHOD(Vector4, Normalize), asCALL_THISCALL);
+//	engine->RegisterObjectMethod("Vector4", "Vector4@ Normalized() const", asMETHODPR(Vector4, Normalize, () const, Vector4), asCALL_THISCALL);
 //	Vector4 MulPerElem(const Vector4& vec) const
 //	Vector4 DivPerElem(const Vector4& vec) const
 //	Vector4 AbsPerElem() const
@@ -128,7 +130,8 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Quat", "float Length() const", asMETHODPR(Quat, Length, () const, float), asCALL_THISCALL);
 //	Quat Conjugate() const;
 //	Vector3 RotateVec(const Vector3& vec) const;
-	engine->RegisterObjectMethod("Quat", "void Normalize()", asMETHODPR(Quat, Normalize, (), Quat&), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Quat", "void Normalize()", asMETHOD(Quat, Normalize), asCALL_THISCALL);
+//	engine->RegisterObjectMethod("Quat", "Quat@ Normalized() const", asMETHODPR(Quat, Normalized, () const, Quat), asCALL_THISCALL);
 	engine->SetDefaultNamespace("Quat");
 	engine->RegisterGlobalFunction("Quat@ Slerp(float, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, const Quat&, const Quat&, &Quat::Slerp>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Quat@ Squad(float, const Quat& in, const Quat& in, const Quat& in, const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, const Quat&, const Quat&, const Quat&, const Quat&, &Quat::Squad>)), asCALL_GENERIC);

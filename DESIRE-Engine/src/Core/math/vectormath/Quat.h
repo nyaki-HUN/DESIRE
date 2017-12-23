@@ -125,10 +125,16 @@ public:
 
 	// Normalize a quaternion
 	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
-	DESIRE_FORCE_INLINE Quat& Normalize()
+	DESIRE_FORCE_INLINE void Normalize()
 	{
 		mVec128 = SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
-		return *this;
+	}
+
+	// Get normalized quaternion
+	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
+	DESIRE_FORCE_INLINE Quat Normalized() const
+	{
+		return SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
 
 	// Spherical linear interpolation between two quaternions

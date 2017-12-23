@@ -32,7 +32,7 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(vec0.GetW() == Approx(result[3]));
 	}
 
-	SECTION("SetXYZ()")
+	SECTION("SetXYZ() | GetXYZ()")
 	{
 		vec0.SetXYZ(vec1.GetXYZ());
 
@@ -42,7 +42,7 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(vec0.GetW() == Approx(1.0f));
 	}
 
-	SECTION("Set element & Get element")
+	SECTION("Set element | Get element")
 	{
 		vec0.SetX(123.0f);
 		vec0.SetY(123.0f);
@@ -130,7 +130,7 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(vec0.Length() == Approx(std::sqrtf(vec0.LengthSqr())));
 	}
 
-	SECTION("Normalize()")
+	SECTION("Normalize() | Normalized()")
 	{
 		Vector4 result = vec0;
 		result.Normalize();
@@ -140,6 +140,12 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(result.GetY() == Approx(vec0.GetY() / length));
 		CHECK(result.GetZ() == Approx(vec0.GetZ() / length));
 		CHECK(result.GetW() == Approx(vec0.GetW() / length));
+
+		Vector4 result2 = vec0.Normalized();
+		CHECK(result2.GetX() == Approx(result.GetX()));
+		CHECK(result2.GetY() == Approx(result.GetY()));
+		CHECK(result2.GetZ() == Approx(result.GetZ()));
+		CHECK(result2.GetW() == Approx(result.GetW()));
 	}
 
 	SECTION("MulPerElem()")
