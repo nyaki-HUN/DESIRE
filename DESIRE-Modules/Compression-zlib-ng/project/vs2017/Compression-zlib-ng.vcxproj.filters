@@ -1,113 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="include">
-      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    <Filter Include="Externals">
+      <UniqueIdentifier>{7B3ECCEB-E7A8-8062-30E7-31089C905EB7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\zlib-ng">
+      <UniqueIdentifier>{BD4EDB25-2965-D9BB-72DC-64DDDE31AA43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\zlib-ng\include">
+      <UniqueIdentifier>{30E3B5B5-9CA5-E93F-E555-78CC5157C21D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\zlib-ng\src">
+      <UniqueIdentifier>{54234A2C-C08F-0527-8983-9D84F5AE278F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\zlib-ng\src\arch">
+      <UniqueIdentifier>{61FA92D6-4D0A-3FA7-B6C3-A3C5A2F22D40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\zlib-ng\src\arch\x86">
+      <UniqueIdentifier>{960E7782-8234-41E9-6B7A-C6B4573F66B5}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\arch">
-      <UniqueIdentifier>{DA512DCF-C61E-88DA-EF37-7682DB63BD68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\arch\x86">
-      <UniqueIdentifier>{8F7AF266-7BDD-810B-2463-BAC110A54D8E}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Externals\zlib-ng\include\zconf.h">
-      <Filter>include</Filter>
+      <Filter>Externals\zlib-ng\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\include\zlib.h">
-      <Filter>include</Filter>
+      <Filter>Externals\zlib-ng\include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\arch\x86\ctzl.h">
-      <Filter>src\arch\x86</Filter>
+      <Filter>Externals\zlib-ng\src\arch\x86</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\crc32.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\deflate.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\deflate_p.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\functable.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\inffast.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\inffixed.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\inflate.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\inftrees.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\match.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\memcopy.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\trees.h">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\src\zutil.h">
+      <Filter>Externals\zlib-ng\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\CompressionZlib-ng.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\zlib-ng\src\adler32.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\compress.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\crc32.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\deflate.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\deflate_fast.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\deflate_medium.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\deflate_slow.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\functable.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\infback.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\inffast.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\inflate.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\inftrees.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\match.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\trees.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\uncompr.c">
-      <Filter>src</Filter>
+      <Filter>Externals\zlib-ng\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\src\zutil.c">
+      <Filter>Externals\zlib-ng\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\CompressionZlib-ng.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

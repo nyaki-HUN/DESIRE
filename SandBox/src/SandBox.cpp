@@ -40,8 +40,8 @@ void SandBox::Init(IWindow *mainWindow)
 
 	ImGuiImpl::Get()->Init();
 
-	FileSystem::Get()->AddZipFileSource("zip.zip");
-//	FileSystem::Get()->AddZipFileSource("zip.zip", FileSystem::FLAG_IGNORE_CASE | FileSystem::FLAG_IGNORE_PATH);
+	FileSystem::Get()->AddZipFileSource("data/zip.zip");
+//	FileSystem::Get()->AddZipFileSource("data/zip.zip", FileSystem::FLAG_IGNORE_CASE | FileSystem::FLAG_IGNORE_PATH);
 
 	ReadFilePtr file = FileSystem::Get()->Open("asd.txt");
 	ReadFilePtr file2 = FileSystem::Get()->Open("qwe.txt");

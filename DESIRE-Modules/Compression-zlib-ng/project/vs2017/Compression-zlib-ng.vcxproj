@@ -117,6 +117,7 @@
     <ClInclude Include="..\..\Externals\zlib-ng\src\memcopy.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\src\trees.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\src\zutil.h" />
+    <ClInclude Include="..\..\src\CompressionZlib-ng.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\zlib-ng\src\adler32.c" />
@@ -135,6 +136,7 @@
     <ClCompile Include="..\..\Externals\zlib-ng\src\trees.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\src\uncompr.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\src\zutil.c" />
+    <ClCompile Include="..\..\src\CompressionZlib-ng.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

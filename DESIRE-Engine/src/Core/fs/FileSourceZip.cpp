@@ -2,11 +2,7 @@
 #include "Core/fs/FileSourceZip.h"
 #include "Core/fs/MemoryFile.h"
 #include "Core/fs/FileSystem.h"		// for EFileSourceFlags
-#include "Core/memory/IAllocator.h"
-
-#if defined(DESIRE_ENABLE_ZLIB)
-	#include "Compression-zlib-ng/include/zlib.h"
-#endif
+#include "Compression/CompressionManager.h"
 
 static const int ZIP_SIGNATURE_CENTRAL_DIRECTORY_FILE_HEADER	= 0x02014b50;	//'PK12'
 static const int ZIP_SIGNATURE_LOCAL_FILE_HEADER				= 0x04034b50;	//'PK34'
@@ -192,64 +188,27 @@ ReadFilePtr FileSourceZip::OpenFile(const char *filename)
 
 		case 8:		// Deflated
 		{
-#ifdef DESIRE_ENABLE_ZLIB
-			std::unique_ptr<uint8_t[]> compressedData = std::make_unique<uint8_t[]>(entry.compressedSize);
-			uint8_t *uncompressedData = (uint8_t*)malloc(entry.uncompressedSize);
-			if(compressedData == nullptr || uncompressedData == nullptr)
+			std::unique_ptr<ICompression> zlib = CompressionManager::Get()->CreateCompression("zlib");
+			if(zlib != nullptr)
 			{
-				free(uncompressedData);
-				LOG_ERROR("Not enough memory to decompress file: %s", it->first.c_str());
-				return nullptr;
-			}
-
-			zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::BEGIN);
-			zipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
-
-			// Setup the inflate stream
-			z_stream stream = {};
-			stream.next_in = compressedData.get();
-			stream.avail_in = entry.compressedSize;
-			stream.next_out = uncompressedData;
-			stream.avail_out = entry.uncompressedSize;
-			stream.opaque = &IAllocator::GetDefaultAllocator();
-			DESIRE_TODO("Test and use a LinearAllocator");
-
-			stream.zalloc = [](void *opaque, uint32_t items, uint32_t size)
-			{
-				IAllocator *allocator = static_cast<IAllocator*>(opaque);
-				return allocator->Allocate(items * size);
-			};
-
-			stream.zfree = [](void *opaque, void *address)
-			{
-				IAllocator *allocator = static_cast<IAllocator*>(opaque);
-				allocator->Deallocate(address);
-			};
-
-			// Decompression with windowBits < 0 for raw inflate (no zlib or gzip header)
-			int result = inflateInit2(&stream, -MAX_WBITS);
-			if(result == Z_OK)
-			{
-				result = inflate(&stream, Z_FINISH);
-				inflateEnd(&stream);
-				if(result == Z_STREAM_END)
+				std::unique_ptr<uint8_t[]> compressedData = std::make_unique<uint8_t[]>(entry.compressedSize);
+				uint8_t *decompressedData = (uint8_t*)malloc(entry.uncompressedSize);
+				if(compressedData == nullptr || decompressedData == nullptr)
 				{
-					return std::make_unique<MemoryFile>(uncompressedData, entry.uncompressedSize);
+					free(decompressedData);
+					LOG_ERROR("Not enough memory to decompress file: %s", it->first.c_str());
+					return nullptr;
 				}
-				else
-				{
-					LOG_ERROR("Error decompressing: %s (inflate error: %d %s)", it->first.c_str(), result, (stream.msg != nullptr) ? stream.msg : "");
-				}
-			}
-			else
-			{
-				LOG_ERROR("Error decompressing: %s (inflateInit2 error: %d %s)", it->first.c_str(), result, (stream.msg != nullptr) ? stream.msg : "");
+
+				zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::BEGIN);
+				zipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
+
+				const size_t decompressedSize = zlib->Decompress(compressedData.get(), entry.compressedSize, decompressedData, entry.uncompressedSize);
+				ASSERT(decompressedSize == entry.uncompressedSize);
+				return std::make_unique<MemoryFile>(decompressedData, decompressedSize);
 			}
 
-			free(uncompressedData);
-#else
-			ASSERT(false && "This compression method is only supported when zlib is enabled");
-#endif
+			ASSERT(false && "This compression method is only supported when zlib is enabled in modules.cpp");
 			break;
 		}
 
