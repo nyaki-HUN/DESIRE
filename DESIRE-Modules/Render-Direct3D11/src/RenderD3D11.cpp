@@ -28,27 +28,6 @@
 
 RenderD3D11::RenderD3D11()
 {
-	const char vs_error[] =
-	{
-		"cbuffer CB : register(b0)\n"
-		"{\n"
-		"	float4x4 matWorldViewProj;\n"
-		"};\n"
-		"float4 main(float3 pos : POSITION) : SV_Position\n"
-		"{\n"
-		"	float4 position = mul(matWorldViewProj, float4(pos, 1.0));\n"
-		"	return position;\n"
-		"}"
-	};
-
-	const char ps_error[] =
-	{
-		"float3 main() : SV_Target\n"
-		"{\n"
-		"	return float3(1, 0, 1);\n"
-		"}"
-	};
-
 	const char vs_screenSpaceQuad[] =
 	{
 		"struct v2f\n"
@@ -64,13 +43,31 @@ RenderD3D11::RenderD3D11()
 		"	return Out;\n"
 		"}\n"
 	};
+	screenSpaceQuadVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_screenSpaceQuad, sizeof(vs_screenSpaceQuad));
 
+	const char vs_error[] =
+	{
+		"cbuffer CB : register(b0)\n"
+		"{\n"
+		"	float4x4 matWorldViewProj;\n"
+		"};\n"
+		"float4 main(float3 pos : POSITION) : SV_Position\n"
+		"{\n"
+		"	float4 position = mul(matWorldViewProj, float4(pos, 1.0));\n"
+		"	return position;\n"
+		"}"
+	};
+	const char ps_error[] =
+	{
+		"float3 main() : SV_Target\n"
+		"{\n"
+		"	return float3(1, 0, 1);\n"
+		"}"
+	};
 	errorVertexShader = std::make_unique<Shader>("vs_error");
 	errorVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
 	errorPixelShader = std::make_unique<Shader>("ps_error");
 	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
-	screenSpaceQuadVertexShader = std::make_unique<Shader>("vs_screenSpaceQuad");
-	screenSpaceQuadVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_screenSpaceQuad, sizeof(vs_screenSpaceQuad));
 
 	// Stencil test parameters
 	depthStencilDesc.StencilEnable = FALSE;
@@ -181,11 +178,11 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	deviceCtx->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 
+	SetDefaultRenderStates();
+
+	Bind(screenSpaceQuadVertexShader.get());
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
-	Bind(screenSpaceQuadVertexShader.get());
-
-	SetDefaultRenderStates();
 }
 
 void RenderD3D11::UpdateRenderWindow(IWindow *window)
