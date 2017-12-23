@@ -10,11 +10,6 @@ CompressionZlib::CompressionZlib()
 	compressionLevel = Z_DEFAULT_COMPRESSION;
 }
 
-CompressionZlib::~CompressionZlib()
-{
-
-}
-
 size_t CompressionZlib::Compress(const void *data, size_t dataSize, void *compressedDataBuffer, size_t compressedDataBufferSize)
 {
 	if(dataSize > UINT32_MAX || compressedDataBufferSize > UINT32_MAX)
