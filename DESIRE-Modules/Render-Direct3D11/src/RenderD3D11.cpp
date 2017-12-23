@@ -108,9 +108,7 @@ RenderD3D11::RenderD3D11()
 
 RenderD3D11::~RenderD3D11()
 {
-	errorVertexShader = nullptr;
-	errorPixelShader = nullptr;
-	screenSpaceQuadVertexShader = nullptr;
+
 }
 
 void RenderD3D11::Init(IWindow *mainWindow)
@@ -150,6 +148,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 
 	initialized = SUCCEEDED(hr);
 
+	// Set the default topology when there is no active mesh
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	// Create back buffer render target view
@@ -901,19 +900,19 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	activeMesh = mesh;
 }
 
-void RenderD3D11::SetScreenSpaceQuadMeshAndVertexShader()
+void RenderD3D11::SetScreenSpaceQuadMesh()
 {
-	if(activeMesh != nullptr)
+	if(activeMesh == nullptr)
 	{
-		deviceCtx->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-		deviceCtx->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-
-		deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-		activeMesh = nullptr;
+		return;
 	}
+	
+	deviceCtx->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+	deviceCtx->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 
-	SetVertexShader(screenSpaceQuadVertexShader.get());
+	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	activeMesh = nullptr;
 }
 
 void RenderD3D11::SetVertexShader(Shader *vertexShader)

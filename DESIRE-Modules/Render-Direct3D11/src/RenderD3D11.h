@@ -55,7 +55,7 @@ private:
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void SetMesh(Mesh *mesh) override;
-	void SetScreenSpaceQuadMeshAndVertexShader() override;
+	void SetScreenSpaceQuadMesh() override;
 	void SetVertexShader(Shader *vertexShader) override;
 	void SetFragmentShader(Shader *fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
@@ -106,7 +106,6 @@ private:
 
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;
-	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
 
 	bool initialized = false;
 };

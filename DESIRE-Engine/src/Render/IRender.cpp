@@ -46,6 +46,7 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 void IRender::RenderScreenSpaceQuad(Material *material)
 {
 	ASSERT(material != nullptr);
+	ASSERT(screenSpaceQuadVertexShader->renderData != nullptr && "Shader needs to be bound by the render module");
 
 	if(material->vertexShader != nullptr || material->fragmentShader == nullptr)
 	{
@@ -53,8 +54,9 @@ void IRender::RenderScreenSpaceQuad(Material *material)
 		return;
 	}
 
+	SetScreenSpaceQuadMesh();
 	SetMaterial(material);
-	SetScreenSpaceQuadMeshAndVertexShader();
+	SetVertexShader(screenSpaceQuadVertexShader.get());
 	UpdateShaderParams();
 
 	DoRender();
@@ -73,7 +75,7 @@ void IRender::SetMaterial(Material *material)
 	// Vertex shader
 	if(material->vertexShader != nullptr)
 	{
-		if(material->vertexShader != nullptr && material->vertexShader->renderData == nullptr)
+		if(material->vertexShader->renderData == nullptr)
 		{
 			Bind(material->vertexShader.get());
 		}

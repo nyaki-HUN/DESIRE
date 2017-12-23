@@ -3,6 +3,8 @@
 #include "Core/Singleton.h"
 #include "Core/String.h"
 
+#include <memory>
+
 class IWindow;
 class View;
 class Mesh;
@@ -99,10 +101,12 @@ protected:
 
 	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 
+	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
+
 private:
 	virtual void SetMesh(Mesh *mesh) = 0;
+	virtual void SetScreenSpaceQuadMesh() = 0;
 	void SetMaterial(Material *material);
-	virtual void SetScreenSpaceQuadMeshAndVertexShader() = 0;
 	virtual void SetVertexShader(Shader *vertexShader) = 0;
 	virtual void SetFragmentShader(Shader *fragmentShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::REPEAT) = 0;

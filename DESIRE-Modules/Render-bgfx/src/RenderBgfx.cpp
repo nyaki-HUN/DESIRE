@@ -540,7 +540,7 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	}
 }
 
-void RenderBgfx::SetScreenSpaceQuadMeshAndVertexShader()
+void RenderBgfx::SetScreenSpaceQuadMesh()
 {
 	ASSERT(false && "Not yet supported");
 }
