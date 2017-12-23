@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Core/IApp.h"
-#include "os.h"
+#include "Core/WINDOWS/os.h"
 
 #include <crtdbg.h>
 

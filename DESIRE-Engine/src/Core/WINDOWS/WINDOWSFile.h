@@ -2,7 +2,7 @@
 
 #include "Core/fs/IReadFile.h"
 #include "Core/fs/IWriteFile.h"
-#include "os.h"
+#include "Core/WINDOWS/os.h"
 
 class WINDOWSFile : public IReadFile, public IWriteFile
 {
