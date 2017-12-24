@@ -74,7 +74,14 @@ const Matrix4& Transform::GetWorldMatrix() const
 
 void Transform::SetPosition(const Vector3& position)
 {
-	// TODO
+	if(parentWorldMatrix != nullptr)
+	{
+		ASSERT(false && "TODO");
+	}
+	else
+	{
+		SetLocalPosition(position);
+	}
 }
 
 Vector3 Transform::GetPosition() const
@@ -89,8 +96,15 @@ Quat Transform::GetRotation() const
 
 void Transform::SetRotation(const Quat& rotation)
 {
-	Quat parentRotation(parentWorldMatrix->GetUpper3x3());
-	SetLocalRotation(parentRotation.Conjugate() * rotation);
+	if(parentWorldMatrix != nullptr)
+	{
+		Quat parentRotation(parentWorldMatrix->GetUpper3x3());
+		SetLocalRotation(parentRotation.Conjugate() * rotation);
+	}
+	else
+	{
+		SetLocalRotation(rotation);
+	}
 }
 
 uint8_t Transform::GetFlags() const
