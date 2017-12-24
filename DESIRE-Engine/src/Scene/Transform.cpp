@@ -113,7 +113,7 @@ void Transform::UpdateWorldMatrix()
 
 		if(parentWorldMatrix != nullptr)
 		{
-			worldMatrix *= *parentWorldMatrix;
+			worldMatrix = *parentWorldMatrix * worldMatrix;
 		}
 	}
 
