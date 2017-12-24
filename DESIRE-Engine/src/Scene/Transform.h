@@ -40,9 +40,13 @@ public:
 
 	// Sets the the absolute position
 	void SetPosition(const Vector3& position);
-
 	// Returns the absolute position
 	Vector3 GetPosition() const;
+
+	// Sets the the absolute rotation
+	void SetRotation(const Quat& rotation);
+	// Returns the absolute rotation
+	Quat GetRotation() const;
 
 	// Returns a combination of flags from EFlags
 	uint8_t GetFlags() const;

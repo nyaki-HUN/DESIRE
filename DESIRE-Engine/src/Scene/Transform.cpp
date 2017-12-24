@@ -82,6 +82,17 @@ Vector3 Transform::GetPosition() const
 	return worldMatrix.GetTranslation();
 }
 
+Quat Transform::GetRotation() const
+{
+	return Quat(worldMatrix.GetUpper3x3());
+}
+
+void Transform::SetRotation(const Quat& rotation)
+{
+	Quat parentRotation(parentWorldMatrix->GetUpper3x3());
+	SetLocalRotation(parentRotation.Conjugate() * rotation);
+}
+
 uint8_t Transform::GetFlags() const
 {
 	return flags;
