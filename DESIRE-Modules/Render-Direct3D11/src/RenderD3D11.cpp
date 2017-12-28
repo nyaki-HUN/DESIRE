@@ -1083,14 +1083,14 @@ void RenderD3D11::SetRasterizerState()
 	uint64_t key = 0;
 	key |= (uint64_t)rasterizerDesc.FillMode				<< 0;	// 2 bits
 	key |= (uint64_t)rasterizerDesc.CullMode				<< 2;	// 2 bits
-//	key |= (uint64_t)rasterizerDesc.FrontCounterClockwise	<< // Constant
-	key |= (uint64_t)rasterizerDesc.DepthBias				<< 4;	// 32 bits
+	key |= (uint64_t)rasterizerDesc.FrontCounterClockwise	<< 4;	// 1 bit
+	key |= (uint64_t)rasterizerDesc.DepthBias				<< 5;	// 32 bits
 //	key |= (uint64_t)rasterizerDesc.DepthBiasClamp			<< // Constant
 //	key |= (uint64_t)rasterizerDesc.SlopeScaledDepthBias	<< // Constant
-//	key |= (uint64_t)rasterizerDesc.DepthClipEnable 		<< // Constant
-	key |= (uint64_t)rasterizerDesc.ScissorEnable			<< 36;	// 1 bit
-//	key |= (uint64_t)rasterizerDesc.MultisampleEnable		<< // Constant
-//	key |= (uint64_t)rasterizerDesc.AntialiasedLineEnable	<< // Constant
+	key |= (uint64_t)rasterizerDesc.DepthClipEnable 		<< 37;	// 1 bit
+	key |= (uint64_t)rasterizerDesc.ScissorEnable			<< 38;	// 1 bit
+	key |= (uint64_t)rasterizerDesc.MultisampleEnable		<< 39;	// 1 bit
+	key |= (uint64_t)rasterizerDesc.AntialiasedLineEnable	<< 40;	// 1 bit
 
 	auto it = rasterizerStateCache.find(key);
 	if(it != rasterizerStateCache.end())
