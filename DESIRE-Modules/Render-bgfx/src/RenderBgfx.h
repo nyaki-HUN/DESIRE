@@ -33,6 +33,7 @@ public:
 	void SetDepthWriteEnabled(bool enabled) override;
 	void SetDepthTest(EDepthTest depthTest) override;
 	void SetCullMode(ECullMode cullMode) override;
+	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
 
 	void Bind(Mesh *mesh) override;
 	void Bind(Shader *shader) override;

@@ -62,6 +62,11 @@ void IRender::RenderScreenSpaceQuad(Material *material)
 	DoRender();
 }
 
+void IRender::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
+{
+	SetBlendModeSeparated(srcBlend, destBlend, blendOp, srcBlend, destBlend, blendOp);
+}
+
 void IRender::SetDefaultRenderStates()
 {
 	SetColorWriteEnabled(true, true);

@@ -397,6 +397,11 @@ void RenderD3D11::SetCullMode(ECullMode cullMode)
 	}
 }
 
+void RenderD3D11::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
+{
+
+}
+
 void RenderD3D11::Bind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);

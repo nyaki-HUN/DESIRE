@@ -38,6 +38,32 @@ public:
 		CW
 	};
 
+	enum class EBlend
+	{
+		ZERO,				// 0, 0, 0, 0
+		ONE,				// 1, 1, 1, 1
+		SRC_COLOR,			// Rs, Gs, Bs, As
+		INV_SRC_COLOR,		// 1-Rs, 1-Gs, 1-Bs, 1-As
+		SRC_ALPHA,			// As, As, As, As
+		INV_SRC_ALPHA,		// 1-As, 1-As, 1-As, 1-As
+		DEST_ALPHA,			// Ad, Ad, Ad, Ad
+		INV_DEST_ALPHA,		// 1-Ad, 1-Ad, 1-Ad ,1-Ad
+		DEST_COLOR,			// Rd, Gd, Bd, Ad
+		INV_DEST_COLOR,		// 1-Rd, 1-Gd, 1-Bd, 1-Ad
+		SRC_ALPHA_SAT,		// f, f, f, 1; where f = min(As, 1-Ad)
+		BLEND_FACTOR,		// blendFactor
+		INV_BLEND_FACTOR	// 1-blendFactor
+	};
+
+	enum class EBlendOp
+	{
+		ADD,
+		SUBTRACT,
+		REV_SUBTRACT,
+		MIN,
+		MAX
+	};
+
 	enum class EAddressMode
 	{
 		REPEAT,
@@ -80,6 +106,8 @@ public:
 	virtual void SetDepthWriteEnabled(bool enabled) = 0;
 	virtual void SetDepthTest(EDepthTest deptTest) = 0;
 	virtual void SetCullMode(ECullMode cullMode) = 0;
+	void SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp = EBlendOp::ADD);
+	virtual void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) = 0;
 
 	// Resource bind
 	virtual void Bind(Mesh *mesh) = 0;

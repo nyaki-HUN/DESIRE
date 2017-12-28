@@ -252,6 +252,18 @@ void RenderBgfx::SetCullMode(ECullMode cullMode)
 	}
 }
 
+void RenderBgfx::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendA, EBlend destBlendA, EBlendOp blendOpA)
+{
+/**/if(activeViewId == 0)
+	{
+		renderState |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_BLEND_MASK;
+	}
+}
+
 void RenderBgfx::Bind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);
@@ -633,16 +645,6 @@ void RenderBgfx::UpdateShaderParams()
 
 void RenderBgfx::DoRender()
 {
-/**/DESIRE_TODO("proper blend state handling");
-/**/if(activeViewId == 0)
-	{
-		renderState |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
-	}
-	else
-	{
-		renderState &= ~BGFX_STATE_BLEND_MASK;
-	}
-
 	bgfx::setState(renderState, blendFactor);
 
 	bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;
