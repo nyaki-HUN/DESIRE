@@ -95,14 +95,15 @@ void IRender::SetMaterial(Material *material)
 	}
 
 	// Textures
-	for(uint8_t i = 0; i < material->textures.size(); i++)
+	uint8_t samplerIdx = 0;
+	for(const Material::TextureInfo& textureInfo : material->GetTextures())
 	{
-		Texture *texture = material->textures[i].get();
-		if(texture->renderData == nullptr)
+		if(textureInfo.texture->renderData == nullptr)
 		{
-			Bind(texture);
+			Bind(textureInfo.texture.get());
 		}
 
-		SetTexture(i, texture, EFilterMode::TRILINEAR, EAddressMode::REPEAT);
+		SetTexture(samplerIdx, textureInfo.texture.get(), textureInfo.filterMode, textureInfo.addressMode);
+		samplerIdx++;
 	}
 }

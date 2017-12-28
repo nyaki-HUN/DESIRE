@@ -84,7 +84,7 @@ void ImGuiImpl::Init()
 
 	fontTexture = std::make_shared<Texture>((uint16_t)width, (uint16_t)height, Texture::EFormat::RGBA8);
 	fontTexture->data = MemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
-	material->textures.push_back(fontTexture);
+	material->AddTexture(fontTexture);
 	io.Fonts->TexID = &fontTexture;
 	
 	// Cleanup (don't clear the input data if you want to append new fonts later)
@@ -228,7 +228,7 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 			}
 
 			mesh->numIndices = cmd.ElemCount;
-			material->textures[0] = *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId);
+			material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
 			render->RenderMesh(mesh.get(), material.get());
 
