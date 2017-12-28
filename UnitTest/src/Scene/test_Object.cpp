@@ -200,8 +200,8 @@ TEST_CASE("Object", "[Scene]")
 
 	// "Update hierarchy"
 	{
-		rootObj->GetTransform().SetPosition(Vector3(1.0f, 1.0f, 1.0f));
-		child1->GetTransform().SetPosition(Vector3(2.0f, 2.0f, 2.0f));
+		rootObj->GetTransform().SetLocalPosition(Vector3(1.0f, 1.0f, 1.0f));
+		child1->GetTransform().SetLocalPosition(Vector3(2.0f, 2.0f, 2.0f));
 
 		REQUIRE((rootObj->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) != 0);
 		REQUIRE((child1->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) != 0);
