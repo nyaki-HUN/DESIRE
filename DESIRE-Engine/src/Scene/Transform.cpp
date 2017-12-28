@@ -48,6 +48,13 @@ void Transform::SetLocalScale(const Vector3& scale)
 	flags &= ~IS_IDENTITY;
 }
 
+Matrix4 Transform::ConstructLocalMatrix() const
+{
+	Matrix4 mat = Matrix4(localRotation, localPosition);
+	mat.AppendScale(localScale);
+	return mat;
+}
+
 Vector3 Transform::GetLocalRotationEulerAngles() const
 {
 	const float ysqr = localRotation.GetY() * localRotation.GetY();
@@ -72,6 +79,11 @@ const Matrix4& Transform::GetWorldMatrix() const
 	return worldMatrix;
 }
 
+Vector3 Transform::GetPosition() const
+{
+	return worldMatrix.GetTranslation();
+}
+
 void Transform::SetPosition(const Vector3& position)
 {
 	if(parentWorldMatrix != nullptr)
@@ -87,9 +99,9 @@ void Transform::SetPosition(const Vector3& position)
 	}
 }
 
-Vector3 Transform::GetPosition() const
+Quat Transform::GetRotation() const
 {
-	return worldMatrix.GetTranslation();
+	return Quat(worldMatrix.GetUpper3x3());
 }
 
 void Transform::SetRotation(const Quat& rotation)
@@ -105,21 +117,27 @@ void Transform::SetRotation(const Quat& rotation)
 	}
 }
 
-Quat Transform::GetRotation() const
+Vector3 Transform::GetScale() const
 {
-	return Quat(worldMatrix.GetUpper3x3());
+	const Matrix3 mat = worldMatrix.GetUpper3x3();
+	return Vector3(mat.col0.Length(), mat.col1.Length(), mat.col2.Length());
+}
+
+void Transform::SetScale(const Vector3& scale)
+{
+	if(parentWorldMatrix != nullptr)
+	{
+		ASSERT(false && "TODO");
+	}
+	else
+	{
+		SetLocalScale(scale);
+	}
 }
 
 uint8_t Transform::GetFlags() const
 {
 	return flags;
-}
-
-Matrix4 Transform::ConstructLocalMatrix() const
-{
-	Matrix4 mat = Matrix4(localRotation, localPosition);
-	mat.AppendScale(localScale);
-	return mat;
 }
 
 void Transform::UpdateWorldMatrix()

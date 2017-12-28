@@ -17,6 +17,8 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Prop("localRotation", &Transform::GetLocalRotation, &Transform::SetLocalRotation)
 		.Prop("localScale", &Transform::GetLocalScale, &Transform::SetLocalScale)
 		.Prop("position", &Transform::GetPosition, &Transform::SetPosition)
+		.Prop("rotation", &Transform::GetPosition, &Transform::SetPosition)
+		.Prop("scale", &Transform::GetScale, &Transform::SetScale)
 	);
 
 	// Object
