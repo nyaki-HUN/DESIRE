@@ -6,7 +6,6 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <memory>
 #include <unordered_map>
 
 class MeshRenderDataD3D11;
