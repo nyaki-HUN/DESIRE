@@ -33,7 +33,7 @@ void RegisterComponentAPI_Lua(lua_State *L)
 		.endClass();
 
 	// Component
-	luabridge::getGlobalNamespace(L).beginClass<Component>("IComponent")
+	luabridge::getGlobalNamespace(L).beginClass<Component>("Component")
 		.addProperty("object", &Component::GetObject)
 		.endClass();
 

@@ -19,9 +19,9 @@ public:
 	void Update() override;
 
 private:
-	IWindow *window;
-	Object *scriptedObject;
-	Object *cubeObj;
+	IWindow *window = nullptr;
+	Object *scriptedObject = nullptr;
+	Object *cubeObj = nullptr;
 
 	InputMapping inputMapping;
 

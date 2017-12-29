@@ -15,5 +15,5 @@ public:
 	std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const char *functionName) override;
 
 private:
-	float rot;
+	float rot = 0.0f;
 };

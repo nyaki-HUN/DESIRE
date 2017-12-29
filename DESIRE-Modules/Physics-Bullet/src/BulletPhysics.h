@@ -25,15 +25,15 @@ public:
 
 	int GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const;
 
-	btDiscreteDynamicsWorld *dynamicsWorld;
+	btDiscreteDynamicsWorld *dynamicsWorld = nullptr;
 
 private:
 	static void SimulationTickCallback(btDynamicsWorld *world, float timeStep);
 
-	BulletDebugDraw *blletDebugDraw;
+	BulletDebugDraw *blletDebugDraw = nullptr;
 
-	btDefaultCollisionConfiguration *collisionConfiguration;
-	btCollisionDispatcher *dispatcher;
-	btAxisSweep3 *broadphase;
-	btSequentialImpulseConstraintSolver *constraintSolver;
+	btDefaultCollisionConfiguration *collisionConfiguration = nullptr;
+	btCollisionDispatcher *dispatcher = nullptr;
+	btAxisSweep3 *broadphase = nullptr;
+	btSequentialImpulseConstraintSolver *constraintSolver = nullptr;
 };

@@ -5,7 +5,6 @@
 #include "Scene/Transform.h"
 
 SimpleRotateScript::SimpleRotateScript()
-	: rot(0.0f)
 {
 
 }

@@ -5,8 +5,6 @@
 NativeScriptComponent::NativeScriptComponent(Object& object, std::unique_ptr<IScript> i_script)
 	: ScriptComponent(object)
 	, script(std::move(i_script))
-	, functionToCall(nullptr)
-	, numFunctionCallArgs(0)
 {
 	ASSERT(script != nullptr);
 	script->self = this;

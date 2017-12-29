@@ -24,7 +24,7 @@ private:
 
 	std::unique_ptr<IScript> script;
 
-	std::function<void(std::array<IScript::Arg, 6>)> functionToCall;
+	std::function<void(std::array<IScript::Arg, 6>)> functionToCall = nullptr;
 	std::array<IScript::Arg, 6> functionArgs;
-	size_t numFunctionCallArgs;
+	size_t numFunctionCallArgs = 0;
 };

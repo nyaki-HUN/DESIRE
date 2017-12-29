@@ -22,9 +22,6 @@ enum EAction
 }; 
 
 SandBox::SandBox()
-	: window(nullptr)
-	, scriptedObject(nullptr)
-	, cubeObj(nullptr)
 {
 
 }
