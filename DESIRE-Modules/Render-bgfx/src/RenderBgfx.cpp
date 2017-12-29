@@ -272,6 +272,8 @@ void RenderBgfx::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 		BGFX_STATE_BLEND_FACTOR,			// EBlend::BLEND_FACTOR
 		BGFX_STATE_BLEND_INV_FACTOR			// EBlend::INV_BLEND_FACTOR
 	};
+	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::INV_BLEND_FACTOR + 1);
+
 	const uint64_t srcRGB = blendConversionTable[(size_t)srcBlendRGB];
 	const uint64_t destRGB = blendConversionTable[(size_t)destBlendRGB];
 	const uint64_t srcAlpha = blendConversionTable[(size_t)srcBlendAlpha];
@@ -286,6 +288,8 @@ void RenderBgfx::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 		BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::MIN
 		BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::MAX
 	};
+	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::MAX + 1);
+
 	const uint64_t equationRGB = equationConversionTable[(size_t)blendOpRGB];
 	const uint64_t equationAlpha = equationConversionTable[(size_t)blendOpAlpha];
 	renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(equationRGB, equationAlpha);
@@ -322,14 +326,14 @@ void RenderBgfx::Bind(Mesh *mesh)
 		bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::TEXCOORD6
 		bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::TEXCOORD7
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib);
+	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib::NUM);
 
 	static const bgfx::AttribType::Enum attribTypeConversionTable[] =
 	{
 		bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::FLOAT
 		bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::UINT8
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType);
+	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::NUM);
 
 	renderData->vertexDecl.begin();
 	for(Mesh::VertexDecl& decl : mesh->vertexDecl)

@@ -152,7 +152,8 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 		"Init",
 		"Kill",
 	};
-	DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType);
+	DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType::NUM);
+
 	for(auto i : Enumerator<ScriptComponent::EBuiltinFuncType>())
 	{
 		asIScriptFunction *func = typeInfo->GetMethodByName(builtinFunctionNames[i]);

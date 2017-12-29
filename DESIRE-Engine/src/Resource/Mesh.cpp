@@ -19,7 +19,7 @@ uint32_t Mesh::VertexDecl::GetSizeInBytes() const
 		sizeof(float),
 		sizeof(uint8_t),
 	};
-	DESIRE_CHECK_ARRAY_SIZE(sizePerAttribType, EAttribType);
+	DESIRE_CHECK_ARRAY_SIZE(sizePerAttribType, EAttribType::NUM);
 
 	return count * sizePerAttribType[(size_t)type];
 }

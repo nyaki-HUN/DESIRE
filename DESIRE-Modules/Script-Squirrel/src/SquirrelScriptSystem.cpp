@@ -89,7 +89,8 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponent_Internal(const char
 			"Init",
 			"Kill",
 		};
-		DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType);
+		DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType::NUM);
+
 		for(auto i : Enumerator<ScriptComponent::EBuiltinFuncType>())
 		{
 			sq_pushstring(vm, builtinFunctionNames[i], -1);

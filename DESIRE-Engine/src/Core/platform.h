@@ -94,8 +94,8 @@ constexpr size_t DesireArraySizeHelper(T(&)[N])
 }
 #define DESIRE_ASIZEOF(X)					DesireArraySizeHelper(X)
 
-// Compile-time check to make sure the array has the same number of elements as the given Enum
-#define DESIRE_CHECK_ARRAY_SIZE(X, ENUM)	static_assert(DESIRE_ASIZEOF(X) == (size_t)ENUM::NUM, "Array size doesn't match the number of elements in the Enum");
+// Compile-time check to make sure the array has the same number of elements as 'count'
+#define DESIRE_CHECK_ARRAY_SIZE(X, COUNT)	static_assert(DESIRE_ASIZEOF(X) == (size_t)COUNT, "Array size doesn't match the number of elements");
 
 // The value of this macro represents the maximum length of a file name string
 #define DESIRE_MAX_PATH_LEN					512

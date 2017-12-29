@@ -26,7 +26,7 @@ void LuaScriptComponent::CallByType(EBuiltinFuncType funcType)
 		"Init",
 		"Kill"
 	};
-	DESIRE_CHECK_ARRAY_SIZE(functionNames, EBuiltinFuncType);
+	DESIRE_CHECK_ARRAY_SIZE(functionNames, EBuiltinFuncType::NUM);
 
 	Call(functionNames[(size_t)funcType]);
 }

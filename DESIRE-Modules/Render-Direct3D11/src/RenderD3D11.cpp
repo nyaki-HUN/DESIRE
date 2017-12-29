@@ -417,6 +417,8 @@ void RenderD3D11::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB,
 		D3D11_BLEND_BLEND_FACTOR,		// EBlend::BLEND_FACTOR
 		D3D11_BLEND_INV_BLEND_FACTOR	// EBlend::INV_BLEND_FACTOR
 	};
+	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::INV_BLEND_FACTOR + 1);
+
 	blendDesc.RenderTarget[0].SrcBlend = blendConversionTable[(size_t)srcBlendRGB];
 	blendDesc.RenderTarget[0].DestBlend = blendConversionTable[(size_t)destBlendRGB];
 	blendDesc.RenderTarget[0].SrcBlendAlpha = blendConversionTable[(size_t)srcBlendAlpha];
@@ -430,6 +432,8 @@ void RenderD3D11::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB,
 		D3D11_BLEND_OP_MIN,				// EBlendOp::MIN
 		D3D11_BLEND_OP_MAX				// EBlendOp::MAX
 	};
+	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::MAX + 1);
+
 	blendDesc.RenderTarget[0].BlendOp = equationConversionTable[(size_t)blendOpRGB];
 	blendDesc.RenderTarget[0].BlendOpAlpha = equationConversionTable[(size_t)blendOpAlpha];
 }
@@ -465,7 +469,7 @@ void RenderD3D11::Bind(Mesh *mesh)
 		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD6
 		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD7
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib);
+	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib::NUM);
 
 	static const DXGI_FORMAT attribTypeConversionTable[][4] =
 	{
@@ -484,7 +488,7 @@ void RenderD3D11::Bind(Mesh *mesh)
 			DXGI_FORMAT_R8G8B8A8_UNORM,
 		},
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType);
+	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::NUM);
 
 	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexDecl.size());
 	for(size_t i = 0; i < mesh->vertexDecl.size(); ++i)
