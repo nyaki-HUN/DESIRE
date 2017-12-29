@@ -32,6 +32,9 @@ public:
 	std::vector<Collision> contactsEnd;
 
 private:
+	void HandleCollisionBegins();
+	void HandleCollisionEnds();
+
 	b2World *world = nullptr;
 	b2ContactListener *contactListener = nullptr;
 	b2DestructionListener *destructorListener = nullptr;

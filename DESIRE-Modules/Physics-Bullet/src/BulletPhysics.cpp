@@ -12,12 +12,6 @@
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 BulletPhysics::BulletPhysics()
-	: dynamicsWorld(nullptr)
-	, collisionConfiguration(nullptr)
-	, dispatcher(nullptr)
-	, broadphase(nullptr)
-	, constraintSolver(nullptr)
-	, blletDebugDraw(nullptr)
 {
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 	dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -208,12 +202,20 @@ void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeSte
 		BulletPhysicsComponent *component0 = static_cast<BulletPhysicsComponent*>(body0->getUserPointer());
 		BulletPhysicsComponent *component1 = static_cast<BulletPhysicsComponent*>(body1->getUserPointer());
 
-		collision.component = component0;
-		collision.otherComponent = component1;
-//		component0->OnContact(collision);
+		ScriptComponent *scriptComponent = component0->GetObject().GetComponent<ScriptComponent>();
+		if(scriptComponent != nullptr)
+		{
+			collision.component = component0;
+			collision.incomingComponent = component1;
+			scriptComponent->Call("OnCollisionEnter", &collision);
+		}
 
-		collision.component = component1;
-		collision.otherComponent = component0;
-//		component1->OnContact(collision);
+		scriptComponent = component1->GetObject().GetComponent<ScriptComponent>();
+		if(scriptComponent != nullptr)
+		{
+			collision.component = component1;
+			collision.incomingComponent = component0;
+			scriptComponent->Call("OnCollisionEnter", &collision);
+		}
 	}
 }

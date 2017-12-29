@@ -45,7 +45,7 @@ void ContactListener::FillCollisionFromContact(Collision& collision, const b2Con
 	const b2Fixture *fixtureB = contact->GetFixtureB();
 
 	collision.component = static_cast<PhysicsComponent*>(fixtureA->GetUserData());
-	collision.otherComponent = static_cast<PhysicsComponent*>(fixtureB->GetUserData());
+	collision.incomingComponent = static_cast<PhysicsComponent*>(fixtureB->GetUserData());
 
 	b2WorldManifold worldManifold;
 	contact->GetWorldManifold(&worldManifold);
