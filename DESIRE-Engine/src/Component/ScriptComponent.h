@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Component/IComponent.h"
+#include "Component/Component.h"
 
 #include <stdint.h>
 
 class String;
 
-class ScriptComponent : public IComponent
+class ScriptComponent : public Component
 {
 	DECLARE_COMPONENT_FURCC_TYPE_ID("SCRI");
 

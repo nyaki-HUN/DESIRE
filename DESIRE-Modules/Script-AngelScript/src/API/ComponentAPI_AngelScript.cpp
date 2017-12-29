@@ -7,13 +7,13 @@
 #include "Scene/Object.h"
 #include "Scene/Transform.h"
 
-// Template function for registering a class derived from IComponent
+// Template function for registering a class derived from Component
 #define SCRIPT_API_REGISTER_COMPONENT(CLASS)																												\
 	engine->RegisterEnumValue("EComponentTypeID", #CLASS, CLASS::TYPE_ID);																					\
 	engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																						\
-	engine->RegisterObjectMethod(#CLASS, "Object& get_object()", asMETHODPR(IComponent, GetObject, () const, Object&), asCALL_THISCALL);					\
-	engine->RegisterObjectMethod(#CLASS, "IComponent@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<IComponent>)), asCALL_CDECL_OBJLAST);		\
-	engine->RegisterObjectMethod("IComponent", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<IComponent>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST)
+	engine->RegisterObjectMethod(#CLASS, "Object& get_object()", asMETHODPR(Component, GetObject, () const, Object&), asCALL_THISCALL);						\
+	engine->RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);		\
+	engine->RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST)
 
 static Vector3* Transform_GetPosition(const Transform& transform)
 {
@@ -40,12 +40,12 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Object", "String GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);
 	engine->RegisterObjectMethod("Object", "uint32 GetID() const", asMETHODPR(Object, GetID, () const, uint32_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "IComponent@ GetComponent(EComponentTypeID typeID)", asMETHODPR(Object, GetComponentByTypeID, (int), IComponent*), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponentTypeID typeID)", asMETHODPR(Object, GetComponentByTypeID, (int), Component*), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Transform& get_transform() const", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHODPR(Object, GetParent, () const, Object*), asCALL_THISCALL);
 
-	// IComponent
-	engine->RegisterInterfaceMethod("IComponent", "Object@ get_object()");
+	// Component
+	engine->RegisterInterfaceMethod("Component", "Object@ get_object()");
 
 	// PhysicsComponent
 	SCRIPT_API_REGISTER_COMPONENT(PhysicsComponent);

@@ -2,9 +2,9 @@
 #include "Component/ScriptComponent.h"
 
 ScriptComponent::ScriptComponent(Object& object)
-	: IComponent(object)
+	: Component(object)
 {
-
+	AddToObject();
 }
 
 ScriptComponent::~ScriptComponent()

@@ -2,9 +2,9 @@
 #include "Component/RenderComponent.h"
 
 RenderComponent::RenderComponent(Object& object)
-	: IComponent(object)
+	: Component(object)
 {
-
+	AddToObject();
 }
 
 RenderComponent::~RenderComponent()

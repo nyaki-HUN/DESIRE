@@ -204,7 +204,7 @@
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h">
       <Filter>3rdparty\stb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Component\IComponent.h">
+    <ClInclude Include="..\..\src\Component\Component.h">
       <Filter>src\Component</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Component\PhysicsComponent.h">
@@ -515,6 +515,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Component\Component.cpp">
+      <Filter>src\Component</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Component\PhysicsComponent.cpp">
       <Filter>src\Component</Filter>
     </ClCompile>

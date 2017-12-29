@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Script/IScriptSystem.h"
 #include "Script/NativeScriptComponent.h"
+#include "Scene/Object.h"
 
 IScriptSystem::IScriptSystem()
 {
@@ -21,7 +22,7 @@ void IScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory_t fact
 
 ScriptComponent* IScriptSystem::CreateScriptComponent(Object *object, const char *scriptName)
 {
-	if(object == nullptr)
+	if(object == nullptr || object->GetComponentByTypeID(ScriptComponent::TYPE_ID) != nullptr)
 	{
 		return nullptr;
 	}

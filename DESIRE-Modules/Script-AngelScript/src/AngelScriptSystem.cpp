@@ -30,7 +30,7 @@ AngelScriptSystem::AngelScriptSystem()
 #endif
 
 	// Register Script API
-	engine->RegisterInterface("IComponent");
+	engine->RegisterInterface("Component");
 	engine->RegisterEnum("EComponentTypeID");
 
 	RegisterCoreAPI_AngelScript(engine);

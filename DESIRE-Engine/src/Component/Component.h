@@ -13,17 +13,13 @@ public:																\
 
 class Object;
 
-class IComponent
+class Component
 {
 protected:
-	IComponent(Object& object)
-		: object(object)
-	{
-
-	}
+	Component(Object& object);
 
 public:
-	virtual ~IComponent() {}
+	virtual ~Component();
 
 	virtual int GetTypeID() const = 0;
 
@@ -35,5 +31,8 @@ public:
 	virtual void OnGUI() {}
 
 protected:
+	// This must be called from the constructor of all derived classes which declare a TYPE_ID
+	void AddToObject();
+
 	Object& object;
 };

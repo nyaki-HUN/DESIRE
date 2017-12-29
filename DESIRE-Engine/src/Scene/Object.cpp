@@ -1,21 +1,18 @@
 #include "stdafx.h"
 #include "Scene/Object.h"
 #include "Scene/Transform.h"
+#include "Component/Component.h"
 #include "Core/math/AABB.h"
 #include "Core/StrUtils.h"
 
 #define MAX_TRANSFORMS	10000
 static Transform preallocatedTransforms[MAX_TRANSFORMS];
-static size_t numTransforms;
+static size_t numTransforms = 0;
 
 Object::Object(const char *name)
-	: transform(nullptr)
-	, aabb(std::make_unique<AABB>())
-	, numTransformsInHierarchy(1)
-	, parent(nullptr)
-	, objectID(0)
-	, objectName(nullptr)
 {
+	aabb = std::make_unique<AABB>();
+
 	if(name == nullptr)
 	{
 		objectName = StrUtils::Duplicate("Object");
@@ -84,26 +81,7 @@ void Object::SetVisible(bool visible)
 
 }
 
-void Object::AddComponent(IComponent *component)
-{
-	if(component == nullptr)
-	{
-		return;
-	}
-
-#if defined(DESIRE_DEBUG)
-	const int typeID = component->GetTypeID();
-	for(const auto& pair : components)
-	{
-		ASSERT(pair.first != typeID);
-	}
-#endif
-
-	component->object = this;
-	components.emplace_back(component->GetTypeID(), component);
-}
-
-IComponent* Object::GetComponentByTypeID(int typeID)
+Component* Object::GetComponentByTypeID(int typeID)
 {
 	for(const auto& pair : components)
 	{
@@ -115,7 +93,7 @@ IComponent* Object::GetComponentByTypeID(int typeID)
 	return nullptr;
 }
 
-const IComponent* Object::GetComponentByTypeID(int typeID) const
+const Component* Object::GetComponentByTypeID(int typeID) const
 {
 	for(const auto& pair : components)
 	{
@@ -127,7 +105,7 @@ const IComponent* Object::GetComponentByTypeID(int typeID) const
 	return nullptr;
 }
 
-const std::vector<std::pair<int, IComponent*>>& Object::GetComponents() const
+const std::vector<std::pair<int, Component*>>& Object::GetComponents() const
 {
 	return components;
 }

@@ -26,7 +26,7 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Func("GetObjectName", &Object::GetObjectName)
 		.Func("GetID", &Object::GetID)
 		.Func("SetActive", &Object::SetActive)
-		.Func<IComponent*(Object::*)(int)>("GetComponent", &Object::GetComponentByTypeID)
+		.Func<Component*(Object::*)(int)>("GetComponent", &Object::GetComponentByTypeID)
 		.Func<PhysicsComponent*(Object::*)()>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
 		.Func<RenderComponent*(Object::*)()>("GetRenderComponent", &Object::GetComponent<RenderComponent>)
 		.Func<SquirrelScriptComponent*(Object::*)()>("GetScriptComponent", &Object::GetComponent<SquirrelScriptComponent>)
@@ -34,23 +34,23 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Func("GetParent", &Object::GetParent)
 	);
 
-	// IComponent
-	rootTable.Bind("IComponent", Sqrat::Class<IComponent, Sqrat::NoConstructor<IComponent>>(vm, "IComponent")
-		.Prop("object", &IComponent::GetObject)
+	// Component
+	rootTable.Bind("Component", Sqrat::Class<Component, Sqrat::NoConstructor<Component>>(vm, "IComponent")
+		.Prop("object", &Component::GetObject)
 	);
 
 	// PhysicsComponent
-	rootTable.Bind("PhysicsComponent", Sqrat::DerivedClass<PhysicsComponent, IComponent, Sqrat::NoConstructor<PhysicsComponent>>(vm, "PhysicsComponent")
+	rootTable.Bind("PhysicsComponent", Sqrat::DerivedClass<PhysicsComponent, Component, Sqrat::NoConstructor<PhysicsComponent>>(vm, "PhysicsComponent")
 		.Prop("mass", &PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
 	);
 
 	// RenderComponent
-	rootTable.Bind("RenderComponent", Sqrat::DerivedClass<RenderComponent, IComponent, Sqrat::NoConstructor<RenderComponent>>(vm, "RenderComponent")
+	rootTable.Bind("RenderComponent", Sqrat::DerivedClass<RenderComponent, Component, Sqrat::NoConstructor<RenderComponent>>(vm, "RenderComponent")
 		.Prop("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
 	);
 
 	// ScriptComponent
-	rootTable.Bind("ScriptComponent", Sqrat::DerivedClass<SquirrelScriptComponent, IComponent, Sqrat::NoConstructor<SquirrelScriptComponent>>(vm, "ScriptComponent")
+	rootTable.Bind("ScriptComponent", Sqrat::DerivedClass<SquirrelScriptComponent, Component, Sqrat::NoConstructor<SquirrelScriptComponent>>(vm, "ScriptComponent")
 		.SquirrelFunc("Call", &SquirrelScriptComponent::CallFromScript)
 	);
 }

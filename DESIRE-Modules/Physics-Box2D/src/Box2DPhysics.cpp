@@ -80,7 +80,7 @@ void Box2DPhysics::Update()
 
 PhysicsComponent* Box2DPhysics::CreatePhysicsComponent(Object *object)
 {
-	if(object == nullptr)
+	if(object == nullptr || object->GetComponentByTypeID(PhysicsComponent::TYPE_ID) != nullptr)
 	{
 		return nullptr;
 	}

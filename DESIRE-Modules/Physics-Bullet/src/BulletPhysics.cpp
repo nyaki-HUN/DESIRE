@@ -65,7 +65,7 @@ void BulletPhysics::Update()
 
 PhysicsComponent* BulletPhysics::CreatePhysicsComponent(Object *object)
 {
-	if(object == nullptr)
+	if(object == nullptr || object->GetComponentByTypeID(PhysicsComponent::TYPE_ID) != nullptr)
 	{
 		return nullptr;
 	}

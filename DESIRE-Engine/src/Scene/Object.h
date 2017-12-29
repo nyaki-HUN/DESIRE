@@ -1,15 +1,16 @@
 #pragma once
 
-#include "Component/IComponent.h"
-
 #include <vector>
 #include <memory>
 
+class Component;
 class Transform;
 class AABB;
 
 class Object
 {
+	friend class Component;
+
 public:
 	Object(const char *name = nullptr);
 	~Object();
@@ -23,10 +24,8 @@ public:
 	void SetActive(bool active);
 	void SetVisible(bool visible);
 
-	void AddComponent(IComponent *component);
-
-	IComponent* GetComponentByTypeID(int typeID);
-	const IComponent* GetComponentByTypeID(int typeID) const;
+	Component* GetComponentByTypeID(int typeID);
+	const Component* GetComponentByTypeID(int typeID) const;
 
 	template<class T>
 	T* GetComponent()
@@ -40,7 +39,7 @@ public:
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
 	}
 
-	const std::vector<std::pair<int, IComponent*>>& GetComponents() const;
+	const std::vector<std::pair<int, Component*>>& GetComponents() const;
 
 	// Remove from scene hierarchy
 	void Remove();
@@ -66,14 +65,14 @@ private:
 	
 	static void RefreshParentWorldMatrixPointersInTransforms(Transform *firstTransform, size_t transformCount);
 
-	std::vector<std::pair<int, IComponent*>> components;
-	Transform *transform;
+	std::vector<std::pair<int, Component*>> components;
+	Transform *transform = nullptr;
 	std::unique_ptr<AABB> aabb;
-	size_t numTransformsInHierarchy;
+	size_t numTransformsInHierarchy = 1;
 
-	Object *parent;
+	Object *parent = nullptr;
 	std::vector<Object*> children;
 
-	uint32_t objectID;
-	char *objectName;
+	uint32_t objectID = 0;
+	char *objectName = nullptr;
 };

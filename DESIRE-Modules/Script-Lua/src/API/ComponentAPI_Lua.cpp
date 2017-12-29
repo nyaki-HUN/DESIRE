@@ -24,7 +24,7 @@ void RegisterComponentAPI_Lua(lua_State *L)
 		.addFunction("GetObjectName", &Object::GetObjectName)
 		.addFunction("GetID", &Object::GetID)
 		.addFunction("SetActive", &Object::SetActive)
-		.addFunction<IComponent*(Object::*)(int)>("GetComponent", &Object::GetComponentByTypeID)
+		.addFunction<Component*(Object::*)(int)>("GetComponent", &Object::GetComponentByTypeID)
 		.addFunction<PhysicsComponent*(Object::*)()>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
 		.addFunction<RenderComponent*(Object::*)()>("GetRenderComponent", &Object::GetComponent<RenderComponent>)
 		.addFunction<LuaScriptComponent*(Object::*)()>("GetScriptComponent", &Object::GetComponent<LuaScriptComponent>)
@@ -32,23 +32,23 @@ void RegisterComponentAPI_Lua(lua_State *L)
 		.addFunction("GetParent", &Object::GetParent)
 		.endClass();
 
-	// IComponent
-	luabridge::getGlobalNamespace(L).beginClass<IComponent>("IComponent")
-		.addProperty("object", &IComponent::GetObject)
+	// Component
+	luabridge::getGlobalNamespace(L).beginClass<Component>("IComponent")
+		.addProperty("object", &Component::GetObject)
 		.endClass();
 
 	// PhysicsComponent
-	luabridge::getGlobalNamespace(L).deriveClass<PhysicsComponent, IComponent>("PhysicsComponent")
+	luabridge::getGlobalNamespace(L).deriveClass<PhysicsComponent, Component>("PhysicsComponent")
 		.addProperty("mass", &PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
 		.endClass();
 
 	// RenderComponent
-	luabridge::getGlobalNamespace(L).deriveClass<RenderComponent, IComponent>("RenderComponent")
+	luabridge::getGlobalNamespace(L).deriveClass<RenderComponent, Component>("RenderComponent")
 		.addProperty("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
 		.endClass();
 
 	// ScriptComponent
-	luabridge::getGlobalNamespace(L).deriveClass<LuaScriptComponent, IComponent>("ScriptComponent")
+	luabridge::getGlobalNamespace(L).deriveClass<LuaScriptComponent, Component>("ScriptComponent")
 		.addCFunction("Call", &LuaScriptComponent::CallFromScript)
 		.endClass();
 }

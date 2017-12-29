@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "Component/PhysicsComponent.h"
 #include "Physics/IPhysics.h"
+#include "Scene/Object.h"
 
 PhysicsComponent::PhysicsComponent(Object& object)
-	: IComponent(object)
+	: Component(object)
 	, collisionLayer(EPhysicsCollisionLayer::DEFAULT)
 {
-
+	AddToObject();
 }
 
 PhysicsComponent::~PhysicsComponent()

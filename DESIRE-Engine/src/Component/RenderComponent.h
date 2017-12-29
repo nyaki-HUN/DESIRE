@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Component/IComponent.h"
+#include "Component/Component.h"
 
 class Mesh;
 class Material;
 
-class RenderComponent : public IComponent
+class RenderComponent : public Component
 {
 	DECLARE_COMPONENT_FURCC_TYPE_ID("REND");
 
