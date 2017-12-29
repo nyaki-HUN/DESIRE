@@ -399,7 +399,44 @@ void RenderD3D11::SetCullMode(ECullMode cullMode)
 
 void RenderD3D11::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
 {
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
+	static const D3D11_BLEND blendConversionTable[] =
+	{
+		D3D11_BLEND_ZERO,				// EBlend::ZERO
+		D3D11_BLEND_ONE,				// EBlend::ONE
+		D3D11_BLEND_SRC_COLOR,			// EBlend::SRC_COLOR
+		D3D11_BLEND_INV_SRC_COLOR,		// EBlend::INV_SRC_COLOR
+		D3D11_BLEND_SRC_ALPHA,			// EBlend::SRC_ALPHA
+		D3D11_BLEND_INV_SRC_ALPHA,		// EBlend::INV_SRC_ALPHA
+		D3D11_BLEND_DEST_ALPHA,			// EBlend::DEST_ALPHA
+		D3D11_BLEND_INV_DEST_ALPHA,		// EBlend::INV_DEST_ALPHA
+		D3D11_BLEND_DEST_COLOR,			// EBlend::DEST_COLOR
+		D3D11_BLEND_INV_DEST_COLOR,		// EBlend::INV_DEST_COLOR
+		D3D11_BLEND_SRC_ALPHA_SAT,		// EBlend::SRC_ALPHA_SAT
+		D3D11_BLEND_BLEND_FACTOR,		// EBlend::BLEND_FACTOR
+		D3D11_BLEND_INV_BLEND_FACTOR	// EBlend::INV_BLEND_FACTOR
+	};
+	blendDesc.RenderTarget[0].SrcBlend = blendConversionTable[(size_t)srcBlendRGB];
+	blendDesc.RenderTarget[0].DestBlend = blendConversionTable[(size_t)destBlendRGB];
+	blendDesc.RenderTarget[0].SrcBlendAlpha = blendConversionTable[(size_t)srcBlendAlpha];
+	blendDesc.RenderTarget[0].DestBlendAlpha = blendConversionTable[(size_t)destBlendAlpha];
+
+	static const D3D11_BLEND_OP equationConversionTable[] =
+	{
+		D3D11_BLEND_OP_ADD,				// EBlendOp::ADD
+		D3D11_BLEND_OP_SUBTRACT,		// EBlendOp::SUBTRACT
+		D3D11_BLEND_OP_REV_SUBTRACT,	// EBlendOp::REV_SUBTRACT
+		D3D11_BLEND_OP_MIN,				// EBlendOp::MIN
+		D3D11_BLEND_OP_MAX				// EBlendOp::MAX
+	};
+	blendDesc.RenderTarget[0].BlendOp = equationConversionTable[(size_t)blendOpRGB];
+	blendDesc.RenderTarget[0].BlendOpAlpha = equationConversionTable[(size_t)blendOpAlpha];
+}
+
+void RenderD3D11::SetBlendModeDisabled()
+{
+	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
 void RenderD3D11::Bind(Mesh *mesh)

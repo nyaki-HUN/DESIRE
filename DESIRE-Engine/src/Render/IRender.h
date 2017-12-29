@@ -108,6 +108,7 @@ public:
 	virtual void SetCullMode(ECullMode cullMode) = 0;
 	void SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp = EBlendOp::ADD);
 	virtual void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) = 0;
+	virtual void SetBlendModeDisabled() = 0;
 
 	// Resource bind
 	virtual void Bind(Mesh *mesh) = 0;

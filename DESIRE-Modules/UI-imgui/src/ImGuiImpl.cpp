@@ -183,6 +183,7 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 
 	render->SetDepthWriteEnabled(false);
 	render->SetCullMode(IRender::ECullMode::NONE);
+	render->SetBlendMode(IRender::EBlend::SRC_ALPHA, IRender::EBlend::INV_SRC_ALPHA, IRender::EBlendOp::ADD);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
 	ASSERT((uint32_t)drawData->TotalIdxCount <= mesh->maxNumOfIndices);

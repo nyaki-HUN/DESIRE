@@ -252,16 +252,48 @@ void RenderBgfx::SetCullMode(ECullMode cullMode)
 	}
 }
 
-void RenderBgfx::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendA, EBlend destBlendA, EBlendOp blendOpA)
+void RenderBgfx::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
 {
-/**/if(activeViewId == 0)
+	renderState &= ~BGFX_STATE_BLEND_MASK;
+
+	static const uint64_t blendConversionTable[] =
 	{
-		renderState |= BGFX_STATE_BLEND_FUNC(BGFX_STATE_BLEND_SRC_ALPHA, BGFX_STATE_BLEND_INV_SRC_ALPHA);
-	}
-	else
+		BGFX_STATE_BLEND_ZERO,				// EBlend::ZERO
+		BGFX_STATE_BLEND_ONE,				// EBlend::ONE
+		BGFX_STATE_BLEND_SRC_COLOR,			// EBlend::SRC_COLOR
+		BGFX_STATE_BLEND_INV_SRC_COLOR,		// EBlend::INV_SRC_COLOR
+		BGFX_STATE_BLEND_SRC_ALPHA,			// EBlend::SRC_ALPHA
+		BGFX_STATE_BLEND_INV_SRC_ALPHA,		// EBlend::INV_SRC_ALPHA
+		BGFX_STATE_BLEND_DST_ALPHA,			// EBlend::DEST_ALPHA
+		BGFX_STATE_BLEND_INV_DST_ALPHA,		// EBlend::INV_DEST_ALPHA
+		BGFX_STATE_BLEND_DST_COLOR,			// EBlend::DEST_COLOR
+		BGFX_STATE_BLEND_INV_DST_COLOR,		// EBlend::INV_DEST_COLOR
+		BGFX_STATE_BLEND_SRC_ALPHA_SAT,		// EBlend::SRC_ALPHA_SAT
+		BGFX_STATE_BLEND_FACTOR,			// EBlend::BLEND_FACTOR
+		BGFX_STATE_BLEND_INV_FACTOR			// EBlend::INV_BLEND_FACTOR
+	};
+	const uint64_t srcRGB = blendConversionTable[(size_t)srcBlendRGB];
+	const uint64_t destRGB = blendConversionTable[(size_t)destBlendRGB];
+	const uint64_t srcAlpha = blendConversionTable[(size_t)srcBlendAlpha];
+	const uint64_t destAlpha = blendConversionTable[(size_t)destBlendAlpha];
+	renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(srcRGB, destRGB, srcAlpha, destAlpha);
+
+	static const uint64_t equationConversionTable[] =
 	{
-		renderState &= ~BGFX_STATE_BLEND_MASK;
-	}
+		BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::ADD
+		BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::SUBTRACT
+		BGFX_STATE_BLEND_EQUATION_REVSUB,	// EBlendOp::REV_SUBTRACT
+		BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::MIN
+		BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::MAX
+	};
+	const uint64_t equationRGB = equationConversionTable[(size_t)blendOpRGB];
+	const uint64_t equationAlpha = equationConversionTable[(size_t)blendOpAlpha];
+	renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(equationRGB, equationAlpha);
+}
+
+void RenderBgfx::SetBlendModeDisabled()
+{
+	renderState &= ~BGFX_STATE_BLEND_MASK;
 }
 
 void RenderBgfx::Bind(Mesh *mesh)
