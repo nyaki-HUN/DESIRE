@@ -30,7 +30,7 @@ Modules
 
  * [LZ4](http://lz4.github.io/lz4)
  * [zlib-ng](https://github.com/Dead2/zlib-ng)
- * [zstd](http://www.zstd.net)
+ * [zstd](http://facebook.github.io/zstd)
 
 ### Physics
 
