@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "RenderD3D11.h"
+#include "Direct3D11Render.h"
 #include "DirectXMathExt.h"
 #include "MeshRenderDataD3D11.h"
 #include "ShaderRenderDataD3D11.h"
@@ -26,7 +26,7 @@
 		ptr = nullptr;		\
 	}
 
-RenderD3D11::RenderD3D11()
+Direct3D11Render::Direct3D11Render()
 {
 	const char vs_screenSpaceQuad[] =
 	{
@@ -103,12 +103,12 @@ RenderD3D11::RenderD3D11()
 	matProj = DirectX::XMMatrixIdentity();
 }
 
-RenderD3D11::~RenderD3D11()
+Direct3D11Render::~Direct3D11Render()
 {
 
 }
 
-void RenderD3D11::Init(IWindow *mainWindow)
+void Direct3D11Render::Init(IWindow *mainWindow)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = mainWindow->GetWidth();
@@ -185,7 +185,7 @@ void RenderD3D11::Init(IWindow *mainWindow)
 	Bind(errorPixelShader.get());
 }
 
-void RenderD3D11::UpdateRenderWindow(IWindow *window)
+void Direct3D11Render::UpdateRenderWindow(IWindow *window)
 {
 	if(!initialized)
 	{
@@ -195,7 +195,7 @@ void RenderD3D11::UpdateRenderWindow(IWindow *window)
 	swapChain->ResizeBuffers(0, window->GetWidth(), window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 }
 
-void RenderD3D11::Kill()
+void Direct3D11Render::Kill()
 {
 	initialized = false;
 
@@ -247,12 +247,12 @@ void RenderD3D11::Kill()
 	DX_RELEASE(backBufferRenderTargetView);
 }
 
-String RenderD3D11::GetShaderFilenameWithPath(const char *shaderFilename) const
+String Direct3D11Render::GetShaderFilenameWithPath(const char *shaderFilename) const
 {
 	return String::CreateFormattedString("data/shaders/hlsl/%s.hlsl", shaderFilename);
 }
 
-void RenderD3D11::BeginFrame(IWindow *window)
+void Direct3D11Render::BeginFrame(IWindow *window)
 {
 	activeWindow = window;
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
@@ -261,12 +261,12 @@ void RenderD3D11::BeginFrame(IWindow *window)
 	deviceCtx->ClearDepthStencilView(backBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-void RenderD3D11::EndFrame()
+void Direct3D11Render::EndFrame()
 {
 	swapChain->Present(1, 0);
 }
 
-void RenderD3D11::SetView(View *view)
+void Direct3D11Render::SetView(View *view)
 {
 	if(view != nullptr)
 	{
@@ -296,7 +296,7 @@ void RenderD3D11::SetView(View *view)
 	}
 }
 
-void RenderD3D11::SetWorldMatrix(const Matrix4& matrix)
+void Direct3D11Render::SetWorldMatrix(const Matrix4& matrix)
 {
 	matWorld.r[0] = GetXMVECTOR(matrix.col0);
 	matWorld.r[1] = GetXMVECTOR(matrix.col1);
@@ -304,7 +304,7 @@ void RenderD3D11::SetWorldMatrix(const Matrix4& matrix)
 	matWorld.r[3] = GetXMVECTOR(matrix.col3);
 }
 
-void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
+void Direct3D11Render::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
 	matView.r[0] = GetXMVECTOR(viewMatrix.col0);
 	matView.r[1] = GetXMVECTOR(viewMatrix.col1);
@@ -317,7 +317,7 @@ void RenderD3D11::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Mat
 	matProj.r[3] = GetXMVECTOR(projMatrix.col3);
 }
 
-void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+void Direct3D11Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
 	if(x == 0 && y == 0 && width == 0 && height == 0)
 	{
@@ -332,7 +332,7 @@ void RenderD3D11::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 	}
 }
 
-void RenderD3D11::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+void Direct3D11Render::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	clearColor[0] = r / 255.0f;
 	clearColor[1] = g / 255.0f;
@@ -340,7 +340,7 @@ void RenderD3D11::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	clearColor[3] = a / 255.0f;
 }
 
-void RenderD3D11::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
+void Direct3D11Render::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
 {
 	ASSERT(!blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
 
@@ -363,12 +363,12 @@ void RenderD3D11::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnab
 	}
 }
 
-void RenderD3D11::SetDepthWriteEnabled(bool enabled)
+void Direct3D11Render::SetDepthWriteEnabled(bool enabled)
 {
 	depthStencilDesc.DepthWriteMask = enabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
 }
 
-void RenderD3D11::SetDepthTest(EDepthTest depthTest)
+void Direct3D11Render::SetDepthTest(EDepthTest depthTest)
 {
 	switch(depthTest)
 	{
@@ -387,7 +387,7 @@ void RenderD3D11::SetDepthTest(EDepthTest depthTest)
 	depthStencilDesc.DepthEnable = TRUE;
 }
 
-void RenderD3D11::SetCullMode(ECullMode cullMode)
+void Direct3D11Render::SetCullMode(ECullMode cullMode)
 {
 	switch(cullMode)
 	{
@@ -397,7 +397,7 @@ void RenderD3D11::SetCullMode(ECullMode cullMode)
 	}
 }
 
-void RenderD3D11::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
+void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
 {
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
@@ -438,12 +438,12 @@ void RenderD3D11::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB,
 	blendDesc.RenderTarget[0].BlendOpAlpha = equationConversionTable[(size_t)blendOpAlpha];
 }
 
-void RenderD3D11::SetBlendModeDisabled()
+void Direct3D11Render::SetBlendModeDisabled()
 {
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
-void RenderD3D11::Bind(Mesh *mesh)
+void Direct3D11Render::Bind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -564,7 +564,7 @@ void RenderD3D11::Bind(Mesh *mesh)
 	mesh->renderData = renderData;
 }
 
-void RenderD3D11::Bind(Shader *shader)
+void Direct3D11Render::Bind(Shader *shader)
 {
 	ASSERT(shader != nullptr);
 
@@ -651,8 +651,15 @@ void RenderD3D11::Bind(Shader *shader)
 
 			if(varDesc.uFlags & D3D_SVF_USED)
 			{
-
+				if(strcmp(varDesc.Name, "worldViewProj") == 0)
+				{
+					int asd = 0;
+				}
 			}
+
+			D3D11_SHADER_TYPE_DESC typeDesc;
+			hr = type->GetDesc(&typeDesc);
+			ASSERT(SUCCEEDED(hr));
 		}
 	}
 
@@ -661,7 +668,7 @@ void RenderD3D11::Bind(Shader *shader)
 	shader->renderData = renderData;
 }
 
-void RenderD3D11::Bind(Texture *texture)
+void Direct3D11Render::Bind(Texture *texture)
 {
 	ASSERT(texture != nullptr);
 
@@ -738,7 +745,7 @@ void RenderD3D11::Bind(Texture *texture)
 	texture->renderData = renderData;
 }
 
-void RenderD3D11::Bind(RenderTarget *renderTarget)
+void Direct3D11Render::Bind(RenderTarget *renderTarget)
 {
 	ASSERT(renderTarget != nullptr);
 
@@ -785,7 +792,7 @@ void RenderD3D11::Bind(RenderTarget *renderTarget)
 	renderTarget->renderData = renderData;
 }
 
-void RenderD3D11::Unbind(Mesh *mesh)
+void Direct3D11Render::Unbind(Mesh *mesh)
 {
 	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
@@ -806,7 +813,7 @@ void RenderD3D11::Unbind(Mesh *mesh)
 	}
 }
 
-void RenderD3D11::Unbind(Shader *shader)
+void Direct3D11Render::Unbind(Shader *shader)
 {
 	if(shader == nullptr || shader->renderData == nullptr)
 	{
@@ -829,7 +836,7 @@ void RenderD3D11::Unbind(Shader *shader)
 	}
 }
 
-void RenderD3D11::Unbind(Texture *texture)
+void Direct3D11Render::Unbind(Texture *texture)
 {
 	if(texture == nullptr || texture->renderData == nullptr)
 	{
@@ -845,7 +852,7 @@ void RenderD3D11::Unbind(Texture *texture)
 	texture->renderData = nullptr;
 }
 
-void RenderD3D11::Unbind(RenderTarget *renderTarget)
+void Direct3D11Render::Unbind(RenderTarget *renderTarget)
 {
 	if(renderTarget == nullptr || renderTarget->renderData == nullptr)
 	{
@@ -873,7 +880,7 @@ void RenderD3D11::Unbind(RenderTarget *renderTarget)
 	renderTarget->renderData = nullptr;
 }
 
-void RenderD3D11::UpdateDynamicMesh(DynamicMesh *mesh)
+void Direct3D11Render::UpdateDynamicMesh(DynamicMesh *mesh)
 {
 	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
@@ -898,13 +905,13 @@ void RenderD3D11::UpdateDynamicMesh(DynamicMesh *mesh)
 	}
 }
 
-void RenderD3D11::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
 	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
 	deviceCtx->RSSetViewports(1, &vp);
 }
 
-void RenderD3D11::SetMesh(Mesh *mesh)
+void Direct3D11Render::SetMesh(Mesh *mesh)
 {
 	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
@@ -943,7 +950,7 @@ void RenderD3D11::SetMesh(Mesh *mesh)
 	activeMesh = mesh;
 }
 
-void RenderD3D11::SetScreenSpaceQuadMesh()
+void Direct3D11Render::SetScreenSpaceQuadMesh()
 {
 	if(activeMesh == nullptr)
 	{
@@ -958,7 +965,7 @@ void RenderD3D11::SetScreenSpaceQuadMesh()
 	activeMesh = nullptr;
 }
 
-void RenderD3D11::SetVertexShader(Shader *vertexShader)
+void Direct3D11Render::SetVertexShader(Shader *vertexShader)
 {
 	if(activeVertexShader == vertexShader)
 	{
@@ -973,7 +980,7 @@ void RenderD3D11::SetVertexShader(Shader *vertexShader)
 	activeVertexShader = vertexShader;
 }
 
-void RenderD3D11::SetFragmentShader(Shader *fragmentShader)
+void Direct3D11Render::SetFragmentShader(Shader *fragmentShader)
 {
 	if(activeFragmentShader == fragmentShader)
 	{
@@ -988,7 +995,7 @@ void RenderD3D11::SetFragmentShader(Shader *fragmentShader)
 	activeFragmentShader = fragmentShader;
 }
 
-void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
+void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	ASSERT(samplerIdx < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
@@ -1024,7 +1031,7 @@ void RenderD3D11::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode f
 	SetSamplerState(samplerIdx, samplerDesc);
 }
 
-void RenderD3D11::UpdateShaderParams()
+void Direct3D11Render::UpdateShaderParams()
 {
 	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
 
@@ -1045,7 +1052,7 @@ void RenderD3D11::UpdateShaderParams()
 	}
 }
 
-void RenderD3D11::DoRender()
+void Direct3D11Render::DoRender()
 {
 	SetDepthStencilState();
 	SetRasterizerState();
@@ -1069,7 +1076,7 @@ void RenderD3D11::DoRender()
 	}
 }
 
-void RenderD3D11::UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size)
+void Direct3D11Render::UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HRESULT hr = deviceCtx->Map(resource, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -1083,7 +1090,7 @@ void RenderD3D11::UpdateD3D11Resource(ID3D11Resource *resource, const void *data
 	deviceCtx->Unmap(resource, 0);
 }
 
-void RenderD3D11::SetDepthStencilState()
+void Direct3D11Render::SetDepthStencilState()
 {
 	ID3D11DepthStencilState *depthStencilState = nullptr;
 
@@ -1122,7 +1129,7 @@ void RenderD3D11::SetDepthStencilState()
 	}
 }
 
-void RenderD3D11::SetRasterizerState()
+void Direct3D11Render::SetRasterizerState()
 {
 	ID3D11RasterizerState *rasterizerState = nullptr;
 
@@ -1157,7 +1164,7 @@ void RenderD3D11::SetRasterizerState()
 	}
 }
 
-void RenderD3D11::SetBlendState()
+void Direct3D11Render::SetBlendState()
 {
 	ID3D11BlendState *blendState = nullptr;
 
@@ -1192,7 +1199,7 @@ void RenderD3D11::SetBlendState()
 	}
 }
 
-void RenderD3D11::SetInputLayout()
+void Direct3D11Render::SetInputLayout()
 {
 	ID3D11InputLayout *inputLayout = nullptr;
 
@@ -1232,7 +1239,7 @@ void RenderD3D11::SetInputLayout()
 	}
 }
 
-void RenderD3D11::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc)
+void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc)
 {
 	ID3D11SamplerState *samplerState = nullptr;
 
@@ -1268,7 +1275,7 @@ void RenderD3D11::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& 
 	}
 }
 
-DXGI_FORMAT RenderD3D11::ConvertTextureFormat(Texture::EFormat textureFormat)
+DXGI_FORMAT Direct3D11Render::ConvertTextureFormat(Texture::EFormat textureFormat)
 {
 	switch(textureFormat)
 	{

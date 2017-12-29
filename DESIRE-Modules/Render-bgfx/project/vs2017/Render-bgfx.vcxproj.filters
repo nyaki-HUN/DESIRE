@@ -438,13 +438,13 @@
     <ClInclude Include="..\..\Externals\bx\src\bx_p.h">
       <Filter>Externals\bx\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\BgfxRender.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Embedded_shaders\vs_screenSpaceQuad.bin.h">
       <Filter>src\Embedded_shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\MeshRenderDataBgfx.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\RenderBgfx.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RenderTargetRenderDataBgfx.h">
@@ -581,7 +581,7 @@
     <ClCompile Include="..\..\Externals\bx\src\timer.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\RenderBgfx.cpp">
+    <ClCompile Include="..\..\src\BgfxRender.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

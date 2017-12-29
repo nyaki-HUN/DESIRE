@@ -212,9 +212,9 @@
     <ClInclude Include="..\..\Externals\bx\include\compat\msvc\dirent.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\osx\malloc.h" />
     <ClInclude Include="..\..\Externals\bx\src\bx_p.h" />
+    <ClInclude Include="..\..\src\BgfxRender.h" />
     <ClInclude Include="..\..\src\Embedded_shaders\vs_screenSpaceQuad.bin.h" />
     <ClInclude Include="..\..\src\MeshRenderDataBgfx.h" />
-    <ClInclude Include="..\..\src\RenderBgfx.h" />
     <ClInclude Include="..\..\src\RenderTargetRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\ShaderRenderDataBgfx.h" />
     <ClInclude Include="..\..\src\TextureRenderDataBgfx.h" />
@@ -261,7 +261,7 @@
     <ClCompile Include="..\..\Externals\bx\src\string.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\thread.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\timer.cpp" />
-    <ClCompile Include="..\..\src\RenderBgfx.cpp" />
+    <ClCompile Include="..\..\src\BgfxRender.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

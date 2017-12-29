@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "RenderBgfx.h"
+#include "BgfxRender.h"
 #include "MeshRenderDataBgfx.h"
 #include "ShaderRenderDataBgfx.h"
 #include "RenderTargetRenderDataBgfx.h"
@@ -27,7 +27,7 @@ static const bgfx::EmbeddedShader s_embeddedShaders[] =
 	BGFX_EMBEDDED_SHADER_END()
 };
 
-RenderBgfx::RenderBgfx()
+BgfxRender::BgfxRender()
 {
 	for(bgfx::UniformHandle& uniform : samplerUniforms)
 	{
@@ -39,12 +39,12 @@ RenderBgfx::RenderBgfx()
 	screenSpaceQuadMeshVertexDecl.end();
 }
 
-RenderBgfx::~RenderBgfx()
+BgfxRender::~BgfxRender()
 {
 
 }
 
-void RenderBgfx::Init(IWindow *mainWindow)
+void BgfxRender::Init(IWindow *mainWindow)
 {
 	bgfx::PlatformData pd = {};
 #if defined(DESIRE_PLATFORM_LINUX)
@@ -74,7 +74,7 @@ void RenderBgfx::Init(IWindow *mainWindow)
 	bgfx::reset(mainWindow->GetWidth(), mainWindow->GetHeight(), BGFX_RESET_VSYNC);
 }
 
-void RenderBgfx::UpdateRenderWindow(IWindow *window)
+void BgfxRender::UpdateRenderWindow(IWindow *window)
 {
 	if(!initialized)
 	{
@@ -84,7 +84,7 @@ void RenderBgfx::UpdateRenderWindow(IWindow *window)
 	bgfx::reset(window->GetWidth(), window->GetHeight(), BGFX_RESET_VSYNC);
 }
 
-void RenderBgfx::Kill()
+void BgfxRender::Kill()
 {
 	for(bgfx::UniformHandle& uniform : samplerUniforms)
 	{
@@ -107,7 +107,7 @@ void RenderBgfx::Kill()
 	initialized = false;
 }
 
-String RenderBgfx::GetShaderFilenameWithPath(const char *shaderFilename) const
+String BgfxRender::GetShaderFilenameWithPath(const char *shaderFilename) const
 {
 	const char *shaderLanguage = "";
 	switch(bgfx::getRendererType())
@@ -126,7 +126,7 @@ String RenderBgfx::GetShaderFilenameWithPath(const char *shaderFilename) const
 	return String::CreateFormattedString("data/shaders/bgfx/%s/%s.bin", shaderLanguage, shaderFilename);
 }
 
-void RenderBgfx::BeginFrame(IWindow *window)
+void BgfxRender::BeginFrame(IWindow *window)
 {
 	activeViewId = 0;
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
@@ -135,12 +135,12 @@ void RenderBgfx::BeginFrame(IWindow *window)
 	bgfx::touch(0);
 }
 
-void RenderBgfx::EndFrame()
+void BgfxRender::EndFrame()
 {
 	bgfx::frame();
 }
 
-void RenderBgfx::SetView(View *view)
+void BgfxRender::SetView(View *view)
 {
 	if(view != nullptr)
 	{
@@ -163,7 +163,7 @@ void RenderBgfx::SetView(View *view)
 	}
 }
 
-void RenderBgfx::SetWorldMatrix(const Matrix4& matrix)
+void BgfxRender::SetWorldMatrix(const Matrix4& matrix)
 {
 	float world[16];
 	matrix.Store(world);
@@ -171,7 +171,7 @@ void RenderBgfx::SetWorldMatrix(const Matrix4& matrix)
 	bgfx::setTransform(world);
 }
 
-void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
+void BgfxRender::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
 	float view[16];
 	float projection[16];
@@ -181,17 +181,17 @@ void RenderBgfx::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matr
 	bgfx::setViewTransform(activeViewId, view, projection);
 }
 
-void RenderBgfx::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+void BgfxRender::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
 	bgfx::setScissor(x, y, width, height);
 }
 
-void RenderBgfx::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+void BgfxRender::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
 	clearColor = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
-void RenderBgfx::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
+void BgfxRender::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
 {
 	if(rgbWriteEnabled)
 	{
@@ -212,7 +212,7 @@ void RenderBgfx::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabl
 	}
 }
 
-void RenderBgfx::SetDepthWriteEnabled(bool enabled)
+void BgfxRender::SetDepthWriteEnabled(bool enabled)
 {
 	if(enabled)
 	{
@@ -224,7 +224,7 @@ void RenderBgfx::SetDepthWriteEnabled(bool enabled)
 	}
 }
 
-void RenderBgfx::SetDepthTest(EDepthTest depthTest)
+void BgfxRender::SetDepthTest(EDepthTest depthTest)
 {
 	renderState &= ~BGFX_STATE_DEPTH_TEST_MASK;
 
@@ -240,7 +240,7 @@ void RenderBgfx::SetDepthTest(EDepthTest depthTest)
 	}
 }
 
-void RenderBgfx::SetCullMode(ECullMode cullMode)
+void BgfxRender::SetCullMode(ECullMode cullMode)
 {
 	renderState &= ~BGFX_STATE_CULL_MASK;
 
@@ -252,7 +252,7 @@ void RenderBgfx::SetCullMode(ECullMode cullMode)
 	}
 }
 
-void RenderBgfx::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
+void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
 {
 	renderState &= ~BGFX_STATE_BLEND_MASK;
 
@@ -295,12 +295,12 @@ void RenderBgfx::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 	renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(equationRGB, equationAlpha);
 }
 
-void RenderBgfx::SetBlendModeDisabled()
+void BgfxRender::SetBlendModeDisabled()
 {
 	renderState &= ~BGFX_STATE_BLEND_MASK;
 }
 
-void RenderBgfx::Bind(Mesh *mesh)
+void BgfxRender::Bind(Mesh *mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -383,7 +383,7 @@ void RenderBgfx::Bind(Mesh *mesh)
 	mesh->renderData = renderData;
 }
 
-void RenderBgfx::Bind(Shader *shader)
+void BgfxRender::Bind(Shader *shader)
 {
 	ASSERT(shader != nullptr);
 
@@ -406,7 +406,7 @@ void RenderBgfx::Bind(Shader *shader)
 	shader->renderData = renderData;
 }
 
-void RenderBgfx::Bind(Texture *texture)
+void BgfxRender::Bind(Texture *texture)
 {
 	ASSERT(texture != nullptr);
 
@@ -432,7 +432,7 @@ void RenderBgfx::Bind(Texture *texture)
 	texture->renderData = renderData;
 }
 
-void RenderBgfx::Bind(RenderTarget *renderTarget)
+void BgfxRender::Bind(RenderTarget *renderTarget)
 {
 	ASSERT(renderTarget != nullptr);
 
@@ -463,7 +463,7 @@ void RenderBgfx::Bind(RenderTarget *renderTarget)
 	renderTarget->renderData = renderData;
 }
 
-void RenderBgfx::Unbind(Mesh *mesh)
+void BgfxRender::Unbind(Mesh *mesh)
 {
 	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
@@ -490,7 +490,7 @@ void RenderBgfx::Unbind(Mesh *mesh)
 	mesh->renderData = nullptr;
 }
 
-void RenderBgfx::Unbind(Shader *shader)
+void BgfxRender::Unbind(Shader *shader)
 {
 	if(shader == nullptr || shader->renderData == nullptr)
 	{
@@ -515,7 +515,7 @@ void RenderBgfx::Unbind(Shader *shader)
 	}
 }
 
-void RenderBgfx::Unbind(Texture *texture)
+void BgfxRender::Unbind(Texture *texture)
 {
 	if(texture == nullptr || texture->renderData == nullptr)
 	{
@@ -530,7 +530,7 @@ void RenderBgfx::Unbind(Texture *texture)
 	texture->renderData = nullptr;
 }
 
-void RenderBgfx::Unbind(RenderTarget *renderTarget)
+void BgfxRender::Unbind(RenderTarget *renderTarget)
 {
 	if(renderTarget == nullptr || renderTarget->renderData == nullptr)
 	{
@@ -552,7 +552,7 @@ void RenderBgfx::Unbind(RenderTarget *renderTarget)
 	renderTarget->renderData = nullptr;
 }
 
-void RenderBgfx::UpdateDynamicMesh(DynamicMesh *mesh)
+void BgfxRender::UpdateDynamicMesh(DynamicMesh *mesh)
 {
 	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
@@ -577,12 +577,12 @@ void RenderBgfx::UpdateDynamicMesh(DynamicMesh *mesh)
 	}
 }
 
-void RenderBgfx::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+void BgfxRender::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
 	bgfx::setViewRect(activeViewId, x, y, width, height);
 }
 
-void RenderBgfx::SetMesh(Mesh *mesh)
+void BgfxRender::SetMesh(Mesh *mesh)
 {
 	MeshRenderDataBgfx *renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
 
@@ -605,7 +605,7 @@ void RenderBgfx::SetMesh(Mesh *mesh)
 	}
 }
 
-void RenderBgfx::SetScreenSpaceQuadMesh()
+void BgfxRender::SetScreenSpaceQuadMesh()
 {
 	bgfx::TransientIndexBuffer indexBuffer;
 	bgfx::TransientVertexBuffer vertexBuffer;
@@ -636,17 +636,17 @@ void RenderBgfx::SetScreenSpaceQuadMesh()
 	bgfx::setVertexBuffer(0, &vertexBuffer);
 }
 
-void RenderBgfx::SetVertexShader(Shader *vertexShader)
+void BgfxRender::SetVertexShader(Shader *vertexShader)
 {
 	activeVertexShader = vertexShader;
 }
 
-void RenderBgfx::SetFragmentShader(Shader *fragmentShader)
+void BgfxRender::SetFragmentShader(Shader *fragmentShader)
 {
 	activeFragmentShader = fragmentShader;
 }
 
-void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
+void BgfxRender::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	uint32_t flags = BGFX_TEXTURE_NONE;
 	switch(filterMode)
@@ -670,7 +670,7 @@ void RenderBgfx::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], renderData->textureHandle, flags);
 }
 
-void RenderBgfx::UpdateShaderParams()
+void BgfxRender::UpdateShaderParams()
 {
 	const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeFragmentShader->renderData);
 
@@ -679,7 +679,7 @@ void RenderBgfx::UpdateShaderParams()
 	bgfx::setUniform(fragmentShaderRenderData->u_tint, color);
 }
 
-void RenderBgfx::DoRender()
+void BgfxRender::DoRender()
 {
 	bgfx::setState(renderState, blendFactor);
 
@@ -703,7 +703,7 @@ void RenderBgfx::DoRender()
 	bgfx::submit(activeViewId, shaderProgram);
 }
 
-bgfx::TextureFormat::Enum RenderBgfx::ConvertTextureFormat(Texture::EFormat textureFormat)
+bgfx::TextureFormat::Enum BgfxRender::ConvertTextureFormat(Texture::EFormat textureFormat)
 {
 	switch(textureFormat)
 	{
@@ -719,7 +719,7 @@ bgfx::TextureFormat::Enum RenderBgfx::ConvertTextureFormat(Texture::EFormat text
 	return bgfx::TextureFormat::Unknown;
 }
 
-void RenderBgfx::BindEmbeddedShader(Shader *shader, const char *name)
+void BgfxRender::BindEmbeddedShader(Shader *shader, const char *name)
 {
 	ASSERT(shader != nullptr);
 

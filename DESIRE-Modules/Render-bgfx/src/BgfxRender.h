@@ -4,18 +4,14 @@
 #include "Resource/Texture.h"
 #include "Core/STL_utils.h"
 
-#include <d3d11.h>
-#include <DirectXMath.h>
+#include "../Externals/bgfx/include/bgfx/bgfx.h"
 #include <unordered_map>
 
-class MeshRenderDataD3D11;
-class ShaderRenderDataD3D11;
-
-class RenderD3D11 : public IRender
+class BgfxRender : public IRender
 {
 public:
-	RenderD3D11();
-	~RenderD3D11() override;
+	BgfxRender();
+	~BgfxRender() override;
 
 	void Init(IWindow *mainWindow) override;
 	void UpdateRenderWindow(IWindow *window) override;
@@ -35,7 +31,7 @@ public:
 	void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
 	void SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled) override;
 	void SetDepthWriteEnabled(bool enabled) override;
-	void SetDepthTest(EDepthTest deptTest) override;
+	void SetDepthTest(EDepthTest depthTest) override;
 	void SetCullMode(ECullMode cullMode) override;
 	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
 	void SetBlendModeDisabled() override;
@@ -64,49 +60,21 @@ private:
 
 	void DoRender() override;
 
-	void UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size);
-	void SetDepthStencilState();
-	void SetRasterizerState();
-	void SetBlendState();
-	void SetInputLayout();
-	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
+	static bgfx::TextureFormat::Enum ConvertTextureFormat(Texture::EFormat textureFormat);
+	static void BindEmbeddedShader(Shader *shader, const char *name);
 
-	static DXGI_FORMAT ConvertTextureFormat(Texture::EFormat textureFormat);
-
-	ID3D11Device *d3dDevice = nullptr;
-	ID3D11DeviceContext *deviceCtx = nullptr;
-	IDXGISwapChain *swapChain = nullptr;
-	ID3D11RenderTargetView *backBufferRenderTargetView = nullptr;
-	ID3D11DepthStencilView *backBufferDepthStencilView = nullptr;
-
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-	D3D11_RASTERIZER_DESC rasterizerDesc = {};
-	D3D11_BLEND_DESC blendDesc = {};
-
-	const ID3D11DepthStencilState *activeDepthStencilState = nullptr;
-	const ID3D11RasterizerState *activeRasterizerState = nullptr;
-	const ID3D11BlendState *activeBlendState = nullptr;
-	const ID3D11InputLayout *activeInputLayout = nullptr;
-	const ID3D11SamplerState *activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
-	const IWindow *activeWindow = nullptr;
-	const Mesh *activeMesh = nullptr;
+	bgfx::UniformHandle samplerUniforms[8];
+	bgfx::ViewId activeViewId = 0;
 	const Shader *activeVertexShader = nullptr;
 	const Shader *activeFragmentShader = nullptr;
 
-	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	DirectX::XMMATRIX matWorld;
-	DirectX::XMMATRIX matView;
-	DirectX::XMMATRIX matProj;
+	std::unordered_map<std::pair<uint64_t, uint64_t>, bgfx::ProgramHandle, stl_utils::hash_pair<uint64_t, uint64_t>> shaderProgramCache;
 
-	std::unordered_map<uint64_t, ID3D11DepthStencilState*> depthStencilStateCache;
-	std::unordered_map<uint64_t, ID3D11RasterizerState*> rasterizerStateCache;
-	std::unordered_map<uint64_t, ID3D11BlendState*> blendStateCache;
-	std::unordered_map<std::pair<uint64_t, uint64_t>, ID3D11InputLayout*, stl_utils::hash_pair<uint64_t, uint64_t>> inputLayoutCache;
-	std::unordered_map<uint64_t, ID3D11SamplerState*> samplerStateCache;
+	uint64_t renderState = 0;
+	uint32_t blendFactor = 0;
+	uint32_t clearColor = 0x000000FF;
 
-	std::unique_ptr<Shader> errorVertexShader;
-	std::unique_ptr<Shader> errorPixelShader;
+	bgfx::VertexDecl screenSpaceQuadMeshVertexDecl;
 
 	bool initialized = false;
 };

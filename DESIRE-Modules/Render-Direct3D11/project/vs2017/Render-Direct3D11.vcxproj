@@ -102,15 +102,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Direct3D11Render.h" />
     <ClInclude Include="..\..\src\DirectXMathExt.h" />
     <ClInclude Include="..\..\src\MeshRenderDataD3D11.h" />
-    <ClInclude Include="..\..\src\RenderD3D11.h" />
     <ClInclude Include="..\..\src\RenderTargetRenderDataD3D11.h" />
     <ClInclude Include="..\..\src\ShaderRenderDataD3D11.h" />
     <ClInclude Include="..\..\src\TextureRenderDataD3D11.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\RenderD3D11.cpp" />
+    <ClCompile Include="..\..\src\Direct3D11Render.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
