@@ -34,14 +34,14 @@ Modules
 
 ### Physics
 
-* [Box2D](https://github.com/erincatto/Box2D)
+* [Box2D](http://box2d.org)
 * [Bullet](http://bulletphysics.org)
 * [PhysX](https://developer.nvidia.com/physx-sdk)
 
 ### Render
 
  * [bgfx](https://bkaradzic.github.io/bgfx)
- * Direct3D11
+ * [Direct3D11](https://msdn.microsoft.com/en-us/library/windows/desktop/ff476080(v=vs.85).aspx)
 
 ### Resource loader
 
