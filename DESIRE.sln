@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-zlib-ng", "DESI
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-zstd", "DESIRE-Modules\Compression-zstd\project\vs2017\Compression-zstd.vcxproj", "{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Box2D", "DESIRE-Modules\Physics-Box2D\project\vs2017\Physics-Box2D.vcxproj", "{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Bullet", "DESIRE-Modules\Physics-Bullet\project\vs2017\Physics-Bullet.vcxproj", "{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-bgfx", "DESIRE-Modules\Render-bgfx\project\vs2017\Render-bgfx.vcxproj", "{39620121-0C61-49D9-9BF4-B67638336D45}"
@@ -59,6 +61,10 @@ Global
 		{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}.Debug|x64.Build.0 = Debug|x64
 		{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}.Release|x64.ActiveCfg = Release|x64
 		{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}.Release|x64.Build.0 = Release|x64
+		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Debug|x64.ActiveCfg = Debug|x64
+		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Debug|x64.Build.0 = Debug|x64
+		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Release|x64.ActiveCfg = Release|x64
+		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Release|x64.Build.0 = Release|x64
 		{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}.Debug|x64.ActiveCfg = Debug|x64
 		{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}.Debug|x64.Build.0 = Debug|x64
 		{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}.Release|x64.ActiveCfg = Release|x64

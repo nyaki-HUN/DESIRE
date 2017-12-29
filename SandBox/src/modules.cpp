@@ -18,9 +18,11 @@ const HashedStringMap<CompressionManager::CompressionFactoryFunc_t> CompressionM
 // --------------------------------------------------------------------------------------------------------------------
 //	Physics
 // --------------------------------------------------------------------------------------------------------------------
+#include "Physics-Box2D/src/Box2DPhysics.h"
 #include "Physics-Bullet/src/BulletPhysics.h"
 //#include "Physics-PhysX/src/PhysXPhysics.h"
-DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, BulletPhysics)
+DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, Box2DPhysics)
+//DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, BulletPhysics)
 //DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, PhysXPhysics)
 
 // --------------------------------------------------------------------------------------------------------------------

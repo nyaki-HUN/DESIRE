@@ -126,6 +126,7 @@ solution "DESIRE"
 	include "DESIRE-Modules/Compression-zstd/project/premake5.lua"
 
 	-- Physics modules
+	include "DESIRE-Modules/Physics-Box2D/project/premake5.lua"
 	include "DESIRE-Modules/Physics-Bullet/project/premake5.lua"
 --	include "DESIRE-Modules/Physics-PhysX/project/premake5.lua"
 

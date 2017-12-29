@@ -34,6 +34,7 @@ Modules
 
 ### Physics
 
+* [Box2D](https://github.com/erincatto/Box2D)
 * [Bullet](http://bulletphysics.org)
 * [PhysX](https://developer.nvidia.com/physx-sdk)
 

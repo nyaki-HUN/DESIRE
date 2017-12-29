@@ -15,6 +15,7 @@ project "SandBox"
 	{
 		"DESIRE",
 		"Compression-zlib-ng",
+		"Physics-Box2D",
 		"Physics-Bullet",
 		"Render-bgfx",
 		"Render-Direct3D11",
