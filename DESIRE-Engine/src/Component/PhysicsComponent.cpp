@@ -3,7 +3,7 @@
 #include "Physics/IPhysics.h"
 
 PhysicsComponent::PhysicsComponent()
-	: collisionGroup(EPhysicsCollisionGroup::DEFAULT)
+	: collisionLayer(EPhysicsCollisionLayer::DEFAULT)
 {
 
 }
@@ -13,7 +13,7 @@ PhysicsComponent::~PhysicsComponent()
 
 }
 
-void PhysicsComponent::SetCollisionGroup(EPhysicsCollisionGroup i_collisionGroup)
+void PhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
-	collisionGroup = i_collisionGroup;
+	collisionLayer = i_collisionLayer;
 }

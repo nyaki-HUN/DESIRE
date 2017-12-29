@@ -43,15 +43,6 @@ BulletPhysics::BulletPhysics()
 		blletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
 	}
 	dynamicsWorld->setDebugDrawer(blletDebugDraw);
-
-	// Setup collision masks
-	memset(collisionMasks, 0xff, sizeof(collisionMasks));
-	for(size_t i = 0; i < DESIRE_ASIZEOF(collisionMasks); i++)
-	{
-		SetCollisionEnabled((EPhysicsCollisionGroup)i, EPhysicsCollisionGroup::WHEEL, false);
-		SetCollisionEnabled((EPhysicsCollisionGroup)i, EPhysicsCollisionGroup::NO_COLLISION, false);
-	}
-	SetCollisionEnabled(EPhysicsCollisionGroup::DEFAULT, EPhysicsCollisionGroup::WHEEL, true);
 }
 
 BulletPhysics::~BulletPhysics()
@@ -82,39 +73,13 @@ PhysicsComponent* BulletPhysics::CreatePhysicsComponent()
 	return component;
 }
 
-void BulletPhysics::SetCollisionEnabled(EPhysicsCollisionGroup a, EPhysicsCollisionGroup b, bool enabled)
+bool BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr, Vector3 *o_collisionNormalPtr, int layerMask)
 {
-	const size_t groupA = (size_t)a;
-	const size_t groupB = (size_t)b;
-
-	ASSERT(groupA < DESIRE_ASIZEOF(collisionMasks));
-	ASSERT(groupB < DESIRE_ASIZEOF(collisionMasks));
-
-	if(enabled)
-	{
-		collisionMasks[groupA] |= (1 << groupB);
-		collisionMasks[groupB] |= (1 << groupA);
-	}
-	else
-	{
-		collisionMasks[groupA] &= ~(1 << groupB);
-		collisionMasks[groupB] &= ~(1 << groupA);
-	}
-}
-
-int16_t BulletPhysics::GetCollisionMaskForGroup(EPhysicsCollisionGroup group) const
-{
-	ASSERT((size_t)group < DESIRE_ASIZEOF(collisionMasks));
-	return collisionMasks[(size_t)group];
-}
-
-bool BulletPhysics::RayTest(const Vector3& startPoint, const Vector3& direction, Vector3 *o_hitpoint, PhysicsComponent **o_component, int collisionGroupMask)
-{
-	const btVector3 from = GetBtVector3(startPoint);
-	const btVector3 to = GetBtVector3(startPoint + direction * 10000.0f);
+	const btVector3 from = GetBtVector3(p1);
+	const btVector3 to = GetBtVector3(p2);
 	btCollisionWorld::ClosestRayResultCallback rayCallback(from, to);
-	rayCallback.m_collisionFilterGroup = (int16_t)collisionGroupMask;
-	rayCallback.m_collisionFilterMask = (int16_t)collisionGroupMask;
+	rayCallback.m_collisionFilterGroup = layerMask;
+	rayCallback.m_collisionFilterMask = layerMask;
 	rayCallback.m_flags = btTriangleRaycastCallback::kF_FilterBackfaces;
 
 	dynamicsWorld->rayTest(from, to, rayCallback);
@@ -124,24 +89,88 @@ bool BulletPhysics::RayTest(const Vector3& startPoint, const Vector3& direction,
 		return false;
 	}
 
-	if(o_hitpoint != nullptr)
-	{
-		*o_hitpoint = GetVector3(rayCallback.m_hitPointWorld);
-	}
-
-	if(o_component != nullptr)
+	if(o_componentPtr != nullptr)
 	{
 		const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObject);
 		if(body != nullptr && body->hasContactResponse())
 		{
-			*o_component = static_cast<PhysicsComponent*>(body->getUserPointer());
+			*o_componentPtr = static_cast<PhysicsComponent*>(body->getUserPointer());
 		}
 		else
 		{
-			*o_component = nullptr;
+			*o_componentPtr = nullptr;
 		}
 	}
+
+	if(o_collisionPointPtr != nullptr)
+	{
+		*o_collisionPointPtr = GetVector3(rayCallback.m_hitPointWorld);
+	}
+
+	if(o_collisionNormalPtr != nullptr)
+	{
+		*o_collisionNormalPtr = GetVector3(rayCallback.m_hitNormalWorld);
+	}
+
 	return true;
+}
+
+bool BulletPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask)
+{
+	ASSERT(false && "TODO implement");
+	return false;
+}
+
+int BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints, Vector3 *o_collisionNormals, int layerMask)
+{
+	const btVector3 from = GetBtVector3(p1);
+	const btVector3 to = GetBtVector3(p2);
+	btCollisionWorld::AllHitsRayResultCallback rayCallback(from, to);
+	rayCallback.m_collisionFilterGroup = layerMask;
+	rayCallback.m_collisionFilterMask = layerMask;
+	rayCallback.m_flags = btTriangleRaycastCallback::kF_FilterBackfaces;
+
+	dynamicsWorld->rayTest(from, to, rayCallback);
+
+	if(!rayCallback.hasHit())
+	{
+		return 0;
+	}
+
+	const int count = std::min(maxCount, rayCallback.m_collisionObjects.size());
+	for(int i = 0; i < count; ++i)
+	{
+		if(o_components != nullptr)
+		{
+			const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
+			if(body != nullptr && body->hasContactResponse())
+			{
+				o_components[i] = static_cast<PhysicsComponent*>(body->getUserPointer());
+			}
+			else
+			{
+				o_components[i] = nullptr;
+			}
+		}
+
+		if(o_collisionPoints != nullptr)
+		{
+			o_collisionPoints[i] = GetVector3(rayCallback.m_hitPointWorld[i]);
+		}
+
+		if(o_collisionNormals != nullptr)
+		{
+			o_collisionNormals[i] = GetVector3(rayCallback.m_hitNormalWorld[i]);
+		}
+	}
+
+	return count;
+}
+
+int BulletPhysics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
+{
+	ASSERT(layer < EPhysicsCollisionLayer::NUM);
+	return collisionMasks[(size_t)layer];
 }
 
 void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeStep)
@@ -151,29 +180,32 @@ void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeSte
 	BulletPhysics *physics = static_cast<BulletPhysics*>(world->getWorldUserInfo());
 
 	const int numManifolds = physics->dispatcher->getNumManifolds();
-	for(int i = 0; i < numManifolds; i++)
+	for(int manifoldIdx = 0; manifoldIdx < numManifolds; ++manifoldIdx)
 	{
 		Collision collision;
 
-		const btPersistentManifold *manifold = physics->dispatcher->getManifoldByIndexInternal(i);
+		const btPersistentManifold *manifold = physics->dispatcher->getManifoldByIndexInternal(manifoldIdx);
 		const btRigidBody *body0 = static_cast<const btRigidBody*>(manifold->getBody0());
 		const btRigidBody *body1 = static_cast<const btRigidBody*>(manifold->getBody1());
-		int numContacts = manifold->getNumContacts();
-		numContacts = std::min(numContacts, Collision::MAX_CONTACT_POINTS);
-		for(int j = 0; j < numContacts; ++j)
+		collision.pointCount = std::min(manifold->getNumContacts(), Collision::MAX_CONTACT_POINTS);
+		for(int i = 0; i < collision.pointCount; ++i)
 		{
 			const btManifoldPoint& pt = manifold->getContactPoint(i);
 			if(pt.getDistance() < 0.0f)
 			{
 				collision.contactPoints[i] = GetVector3(pt.getPositionWorldOnB());
-				collision.force[i] = GetVector3(pt.m_normalWorldOnB * pt.m_appliedImpulse);
+				collision.contactNormals[i] = GetVector3(pt.m_normalWorldOnB);
 			}
 		}
 
 		BulletPhysicsComponent *component0 = static_cast<BulletPhysicsComponent*>(body0->getUserPointer());
 		BulletPhysicsComponent *component1 = static_cast<BulletPhysicsComponent*>(body1->getUserPointer());
+
+		collision.component = component0;
 		collision.otherComponent = component1;
 //		component0->OnContact(collision);
+
+		collision.component = component1;
 		collision.otherComponent = component0;
 //		component1->OnContact(collision);
 	}

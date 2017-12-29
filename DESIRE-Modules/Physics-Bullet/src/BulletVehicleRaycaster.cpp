@@ -15,8 +15,8 @@ BulletVehicleRaycaster::BulletVehicleRaycaster(btDynamicsWorld *world)
 void* BulletVehicleRaycaster::castRay(const btVector3& from, const btVector3& to, btVehicleRaycasterResult& result)
 {
 	btCollisionWorld::ClosestRayResultCallback rayCallback(from, to);
-	rayCallback.m_collisionFilterGroup = EPhysicsCollisionGroupMask::MASK_WHEEL;
-	rayCallback.m_collisionFilterMask = EPhysicsCollisionGroupMask::MASK_DEFAULT;
+	rayCallback.m_collisionFilterGroup = IPhysics::MASK_WHEEL;
+	rayCallback.m_collisionFilterMask = IPhysics::MASK_DEFAULT;
 
 	dynamicsWorld->rayTest(from, to, rayCallback);
 

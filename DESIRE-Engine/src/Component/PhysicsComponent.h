@@ -2,7 +2,7 @@
 
 #include "Component/IComponent.h"
 
-enum class EPhysicsCollisionGroup;
+enum class EPhysicsCollisionLayer;
 
 class PhysicsComponent : public IComponent
 {
@@ -12,10 +12,11 @@ public:
 	PhysicsComponent();
 	~PhysicsComponent() override;
 
-	virtual void SetCollisionGroup(EPhysicsCollisionGroup collisionGroup);
+	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
+
 	virtual void SetMass(float mass) = 0;
 	virtual float GetMass() const = 0;
 
 protected:
-	EPhysicsCollisionGroup collisionGroup;
+	EPhysicsCollisionLayer collisionLayer;
 };

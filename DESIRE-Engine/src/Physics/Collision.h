@@ -9,7 +9,10 @@ class Collision
 public:
 	static const int MAX_CONTACT_POINTS = 4;
 
-	Vector3 contactPoints[MAX_CONTACT_POINTS];
-	Vector3 force[MAX_CONTACT_POINTS];
+	PhysicsComponent *component;
 	PhysicsComponent *otherComponent;
+
+	Vector3 contactPoints[MAX_CONTACT_POINTS];
+	Vector3 contactNormals[MAX_CONTACT_POINTS];
+	int pointCount;
 };

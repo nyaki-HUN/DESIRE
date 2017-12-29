@@ -80,16 +80,16 @@ BulletPhysicsComponent::BulletPhysicsComponent(bool dynamic)
 	body->setUserPointer(this);
 
 	BulletPhysics *physics = static_cast<BulletPhysics*>(IPhysics::Get());
-	physics->dynamicsWorld->addRigidBody(body, (1 << (int)collisionGroup), physics->GetCollisionMaskForGroup(collisionGroup));
+	physics->dynamicsWorld->addRigidBody(body, (1 << (int)collisionLayer), physics->GetMaskForCollisionLayer(collisionLayer));
 
 	if(dynamic)
 	{
-		SetCollisionGroup(EPhysicsCollisionGroup::DYNAMIC);
+		SetCollisionLayer(EPhysicsCollisionLayer::DYNAMIC);
 		body->setActivationState(ISLAND_SLEEPING);
 	}
 	else
 	{
-		SetCollisionGroup(EPhysicsCollisionGroup::DEFAULT);
+		SetCollisionLayer(EPhysicsCollisionLayer::DEFAULT);
 		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 	}
 }
@@ -113,16 +113,16 @@ BulletPhysicsComponent::~BulletPhysicsComponent()
 	delete triangleIndexVertexArrays;
 }
 
-void BulletPhysicsComponent::SetCollisionGroup(EPhysicsCollisionGroup i_collisionGroup)
+void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
-	if(collisionGroup == i_collisionGroup)
+	if(collisionLayer == i_collisionLayer)
 	{
 		return;
 	}
 
-	collisionGroup = i_collisionGroup;
+	collisionLayer = i_collisionLayer;
 
-	if(collisionGroup == EPhysicsCollisionGroup::NO_COLLISION)
+	if(collisionLayer == EPhysicsCollisionLayer::NO_COLLISION)
 	{
 		body->forceActivationState(DISABLE_SIMULATION);
 	}
@@ -133,8 +133,8 @@ void BulletPhysicsComponent::SetCollisionGroup(EPhysicsCollisionGroup i_collisio
 
 	BulletPhysics *physics = static_cast<BulletPhysics*>(IPhysics::Get());
 	btBroadphaseProxy *handle = body->getBroadphaseHandle();
-	handle->m_collisionFilterGroup = (1 << (int)collisionGroup);
-	handle->m_collisionFilterMask = physics->GetCollisionMaskForGroup(collisionGroup);
+	handle->m_collisionFilterGroup = (1 << (int)collisionLayer);
+	handle->m_collisionFilterMask = physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
 void BulletPhysicsComponent::SetMass(float mass)

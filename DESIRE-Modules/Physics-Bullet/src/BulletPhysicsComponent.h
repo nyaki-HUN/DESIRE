@@ -13,7 +13,8 @@ public:
 	BulletPhysicsComponent(bool dynamic);
 	~BulletPhysicsComponent();
 
-	void SetCollisionGroup(EPhysicsCollisionGroup collisionGroup) override;
+	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
+
 	void SetMass(float mass) override;
 	float GetMass() const override;
 

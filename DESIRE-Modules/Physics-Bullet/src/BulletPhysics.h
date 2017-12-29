@@ -19,17 +19,17 @@ public:
 
 	PhysicsComponent* CreatePhysicsComponent() override;
 
-	void SetCollisionEnabled(EPhysicsCollisionGroup a, EPhysicsCollisionGroup b, bool enabled) override;
-	int16_t GetCollisionMaskForGroup(EPhysicsCollisionGroup group) const;
+	bool RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr = nullptr, Vector3 *o_collisionNormalPtr = nullptr, int layerMask = IPhysics::MASK_ALL) override;
+	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = IPhysics::MASK_ALL) override;
+	int RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints = nullptr, Vector3 *o_collisionNormals = nullptr, int layerMask = IPhysics::MASK_ALL) override;
 
-	bool RayTest(const Vector3& startPoint, const Vector3& direction, Vector3 *o_hitpoint = nullptr, PhysicsComponent **o_component = nullptr, int collisionGroupMask = 0xffffffff) override;
+	int GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const;
 
 	btDiscreteDynamicsWorld *dynamicsWorld;
 
 private:
 	static void SimulationTickCallback(btDynamicsWorld *world, float timeStep);
 
-	int16_t collisionMasks[16];
 	BulletDebugDraw *blletDebugDraw;
 
 	btDefaultCollisionConfiguration *collisionConfiguration;
