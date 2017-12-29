@@ -11,7 +11,6 @@
 #define CONTEXT_POOL_DEFAULT_SIZE	10
 
 AngelScriptSystem::AngelScriptSystem()
-	: engine(nullptr)
 {
 	engine = asCreateScriptEngine();
 	int result = engine->SetMessageCallback(asFUNCTION(MessageCallback), this, asCALL_CDECL);
@@ -63,7 +62,7 @@ AngelScriptSystem::~AngelScriptSystem()
 	engine->ShutDownAndRelease();
 }
 
-ScriptComponent* AngelScriptSystem::CreateScriptComponent_Internal(const char *scriptName)
+ScriptComponent* AngelScriptSystem::CreateScriptComponent_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -84,7 +83,7 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponent_Internal(const char *s
 		return nullptr;
 	}
 
-	AngelScriptComponent *scriptComponent = new AngelScriptComponent();
+	AngelScriptComponent *scriptComponent = new AngelScriptComponent(object);
 
 	// Call the constructor
 	asIScriptContext *ctx = engine->RequestContext();

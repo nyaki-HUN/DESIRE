@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "Component/ScriptComponent.h"
 
-ScriptComponent::ScriptComponent()
+ScriptComponent::ScriptComponent(Object& object)
+	: IComponent(object)
 {
 
 }

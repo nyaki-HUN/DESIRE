@@ -5,7 +5,9 @@
 #include "BulletVectormathExt.h"
 
 #include "Core/Timer.h"
+#include "Component/ScriptComponent.h"
 #include "Physics/Collision.h"
+#include "Scene/Object.h"
 
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
@@ -67,9 +69,14 @@ void BulletPhysics::Update()
 	dynamicsWorld->stepSimulation(deltaT, 7);
 }
 
-PhysicsComponent* BulletPhysics::CreatePhysicsComponent()
+PhysicsComponent* BulletPhysics::CreatePhysicsComponent(Object *object)
 {
-	BulletPhysicsComponent *component = new BulletPhysicsComponent(true);
+	if(object == nullptr)
+	{
+		return nullptr;
+	}
+
+	BulletPhysicsComponent *component = new BulletPhysicsComponent(*object, true);
 	return component;
 }
 

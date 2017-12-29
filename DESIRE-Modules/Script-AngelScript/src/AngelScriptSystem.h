@@ -16,7 +16,7 @@ public:
 	~AngelScriptSystem() override;
 
 private:
-	ScriptComponent* CreateScriptComponent_Internal(const char *scriptName) override;
+	ScriptComponent* CreateScriptComponent_Internal(Object& object, const char *scriptName) override;
 
 	static asIScriptModule* CompileScript(const char *scriptName, asIScriptEngine *engine);
 	asIScriptContext* CreateScriptContext();
@@ -31,6 +31,6 @@ private:
 	void ExceptionCallback(asIScriptContext *ctx);
 	void LineCallback(asIScriptContext *ctx);		// The line callback function is called by the VM for each statement that is executed
 
-	asIScriptEngine *engine;
+	asIScriptEngine *engine = nullptr;
 	std::vector<asIScriptContext*> contextPool;
 };

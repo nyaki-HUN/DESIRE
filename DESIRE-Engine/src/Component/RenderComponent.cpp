@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "Component/RenderComponent.h"
 
-RenderComponent::RenderComponent()
+RenderComponent::RenderComponent(Object& object)
+	: IComponent(object)
 {
 
 }

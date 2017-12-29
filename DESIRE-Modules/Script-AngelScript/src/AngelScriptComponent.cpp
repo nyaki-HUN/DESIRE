@@ -3,10 +3,8 @@
 
 #include "Core/String.h"
 
-AngelScriptComponent::AngelScriptComponent()
-	: scriptObject(nullptr)
-	, functionCallCtx(nullptr)
-	, numFunctionCallArgs(0)
+AngelScriptComponent::AngelScriptComponent(Object& object)
+	: ScriptComponent(object)
 {
 
 }

@@ -11,7 +11,6 @@
 #include <stdarg.h>
 
 SquirrelScriptSystem::SquirrelScriptSystem()
-	: vm(nullptr)
 {
 	// Create a VM with initial stack size 1024 
 	vm = sq_open(1024);
@@ -48,7 +47,7 @@ SquirrelScriptSystem::~SquirrelScriptSystem()
 	sq_close(vm);
 }
 
-ScriptComponent* SquirrelScriptSystem::CreateScriptComponent_Internal(const char *scriptName)
+ScriptComponent* SquirrelScriptSystem::CreateScriptComponent_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -69,7 +68,7 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponent_Internal(const char
 		}
 	}
 
-	SquirrelScriptComponent *scriptComponent = new SquirrelScriptComponent(vm);
+	SquirrelScriptComponent *scriptComponent = new SquirrelScriptComponent(object, vm);
 
 	// Call the constructor
 	sq_pushroottable(vm);	// the 'this' parameter

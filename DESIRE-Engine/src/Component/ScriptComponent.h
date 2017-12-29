@@ -19,7 +19,7 @@ public:
 		NUM
 	};
 
-	ScriptComponent();
+	ScriptComponent(Object& object);
 	~ScriptComponent() override;
 
 	// Call a built-in function (this is usually faster as the function pointer is cached)

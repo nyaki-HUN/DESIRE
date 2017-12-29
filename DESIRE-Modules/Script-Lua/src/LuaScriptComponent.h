@@ -7,7 +7,7 @@
 class LuaScriptComponent : public ScriptComponent
 {
 public:
-	LuaScriptComponent(lua_State *L);
+	LuaScriptComponent(Object& object, lua_State *L);
 	~LuaScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
@@ -25,6 +25,6 @@ private:
 	bool AddFunctionCallArg(void *arg) override;
 	bool AddFunctionCallArg(const String& string) override;
 
-	lua_State *L;
-	int numFunctionCallArgs;
+	lua_State *L = nullptr;
+	int numFunctionCallArgs = 0;
 };

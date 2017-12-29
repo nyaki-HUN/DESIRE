@@ -10,7 +10,7 @@ class btTriangleIndexVertexArray;
 class BulletPhysicsComponent : public PhysicsComponent
 {
 public:
-	BulletPhysicsComponent(bool dynamic);
+	BulletPhysicsComponent(Object& object, bool dynamic);
 	~BulletPhysicsComponent();
 
 	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
@@ -18,11 +18,13 @@ public:
 	void SetMass(float mass) override;
 	float GetMass() const override;
 
-private:
-	btRigidBody *body;
-	btCollisionShape *shape;
-	btDefaultMotionState *motionState;
-	btTriangleIndexVertexArray *triangleIndexVertexArrays;
+	bool IsTrigger() const override;
 
-	bool dynamic;
+private:
+	btRigidBody *body = nullptr;
+	btCollisionShape *shape = nullptr;
+	btDefaultMotionState *motionState = nullptr;
+	btTriangleIndexVertexArray *triangleIndexVertexArrays = nullptr;
+
+	bool dynamic = false;
 };

@@ -6,9 +6,9 @@
 #include "lua.hpp"
 #include "LuaBridge/LuaBridge.h"
 
-LuaScriptComponent::LuaScriptComponent(lua_State *L)
-	: L(L)
-	, numFunctionCallArgs(0)
+LuaScriptComponent::LuaScriptComponent(Object& object, lua_State *L)
+	: ScriptComponent(object)
+	, L(L)
 {
 
 }

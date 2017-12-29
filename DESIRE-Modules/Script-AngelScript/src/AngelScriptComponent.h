@@ -7,14 +7,14 @@
 class AngelScriptComponent : public ScriptComponent
 {
 public:
-	AngelScriptComponent();
+	AngelScriptComponent(Object& object);
 	~AngelScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 
 	static void CallFromScript(asIScriptGeneric *gen);
 
-	asIScriptObject *scriptObject;
+	asIScriptObject *scriptObject = nullptr;
 
 private:
 	bool PrepareFunctionCall(const char *functionName) override;
@@ -27,6 +27,6 @@ private:
 	bool AddFunctionCallArg(void *arg) override;
 	bool AddFunctionCallArg(const String& arg) override;
 
-	asIScriptContext *functionCallCtx;
-	uint32_t numFunctionCallArgs;
+	asIScriptContext *functionCallCtx = nullptr;
+	uint32_t numFunctionCallArgs = 0;
 };

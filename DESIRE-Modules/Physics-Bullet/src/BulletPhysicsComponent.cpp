@@ -7,11 +7,8 @@
 
 #include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
 
-BulletPhysicsComponent::BulletPhysicsComponent(bool dynamic)
-	: body(nullptr)
-	, shape(nullptr)
-	, motionState(nullptr)
-	, triangleIndexVertexArrays(nullptr)
+BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
+	: PhysicsComponent(object)
 	, dynamic(dynamic)
 {
 	int *indices = nullptr;
@@ -151,4 +148,10 @@ float BulletPhysicsComponent::GetMass() const
 {
 	const float rv = body->getInvMass();
 	return (rv != 0.0f) ? 1.0f / rv : 0.0f;
+}
+
+bool BulletPhysicsComponent::IsTrigger() const
+{
+	ASSERT(false && "TODO");
+	return false;
 }

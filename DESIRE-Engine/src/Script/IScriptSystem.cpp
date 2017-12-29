@@ -19,8 +19,13 @@ void IScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory_t fact
 	scriptFactories.Insert(scriptName, factory);
 }
 
-ScriptComponent* IScriptSystem::CreateScriptComponent(const char *scriptName)
+ScriptComponent* IScriptSystem::CreateScriptComponent(Object *object, const char *scriptName)
 {
+	if(object == nullptr)
+	{
+		return nullptr;
+	}
+
 	ScriptComponent *scriptComponent = nullptr;
 
 	// Try to create as a native script 
@@ -28,12 +33,12 @@ ScriptComponent* IScriptSystem::CreateScriptComponent(const char *scriptName)
 	ScriptFactory_t *scriptFactory = scriptFactories.Find(scriptNameHash);
 	if(scriptFactory != nullptr)
 	{
-		scriptComponent = new NativeScriptComponent((*scriptFactory)());
+		scriptComponent = new NativeScriptComponent(*object, (*scriptFactory)());
 	}
 	else
 	{
 		// Try to create from file
-		scriptComponent = CreateScriptComponent_Internal(scriptName);
+		scriptComponent = CreateScriptComponent_Internal(*object, scriptName);
 	}
 
 	if(scriptComponent != nullptr)

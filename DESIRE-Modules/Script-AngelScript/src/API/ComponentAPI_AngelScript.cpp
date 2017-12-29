@@ -11,7 +11,7 @@
 #define SCRIPT_API_REGISTER_COMPONENT(CLASS)																												\
 	engine->RegisterEnumValue("EComponentTypeID", #CLASS, CLASS::TYPE_ID);																					\
 	engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																						\
-	engine->RegisterObjectMethod(#CLASS, "Object@ get_object()", asMETHODPR(IComponent, GetObject, () const, Object*), asCALL_THISCALL);					\
+	engine->RegisterObjectMethod(#CLASS, "Object& get_object()", asMETHODPR(IComponent, GetObject, () const, Object&), asCALL_THISCALL);					\
 	engine->RegisterObjectMethod(#CLASS, "IComponent@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<IComponent>)), asCALL_CDECL_OBJLAST);		\
 	engine->RegisterObjectMethod("IComponent", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<IComponent>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST)
 

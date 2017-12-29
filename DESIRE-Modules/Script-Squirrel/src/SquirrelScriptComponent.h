@@ -7,7 +7,7 @@
 class SquirrelScriptComponent : public ScriptComponent
 {
 public:
-	SquirrelScriptComponent(HSQUIRRELVM vm);
+	SquirrelScriptComponent(Object& object, HSQUIRRELVM vm);
 	~SquirrelScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
@@ -28,7 +28,7 @@ private:
 	bool AddFunctionCallArg(void *arg) override;
 	bool AddFunctionCallArg(const String& string) override;
 
-	HSQUIRRELVM vm;
-	SQInteger savedStackTop;
-	SQInteger numFunctionCallArgs;
+	HSQUIRRELVM vm = nullptr;
+	SQInteger savedStackTop = 0;
+	SQInteger numFunctionCallArgs = 0;
 };

@@ -10,7 +10,7 @@ class RenderComponent : public IComponent
 	DECLARE_COMPONENT_FURCC_TYPE_ID("REND");
 
 public:
-	RenderComponent();
+	RenderComponent(Object& object);
 	~RenderComponent() override;
 
 	void SetLayer(int layer);

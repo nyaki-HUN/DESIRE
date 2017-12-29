@@ -4,6 +4,7 @@
 #include "Core/math/vectormath.h"
 
 class PhysicsComponent;
+class Object;
 
 enum class EPhysicsCollisionLayer
 {
@@ -32,7 +33,7 @@ public:
 
 	virtual void Update() = 0;
 
-	virtual PhysicsComponent* CreatePhysicsComponent() = 0;
+	virtual PhysicsComponent* CreatePhysicsComponent(Object *object) = 0;
 
 	void SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled);
 

@@ -29,7 +29,7 @@ void SimpleRotateScript::Update()
 {
 	rot += Timer::Get()->GetSecDelta();
 
-	self->GetObject()->GetTransform().SetLocalRotation(Quat::CreateRotation(rot, Vector3::AxisX()));
+	self->GetObject().GetTransform().SetLocalRotation(Quat::CreateRotation(rot, Vector3::AxisX()));
 }
 
 std::function<void(std::array<IScript::Arg, 6>)> SimpleRotateScript::GetFunctionToCall(const char *functionName)

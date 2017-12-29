@@ -17,7 +17,7 @@ public:
 
 	void Update() override;
 
-	PhysicsComponent* CreatePhysicsComponent() override;
+	PhysicsComponent* CreatePhysicsComponent(Object *object) override;
 
 	bool RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr = nullptr, Vector3 *o_collisionNormalPtr = nullptr, int layerMask = IPhysics::MASK_ALL) override;
 	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = IPhysics::MASK_ALL) override;

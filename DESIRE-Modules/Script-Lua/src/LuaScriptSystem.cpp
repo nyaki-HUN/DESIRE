@@ -9,7 +9,6 @@
 #include "lua.hpp"
 
 LuaScriptSystem::LuaScriptSystem()
-	: L(nullptr)
 {
 	L = luaL_newstate();
 
@@ -44,7 +43,7 @@ LuaScriptSystem::~LuaScriptSystem()
 	lua_close(L);
 }
 
-ScriptComponent* LuaScriptSystem::CreateScriptComponent_Internal(const char *scriptName)
+ScriptComponent* LuaScriptSystem::CreateScriptComponent_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -57,7 +56,7 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponent_Internal(const char *scr
 
 	CompileScript(scriptName, newL);
 
-	LuaScriptComponent *scriptComponent = new LuaScriptComponent(newL);
+	LuaScriptComponent *scriptComponent = new LuaScriptComponent(object, newL);
 	luabridge::setGlobal(newL, scriptComponent, "self");
 
 	return scriptComponent;

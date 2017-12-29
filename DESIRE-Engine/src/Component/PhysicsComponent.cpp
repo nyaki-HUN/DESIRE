@@ -2,8 +2,9 @@
 #include "Component/PhysicsComponent.h"
 #include "Physics/IPhysics.h"
 
-PhysicsComponent::PhysicsComponent()
-	: collisionLayer(EPhysicsCollisionLayer::DEFAULT)
+PhysicsComponent::PhysicsComponent(Object& object)
+	: IComponent(object)
+	, collisionLayer(EPhysicsCollisionLayer::DEFAULT)
 {
 
 }

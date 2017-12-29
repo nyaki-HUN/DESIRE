@@ -34,9 +34,10 @@ Box2DPhysics::Box2DPhysics()
 	world->SetContinuousPhysics(true);
 	world->SetContactListener(contactListener);
 	world->SetDestructionListener(destructorListener);
-	b2BodyDef def;
-	def.type = b2BodyType::b2_dynamicBody;
-	bodyForTargetJoint = world->CreateBody(&def);
+
+	b2BodyDef bodyDef;
+	bodyDef.type = b2BodyType::b2_dynamicBody;
+	bodyForTargetJoint = world->CreateBody(&bodyDef);
 }
 
 Box2DPhysics::~Box2DPhysics()
@@ -56,9 +57,9 @@ Box2DPhysics::~Box2DPhysics()
 
 void Box2DPhysics::Update()
 {
-	{
-		const float dt = 1.0f / 60.0f;
+	const float dt = 1.0f / 60.0f;
 
+	{
 		contactsBegin.clear();
 		contactsEnd.clear();
 
@@ -70,8 +71,14 @@ void Box2DPhysics::Update()
 	world->ClearForces();
 }
 
-PhysicsComponent* Box2DPhysics::CreatePhysicsComponent()
+PhysicsComponent* Box2DPhysics::CreatePhysicsComponent(Object *object)
 {
+	if(object == nullptr)
+	{
+		return nullptr;
+	}
+
+	ASSERT(false && "TODO");
 	return nullptr;
 }
 
@@ -153,4 +160,9 @@ uint16_t Box2DPhysics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) co
 b2World* Box2DPhysics::GetWorld() const
 {
 	return world;
+}
+
+b2Body* Box2DPhysics::GetBodyForTargetJoint() const
+{
+	return bodyForTargetJoint;
 }

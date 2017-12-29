@@ -11,7 +11,7 @@ public:
 	~SquirrelScriptSystem() override;
 
 private:
-	ScriptComponent* CreateScriptComponent_Internal(const char *scriptName) override;
+	ScriptComponent* CreateScriptComponent_Internal(Object& object, const char *scriptName) override;
 
 	static void CompileScript(const char *scriptName, HSQUIRRELVM vm);
 
@@ -22,5 +22,5 @@ private:
 	static void DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar *sourcename, SQInteger line, const SQChar *funcname);
 	static SQInteger RuntimeErrorHandler(HSQUIRRELVM vm);
 
-	HSQUIRRELVM vm;
+	HSQUIRRELVM vm = nullptr;
 };

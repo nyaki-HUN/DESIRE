@@ -6,9 +6,9 @@
 
 #include "sqrat/sqratTypes.h"
 
-SquirrelScriptComponent::SquirrelScriptComponent(HSQUIRRELVM vm)
-	: vm(vm)
-	, numFunctionCallArgs(0)
+SquirrelScriptComponent::SquirrelScriptComponent(Object& object, HSQUIRRELVM vm)
+	: ScriptComponent(object)
+	, vm(vm)
 {
 	sq_resetobject(&scriptObject);
 	for(auto i : Enumerator<EBuiltinFuncType>())

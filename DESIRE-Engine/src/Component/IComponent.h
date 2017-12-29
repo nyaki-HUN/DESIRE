@@ -15,17 +15,19 @@ class Object;
 
 class IComponent
 {
-	friend class Object;
-
 protected:
-	IComponent() {}
+	IComponent(Object& object)
+		: object(object)
+	{
+
+	}
 
 public:
 	virtual ~IComponent() {}
 
 	virtual int GetTypeID() const = 0;
 
-	inline Object* GetObject() const
+	inline Object& GetObject() const
 	{
 		return object;
 	}
@@ -33,5 +35,5 @@ public:
 	virtual void OnGUI() {}
 
 protected:
-	Object *object;
+	Object& object;
 };

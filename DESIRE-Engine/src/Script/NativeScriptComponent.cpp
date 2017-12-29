@@ -2,8 +2,9 @@
 #include "Script/NativeScriptComponent.h"
 #include "Core/String.h"
 
-NativeScriptComponent::NativeScriptComponent(std::unique_ptr<IScript> i_script)
-	: script(std::move(i_script))
+NativeScriptComponent::NativeScriptComponent(Object& object, std::unique_ptr<IScript> i_script)
+	: ScriptComponent(object)
+	, script(std::move(i_script))
 	, functionToCall(nullptr)
 	, numFunctionCallArgs(0)
 {
