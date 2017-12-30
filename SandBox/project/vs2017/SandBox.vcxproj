@@ -121,6 +121,9 @@
     <ProjectReference Include="..\..\..\DESIRE-Modules\Compression-zlib-ng\project\vs2017\Compression-zlib-ng.vcxproj">
       <Project>{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Compression-zstd\project\vs2017\Compression-zstd.vcxproj">
+      <Project>{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\DESIRE-Modules\Physics-Box2D\project\vs2017\Physics-Box2D.vcxproj">
       <Project>{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}</Project>
     </ProjectReference>
