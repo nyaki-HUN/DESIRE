@@ -15,5 +15,6 @@ Component::~Component()
 
 void Component::AddToObject()
 {
+	ASSERT(object.GetComponentByTypeID(GetTypeID()) == nullptr);
 	object.components.emplace_back(GetTypeID(), this);
 }
