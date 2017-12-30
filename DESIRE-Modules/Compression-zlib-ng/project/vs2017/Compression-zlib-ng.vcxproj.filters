@@ -72,7 +72,7 @@
     <ClInclude Include="..\..\include\zconf.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\CompressionZlib-ng.h">
+    <ClInclude Include="..\..\src\ZlibNgCompression.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -143,7 +143,7 @@
     <ClCompile Include="..\..\Externals\zlib-ng\zutil.c">
       <Filter>Externals\zlib-ng</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\CompressionZlib-ng.cpp">
+    <ClCompile Include="..\..\src\ZlibNgCompression.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

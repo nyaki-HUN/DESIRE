@@ -145,8 +145,8 @@
     <ClInclude Include="..\..\src\Component\PhysicsComponent.h" />
     <ClInclude Include="..\..\src\Component\RenderComponent.h" />
     <ClInclude Include="..\..\src\Component\ScriptComponent.h" />
+    <ClInclude Include="..\..\src\Compression\Compression.h" />
     <ClInclude Include="..\..\src\Compression\CompressionManager.h" />
-    <ClInclude Include="..\..\src\Compression\ICompression.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueInt.h" />
     <ClInclude Include="..\..\src\Core\ConfigValue\IConfigValue.h" />
@@ -250,6 +250,7 @@
     <ClCompile Include="..\..\src\Component\PhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\Component\RenderComponent.cpp" />
     <ClCompile Include="..\..\src\Component\ScriptComponent.cpp" />
+    <ClCompile Include="..\..\src\Compression\Compression.cpp" />
     <ClCompile Include="..\..\src\Compression\CompressionManager.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueInt.cpp" />

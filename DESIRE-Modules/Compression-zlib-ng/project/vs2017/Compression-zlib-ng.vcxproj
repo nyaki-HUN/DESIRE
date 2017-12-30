@@ -119,7 +119,7 @@
     <ClInclude Include="..\..\Externals\zlib-ng\zlib.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zutil.h" />
     <ClInclude Include="..\..\include\zconf.h" />
-    <ClInclude Include="..\..\src\CompressionZlib-ng.h" />
+    <ClInclude Include="..\..\src\ZlibNgCompression.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\zlib-ng\adler32.c" />
@@ -144,7 +144,7 @@
     <ClCompile Include="..\..\Externals\zlib-ng\trees.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\uncompr.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\zutil.c" />
-    <ClCompile Include="..\..\src\CompressionZlib-ng.cpp" />
+    <ClCompile Include="..\..\src\ZlibNgCompression.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

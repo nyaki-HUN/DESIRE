@@ -1,16 +1,27 @@
 #include "stdafx.h"
-#include "CompressionZlib-ng.h"
+#include "ZlibNgCompression.h"
 
 #include "Core/memory/IAllocator.h"
 
 #include "zlib.h"
 
-CompressionZlib::CompressionZlib()
+ZlibNgCompression::ZlibNgCompression()
 {
 	compressionLevel = Z_DEFAULT_COMPRESSION;
 }
 
-size_t CompressionZlib::Compress(const void *data, size_t dataSize, void *compressedDataBuffer, size_t compressedDataBufferSize)
+ZlibNgCompression::~ZlibNgCompression()
+{
+
+}
+
+size_t ZlibNgCompression::GetMaxCompressionDataBufferSize(size_t dataSize) const
+{
+	ASSERT(false && "Unimplemented");
+	return 0;
+}
+
+size_t ZlibNgCompression::CompressBuffer(void *compressedDataBuffer, size_t compressedDataBufferSize, const void *data, size_t dataSize)
 {
 	if(dataSize > UINT32_MAX || compressedDataBufferSize > UINT32_MAX)
 	{
@@ -23,8 +34,8 @@ size_t CompressionZlib::Compress(const void *data, size_t dataSize, void *compre
 	stream.avail_in = (uint32_t)dataSize;
 	stream.next_out = static_cast<uint8_t*>(compressedDataBuffer);
 	stream.avail_out = (uint32_t)compressedDataBufferSize;
-	stream.zalloc = &CompressionZlib::zlib_alloc;
-	stream.zfree = &CompressionZlib::zlib_free;
+	stream.zalloc = &ZlibNgCompression::customAlloc;
+	stream.zfree = &ZlibNgCompression::customFree;
 	stream.opaque = &IAllocator::GetDefaultAllocator();
 	DESIRE_TODO("Test and use a LinearAllocator");
 
@@ -48,21 +59,27 @@ size_t CompressionZlib::Compress(const void *data, size_t dataSize, void *compre
 	return stream.total_out;
 }
 
-size_t CompressionZlib::Decompress(const void *data, size_t dataSize, void *decompressedDataBuffer, size_t decompressedDataBufferSize)
+size_t ZlibNgCompression::GetMaxDecompressionDataBufferSize(const void *compressedData, size_t compressedDataSize) const
 {
-	if(dataSize > UINT32_MAX || decompressedDataBufferSize > UINT32_MAX)
+	ASSERT(false && "Unimplemented");
+	return 0;
+}
+
+size_t ZlibNgCompression::DecompressBuffer(void *dataBuffer, size_t dataBufferSize, const void *compressedData, size_t compressedDataSize)
+{
+	if(compressedDataSize > UINT32_MAX || dataBufferSize > UINT32_MAX)
 	{
 		LOG_ERROR("Error decompressing - data is too large");
 		return 0;
 	}
 
 	z_stream stream = {};
-	stream.next_in = static_cast<const uint8_t*>(data);
-	stream.avail_in = (uint32_t)dataSize;
-	stream.next_out = static_cast<uint8_t*>(decompressedDataBuffer);
-	stream.avail_out = (uint32_t)decompressedDataBufferSize;
-	stream.zalloc = &CompressionZlib::zlib_alloc;
-	stream.zfree = &CompressionZlib::zlib_free;
+	stream.next_in = static_cast<const uint8_t*>(compressedData);
+	stream.avail_in = (uint32_t)compressedDataSize;
+	stream.next_out = static_cast<uint8_t*>(dataBuffer);
+	stream.avail_out = (uint32_t)dataBufferSize;
+	stream.zalloc = &ZlibNgCompression::customAlloc;
+	stream.zfree = &ZlibNgCompression::customFree;
 	stream.opaque = &IAllocator::GetDefaultAllocator();
 	DESIRE_TODO("Test and use a LinearAllocator");
 
@@ -86,13 +103,23 @@ size_t CompressionZlib::Decompress(const void *data, size_t dataSize, void *deco
 	return stream.total_out;
 }
 
-void* CompressionZlib::zlib_alloc(void *opaque, uint32_t items, uint32_t size)
+int ZlibNgCompression::GetMinCompressionLevel() const
+{
+	return Z_BEST_SPEED;
+}
+
+int ZlibNgCompression::GetMaxCompressionLevel() const
+{
+	return Z_BEST_COMPRESSION;
+}
+
+void* ZlibNgCompression::customAlloc(void *opaque, uint32_t items, uint32_t size)
 {
 	IAllocator *allocator = static_cast<IAllocator*>(opaque);
 	return allocator->Allocate(items * size);
 }
 
-void CompressionZlib::zlib_free(void *opaque, void *address)
+void ZlibNgCompression::customFree(void *opaque, void *address)
 {
 	IAllocator *allocator = static_cast<IAllocator*>(opaque);
 	allocator->Deallocate(address);

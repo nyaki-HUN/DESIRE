@@ -188,7 +188,7 @@ ReadFilePtr FileSourceZip::OpenFile(const char *filename)
 
 		case 8:		// Deflated
 		{
-			std::unique_ptr<ICompression> zlib = CompressionManager::Get()->CreateCompression("zlib");
+			std::unique_ptr<Compression> zlib = CompressionManager::Get()->CreateCompression("zlib");
 			if(zlib != nullptr)
 			{
 				std::unique_ptr<uint8_t[]> compressedData = std::make_unique<uint8_t[]>(entry.compressedSize);
@@ -203,7 +203,7 @@ ReadFilePtr FileSourceZip::OpenFile(const char *filename)
 				zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::BEGIN);
 				zipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
 
-				const size_t decompressedSize = zlib->Decompress(compressedData.get(), entry.compressedSize, decompressedData, entry.uncompressedSize);
+				const size_t decompressedSize = zlib->DecompressBuffer(decompressedData, entry.uncompressedSize, compressedData.get(), entry.compressedSize);
 				ASSERT(decompressedSize == entry.uncompressedSize);
 				return std::make_unique<MemoryFile>(decompressedData, decompressedSize);
 			}

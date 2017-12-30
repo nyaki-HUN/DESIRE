@@ -2,7 +2,7 @@
 
 #include "Core/Singleton.h"
 #include "Core/HashedStringMap.h"
-#include "Compression/ICompression.h"
+#include "Compression/Compression.h"
 
 #include <memory>
 
@@ -11,13 +11,13 @@ class CompressionManager
 	DESIRE_DECLARE_SINGLETON(CompressionManager)
 
 public:
-	std::unique_ptr<ICompression> CreateCompression(const char *name) const;
+	std::unique_ptr<Compression> CreateCompression(const char *name) const;
 
 private:
-	typedef ICompression*(*CompressionFactoryFunc_t)();
+	typedef Compression*(*CompressionFactoryFunc_t)();
 
 	template<class T>
-	static ICompression* CompressionFactory()
+	static Compression* CompressionFactory()
 	{
 		return new T();
 	}
