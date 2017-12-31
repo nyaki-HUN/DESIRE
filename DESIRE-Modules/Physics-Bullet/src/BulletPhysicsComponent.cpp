@@ -5,6 +5,7 @@
 
 #include "Core/math/AABB.h"
 
+#include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
 
 BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)

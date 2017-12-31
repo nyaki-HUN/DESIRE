@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Core/IApp.h"
-#include "Core/platform.h"
 #include "Core/CoreAppEvent.h"
 #include "Core/Timer.h"
 #include "Input/Input.h"

@@ -9,6 +9,7 @@
 #include "Physics/Collision.h"
 #include "Scene/Object.h"
 
+#include "btBulletDynamicsCommon.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 BulletPhysics::BulletPhysics()

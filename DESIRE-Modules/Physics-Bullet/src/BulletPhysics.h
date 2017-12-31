@@ -1,13 +1,14 @@
 #pragma once
 
-#include "Core/platform.h"
 #include "Physics/IPhysics.h"
 
-DESIRE_DISABLE_WARNINGS
-#include "../Externals/Bullet/src/btBulletDynamicsCommon.h"
-DESIRE_ENABLE_WARNINGS
-
 class BulletDebugDraw;
+class btDiscreteDynamicsWorld;
+class btDynamicsWorld;
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class btAxisSweep3;
+class btSequentialImpulseConstraintSolver;
 
 class BulletPhysics : public IPhysics
 {

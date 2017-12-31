@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Assert.h"
+#include "Core/assert.h"
 #include "Core/HashedString.h"
 #include "Core/STL_utils.h"
 
