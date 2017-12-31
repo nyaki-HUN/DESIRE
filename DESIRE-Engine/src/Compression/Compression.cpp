@@ -3,22 +3,12 @@
 
 Compression::Compression()
 {
-	compressionLevel = GetMinCompressionLevel();
+
 }
 
 Compression::~Compression()
 {
 
-}
-
-void Compression::InitStreamForCompression()
-{
-	ASSERT(false && "Not implemented");
-}
-
-void Compression::InitStreamForDecompression()
-{
-	ASSERT(false && "Not implemented");
 }
 
 void Compression::SetCompressionLevel(int level)
@@ -37,4 +27,19 @@ int Compression::GetMinCompressionLevel() const
 int Compression::GetMaxCompressionLevel() const
 {
 	return 0;
+}
+
+void Compression::InitStreamForCompression()
+{
+	ASSERT(false && "Unimplemented");
+}
+
+void Compression::InitStreamForDecompression()
+{
+	ASSERT(false && "Unimplemented");
+}
+
+void Compression::ProcessStream()
+{
+	ASSERT(false && "Unimplemented");
 }

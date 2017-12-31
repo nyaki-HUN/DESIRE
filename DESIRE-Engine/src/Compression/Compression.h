@@ -24,6 +24,7 @@ public:
 	// Stream API for compress/decompress
 	virtual void InitStreamForCompression();
 	virtual void InitStreamForDecompression();
+	virtual void ProcessStream();
 
 protected:
 	int compressionLevel = 0;
