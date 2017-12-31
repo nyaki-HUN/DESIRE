@@ -1,16 +1,17 @@
 #include "stdafx.h"
-#include "ZlibNgCompression.h"
+#include "ZlibNgCompressionBase.h"
 
 #include "Core/memory/IAllocator.h"
 
 #include "zlib.h"
 
-ZlibNgCompression::ZlibNgCompression()
+ZlibNgCompressionBase::ZlibNgCompressionBase(int windowBits)
+	: windowBits(windowBits)
 {
 	compressionLevel = Z_DEFAULT_COMPRESSION;
 }
 
-ZlibNgCompression::~ZlibNgCompression()
+ZlibNgCompressionBase::~ZlibNgCompressionBase()
 {
 	if(deflateStream != nullptr)
 	{
@@ -27,13 +28,31 @@ ZlibNgCompression::~ZlibNgCompression()
 	}
 }
 
-size_t ZlibNgCompression::GetMaxCompressionDataBufferSize(size_t dataSize) const
+size_t ZlibNgCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) const
 {
-	ASSERT(false && "Unimplemented");
-	return 0;
+	if(dataSize > UINT32_MAX)
+	{
+		LOG_ERROR("Data is too large");
+		return 0;
+	}
+
+	z_stream stream = {};
+	StreamInit(stream);
+
+	int result = deflateInit2(&stream, compressionLevel, Z_DEFLATED, windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+	if(result != Z_OK)
+	{
+		return 0;
+	}
+
+	const size_t maxSize = deflateBound(&stream, (uint32_t)dataSize);
+
+	deflateEnd(&stream);
+
+	return maxSize;
 }
 
-size_t ZlibNgCompression::CompressBuffer(void *compressedDataBuffer, size_t compressedDataBufferSize, const void *data, size_t dataSize)
+size_t ZlibNgCompressionBase::CompressBuffer(void *compressedDataBuffer, size_t compressedDataBufferSize, const void *data, size_t dataSize)
 {
 	if(dataSize > UINT32_MAX || compressedDataBufferSize > UINT32_MAX)
 	{
@@ -48,8 +67,6 @@ size_t ZlibNgCompression::CompressBuffer(void *compressedDataBuffer, size_t comp
 	stream.next_out = static_cast<uint8_t*>(compressedDataBuffer);
 	stream.avail_out = (uint32_t)compressedDataBufferSize;
 
-	// Compression with windowBits < 0 for raw deflate (no zlib or gzip header)
-	const int windowBits = -MAX_WBITS;
 	int result = deflateInit2(&stream, compressionLevel, Z_DEFLATED, windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
 	if(result != Z_OK)
 	{
@@ -69,13 +86,13 @@ size_t ZlibNgCompression::CompressBuffer(void *compressedDataBuffer, size_t comp
 	return stream.total_out;
 }
 
-size_t ZlibNgCompression::GetMaxDecompressionDataBufferSize(const void *compressedData, size_t compressedDataSize) const
+size_t ZlibNgCompressionBase::GetMaxDecompressionDataBufferSize(const void *compressedData, size_t compressedDataSize) const
 {
 	ASSERT(false && "Unimplemented");
 	return 0;
 }
 
-size_t ZlibNgCompression::DecompressBuffer(void *dataBuffer, size_t dataBufferSize, const void *compressedData, size_t compressedDataSize)
+size_t ZlibNgCompressionBase::DecompressBuffer(void *dataBuffer, size_t dataBufferSize, const void *compressedData, size_t compressedDataSize)
 {
 	if(compressedDataSize > UINT32_MAX || dataBufferSize > UINT32_MAX)
 	{
@@ -90,8 +107,6 @@ size_t ZlibNgCompression::DecompressBuffer(void *dataBuffer, size_t dataBufferSi
 	stream.next_out = static_cast<uint8_t*>(dataBuffer);
 	stream.avail_out = (uint32_t)dataBufferSize;
 
-	// Decompression with windowBits < 0 for raw inflate (no zlib or gzip header)
-	const int windowBits = -MAX_WBITS;
 	int result = inflateInit2(&stream, windowBits);
 	if(result != Z_OK)
 	{
@@ -111,32 +126,70 @@ size_t ZlibNgCompression::DecompressBuffer(void *dataBuffer, size_t dataBufferSi
 	return stream.total_out;
 }
 
-int ZlibNgCompression::GetMinCompressionLevel() const
+void ZlibNgCompressionBase::InitStreamForCompression()
+{
+	if(inflateStream != nullptr || deflateStream != nullptr)
+	{
+		ASSERT(false && "Already initialized");
+		return;
+	}
+
+	deflateStream = new z_stream();
+	StreamInit(*deflateStream);
+
+	int result = deflateInit2(deflateStream, compressionLevel, Z_DEFLATED, windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+	if(result != Z_OK)
+	{
+		delete deflateStream;
+		deflateStream = nullptr;
+	}
+}
+
+void ZlibNgCompressionBase::InitStreamForDecompression()
+{
+	if(inflateStream != nullptr || deflateStream != nullptr)
+	{
+		ASSERT(false && "Already initialized");
+		return;
+	}
+
+	inflateStream = new z_stream();
+	StreamInit(*inflateStream);
+
+	int result = inflateInit2(inflateStream, windowBits);
+	if(result != Z_OK)
+	{
+		delete inflateStream;
+		inflateStream = nullptr;
+	}
+}
+
+int ZlibNgCompressionBase::GetMinCompressionLevel() const
 {
 	return Z_BEST_SPEED;
 }
 
-int ZlibNgCompression::GetMaxCompressionLevel() const
+int ZlibNgCompressionBase::GetMaxCompressionLevel() const
 {
 	return Z_BEST_COMPRESSION;
 }
 
-void* ZlibNgCompression::CustomAlloc(void *opaque, uint32_t items, uint32_t size)
+void* ZlibNgCompressionBase::CustomAlloc(void *opaque, uint32_t items, uint32_t size)
 {
 	IAllocator *allocator = static_cast<IAllocator*>(opaque);
 	return allocator->Allocate(items * size);
 }
 
-void ZlibNgCompression::CustomFree(void *opaque, void *address)
+void ZlibNgCompressionBase::CustomFree(void *opaque, void *address)
 {
 	IAllocator *allocator = static_cast<IAllocator*>(opaque);
 	allocator->Deallocate(address);
 }
 
-void ZlibNgCompression::StreamInit(z_stream& stream)
+void ZlibNgCompressionBase::StreamInit(z_stream& stream)
 {
-	stream.zalloc = &ZlibNgCompression::CustomAlloc;
-	stream.zfree = &ZlibNgCompression::CustomFree;
+	stream.zalloc = &ZlibNgCompressionBase::CustomAlloc;
+	stream.zfree = &ZlibNgCompressionBase::CustomFree;
 	stream.opaque = &IAllocator::GetDefaultAllocator();
 	DESIRE_TODO("Test and use a LinearAllocator");
 }

@@ -9,11 +9,15 @@ DESIRE_APP_CLASS(SandBox)
 // --------------------------------------------------------------------------------------------------------------------
 #include "Compression/CompressionManager.h"
 
-#include "Compression-zlib-ng/src/ZlibNgCompression.h"
+#include "Compression-zlib-ng/src/GZipCompression.h"
+#include "Compression-zlib-ng/src/ZlibCompression.h"
+#include "Compression-zlib-ng/src/RawDeflateCompression.h"
 #include "Compression-zstd/src/ZstdCompression.h"
 const HashedStringMap<CompressionManager::CompressionFactoryFunc_t> CompressionManager::compressionFactories =
 {
-	{ "zlib", &CompressionFactory<ZlibNgCompression> },
+	{ "gzip", &CompressionFactory<GZipCompression> },
+	{ "zlib", &CompressionFactory<ZlibCompression> },
+	{ "deflate", &CompressionFactory<RawDeflateCompression> },
 	{ "zstd", &CompressionFactory<ZstdCompression> },
 };
 
