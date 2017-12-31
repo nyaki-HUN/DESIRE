@@ -2,6 +2,8 @@
 
 #include "Compression/Compression.h"
 
+typedef struct z_stream_s z_stream;
+
 class ZlibNgCompression : public Compression
 {
 public:
@@ -18,6 +20,10 @@ public:
 	int GetMaxCompressionLevel() const override;
 
 private:
-	static void* customAlloc(void *opaque, uint32_t items, uint32_t size);
-	static void customFree(void *opaque, void *address);
+	static void* CustomAlloc(void *opaque, uint32_t items, uint32_t size);
+	static void CustomFree(void *opaque, void *address);
+	static void StreamInit(z_stream& stream);
+
+	z_stream *deflateStream = nullptr;
+	z_stream *inflateStream = nullptr;
 };

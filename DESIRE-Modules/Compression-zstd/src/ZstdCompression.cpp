@@ -3,6 +3,9 @@
 
 #include "Core/memory/IAllocator.h"
 
+#define ZSTD_STATIC_LINKING_ONLY
+#include "zstd.h"
+
 ZstdCompression::ZstdCompression()
 {
 	compressionLevel = 19;
@@ -53,8 +56,8 @@ void ZstdCompression::InitStreamForCompression()
 
 #if defined(ZSTD_STATIC_LINKING_ONLY)
 	ZSTD_customMem customMem = {};
-	customMem.customAlloc = &ZstdCompression::customAlloc;
-	customMem.customFree = &ZstdCompression::customFree;
+	customMem.customAlloc = &ZstdCompression::CustomAlloc;
+	customMem.customFree = &ZstdCompression::CustomFree;
 	customMem.opaque = &IAllocator::GetDefaultAllocator();
 
 	cstream = ZSTD_createCStream_advanced(customMem);
@@ -80,8 +83,8 @@ void ZstdCompression::InitStreamForDecompression()
 
 #if defined(ZSTD_STATIC_LINKING_ONLY)
 	ZSTD_customMem customMem = {};
-	customMem.customAlloc = &ZstdCompression::customAlloc;
-	customMem.customFree = &ZstdCompression::customFree;
+	customMem.customAlloc = &ZstdCompression::CustomAlloc;
+	customMem.customFree = &ZstdCompression::CustomFree;
 	customMem.opaque = &IAllocator::GetDefaultAllocator();
 
 	dstream = ZSTD_createDStream_advanced(customMem);
@@ -107,13 +110,13 @@ int ZstdCompression::GetMaxCompressionLevel() const
 	return ZSTD_maxCLevel();
 }
 
-void* ZstdCompression::customAlloc(void *opaque, size_t size)
+void* ZstdCompression::CustomAlloc(void *opaque, size_t size)
 {
 	IAllocator *allocator = static_cast<IAllocator*>(opaque);
 	return allocator->Allocate(size);
 }
 
-void ZstdCompression::customFree(void *opaque, void *address)
+void ZstdCompression::CustomFree(void *opaque, void *address)
 {
 	IAllocator *allocator = static_cast<IAllocator*>(opaque);
 	allocator->Deallocate(address);

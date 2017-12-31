@@ -2,8 +2,8 @@
 
 #include "Compression/Compression.h"
 
-#define ZSTD_STATIC_LINKING_ONLY
-#include "../Externals/zstd/include/zstd.h"
+typedef struct ZSTD_CCtx_s ZSTD_CStream;
+typedef struct ZSTD_DCtx_s ZSTD_DStream;
 
 class ZstdCompression : public Compression
 {
@@ -24,8 +24,8 @@ public:
 	int GetMaxCompressionLevel() const override;
 
 private:
-	static void* customAlloc(void *opaque, size_t size);
-	static void customFree(void *opaque, void *address);
+	static void* CustomAlloc(void *opaque, size_t size);
+	static void CustomFree(void *opaque, void *address);
 
 	ZSTD_CStream *cstream = nullptr;
 	ZSTD_DStream *dstream = nullptr;
