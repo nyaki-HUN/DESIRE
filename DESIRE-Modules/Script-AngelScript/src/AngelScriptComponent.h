@@ -1,8 +1,10 @@
 #pragma once
 
-#include "AngelScriptSystem.h"
-
 #include "Component/ScriptComponent.h"
+
+class asIScriptContext;
+class asIScriptGeneric;
+class asIScriptObject;
 
 class AngelScriptComponent : public ScriptComponent
 {

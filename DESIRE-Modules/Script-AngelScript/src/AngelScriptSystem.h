@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Script/IScriptSystem.h"
-#include "Core/platform.h"
-
-DESIRE_DISABLE_WARNINGS
-#include "../Externals/AngelScript/include/angelscript.h"
-DESIRE_ENABLE_WARNINGS
 
 class String;
+class asIScriptEngine;
+class asIScriptModule;
+class asIScriptContext;
+class asIScriptFunction;
+struct asSMessageInfo;
 
 class AngelScriptSystem : public IScriptSystem
 {

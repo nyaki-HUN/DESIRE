@@ -1,8 +1,8 @@
 #pragma once
 
-#include "LuaScriptSystem.h"
-
 #include "Component/ScriptComponent.h"
+
+struct lua_State;
 
 class LuaScriptComponent : public ScriptComponent
 {

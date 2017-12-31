@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ImGuiImpl.h"
 
-#include "Core/platform.h"
 #include "Core/IWindow.h"
 #include "Core/Timer.h"
 #include "Input/Input.h"

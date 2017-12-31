@@ -3,6 +3,10 @@
 
 #include "Core/String.h"
 
+DESIRE_DISABLE_WARNINGS
+#include "angelscript.h"
+DESIRE_ENABLE_WARNINGS
+
 AngelScriptComponent::AngelScriptComponent(Object& object)
 	: ScriptComponent(object)
 {

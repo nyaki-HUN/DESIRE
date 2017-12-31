@@ -1,8 +1,8 @@
 #pragma once
 
-#include "SquirrelScriptSystem.h"
-
 #include "Component/ScriptComponent.h"
+
+#include "squirrel.h"
 
 class SquirrelScriptComponent : public ScriptComponent
 {

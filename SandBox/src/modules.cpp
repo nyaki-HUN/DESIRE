@@ -35,7 +35,7 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(IPhysics, Box2DPhysics)
 //	Render
 // --------------------------------------------------------------------------------------------------------------------
 #include "Render-bgfx/src/BgfxRender.h"
-//#include "Render-Direct3D11/src/Direct3D11Render.h"
+#include "Render-Direct3D11/src/Direct3D11Render.h"
 DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, BgfxRender)
 //DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, Direct3D11Render)
 
