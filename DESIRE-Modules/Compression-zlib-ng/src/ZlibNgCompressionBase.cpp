@@ -126,6 +126,16 @@ size_t ZlibNgCompressionBase::DecompressBuffer(void *dataBuffer, size_t dataBuff
 	return stream.total_out;
 }
 
+int ZlibNgCompressionBase::GetMinCompressionLevel() const
+{
+	return Z_BEST_SPEED;
+}
+
+int ZlibNgCompressionBase::GetMaxCompressionLevel() const
+{
+	return Z_BEST_COMPRESSION;
+}
+
 void ZlibNgCompressionBase::InitStreamForCompression()
 {
 	if(inflateStream != nullptr || deflateStream != nullptr)
@@ -162,16 +172,6 @@ void ZlibNgCompressionBase::InitStreamForDecompression()
 		delete inflateStream;
 		inflateStream = nullptr;
 	}
-}
-
-int ZlibNgCompressionBase::GetMinCompressionLevel() const
-{
-	return Z_BEST_SPEED;
-}
-
-int ZlibNgCompressionBase::GetMaxCompressionLevel() const
-{
-	return Z_BEST_COMPRESSION;
 }
 
 void* ZlibNgCompressionBase::CustomAlloc(void *opaque, uint32_t items, uint32_t size)

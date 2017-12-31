@@ -46,6 +46,16 @@ size_t ZstdCompression::DecompressBuffer(void *dataBuffer, size_t dataBufferSize
 	return ZSTD_decompress(dataBuffer, dataBufferSize, compressedData, compressedDataSize);
 }
 
+int ZstdCompression::GetMinCompressionLevel() const
+{
+	return 1;
+}
+
+int ZstdCompression::GetMaxCompressionLevel() const
+{
+	return ZSTD_maxCLevel();
+}
+
 void ZstdCompression::InitStreamForCompression()
 {
 	if(cstream != nullptr || dstream != nullptr)
@@ -98,16 +108,6 @@ void ZstdCompression::InitStreamForDecompression()
 		ZSTD_freeDStream(dstream);
 		dstream = nullptr;
 	}
-}
-
-int ZstdCompression::GetMinCompressionLevel() const
-{
-	return 1;
-}
-
-int ZstdCompression::GetMaxCompressionLevel() const
-{
-	return ZSTD_maxCLevel();
 }
 
 void* ZstdCompression::CustomAlloc(void *opaque, size_t size)

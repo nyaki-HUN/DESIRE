@@ -16,14 +16,14 @@ public:
 	virtual size_t GetMaxDecompressionDataBufferSize(const void *compressedData, size_t compressedDataSize) const = 0;
 	virtual size_t DecompressBuffer(void *dataBuffer, size_t dataBufferSize, const void *compressedData, size_t compressedDataSize) = 0;
 
-	// Stream compress/decompress
-	virtual void InitStreamForCompression();
-	virtual void InitStreamForDecompression();
-
 	// Options
 	void SetCompressionLevel(int level);
 	virtual int GetMinCompressionLevel() const;
 	virtual int GetMaxCompressionLevel() const;
+
+	// Stream API for compress/decompress
+	virtual void InitStreamForCompression();
+	virtual void InitStreamForDecompression();
 
 protected:
 	int compressionLevel = 0;

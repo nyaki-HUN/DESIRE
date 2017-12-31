@@ -16,11 +16,11 @@ public:
 	size_t GetMaxDecompressionDataBufferSize(const void *compressedData, size_t compressedDataSize) const override;
 	size_t DecompressBuffer(void *dataBuffer, size_t dataBufferSize, const void *compressedData, size_t compressedDataSize) override;
 
-	void InitStreamForCompression() override;
-	void InitStreamForDecompression() override;
-
 	int GetMinCompressionLevel() const override;
 	int GetMaxCompressionLevel() const override;
+
+	void InitStreamForCompression() override;
+	void InitStreamForDecompression() override;
 
 protected:
 	static void* CustomAlloc(void *opaque, uint32_t items, uint32_t size);
