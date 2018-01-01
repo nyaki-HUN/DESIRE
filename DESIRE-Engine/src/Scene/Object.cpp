@@ -83,29 +83,31 @@ void Object::SetVisible(bool visible)
 
 Component* Object::GetComponentByTypeID(int typeID)
 {
-	for(const auto& pair : components)
+	for(Component *component : components)
 	{
-		if(pair.first == typeID)
+		if(component->GetTypeID() == typeID)
 		{
-			return pair.second;
+			return component;
 		}
 	}
+
 	return nullptr;
 }
 
 const Component* Object::GetComponentByTypeID(int typeID) const
 {
-	for(const auto& pair : components)
+	for(const Component *component : components)
 	{
-		if(pair.first == typeID)
+		if(component->GetTypeID() == typeID)
 		{
-			return pair.second;
+			return component;
 		}
 	}
+
 	return nullptr;
 }
 
-const std::vector<std::pair<int, Component*>>& Object::GetComponents() const
+const std::vector<Component*>& Object::GetComponents() const
 {
 	return components;
 }
@@ -215,7 +217,11 @@ void Object::RemoveChild_Internal(Object *child)
 		obj = obj->parent;
 	} while(obj != nullptr);
 
-	children.erase(std::remove(children.begin(), children.end(), child), children.end());
+	auto it = std::find(children.begin(), children.end(), child);
+	if(it != children.end())
+	{
+		children.erase(it);
+	}
 }
 
 void Object::SetNewParent(Object *newParent)

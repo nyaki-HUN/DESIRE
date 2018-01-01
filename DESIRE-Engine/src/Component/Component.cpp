@@ -10,11 +10,21 @@ Component::Component(Object& object)
 
 Component::~Component()
 {
+	// Remove from object
+	auto it = std::find(object.components.begin(), object.components.end(), this);
+	if(it != object.components.end())
+	{
+		object.components.erase(it);
+	}
+}
+
+void Component::OnGUI()
+{
 
 }
 
 void Component::AddToObject()
 {
 	ASSERT(object.GetComponentByTypeID(GetTypeID()) == nullptr);
-	object.components.emplace_back(GetTypeID(), this);
+	object.components.push_back(this);
 }

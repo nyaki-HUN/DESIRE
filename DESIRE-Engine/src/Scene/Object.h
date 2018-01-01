@@ -39,7 +39,7 @@ public:
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
 	}
 
-	const std::vector<std::pair<int, Component*>>& GetComponents() const;
+	const std::vector<Component*>& GetComponents() const;
 
 	// Remove from scene hierarchy
 	void Remove();
@@ -65,7 +65,7 @@ private:
 	
 	static void RefreshParentWorldMatrixPointersInTransforms(Transform *firstTransform, size_t transformCount);
 
-	std::vector<std::pair<int, Component*>> components;
+	std::vector<Component*> components;
 	Transform *transform = nullptr;
 	std::unique_ptr<AABB> aabb;
 	size_t numTransformsInHierarchy = 1;
