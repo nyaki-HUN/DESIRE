@@ -31,11 +31,10 @@ void QuadTreeLeaf::AddObject(Object *obj)
 
 bool QuadTreeLeaf::RemoveObject(Object *obj)
 {
-	auto it = std::remove(objects.begin(), objects.end(), obj);
-	const bool isRemoved = (it != objects.end());
-	if(isRemoved)
+	auto it = std::find(objects.begin(), objects.end(), obj);
+	if(it != objects.end())
 	{
-		objects.erase(it, objects.end());
+		objects.erase(it);
 		return true;
 	}
 
