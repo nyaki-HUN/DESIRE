@@ -31,17 +31,17 @@ Object::Object(const char *name)
 
 Object::~Object()
 {
-	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and we can skip the following block
+	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and no need to call Remove()
 	if(transform->owner != nullptr)
 	{
 		Remove();
 		numTransforms -= numTransformsInHierarchy;
+	}
 
-		for(Object *child : children)
-		{
-			child->transform->owner = nullptr;
-			delete child;
-		}
+	for(Object *child : children)
+	{
+		child->transform->owner = nullptr;
+		delete child;
 	}
 
 	transform->parentWorldMatrix = nullptr;
