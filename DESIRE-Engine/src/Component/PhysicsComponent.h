@@ -8,8 +8,10 @@ class PhysicsComponent : public Component
 {
 	DECLARE_COMPONENT_FURCC_TYPE_ID("PHYS");
 
-public:
+protected:
 	PhysicsComponent(Object& object);
+
+public:
 	~PhysicsComponent() override;
 
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);

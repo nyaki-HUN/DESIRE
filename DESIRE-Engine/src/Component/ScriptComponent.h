@@ -2,13 +2,14 @@
 
 #include "Component/Component.h"
 
-#include <stdint.h>
-
 class String;
 
 class ScriptComponent : public Component
 {
 	DECLARE_COMPONENT_FURCC_TYPE_ID("SCRI");
+
+protected:
+	ScriptComponent(Object& object);
 
 public:
 	enum class EBuiltinFuncType
@@ -19,7 +20,6 @@ public:
 		NUM
 	};
 
-	ScriptComponent(Object& object);
 	~ScriptComponent() override;
 
 	// Call a built-in function (this is usually faster as the function pointer is cached)
@@ -31,7 +31,7 @@ public:
 	{
 		if(PrepareFunctionCall(functionName))
 		{
-			// Since initializer lists guarantee sequencing, this can be used to call AddFunctionCallArg on each element of 'args', in order
+			// Since initializer lists guarantee sequencing, this can be used to call AddFunctionCallArg on each element of 'args' in the same order
 			std::initializer_list<bool> dummy = { (AddFunctionCallArg(args))... };
 			// Do execute and cleanup
 			ExecuteFunctionCall();
