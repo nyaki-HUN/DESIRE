@@ -103,7 +103,11 @@ void Transform::SetPosition(const Vector3& position)
 
 Quat Transform::GetRotation() const
 {
-	return Quat(worldMatrix.GetUpper3x3());
+	Matrix3 mat = worldMatrix.GetUpper3x3();
+	mat.col0.Normalize();
+	mat.col1.Normalize();
+	mat.col2.Normalize();
+	return Quat(mat).Normalized();
 }
 
 void Transform::SetRotation(const Quat& rotation)
@@ -130,8 +134,7 @@ void Transform::SetScale(const Vector3& scale)
 	if(parent != nullptr)
 	{
 		const Vector3 parentScale = parent->GetScale();
-
-		ASSERT(false && "TODO");
+		SetLocalScale(scale.DivPerElem(parentScale));
 	}
 	else
 	{
