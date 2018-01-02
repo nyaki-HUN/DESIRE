@@ -24,9 +24,7 @@ Object::Object(const char *name)
 
 	ASSERT(numTransforms < MAX_TRANSFORMS);
 	transform = &preallocatedTransforms[numTransforms++];
-	transform->parentWorldMatrix = nullptr;
 	transform->owner = this;
-	transform->ResetToIdentity();
 }
 
 Object::~Object()
@@ -44,8 +42,9 @@ Object::~Object()
 		delete child;
 	}
 
-	transform->parentWorldMatrix = nullptr;
+	transform->parent = nullptr;
 	transform->owner = nullptr;
+	transform->ResetToIdentity();
 
 	free(objectName);
 }
@@ -266,19 +265,19 @@ void Object::SetNewParent(Object *newParent)
 		}
 
 		memmove(movedTransformDst, movedTransformSrc, numToMove * sizeof(Transform));
-		RefreshParentWorldMatrixPointersInTransforms(movedTransformDst, numToMove);
+		RefreshParentPointerInTransforms(movedTransformDst, numToMove);
 
 		memcpy(transform, savedTransforms, numTransformsInHierarchy * sizeof(Transform));
-		RefreshParentWorldMatrixPointersInTransforms(transform, numTransformsInHierarchy);
+		RefreshParentPointerInTransforms(transform, numTransformsInHierarchy);
 	}
 
-	transform->parentWorldMatrix = (newParent != nullptr) ? &newParent->transform->worldMatrix : nullptr;
+	transform->parent = (newParent != nullptr) ? newParent->transform : nullptr;
 	transform->flags |= Transform::WORLD_MATRIX_DIRTY;
 
 	parent = newParent;
 }
 
-void Object::RefreshParentWorldMatrixPointersInTransforms(Transform *firstTransform, size_t transformCount)
+void Object::RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount)
 {
 	Transform *transformTmp = firstTransform;
 	for(size_t i = 0; i < transformCount; ++i)
@@ -286,7 +285,7 @@ void Object::RefreshParentWorldMatrixPointersInTransforms(Transform *firstTransf
 		transformTmp->owner->transform = transformTmp;
 		if(transformTmp->owner->parent != nullptr)
 		{
-			transformTmp->parentWorldMatrix = &transformTmp->owner->parent->GetTransform().GetWorldMatrix();
+			transformTmp->parent = &transformTmp->owner->parent->GetTransform();
 		}
 
 		transformTmp++;

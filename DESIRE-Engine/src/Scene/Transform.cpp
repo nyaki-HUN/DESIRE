@@ -3,13 +3,6 @@
 #include "Core/math/math.h"
 
 Transform::Transform()
-	: localPosition(0.0f)
-	, localRotation(0.0f, 0.0f, 0.0f, 1.0f)
-	, localScale(1.0f)
-	, worldMatrix(Matrix4::Identity())
-	, parentWorldMatrix(nullptr)
-	, owner(nullptr)
-	, flags(IS_IDENTITY)
 {
 
 }
@@ -24,7 +17,16 @@ void Transform::ResetToIdentity()
 	localPosition = Vector3(0.0f);
 	localRotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
 	localScale = Vector3(1.0f);
-	flags = IS_IDENTITY | POSITION_CHANGED | ROTATION_CHANGED | SCALE_CHANGED;
+
+	if(owner != nullptr)
+	{
+		flags = IS_IDENTITY | POSITION_CHANGED | ROTATION_CHANGED | SCALE_CHANGED;
+	}
+	else
+	{
+		worldMatrix = Matrix4::Identity();
+		flags = IS_IDENTITY;
+	}
 }
 
 void Transform::SetLocalPosition(const Vector3& position)
@@ -86,9 +88,9 @@ Vector3 Transform::GetPosition() const
 
 void Transform::SetPosition(const Vector3& position)
 {
-	if(parentWorldMatrix != nullptr)
+	if(parent != nullptr)
 	{
-		Matrix4 mat = *parentWorldMatrix;
+		Matrix4 mat = parent->worldMatrix;
 		mat.Invert();
 		mat *= Matrix4::CreateTranslation(position);
 		SetLocalPosition(mat.GetTranslation());
@@ -106,9 +108,9 @@ Quat Transform::GetRotation() const
 
 void Transform::SetRotation(const Quat& rotation)
 {
-	if(parentWorldMatrix != nullptr)
+	if(parent != nullptr)
 	{
-		const Quat parentRotation(parentWorldMatrix->GetUpper3x3());
+		const Quat parentRotation = parent->GetRotation();
 		SetLocalRotation(parentRotation.Conjugate() * rotation);
 	}
 	else
@@ -125,8 +127,10 @@ Vector3 Transform::GetScale() const
 
 void Transform::SetScale(const Vector3& scale)
 {
-	if(parentWorldMatrix != nullptr)
+	if(parent != nullptr)
 	{
+		const Vector3 parentScale = parent->GetScale();
+
 		ASSERT(false && "TODO");
 	}
 	else
@@ -144,9 +148,9 @@ void Transform::UpdateWorldMatrix()
 {
 	if(flags & IS_IDENTITY)
 	{
-		if(parentWorldMatrix != nullptr)
+		if(parent != nullptr)
 		{
-			worldMatrix = *parentWorldMatrix;
+			worldMatrix = parent->worldMatrix;
 		}
 		else
 		{
@@ -157,9 +161,9 @@ void Transform::UpdateWorldMatrix()
 	{
 		worldMatrix = ConstructLocalMatrix();
 
-		if(parentWorldMatrix != nullptr)
+		if(parent != nullptr)
 		{
-			worldMatrix = *parentWorldMatrix * worldMatrix;
+			worldMatrix = parent->worldMatrix * worldMatrix;
 		}
 	}
 

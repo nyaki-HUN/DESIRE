@@ -61,13 +61,13 @@ public:
 	void UpdateWorldMatrix();
 
 private:
-	Vector3 localPosition;
-	Quat localRotation;
-	Vector3 localScale;
+	Vector3 localPosition = Vector3(0.0f);
+	Quat localRotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector3 localScale = Vector3(1.0f);
 
-	Matrix4 worldMatrix;
+	Matrix4 worldMatrix = Matrix4::Identity();
 
-	const Matrix4 *parentWorldMatrix;
-	Object *owner;
-	uint8_t flags;
+	const Transform *parent = nullptr;
+	Object *owner = nullptr;
+	uint8_t flags = IS_IDENTITY;
 };
