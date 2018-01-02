@@ -4,9 +4,9 @@
 #include "Core/fs/FileSystem.h"		// for EFileSourceFlags
 #include "Compression/CompressionManager.h"
 
-static const int ZIP_SIGNATURE_CENTRAL_DIRECTORY_FILE_HEADER	= 0x02014b50;	//'PK12'
-static const int ZIP_SIGNATURE_LOCAL_FILE_HEADER				= 0x04034b50;	//'PK34'
-static const int ZIP_SIGNATURE_END_OF_CENTRAL_DIRECTORY			= 0x06054b50;	//'PK56'
+constexpr int kZipSignatureCentralDirectoryFileHeader	= 0x02014b50;	//'PK12'
+constexpr int kZipSignatureLocalFileHeader				= 0x04034b50;	//'PK34'
+constexpr int kZipSignatureEndOfCentralDirectory		= 0x06054b50;	//'PK56'
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
 	#include <PshPack1.h>
@@ -117,7 +117,7 @@ bool FileSourceZip::Load()
 	zipFile->Seek(-(int64_t)sizeof(ZipEndOfCentralDirectoryRecord), IReadFile::ESeekOrigin::END);
 	ZipEndOfCentralDirectoryRecord record;
 	zipFile->ReadBuffer(&record, sizeof(ZipEndOfCentralDirectoryRecord));
-	if(record.signature != ZIP_SIGNATURE_END_OF_CENTRAL_DIRECTORY)
+	if(record.signature != kZipSignatureEndOfCentralDirectory)
 	{
 		LOG_ERROR("The zip file contains comment which is not supported");
 		return false;
@@ -130,8 +130,8 @@ bool FileSourceZip::Load()
 		// Process the Central Directory Header
 		ZipCentralDirectoryFileHeader centralDirHeader;
 		zipFile->ReadBuffer(&centralDirHeader, sizeof(ZipCentralDirectoryFileHeader));
-		ASSERT(centralDirHeader.signature == ZIP_SIGNATURE_CENTRAL_DIRECTORY_FILE_HEADER);
-		if(centralDirHeader.signature == ZIP_SIGNATURE_CENTRAL_DIRECTORY_FILE_HEADER)
+		ASSERT(centralDirHeader.signature == kZipSignatureCentralDirectoryFileHeader);
+		if(centralDirHeader.signature == kZipSignatureCentralDirectoryFileHeader)
 		{
 			const int64_t currPos = zipFile->Tell();
 			zipFile->Seek(centralDirHeader.offsetOfLocalHeader, IReadFile::ESeekOrigin::BEGIN);
@@ -224,7 +224,7 @@ void FileSourceZip::ProcessLocalHeaders()
 {
 	ZipLocalFileHeader header;
 	zipFile->ReadBuffer(&header, sizeof(header));
-	if(header.signature != ZIP_SIGNATURE_LOCAL_FILE_HEADER || header.filenameLength == 0)
+	if(header.signature != kZipSignatureLocalFileHeader || header.filenameLength == 0)
 	{
 		return;
 	}

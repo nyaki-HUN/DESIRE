@@ -51,11 +51,12 @@ bool QuadTreeLeaf::RemoveObject(Object *obj)
 
 void QuadTreeLeaf::Init()
 {
+	constexpr float kMaxResizeFactor = 1.5f;
+
 	// Calculate size limits
 	const Vector3 size = aabb.GetSize();
-	static const float MAX_RESIZE_FACTOR = 1.5f;
-	maxSizeX = size.GetX() * MAX_RESIZE_FACTOR;
-	maxSizeZ = size.GetZ() * MAX_RESIZE_FACTOR;
+	maxSizeX = size.GetX() * kMaxResizeFactor;
+	maxSizeZ = size.GetZ() * kMaxResizeFactor;
 
 	if(objects.size() <= QUAD_TREE_MIN_OBJECT_PER_LEAF)
 	{
