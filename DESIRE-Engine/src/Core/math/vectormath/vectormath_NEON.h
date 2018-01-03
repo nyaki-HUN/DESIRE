@@ -11,18 +11,6 @@ typedef float32x4_t	vec_float3_t;
 typedef float32x4_t	vec_float4_t;
 
 // --------------------------------------------------------------------------------------------------------------------
-//	NEON Helper functions
-// --------------------------------------------------------------------------------------------------------------------
-
-static DESIRE_FORCE_INLINE float32x4_t newtonrapson_rsqrt4(float32x4_t vec)
-{
-	float32x4_t result = vrsqrteq_f32(vec);
-	result = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result, result), vec), result);
-	result = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result, result), vec), result);
-	return result;
-}
-
-// --------------------------------------------------------------------------------------------------------------------
 //	NEON implementation of the SIMD functions
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -57,7 +45,7 @@ public:
 	static DESIRE_FORCE_INLINE void SetXYZ(float32x4_t& vec, float32x4_t xyz)
 	{
 		const uint32x4_t mask_w = (uint32x4_t){ 0, 0, 0, 0xffffffff };
-		vec = vbslq_f32(mask_w, vec, xyz);
+		vec = SIMD::Blend(xyz, vec, mask_w);
 	}
 
 	// Set element
@@ -210,24 +198,42 @@ public:
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
+	// Select packed single precision floating-point values from a and b using the mask
+	static DESIRE_FORCE_INLINE float32x4_t Blend(float32x4_t a, float32x4_t b, uint32x4_t mask)
+	{
+		return vbslq_f32(mask, b, a);
+	}
+
 	// Shuffle
-	static DESIRE_FORCE_INLINE __m128 Shuffle_XXXX(__m128 vec)
+	static DESIRE_FORCE_INLINE float32x4_t Shuffle_XXXX(float32x4_t vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 0, 0 });
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_YYYY(__m128 vec)
+	static DESIRE_FORCE_INLINE float32x4_t Shuffle_YYYY(float32x4_t vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 1, 1, 1, 1 });
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_ZZZZ(__m128 vec)
+	static DESIRE_FORCE_INLINE float32x4_t Shuffle_ZZZZ(float32x4_t vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 2, 2 });
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_WWWW(__m128 vec)
+	static DESIRE_FORCE_INLINE float32x4_t Shuffle_WWWW(float32x4_t vec)
 	{
 		return __builtin_shuffle(vec, (uint32x4_t){ 3, 3, 3, 3 });
 	}
 };
+
+// --------------------------------------------------------------------------------------------------------------------
+//	NEON Helper functions
+// --------------------------------------------------------------------------------------------------------------------
+
+static DESIRE_FORCE_INLINE float32x4_t newtonrapson_rsqrt4(float32x4_t vec)
+{
+	float32x4_t result = vrsqrteq_f32(vec);
+	result = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result, result), vec), result);
+	result = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result, result), vec), result);
+	return result;
+}

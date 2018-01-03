@@ -130,9 +130,9 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateScale(const Vector3& scaleVec)
 	const uint32x4_t mask_y = (uint32x4_t){ 0, 0xffffffff, 0, 0 };
 	const uint32x4_t mask_z = (uint32x4_t){ 0, 0, 0xffffffff, 0 };
 	return Matrix3(
-		vbslq_f32(mask_x, scaleVec, zero),
-		vbslq_f32(mask_y, scaleVec, zero),
-		vbslq_f32(mask_z, scaleVec, zero)
+		SIMD::Blend(zero, scaleVec, mask_x),
+		SIMD::Blend(zero, scaleVec, mask_y),
+		SIMD::Blend(zero, scaleVec, mask_z)
 	);
 }
 
@@ -330,9 +330,9 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateScale(const Vector3& scaleVec)
 	const uint32x4_t mask_y = (uint32x4_t) { 0, 0xffffffff, 0, 0 };
 	const uint32x4_t mask_z = (uint32x4_t) { 0, 0, 0xffffffff, 0 };
 	return Matrix4(
-		vbslq_f32(mask_x, scaleVec, zero),
-		vbslq_f32(mask_y, scaleVec, zero),
-		vbslq_f32(mask_z, scaleVec, zero),
+		SIMD::Blend(zero, scaleVec, mask_x),
+		SIMD::Blend(zero, scaleVec, mask_y),
+		SIMD::Blend(zero, scaleVec, mask_z),
 		Vector4::AxisW()
 	);
 }
