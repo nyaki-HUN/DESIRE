@@ -122,28 +122,6 @@ public:
 		);
 	}
 
-	// Get maximum element
-	static DESIRE_FORCE_INLINE float32x4_t MaxElem3(float32x4_t vec)
-	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
-	}
-
-	static DESIRE_FORCE_INLINE float32x4_t MaxElem4(float32x4_t vec)
-	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
-	}
-
-	// Get minimum element
-	static DESIRE_FORCE_INLINE float32x4_t MinElem3(float32x4_t vec)
-	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
-	}
-
-	static DESIRE_FORCE_INLINE float32x4_t MinElem4(float32x4_t vec)
-	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
-	}
-
 	// Compute the dot product of two 3-D vectors
 	static DESIRE_FORCE_INLINE float32x4_t Dot3(float32x4_t a, float32x4_t b)
 	{
@@ -208,6 +186,28 @@ public:
 	static DESIRE_FORCE_INLINE float32x4_t MinPerElem(float32x4_t vec0, float32x4_t vec1)
 	{
 		return vminq_f32(vec0, vec1);
+	}
+
+	// Get maximum element
+	static DESIRE_FORCE_INLINE float32x4_t MaxElem3(float32x4_t vec)
+	{
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+	}
+
+	static DESIRE_FORCE_INLINE float32x4_t MaxElem4(float32x4_t vec)
+	{
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+	}
+
+	// Get minimum element
+	static DESIRE_FORCE_INLINE float32x4_t MinElem3(float32x4_t vec)
+	{
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+	}
+
+	static DESIRE_FORCE_INLINE float32x4_t MinElem4(float32x4_t vec)
+	{
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Shuffle

@@ -307,28 +307,6 @@ public:
 		return (_mm_movemask_ps(_mm_cmple_ps(vec0, vec1)) & 0x7) == 0x7;
 	}
 
-	// Get maximum element
-	static DESIRE_FORCE_INLINE __m128 MaxElem3(__m128 vec)
-	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
-	}
-
-	static DESIRE_FORCE_INLINE __m128 MaxElem4(__m128 vec)
-	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
-	}
-
-	// Get minimum element
-	static DESIRE_FORCE_INLINE __m128 MinElem3(__m128 vec)
-	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
-	}
-
-	static DESIRE_FORCE_INLINE __m128 MinElem4(__m128 vec)
-	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
-	}
-
 	// Compute the dot product of two 3-D vectors
 	static DESIRE_FORCE_INLINE __m128 Dot3(__m128 a, __m128 b)
 	{
@@ -393,6 +371,28 @@ public:
 	static DESIRE_FORCE_INLINE __m128 MinPerElem(__m128 vec0, __m128 vec1)
 	{
 		return _mm_min_ps(vec0, vec1);
+	}
+
+	// Get maximum element
+	static DESIRE_FORCE_INLINE __m128 MaxElem3(__m128 vec)
+	{
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+	}
+
+	static DESIRE_FORCE_INLINE __m128 MaxElem4(__m128 vec)
+	{
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+	}
+
+	// Get minimum element
+	static DESIRE_FORCE_INLINE __m128 MinElem3(__m128 vec)
+	{
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+	}
+
+	static DESIRE_FORCE_INLINE __m128 MinElem4(__m128 vec)
+	{
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Shuffle

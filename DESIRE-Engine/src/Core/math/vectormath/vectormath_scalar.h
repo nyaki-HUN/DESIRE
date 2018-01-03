@@ -234,42 +234,6 @@ public:
 		);
 	}
 
-	// Get maximum element
-	static DESIRE_FORCE_INLINE vec_float3_t MaxElem3(const vec_float3_t& vec)
-	{
-		float result;
-		result = (vec.x > vec.y) ? vec.x : vec.y;
-		result = (vec.z > result) ? vec.z : result;
-		return vec_float3_t(result, result, result);
-	}
-
-	static DESIRE_FORCE_INLINE vec_float4_t MaxElem4(const vec_float4_t& vec)
-	{
-		float result;
-		result = (vec.x > vec.y) ? vec.x : vec.y;
-		result = (vec.z > result) ? vec.z : result;
-		result = (vec.w > result) ? vec.w : result;
-		return vec_float4_t(result, result, result, result);
-	}
-
-	// Get minimum element
-	static DESIRE_FORCE_INLINE vec_float3_t MinElem3(const vec_float3_t& vec)
-	{
-		float result;
-		result = (vec.x < vec.y) ? vec.x : vec.y;
-		result = (vec.z < result) ? vec.z : result;
-		return vec_float3_t(result, result, result);
-	}
-
-	static DESIRE_FORCE_INLINE vec_float4_t MinElem4(const vec_float4_t& vec)
-	{
-		float result;
-		result = (vec.x < vec.y) ? vec.x : vec.y;
-		result = (vec.z < result) ? vec.z : result;
-		result = (vec.w < result) ? vec.w : result;
-		return vec_float4_t(result, result, result, result);
-	}
-
 	// Compute the dot product of two 3-D vectors
 	static DESIRE_FORCE_INLINE vec_float3_t Dot3(const vec_float3_t& a, const vec_float3_t& b)
 	{
@@ -397,5 +361,41 @@ public:
 			(vec0.z < vec1.z) ? vec0.z : vec1.z,
 			(vec0.w < vec1.w) ? vec0.w : vec1.w
 		);
+	}
+
+	// Get maximum element
+	static DESIRE_FORCE_INLINE vec_float3_t MaxElem3(const vec_float3_t& vec)
+	{
+		float result;
+		result = (vec.x > vec.y) ? vec.x : vec.y;
+		result = (vec.z > result) ? vec.z : result;
+		return vec_float3_t(result, result, result);
+	}
+
+	static DESIRE_FORCE_INLINE vec_float4_t MaxElem4(const vec_float4_t& vec)
+	{
+		float result;
+		result = (vec.x > vec.y) ? vec.x : vec.y;
+		result = (vec.z > result) ? vec.z : result;
+		result = (vec.w > result) ? vec.w : result;
+		return vec_float4_t(result, result, result, result);
+	}
+
+	// Get minimum element
+	static DESIRE_FORCE_INLINE vec_float3_t MinElem3(const vec_float3_t& vec)
+	{
+		float result;
+		result = (vec.x < vec.y) ? vec.x : vec.y;
+		result = (vec.z < result) ? vec.z : result;
+		return vec_float3_t(result, result, result);
+	}
+
+	static DESIRE_FORCE_INLINE vec_float4_t MinElem4(const vec_float4_t& vec)
+	{
+		float result;
+		result = (vec.x < vec.y) ? vec.x : vec.y;
+		result = (vec.z < result) ? vec.z : result;
+		result = (vec.w < result) ? vec.w : result;
+		return vec_float4_t(result, result, result, result);
 	}
 };
