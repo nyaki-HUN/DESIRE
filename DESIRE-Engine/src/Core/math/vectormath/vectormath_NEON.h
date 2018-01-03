@@ -102,23 +102,23 @@ public:
 	}
 
 	// Comparison operators
-	static DESIRE_FORCE_INLINE bool OpCmpGE(float32x4_t vec0, float32x4_t vec1)
+	static DESIRE_FORCE_INLINE bool OpCmpGE(float32x4_t a, float32x4_t b)
 	{
-//		uint32x4_t result = vcgeq_f32(vec0, vec1);
+//		uint32x4_t result = vcgeq_f32(a, b);
 		return (
-			vec0.GetX() >= vec1.GetX() &&
-			vec0.GetY() >= vec1.GetY() &&
-			vec0.GetZ() >= vec1.GetZ()
+			a.GetX() >= b.GetX() &&
+			a.GetY() >= b.GetY() &&
+			a.GetZ() >= b.GetZ()
 		);
 	}
 
-	static DESIRE_FORCE_INLINE bool OpCmpLE(float32x4_t vec0, float32x4_t vec1)
+	static DESIRE_FORCE_INLINE bool OpCmpLE(float32x4_t a, float32x4_t b)
 	{
-//		uint32x4_t result = vcleq_f32(vec0, vec1);
+//		uint32x4_t result = vcleq_f32(a, b);
 		return (
-			vec0.GetX() <= vec1.GetX() &&
-			vec0.GetY() <= vec1.GetY() &&
-			vec0.GetZ() <= vec1.GetZ()
+			a.GetX() <= b.GetX() &&
+			a.GetY() <= b.GetY() &&
+			a.GetZ() <= b.GetZ()
 		);
 	}
 
@@ -153,21 +153,21 @@ public:
 	}
 
 	// Multiply vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t MulPerElem(float32x4_t vec0, float32x4_t vec1)
+	static DESIRE_FORCE_INLINE float32x4_t MulPerElem(float32x4_t a, float32x4_t b)
 	{
-		return vmulq_f32(vec0, vec1);
+		return vmulq_f32(a, b);
 	}
 
 	// Divide vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t DivPerElem(float32x4_t vec0, float32x4_t vec1)
+	static DESIRE_FORCE_INLINE float32x4_t DivPerElem(float32x4_t a, float32x4_t b)
 	{
 		// Get an initial estimate of 1/vec
-		float32x4_t reciprocal = vrecpeq_f32(vec1);
+		float32x4_t reciprocal = vrecpeq_f32(b);
 		// Use a couple Newton-Raphson steps to refine the estimate
-		reciprocal = SIMD::MulPerElem(vrecpsq_f32(vec1, reciprocal), reciprocal);
-		reciprocal = SIMD::MulPerElem(vrecpsq_f32(vec1, reciprocal), reciprocal);
+		reciprocal = SIMD::MulPerElem(vrecpsq_f32(b, reciprocal), reciprocal);
+		reciprocal = SIMD::MulPerElem(vrecpsq_f32(b, reciprocal), reciprocal);
 
-		return SIMD::MulPerElem(vec0, reciprocal);
+		return SIMD::MulPerElem(a, reciprocal);
 	}
 
 	// Compute the absolute value per element
@@ -177,15 +177,15 @@ public:
 	}
 
 	// Maximum of two vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t MaxPerElem(float32x4_t vec0, float32x4_t vec1)
+	static DESIRE_FORCE_INLINE float32x4_t MaxPerElem(float32x4_t a, float32x4_t b)
 	{
-		return vmaxq_f32(vec0, vec1);
+		return vmaxq_f32(a, b);
 	}
 
 	// Minimum of two vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t MinPerElem(float32x4_t vec0, float32x4_t vec1)
+	static DESIRE_FORCE_INLINE float32x4_t MinPerElem(float32x4_t a, float32x4_t b)
 	{
-		return vminq_f32(vec0, vec1);
+		return vminq_f32(a, b);
 	}
 
 	// Get maximum element

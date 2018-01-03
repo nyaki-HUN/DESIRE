@@ -216,21 +216,21 @@ public:
 	}
 
 	// Comparison operators
-	static DESIRE_FORCE_INLINE bool OpCmpGE(const vec_float3_t& vec0, const vec_float3_t& vec1)
+	static DESIRE_FORCE_INLINE bool OpCmpGE(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return (
-			vec0.x >= vec1.x &&
-			vec0.y >= vec1.y &&
-			vec0.z >= vec1.z
+			a.x >= b.x &&
+			a.y >= b.y &&
+			a.z >= b.z
 		);
 	}
 
-	static DESIRE_FORCE_INLINE bool OpCmpLE(const vec_float3_t& vec0, const vec_float3_t& vec1)
+	static DESIRE_FORCE_INLINE bool OpCmpLE(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return (
-			vec0.x <= vec1.x &&
-			vec0.y <= vec1.y &&
-			vec0.z <= vec1.z
+			a.x <= b.x &&
+			a.y <= b.y &&
+			a.z <= b.z
 		);
 	}
 
@@ -264,42 +264,42 @@ public:
 	}
 
 	// Multiply vectors per element
-	static DESIRE_FORCE_INLINE vec_float3_t MulPerElem(const vec_float3_t& vec0, const vec_float3_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float3_t MulPerElem(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return vec_float3_t(
-			vec0.x * vec1.x,
-			vec0.y * vec1.y,
-			vec0.z * vec1.z
+			a.x * b.x,
+			a.y * b.y,
+			a.z * b.z
 		);
 	}
 
-	static DESIRE_FORCE_INLINE vec_float4_t MulPerElem(const vec_float4_t& vec0, const vec_float4_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float4_t MulPerElem(const vec_float4_t& a, const vec_float4_t& b)
 	{
 		return vec_float4_t(
-			vec0.x * vec1.x,
-			vec0.y * vec1.y,
-			vec0.z * vec1.z,
-			vec0.w * vec1.w
+			a.x * b.x,
+			a.y * b.y,
+			a.z * b.z,
+			a.w * b.w
 		);
 	}
 
 	// Divide vectors per element
-	static DESIRE_FORCE_INLINE vec_float3_t DivPerElem(const vec_float3_t& vec0, const vec_float3_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float3_t DivPerElem(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return vec_float3_t(
-			vec0.x / vec1.x,
-			vec0.y / vec1.y,
-			vec0.z / vec1.z
+			a.x / b.x,
+			a.y / b.y,
+			a.z / b.z
 		);
 	}
 
-	static DESIRE_FORCE_INLINE vec_float4_t DivPerElem(const vec_float4_t& vec0, const vec_float4_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float4_t DivPerElem(const vec_float4_t& a, const vec_float4_t& b)
 	{
 		return vec_float4_t(
-			vec0.x / vec1.x,
-			vec0.y / vec1.y,
-			vec0.z / vec1.z,
-			vec0.w / vec1.w
+			a.x / b.x,
+			a.y / b.y,
+			a.z / b.z,
+			a.w / b.w
 		);
 	}
 
@@ -324,42 +324,42 @@ public:
 	}
 
 	// Maximum of two vectors per element
-	static DESIRE_FORCE_INLINE vec_float3_t MaxPerElem(const vec_float3_t& vec0, const vec_float3_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float3_t MaxPerElem(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return vec_float3_t(
-			(vec0.x > vec1.x) ? vec0.x : vec1.x,
-			(vec0.y > vec1.y) ? vec0.y : vec1.y,
-			(vec0.z > vec1.z) ? vec0.z : vec1.z
+			(a.x > b.x) ? a.x : b.x,
+			(a.y > b.y) ? a.y : b.y,
+			(a.z > b.z) ? a.z : b.z
 		);
 	}
 
-	static DESIRE_FORCE_INLINE vec_float4_t MaxPerElem(const vec_float4_t& vec0, const vec_float4_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float4_t MaxPerElem(const vec_float4_t& a, const vec_float4_t& b)
 	{
 		return vec_float4_t(
-			(vec0.x > vec1.x) ? vec0.x : vec1.x,
-			(vec0.y > vec1.y) ? vec0.y : vec1.y,
-			(vec0.z > vec1.z) ? vec0.z : vec1.z,
-			(vec0.w > vec1.w) ? vec0.w : vec1.w
+			(a.x > b.x) ? a.x : b.x,
+			(a.y > b.y) ? a.y : b.y,
+			(a.z > b.z) ? a.z : b.z,
+			(a.w > b.w) ? a.w : b.w
 		);
 	}
 
 	// Minimum of two vectors per element
-	static DESIRE_FORCE_INLINE vec_float3_t MinPerElem(const vec_float3_t& vec0, const vec_float3_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float3_t MinPerElem(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return vec_float3_t(
-			(vec0.x < vec1.x) ? vec0.x : vec1.x,
-			(vec0.y < vec1.y) ? vec0.y : vec1.y,
-			(vec0.z < vec1.z) ? vec0.z : vec1.z
+			(a.x < b.x) ? a.x : b.x,
+			(a.y < b.y) ? a.y : b.y,
+			(a.z < b.z) ? a.z : b.z
 		);
 	}
 
-	static DESIRE_FORCE_INLINE vec_float4_t MinPerElem(const vec_float4_t& vec0, const vec_float4_t& vec1)
+	static DESIRE_FORCE_INLINE vec_float4_t MinPerElem(const vec_float4_t& a, const vec_float4_t& b)
 	{
 		return vec_float4_t(
-			(vec0.x < vec1.x) ? vec0.x : vec1.x,
-			(vec0.y < vec1.y) ? vec0.y : vec1.y,
-			(vec0.z < vec1.z) ? vec0.z : vec1.z,
-			(vec0.w < vec1.w) ? vec0.w : vec1.w
+			(a.x < b.x) ? a.x : b.x,
+			(a.y < b.y) ? a.y : b.y,
+			(a.z < b.z) ? a.z : b.z,
+			(a.w < b.w) ? a.w : b.w
 		);
 	}
 

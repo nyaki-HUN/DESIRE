@@ -297,14 +297,14 @@ public:
 	}
 
 	// Comparison operators
-	static DESIRE_FORCE_INLINE bool OpCmpGE(__m128 vec0, __m128 vec1)
+	static DESIRE_FORCE_INLINE bool OpCmpGE(__m128 a, __m128 b)
 	{
-		return (_mm_movemask_ps(_mm_cmpge_ps(vec0, vec1)) & 0x7) == 0x7;
+		return (_mm_movemask_ps(_mm_cmpge_ps(a, b)) & 0x7) == 0x7;
 	}
 
-	static DESIRE_FORCE_INLINE bool OpCmpLE(__m128 vec0, __m128 vec1)
+	static DESIRE_FORCE_INLINE bool OpCmpLE(__m128 a, __m128 b)
 	{
-		return (_mm_movemask_ps(_mm_cmple_ps(vec0, vec1)) & 0x7) == 0x7;
+		return (_mm_movemask_ps(_mm_cmple_ps(a, b)) & 0x7) == 0x7;
 	}
 
 	// Compute the dot product of two 3-D vectors
@@ -344,15 +344,15 @@ public:
 	}
 
 	// Multiply vectors per element
-	static DESIRE_FORCE_INLINE __m128 MulPerElem(__m128 vec0, __m128 vec1)
+	static DESIRE_FORCE_INLINE __m128 MulPerElem(__m128 a, __m128 b)
 	{
-		return _mm_mul_ps(vec0, vec1);
+		return _mm_mul_ps(a, b);
 	}
 
 	// Divide vectors per element
-	static DESIRE_FORCE_INLINE __m128 DivPerElem(__m128 vec0, __m128 vec1)
+	static DESIRE_FORCE_INLINE __m128 DivPerElem(__m128 a, __m128 b)
 	{
-		return _mm_div_ps(vec0, vec1);
+		return _mm_div_ps(a, b);
 	}
 
 	// Compute the absolute value per element
@@ -362,15 +362,15 @@ public:
 	}
 
 	// Maximum of two vectors per element
-	static DESIRE_FORCE_INLINE __m128 MaxPerElem(__m128 vec0, __m128 vec1)
+	static DESIRE_FORCE_INLINE __m128 MaxPerElem(__m128 a, __m128 b)
 	{
-		return _mm_max_ps(vec0, vec1);
+		return _mm_max_ps(a, b);
 	}
 
 	// Minimum of two vectors per element
-	static DESIRE_FORCE_INLINE __m128 MinPerElem(__m128 vec0, __m128 vec1)
+	static DESIRE_FORCE_INLINE __m128 MinPerElem(__m128 a, __m128 b)
 	{
-		return _mm_min_ps(vec0, vec1);
+		return _mm_min_ps(a, b);
 	}
 
 	// Get maximum element
