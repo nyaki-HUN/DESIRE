@@ -310,23 +310,23 @@ public:
 	// Get maximum element
 	static DESIRE_FORCE_INLINE __m128 MaxElem3(__m128 vec)
 	{
-		return _mm_max_ps(_mm_max_ps(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE __m128 MaxElem4(__m128 vec)
 	{
-		return _mm_max_ps(_mm_max_ps(vec, SIMD::Shuffle_YYYY(vec)), _mm_max_ps(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Get minimum element
 	static DESIRE_FORCE_INLINE __m128 MinElem3(__m128 vec)
 	{
-		return _mm_min_ps(_mm_min_ps(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE __m128 MinElem4(__m128 vec)
 	{
-		return _mm_min_ps(_mm_min_ps(vec, SIMD::Shuffle_YYYY(vec)), _mm_min_ps(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Compute the dot product of two 3-D vectors
@@ -359,10 +359,10 @@ public:
 	// Compute cross product of two 3-D vectors
 	static DESIRE_FORCE_INLINE __m128 Cross(__m128 a, __m128 b)
 	{
-		__m128 yzx0 = _mm_shuffle_ps(a, a, _MM_SHUFFLE(3, 0, 2, 1));
-		__m128 yzx1 = _mm_shuffle_ps(b, b, _MM_SHUFFLE(3, 0, 2, 1));
+		__m128 yzx0 = SIMD::Shuffle_YZXW(a);
+		__m128 yzx1 = SIMD::Shuffle_YZXW(b);
 		__m128 result = SIMD::Sub(SIMD::MulPerElem(yzx1, a), SIMD::MulPerElem(yzx0, b));
-		return _mm_shuffle_ps(result, result, _MM_SHUFFLE(3, 0, 2, 1));
+		return SIMD::Shuffle_YZXW(result);
 	}
 
 	// Multiply vectors per element
@@ -414,5 +414,10 @@ public:
 	static DESIRE_FORCE_INLINE __m128 Shuffle_WWWW(__m128 vec)
 	{
 		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3));
+	}
+
+	static DESIRE_FORCE_INLINE __m128 Shuffle_YZXW(__m128 vec)
+	{
+		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1));
 	}
 };

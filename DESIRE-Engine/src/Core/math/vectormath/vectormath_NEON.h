@@ -125,29 +125,29 @@ public:
 	// Get maximum element
 	static DESIRE_FORCE_INLINE float32x4_t MaxElem3(float32x4_t vec)
 	{
-		return vmaxq_f32(vmaxq_f32(vec, SIMD::Shuffle_YYYY(vec, 1)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE float32x4_t MaxElem4(float32x4_t vec)
 	{
-		return vmaxq_f32(vmaxq_f32(vec, SIMD::Shuffle_YYYY(vec)), vmaxq_f32(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Get minimum element
 	static DESIRE_FORCE_INLINE float32x4_t MinElem3(float32x4_t vec)
 	{
-		return vminq_f32(vminq_f32(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE float32x4_t MinElem4(float32x4_t vec)
 	{
-		return vminq_f32(vminq_f32(vec, SIMD::Shuffle_YYYY(vec)), vminq_f32(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
 	}
 
 	// Compute the dot product of two 3-D vectors
 	static DESIRE_FORCE_INLINE float32x4_t Dot3(float32x4_t a, float32x4_t b)
 	{
-		float32x4_t vd = vmulq_f32(a, b);
+		float32x4_t vd = SIMD::MulPerElem(a, b);
 		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_low_f32(vd));
 		return vadd_f32(x, vget_high_f32(vd));
 	}
@@ -155,7 +155,7 @@ public:
 	// Compute the dot product of two 4-D vectors
 	static DESIRE_FORCE_INLINE float32x4_t Dot4(float32x4_t a, float32x4_t b)
 	{
-		float32x4_t vd = vmulq_f32(a, b);
+		float32x4_t vd = SIMD::MulPerElem(a, b);
 		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_high_f32(vd));
 		return vpadd_f32(x, x);
 	}
@@ -168,7 +168,7 @@ public:
 		float32x2_t yzx0 = vcombine_f32(vext_f32(xy0, vget_high_f32(a), 1), xy0);
 		float32x2_t yzx1 = vcombine_f32(vext_f32(xy1, vget_high_f32(b), 1), xy1);
 
-		float32x2_t result = vmlsq_f32(vmulq_f32(yzx1, a), yzx0, b);
+		float32x2_t result = vmlsq_f32(SIMD::MulPerElem(yzx1, a), yzx0, b);
 		// form (Y, Z, X, _)
 		xy1 = vget_low_f32(result);
 		return vcombine_f32(vext_f32(xy1, vget_high_f32(result), 1), xy1);
@@ -186,10 +186,10 @@ public:
 		// Get an initial estimate of 1/vec
 		float32x4_t reciprocal = vrecpeq_f32(vec1);
 		// Use a couple Newton-Raphson steps to refine the estimate
-		reciprocal = vmulq_f32(vrecpsq_f32(vec1, reciprocal), reciprocal);
-		reciprocal = vmulq_f32(vrecpsq_f32(vec1, reciprocal), reciprocal);
+		reciprocal = SIMD::MulPerElem(vrecpsq_f32(vec1, reciprocal), reciprocal);
+		reciprocal = SIMD::MulPerElem(vrecpsq_f32(vec1, reciprocal), reciprocal);
 
-		return vmulq_f32(vec0, reciprocal);
+		return SIMD::MulPerElem(vec0, reciprocal);
 	}
 
 	// Compute the absolute value per element

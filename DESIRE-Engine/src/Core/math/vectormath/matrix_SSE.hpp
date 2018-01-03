@@ -10,10 +10,10 @@ DESIRE_FORCE_INLINE Matrix3::Matrix3(const Quat& unitQuat)
 	const __m128 mask_z = _mm_load_ps((float*)select_z);
 
 	__m128 xyzw_2 = _mm_add_ps(unitQuat, unitQuat);
-	__m128 wwww = _mm_shuffle_ps(unitQuat, unitQuat, _MM_SHUFFLE(3, 3, 3, 3));
-	__m128 yzxw = _mm_shuffle_ps(unitQuat, unitQuat, _MM_SHUFFLE(3, 0, 2, 1));
+	__m128 wwww = SIMD::Shuffle_WWWW(unitQuat);
+	__m128 yzxw = SIMD::Shuffle_YZXW(unitQuat);
 	__m128 zxyw = _mm_shuffle_ps(unitQuat, unitQuat, _MM_SHUFFLE(3, 1, 0, 2));
-	__m128 yzxw_2 = _mm_shuffle_ps(xyzw_2, xyzw_2, _MM_SHUFFLE(3, 0, 2, 1));
+	__m128 yzxw_2 = SIMD::Shuffle_YZXW(xyzw_2);
 	__m128 zxyw_2 = _mm_shuffle_ps(xyzw_2, xyzw_2, _MM_SHUFFLE(3, 1, 0, 2));
 
 	__m128 tmp0 = _mm_mul_ps(yzxw_2, wwww);									// tmp0 = 2yw, 2zw, 2xw, 2w2
