@@ -2,6 +2,29 @@
 //	Scalar implementation of quaternion class functions
 // --------------------------------------------------------------------------------------------------------------------
 
+DESIRE_FORCE_INLINE Vector3 Quat::EulerAngles() const
+{
+	const Vector4 vecSq = SIMD::MulPerElem(mVec128, mVec128);
+	const float ySq = vecSq.GetY();
+
+	const float tmpX1 = 1.0f - 2.0f * (vecSq.GetX() + ySq);
+	const float tmpX2 = 1.0f - 2.0f * (ySq + vecSq.GetZ());
+
+	const float x = GetX();
+	const float y = GetY();
+	const float z = GetZ();
+	const float w = GetW();
+	const float t1 = 2.0f * (w * x + y * z);
+	const float t2 = 2.0f * (w * y - z * x);
+	const float t3 = 2.0f * (w * z + x * y);
+
+	return Vector3(
+		std::atan2(t1, tmpX1),
+		std::asin(t2 < -1.0f ? -1.0f : (t2 > 1.0f ? 1.0f : t2)),
+		std::atan2(t3, tmpX2)
+	);
+}
+
 DESIRE_FORCE_INLINE Vector3 Quat::RotateVec(const Vector3& vec) const
 {
 	const float tmpX = ((GetW() * vec.GetX()) + (GetY() * vec.GetZ())) - (GetZ() * vec.GetY());
@@ -81,12 +104,12 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotationZ(float radians)
 DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
 {
 	const Vector3 halfAngle = radiansXYZ * 0.5f;
-	const float cZ = std::cos(halfAngle.mVec128.z);
-	const float sZ = std::sin(halfAngle.mVec128.z);
-	const float cX = std::cos(halfAngle.mVec128.x);
-	const float sX = std::sin(halfAngle.mVec128.x);
-	const float cY = std::cos(halfAngle.mVec128.y);
-	const float sY = std::sin(halfAngle.mVec128.y);
+	const float cZ = std::cos(halfAngle.GetZ());
+	const float sZ = std::sin(halfAngle.GetZ());
+	const float cX = std::cos(halfAngle.GetX());
+	const float sX = std::sin(halfAngle.GetX());
+	const float cY = std::cos(halfAngle.GetY());
+	const float sY = std::sin(halfAngle.GetY());
 
 	const float cYcZ = cY * cZ;
 	const float sYcZ = sY * cZ;
@@ -111,9 +134,9 @@ DESIRE_FORCE_INLINE Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, 
 DESIRE_FORCE_INLINE Quat Quat::operator *(const Quat& quat) const
 {
 	return Quat(
-		(((mVec128.w * quat.mVec128.x) + (mVec128.x * quat.mVec128.w)) + (mVec128.y * quat.mVec128.z)) - (mVec128.z * quat.mVec128.y),
-		(((mVec128.w * quat.mVec128.y) + (mVec128.y * quat.mVec128.w)) + (mVec128.z * quat.mVec128.x)) - (mVec128.x * quat.mVec128.z),
-		(((mVec128.w * quat.mVec128.z) + (mVec128.z * quat.mVec128.w)) + (mVec128.x * quat.mVec128.y)) - (mVec128.y * quat.mVec128.x),
-		(((mVec128.w * quat.mVec128.w) - (mVec128.x * quat.mVec128.x)) - (mVec128.y * quat.mVec128.y)) - (mVec128.z * quat.mVec128.z)
+		((GetW() * quat.GetX() + GetX() * quat.GetW()) + GetY() * quat.GetZ()) - GetZ() * quat.GetY(),
+		((GetW() * quat.GetY() + GetY() * quat.GetW()) + GetZ() * quat.GetX()) - GetX() * quat.GetZ(),
+		((GetW() * quat.GetZ() + GetZ() * quat.GetW()) + GetX() * quat.GetY()) - GetY() * quat.GetX(),
+		((GetW() * quat.GetW() - GetX() * quat.GetX()) - GetY() * quat.GetY()) - GetZ() * quat.GetZ()
 	);
 }

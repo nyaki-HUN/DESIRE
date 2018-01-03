@@ -120,6 +120,9 @@ public:
 		return SIMD::Conjugate(mVec128);
 	}
 
+	// Compute the Euler angle representation of the rotation in radians
+	DESIRE_FORCE_INLINE Vector3 EulerAngles() const;
+
 	// Rotate a 3-D vector with this unit-length quaternion
 	DESIRE_FORCE_INLINE Vector3 RotateVec(const Vector3& vec) const;
 

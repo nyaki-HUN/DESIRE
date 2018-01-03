@@ -2,6 +2,29 @@
 //	SSE implementation of quaternion class functions
 // --------------------------------------------------------------------------------------------------------------------
 
+DESIRE_FORCE_INLINE Vector3 Quat::EulerAngles() const
+{
+	const Vector4 vecSq = SIMD::MulPerElem(mVec128, mVec128);
+	const float ySq = vecSq.GetY();
+
+	const float tmpX1 = 1.0f - 2.0f * (vecSq.GetX() + ySq);
+	const float tmpX2 = 1.0f - 2.0f * (ySq + vecSq.GetZ());
+
+	const float x = GetX();
+	const float y = GetY();
+	const float z = GetZ();
+	const float w = GetW();
+	const float t1 = 2.0f * (w * x + y * z);
+	const float t2 = 2.0f * (w * y - z * x);
+	const float t3 = 2.0f * (w * z + x * y);
+
+	return Vector3(
+		std::atan2(t1, tmpX1),
+		std::asin(t2 < -1.0f ? -1.0f : (t2 > 1.0f ? 1.0f : t2)),
+		std::atan2(t3, tmpX2)
+	);
+}
+
 DESIRE_FORCE_INLINE Vector3 Quat::RotateVec(const Vector3& vec) const
 {
 	__m128 tmp0 = SIMD::Shuffle_YZXW(mVec128);
