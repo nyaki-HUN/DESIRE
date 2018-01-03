@@ -129,6 +129,7 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Quat", "float Norm()", asMETHODPR(Quat, Norm, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Quat", "float Length() const", asMETHODPR(Quat, Length, () const, float), asCALL_THISCALL);
 //	Quat Conjugate() const;
+//	Vector3 EulerAngles() const;
 //	Vector3 RotateVec(const Vector3& vec) const;
 	engine->RegisterObjectMethod("Quat", "void Normalize()", asMETHOD(Quat, Normalize), asCALL_THISCALL);
 //	engine->RegisterObjectMethod("Quat", "Quat@ Normalized() const", asMETHODPR(Quat, Normalized, () const, Quat), asCALL_THISCALL);
