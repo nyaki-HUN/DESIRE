@@ -4,11 +4,9 @@
 
 DESIRE_FORCE_INLINE Vector3 Quat::EulerAngles() const
 {
-	const Vector4 vecSq = SIMD::MulPerElem(mVec128, mVec128);
-	const float ySq = vecSq.GetY();
-
-	const float tmpX1 = 1.0f - 2.0f * (vecSq.GetX() + ySq);
-	const float tmpX2 = 1.0f - 2.0f * (ySq + vecSq.GetZ());
+	const Vector4 vecSq2 = Vector4(SIMD::MulPerElem(mVec128, mVec128)) * 2.0f;
+	const float tmpX1 = 1.0f - (vecSq2.GetX() + vecSq2.GetY());
+	const float tmpX2 = 1.0f - (vecSq2.GetY() + vecSq2.GetZ());
 
 	const float x = GetX();
 	const float y = GetY();

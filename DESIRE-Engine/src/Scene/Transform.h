@@ -34,9 +34,6 @@ public:
 
 	Matrix4 ConstructLocalMatrix() const;
 
-	// Returns the rotation as Euler angles in degrees
-	Vector3 GetLocalRotationEulerAngles() const;
-
 	// Returns the absolute position
 	Vector3 GetPosition() const;
 	// Sets the the absolute position

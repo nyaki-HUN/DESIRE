@@ -57,25 +57,6 @@ Matrix4 Transform::ConstructLocalMatrix() const
 	return mat;
 }
 
-Vector3 Transform::GetLocalRotationEulerAngles() const
-{
-	const float ysqr = localRotation.GetY() * localRotation.GetY();
-
-	const float t0 = 2.0f * (localRotation.GetW() * localRotation.GetX() + localRotation.GetY() * localRotation.GetZ());
-	const float t1 = 1.0f - 2.0f * (localRotation.GetX() * localRotation.GetX() + ysqr);
-	const float x = std::atan2(t0, t1);
-
-	const float t2 = 2.0f * (localRotation.GetW() * localRotation.GetY() - localRotation.GetZ() * localRotation.GetX());
-	const float y = std::asin(Math::Clamp(t2, -1.0f, 1.0f));
-
-	const float t3 = 2.0f * (localRotation.GetW() * localRotation.GetZ() + localRotation.GetX() * localRotation.GetY());
-	const float t4 = 1.0f - 2.0f * (ysqr + localRotation.GetZ() * localRotation.GetZ());
-	const float z = std::atan2(t3, t4);
-
-	Vector3 eulerAngles(x, y, z);
-	return Math::RadToDeg(eulerAngles);
-}
-
 const Matrix4& Transform::GetWorldMatrix() const
 {
 	return worldMatrix;
