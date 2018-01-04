@@ -17,14 +17,3 @@ Component::~Component()
 		object.components.erase(it);
 	}
 }
-
-void Component::OnGUI()
-{
-
-}
-
-void Component::AddToObject()
-{
-	ASSERT(object.GetComponentByTypeID(GetTypeID()) == nullptr);
-	object.components.push_back(this);
-}

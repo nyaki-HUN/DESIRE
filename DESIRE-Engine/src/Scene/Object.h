@@ -28,6 +28,18 @@ public:
 	const Component* GetComponentByTypeID(int typeID) const;
 
 	template<class T>
+	T* AddComponent()
+	{
+		T *component = GetComponent<T>();
+		if(component == nullptr)
+		{
+			component = new T(*this);
+			components.push_back(component);
+		}
+		return component;
+	}
+
+	template<class T>
 	T* GetComponent()
 	{
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));

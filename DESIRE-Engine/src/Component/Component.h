@@ -28,11 +28,6 @@ public:
 		return object;
 	}
 
-	virtual void OnGUI();
-
 protected:
-	// This must be called from the constructor of all derived classes which declare a TYPE_ID
-	void AddToObject();
-
 	Object& object;
 };

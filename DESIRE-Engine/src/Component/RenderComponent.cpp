@@ -4,7 +4,7 @@
 RenderComponent::RenderComponent(Object& object)
 	: Component(object)
 {
-	AddToObject();
+
 }
 
 RenderComponent::~RenderComponent()

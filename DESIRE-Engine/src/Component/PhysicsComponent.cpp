@@ -7,7 +7,7 @@ PhysicsComponent::PhysicsComponent(Object& object)
 	: Component(object)
 	, collisionLayer(EPhysicsCollisionLayer::DEFAULT)
 {
-	AddToObject();
+
 }
 
 PhysicsComponent::~PhysicsComponent()

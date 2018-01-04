@@ -4,7 +4,7 @@
 ScriptComponent::ScriptComponent(Object& object)
 	: Component(object)
 {
-	AddToObject();
+
 }
 
 ScriptComponent::~ScriptComponent()
