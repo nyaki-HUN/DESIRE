@@ -16,7 +16,7 @@ public:
 	~AngelScriptSystem() override;
 
 private:
-	ScriptComponent* CreateScriptComponent_Internal(Object& object, const char *scriptName) override;
+	ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) override;
 
 	static asIScriptModule* CompileScript(const char *scriptName, asIScriptEngine *engine);
 	asIScriptContext* CreateScriptContext();

@@ -24,19 +24,15 @@ public:
 	void SetActive(bool active);
 	void SetVisible(bool visible);
 
-	Component* GetComponentByTypeID(int typeID);
-	const Component* GetComponentByTypeID(int typeID) const;
-
 	template<class T>
 	T* AddComponent()
 	{
-		T *component = GetComponent<T>();
-		if(component == nullptr)
-		{
-			component = new T(*this);
-		}
+		T *component = new T(*this);
 		return component;
 	}
+
+	Component* GetComponentByTypeID(int typeID);
+	const Component* GetComponentByTypeID(int typeID) const;
 
 	template<class T>
 	T* GetComponent()

@@ -62,7 +62,7 @@ AngelScriptSystem::~AngelScriptSystem()
 	engine->ShutDownAndRelease();
 }
 
-ScriptComponent* AngelScriptSystem::CreateScriptComponent_Internal(Object& object, const char *scriptName)
+ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 

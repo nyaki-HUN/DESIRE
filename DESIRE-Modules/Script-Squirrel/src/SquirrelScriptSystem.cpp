@@ -47,7 +47,7 @@ SquirrelScriptSystem::~SquirrelScriptSystem()
 	sq_close(vm);
 }
 
-ScriptComponent* SquirrelScriptSystem::CreateScriptComponent_Internal(Object& object, const char *scriptName)
+ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 

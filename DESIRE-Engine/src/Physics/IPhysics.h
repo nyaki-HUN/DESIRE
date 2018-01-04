@@ -33,7 +33,7 @@ public:
 
 	virtual void Update() = 0;
 
-	virtual PhysicsComponent* CreatePhysicsComponent(Object *object) = 0;
+	virtual PhysicsComponent* CreatePhysicsComponentOnObject(Object& object) = 0;
 
 	void SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled);
 

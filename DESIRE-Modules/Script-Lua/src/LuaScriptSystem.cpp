@@ -43,7 +43,7 @@ LuaScriptSystem::~LuaScriptSystem()
 	lua_close(L);
 }
 
-ScriptComponent* LuaScriptSystem::CreateScriptComponent_Internal(Object& object, const char *scriptName)
+ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 

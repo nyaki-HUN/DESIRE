@@ -20,10 +20,10 @@ public:
 	void Update();
 
 	void RegisterScript(HashedString scriptName, ScriptFactory_t factory);
-	ScriptComponent* CreateScriptComponent(Object *object, const char *scriptName);
+	ScriptComponent* CreateScriptComponentOnObject(Object& object, const char *scriptName);
 
 private:
-	virtual ScriptComponent* CreateScriptComponent_Internal(Object& object, const char *scriptName) = 0;
+	virtual ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) = 0;
 
 	std::vector<ScriptComponent*> components;
 	HashedStringMap<ScriptFactory_t> scriptFactories;

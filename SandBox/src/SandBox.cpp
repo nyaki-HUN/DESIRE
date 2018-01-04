@@ -47,7 +47,7 @@ void SandBox::Init(IWindow *mainWindow)
 	//////////
 
 	scriptedObject = new Object("Obj_1");
-	ScriptComponent *scriptComp = IScriptSystem::Get()->CreateScriptComponent(scriptedObject, "TestScript");
+	ScriptComponent *scriptComp = IScriptSystem::Get()->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
 	if(scriptComp != nullptr)
 	{
 		scriptComp->CallByType(ScriptComponent::EBuiltinFuncType::INIT);
@@ -63,7 +63,7 @@ void SandBox::Init(IWindow *mainWindow)
 	REGISTER_NATIVE_SCRIPT(SimpleRotateScript);
 
 	cubeObj = new Object("Obj_2");
-	IScriptSystem::Get()->CreateScriptComponent(cubeObj, "SimpleRotateScript");
+	IScriptSystem::Get()->CreateScriptComponentOnObject(*cubeObj, "SimpleRotateScript");
 
 	//////////
 

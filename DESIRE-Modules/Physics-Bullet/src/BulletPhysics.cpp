@@ -64,14 +64,9 @@ void BulletPhysics::Update()
 	dynamicsWorld->stepSimulation(deltaT, 7);
 }
 
-PhysicsComponent* BulletPhysics::CreatePhysicsComponent(Object *object)
+PhysicsComponent* BulletPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
-	if(object == nullptr || object->GetComponentByTypeID(PhysicsComponent::TYPE_ID) != nullptr)
-	{
-		return nullptr;
-	}
-
-	BulletPhysicsComponent *component = new BulletPhysicsComponent(*object, true);
+	BulletPhysicsComponent *component = new BulletPhysicsComponent(object, true);
 	return component;
 }
 

@@ -78,13 +78,8 @@ void Box2DPhysics::Update()
 	world->ClearForces();
 }
 
-PhysicsComponent* Box2DPhysics::CreatePhysicsComponent(Object *object)
+PhysicsComponent* Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
-	if(object == nullptr || object->GetComponentByTypeID(PhysicsComponent::TYPE_ID) != nullptr)
-	{
-		return nullptr;
-	}
-
 	ASSERT(false && "TODO");
 	return nullptr;
 }
