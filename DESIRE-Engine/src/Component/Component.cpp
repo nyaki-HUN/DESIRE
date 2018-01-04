@@ -5,7 +5,8 @@
 Component::Component(Object& object)
 	: object(object)
 {
-
+	// Add to object
+	object.components.push_back(this);
 }
 
 Component::~Component()

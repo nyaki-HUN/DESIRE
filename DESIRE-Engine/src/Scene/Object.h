@@ -34,7 +34,6 @@ public:
 		if(component == nullptr)
 		{
 			component = new T(*this);
-			components.push_back(component);
 		}
 		return component;
 	}
