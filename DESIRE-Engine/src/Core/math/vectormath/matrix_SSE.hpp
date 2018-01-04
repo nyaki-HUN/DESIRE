@@ -433,7 +433,12 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
 	res1 = SIMD::Blend(res1, s, mask_z);
 	res2 = SIMD::Blend(zero, SIMD::Negate(s), mask_y);
 	res2 = SIMD::Blend(res2, c, mask_z);
-	return Matrix4(Vector4::AxisX(), res1, res2, Vector4::AxisW());
+	return Matrix4(
+		Vector4::AxisX(),
+		res1,
+		res2,
+		Vector4::AxisW()
+	);
 }
 
 DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationY(float radians)
@@ -449,7 +454,11 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationY(float radians)
 	res0 = SIMD::Blend(res0, SIMD::Negate(s), mask_z);
 	res2 = SIMD::Blend(zero, s, mask_x);
 	res2 = SIMD::Blend(res2, c, mask_z);
-	return Matrix4(res0, Vector4::AxisY(), res2, Vector4::AxisW()
+	return Matrix4(
+		res0,
+		Vector4::AxisY(),
+		res2,
+		Vector4::AxisW()
 	);
 }
 
@@ -466,7 +475,12 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZ(float radians)
 	res0 = SIMD::Blend(res0, s, mask_y);
 	res1 = SIMD::Blend(zero, SIMD::Negate(s), mask_x);
 	res1 = SIMD::Blend(res1, c, mask_y);
-	return Matrix4(res0, res1, Vector4::AxisZ(), Vector4::AxisW());
+	return Matrix4(
+		res0,
+		res1,
+		Vector4::AxisZ(),
+		Vector4::AxisW()
+	);
 }
 
 DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
@@ -587,7 +601,6 @@ DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
 	diagSum = _mm_add_ps(_mm_add_ps(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
 	diagDiff = _mm_sub_ps(_mm_sub_ps(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
 	radicand = _mm_add_ps(SIMD::Blend(diagDiff, diagSum, mask_w), _mm_set1_ps(1.0f));
-//	invSqrt = _mm_rsqrt_ps(radicand);
 	invSqrt = newtonrapson_rsqrt4(radicand);
 
 	zy_xz_yx = SIMD::Blend(col0, col1, mask_z);								// zy_xz_yx = 00 01 12 03
