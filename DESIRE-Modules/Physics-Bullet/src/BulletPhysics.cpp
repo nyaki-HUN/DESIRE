@@ -66,6 +66,11 @@ void BulletPhysics::Update()
 
 PhysicsComponent* BulletPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
+	if(object.GetComponent<PhysicsComponent>() != nullptr)
+	{
+		return nullptr;
+	}
+
 	BulletPhysicsComponent *component = new BulletPhysicsComponent(object, true);
 	return component;
 }

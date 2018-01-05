@@ -80,6 +80,11 @@ void Box2DPhysics::Update()
 
 PhysicsComponent* Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
+	if(object.GetComponent<PhysicsComponent>() != nullptr)
+	{
+		return nullptr;
+	}
+
 	ASSERT(false && "TODO");
 	return nullptr;
 }
