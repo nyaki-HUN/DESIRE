@@ -198,19 +198,17 @@ void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeSte
 		BulletPhysicsComponent *component0 = static_cast<BulletPhysicsComponent*>(body0->getUserPointer());
 		BulletPhysicsComponent *component1 = static_cast<BulletPhysicsComponent*>(body1->getUserPointer());
 
-		ScriptComponent *scriptComponent = component0->GetObject().GetComponent<ScriptComponent>();
-		if(scriptComponent != nullptr)
+		collision.component = component0;
+		collision.incomingComponent = component1;
+		for(ScriptComponent *scriptComponent : component0->GetObject().GetScriptComponents())
 		{
-			collision.component = component0;
-			collision.incomingComponent = component1;
 			scriptComponent->Call("OnCollisionEnter", &collision);
 		}
 
-		scriptComponent = component1->GetObject().GetComponent<ScriptComponent>();
-		if(scriptComponent != nullptr)
+		collision.component = component1;
+		collision.incomingComponent = component0;
+		for(ScriptComponent *scriptComponent : component1->GetObject().GetScriptComponents())
 		{
-			collision.component = component1;
-			collision.incomingComponent = component0;
 			scriptComponent->Call("OnCollisionEnter", &collision);
 		}
 	}

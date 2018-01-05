@@ -4,6 +4,7 @@
 #include <memory>
 
 class Component;
+class ScriptComponent;
 class Transform;
 class AABB;
 
@@ -27,26 +28,37 @@ public:
 	template<class T>
 	T* AddComponent()
 	{
-		T *component = new T(*this);
+		T *component = GetComponent<T>();
+		if(component == nullptr)
+		{
+			component = new T(*this);
+		}
 		return component;
 	}
 
+	// Get the first component with the given typeID
 	Component* GetComponentByTypeID(int typeID);
 	const Component* GetComponentByTypeID(int typeID) const;
 
+	// Get the first component with the given template type
 	template<class T>
 	T* GetComponent()
 	{
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
 	}
 
+	// Get the first component with the given template type
 	template<class T>
 	const T* GetComponent() const
 	{
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
 	}
 
+	// Get all components
 	const std::vector<Component*>& GetComponents() const;
+
+	// Get all script components
+	std::vector<ScriptComponent*> GetScriptComponents() const;
 
 	// Remove from scene hierarchy
 	void Remove();

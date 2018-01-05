@@ -178,8 +178,7 @@ void Box2DPhysics::HandleCollisionBegins()
 			// Trigger event (only sent to triggers)
 			if(collision.component->IsTrigger())
 			{
-				ScriptComponent *scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				for(ScriptComponent *scriptComponent : collision.component->GetObject().GetScriptComponents())
 				{
 					scriptComponent->Call("OnTriggerEnter", collision.incomingComponent);
 				}
@@ -187,8 +186,7 @@ void Box2DPhysics::HandleCollisionBegins()
 
 			if(collision.incomingComponent->IsTrigger())
 			{
-				ScriptComponent *scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				for(ScriptComponent *scriptComponent : collision.incomingComponent->GetObject().GetScriptComponents())
 				{
 					scriptComponent->Call("OnTriggerEnter", collision.component);
 				}
@@ -197,19 +195,18 @@ void Box2DPhysics::HandleCollisionBegins()
 		else
 		{
 			// Collision event (sent to both components)
-			ScriptComponent *scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			PhysicsComponent *component0 = collision.component;
+			PhysicsComponent *component1 = collision.incomingComponent;
+
+			for(ScriptComponent *scriptComponent : component0->GetObject().GetScriptComponents())
 			{
 				scriptComponent->Call("OnCollisionEnter", &collision);
 			}
 
-			scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			collision.component = component1;
+			collision.incomingComponent = component0;
+			for(ScriptComponent *scriptComponent : component1->GetObject().GetScriptComponents())
 			{
-				PhysicsComponent *tmp = collision.component;
-				collision.component = collision.incomingComponent;
-				collision.incomingComponent = tmp;
-
 				scriptComponent->Call("OnCollisionEnter", &collision);
 			}
 		}
@@ -225,8 +222,7 @@ void Box2DPhysics::HandleCollisionEnds()
 			// Trigger event (only sent to triggers)
 			if(collision.component->IsTrigger())
 			{
-				ScriptComponent *scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				for(ScriptComponent *scriptComponent : collision.component->GetObject().GetScriptComponents())
 				{
 					scriptComponent->Call("OnTriggerExit", collision.incomingComponent);
 				}
@@ -234,8 +230,7 @@ void Box2DPhysics::HandleCollisionEnds()
 
 			if(collision.incomingComponent->IsTrigger())
 			{
-				ScriptComponent *scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				for(ScriptComponent *scriptComponent : collision.incomingComponent->GetObject().GetScriptComponents())
 				{
 					scriptComponent->Call("OnTriggerExit", collision.component);
 				}
@@ -244,19 +239,18 @@ void Box2DPhysics::HandleCollisionEnds()
 		else
 		{
 			// Collision event (sent to both components)
-			ScriptComponent *scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			PhysicsComponent *component0 = collision.component;
+			PhysicsComponent *component1 = collision.incomingComponent;
+
+			for(ScriptComponent *scriptComponent : component0->GetObject().GetScriptComponents())
 			{
 				scriptComponent->Call("OnCollisionExit", &collision);
 			}
 
-			scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			collision.component = component1;
+			collision.incomingComponent = component0;
+			for(ScriptComponent *scriptComponent : component1->GetObject().GetScriptComponents())
 			{
-				PhysicsComponent *tmp = collision.component;
-				collision.component = collision.incomingComponent;
-				collision.incomingComponent = tmp;
-
 				scriptComponent->Call("OnCollisionExit", &collision);
 			}
 		}

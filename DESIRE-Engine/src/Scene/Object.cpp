@@ -2,6 +2,7 @@
 #include "Scene/Object.h"
 #include "Scene/Transform.h"
 #include "Component/Component.h"
+#include "Component/ScriptComponent.h"
 #include "Core/math/AABB.h"
 #include "Core/StrUtils.h"
 
@@ -109,6 +110,20 @@ const Component* Object::GetComponentByTypeID(int typeID) const
 const std::vector<Component*>& Object::GetComponents() const
 {
 	return components;
+}
+
+std::vector<ScriptComponent*> Object::GetScriptComponents() const
+{
+	std::vector<ScriptComponent*> scriptComponents;
+	for(Component *component : components)
+	{
+		if(component->GetTypeID() == ScriptComponent::TYPE_ID)
+		{
+			scriptComponents.push_back(static_cast<ScriptComponent*>(component));
+		}
+	}
+
+	return scriptComponents;
 }
 
 void Object::Remove()
