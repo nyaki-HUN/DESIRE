@@ -10,8 +10,6 @@ class AABB;
 
 class Object
 {
-	friend class Component;
-
 public:
 	Object(const char *name = nullptr);
 	~Object();
@@ -26,36 +24,32 @@ public:
 	void SetVisible(bool visible);
 
 	template<class T>
-	T* AddComponent()
+	T& AddComponent()
 	{
 		T *component = GetComponent<T>();
 		if(component == nullptr)
 		{
-			component = new T(*this);
+			components.push_back(std::make_unique<T>(*this));
+			component = static_cast<T*>(components.back().get());
 		}
-		return component;
+		return *component;
 	}
+
+	// Removes and destroys a component
+	void RemoveComponent(const Component *component);
 
 	// Get the first component with the given typeID
-	Component* GetComponentByTypeID(int typeID);
-	const Component* GetComponentByTypeID(int typeID) const;
+	Component* GetComponentByTypeID(int typeID) const;
 
 	// Get the first component with the given template type
 	template<class T>
-	T* GetComponent()
-	{
-		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
-	}
-
-	// Get the first component with the given template type
-	template<class T>
-	const T* GetComponent() const
+	T* GetComponent() const
 	{
 		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
 	}
 
 	// Get all components
-	const std::vector<Component*>& GetComponents() const;
+	const std::vector<std::unique_ptr<Component>>& GetComponents() const;
 
 	// Get all script components
 	std::vector<ScriptComponent*> GetScriptComponents() const;
@@ -84,7 +78,7 @@ private:
 	
 	static void RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount);
 
-	std::vector<Component*> components;
+	std::vector<std::unique_ptr<Component>> components;
 	Transform *transform = nullptr;
 	std::unique_ptr<AABB> aabb;
 	size_t numTransformsInHierarchy = 1;

@@ -21,6 +21,8 @@ protected:
 public:
 	virtual ~Component();
 
+	void Destroy() const;
+
 	virtual int GetTypeID() const = 0;
 
 	inline Object& GetObject() const

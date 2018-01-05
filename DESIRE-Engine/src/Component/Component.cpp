@@ -5,16 +5,15 @@
 Component::Component(Object& object)
 	: object(object)
 {
-	// Add to object
-	object.components.push_back(this);
+
 }
 
 Component::~Component()
 {
-	// Remove from object
-	auto it = std::find(object.components.begin(), object.components.end(), this);
-	if(it != object.components.end())
-	{
-		object.components.erase(it);
-	}
+
+}
+
+void Component::Destroy() const
+{
+	object.RemoveComponent(this);
 }

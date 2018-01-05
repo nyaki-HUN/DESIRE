@@ -81,33 +81,32 @@ void Object::SetVisible(bool visible)
 
 }
 
-Component* Object::GetComponentByTypeID(int typeID)
+void Object::RemoveComponent(const Component *component)
 {
-	for(Component *component : components)
+	for(auto it = components.begin(); it != components.end(); ++it)
+	{
+		if(it->get() == component)
+		{
+			components.erase(it);
+			return;
+		}
+	}
+}
+
+Component* Object::GetComponentByTypeID(int typeID) const
+{
+	for(const std::unique_ptr<Component>& component : components)
 	{
 		if(component->GetTypeID() == typeID)
 		{
-			return component;
+			return component.get();
 		}
 	}
 
 	return nullptr;
 }
 
-const Component* Object::GetComponentByTypeID(int typeID) const
-{
-	for(const Component *component : components)
-	{
-		if(component->GetTypeID() == typeID)
-		{
-			return component;
-		}
-	}
-
-	return nullptr;
-}
-
-const std::vector<Component*>& Object::GetComponents() const
+const std::vector<std::unique_ptr<Component>>& Object::GetComponents() const
 {
 	return components;
 }
@@ -115,11 +114,11 @@ const std::vector<Component*>& Object::GetComponents() const
 std::vector<ScriptComponent*> Object::GetScriptComponents() const
 {
 	std::vector<ScriptComponent*> scriptComponents;
-	for(Component *component : components)
+	for(const std::unique_ptr<Component>& component : components)
 	{
 		if(component->GetTypeID() == ScriptComponent::TYPE_ID)
 		{
-			scriptComponents.push_back(static_cast<ScriptComponent*>(component));
+			scriptComponents.push_back(static_cast<ScriptComponent*>(component.get()));
 		}
 	}
 
