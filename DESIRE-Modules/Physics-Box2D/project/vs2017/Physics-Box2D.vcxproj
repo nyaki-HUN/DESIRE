@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Dynamics\b2WorldCallbacks.h" />
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Rope\b2Rope.h" />
     <ClInclude Include="..\..\src\Box2DPhysics.h" />
+    <ClInclude Include="..\..\src\Box2DPhysicsComponent.h" />
     <ClInclude Include="..\..\src\ContactListener.h" />
     <ClInclude Include="..\..\src\DestructorListener.h" />
     <ClInclude Include="..\..\src\PhysicsMaterial.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="..\..\Externals\Box2D\Box2D\Dynamics\b2WorldCallbacks.cpp" />
     <ClCompile Include="..\..\Externals\Box2D\Box2D\Rope\b2Rope.cpp" />
     <ClCompile Include="..\..\src\Box2DPhysics.cpp" />
+    <ClCompile Include="..\..\src\Box2DPhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\ContactListener.cpp" />
     <ClCompile Include="..\..\src\DestructorListener.cpp" />
   </ItemGroup>

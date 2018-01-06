@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Box2DPhysics.h"
+#include "Box2DPhysicsComponent.h"
 #include "ContactListener.h"
 #include "DestructorListener.h"
 #include "RaycastCallbacks.h"
@@ -78,15 +79,10 @@ void Box2DPhysics::Update()
 	world->ClearForces();
 }
 
-PhysicsComponent* Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)
+PhysicsComponent& Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
-	if(object.GetComponent<PhysicsComponent>() != nullptr)
-	{
-		return nullptr;
-	}
-
-	ASSERT(false && "TODO");
-	return nullptr;
+	Box2DPhysicsComponent& component = object.AddComponent<Box2DPhysicsComponent>();
+	return component;
 }
 
 bool Box2DPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr, Vector3 *o_collisionNormalPtr, int layerMask)
