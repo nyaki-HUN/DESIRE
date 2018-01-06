@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/IRender.h"
+#include "Render/Render.h"
 #include "Resource/Texture.h"
 #include "Core/STL_utils.h"
 
@@ -11,7 +11,7 @@
 class MeshRenderDataD3D11;
 class ShaderRenderDataD3D11;
 
-class Direct3D11Render : public IRender
+class Direct3D11Render : public Render
 {
 public:
 	Direct3D11Render();

@@ -432,10 +432,10 @@
     <ClInclude Include="..\..\src\Render\DebugDraw.h">
       <Filter>src\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\IRender.h">
+    <ClInclude Include="..\..\src\Render\Material.h">
       <Filter>src\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\Material.h">
+    <ClInclude Include="..\..\src\Render\Render.h">
       <Filter>src\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\RenderTarget.h">
@@ -495,7 +495,7 @@
     <ClInclude Include="..\..\src\Script\NativeScriptComponent.h">
       <Filter>src\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Sound\ISound.h">
+    <ClInclude Include="..\..\src\Sound\Sound.h">
       <Filter>src\Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Utils\Enumerator.h">
@@ -647,10 +647,10 @@
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\IRender.cpp">
+    <ClCompile Include="..\..\src\Render\Material.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\Material.cpp">
+    <ClCompile Include="..\..\src\Render\Render.cpp">
       <Filter>src\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\RenderTarget.cpp">
@@ -701,7 +701,7 @@
     <ClCompile Include="..\..\src\Script\NativeScriptComponent.cpp">
       <Filter>src\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Sound\ISound.cpp">
+    <ClCompile Include="..\..\src\Sound\Sound.cpp">
       <Filter>src\Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Utils\TaskManager.cpp">

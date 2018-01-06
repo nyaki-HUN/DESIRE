@@ -217,8 +217,8 @@
     <ClInclude Include="..\..\src\Physics\Physics.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\DebugDraw.h" />
-    <ClInclude Include="..\..\src\Render\IRender.h" />
     <ClInclude Include="..\..\src\Render\Material.h" />
+    <ClInclude Include="..\..\src\Render\Render.h" />
     <ClInclude Include="..\..\src\Render\RenderTarget.h" />
     <ClInclude Include="..\..\src\Render\View.h" />
     <ClInclude Include="..\..\src\Resource\ErrorTexture.h" />
@@ -238,7 +238,7 @@
     <ClInclude Include="..\..\src\Script\IScript.h" />
     <ClInclude Include="..\..\src\Script\IScriptSystem.h" />
     <ClInclude Include="..\..\src\Script\NativeScriptComponent.h" />
-    <ClInclude Include="..\..\src\Sound\ISound.h" />
+    <ClInclude Include="..\..\src\Sound\Sound.h" />
     <ClInclude Include="..\..\src\Utils\Enumerator.h" />
     <ClInclude Include="..\..\src\Utils\GuardedCallbackFactory.h" />
     <ClInclude Include="..\..\src\Utils\JsonDataTranslator.h" />
@@ -290,8 +290,8 @@
     <ClCompile Include="..\..\src\Physics\Physics.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp" />
-    <ClCompile Include="..\..\src\Render\IRender.cpp" />
     <ClCompile Include="..\..\src\Render\Material.cpp" />
+    <ClCompile Include="..\..\src\Render\Render.cpp" />
     <ClCompile Include="..\..\src\Render\RenderTarget.cpp" />
     <ClCompile Include="..\..\src\Render\View.cpp" />
     <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp" />
@@ -308,7 +308,7 @@
     <ClCompile Include="..\..\src\Scene\Transform.cpp" />
     <ClCompile Include="..\..\src\Script\IScriptSystem.cpp" />
     <ClCompile Include="..\..\src\Script\NativeScriptComponent.cpp" />
-    <ClCompile Include="..\..\src\Sound\ISound.cpp" />
+    <ClCompile Include="..\..\src\Sound\Sound.cpp" />
     <ClCompile Include="..\..\src\Utils\TaskManager.cpp" />
     <ClCompile Include="..\..\src\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

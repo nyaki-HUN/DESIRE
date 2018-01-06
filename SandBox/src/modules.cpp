@@ -36,8 +36,8 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(Physics, Box2DPhysics)
 // --------------------------------------------------------------------------------------------------------------------
 #include "Render-bgfx/src/BgfxRender.h"
 #include "Render-Direct3D11/src/Direct3D11Render.h"
-DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, BgfxRender)
-//DESIRE_DEFINE_SINGLETON_INSTANCE(IRender, Direct3D11Render)
+DESIRE_DEFINE_SINGLETON_INSTANCE(Render, BgfxRender)
+//DESIRE_DEFINE_SINGLETON_INSTANCE(Render, Direct3D11Render)
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Resource
@@ -77,5 +77,5 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, SquirrelScriptSystem)
 // --------------------------------------------------------------------------------------------------------------------
 //	Sound
 // --------------------------------------------------------------------------------------------------------------------
-#include "Sound/ISound.h"
-DESIRE_DEFINE_EMPTY_SINGLETON_INSTANCE(ISound)
+#include "Sound/Sound.h"
+DESIRE_DEFINE_EMPTY_SINGLETON_INSTANCE(Sound)

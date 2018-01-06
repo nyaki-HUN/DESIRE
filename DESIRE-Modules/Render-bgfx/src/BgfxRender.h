@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Render/IRender.h"
+#include "Render/Render.h"
 #include "Resource/Texture.h"
 #include "Core/STL_utils.h"
 
 #include "../Externals/bgfx/include/bgfx/bgfx.h"
 #include <unordered_map>
 
-class BgfxRender : public IRender
+class BgfxRender : public Render
 {
 public:
 	BgfxRender();

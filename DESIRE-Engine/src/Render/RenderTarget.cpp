@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Render/RenderTarget.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 #include "Resource/Texture.h"
 
 RenderTarget::RenderTarget(uint16_t width, uint16_t height)
@@ -13,7 +13,7 @@ RenderTarget::~RenderTarget()
 {
 	if(renderData != nullptr)
 	{
-		IRender::Get()->Unbind(this);
+		Render::Get()->Unbind(this);
 	}
 }
 

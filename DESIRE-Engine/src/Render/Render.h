@@ -15,9 +15,9 @@ class Texture;
 class RenderTarget;
 class Matrix4;
 
-class IRender
+class Render
 {
-	DESIRE_DECLARE_SINGLETON_INTERFACE(IRender)
+	DESIRE_DECLARE_SINGLETON(Render)
 
 public:
 	enum class EDepthTest

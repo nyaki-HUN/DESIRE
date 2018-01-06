@@ -1,22 +1,22 @@
 #include "stdafx.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 #include "Render/Material.h"
 #include "Core/math/vectormath.h"
 #include "Resource/Mesh.h"
 #include "Resource/Shader.h"
 #include "Resource/Texture.h"
 
-IRender::IRender()
+Render::Render()
 {
 	screenSpaceQuadVertexShader = std::make_unique<Shader>("vs_screenSpaceQuad");
 }
 
-IRender::~IRender()
+Render::~Render()
 {
 
 }
 
-void IRender::RenderMesh(Mesh *mesh, Material *material)
+void Render::RenderMesh(Mesh *mesh, Material *material)
 {
 	ASSERT(mesh != nullptr);
 	ASSERT(material != nullptr);
@@ -43,7 +43,7 @@ void IRender::RenderMesh(Mesh *mesh, Material *material)
 	DoRender();
 }
 
-void IRender::RenderScreenSpaceQuad(Material *material)
+void Render::RenderScreenSpaceQuad(Material *material)
 {
 	ASSERT(material != nullptr);
 	ASSERT(screenSpaceQuadVertexShader->renderData != nullptr && "Shader needs to be bound by the render module");
@@ -62,12 +62,12 @@ void IRender::RenderScreenSpaceQuad(Material *material)
 	DoRender();
 }
 
-void IRender::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
+void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
 {
 	SetBlendModeSeparated(srcBlend, destBlend, blendOp, srcBlend, destBlend, blendOp);
 }
 
-void IRender::SetDefaultRenderStates()
+void Render::SetDefaultRenderStates()
 {
 	SetColorWriteEnabled(true, true);
 	SetDepthWriteEnabled(true);
@@ -75,7 +75,7 @@ void IRender::SetDefaultRenderStates()
 	SetCullMode(ECullMode::CCW);
 }
 
-void IRender::SetMaterial(Material *material)
+void Render::SetMaterial(Material *material)
 {
 	// Vertex shader
 	if(material->vertexShader != nullptr)

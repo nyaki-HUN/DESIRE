@@ -5,7 +5,7 @@
 #include "Core/fs/FileSystemWatcher.h"
 #include "Core/fs/IReadFile.h"
 #include "Input/Input.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 #include "Resource/ResourceManager.h"
 #include "Scene/Object.h"
 #include "Script/IScriptSystem.h"
@@ -133,7 +133,7 @@ void SandBox::Update()
 
 	dataDirWatcher->Update();
 
-	IRender::Get()->BeginFrame(window);
+	Render::Get()->BeginFrame(window);
 	ImGuiImpl::Get()->NewFrame(window);
 
 	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
@@ -142,5 +142,5 @@ void SandBox::Update()
 	ImGui::End();
 
 	ImGuiImpl::Get()->EndFrame();
-	IRender::Get()->EndFrame();
+	Render::Get()->EndFrame();
 }

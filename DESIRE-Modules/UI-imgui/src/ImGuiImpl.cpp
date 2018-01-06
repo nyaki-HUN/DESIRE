@@ -6,7 +6,7 @@
 #include "Input/Input.h"
 #include "Render/Camera.h"
 #include "Render/Material.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 #include "Resource/ResourceManager.h"
 #include "Resource/Mesh.h"
 #include "Resource/Shader.h"
@@ -170,10 +170,10 @@ void ImGuiImpl::EndFrame()
 	ImGui::Render();
 }
 
-void ImGuiImpl::Render(ImDrawData *drawData)
+void ImGuiImpl::DoRender(ImDrawData *drawData)
 {
 	ImGuiIO& io = ImGui::GetIO();
-	IRender *render = IRender::Get();
+	Render *render = Render::Get();
 
 /**/render->SetWorldMatrix(Matrix4::Identity());
 
@@ -181,8 +181,8 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 	render->SetViewProjectionMatrices(Matrix4::Identity(), matOrtho);
 
 	render->SetDepthWriteEnabled(false);
-	render->SetCullMode(IRender::ECullMode::NONE);
-	render->SetBlendMode(IRender::EBlend::SRC_ALPHA, IRender::EBlend::INV_SRC_ALPHA, IRender::EBlendOp::ADD);
+	render->SetCullMode(Render::ECullMode::NONE);
+	render->SetBlendMode(Render::EBlend::SRC_ALPHA, Render::EBlend::INV_SRC_ALPHA, Render::EBlendOp::ADD);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
 	ASSERT((uint32_t)drawData->TotalIdxCount <= mesh->maxNumOfIndices);
@@ -243,5 +243,5 @@ void ImGuiImpl::Render(ImDrawData *drawData)
 
 void ImGuiImpl::RenderDrawListsCallback(ImDrawData *drawData)
 {
-	ImGuiImpl::Get()->Render(drawData);
+	ImGuiImpl::Get()->DoRender(drawData);
 }

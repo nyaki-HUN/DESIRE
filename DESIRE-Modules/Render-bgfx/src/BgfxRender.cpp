@@ -246,9 +246,9 @@ void BgfxRender::SetCullMode(ECullMode cullMode)
 
 	switch(cullMode)
 	{
-		case IRender::ECullMode::NONE:	break;
-		case IRender::ECullMode::CCW:	renderState |= BGFX_STATE_CULL_CCW; break;
-		case IRender::ECullMode::CW:	renderState |= BGFX_STATE_CULL_CW; break;
+		case ECullMode::NONE:	break;
+		case ECullMode::CCW:	renderState |= BGFX_STATE_CULL_CCW; break;
+		case ECullMode::CW:		renderState |= BGFX_STATE_CULL_CW; break;
 	}
 }
 

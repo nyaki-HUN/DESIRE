@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Resource/Shader.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 
 Shader::Shader(const String& name)
 	: name(name)
@@ -12,6 +12,6 @@ Shader::~Shader()
 {
 	if(renderData != nullptr)
 	{
-		IRender::Get()->Unbind(this);
+		Render::Get()->Unbind(this);
 	}
 }

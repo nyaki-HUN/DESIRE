@@ -12,7 +12,7 @@ class Texture;
 
 class ImGuiImpl
 {
-	DESIRE_DECLARE_SINGLETON(ImGuiImpl)
+	DESIRE_SINGLETON(ImGuiImpl)
 
 public:
 	void Init();
@@ -22,7 +22,7 @@ public:
 	void EndFrame();
 
 private:
-	void Render(ImDrawData *data);
+	void DoRender(ImDrawData *data);
 
 	static void RenderDrawListsCallback(ImDrawData *data);
 

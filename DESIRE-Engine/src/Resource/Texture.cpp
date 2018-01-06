@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Resource/Texture.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 
 Texture::Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMipMaps)
 	: width(width)
@@ -15,7 +15,7 @@ Texture::~Texture()
 {
 	if(renderData != nullptr)
 	{
-		IRender::Get()->Unbind(this);
+		Render::Get()->Unbind(this);
 	}
 }
 

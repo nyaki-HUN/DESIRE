@@ -4,7 +4,7 @@
 #include "Core/Timer.h"
 #include "Input/Input.h"
 #include "Physics/Physics.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 #include "Script/IScriptSystem.h"
 
 IApp* IApp::instance = nullptr;
@@ -60,7 +60,7 @@ int IApp::Run(int argc, const char * const *argv)
 
 	CreationParams params = IApp::Get()->GetCreationParams(argc, argv);
 	IWindow *mainWindow = IWindow::Create(params.windowParams);
-	IRender::Get()->Init(mainWindow);
+	Render::Get()->Init(mainWindow);
 	Input::Init(mainWindow);
 
 	// Run App
@@ -91,7 +91,7 @@ int IApp::Run(int argc, const char * const *argv)
 
 	// DeInit engine
 	Input::Kill();
-	IRender::Get()->Kill();
+	Render::Get()->Kill();
 	delete mainWindow;
 
 	return returnValue;

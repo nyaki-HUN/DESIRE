@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Render/IRender.h"
+#include "Render/Render.h"
 
 #include <vector>
 
@@ -13,15 +13,15 @@ public:
 	struct TextureInfo
 	{
 		std::shared_ptr<Texture> texture;
-		IRender::EFilterMode filterMode;
-		IRender::EAddressMode addressMode;
+		Render::EFilterMode filterMode;
+		Render::EAddressMode addressMode;
 	};
 
 	Material();
 	~Material();
 
 	const std::vector<TextureInfo>& GetTextures() const;
-	void AddTexture(const std::shared_ptr<Texture>& texture, IRender::EFilterMode filterMode = IRender::EFilterMode::TRILINEAR, IRender::EAddressMode addressMode = IRender::EAddressMode::REPEAT);
+	void AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode = Render::EFilterMode::TRILINEAR, Render::EAddressMode addressMode = Render::EAddressMode::REPEAT);
 	void ChangeTexture(uint8_t idx,  const std::shared_ptr<Texture>& texture);
 
 	std::shared_ptr<Shader> vertexShader;

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Render/View.h"
-#include "Render/IRender.h"
 #include "Render/RenderTarget.h"
 #include "Resource/Texture.h"
 

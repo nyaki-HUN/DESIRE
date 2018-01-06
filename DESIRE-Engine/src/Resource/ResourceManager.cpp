@@ -5,7 +5,7 @@
 #include "Resource/Texture.h"
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/IReadFile.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 
 ResourceManager::ResourceManager()
 {
@@ -117,7 +117,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const char *filename)
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const char *filename)
 {
-	const String filenameWithPath = IRender::Get()->GetShaderFilenameWithPath(filename);
+	const String filenameWithPath = Render::Get()->GetShaderFilenameWithPath(filename);
 
 	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath.c_str());
 	if(file)

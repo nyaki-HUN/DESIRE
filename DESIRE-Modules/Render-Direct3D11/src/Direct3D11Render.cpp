@@ -391,9 +391,9 @@ void Direct3D11Render::SetCullMode(ECullMode cullMode)
 {
 	switch(cullMode)
 	{
-		case IRender::ECullMode::NONE:	rasterizerDesc.CullMode = D3D11_CULL_NONE; break;
-		case IRender::ECullMode::CCW:	rasterizerDesc.CullMode = D3D11_CULL_BACK; break;
-		case IRender::ECullMode::CW:	rasterizerDesc.CullMode = D3D11_CULL_FRONT; break;
+		case ECullMode::NONE:	rasterizerDesc.CullMode = D3D11_CULL_NONE; break;
+		case ECullMode::CCW:	rasterizerDesc.CullMode = D3D11_CULL_BACK; break;
+		case ECullMode::CW:		rasterizerDesc.CullMode = D3D11_CULL_FRONT; break;
 	}
 }
 

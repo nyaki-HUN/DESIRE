@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Resource/Mesh.h"
-#include "Render/IRender.h"
+#include "Render/Render.h"
 
 Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
 	: attrib(attrib)
@@ -39,7 +39,7 @@ Mesh::~Mesh()
 {
 	if(renderData != nullptr)
 	{
-		IRender::Get()->Unbind(this);
+		Render::Get()->Unbind(this);
 	}
 
 	free(indices);

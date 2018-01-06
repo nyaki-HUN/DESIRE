@@ -2,9 +2,9 @@
 
 #include "Core/Singleton.h"
 
-class ISound
+class Sound
 {
-	DESIRE_DECLARE_SINGLETON_INTERFACE(ISound)
+	DESIRE_DECLARE_SINGLETON(Sound)
 
 public:
 	virtual void PlaySound(const char *soundName) = 0;
