@@ -20,34 +20,38 @@ void IScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory_t fact
 	scriptFactories.Insert(scriptName, factory);
 }
 
-ScriptComponent* IScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scriptName)
+void IScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scriptName)
 {
-	ScriptComponent *scriptComponent = nullptr;
-
 	// Try to create as a native script 
 	HashedString scriptNameHash = HashedString::CreateFromDynamicString(scriptName);
 	ScriptFactory_t *scriptFactory = scriptFactories.Find(scriptNameHash);
 	if(scriptFactory != nullptr)
 	{
-		scriptComponent = new NativeScriptComponent(object, (*scriptFactory)());
-	}
-	else
-	{
-		// Try to create from file
-		scriptComponent = CreateScriptComponentOnObject_Internal(object, scriptName);
+		object.AddComponent<NativeScriptComponent>((*scriptFactory)());
+		return;
 	}
 
-	if(scriptComponent != nullptr)
-	{
-		components.push_back(scriptComponent);
-	}
+	// Try to create from file
+	CreateScriptComponentOnObject_Internal(object, scriptName);
+}
 
-	return scriptComponent;
+void IScriptSystem::OnScriptComponentCreate(ScriptComponent *component)
+{
+	scriptComponents.push_back(component);
+}
+
+void IScriptSystem::OnScriptComponentDestroy(ScriptComponent *component)
+{
+	auto it = std::find(scriptComponents.begin(), scriptComponents.end(), component);
+	if(it != scriptComponents.end())
+	{
+		scriptComponents.erase(it);
+	}
 }
 
 void IScriptSystem::Update()
 {
-	for(ScriptComponent *scriptComponent : components)
+	for(ScriptComponent *scriptComponent : scriptComponents)
 	{
 		scriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::UPDATE);
 	}

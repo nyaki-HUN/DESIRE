@@ -23,13 +23,13 @@ public:
 	void SetActive(bool active);
 	void SetVisible(bool visible);
 
-	template<class T>
-	T& AddComponent()
+	template<class T, class... Args>
+	T& AddComponent(Args&&... args)
 	{
 		T *component = GetComponent<T>();
 		if(component == nullptr)
 		{
-			components.push_back(std::make_unique<T>(*this));
+			components.push_back(std::make_unique<T>(*this, std::forward<Args>(args)...));
 			component = static_cast<T*>(components.back().get());
 		}
 		return *component;

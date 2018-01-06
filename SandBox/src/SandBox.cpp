@@ -47,7 +47,8 @@ void SandBox::Init(IWindow *mainWindow)
 	//////////
 
 	scriptedObject = new Object("Obj_1");
-	ScriptComponent *scriptComp = IScriptSystem::Get()->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
+	IScriptSystem::Get()->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
+	ScriptComponent *scriptComp = scriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
 	{
 		scriptComp->CallByType(ScriptComponent::EBuiltinFuncType::INIT);

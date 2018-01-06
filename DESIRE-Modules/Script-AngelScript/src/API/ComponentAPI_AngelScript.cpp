@@ -41,7 +41,8 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Object", "String GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);
 	engine->RegisterObjectMethod("Object", "uint32 GetID() const", asMETHODPR(Object, GetID, () const, uint32_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponentTypeID typeID)", asMETHODPR(Object, GetComponentByTypeID, (int), Component*), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "void RemoveComponent(Component@)", asMETHODPR(Object, RemoveComponent, (const Component*), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponentTypeID typeID) const", asMETHODPR(Object, GetComponentByTypeID, (int) const, Component*), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Transform& get_transform() const", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHODPR(Object, GetParent, () const, Object*), asCALL_THISCALL);
 

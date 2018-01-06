@@ -10,7 +10,7 @@ LuaScriptComponent::LuaScriptComponent(Object& object, lua_State *L)
 	: ScriptComponent(object)
 	, L(L)
 {
-
+	luabridge::setGlobal(L, this, "self");
 }
 
 LuaScriptComponent::~LuaScriptComponent()

@@ -5,6 +5,7 @@
 
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/IReadFile.h"
+#include "Scene/Object.h"
 
 #include "lua.hpp"
 
@@ -43,7 +44,7 @@ LuaScriptSystem::~LuaScriptSystem()
 	lua_close(L);
 }
 
-ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+void LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -51,15 +52,12 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object&
 	if(newL == nullptr)
 	{
 		LOG_ERROR("Failed to create new script thread");
-		return nullptr;
+		return;
 	}
 
 	CompileScript(scriptName, newL);
 
-	LuaScriptComponent *scriptComponent = new LuaScriptComponent(object, newL);
-	luabridge::setGlobal(newL, scriptComponent, "self");
-
-	return scriptComponent;
+	LuaScriptComponent& scriptComponent = object.AddComponent<LuaScriptComponent>(newL);
 }
 
 void LuaScriptSystem::CompileScript(const char *scriptName, lua_State *L)

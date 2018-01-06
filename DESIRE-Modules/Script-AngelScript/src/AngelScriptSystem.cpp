@@ -6,6 +6,7 @@
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/IReadFile.h"
 #include "Core/String.h"
+#include "Scene/Object.h"
 #include "Utils/Enumerator.h"
 
 #define CONTEXT_POOL_DEFAULT_SIZE	10
@@ -62,7 +63,7 @@ AngelScriptSystem::~AngelScriptSystem()
 	engine->ShutDownAndRelease();
 }
 
-ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+void AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -72,7 +73,7 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 		module = CompileScript(scriptName, engine);
 		if(module == nullptr)
 		{
-			return nullptr;
+			return;
 		}
 	}
 
@@ -80,32 +81,28 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 	asIScriptFunction *factoryFunc = (asIScriptFunction*)module->GetUserData();
 	if(factoryFunc == nullptr)
 	{
-		return nullptr;
+		return;
 	}
 
-	AngelScriptComponent *scriptComponent = new AngelScriptComponent(object);
+	AngelScriptComponent& scriptComponent = object.AddComponent<AngelScriptComponent>();
 
 	// Call the constructor
 	asIScriptContext *ctx = engine->RequestContext();
 	ctx->Prepare(factoryFunc);
-	ctx->SetArgObject(0, scriptComponent);
+	ctx->SetArgObject(0, &scriptComponent);
 	int result = ctx->Execute();
 	if(result == asEXECUTION_FINISHED)
 	{
-		// Get the object that was created and increase the reference, otherwise it will be destroyed when the context is reused or destroyed
-		asIScriptObject *obj = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
-		obj->AddRef();
-
-		scriptComponent->scriptObject = obj;
+		// Get the object that was created and increase the reference, otherwise it would be destroyed when the context is reused or destroyed
+		scriptComponent.scriptObject = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
+		scriptComponent.scriptObject->AddRef();
 	}
 	else
 	{
-		delete scriptComponent;
-		scriptComponent = nullptr;
+		object.RemoveComponent(&scriptComponent);
 	}
-	engine->ReturnContext(ctx);
 
-	return scriptComponent;
+	engine->ReturnContext(ctx);
 }
 
 asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScriptEngine *engine)

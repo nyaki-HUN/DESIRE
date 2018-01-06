@@ -6,6 +6,7 @@
 #include "Core/fs/FileSystem.h"
 #include "Core/fs/IReadFile.h"
 #include "Core/String.h"
+#include "Scene/Object.h"
 #include "Utils/Enumerator.h"
 
 #include <stdarg.h>
@@ -47,7 +48,7 @@ SquirrelScriptSystem::~SquirrelScriptSystem()
 	sq_close(vm);
 }
 
-ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+void SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -64,20 +65,20 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 		if(SQ_FAILED(result))
 		{
 			sq_pop(vm, 1);	// pop root table
-			return nullptr;
+			return;
 		}
 	}
 
-	SquirrelScriptComponent *scriptComponent = new SquirrelScriptComponent(object, vm);
+	SquirrelScriptComponent& scriptComponent = object.AddComponent<SquirrelScriptComponent>(vm);
 
 	// Call the constructor
 	sq_pushroottable(vm);	// the 'this' parameter
-	Sqrat::PushVar(vm, scriptComponent);
+	Sqrat::PushVar(vm, &scriptComponent);
 	result = sq_call(vm, 2, true, true);
 	if(SQ_SUCCEEDED(result))
 	{
-		sq_getstackobj(vm, -1, &scriptComponent->scriptObject);
-		sq_addref(vm, &scriptComponent->scriptObject);
+		sq_getstackobj(vm, -1, &scriptComponent.scriptObject);
+		sq_addref(vm, &scriptComponent.scriptObject);
 
 		sq_pop(vm, 1);	// pop instance
 
@@ -96,8 +97,8 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 			result = sq_get(vm, -2);
 			if(SQ_SUCCEEDED(result) && sq_gettype(vm, -1) == OT_CLOSURE)
 			{
-				sq_getstackobj(vm, -1, &scriptComponent->builtinFunctions[i]);
-				sq_addref(vm, &scriptComponent->builtinFunctions[i]);
+				sq_getstackobj(vm, -1, &scriptComponent.builtinFunctions[i]);
+				sq_addref(vm, &scriptComponent.builtinFunctions[i]);
 
 				sq_pop(vm, 1);
 			}
@@ -105,13 +106,10 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 	}
 	else
 	{
-		delete scriptComponent;
-		scriptComponent = nullptr;
+		object.RemoveComponent(&scriptComponent);
 	}
 
 	sq_pop(vm, 2);	// pop class and root table
-
-	return scriptComponent;
 }
 
 void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
