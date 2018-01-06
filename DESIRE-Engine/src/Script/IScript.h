@@ -26,7 +26,7 @@ public:
 			STRING
 		};
 
-		EType type;
+		EType type = EType::UNDEFINED;
 
 		union
 		{
@@ -48,5 +48,5 @@ public:
 	virtual std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const char *functionName) = 0;
 
 protected:
-	ScriptComponent *self;
+	ScriptComponent *self = nullptr;
 };

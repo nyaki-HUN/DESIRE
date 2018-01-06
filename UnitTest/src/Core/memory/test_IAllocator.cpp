@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "Core/memory/IAllocator.h"
+#include "Core/memory/Allocator.h"
 
 TEST_CASE("IAllocator", "[Core][memory]")
 {
-	IAllocator& defaultAllocator = IAllocator::GetDefaultAllocator();
-	IAllocator& frameAllocator = IAllocator::GetFrameAllocator();
+	Allocator& defaultAllocator = Allocator::GetDefaultAllocator();
+	Allocator& frameAllocator = Allocator::GetFrameAllocator();
 }
 
 TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
@@ -26,8 +26,8 @@ TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
 		int value;
 	};
 
-	IAllocator::ResetFrameAllocator();
-	IAllocator& a = IAllocator::GetFrameAllocator();
+	Allocator::ResetFrameAllocator();
+	Allocator& a = Allocator::GetFrameAllocator();
 
 	const size_t numAllocBegin = globalMemoryAllocationCount;
 

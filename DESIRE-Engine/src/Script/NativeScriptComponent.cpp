@@ -2,7 +2,7 @@
 #include "Script/NativeScriptComponent.h"
 #include "Core/String.h"
 
-NativeScriptComponent::NativeScriptComponent(Object& object, std::unique_ptr<IScript> i_script)
+NativeScriptComponent::NativeScriptComponent(Object& object, std::unique_ptr<IScript>&& i_script)
 	: ScriptComponent(object)
 	, script(std::move(i_script))
 {
