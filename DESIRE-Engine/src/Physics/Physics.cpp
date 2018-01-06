@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "Physics/IPhysics.h"
+#include "Physics/Physics.h"
 
-IPhysics::IPhysics()
+Physics::Physics()
 {
 	// Setup collision masks
 	for(size_t i = 0; i < DESIRE_ASIZEOF(collisionMasks); i++)
@@ -14,12 +14,12 @@ IPhysics::IPhysics()
 	SetCollisionEnabled(EPhysicsCollisionLayer::DEFAULT, EPhysicsCollisionLayer::WHEEL, true);
 }
 
-IPhysics::~IPhysics()
+Physics::~Physics()
 {
 
 }
 
-void IPhysics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled)
+void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled)
 {
 	ASSERT(a < EPhysicsCollisionLayer::NUM);
 	ASSERT(b < EPhysicsCollisionLayer::NUM);

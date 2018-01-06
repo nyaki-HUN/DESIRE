@@ -3,7 +3,7 @@
 #include "Core/CoreAppEvent.h"
 #include "Core/Timer.h"
 #include "Input/Input.h"
-#include "Physics/IPhysics.h"
+#include "Physics/Physics.h"
 #include "Render/IRender.h"
 #include "Script/IScriptSystem.h"
 
@@ -55,7 +55,7 @@ int IApp::Run(int argc, const char * const *argv)
 	// Init engine
 	Timer::Get();
 	Input::Get();
-	IPhysics *physics = IPhysics::Get();
+	Physics *physics = Physics::Get();
 	IScriptSystem *scriptSystem = IScriptSystem::Get();
 
 	CreationParams params = IApp::Get()->GetCreationParams(argc, argv);

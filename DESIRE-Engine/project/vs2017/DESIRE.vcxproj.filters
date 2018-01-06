@@ -423,7 +423,7 @@
     <ClInclude Include="..\..\src\Physics\Collision.h">
       <Filter>src\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Physics\IPhysics.h">
+    <ClInclude Include="..\..\src\Physics\Physics.h">
       <Filter>src\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Render\Camera.h">
@@ -638,7 +638,7 @@
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp">
       <Filter>src\Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Physics\IPhysics.cpp">
+    <ClCompile Include="..\..\src\Physics\Physics.cpp">
       <Filter>src\Physics</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Render\Camera.cpp">

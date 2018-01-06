@@ -214,7 +214,7 @@
     <ClInclude Include="..\..\src\Input\keyCodes.h" />
     <ClInclude Include="..\..\src\Network\NetworkFileSource.h" />
     <ClInclude Include="..\..\src\Physics\Collision.h" />
-    <ClInclude Include="..\..\src\Physics\IPhysics.h" />
+    <ClInclude Include="..\..\src\Physics\Physics.h" />
     <ClInclude Include="..\..\src\Render\Camera.h" />
     <ClInclude Include="..\..\src\Render\DebugDraw.h" />
     <ClInclude Include="..\..\src\Render\IRender.h" />
@@ -287,7 +287,7 @@
     <ClCompile Include="..\..\src\Input\Mouse.cpp" />
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp" />
     <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp" />
-    <ClCompile Include="..\..\src\Physics\IPhysics.cpp" />
+    <ClCompile Include="..\..\src\Physics\Physics.cpp" />
     <ClCompile Include="..\..\src\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Render\DebugDraw.cpp" />
     <ClCompile Include="..\..\src\Render\IRender.cpp" />

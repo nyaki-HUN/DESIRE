@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Component/PhysicsComponent.h"
-#include "Physics/IPhysics.h"
+#include "Physics/Physics.h"			// for EPhysicsCollisionLayer
 #include "Scene/Object.h"
 
 PhysicsComponent::PhysicsComponent(Object& object)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Physics/IPhysics.h"
+#include "Physics/Physics.h"
 
 class BulletDebugDraw;
 class btDiscreteDynamicsWorld;
@@ -10,7 +10,7 @@ class btCollisionDispatcher;
 class btAxisSweep3;
 class btSequentialImpulseConstraintSolver;
 
-class BulletPhysics : public IPhysics
+class BulletPhysics : public Physics
 {
 public:
 	BulletPhysics();
@@ -20,9 +20,9 @@ public:
 
 	PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) override;
 
-	bool RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr = nullptr, Vector3 *o_collisionNormalPtr = nullptr, int layerMask = IPhysics::MASK_ALL) override;
-	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = IPhysics::MASK_ALL) override;
-	int RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints = nullptr, Vector3 *o_collisionNormals = nullptr, int layerMask = IPhysics::MASK_ALL) override;
+	bool RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr = nullptr, Vector3 *o_collisionNormalPtr = nullptr, int layerMask = Physics::MASK_ALL) override;
+	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
+	int RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints = nullptr, Vector3 *o_collisionNormals = nullptr, int layerMask = Physics::MASK_ALL) override;
 
 	int GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const;
 
