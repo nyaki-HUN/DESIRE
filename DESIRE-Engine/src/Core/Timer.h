@@ -4,7 +4,7 @@
 
 class Timer
 {
-	DESIRE_DECLARE_SINGLETON(Timer)
+	DESIRE_SINGLETON(Timer)
 
 public:
 	void Update();

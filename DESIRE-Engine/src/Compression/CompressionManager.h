@@ -8,7 +8,7 @@
 
 class CompressionManager
 {
-	DESIRE_DECLARE_SINGLETON(CompressionManager)
+	DESIRE_SINGLETON(CompressionManager)
 
 public:
 	std::unique_ptr<Compression> CreateCompression(const char *name) const;

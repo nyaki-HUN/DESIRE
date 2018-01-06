@@ -12,7 +12,7 @@ class Object;
 
 class IScriptSystem
 {
-	DESIRE_DECLARE_SINGLETON_INTERFACE(IScriptSystem)
+	DESIRE_DECLARE_SINGLETON(IScriptSystem)
 
 public:
 	typedef std::unique_ptr<IScript>(*ScriptFactory_t)();

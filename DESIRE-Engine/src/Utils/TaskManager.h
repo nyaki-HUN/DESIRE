@@ -9,7 +9,7 @@
 
 class TaskManager
 {
-	DESIRE_DECLARE_SINGLETON(TaskManager)
+	DESIRE_SINGLETON(TaskManager)
 
 public:
 	void AddTask(std::function<void()> task, bool toFront = false);

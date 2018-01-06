@@ -10,7 +10,7 @@ class IFileSource;
 
 class FileSystem
 {
-	DESIRE_DECLARE_SINGLETON(FileSystem)
+	DESIRE_SINGLETON(FileSystem)
 
 public:
 	enum class ELocation

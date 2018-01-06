@@ -7,7 +7,7 @@
 //	Copy constructor, move constructor, assignment operator and move assignment operator are forbidden
 // --------------------------------------------------------------------------------------------------------------------
 
-#define DESIRE_DECLARE_SINGLETON(Class)					\
+#define DESIRE_SINGLETON(Class)							\
 public:													\
 	static Class* Get()									\
 	{													\
@@ -23,7 +23,7 @@ private:												\
 	Class& operator=(Class&&) = delete;
 
 
-#define DESIRE_DECLARE_SINGLETON_INTERFACE(Class)		\
+#define DESIRE_DECLARE_SINGLETON(Class)					\
 public:													\
 	static Class* Get();								\
 protected:												\

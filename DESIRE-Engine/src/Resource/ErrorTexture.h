@@ -5,7 +5,7 @@
 
 class ErrorTexture : public Texture
 {
-	DESIRE_DECLARE_SINGLETON(ErrorTexture)
+	DESIRE_SINGLETON(ErrorTexture)
 
 public:
 

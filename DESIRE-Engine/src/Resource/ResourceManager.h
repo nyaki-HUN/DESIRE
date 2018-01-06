@@ -13,7 +13,7 @@ class Texture;
 
 class ResourceManager
 {
-	DESIRE_DECLARE_SINGLETON(ResourceManager)
+	DESIRE_SINGLETON(ResourceManager)
 
 public:
 	std::shared_ptr<Mesh> GetMesh(const char *filename);

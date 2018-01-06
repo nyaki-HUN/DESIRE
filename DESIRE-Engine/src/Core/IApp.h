@@ -10,7 +10,7 @@ enum class EAppEventType;
 
 class IApp
 {
-	DESIRE_DECLARE_SINGLETON_INTERFACE(IApp)
+	DESIRE_DECLARE_SINGLETON(IApp)
 	static void CreateInstance();
 
 public:

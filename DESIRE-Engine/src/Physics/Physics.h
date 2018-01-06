@@ -18,7 +18,7 @@ enum class EPhysicsCollisionLayer
 
 class Physics
 {
-	DESIRE_DECLARE_SINGLETON_INTERFACE(Physics)
+	DESIRE_DECLARE_SINGLETON(Physics)
 
 public:
 	enum EPhysicsCollisionLayerMask

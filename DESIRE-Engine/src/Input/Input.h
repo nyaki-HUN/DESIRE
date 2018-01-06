@@ -14,7 +14,7 @@ class IWindow;
 class Input
 {
 	friend class InputImpl;
-	DESIRE_DECLARE_SINGLETON(Input)
+	DESIRE_SINGLETON(Input)
 
 public:
 	static const int MAX_NUM_TYPING_CHARACTERS = 8;

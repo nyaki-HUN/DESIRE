@@ -7,7 +7,7 @@ class Camera;
 
 class ISceneManager
 {
-	DESIRE_DECLARE_SINGLETON_INTERFACE(ISceneManager)
+	DESIRE_DECLARE_SINGLETON(ISceneManager)
 
 public:
 	virtual void AddObject(Object *obj, bool dynamic) = 0;
