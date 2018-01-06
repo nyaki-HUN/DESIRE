@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ZlibNgCompressionBase.h"
 
-#include "Core/memory/IAllocator.h"
+#include "Core/memory/Allocator.h"
 
 #include "zlib.h"
 
@@ -176,13 +176,13 @@ void ZlibNgCompressionBase::InitStreamForDecompression()
 
 void* ZlibNgCompressionBase::CustomAlloc(void *opaque, uint32_t items, uint32_t size)
 {
-	IAllocator *allocator = static_cast<IAllocator*>(opaque);
+	Allocator *allocator = static_cast<Allocator*>(opaque);
 	return allocator->Allocate(items * size);
 }
 
 void ZlibNgCompressionBase::CustomFree(void *opaque, void *address)
 {
-	IAllocator *allocator = static_cast<IAllocator*>(opaque);
+	Allocator *allocator = static_cast<Allocator*>(opaque);
 	allocator->Deallocate(address);
 }
 
@@ -190,6 +190,6 @@ void ZlibNgCompressionBase::StreamInit(z_stream& stream)
 {
 	stream.zalloc = &ZlibNgCompressionBase::CustomAlloc;
 	stream.zfree = &ZlibNgCompressionBase::CustomFree;
-	stream.opaque = &IAllocator::GetDefaultAllocator();
+	stream.opaque = &Allocator::GetDefaultAllocator();
 	DESIRE_TODO("Test and use a LinearAllocator");
 }

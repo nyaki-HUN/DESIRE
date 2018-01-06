@@ -369,10 +369,10 @@
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_scalar.h">
       <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\FreeList.h">
+    <ClInclude Include="..\..\src\Core\memory\Allocator.h">
       <Filter>src\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\IAllocator.h">
+    <ClInclude Include="..\..\src\Core\memory\FreeList.h">
       <Filter>src\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Core\memory\LinearAllocator.h">
@@ -602,10 +602,10 @@
     <ClCompile Include="..\..\src\Core\math\math.cpp">
       <Filter>src\Core\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\FreeList.cpp">
+    <ClCompile Include="..\..\src\Core\memory\Allocator.cpp">
       <Filter>src\Core\memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\IAllocator.cpp">
+    <ClCompile Include="..\..\src\Core\memory\FreeList.cpp">
       <Filter>src\Core\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\memory\LinearAllocator.cpp">

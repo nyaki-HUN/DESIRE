@@ -4,30 +4,30 @@
 //	Base class for memory allocators
 // --------------------------------------------------------------------------------------------------------------------
 
-class IAllocator
+class Allocator
 {
 public:
 	static const size_t DEFAULT_ALIGNMENT = 8;
 
-	IAllocator() {}
-	virtual ~IAllocator() {}
+	Allocator() {}
+	virtual ~Allocator() {}
 
-	virtual void* Allocate(size_t size, size_t alignment = IAllocator::DEFAULT_ALIGNMENT) = 0;
+	virtual void* Allocate(size_t size, size_t alignment = Allocator::DEFAULT_ALIGNMENT) = 0;
 	virtual void Deallocate(void *ptr) = 0;
 
 	// Returns the default MallocAllocator
-	static IAllocator& GetDefaultAllocator();
+	static Allocator& GetDefaultAllocator();
 
 	// Returns a linear allocator which is reset at the end of each frame
-	static IAllocator& GetFrameAllocator();
+	static Allocator& GetFrameAllocator();
 
 	// Reset all allocations in the frame allocator (this should happen at the end of the frame)
 	static void ResetFrameAllocator();
 
 private:
 	// Prevent copy
-	IAllocator(const IAllocator& other) = delete;
-	IAllocator& operator=(const IAllocator& other) = delete;
+	Allocator(const Allocator& other) = delete;
+	Allocator& operator=(const Allocator& other) = delete;
 };
 
 // Creates a new object of type T using the allocator 'A' to allocate its memory

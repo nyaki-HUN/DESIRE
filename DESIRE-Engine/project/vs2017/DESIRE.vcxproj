@@ -196,8 +196,8 @@
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_NEON.h" />
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_SSE.h" />
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_scalar.h" />
+    <ClInclude Include="..\..\src\Core\memory\Allocator.h" />
     <ClInclude Include="..\..\src\Core\memory\FreeList.h" />
-    <ClInclude Include="..\..\src\Core\memory\IAllocator.h" />
     <ClInclude Include="..\..\src\Core\memory\LinearAllocator.h" />
     <ClInclude Include="..\..\src\Core\memory\MallocAllocator.h" />
     <ClInclude Include="..\..\src\Core\memory\PoolAllocator.h" />
@@ -275,8 +275,8 @@
     <ClCompile Include="..\..\src\Core\fs\MemoryFile.cpp" />
     <ClCompile Include="..\..\src\Core\math\AABB.cpp" />
     <ClCompile Include="..\..\src\Core\math\math.cpp" />
+    <ClCompile Include="..\..\src\Core\memory\Allocator.cpp" />
     <ClCompile Include="..\..\src\Core\memory\FreeList.cpp" />
-    <ClCompile Include="..\..\src\Core\memory\IAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\memory\LinearAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\memory\MallocAllocator.cpp" />
     <ClCompile Include="..\..\src\Input\GameController.cpp" />

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Core/memory/IAllocator.h"
+#include "Core/memory/Allocator.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	An allocator wrapper for malloc/free
 // --------------------------------------------------------------------------------------------------------------------
 
-class MallocAllocator : public IAllocator
+class MallocAllocator : public Allocator
 {
 public:
 	MallocAllocator();
 
-	void* Allocate(size_t size, size_t alignment = IAllocator::DEFAULT_ALIGNMENT) override;
+	void* Allocate(size_t size, size_t alignment = Allocator::DEFAULT_ALIGNMENT) override;
 	void Deallocate(void *ptr) override;
 };

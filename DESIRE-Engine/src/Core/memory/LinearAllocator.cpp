@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Core/memory/LinearAllocator.h"
 
-LinearAllocator::LinearAllocator(void *memoryStart, size_t memorySize, IAllocator& fallbackAllocator)
+LinearAllocator::LinearAllocator(void *memoryStart, size_t memorySize, Allocator& fallbackAllocator)
 	: memoryStart((char*)memoryStart)
 	, memorySize(memorySize)
 	, freeSpace(memorySize)

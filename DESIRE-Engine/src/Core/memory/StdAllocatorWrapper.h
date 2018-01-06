@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/platform.h"	// for DESIRE_UNUSED
-#include "Core/memory/IAllocator.h"
+#include "Core/memory/Allocator.h"
 
 #include <new>
 #include <utility>			// for std::forward()
@@ -56,7 +56,7 @@ public:
 			return nullptr;
 		}
 
-		void *ptr = IAllocator::GetFrameAllocator().Allocate(n * sizeof(T));
+		void *ptr = Allocator::GetFrameAllocator().Allocate(n * sizeof(T));
 		return static_cast<T*>(ptr);
 	}
 
@@ -70,7 +70,7 @@ public:
 	void deallocate(T *ptr, size_t n) const
 	{
 		DESIRE_UNUSED(n);
-		IAllocator::GetFrameAllocator().Deallocate(ptr);
+		Allocator::GetFrameAllocator().Deallocate(ptr);
 	}
 
 	// (deprecated in C++17)
