@@ -34,7 +34,7 @@ public:
 		}
 
 	public:
-		template<typename... Args>
+		template<class... Args>
 		void operator()(Args&&... args)
 		{
 			if(!guard.expired())
@@ -43,7 +43,7 @@ public:
 			}
 		}
 
-		template<typename... Args>
+		template<class... Args>
 		void operator()(Args&&... args) const
 		{
 			if(!guard.expired())
