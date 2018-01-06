@@ -2,13 +2,13 @@
 
 #include "Core/Singleton.h"
 
-#include "../Externals/imgui/imgui.h"
 #include <memory>
 
 class IWindow;
 class DynamicMesh;
 class Material;
 class Texture;
+struct ImDrawData;
 
 class ImGuiImpl
 {
