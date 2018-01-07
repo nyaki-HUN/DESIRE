@@ -98,6 +98,7 @@ private:
 	DirectX::XMMATRIX matWorld;
 	DirectX::XMMATRIX matView;
 	DirectX::XMMATRIX matProj;
+	float resolution[2] = { 0.0f, 0.0f };
 
 	std::unordered_map<uint64_t, ID3D11DepthStencilState*> depthStencilStateCache;
 	std::unordered_map<uint64_t, ID3D11RasterizerState*> rasterizerStateCache;

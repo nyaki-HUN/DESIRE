@@ -619,8 +619,8 @@ void Direct3D11Render::Bind(Shader *shader)
 		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
 	}
 
-	renderData->constantBuffers.reserve(shaderDesc.ConstantBuffers);
-	renderData->constantBuffersData.reserve(shaderDesc.ConstantBuffers);
+	renderData->constantBuffers.resize(shaderDesc.ConstantBuffers);
+	renderData->constantBuffersData.resize(shaderDesc.ConstantBuffers);
 	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
 		ID3D11ShaderReflectionConstantBuffer *cbuffer = reflection->GetConstantBufferByIndex(i);
@@ -629,8 +629,6 @@ void Direct3D11Render::Bind(Shader *shader)
 		ASSERT(SUCCEEDED(hr));
 
 		// Create constant buffer
-		renderData->constantBuffers.push_back(nullptr);
-
 		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -639,27 +637,34 @@ void Direct3D11Render::Bind(Shader *shader)
 		ASSERT(SUCCEEDED(hr));
 
 		// Create constant buffer data
-		renderData->constantBuffersData.push_back(MemoryBuffer(shaderBufferDesc.Size));
+		ShaderRenderDataD3D11::ConstantBufferData& bufferData = renderData->constantBuffersData[i];
+		bufferData.buffer = MemoryBuffer(shaderBufferDesc.Size);
 
 		for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
 		{
-			ID3D11ShaderReflectionVariable* var = cbuffer->GetVariableByIndex(j);
-			ID3D11ShaderReflectionType *type = var->GetType();
+			ID3D11ShaderReflectionVariable *shaderVar = cbuffer->GetVariableByIndex(j);
 			D3D11_SHADER_VARIABLE_DESC varDesc;
-			hr = var->GetDesc(&varDesc);
+			hr = shaderVar->GetDesc(&varDesc);
 			ASSERT(SUCCEEDED(hr));
 
-			if(varDesc.uFlags & D3D_SVF_USED)
+			if((varDesc.uFlags & D3D_SVF_USED) == 0)
 			{
-				if(strcmp(varDesc.Name, "worldViewProj") == 0)
-				{
-					int asd = 0;
-				}
+				continue;
 			}
 
+			ID3D11ShaderReflectionType *type = shaderVar->GetType();
 			D3D11_SHADER_TYPE_DESC typeDesc;
 			hr = type->GetDesc(&typeDesc);
 			ASSERT(SUCCEEDED(hr));
+
+			if( typeDesc.Class != D3D_SVC_SCALAR &&
+				typeDesc.Class != D3D_SVC_VECTOR &&
+				typeDesc.Class != D3D_SVC_MATRIX_COLUMNS)
+			{
+				continue;
+			}
+
+			bufferData.variableOffsetSizePairs.Insert(HashedString::CreateFromDynamicString(varDesc.Name), std::make_pair(varDesc.StartOffset, varDesc.Size));
 		}
 	}
 
@@ -909,6 +914,9 @@ void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 {
 	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
 	deviceCtx->RSSetViewports(1, &vp);
+
+	resolution[0] = vp.Width - vp.TopLeftX;
+	resolution[1] = vp.Height - vp.TopLeftY;
 }
 
 void Direct3D11Render::SetMesh(Mesh *mesh)
@@ -1037,18 +1045,56 @@ void Direct3D11Render::UpdateShaderParams()
 
 	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
 	{
-/**/	DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-/**/	DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-/**/	memcpy(vertexShaderRenderData->constantBuffersData[i].data, &matWorldViewProj.r[0], vertexShaderRenderData->constantBuffersData[i].size);
+		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = vertexShaderRenderData->constantBuffersData[i];
 
-		deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, vertexShaderRenderData->constantBuffersData[i].data, 0, 0);
+		const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
+
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldView");
+		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
+		{
+			DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
+			memcpy(bufferData.buffer.data + offsetSizePair->first, &matWorldView.r[0], offsetSizePair->second);
+		}
+
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
+		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
+		{
+			DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
+			DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
+			memcpy(bufferData.buffer.data + offsetSizePair->first, &matWorldViewProj.r[0], offsetSizePair->second);
+		}
+
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
+		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(resolution))
+		{
+			memcpy(bufferData.buffer.data + offsetSizePair->first, resolution, offsetSizePair->second);
+		}
+
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("tintColor");
+		if(offsetSizePair != nullptr && offsetSizePair->second == 4 * sizeof(float))
+		{
+			const float tintColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			memcpy(bufferData.buffer.data + offsetSizePair->first, tintColor, offsetSizePair->second);
+		}
+
+		deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.buffer.data, 0, 0);
 	}
 
 	const ShaderRenderDataD3D11 *fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeFragmentShader->renderData);
 
 	for(size_t i = 0; i < fragmentShaderRenderData->constantBuffers.size(); ++i)
 	{
-		deviceCtx->UpdateSubresource(fragmentShaderRenderData->constantBuffers[i], 0, nullptr, fragmentShaderRenderData->constantBuffersData[i].data, 0, 0);
+		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = fragmentShaderRenderData->constantBuffersData[i];
+
+		const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
+
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
+		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(resolution))
+		{
+			memcpy(bufferData.buffer.data + offsetSizePair->first, resolution, offsetSizePair->second);
+		}
+
+		deviceCtx->UpdateSubresource(fragmentShaderRenderData->constantBuffers[i], 0, nullptr, fragmentShaderRenderData->constantBuffersData[i].buffer.data, 0, 0);
 	}
 }
 
