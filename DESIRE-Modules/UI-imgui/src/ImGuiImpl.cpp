@@ -4,7 +4,6 @@
 #include "Core/IWindow.h"
 #include "Core/Timer.h"
 #include "Input/Input.h"
-#include "Render/Camera.h"
 #include "Render/Material.h"
 #include "Render/Render.h"
 #include "Resource/ResourceManager.h"
@@ -172,13 +171,7 @@ void ImGuiImpl::EndFrame()
 
 void ImGuiImpl::DoRender(ImDrawData *drawData)
 {
-	ImGuiIO& io = ImGui::GetIO();
 	Render *render = Render::Get();
-
-/**/render->SetWorldMatrix(Matrix4::Identity());
-
-	Matrix4 matOrtho = Camera::CreateOrthographicProjectonMatrix(io.DisplaySize.x, io.DisplaySize.y, -1.0f, 1.0f);
-	render->SetViewProjectionMatrices(Matrix4::Identity(), matOrtho);
 
 	render->SetDepthWriteEnabled(false);
 	render->SetCullMode(Render::ECullMode::NONE);
