@@ -4,3 +4,6 @@
 [submodule "DESIRE-Modules/Compression-zlib-ng/Externals/zlib-ng"]
 	path = DESIRE-Modules/Compression-zlib-ng/Externals/zlib-ng
 	url = https://github.com/Dead2/zlib-ng.git
+[submodule "DESIRE-Modules/Script-Lua/Externals/LuaBridge"]
+	path = DESIRE-Modules/Script-Lua/Externals/LuaBridge
+	url = https://github.com/vinniefalco/LuaBridge.git
