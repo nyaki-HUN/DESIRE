@@ -12,6 +12,7 @@
 #include "Component/ScriptComponent.h"
 
 #include "UI-imgui/src/ImGuiImpl.h"
+#include "UI-imgui/Externals/imgui/imgui.h"
 
 enum EAction
 {
