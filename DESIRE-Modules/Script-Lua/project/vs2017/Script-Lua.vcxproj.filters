@@ -33,6 +33,12 @@
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\LuaBridge.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedObject.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedPtr.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\CFunctions.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
     </ClInclude>
@@ -70,6 +76,9 @@
       <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Userdata.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\dump.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\lua\src\lapi.h">

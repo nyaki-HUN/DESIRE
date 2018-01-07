@@ -103,6 +103,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\LuaBridge.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedObject.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedPtr.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\CFunctions.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\ClassInfo.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Constructor.h" />
@@ -116,6 +118,7 @@
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeList.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeTraits.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Userdata.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\dump.h" />
     <ClInclude Include="..\..\Externals\lua\src\lapi.h" />
     <ClInclude Include="..\..\Externals\lua\src\lauxlib.h" />
     <ClInclude Include="..\..\Externals\lua\src\lcode.h" />
