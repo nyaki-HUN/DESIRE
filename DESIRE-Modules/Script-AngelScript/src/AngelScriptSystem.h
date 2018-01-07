@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script/IScriptSystem.h"
+#include "Script/ScriptSystem.h"
 
 class String;
 class asIScriptEngine;
@@ -9,7 +9,7 @@ class asIScriptContext;
 class asIScriptFunction;
 struct asSMessageInfo;
 
-class AngelScriptSystem : public IScriptSystem
+class AngelScriptSystem : public ScriptSystem
 {
 public:
 	AngelScriptSystem();

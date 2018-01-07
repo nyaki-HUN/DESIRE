@@ -8,7 +8,7 @@
 #include "Render/Render.h"
 #include "Resource/ResourceManager.h"
 #include "Scene/Object.h"
-#include "Script/IScriptSystem.h"
+#include "Script/ScriptSystem.h"
 #include "Component/ScriptComponent.h"
 
 #include "UI-imgui/src/ImGuiImpl.h"
@@ -48,7 +48,7 @@ void SandBox::Init(IWindow *mainWindow)
 	//////////
 
 	scriptedObject = new Object("Obj_1");
-	IScriptSystem::Get()->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
+	ScriptSystem::Get()->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
 	ScriptComponent *scriptComp = scriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
 	{
@@ -65,7 +65,7 @@ void SandBox::Init(IWindow *mainWindow)
 	REGISTER_NATIVE_SCRIPT(SimpleRotateScript);
 
 	cubeObj = new Object("Obj_2");
-	IScriptSystem::Get()->CreateScriptComponentOnObject(*cubeObj, "SimpleRotateScript");
+	ScriptSystem::Get()->CreateScriptComponentOnObject(*cubeObj, "SimpleRotateScript");
 
 	//////////
 

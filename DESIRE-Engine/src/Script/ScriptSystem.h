@@ -10,9 +10,9 @@ class IScript;
 class ScriptComponent;
 class Object;
 
-class IScriptSystem
+class ScriptSystem
 {
-	DESIRE_DECLARE_SINGLETON(IScriptSystem)
+	DESIRE_DECLARE_SINGLETON(ScriptSystem)
 
 public:
 	typedef std::unique_ptr<IScript>(*ScriptFactory_t)();
@@ -43,4 +43,4 @@ public:
 	}
 };
 
-#define REGISTER_NATIVE_SCRIPT(SCRIPT)	IScriptSystem::Get()->RegisterScript(HashedString(#SCRIPT), &NativeScriptFactory<SCRIPT>::Create)
+#define REGISTER_NATIVE_SCRIPT(SCRIPT)	ScriptSystem::Get()->RegisterScript(HashedString(#SCRIPT), &NativeScriptFactory<SCRIPT>::Create)

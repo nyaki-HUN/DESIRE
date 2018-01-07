@@ -1,26 +1,26 @@
 #include "stdafx.h"
-#include "Script/IScriptSystem.h"
+#include "Script/ScriptSystem.h"
 #include "Script/NativeScriptComponent.h"
 #include "Scene/Object.h"
 
-IScriptSystem::IScriptSystem()
+ScriptSystem::ScriptSystem()
 {
 
 }
 
-IScriptSystem::~IScriptSystem()
+ScriptSystem::~ScriptSystem()
 {
 
 }
 
-void IScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory_t factory)
+void ScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory_t factory)
 {
 	ASSERT(factory != nullptr);
 
 	scriptFactories.Insert(scriptName, factory);
 }
 
-void IScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scriptName)
+void ScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scriptName)
 {
 	// Try to create as a native script 
 	HashedString scriptNameHash = HashedString::CreateFromDynamicString(scriptName);
@@ -35,12 +35,12 @@ void IScriptSystem::CreateScriptComponentOnObject(Object& object, const char *sc
 	CreateScriptComponentOnObject_Internal(object, scriptName);
 }
 
-void IScriptSystem::OnScriptComponentCreate(ScriptComponent *component)
+void ScriptSystem::OnScriptComponentCreate(ScriptComponent *component)
 {
 	scriptComponents.push_back(component);
 }
 
-void IScriptSystem::OnScriptComponentDestroy(ScriptComponent *component)
+void ScriptSystem::OnScriptComponentDestroy(ScriptComponent *component)
 {
 	auto it = std::find(scriptComponents.begin(), scriptComponents.end(), component);
 	if(it != scriptComponents.end())
@@ -49,7 +49,7 @@ void IScriptSystem::OnScriptComponentDestroy(ScriptComponent *component)
 	}
 }
 
-void IScriptSystem::Update()
+void ScriptSystem::Update()
 {
 	for(ScriptComponent *scriptComponent : scriptComponents)
 	{

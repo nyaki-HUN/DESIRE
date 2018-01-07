@@ -5,7 +5,7 @@
 #include "Input/Input.h"
 #include "Physics/Physics.h"
 #include "Render/Render.h"
-#include "Script/IScriptSystem.h"
+#include "Script/ScriptSystem.h"
 
 IApp* IApp::instance = nullptr;
 bool IApp::isMainLoopRunning = false;
@@ -56,7 +56,7 @@ int IApp::Run(int argc, const char * const *argv)
 	Timer::Get();
 	Input::Get();
 	Physics *physics = Physics::Get();
-	IScriptSystem *scriptSystem = IScriptSystem::Get();
+	ScriptSystem *scriptSystem = ScriptSystem::Get();
 
 	CreationParams params = IApp::Get()->GetCreationParams(argc, argv);
 	IWindow *mainWindow = IWindow::Create(params.windowParams);

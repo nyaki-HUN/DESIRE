@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "Component/ScriptComponent.h"
-#include "Script/IScriptSystem.h"
+#include "Script/ScriptSystem.h"
 
 ScriptComponent::ScriptComponent(Object& object)
 	: Component(object)
 {
-	IScriptSystem::Get()->OnScriptComponentCreate(this);
+	ScriptSystem::Get()->OnScriptComponentCreate(this);
 }
 
 ScriptComponent::~ScriptComponent()
 {
-	IScriptSystem::Get()->OnScriptComponentDestroy(this);
+	ScriptSystem::Get()->OnScriptComponentDestroy(this);
 }

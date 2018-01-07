@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Script/IScriptSystem.h"
+#include "Script/ScriptSystem.h"
 
 #include "../Externals/Squirrel/include/squirrel.h"
 
-class SquirrelScriptSystem : public IScriptSystem
+class SquirrelScriptSystem : public ScriptSystem
 {
 public:
 	SquirrelScriptSystem();

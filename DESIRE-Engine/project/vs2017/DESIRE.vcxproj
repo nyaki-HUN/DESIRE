@@ -236,8 +236,8 @@
     <ClInclude Include="..\..\src\Scene\SceneGraphTraversal.h" />
     <ClInclude Include="..\..\src\Scene\Transform.h" />
     <ClInclude Include="..\..\src\Script\IScript.h" />
-    <ClInclude Include="..\..\src\Script\IScriptSystem.h" />
     <ClInclude Include="..\..\src\Script\NativeScriptComponent.h" />
+    <ClInclude Include="..\..\src\Script\ScriptSystem.h" />
     <ClInclude Include="..\..\src\Sound\Sound.h" />
     <ClInclude Include="..\..\src\Utils\Enumerator.h" />
     <ClInclude Include="..\..\src\Utils\GuardedCallbackFactory.h" />
@@ -306,8 +306,8 @@
     <ClCompile Include="..\..\src\Scene\QuadTreeLeaf.cpp" />
     <ClCompile Include="..\..\src\Scene\QuadTreeSceneManager.cpp" />
     <ClCompile Include="..\..\src\Scene\Transform.cpp" />
-    <ClCompile Include="..\..\src\Script\IScriptSystem.cpp" />
     <ClCompile Include="..\..\src\Script\NativeScriptComponent.cpp" />
+    <ClCompile Include="..\..\src\Script\ScriptSystem.cpp" />
     <ClCompile Include="..\..\src\Sound\Sound.cpp" />
     <ClCompile Include="..\..\src\Utils\TaskManager.cpp" />
     <ClCompile Include="..\..\src\stdafx.cpp">

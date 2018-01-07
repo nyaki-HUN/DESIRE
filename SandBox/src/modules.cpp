@@ -70,9 +70,9 @@ const std::vector<ResourceManager::TextureLoaderFunc_t> ResourceManager::texture
 #include "Script-AngelScript/src/AngelScriptSystem.h"
 #include "Script-Lua/src/LuaScriptSystem.h"
 #include "Script-Squirrel/src/SquirrelScriptSystem.h"
-//DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, AngelScriptSystem)
-//DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, LuaScriptSystem)
-DESIRE_DEFINE_SINGLETON_INSTANCE(IScriptSystem, SquirrelScriptSystem)
+//DESIRE_DEFINE_SINGLETON_INSTANCE(ScriptSystem, AngelScriptSystem)
+//DESIRE_DEFINE_SINGLETON_INSTANCE(ScriptSystem, LuaScriptSystem)
+DESIRE_DEFINE_SINGLETON_INSTANCE(ScriptSystem, SquirrelScriptSystem)
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Sound

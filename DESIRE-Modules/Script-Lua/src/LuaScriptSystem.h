@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Script/IScriptSystem.h"
+#include "Script/ScriptSystem.h"
 
 struct lua_State;
 
-class LuaScriptSystem : public IScriptSystem
+class LuaScriptSystem : public ScriptSystem
 {
 public:
 	LuaScriptSystem();
