@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "API/LuaScriptAPI.h"
 
-#include "Sound/ISound.h"
+#include "Sound/Sound.h"
 
 void RegisterSoundAPI_Lua(lua_State *L)
 {
