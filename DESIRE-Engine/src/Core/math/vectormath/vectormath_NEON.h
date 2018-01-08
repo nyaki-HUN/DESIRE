@@ -179,23 +179,23 @@ public:
 	// Get maximum element
 	static DESIRE_FORCE_INLINE float32x4_t MaxElem3(float32x4_t vec)
 	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE float32x4_t MaxElem4(float32x4_t vec)
 	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Get minimum element
 	static DESIRE_FORCE_INLINE float32x4_t MinElem3(float32x4_t vec)
 	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE float32x4_t MinElem4(float32x4_t vec)
 	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Select packed single precision floating-point values from a and b using the mask

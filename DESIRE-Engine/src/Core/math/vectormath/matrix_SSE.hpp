@@ -10,10 +10,10 @@ DESIRE_FORCE_INLINE Matrix3::Matrix3(const Quat& unitQuat)
 	const __m128 mask_z = _mm_load_ps((float*)select_z);
 
 	__m128 xyzw_2 = _mm_add_ps(unitQuat, unitQuat);
-	__m128 wwww = SIMD::Shuffle_WWWW(unitQuat);
-	__m128 yzxw = SIMD::Shuffle_YZXW(unitQuat);
+	__m128 wwww = SIMD::Swizzle_WWWW(unitQuat);
+	__m128 yzxw = SIMD::Swizzle_YZXW(unitQuat);
 	__m128 zxyw = _mm_shuffle_ps(unitQuat, unitQuat, _MM_SHUFFLE(3, 1, 0, 2));
-	__m128 yzxw_2 = SIMD::Shuffle_YZXW(xyzw_2);
+	__m128 yzxw_2 = SIMD::Swizzle_YZXW(xyzw_2);
 	__m128 zxyw_2 = _mm_shuffle_ps(xyzw_2, xyzw_2, _MM_SHUFFLE(3, 1, 0, 2));
 
 	__m128 tmp0 = _mm_mul_ps(yzxw_2, wwww);									// tmp0 = 2yw, 2zw, 2xw, 2w2
@@ -41,7 +41,7 @@ DESIRE_FORCE_INLINE void Matrix3::Transpose()
 	col0 = _mm_unpacklo_ps(tmp0, col1);
 
 	tmp1 = _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(0, 1, 1, 0));
-	col2 = SIMD::Blend(tmp1, SIMD::Shuffle_ZZZZ(col1), mask_y);
+	col2 = SIMD::Blend(tmp1, SIMD::Swizzle_ZZZZ(col1), mask_y);
 
 	tmp0 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(0, 3, 2, 2));
 	col1 = SIMD::Blend(tmp0, col1, mask_y);
@@ -53,7 +53,7 @@ DESIRE_FORCE_INLINE void Matrix3::Invert()
 	const __m128 tmp0 = col1.Cross(col2);
 	const __m128 tmp1 = col2.Cross(col0);
 	__m128 dot = SIMD::Dot3(tmp2, col2);
-	dot = SIMD::Shuffle_XXXX(dot);
+	dot = SIMD::Swizzle_XXXX(dot);
 	const __m128 invdet = _mm_rcp_ps(dot);
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);
@@ -63,7 +63,7 @@ DESIRE_FORCE_INLINE void Matrix3::Invert()
 	__m128 inv1 = _mm_shuffle_ps(tmp3, tmp3, _MM_SHUFFLE(0, 3, 2, 2));
 	__m128 inv2 = _mm_shuffle_ps(tmp4, tmp4, _MM_SHUFFLE(0, 1, 1, 0));
 	inv1 = SIMD::Blend(inv1, tmp1, mask_y);
-	inv2 = SIMD::Blend(inv2, SIMD::Shuffle_ZZZZ(tmp1), mask_y);
+	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(tmp1), mask_y);
 	col0 = _mm_mul_ps(inv0, invdet);
 	col1 = _mm_mul_ps(inv1, invdet);
 	col2 = _mm_mul_ps(inv2, invdet);
@@ -73,8 +73,8 @@ DESIRE_FORCE_INLINE Vector3 Matrix3::operator *(const Vector3& vec) const
 {
 	return Vector3(
 		_mm_add_ps(
-			_mm_add_ps(_mm_mul_ps(col0, SIMD::Shuffle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Shuffle_YYYY(vec))),
-			_mm_mul_ps(col2, SIMD::Shuffle_ZZZZ(vec)))
+			_mm_add_ps(_mm_mul_ps(col0, SIMD::Swizzle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Swizzle_YYYY(vec))),
+			_mm_mul_ps(col2, SIMD::Swizzle_ZZZZ(vec)))
 	);
 }
 
@@ -150,8 +150,8 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ
 	Z1 = _mm_and_ps(Z1, _mm_load_ps((float *)select_xyz));
 	__m128 Y0 = _mm_shuffle_ps(c, negS, _MM_SHUFFLE(0, 1, 1, 1));
 	__m128 Y1 = _mm_shuffle_ps(s, c, _MM_SHUFFLE(0, 1, 1, 1));
-	__m128 X0 = SIMD::Shuffle_XXXX(s);
-	__m128 X1 = SIMD::Shuffle_XXXX(c);
+	__m128 X0 = SIMD::Swizzle_XXXX(s);
+	__m128 X1 = SIMD::Swizzle_XXXX(c);
 	__m128 tmp = _mm_mul_ps(Z0, Y1);
 	return Matrix3(
 		_mm_mul_ps(Z0, Y0),
@@ -165,9 +165,9 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	__m128 s, c, tmp0, tmp1, tmp2;
 	__m128 axis = unitVec;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	__m128 xxxx = SIMD::Shuffle_XXXX(axis);
-	__m128 yyyy = SIMD::Shuffle_YYYY(axis);
-	__m128 zzzz = SIMD::Shuffle_ZZZZ(axis);
+	__m128 xxxx = SIMD::Swizzle_XXXX(axis);
+	__m128 yyyy = SIMD::Swizzle_YYYY(axis);
+	__m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
 	__m128 oneMinusC = _mm_sub_ps(_mm_set1_ps(1.0f), c);
 	__m128 axisS = _mm_mul_ps(axis, s);
 	__m128 negAxisS = SIMD::Negate(axisS);
@@ -178,10 +178,10 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	const __m128 mask_y = _mm_load_ps((float*)select_y);
 	const __m128 mask_z = _mm_load_ps((float*)select_z);
 	tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
-	tmp0 = SIMD::Blend(tmp0, SIMD::Shuffle_YYYY(negAxisS), mask_z);
-	tmp1 = SIMD::Blend(SIMD::Shuffle_XXXX(axisS), SIMD::Shuffle_ZZZZ(negAxisS), mask_x);
+	tmp0 = SIMD::Blend(tmp0, SIMD::Swizzle_YYYY(negAxisS), mask_z);
+	tmp1 = SIMD::Blend(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS), mask_x);
 	tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
-	tmp2 = SIMD::Blend(tmp2, SIMD::Shuffle_XXXX(negAxisS), mask_y);
+	tmp2 = SIMD::Blend(tmp2, SIMD::Swizzle_XXXX(negAxisS), mask_y);
 	tmp0 = SIMD::Blend(tmp0, c, mask_x);
 	tmp1 = SIMD::Blend(tmp1, c, mask_y);
 	tmp2 = SIMD::Blend(tmp2, c, mask_z);
@@ -283,7 +283,7 @@ DESIRE_FORCE_INLINE void Matrix4::Invert()
 	// Dividing is FASTER than rcp_nr! (Because rcp_nr causes many register-memory RWs)
 	const float one = 1.0f;
 	__m128 rDet = _mm_div_ss(_mm_load_ss(&one), det);
-	rDet = SIMD::Shuffle_XXXX(rDet);
+	rDet = SIMD::Swizzle_XXXX(rDet);
 
 	// Devide the first 12 minterms with the determinant
 	mtL1 = _mm_mul_ps(mtL1, rDet);
@@ -319,20 +319,20 @@ DESIRE_FORCE_INLINE void Matrix4::AffineInvert()
 	const __m128 tmp1 = col2.GetXYZ().Cross(col0.GetXYZ());
 	inv3 = SIMD::Negate(col3);
 	__m128 dot = SIMD::Dot3(tmp2, col2);
-	dot = SIMD::Shuffle_XXXX(dot);
+	dot = SIMD::Swizzle_XXXX(dot);
 	const __m128 invdet = _mm_rcp_ps(dot);
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);
 	inv0 = _mm_unpacklo_ps(tmp3, tmp1);
-	const __m128 xxxx = SIMD::Shuffle_XXXX(inv3);
+	const __m128 xxxx = SIMD::Swizzle_XXXX(inv3);
 	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
 	const __m128 mask_y = _mm_load_ps((float*)select_y);
 	inv1 = _mm_shuffle_ps(tmp3, tmp3, _MM_SHUFFLE(0, 3, 2, 2));
 	inv1 = SIMD::Blend(inv1, tmp1, mask_y);
 	inv2 = _mm_shuffle_ps(tmp4, tmp4, _MM_SHUFFLE(0, 1, 1, 0));
-	inv2 = SIMD::Blend(inv2, SIMD::Shuffle_ZZZZ(tmp1), mask_y);
-	const __m128 yyyy = SIMD::Shuffle_YYYY(inv3);
-	const __m128 zzzz = SIMD::Shuffle_ZZZZ(inv3);
+	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(tmp1), mask_y);
+	const __m128 yyyy = SIMD::Swizzle_YYYY(inv3);
+	const __m128 zzzz = SIMD::Swizzle_ZZZZ(inv3);
 	inv3 = _mm_mul_ps(inv0, xxxx);
 	inv3 = vec_madd(inv1, yyyy, inv3);
 	inv3 = vec_madd(inv2, zzzz, inv3);
@@ -355,15 +355,15 @@ DESIRE_FORCE_INLINE void Matrix4::OrthoInvert()
 	tmp1 = _mm_unpackhi_ps(col0, col2);
 	inv3 = SIMD::Negate(col3);
 	inv0 = _mm_unpacklo_ps(tmp0, col1);
-	xxxx = SIMD::Shuffle_XXXX(inv3);
+	xxxx = SIMD::Swizzle_XXXX(inv3);
 	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
 	const __m128 mask_y = _mm_load_ps((float*)select_y);
 	inv1 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(0, 3, 2, 2));
 	inv1 = SIMD::Blend(inv1, col1, mask_y);
 	inv2 = _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(0, 1, 1, 0));
-	inv2 = SIMD::Blend(inv2, SIMD::Shuffle_ZZZZ(col1), mask_y);
-	yyyy = SIMD::Shuffle_YYYY(inv3);
-	zzzz = SIMD::Shuffle_ZZZZ(inv3);
+	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(col1), mask_y);
+	yyyy = SIMD::Swizzle_YYYY(inv3);
+	zzzz = SIMD::Swizzle_ZZZZ(inv3);
 	inv3 = _mm_mul_ps(inv0, xxxx);
 	inv3 = vec_madd(inv1, yyyy, inv3);
 	inv3 = vec_madd(inv2, zzzz, inv3);
@@ -406,8 +406,8 @@ DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector4& vec) const
 {
 	return Vector4(
 		_mm_add_ps(
-			_mm_add_ps(_mm_mul_ps(col0, SIMD::Shuffle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Shuffle_YYYY(vec))),
-			_mm_add_ps(_mm_mul_ps(col2, SIMD::Shuffle_ZZZZ(vec)), _mm_mul_ps(col3, SIMD::Shuffle_WWWW(vec))))
+			_mm_add_ps(_mm_mul_ps(col0, SIMD::Swizzle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Swizzle_YYYY(vec))),
+			_mm_add_ps(_mm_mul_ps(col2, SIMD::Swizzle_ZZZZ(vec)), _mm_mul_ps(col3, SIMD::Swizzle_WWWW(vec))))
 	);
 }
 
@@ -415,8 +415,8 @@ DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector3& vec) const
 {
 	return Vector4(
 		_mm_add_ps(
-			_mm_add_ps(_mm_mul_ps(col0, SIMD::Shuffle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Shuffle_YYYY(vec))),
-			_mm_mul_ps(col2, SIMD::Shuffle_ZZZZ(vec)))
+			_mm_add_ps(_mm_mul_ps(col0, SIMD::Swizzle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Swizzle_YYYY(vec))),
+			_mm_mul_ps(col2, SIMD::Swizzle_ZZZZ(vec)))
 	);
 }
 
@@ -495,8 +495,8 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ
 	Z1 = _mm_and_ps(Z1, _mm_load_ps((float*)select_xyz));
 	Y0 = _mm_shuffle_ps(c, negS, _MM_SHUFFLE(0, 1, 1, 1));
 	Y1 = _mm_shuffle_ps(s, c, _MM_SHUFFLE(0, 1, 1, 1));
-	X0 = SIMD::Shuffle_XXXX(s);
-	X1 = SIMD::Shuffle_XXXX(c);
+	X0 = SIMD::Swizzle_XXXX(s);
+	X1 = SIMD::Swizzle_XXXX(c);
 	__m128 tmp = _mm_mul_ps(Z0, Y1);
 	return Matrix4(
 		_mm_mul_ps(Z0, Y0),
@@ -511,9 +511,9 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 	__m128 s, c, tmp0, tmp1, tmp2;
 	__m128 axis = unitVec;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	__m128 xxxx = SIMD::Shuffle_XXXX(axis);
-	__m128 yyyy = SIMD::Shuffle_YYYY(axis);
-	__m128 zzzz = SIMD::Shuffle_ZZZZ(axis);
+	__m128 xxxx = SIMD::Swizzle_XXXX(axis);
+	__m128 yyyy = SIMD::Swizzle_YYYY(axis);
+	__m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
 	__m128 oneMinusC = _mm_sub_ps(_mm_set1_ps(1.0f), c);
 	__m128 axisS = _mm_mul_ps(axis, s);
 	__m128 negAxisS = SIMD::Negate(axisS);
@@ -524,10 +524,10 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 	const __m128 mask_y = _mm_load_ps((float*)select_y);
 	const __m128 mask_z = _mm_load_ps((float*)select_z);
 	tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
-	tmp0 = SIMD::Blend(tmp0, SIMD::Shuffle_YYYY(negAxisS), mask_z);
-	tmp1 = SIMD::Blend(SIMD::Shuffle_XXXX(axisS), SIMD::Shuffle_ZZZZ(negAxisS), mask_x);
+	tmp0 = SIMD::Blend(tmp0, SIMD::Swizzle_YYYY(negAxisS), mask_z);
+	tmp1 = SIMD::Blend(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS), mask_x);
 	tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
-	tmp2 = SIMD::Blend(tmp2, SIMD::Shuffle_XXXX(negAxisS), mask_y);
+	tmp2 = SIMD::Blend(tmp2, SIMD::Swizzle_XXXX(negAxisS), mask_y);
 	tmp0 = SIMD::Blend(tmp0, c, mask_x);
 	tmp1 = SIMD::Blend(tmp1, c, mask_y);
 	tmp2 = SIMD::Blend(tmp2, c, mask_z);
@@ -605,10 +605,10 @@ DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
 
 	zy_xz_yx = SIMD::Blend(col0, col1, mask_z);								// zy_xz_yx = 00 01 12 03
 	zy_xz_yx = _mm_shuffle_ps(zy_xz_yx, zy_xz_yx, _MM_SHUFFLE(0, 1, 2, 2));	// zy_xz_yx = 12 12 01 00
-	zy_xz_yx = SIMD::Blend(zy_xz_yx, SIMD::Shuffle_XXXX(col2), mask_y);		// zy_xz_yx = 12 20 01 00
+	zy_xz_yx = SIMD::Blend(zy_xz_yx, SIMD::Swizzle_XXXX(col2), mask_y);		// zy_xz_yx = 12 20 01 00
 	yz_zx_xy = SIMD::Blend(col0, col1, mask_x);								// yz_zx_xy = 10 01 02 03
 	yz_zx_xy = _mm_shuffle_ps(yz_zx_xy, yz_zx_xy, _MM_SHUFFLE(0, 0, 2, 0));	// yz_zx_xy = 10 02 10 10
-	yz_zx_xy = SIMD::Blend(yz_zx_xy, SIMD::Shuffle_YYYY(col2), mask_x);		// yz_zx_xy = 21 02 10 10
+	yz_zx_xy = SIMD::Blend(yz_zx_xy, SIMD::Swizzle_YYYY(col2), mask_x);		// yz_zx_xy = 21 02 10 10
 
 	sum = _mm_add_ps(zy_xz_yx, yz_zx_xy);
 	diff = _mm_sub_ps(zy_xz_yx, yz_zx_xy);
@@ -616,28 +616,28 @@ DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
 	scale = _mm_mul_ps(invSqrt, _mm_set1_ps(0.5f));
 
 	res0 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 1, 2, 0));
-	res0 = SIMD::Blend(res0, SIMD::Shuffle_XXXX(diff), mask_w);  // TODO: Ck
+	res0 = SIMD::Blend(res0, SIMD::Swizzle_XXXX(diff), mask_w);  // TODO: Ck
 	res1 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 2));
-	res1 = SIMD::Blend(res1, SIMD::Shuffle_YYYY(diff), mask_w);  // TODO: Ck
+	res1 = SIMD::Blend(res1, SIMD::Swizzle_YYYY(diff), mask_w);  // TODO: Ck
 	res2 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 1));
-	res2 = SIMD::Blend(res2, SIMD::Shuffle_ZZZZ(diff), mask_w);  // TODO: Ck
+	res2 = SIMD::Blend(res2, SIMD::Swizzle_ZZZZ(diff), mask_w);  // TODO: Ck
 	res3 = diff;
 	res0 = SIMD::Blend(res0, radicand, mask_x);
 	res1 = SIMD::Blend(res1, radicand, mask_y);
 	res2 = SIMD::Blend(res2, radicand, mask_z);
 	res3 = SIMD::Blend(res3, radicand, mask_w);
-	res0 = _mm_mul_ps(res0, SIMD::Shuffle_XXXX(scale));
-	res1 = _mm_mul_ps(res1, SIMD::Shuffle_YYYY(scale));
-	res2 = _mm_mul_ps(res2, SIMD::Shuffle_ZZZZ(scale));
-	res3 = _mm_mul_ps(res3, SIMD::Shuffle_WWWW(scale));
+	res0 = _mm_mul_ps(res0, SIMD::Swizzle_XXXX(scale));
+	res1 = _mm_mul_ps(res1, SIMD::Swizzle_YYYY(scale));
+	res2 = _mm_mul_ps(res2, SIMD::Swizzle_ZZZZ(scale));
+	res3 = _mm_mul_ps(res3, SIMD::Swizzle_WWWW(scale));
 
 	/* determine case and select answer */
 
-	xx = SIMD::Shuffle_XXXX(col0);
-	yy = SIMD::Shuffle_YYYY(col1);
-	zz = SIMD::Shuffle_ZZZZ(col2);
+	xx = SIMD::Swizzle_XXXX(col0);
+	yy = SIMD::Swizzle_YYYY(col1);
+	zz = SIMD::Swizzle_ZZZZ(col2);
 	__m128 res = SIMD::Blend(res0, res1, _mm_cmpgt_ps(yy, xx));
 	res = SIMD::Blend(res, res2, _mm_and_ps(_mm_cmpgt_ps(zz, xx), _mm_cmpgt_ps(zz, yy)));
-	res = SIMD::Blend(res, res3, _mm_cmpgt_ps(SIMD::Shuffle_XXXX(diagSum), _mm_setzero_ps()));
+	res = SIMD::Blend(res, res3, _mm_cmpgt_ps(SIMD::Swizzle_XXXX(diagSum), _mm_setzero_ps()));
 	mVec128 = res;
 }

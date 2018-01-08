@@ -109,9 +109,9 @@ public:
 
 	// Get element
 	static DESIRE_FORCE_INLINE float GetX(__m128 vec)		{ return _mm_cvtss_f32(vec); }
-	static DESIRE_FORCE_INLINE float GetY(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Shuffle_YYYY(vec)); }
-	static DESIRE_FORCE_INLINE float GetZ(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Shuffle_ZZZZ(vec)); }
-	static DESIRE_FORCE_INLINE float GetW(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Shuffle_WWWW(vec)); }
+	static DESIRE_FORCE_INLINE float GetY(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_YYYY(vec)); }
+	static DESIRE_FORCE_INLINE float GetZ(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_ZZZZ(vec)); }
+	static DESIRE_FORCE_INLINE float GetW(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_WWWW(vec)); }
 
 	// Compute the conjugate of a quaternion
 	static DESIRE_FORCE_INLINE __m128 Conjugate(__m128 quat)
@@ -159,9 +159,9 @@ public:
 		return _mm_dp_ps(a, b, 0x77);
 #else
 		__m128 result = SIMD::MulPerElem(a, b);
-		return SIMD::Add(	SIMD::Shuffle_XXXX(result),
-							SIMD::Add(	SIMD::Shuffle_YYYY(result),
-										SIMD::Shuffle_ZZZZ(result)));
+		return SIMD::Add(	SIMD::Swizzle_XXXX(result),
+							SIMD::Add(	SIMD::Swizzle_YYYY(result),
+										SIMD::Swizzle_ZZZZ(result)));
 #endif
 	}
 
@@ -172,20 +172,20 @@ public:
 		return _mm_dp_ps(a, b, 0xff);
 #else
 		__m128 result = SIMD::MulPerElem(a, b);
-		return SIMD::Add(	SIMD::Shuffle_XXXX(result),
-							SIMD::Add(	SIMD::Shuffle_YYYY(result),
-										SIMD::Add(	SIMD::Shuffle_ZZZZ(result),
-													SIMD::Shuffle_WWWW(result))));
+		return SIMD::Add(	SIMD::Swizzle_XXXX(result),
+							SIMD::Add(	SIMD::Swizzle_YYYY(result),
+										SIMD::Add(	SIMD::Swizzle_ZZZZ(result),
+													SIMD::Swizzle_WWWW(result))));
 #endif
 	}
 
 	// Compute cross product of two 3-D vectors
 	static DESIRE_FORCE_INLINE __m128 Cross(__m128 a, __m128 b)
 	{
-		__m128 yzx0 = SIMD::Shuffle_YZXW(a);
-		__m128 yzx1 = SIMD::Shuffle_YZXW(b);
+		__m128 yzx0 = SIMD::Swizzle_YZXW(a);
+		__m128 yzx1 = SIMD::Swizzle_YZXW(b);
 		__m128 result = SIMD::Sub(SIMD::MulPerElem(yzx1, a), SIMD::MulPerElem(yzx0, b));
-		return SIMD::Shuffle_YZXW(result);
+		return SIMD::Swizzle_YZXW(result);
 	}
 
 	// Multiply vectors per element
@@ -221,23 +221,23 @@ public:
 	// Get maximum element
 	static DESIRE_FORCE_INLINE __m128 MaxElem3(__m128 vec)
 	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE __m128 MaxElem4(__m128 vec)
 	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Get minimum element
 	static DESIRE_FORCE_INLINE __m128 MinElem3(__m128 vec)
 	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::Shuffle_ZZZZ(vec));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
 	static DESIRE_FORCE_INLINE __m128 MinElem4(__m128 vec)
 	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Shuffle_YYYY(vec)), SIMD::MinPerElem(SIMD::Shuffle_ZZZZ(vec), SIMD::Shuffle_WWWW(vec)));
+		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Select packed single precision floating-point values from a and b using the mask
@@ -247,27 +247,27 @@ public:
 	}
 
 	// Shuffle
-	static DESIRE_FORCE_INLINE __m128 Shuffle_XXXX(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Swizzle_XXXX(__m128 vec)
 	{
 		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_YYYY(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Swizzle_YYYY(__m128 vec)
 	{
 		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_ZZZZ(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Swizzle_ZZZZ(__m128 vec)
 	{
 		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_WWWW(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Swizzle_WWWW(__m128 vec)
 	{
 		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Shuffle_YZXW(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 Swizzle_YZXW(__m128 vec)
 	{
 		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1));
 	}
