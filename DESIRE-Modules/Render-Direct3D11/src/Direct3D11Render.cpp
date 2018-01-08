@@ -268,6 +268,11 @@ void Direct3D11Render::EndFrame()
 
 void Direct3D11Render::SetView(View *view)
 {
+	if(view == activeView)
+	{
+		return;
+	}
+
 	if(view != nullptr)
 	{
 		RenderTarget *rt = view->GetRenderTarget();
@@ -294,6 +299,8 @@ void Direct3D11Render::SetView(View *view)
 		deviceCtx->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 		SetViewport(0, 0, activeWindow->GetWidth(), activeWindow->GetHeight());
 	}
+
+	activeView = view;
 }
 
 void Direct3D11Render::SetWorldMatrix(const Matrix4& matrix)
@@ -914,9 +921,6 @@ void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 {
 	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
 	deviceCtx->RSSetViewports(1, &vp);
-
-	resolution[0] = vp.Width - vp.TopLeftX;
-	resolution[1] = vp.Height - vp.TopLeftY;
 }
 
 void Direct3D11Render::SetMesh(Mesh *mesh)
@@ -1045,6 +1049,7 @@ void Direct3D11Render::UpdateShaderParams()
 
 	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
 	{
+		bool isChanged = false;
 		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = vertexShaderRenderData->constantBuffersData[i];
 
 		const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
@@ -1054,6 +1059,7 @@ void Direct3D11Render::UpdateShaderParams()
 		{
 			DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 			memcpy(bufferData.buffer.data + offsetSizePair->first, &matWorldView.r[0], offsetSizePair->second);
+			isChanged = true;
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
@@ -1062,12 +1068,25 @@ void Direct3D11Render::UpdateShaderParams()
 			DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 			DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
 			memcpy(bufferData.buffer.data + offsetSizePair->first, &matWorldViewProj.r[0], offsetSizePair->second);
+			isChanged = true;
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
-		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(resolution))
+		if(offsetSizePair != nullptr && offsetSizePair->second == 2 * sizeof(float))
 		{
+			float resolution[2];
+			if(activeView != nullptr)
+			{
+				resolution[0] = activeView->GetWidth();
+				resolution[1] = activeView->GetHeight();
+			}
+			else
+			{
+				resolution[0] = activeWindow->GetWidth();
+				resolution[1] = activeWindow->GetHeight();
+			}
 			memcpy(bufferData.buffer.data + offsetSizePair->first, resolution, offsetSizePair->second);
+			isChanged = true;
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("tintColor");
@@ -1075,26 +1094,54 @@ void Direct3D11Render::UpdateShaderParams()
 		{
 			const float tintColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			memcpy(bufferData.buffer.data + offsetSizePair->first, tintColor, offsetSizePair->second);
+			isChanged = true;
 		}
 
-		deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.buffer.data, 0, 0);
+		if(isChanged)
+		{
+			deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.buffer.data, 0, 0);
+		}
 	}
 
 	const ShaderRenderDataD3D11 *fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeFragmentShader->renderData);
 
 	for(size_t i = 0; i < fragmentShaderRenderData->constantBuffers.size(); ++i)
 	{
+		bool isChanged = false;
 		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = fragmentShaderRenderData->constantBuffersData[i];
 
 		const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
 
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
-		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(resolution))
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
+		if(offsetSizePair != nullptr)
 		{
-			memcpy(bufferData.buffer.data + offsetSizePair->first, resolution, offsetSizePair->second);
+			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
+			memcpy(bufferData.buffer.data + offsetSizePair->first, &matViewInv.r[0], offsetSizePair->second);
+			isChanged = true;
 		}
 
-		deviceCtx->UpdateSubresource(fragmentShaderRenderData->constantBuffers[i], 0, nullptr, fragmentShaderRenderData->constantBuffersData[i].buffer.data, 0, 0);
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
+		if(offsetSizePair != nullptr && offsetSizePair->second == 2 * sizeof(float))
+		{
+			float resolution[2];
+			if(activeView != nullptr)
+			{
+				resolution[0] = activeView->GetWidth();
+				resolution[1] = activeView->GetHeight();
+			}
+			else
+			{
+				resolution[0] = activeWindow->GetWidth();
+				resolution[1] = activeWindow->GetHeight();
+			}
+			memcpy(bufferData.buffer.data + offsetSizePair->first, resolution, offsetSizePair->second);
+			isChanged = true;
+		}
+
+		if(isChanged)
+		{
+			deviceCtx->UpdateSubresource(fragmentShaderRenderData->constantBuffers[i], 0, nullptr, fragmentShaderRenderData->constantBuffersData[i].buffer.data, 0, 0);
+		}
 	}
 }
 

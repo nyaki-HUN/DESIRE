@@ -89,6 +89,7 @@ private:
 	const ID3D11InputLayout *activeInputLayout = nullptr;
 	const ID3D11SamplerState *activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
 	const IWindow *activeWindow = nullptr;
+	const View *activeView = nullptr;
 	const Mesh *activeMesh = nullptr;
 	const Shader *activeVertexShader = nullptr;
 	const Shader *activeFragmentShader = nullptr;
@@ -98,7 +99,6 @@ private:
 	DirectX::XMMATRIX matWorld;
 	DirectX::XMMATRIX matView;
 	DirectX::XMMATRIX matProj;
-	float resolution[2] = { 0.0f, 0.0f };
 
 	std::unordered_map<uint64_t, ID3D11DepthStencilState*> depthStencilStateCache;
 	std::unordered_map<uint64_t, ID3D11RasterizerState*> rasterizerStateCache;
