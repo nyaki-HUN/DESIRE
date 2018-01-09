@@ -1043,16 +1043,33 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterM
 	SetSamplerState(samplerIdx, samplerDesc);
 }
 
-void Direct3D11Render::UpdateShaderParams()
+void Direct3D11Render::UpdateShaderParams(const Material *material)
 {
 	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
+
+	float tmpBuffer[4 * 4] = {};
+	const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
 
 	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
 	{
 		bool isChanged = false;
 		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = vertexShaderRenderData->constantBuffersData[i];
 
-		const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
+		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
+		{
+			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
+			if(offsetSizePair != nullptr)
+			{
+				ASSERT(offsetSizePair->second <= sizeof(tmpBuffer));
+				shaderParam.GetValue(tmpBuffer, offsetSizePair->second);
+
+				if(memcmp(tmpBuffer, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second) != 0)
+				{
+					memcpy(bufferData.buffer.data + offsetSizePair->first, tmpBuffer, offsetSizePair->second);
+					isChanged = true;
+				}
+			}
+		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldView");
 		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
@@ -1110,7 +1127,21 @@ void Direct3D11Render::UpdateShaderParams()
 		bool isChanged = false;
 		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = fragmentShaderRenderData->constantBuffersData[i];
 
-		const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
+		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
+		{
+			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
+			if(offsetSizePair != nullptr)
+			{
+				ASSERT(offsetSizePair->second <= sizeof(tmpBuffer));
+				shaderParam.GetValue(tmpBuffer, offsetSizePair->second);
+
+				if(memcmp(tmpBuffer, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second) != 0)
+				{
+					memcpy(bufferData.buffer.data + offsetSizePair->first, tmpBuffer, offsetSizePair->second);
+					isChanged = true;
+				}
+			}
+		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
 		if(offsetSizePair != nullptr)

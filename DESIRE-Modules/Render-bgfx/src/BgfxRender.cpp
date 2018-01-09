@@ -670,7 +670,7 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], renderData->textureHandle, flags);
 }
 
-void BgfxRender::UpdateShaderParams()
+void BgfxRender::UpdateShaderParams(const Material *material)
 {
 	const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeFragmentShader->renderData);
 

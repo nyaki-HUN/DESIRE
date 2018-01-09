@@ -139,7 +139,7 @@ private:
 	virtual void SetVertexShader(Shader *vertexShader) = 0;
 	virtual void SetFragmentShader(Shader *fragmentShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::REPEAT) = 0;
-	virtual void UpdateShaderParams() = 0;
+	virtual void UpdateShaderParams(const Material *material) = 0;
 
 	// Submit draw command
 	virtual void DoRender() = 0;

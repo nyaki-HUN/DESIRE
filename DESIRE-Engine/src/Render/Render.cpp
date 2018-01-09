@@ -38,7 +38,7 @@ void Render::RenderMesh(Mesh *mesh, Material *material)
 
 	SetMesh(mesh);
 	SetMaterial(material);
-	UpdateShaderParams();
+	UpdateShaderParams(material);
 
 	DoRender();
 }
@@ -57,7 +57,7 @@ void Render::RenderScreenSpaceQuad(Material *material)
 	SetScreenSpaceQuadMesh();
 	SetMaterial(material);
 	SetVertexShader(screenSpaceQuadVertexShader.get());
-	UpdateShaderParams();
+	UpdateShaderParams(material);
 
 	DoRender();
 }

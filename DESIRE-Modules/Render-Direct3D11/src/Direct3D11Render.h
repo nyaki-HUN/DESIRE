@@ -60,7 +60,7 @@ private:
 	void SetVertexShader(Shader *vertexShader) override;
 	void SetFragmentShader(Shader *fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
-	void UpdateShaderParams() override;
+	void UpdateShaderParams(const Material *material) override;
 
 	void DoRender() override;
 
