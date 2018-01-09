@@ -91,12 +91,12 @@ void Camera::RecalculateMatrices()
 {
 	if(flags & VIEW_MATRIX_IS_DIRTY)
 	{
-		viewMat = Camera::CreateViewMatrix(position, target, viewMat.GetRow1().GetXYZ());
+		viewMat = CreateViewMatrix(position, target);
 	}
 	
 	if(flags & PROJECTION_MATRIX_IS_DIRTY)
 	{
-		projMat = Camera::CreatePerspectiveProjectionMatrix(fov, aspect, zNear, zFar);
+		projMat = CreatePerspectiveProjectionMatrix(fov, aspect, zNear, zFar);
 	}
 
 	flags &= ~ALL_MATRICES_ARE_DIRTY;
@@ -134,7 +134,7 @@ Matrix4 Camera::CreateViewMatrix(const Vector3& eyePos, const Vector3& lookAtPos
 	const Vector3 x = (y.Cross(z)).Normalized();
 	y = z.Cross(x);
 
-	Matrix4 matView = Matrix4(Vector4(x), Vector4(y), Vector4(z), Vector4(eyePos));
+	Matrix4 matView = Matrix4(Vector4(x), Vector4(y), Vector4(z), Vector4(eyePos, 1.0f));
 	matView.OrthoInvert();
 	return matView;
 }
