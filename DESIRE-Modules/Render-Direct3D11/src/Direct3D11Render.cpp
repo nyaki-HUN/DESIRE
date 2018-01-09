@@ -1120,6 +1120,14 @@ void Direct3D11Render::UpdateShaderParams()
 			isChanged = true;
 		}
 
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("camPos");
+		if(offsetSizePair != nullptr)
+		{
+			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
+			memcpy(bufferData.buffer.data + offsetSizePair->first, &matViewInv.r[3], offsetSizePair->second);
+			isChanged = true;
+		}
+
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
 		if(offsetSizePair != nullptr && offsetSizePair->second == 2 * sizeof(float))
 		{
