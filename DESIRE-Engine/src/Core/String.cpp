@@ -24,7 +24,7 @@ String::String(String&& string)
 {
 	if(string.data == string.staticContent)
 	{
-		memcpy(staticContent, string.staticContent, STACK_SIZE);
+		memcpy(staticContent, string.staticContent, kStackSize);
 		data = staticContent;
 		size = string.size;
 	}
@@ -296,7 +296,7 @@ String& String::operator =(String&& string)
 
 	if(string.data == string.staticContent)
 	{
-		memcpy(staticContent, string.staticContent, STACK_SIZE);
+		memcpy(staticContent, string.staticContent, kStackSize);
 		data = staticContent;
 		size = string.size;
 	}
@@ -437,8 +437,8 @@ String String::CreateFormattedString(const char *format, ...)
 String String::CreateFromInt(int num)
 {
 	String string;
-	// It is safe to use STACK_SIZE here as data is always at least that big
-	snprintf(string.data, STACK_SIZE, "%d", num);
+	// It is safe to use kStackSize here as data is always at least that big
+	snprintf(string.data, kStackSize, "%d", num);
 	return string;
 }
 
@@ -477,7 +477,7 @@ void String::Replace_Internal(const char *search, const char *replaceTo, bool al
 
 void String::EnsureSize(size_t newSize, bool keepOld)
 {
-	if(newSize >= STACK_SIZE)
+	if(newSize >= kStackSize)
 	{
 		char *oldData = data;
 		data = new char[newSize + 1];

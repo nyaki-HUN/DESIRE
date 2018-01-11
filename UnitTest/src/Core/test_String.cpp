@@ -7,7 +7,7 @@ TEST_CASE("String", "[Core]")
 	const char *charSeq = "String ASD";
 	String string = charSeq;
 
-	// The bigString variable represents a String wich contains more data than String::STACK_SIZE and stores it in the heap
+	// The bigString variable represents a String wich contains more data than String::kStackSize and stores it in the heap
 	const char *charSeq2 = "String1234567890 QWE1234567890 asd1234567890";
 	String bigString = charSeq2;
 
