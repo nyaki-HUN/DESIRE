@@ -16,7 +16,6 @@ class HashedString
 public:
 	template<size_t LEN>
 	constexpr HashedString(const char(&str)[LEN])
-		: hash(0)
 	{
 		DESIRE_DISABLE_WARNINGS
 #define _h	MurmurHash64<LEN - 1>((LEN - 1) * m, str, 0)
@@ -160,5 +159,5 @@ private:
 #undef k
 	}
 
-	uint64_t hash;
+	uint64_t hash = 0;
 };

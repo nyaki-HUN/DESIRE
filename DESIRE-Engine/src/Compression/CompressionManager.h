@@ -11,7 +11,7 @@ class CompressionManager
 	DESIRE_SINGLETON(CompressionManager)
 
 public:
-	std::unique_ptr<Compression> CreateCompression(const char *name) const;
+	std::unique_ptr<Compression> CreateCompression(HashedString name) const;
 
 private:
 	typedef Compression*(*CompressionFactoryFunc_t)();

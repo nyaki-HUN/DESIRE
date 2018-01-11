@@ -42,8 +42,7 @@ void Box2DPhysicsComponent::SetMass(float mass)
 
 float Box2DPhysicsComponent::GetMass() const
 {
-	ASSERT(false && "TODO");
-	return 0.0f;
+	return body->GetMass();
 }
 
 bool Box2DPhysicsComponent::IsTrigger() const

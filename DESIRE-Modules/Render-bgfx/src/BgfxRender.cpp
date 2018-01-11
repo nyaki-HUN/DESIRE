@@ -672,11 +672,13 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 
 void BgfxRender::UpdateShaderParams(const Material *material)
 {
-	const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeFragmentShader->renderData);
+	for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
+	{
+		const void *value = shaderParam.GetValue();
 
-	const float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-//	const float colorHighlighted[4] = { 0.3f, 0.3f, 2.0f, 1.0f };
-	bgfx::setUniform(fragmentShaderRenderData->u_tint, color);
+		bgfx::UniformHandle uniform = BGFX_INVALID_HANDLE;
+		bgfx::setUniform(uniform, value);
+	}
 }
 
 void BgfxRender::DoRender()

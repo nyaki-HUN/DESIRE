@@ -11,11 +11,11 @@ CompressionManager::~CompressionManager()
 
 }
 
-std::unique_ptr<Compression> CompressionManager::CreateCompression(const char *name) const
+std::unique_ptr<Compression> CompressionManager::CreateCompression(HashedString name) const
 {
 	Compression *compression = nullptr;
 
-	const CompressionFactoryFunc_t *factoryFunc = compressionFactories.Find(HashedString::CreateFromDynamicString(name));
+	const CompressionFactoryFunc_t *factoryFunc = compressionFactories.Find(name);
 	if(factoryFunc != nullptr)
 	{
 		compression = (*factoryFunc)();
