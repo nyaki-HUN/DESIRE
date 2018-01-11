@@ -1,19 +1,24 @@
 #include "stdafx.h"
 #include "Render/Material.h"
 
-Material::ShaderParam::ShaderParam(HashedString name, std::function<void(void *, size_t)>&& func)
-	: name(name)
+Material::ShaderParam::ShaderParam(String&& paramName, std::function<void(void*)>&& func)
+	: name(std::move(paramName))
+	, nameHash(HashedString::CreateFromDynamicString(name.c_str(), name.Length()))
 	, func(std::move(func))
 {
 
 }
 
-void Material::ShaderParam::GetValue(void *buffer, size_t size) const
+const void* Material::ShaderParam::GetValue() const
 {
+	static float value[16] = {};
+
 	if(func != nullptr)
 	{
-		func(buffer, size);
+		func(value);
 	}
+
+	return value;
 }
 
 Material::Material()
@@ -46,9 +51,9 @@ const std::vector<Material::TextureInfo>& Material::GetTextures() const
 	return textures;
 }
 
-void Material::AddShaderParam(const char *name, std::function<void(void *, size_t)>&& func)
+void Material::AddShaderParam(String&& name, std::function<void(void*)>&& func)
 {
-	shaderParams.emplace_back(HashedString::CreateFromDynamicString(name), std::move(func));
+	shaderParams.emplace_back(std::move(name), std::move(func));
 }
 
 const std::vector<Material::ShaderParam>& Material::GetShaderParams() const

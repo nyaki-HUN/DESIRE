@@ -61,6 +61,7 @@ private:
 	void SetFragmentShader(Shader *fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
 	void UpdateShaderParams(const Material *material) override;
+	static bool CheckAndUpdateShaderParam(const void *value, void *valueInConstantBuffer, uint32_t size);
 
 	void DoRender() override;
 

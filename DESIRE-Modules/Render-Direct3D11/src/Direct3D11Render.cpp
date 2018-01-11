@@ -1047,7 +1047,6 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 {
 	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
 
-	float tmpBuffer[4 * 4] = {};
 	const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
 
 	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
@@ -1057,35 +1056,26 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 
 		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
 		{
-			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
+			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.nameHash);
 			if(offsetSizePair != nullptr)
 			{
-				ASSERT(offsetSizePair->second <= sizeof(tmpBuffer));
-				shaderParam.GetValue(tmpBuffer, offsetSizePair->second);
-
-				if(memcmp(tmpBuffer, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second) != 0)
-				{
-					memcpy(bufferData.buffer.data + offsetSizePair->first, tmpBuffer, offsetSizePair->second);
-					isChanged = true;
-				}
+				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 			}
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldView");
 		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
-			DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-			memcpy(bufferData.buffer.data + offsetSizePair->first, &matWorldView.r[0], offsetSizePair->second);
-			isChanged = true;
+			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
 		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
-			DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-			DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-			memcpy(bufferData.buffer.data + offsetSizePair->first, &matWorldViewProj.r[0], offsetSizePair->second);
-			isChanged = true;
+			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
+			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
@@ -1102,16 +1092,8 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 				resolution[0] = activeWindow->GetWidth();
 				resolution[1] = activeWindow->GetHeight();
 			}
-			memcpy(bufferData.buffer.data + offsetSizePair->first, resolution, offsetSizePair->second);
-			isChanged = true;
-		}
 
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("tintColor");
-		if(offsetSizePair != nullptr && offsetSizePair->second == 4 * sizeof(float))
-		{
-			const float tintColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			memcpy(bufferData.buffer.data + offsetSizePair->first, tintColor, offsetSizePair->second);
-			isChanged = true;
+			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		if(isChanged)
@@ -1129,17 +1111,10 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 
 		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
 		{
-			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
+			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.nameHash);
 			if(offsetSizePair != nullptr)
 			{
-				ASSERT(offsetSizePair->second <= sizeof(tmpBuffer));
-				shaderParam.GetValue(tmpBuffer, offsetSizePair->second);
-
-				if(memcmp(tmpBuffer, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second) != 0)
-				{
-					memcpy(bufferData.buffer.data + offsetSizePair->first, tmpBuffer, offsetSizePair->second);
-					isChanged = true;
-				}
+				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 			}
 		}
 
@@ -1147,16 +1122,14 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 		if(offsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			memcpy(bufferData.buffer.data + offsetSizePair->first, &matViewInv.r[0], offsetSizePair->second);
-			isChanged = true;
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("camPos");
 		if(offsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			memcpy(bufferData.buffer.data + offsetSizePair->first, &matViewInv.r[3], offsetSizePair->second);
-			isChanged = true;
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
@@ -1173,8 +1146,8 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 				resolution[0] = activeWindow->GetWidth();
 				resolution[1] = activeWindow->GetHeight();
 			}
-			memcpy(bufferData.buffer.data + offsetSizePair->first, resolution, offsetSizePair->second);
-			isChanged = true;
+
+			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		if(isChanged)
@@ -1182,6 +1155,17 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 			deviceCtx->UpdateSubresource(fragmentShaderRenderData->constantBuffers[i], 0, nullptr, fragmentShaderRenderData->constantBuffersData[i].buffer.data, 0, 0);
 		}
 	}
+}
+
+bool Direct3D11Render::CheckAndUpdateShaderParam(const void *value, void *valueInConstantBuffer, uint32_t size)
+{
+	if(memcmp(valueInConstantBuffer, value, size) == 0)
+	{
+		return false;
+	}
+
+	memcpy(valueInConstantBuffer, value, size);
+	return true;
 }
 
 void Direct3D11Render::DoRender()

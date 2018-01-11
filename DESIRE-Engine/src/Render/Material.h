@@ -21,11 +21,14 @@ public:
 
 	struct ShaderParam
 	{
-		HashedString name;
-		std::function<void(void *, size_t)> func;
+		const String name;
+		const HashedString nameHash;
 
-		ShaderParam(HashedString name, std::function<void(void *, size_t)>&& func);
-		void GetValue(void *buffer, size_t size) const;
+		ShaderParam(String&& paramName, std::function<void(void*)>&& func);
+		const void* GetValue() const;
+
+	private:
+		std::function<void(void *)> func;
 	};
 
 	Material();
@@ -35,7 +38,7 @@ public:
 	void ChangeTexture(uint8_t idx,  const std::shared_ptr<Texture>& texture);
 	const std::vector<TextureInfo>& GetTextures() const;
 
-	void AddShaderParam(const char *name, std::function<void(void *, size_t)>&& func);
+	void AddShaderParam(String&& name, std::function<void(void*)>&& func);
 	const std::vector<ShaderParam>& Material::GetShaderParams() const;
 
 	std::shared_ptr<Shader> vertexShader;
