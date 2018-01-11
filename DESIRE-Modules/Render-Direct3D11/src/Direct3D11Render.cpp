@@ -1056,7 +1056,7 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 
 		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
 		{
-			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.nameHash);
+			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
 			if(offsetSizePair != nullptr)
 			{
 				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
@@ -1111,7 +1111,7 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 
 		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
 		{
-			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.nameHash);
+			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
 			if(offsetSizePair != nullptr)
 			{
 				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);

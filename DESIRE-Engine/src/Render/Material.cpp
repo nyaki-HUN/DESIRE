@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "Render/Material.h"
 
-Material::ShaderParam::ShaderParam(String&& paramName, std::function<void(void*)>&& func)
-	: name(std::move(paramName))
-	, nameHash(HashedString::CreateFromDynamicString(name.c_str(), name.Length()))
+Material::ShaderParam::ShaderParam(HashedString name, std::function<void(void*)>&& func)
+	: name(name)
 	, func(std::move(func))
 {
 
@@ -51,9 +50,9 @@ const std::vector<Material::TextureInfo>& Material::GetTextures() const
 	return textures;
 }
 
-void Material::AddShaderParam(String&& name, std::function<void(void*)>&& func)
+void Material::AddShaderParam(HashedString name, std::function<void(void*)>&& func)
 {
-	shaderParams.emplace_back(std::move(name), std::move(func));
+	shaderParams.emplace_back(name, std::move(func));
 }
 
 const std::vector<Material::ShaderParam>& Material::GetShaderParams() const

@@ -61,9 +61,10 @@ void BgfxRender::Init(IWindow *mainWindow)
 		bgfx::setViewClear(viewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColor, 1.0f, 0);
 	}
 
-	for(size_t i = 0; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
+	samplerUniforms[0] = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
+	for(uint8_t i = 1; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
 	{
-		samplerUniforms[i] = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
+		samplerUniforms[i] = bgfx::createUniform(String::CreateFormattedString("s_tex%u", i).c_str(), bgfx::UniformType::Int1);
 	}
 
 	renderState = BGFX_STATE_MSAA;
@@ -401,7 +402,31 @@ void BgfxRender::Bind(Shader *shader)
 	ASSERT(bgfx::isValid(renderData->shaderHandle));
 	bgfx::setName(renderData->shaderHandle, shader->name.c_str());
 
-	renderData->u_tint = bgfx::createUniform("u_tint", bgfx::UniformType::Vec4);
+	const uint16_t uniformCount = bgfx::getShaderUniforms(renderData->shaderHandle, nullptr, 0);
+	bgfx::UniformHandle *uniforms = (bgfx::UniformHandle*)alloca(uniformCount * sizeof(bgfx::UniformHandle));
+	bgfx::getShaderUniforms(renderData->shaderHandle, uniforms, uniformCount);
+	for(uint16_t i = 0; i < uniformCount; ++i)
+	{
+		bool isSampler = false;
+		for(bgfx::UniformHandle& samplerUniform : samplerUniforms)
+		{
+			if(uniforms[i].idx == samplerUniform.idx)
+			{
+				isSampler = true;
+				break;
+			}
+		}
+
+		if(isSampler)
+		{
+			// Skip sampler uniforms
+			continue;
+		}
+
+		bgfx::UniformInfo info;
+		bgfx::getUniformInfo(uniforms[i], info);
+		renderData->uniforms.Insert(HashedString::CreateFromDynamicString(info.name), uniforms[i]);
+	}
 
 	shader->renderData = renderData;
 }
@@ -500,7 +525,6 @@ void BgfxRender::Unbind(Shader *shader)
 
 	ShaderRenderDataBgfx *renderData = static_cast<ShaderRenderDataBgfx*>(shader->renderData);
 	bgfx::destroy(renderData->shaderHandle);
-	bgfx::destroy(renderData->u_tint);
 
 	delete renderData;
 	shader->renderData = nullptr;
@@ -672,12 +696,22 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 
 void BgfxRender::UpdateShaderParams(const Material *material)
 {
+	const ShaderRenderDataBgfx *vertexShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeVertexShader->renderData);
+	const ShaderRenderDataBgfx *fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(activeFragmentShader->renderData);
+
 	for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
 	{
-		const void *value = shaderParam.GetValue();
+		const bgfx::UniformHandle *uniform = vertexShaderRenderData->uniforms.Find(shaderParam.name);
+		if(uniform == nullptr)
+		{
+			uniform = fragmentShaderRenderData->uniforms.Find(shaderParam.name);
+		}
 
-		bgfx::UniformHandle uniform = BGFX_INVALID_HANDLE;
-		bgfx::setUniform(uniform, value);
+		if(uniform != nullptr && bgfx::isValid(*uniform))
+		{
+			const void *value = shaderParam.GetValue();
+			bgfx::setUniform(*uniform, value);
+		}
 	}
 }
 

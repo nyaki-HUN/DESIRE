@@ -3,6 +3,7 @@
 #include "Core/HashedString.h"
 #include "Render/Render.h"
 
+#include <memory>
 #include <vector>
 #include <functional>
 
@@ -21,10 +22,9 @@ public:
 
 	struct ShaderParam
 	{
-		const String name;
-		const HashedString nameHash;
+		const HashedString name;
 
-		ShaderParam(String&& paramName, std::function<void(void*)>&& func);
+		ShaderParam(HashedString name, std::function<void(void*)>&& func);
 		const void* GetValue() const;
 
 	private:
@@ -38,7 +38,7 @@ public:
 	void ChangeTexture(uint8_t idx,  const std::shared_ptr<Texture>& texture);
 	const std::vector<TextureInfo>& GetTextures() const;
 
-	void AddShaderParam(String&& name, std::function<void(void*)>&& func);
+	void AddShaderParam(HashedString name, std::function<void(void*)>&& func);
 	const std::vector<ShaderParam>& Material::GetShaderParams() const;
 
 	std::shared_ptr<Shader> vertexShader;
