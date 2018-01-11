@@ -157,9 +157,9 @@ private:
 	void EnsureSize(size_t size, bool keepOld);
 	void InitWithData(const char *data, size_t size);
 
-	static const size_t STACK_SIZE = 32;
+	static const size_t kStackSize = 16;
 
 	char *data;
 	size_t size;
-	char staticContent[STACK_SIZE];
+	char staticContent[kStackSize];
 };
