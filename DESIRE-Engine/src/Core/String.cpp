@@ -483,7 +483,7 @@ void String::EnsureSize(size_t newSize, bool keepOld)
 		data = new char[newSize + 1];
 		if(keepOld)
 		{
-			strcpy_s(data, newSize, oldData);
+			strcpy_s(data, newSize + 1, oldData);
 		}
 
 		if(oldData != staticContent)
