@@ -145,12 +145,6 @@ public:
 	static DESIRE_FORCE_INLINE float GetZ(const vec_float4_t& vec)			{ return vec.z; }
 	static DESIRE_FORCE_INLINE float GetW(const vec_float4_t& vec)			{ return vec.w; }
 
-	// Compute the conjugate of a quaternion
-	static DESIRE_FORCE_INLINE vec_float4_t Conjugate(const vec_float4_t& quat)
-	{
-		return vec_float4_t(-quat.x, -quat.y, -quat.z, quat.w);
-	}
-
 	// Operator overloads
 	static DESIRE_FORCE_INLINE vec_float3_t Negate(const vec_float3_t& vec)
 	{

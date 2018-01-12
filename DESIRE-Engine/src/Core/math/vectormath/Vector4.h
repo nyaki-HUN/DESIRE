@@ -1,18 +1,34 @@
 #pragma once
 
-// --------------------------------------------------------------------------------------------------------------------
-//	Vector4
-// --------------------------------------------------------------------------------------------------------------------
-
 class Vector4
 {
 public:
-	// Constructors
-	DESIRE_FORCE_INLINE Vector4() {}	// No initialization
-	DESIRE_FORCE_INLINE Vector4(const Vector4& vec)					: mVec128(vec.mVec128) {}
-	DESIRE_FORCE_INLINE Vector4(vec_float4_t vf)					: mVec128(vf) {}
-	DESIRE_FORCE_INLINE Vector4(float x, float y, float z, float w)	{ SIMD::Construct(mVec128, x, y, z, w); }
-	explicit DESIRE_FORCE_INLINE Vector4(float scalar)				{ SIMD::Construct(mVec128, scalar); }
+	DESIRE_FORCE_INLINE Vector4()
+	{
+		// No initialization
+	}
+
+	DESIRE_FORCE_INLINE Vector4(const Vector4& vec)
+		: mVec128(vec.mVec128)
+	{
+	
+	}
+	
+	DESIRE_FORCE_INLINE Vector4(vec_float4_t vf)
+		: mVec128(vf) 
+	{
+	
+	}
+
+	DESIRE_FORCE_INLINE Vector4(float x, float y, float z, float w)
+	{
+		SIMD::Construct(mVec128, x, y, z, w);
+	}
+
+	explicit DESIRE_FORCE_INLINE Vector4(float scalar)
+	{
+		SIMD::Construct(mVec128, scalar);
+	}
 
 	// Construct a 4-D vector from a 3-D vector and a scalar
 	DESIRE_FORCE_INLINE Vector4(const Vector3& xyz, float w)
@@ -76,25 +92,10 @@ public:
 		return *this;
 	}
 
-	DESIRE_FORCE_INLINE Vector4 operator -() const
-	{
-		return SIMD::Negate(mVec128);
-	}
-
-	DESIRE_FORCE_INLINE Vector4 operator +(const Vector4& vec) const
-	{
-		return SIMD::Add(mVec128, vec.mVec128);
-	}
-
-	DESIRE_FORCE_INLINE Vector4 operator -(const Vector4& vec) const
-	{
-		return SIMD::Sub(mVec128, vec.mVec128);
-	}
-
-	DESIRE_FORCE_INLINE Vector4 operator *(float scalar) const
-	{
-		return SIMD::Mul(mVec128, scalar);
-	}
+	DESIRE_FORCE_INLINE Vector4 operator -() const						{ return SIMD::Negate(mVec128); }
+	DESIRE_FORCE_INLINE Vector4 operator +(const Vector4& vec) const	{ return SIMD::Add(mVec128, vec.mVec128); }
+	DESIRE_FORCE_INLINE Vector4 operator -(const Vector4& vec) const	{ return SIMD::Sub(mVec128, vec.mVec128); }
+	DESIRE_FORCE_INLINE Vector4 operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
 
 	DESIRE_FORCE_INLINE Vector4 operator /(float scalar) const
 	{

@@ -60,14 +60,6 @@ public:
 	static DESIRE_FORCE_INLINE float GetZ(float32x4_t vec)				{ return vgetq_lane_f32(vec, 2); }
 	static DESIRE_FORCE_INLINE float GetW(float32x4_t vec)				{ return vgetq_lane_f32(vec, 3); }
 
-	// Compute the conjugate of a quaternion
-	static DESIRE_FORCE_INLINE float32x4_t Conjugate(float32x4_t quat)
-	{
-		const uint32x4_t mask = vdupq_n_u32(0x80000000);
-		mask = vsetq_lane_u32(0, mask, 3);
-		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(quat), mask));
-	}
-
 	// Operator overloads
 	static DESIRE_FORCE_INLINE float32x4_t Negate(float32x4_t vec)
 	{

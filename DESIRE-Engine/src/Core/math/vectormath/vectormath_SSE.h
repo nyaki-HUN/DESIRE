@@ -113,13 +113,6 @@ public:
 	static DESIRE_FORCE_INLINE float GetZ(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_ZZZZ(vec)); }
 	static DESIRE_FORCE_INLINE float GetW(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_WWWW(vec)); }
 
-	// Compute the conjugate of a quaternion
-	static DESIRE_FORCE_INLINE __m128 Conjugate(__m128 quat)
-	{
-		alignas(16) const uint32_t mask[4] = { 0x80000000, 0x80000000, 0x80000000, 0 };
-		return _mm_xor_ps(quat, _mm_load_ps((float*)mask));
-	}
-
 	// Operator overloads
 	static DESIRE_FORCE_INLINE __m128 Negate(__m128 vec)
 	{
