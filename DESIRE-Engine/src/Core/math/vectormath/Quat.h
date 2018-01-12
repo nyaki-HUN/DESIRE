@@ -200,15 +200,15 @@ public:
 		const __m128 tmp2 = SIMD::Swizzle_ZXYW(mVec128);
 		__m128 tmp3 = SIMD::Swizzle_YZXW(vec);
 		const __m128 wwww = SIMD::Swizzle_WWWW(mVec128);
-		__m128 qv = _mm_mul_ps(wwww, vec);
+		__m128 qv = SIMD::Mul(wwww, vec);
 		qv = SIMD::MulAdd(tmp0, tmp1, qv);
 		qv = vec_nmsub(tmp2, tmp3, qv);
-		const __m128 product = _mm_mul_ps(mVec128, vec);
+		const __m128 product = SIMD::Mul(mVec128, vec);
 		__m128 qw = SIMD::MulAdd(_mm_ror_ps(mVec128, 1), _mm_ror_ps(vec, 1), product);
-		qw = _mm_add_ps(_mm_ror_ps(product, 2), qw);
+		qw = SIMD::Add(_mm_ror_ps(product, 2), qw);
 		tmp1 = SIMD::Swizzle_ZXYW(qv);
 		tmp3 = SIMD::Swizzle_YZXW(qv);
-		__m128 res = _mm_mul_ps(SIMD::Swizzle_XXXX(qw), mVec128);
+		__m128 res = SIMD::Mul(SIMD::Swizzle_XXXX(qw), mVec128);
 		res = SIMD::MulAdd(wwww, qv, res);
 		res = SIMD::MulAdd(tmp0, tmp1, res);
 		res = vec_nmsub(tmp2, tmp3, res);
@@ -262,7 +262,7 @@ public:
 		const __m128 scales = _mm_div_ps(sines, SIMD::Swizzle_XXXX(sines));
 		const __m128 scale0 = SIMD::Blend(oneMinusT, SIMD::Swizzle_YYYY(scales), selectMask);
 		const __m128 scale1 = SIMD::Blend(tttt, SIMD::Swizzle_ZZZZ(scales), selectMask);
-		return SIMD::MulAdd(start, scale0, _mm_mul_ps(unitQuat1, scale1));
+		return SIMD::MulAdd(start, scale0, SIMD::Mul(unitQuat1, scale1));
 #else
 		Quat start;
 		float scale0, scale1;

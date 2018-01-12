@@ -19,9 +19,9 @@ DESIRE_FORCE_INLINE void Matrix3::Invert()
 	__m128 inv2 = _mm_shuffle_ps(tmp4, tmp4, _MM_SHUFFLE(0, 1, 1, 0));
 	inv1 = SIMD::Blend(inv1, tmp1, mask_y);
 	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(tmp1), mask_y);
-	col0 = _mm_mul_ps(inv0, invdet);
-	col1 = _mm_mul_ps(inv1, invdet);
-	col2 = _mm_mul_ps(inv2, invdet);
+	col0 = SIMD::Mul(inv0, invdet);
+	col1 = SIMD::Mul(inv1, invdet);
+	col2 = SIMD::Mul(inv2, invdet);
 }
 
 DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
@@ -110,7 +110,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	__m128 xxxx = SIMD::Swizzle_XXXX(axis);
 	__m128 yyyy = SIMD::Swizzle_YYYY(axis);
 	__m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
-	__m128 oneMinusC = _mm_sub_ps(_mm_set1_ps(1.0f), c);
+	__m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
 	__m128 axisS = SIMD::Mul(axis, s);
 	__m128 negAxisS = SIMD::Negate(axisS);
 	const __m128 mask_x = SIMD::MaskX(); 
@@ -147,25 +147,25 @@ DESIRE_FORCE_INLINE void Matrix4::Invert()
 {
 	// Calculating the minterms for the first line
 	__m128 tt2 = _mm_ror_ps(col2, 1);
-	__m128 Vc = _mm_mul_ps(tt2, col3);									// V3' dot V4
-	__m128 Va = _mm_mul_ps(tt2, _mm_ror_ps(col3, 2));					// V3' dot V4"
-	__m128 Vb = _mm_mul_ps(tt2, _mm_ror_ps(col3, 3));					// V3' dot V4^
+	__m128 Vc = SIMD::Mul(tt2, col3);									// V3' dot V4
+	__m128 Va = SIMD::Mul(tt2, _mm_ror_ps(col3, 2));					// V3' dot V4"
+	__m128 Vb = SIMD::Mul(tt2, _mm_ror_ps(col3, 3));					// V3' dot V4^
 
-	__m128 r1 = _mm_sub_ps(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));		// V3" dot V4^ - V3^ dot V4"
-	__m128 r2 = _mm_sub_ps(_mm_ror_ps(Vb, 2), Vb);						// V3^ dot V4' - V3' dot V4^
-	__m128 r3 = _mm_sub_ps(Va, _mm_ror_ps(Vc, 1));						// V3' dot V4" - V3" dot V4'
+	__m128 r1 = SIMD::Sub(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));		// V3" dot V4^ - V3^ dot V4"
+	__m128 r2 = SIMD::Sub(_mm_ror_ps(Vb, 2), Vb);						// V3^ dot V4' - V3' dot V4^
+	__m128 r3 = SIMD::Sub(Va, _mm_ror_ps(Vc, 1));						// V3' dot V4" - V3" dot V4'
 
 	__m128 sum;
 	Va = _mm_ror_ps(col1, 1);
-	sum = _mm_mul_ps(Va, r1);
+	sum = SIMD::Mul(Va, r1);
 	Vb = _mm_ror_ps(col1, 2);
-	sum = _mm_add_ps(sum, _mm_mul_ps(Vb, r2));
+	sum = SIMD::MulAdd(Vb, r2, sum);
 	Vc = _mm_ror_ps(col1, 3);
-	sum = _mm_add_ps(sum, _mm_mul_ps(Vc, r3));
+	sum = SIMD::MulAdd(Vc, r3, sum);
 
 	// Calculating the determinant
-	__m128 det = _mm_mul_ps(sum, col0);
-	det = _mm_add_ps(det, _mm_movehl_ps(det, det));
+	__m128 det = SIMD::Mul(sum, col0);
+	det = SIMD::Add(det, _mm_movehl_ps(det, det));
 
 	// Testing the determinant
 	det = _mm_sub_ss(det, _mm_shuffle_ps(det, det, 1));
@@ -178,29 +178,29 @@ DESIRE_FORCE_INLINE void Matrix4::Invert()
 
 	// Calculating the minterms of the second line (using previous results)
 	__m128 tt = _mm_ror_ps(col0, 1);
-	sum = _mm_mul_ps(tt, r1);
+	sum = SIMD::Mul(tt, r1);
 	tt = _mm_ror_ps(tt, 1);
-	sum = _mm_add_ps(sum, _mm_mul_ps(tt, r2));
+	sum = SIMD::MulAdd(tt, r2, sum);
 	tt = _mm_ror_ps(tt, 1);
-	sum = _mm_add_ps(sum, _mm_mul_ps(tt, r3));
+	sum = SIMD::MulAdd(tt, r3, sum);
 	__m128 mtL2 = _mm_xor_ps(sum, Sign_NPNP);
 
 	// Calculating the minterms of the third line
 	tt = _mm_ror_ps(col0, 1);
-	Va = _mm_mul_ps(tt, Vb);											// V1' dot V2"
-	Vb = _mm_mul_ps(tt, Vc);											// V1' dot V2^
-	Vc = _mm_mul_ps(tt, col1);											// V1' dot V2
+	Va = SIMD::Mul(tt, Vb);												// V1' dot V2"
+	Vb = SIMD::Mul(tt, Vc);												// V1' dot V2^
+	Vc = SIMD::Mul(tt, col1);											// V1' dot V2
 
-	r1 = _mm_sub_ps(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));				// V1" dot V2^ - V1^ dot V2"
-	r2 = _mm_sub_ps(_mm_ror_ps(Vb, 2), Vb);								// V1^ dot V2' - V1' dot V2^
-	r3 = _mm_sub_ps(Va, _mm_ror_ps(Vc, 1));								// V1' dot V2" - V1" dot V2'
+	r1 = SIMD::Sub(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));				// V1" dot V2^ - V1^ dot V2"
+	r2 = SIMD::Sub(_mm_ror_ps(Vb, 2), Vb);								// V1^ dot V2' - V1' dot V2^
+	r3 = SIMD::Sub(Va, _mm_ror_ps(Vc, 1));								// V1' dot V2" - V1" dot V2'
 
 	tt = _mm_ror_ps(col3, 1);
-	sum = _mm_mul_ps(tt, r1);
+	sum = SIMD::Mul(tt, r1);
 	tt = _mm_ror_ps(tt, 1);
-	sum = _mm_add_ps(sum, _mm_mul_ps(tt, r2));
+	sum = SIMD::MulAdd(tt, r2, sum);
 	tt = _mm_ror_ps(tt, 1);
-	sum = _mm_add_ps(sum, _mm_mul_ps(tt, r3));
+	sum = SIMD::MulAdd(tt, r3, sum);
 	__m128 mtL3 = _mm_xor_ps(sum, Sign_PNPN);
 
 	// Dividing is FASTER than rcp_nr! (Because rcp_nr causes many register-memory RWs)
@@ -209,19 +209,19 @@ DESIRE_FORCE_INLINE void Matrix4::Invert()
 	rDet = SIMD::Swizzle_XXXX(rDet);
 
 	// Devide the first 12 minterms with the determinant
-	mtL1 = _mm_mul_ps(mtL1, rDet);
-	mtL2 = _mm_mul_ps(mtL2, rDet);
-	mtL3 = _mm_mul_ps(mtL3, rDet);
+	mtL1 = SIMD::Mul(mtL1, rDet);
+	mtL2 = SIMD::Mul(mtL2, rDet);
+	mtL3 = SIMD::Mul(mtL3, rDet);
 
 	// Calculate the minterms of the forth line and devide by the determinant
 	tt = _mm_ror_ps(col2, 1);
-	sum = _mm_mul_ps(tt, r1);
+	sum = SIMD::Mul(tt, r1);
 	tt = _mm_ror_ps(tt, 1);
-	sum = _mm_add_ps(sum, _mm_mul_ps(tt, r2));
+	sum = SIMD::MulAdd(tt, r2, sum);
 	tt = _mm_ror_ps(tt, 1);
-	sum = _mm_add_ps(sum, _mm_mul_ps(tt, r3));
+	sum = SIMD::MulAdd(tt, r3, sum);
 	__m128 mtL4 = _mm_xor_ps(sum, Sign_NPNP);
-	mtL4 = _mm_mul_ps(mtL4, rDet);
+	mtL4 = SIMD::Mul(mtL4, rDet);
 
 	// Now we just have to transpose the minterms matrix
 	__m128 trns0 = _mm_unpacklo_ps(mtL1, mtL2);
@@ -256,13 +256,13 @@ DESIRE_FORCE_INLINE void Matrix4::AffineInvert()
 	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(tmp1), mask_y);
 	const __m128 yyyy = SIMD::Swizzle_YYYY(inv3);
 	const __m128 zzzz = SIMD::Swizzle_ZZZZ(inv3);
-	inv3 = _mm_mul_ps(inv0, xxxx);
+	inv3 = SIMD::Mul(inv0, xxxx);
 	inv3 = SIMD::MulAdd(inv1, yyyy, inv3);
 	inv3 = SIMD::MulAdd(inv2, zzzz, inv3);
-	inv0 = _mm_mul_ps(inv0, invdet);
-	inv1 = _mm_mul_ps(inv1, invdet);
-	inv2 = _mm_mul_ps(inv2, invdet);
-	inv3 = _mm_mul_ps(inv3, invdet);
+	inv0 = SIMD::Mul(inv0, invdet);
+	inv1 = SIMD::Mul(inv1, invdet);
+	inv2 = SIMD::Mul(inv2, invdet);
+	inv3 = SIMD::Mul(inv3, invdet);
 	col0 = Vector4(Vector3(inv0), 0.0f);
 	col1 = Vector4(Vector3(inv1), 0.0f);
 	col2 = Vector4(Vector3(inv2), 0.0f);
@@ -287,7 +287,7 @@ DESIRE_FORCE_INLINE void Matrix4::OrthoInvert()
 	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(col1), mask_y);
 	yyyy = SIMD::Swizzle_YYYY(inv3);
 	zzzz = SIMD::Swizzle_ZZZZ(inv3);
-	inv3 = _mm_mul_ps(inv0, xxxx);
+	inv3 = SIMD::Mul(inv0, xxxx);
 	inv3 = SIMD::MulAdd(inv1, yyyy, inv3);
 	inv3 = SIMD::MulAdd(inv2, zzzz, inv3);
 	col0 = Vector4(Vector3(inv0), 0.0f);
@@ -300,25 +300,25 @@ DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
 {
 	// Calculating the minterms for the first line
 	__m128 tt2 = _mm_ror_ps(col2, 1);
-	__m128 Vc = _mm_mul_ps(tt2, col3);									// V3' dot V4
-	__m128 Va = _mm_mul_ps(tt2, _mm_ror_ps(col3, 2));					// V3' dot V4"
-	__m128 Vb = _mm_mul_ps(tt2, _mm_ror_ps(col3, 3));					// V3' dot V4^
+	__m128 Vc = SIMD::Mul(tt2, col3);									// V3' dot V4
+	__m128 Va = SIMD::Mul(tt2, _mm_ror_ps(col3, 2));					// V3' dot V4"
+	__m128 Vb = SIMD::Mul(tt2, _mm_ror_ps(col3, 3));					// V3' dot V4^
 
-	__m128 r1 = _mm_sub_ps(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));		// V3" dot V4^ - V3^ dot V4"
-	__m128 r2 = _mm_sub_ps(_mm_ror_ps(Vb, 2), Vb);						// V3^ dot V4' - V3' dot V4^
-	__m128 r3 = _mm_sub_ps(Va, _mm_ror_ps(Vc, 1));						// V3' dot V4" - V3" dot V4'
+	__m128 r1 = SIMD::Sub(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));		// V3" dot V4^ - V3^ dot V4"
+	__m128 r2 = SIMD::Sub(_mm_ror_ps(Vb, 2), Vb);						// V3^ dot V4' - V3' dot V4^
+	__m128 r3 = SIMD::Sub(Va, _mm_ror_ps(Vc, 1));						// V3' dot V4" - V3" dot V4'
 
 	__m128 sum;
 	Va = _mm_ror_ps(col1, 1);
-	sum = _mm_mul_ps(Va, r1);
+	sum = SIMD::Mul(Va, r1);
 	Vb = _mm_ror_ps(col1, 2);
-	sum = _mm_add_ps(sum, _mm_mul_ps(Vb, r2));
+	sum = SIMD::MulAdd(Vb, r2, sum);
 	Vc = _mm_ror_ps(col1, 3);
-	sum = _mm_add_ps(sum, _mm_mul_ps(Vc, r3));
+	sum = SIMD::MulAdd(Vc, r3, sum);
 
 	// Calculating the determinant
-	__m128 det = _mm_mul_ps(sum, col0);
-	det = _mm_add_ps(det, _mm_movehl_ps(det, det));
+	__m128 det = SIMD::Mul(sum, col0);
+	det = SIMD::Add(det, _mm_movehl_ps(det, det));
 
 	// Testing the determinant
 	det = _mm_sub_ss(det, _mm_shuffle_ps(det, det, 1));
@@ -402,11 +402,11 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ
 	Y1 = _mm_shuffle_ps(s, c, _MM_SHUFFLE(0, 1, 1, 1));
 	X0 = SIMD::Swizzle_XXXX(s);
 	X1 = SIMD::Swizzle_XXXX(c);
-	__m128 tmp = _mm_mul_ps(Z0, Y1);
+	__m128 tmp = SIMD::Mul(Z0, Y1);
 	return Matrix4(
-		_mm_mul_ps(Z0, Y0),
-		SIMD::MulAdd(Z1, X1, _mm_mul_ps(tmp, X0)),
-		vec_nmsub(Z1, X0, _mm_mul_ps(tmp, X1)),
+		SIMD::Mul(Z0, Y0),
+		SIMD::MulAdd(Z1, X1, SIMD::Mul(tmp, X0)),
+		vec_nmsub(Z1, X0, SIMD::Mul(tmp, X1)),
 		Vector4::AxisW()
 	);
 }
@@ -419,8 +419,8 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 	__m128 xxxx = SIMD::Swizzle_XXXX(axis);
 	__m128 yyyy = SIMD::Swizzle_YYYY(axis);
 	__m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
-	__m128 oneMinusC = _mm_sub_ps(_mm_set1_ps(1.0f), c);
-	__m128 axisS = _mm_mul_ps(axis, s);
+	__m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
+	__m128 axisS = SIMD::Mul(axis, s);
 	__m128 negAxisS = SIMD::Negate(axisS);
 	alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
 	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
@@ -443,9 +443,9 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 	tmp1 = _mm_and_ps(tmp1, mask_xyz);
 	tmp2 = _mm_and_ps(tmp2, mask_xyz);
 	return Matrix4(
-		SIMD::MulAdd(_mm_mul_ps(axis, xxxx), oneMinusC, tmp0),
-		SIMD::MulAdd(_mm_mul_ps(axis, yyyy), oneMinusC, tmp1),
-		SIMD::MulAdd(_mm_mul_ps(axis, zzzz), oneMinusC, tmp2),
+		SIMD::MulAdd(SIMD::Mul(axis, xxxx), oneMinusC, tmp0),
+		SIMD::MulAdd(SIMD::Mul(axis, yyyy), oneMinusC, tmp1),
+		SIMD::MulAdd(SIMD::Mul(axis, zzzz), oneMinusC, tmp2),
 		Vector4::AxisW()
 	);
 }
@@ -486,9 +486,9 @@ DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
 	yy_zz_xx_yy = _mm_shuffle_ps(xx_yy_zz_xx, xx_yy_zz_xx, _MM_SHUFFLE(1, 0, 2, 1));
 	zz_xx_yy_zz = _mm_shuffle_ps(xx_yy_zz_xx, xx_yy_zz_xx, _MM_SHUFFLE(2, 1, 0, 2));
 
-	diagSum = _mm_add_ps(_mm_add_ps(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
-	diagDiff = _mm_sub_ps(_mm_sub_ps(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
-	radicand = _mm_add_ps(SIMD::Blend(diagDiff, diagSum, mask_w), _mm_set1_ps(1.0f));
+	diagSum = SIMD::Add(SIMD::Add(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
+	diagDiff = SIMD::Sub(SIMD::Sub(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
+	radicand = SIMD::Add(SIMD::Blend(diagDiff, diagSum, mask_w), _mm_set1_ps(1.0f));
 	invSqrt = newtonrapson_rsqrt4(radicand);
 
 	zy_xz_yx = SIMD::Blend(col0, col1, mask_z);								// zy_xz_yx = 00 01 12 03
@@ -498,10 +498,10 @@ DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
 	yz_zx_xy = _mm_shuffle_ps(yz_zx_xy, yz_zx_xy, _MM_SHUFFLE(0, 0, 2, 0));	// yz_zx_xy = 10 02 10 10
 	yz_zx_xy = SIMD::Blend(yz_zx_xy, SIMD::Swizzle_YYYY(col2), mask_x);		// yz_zx_xy = 21 02 10 10
 
-	sum = _mm_add_ps(zy_xz_yx, yz_zx_xy);
-	diff = _mm_sub_ps(zy_xz_yx, yz_zx_xy);
+	sum = SIMD::Add(zy_xz_yx, yz_zx_xy);
+	diff = SIMD::Sub(zy_xz_yx, yz_zx_xy);
 
-	scale = _mm_mul_ps(invSqrt, _mm_set1_ps(0.5f));
+	scale = SIMD::Mul(invSqrt, 0.5f);
 
 	res0 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 1, 2, 0));
 	res0 = SIMD::Blend(res0, SIMD::Swizzle_XXXX(diff), mask_w);  // TODO: Ck
@@ -514,10 +514,10 @@ DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
 	res1 = SIMD::Blend(res1, radicand, mask_y);
 	res2 = SIMD::Blend(res2, radicand, mask_z);
 	res3 = SIMD::Blend(res3, radicand, mask_w);
-	res0 = _mm_mul_ps(res0, SIMD::Swizzle_XXXX(scale));
-	res1 = _mm_mul_ps(res1, SIMD::Swizzle_YYYY(scale));
-	res2 = _mm_mul_ps(res2, SIMD::Swizzle_ZZZZ(scale));
-	res3 = _mm_mul_ps(res3, SIMD::Swizzle_WWWW(scale));
+	res0 = SIMD::Mul(res0, SIMD::Swizzle_XXXX(scale));
+	res1 = SIMD::Mul(res1, SIMD::Swizzle_YYYY(scale));
+	res2 = SIMD::Mul(res2, SIMD::Swizzle_ZZZZ(scale));
+	res3 = SIMD::Mul(res3, SIMD::Swizzle_WWWW(scale));
 
 	/* determine case and select answer */
 

@@ -281,20 +281,20 @@ public:
 // --------------------------------------------------------------------------------------------------------------------
 
 #define _mm_ror_ps(vec, i)	_mm_shuffle_ps(vec, vec, _MM_SHUFFLE((uint8_t)(i + 3) % 4,(uint8_t)(i + 2) % 4,(uint8_t)(i + 1) % 4,(uint8_t)(i + 0) % 4))
-#define vec_nmsub(a, b, c)	_mm_sub_ps(c, _mm_mul_ps(a, b))
+#define vec_nmsub(a, b, c)	SIMD::Sub(c, SIMD::Mul(a, b))
 
 static DESIRE_FORCE_INLINE __m128 newtonrapson_rsqrt4(const __m128 v)
 {
 	const __m128 approx = _mm_rsqrt_ps(v);
 	const __m128 muls = SIMD::Mul(SIMD::Mul(v, approx), approx);
-	return SIMD::Mul(SIMD::Mul(_mm_set1_ps(0.5f), approx), _mm_sub_ps(_mm_set1_ps(3.0f), muls));
+	return SIMD::Mul(SIMD::Mul(_mm_set1_ps(0.5f), approx), SIMD::Sub(_mm_set1_ps(3.0f), muls));
 }
 
 static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
 {
 	__m128 xabs = _mm_and_ps(x, toM128(0x7fffffff));
 	__m128 select = _mm_cmplt_ps(x, _mm_setzero_ps());
-	__m128 t1 = _mm_sqrt_ps(_mm_sub_ps(_mm_set1_ps(1.0f), xabs));
+	__m128 t1 = _mm_sqrt_ps(SIMD::Sub(_mm_set1_ps(1.0f), xabs));
 
 	/* Instruction counts can be reduced if the polynomial was
 	* computed entirely from nested (dependent) fma's. However,
@@ -387,7 +387,7 @@ static DESIRE_FORCE_INLINE void sincosf4(__m128 x, __m128 *s, __m128 *c)
 
 	// Find the quadrant the angle falls in
 	// using:  q = (int)(ceil(abs(xl)) * sign(xl))
-	//	const __m128i q = _mm_cvtps_epi32(_mm_add_ps(xl, SIMD::Blend(_mm_set1_ps(0.5f), xl, 0x80000000)));
+//	const __m128i q = _mm_cvtps_epi32(SIMD::Add(xl, SIMD::Blend(_mm_set1_ps(0.5f), xl, 0x80000000)));
 	const __m128i q = _mm_cvtps_epi32(xl);
 
 	// Compute the offset based on the quadrant that the angle falls in.
@@ -405,8 +405,8 @@ static DESIRE_FORCE_INLINE void sincosf4(__m128 x, __m128 *s, __m128 *c)
 
 	// Compute both the sin and cos of the angles
 	// using a polynomial expression:
-	//   cx = 1.0f + xl2 * ((C0 * xl2 + C1) * xl2 + C2), and
-	//   sx = xl + xl3 * ((S0 * xl2 + S1) * xl2 + S2)
+//   cx = 1.0f + xl2 * ((C0 * xl2 + C1) * xl2 + C2), and
+//   sx = xl + xl3 * ((S0 * xl2 + S1) * xl2 + S2)
 	__m128 cx =
 		SIMD::MulAdd(
 			SIMD::MulAdd(
