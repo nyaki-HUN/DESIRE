@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bimg#license-bsd-2-clause
  */
 
 #ifndef BIMG_IMAGE_H_HEADER_GUARD
@@ -599,6 +599,14 @@ namespace bimg
 		, const void* _data
 		, uint32_t _size
 		, ImageMip& _mip
+		);
+
+	///
+	ImageContainer* imageCubemapFromLatLongRgba32F(
+		  bx::AllocatorI* _allocator
+		, const ImageContainer& _input
+		, bool _useBilinearInterpolation
+		, bx::Error* _err
 		);
 
 } // namespace bimg
