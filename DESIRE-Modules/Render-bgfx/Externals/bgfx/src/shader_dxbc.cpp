@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -1550,7 +1550,7 @@ namespace bgfx
 										, "%d + %s%d"
 										, operand.regIndex[jj]
 										, s_dxbcOperandType[operand.subOperand[jj].type]
-										, operand.regIndex[jj]
+										, operand.subOperand[jj].regIndex
 										);
 					break;
 

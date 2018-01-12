@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -1319,6 +1319,14 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 						goto error;
 					}
 
+#if 0
+					m_swapEffect      = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+					m_swapBufferCount = 2;
+#else
+					m_swapEffect      = DXGI_SWAP_EFFECT_DISCARD;
+					m_swapBufferCount = 1;
+#endif // 0
+
 					bx::memSet(&m_scd, 0, sizeof(m_scd) );
 					m_scd.BufferDesc.Width  = _init.resolution.m_width;
 					m_scd.BufferDesc.Height = _init.resolution.m_height;
@@ -1328,7 +1336,8 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					m_scd.SampleDesc.Count   = 1;
 					m_scd.SampleDesc.Quality = 0;
 					m_scd.BufferUsage  = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-					m_scd.BufferCount  = 1;
+					m_scd.BufferCount  = m_swapBufferCount;
+					m_scd.SwapEffect   = m_swapEffect;
 					m_scd.OutputWindow = (HWND)g_platformData.nwh;
 					m_scd.Windowed     = true;
 
@@ -1336,6 +1345,20 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 						, &m_scd
 						, &m_swapChain
 						);
+					if (FAILED(hr) )
+					{
+						// DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL is not available on win7
+						// Try again with DXGI_SWAP_EFFECT_DISCARD
+						m_swapEffect      = DXGI_SWAP_EFFECT_DISCARD;
+						m_swapBufferCount = 1;
+
+						m_scd.BufferCount = m_swapBufferCount;
+						m_scd.SwapEffect  = m_swapEffect;
+						hr = m_factory->CreateSwapChain(m_device
+							, &m_scd
+							, &m_swapChain
+							);
+					}
 
 					DX_CHECK(m_factory->MakeWindowAssociation( (HWND)g_platformData.nwh, 0
 						| DXGI_MWA_NO_WINDOW_CHANGES
@@ -2681,7 +2704,8 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					if (resize)
 					{
 						m_deviceCtx->OMSetRenderTargets(1, s_zero.m_rtv, NULL);
-						DX_CHECK(m_swapChain->ResizeBuffers(2
+						DX_CHECK(m_swapChain->ResizeBuffers(
+							  m_swapBufferCount
 							, getBufferWidth()
 							, getBufferHeight()
 							, getBufferFormat()
@@ -2694,6 +2718,17 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 						m_scd.SampleDesc = s_msaa[(m_resolution.m_flags&BGFX_RESET_MSAA_MASK)>>BGFX_RESET_MSAA_SHIFT];
 
 						DX_RELEASE(m_swapChain, 0);
+
+						if (m_scd.SampleDesc.Count != 1)
+						{
+							m_scd.SwapEffect  = DXGI_SWAP_EFFECT_DISCARD;
+							m_scd.BufferCount = 1;
+						}
+						else
+						{
+							m_scd.SwapEffect  = m_swapEffect;
+							m_scd.BufferCount = m_swapBufferCount;
+						}
 
 						SwapChainDesc* scd = &m_scd;
 						SwapChainDesc swapChainScd;
@@ -3859,6 +3894,8 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 #endif // BX_PLATFORM_WINDOWS
 
 		SwapChainDesc m_scd;
+		DXGI_SWAP_EFFECT m_swapEffect;
+		uint32_t m_swapBufferCount;
 		uint32_t m_maxAnisotropy;
 		bool m_depthClamp;
 		bool m_wireframe;
@@ -5396,7 +5433,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 							}
 
 							DX_CHECK(s_renderD3D11->m_device->CreateRenderTargetView(
-									NULL == texture.m_rt ? texture.m_ptr : texture.m_rt
+								  NULL == texture.m_rt ? texture.m_ptr : texture.m_rt
 								, &desc
 								, &m_rtv[m_num]
 								) );
@@ -5968,7 +6005,6 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					{
 						profiler.end();
 					}
-
 					profiler.begin(view);
 
 					viewState.m_rect = _render->m_view[view].m_rect;
@@ -6896,6 +6932,8 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 
 			PIX_ENDEVENT();
 		}
+
+		m_deviceCtx->OMSetRenderTargets(1, s_zero.m_rtv, NULL);
 	}
 } /* namespace d3d11 */ } // namespace bgfx
 

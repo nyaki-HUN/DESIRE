@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -264,6 +264,38 @@ namespace bgfx { namespace d3d12
 	};
 	BX_STATIC_ASSERT(TextureFormat::Count == BX_COUNTOF(s_textureFormat) );
 
+	static const char* s_colorSpace[] =
+	{
+		// https://msdn.microsoft.com/en-us/library/windows/desktop/dn903661(v=vs.85).aspx
+		"RGB,    0-255, 2.2, Image, BT.709,  n/a",    // DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709
+		"RGB,    0-255, 1.0, Image, BT.709,  n/a",    // DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709
+		"RGB,   16-235, 2.2, Image, BT.709,  n/a",    // DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P709
+		"RGB,   16-235, 2.2, Image, BT.2020, n/a",    // DXGI_COLOR_SPACE_RGB_STUDIO_G22_NONE_P2020
+		"Reserved",                                   // DXGI_COLOR_SPACE_RESERVED
+		"YCbCr,  0-255, 2.2, Image, BT.709,  BT.601", // DXGI_COLOR_SPACE_YCBCR_FULL_G22_NONE_P709_X601
+		"YCbCr, 16-235, 2.2, Video, BT.601,  n/a",    // DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P601
+		"YCbCr,  0-255, 2.2, Video, BT.601,  n/a",    // DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P601
+		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P709
+		"", // DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P709
+		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_LEFT_P2020
+		"", // DXGI_COLOR_SPACE_YCBCR_FULL_G22_LEFT_P2020
+		"", // DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020
+		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G2084_LEFT_P2020
+		"", // DXGI_COLOR_SPACE_RGB_STUDIO_G2084_NONE_P2020
+		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G22_TOPLEFT_P2020
+		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G2084_TOPLEFT_P2020
+		"", // DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P2020
+		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_GHLG_TOPLEFT_P2020
+		"", // DXGI_COLOR_SPACE_YCBCR_FULL_GHLG_TOPLEFT_P2020
+//		"", // DXGI_COLOR_SPACE_RGB_STUDIO_G24_NONE_P709
+//		"", // DXGI_COLOR_SPACE_RGB_STUDIO_G24_NONE_P2020
+//		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G24_LEFT_P709
+//		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G24_LEFT_P2020
+//		"", // DXGI_COLOR_SPACE_YCBCR_STUDIO_G24_TOPLEFT_P2020
+		"Custom",
+	};
+	BX_STATIC_ASSERT(BX_COUNTOF(s_colorSpace) == DXGI_COLOR_SPACE_YCBCR_FULL_GHLG_TOPLEFT_P2020+2);
+
 	static const D3D12_INPUT_ELEMENT_DESC s_attrib[] =
 	{
 		{ "POSITION",     0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -392,6 +424,8 @@ namespace bgfx { namespace d3d12
 	static const GUID IID_IDXGIDevice3              = { 0x6007896c, 0x3244, 0x4afd, { 0xbf, 0x18, 0xa6, 0xd3, 0xbe, 0xda, 0x50, 0x23 } };
 	static const GUID IID_IDXGIFactory2             = { 0x50c83a1c, 0xe072, 0x4c48, { 0x87, 0xb0, 0x36, 0x30, 0xfa, 0x36, 0xa6, 0xd0 } };
 	static const GUID IID_IDXGIFactory4             = { 0x1bc6ea02, 0xef36, 0x464f, { 0xbf, 0x0c, 0x21, 0xca, 0x39, 0xe5, 0x16, 0x8a } };
+	static const GUID IID_IDXGIOutput6              = { 0x068346e8, 0xaaec, 0x4b84, { 0xad, 0xd7, 0x13, 0x7f, 0x51, 0x3f, 0x77, 0xa1 } };
+
 
 	BX_PRAGMA_DIAGNOSTIC_POP();
 
@@ -577,11 +611,11 @@ namespace bgfx { namespace d3d12
 	}
 
 #if BGFX_CONFIG_DEBUG_PIX && BX_PLATFORM_WINDOWS
-	static PIXEventsThreadInfo temp;
+	static PIXEventsThreadInfo s_pixEventsThreadInfo;
 
 	PIXEventsThreadInfo* WINAPI stubPIXGetThreadInfo()
 	{
-		return &temp;
+		return &s_pixEventsThreadInfo;
 	}
 
 	uint64_t WINAPI stubPIXEventsReplaceBlock(bool _getEarliestTime)
@@ -1047,6 +1081,40 @@ namespace bgfx { namespace d3d12
 				{
 					BX_TRACE("Init error: Failed to create swap chain.");
 					goto error;
+				}
+			}
+
+			{
+				IDXGIOutput* output;
+				hr = m_swapChain->GetContainingOutput(&output);
+				if (SUCCEEDED(hr) )
+				{
+					IDXGIOutput6* output6;
+					hr = output->QueryInterface(IID_IDXGIOutput6, (void**)&output6);
+					if (SUCCEEDED(hr) )
+					{
+						DXGI_OUTPUT_DESC1 desc;
+						hr = output6->GetDesc1(&desc);
+						if (SUCCEEDED(hr) )
+						{
+							BX_TRACE("Display specs:")
+							BX_TRACE("\t         BitsPerColor: %d", desc.BitsPerColor);
+							BX_TRACE("\t          Color space: %s (colorspace, range, gamma, sitting, primaries, transform)"
+								, s_colorSpace[bx::min<uint32_t>(desc.ColorSpace, DXGI_COLOR_SPACE_YCBCR_FULL_GHLG_TOPLEFT_P2020+1)]
+								);
+							BX_TRACE("\t           RedPrimary: %f, %f", desc.RedPrimary[0],   desc.RedPrimary[1]);
+							BX_TRACE("\t         GreenPrimary: %f, %f", desc.GreenPrimary[0], desc.GreenPrimary[1]);
+							BX_TRACE("\t          BluePrimary: %f, %f", desc.BluePrimary[0],  desc.BluePrimary[1]);
+							BX_TRACE("\t           WhitePoint: %f, %f", desc.WhitePoint[0],   desc.WhitePoint[1]);
+							BX_TRACE("\t         MinLuminance: %f", desc.MinLuminance);
+							BX_TRACE("\t         MaxLuminance: %f", desc.MaxLuminance);
+							BX_TRACE("\tMaxFullFrameLuminance: %f", desc.MaxFullFrameLuminance);
+						}
+
+						DX_RELEASE(output6, 1);
+					}
+
+					DX_RELEASE(output, 0);
 				}
 			}
 
@@ -2025,7 +2093,7 @@ namespace bgfx { namespace d3d12
 			m_backBufferDepthStencil = createCommittedResource(m_device, HeapProperty::Default, &resourceDesc, &clearValue);
 
 			D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
-			ZeroMemory(&dsvDesc, sizeof(dsvDesc) );
+			bx::memSet(&dsvDesc, 0, sizeof(dsvDesc) );
 			dsvDesc.Format        = resourceDesc.Format;
 			dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 			dsvDesc.Flags         = D3D12_DSV_FLAGS(0)
@@ -2533,6 +2601,10 @@ data.NumQualityLevels = 0;
 					if (DxbcOperandAddrMode::Imm32 == operand.addrMode[0]
 					&&  0 == operand.regIndex[0]
 					&&  DxbcOperandAddrMode::Imm32 == operand.addrMode[1])
+					{
+						operand.regIndex[1] += cast.offset;
+					}
+					else if (DxbcOperandAddrMode::RegImm32 == operand.addrMode[1])
 					{
 						operand.regIndex[1] += cast.offset;
 					}
@@ -4849,7 +4921,7 @@ data.NumQualityLevels = 0;
 						BX_UNUSED(blockInfo);
 
 						D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
-						ZeroMemory(&dsvDesc, sizeof(dsvDesc) );
+						bx::memSet(&dsvDesc, 0, sizeof(dsvDesc) );
 						dsvDesc.Format        = s_textureFormat[texture.m_textureFormat].m_fmtDsv;
 						dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 						dsvDesc.Flags         = D3D12_DSV_FLAG_NONE
@@ -4866,8 +4938,53 @@ data.NumQualityLevels = 0;
 					{
 						m_texture[m_num] = handle;
 						D3D12_CPU_DESCRIPTOR_HANDLE rtv = { rtvDescriptor.ptr + m_num * rtvDescriptorSize };
+
+						D3D12_RENDER_TARGET_VIEW_DESC desc;
+						desc.Format = texture.m_srvd.Format;
+
+						switch (texture.m_type)
+						{
+						default:
+						case TextureD3D12::Texture2D:
+//							if (1 < msaa.Count)
+//							{
+//								desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DMS;
+//							}
+//							else
+							{
+								desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+								desc.Texture2D.MipSlice   = m_attachment[ii].mip;
+								desc.Texture2D.PlaneSlice = 0;
+							}
+							break;
+
+						case TextureD3D12::TextureCube:
+//							if (1 < msaa.Count)
+//							{
+//								desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DMSARRAY;
+//								desc.Texture2DMSArray.ArraySize       = 1;
+//								desc.Texture2DMSArray.FirstArraySlice = m_attachment[ii].layer;
+//							}
+//							else
+							{
+								desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2DARRAY;
+								desc.Texture2DArray.ArraySize       = 1;
+								desc.Texture2DArray.FirstArraySlice = m_attachment[ii].layer;
+								desc.Texture2DArray.MipSlice        = m_attachment[ii].mip;
+								desc.Texture2DArray.PlaneSlice      = 0;
+							}
+							break;
+
+						case TextureD3D12::Texture3D:
+							desc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE3D;
+							desc.Texture3D.MipSlice = m_attachment[ii].mip;
+							desc.Texture3D.WSize = 1;
+							desc.Texture3D.FirstWSlice = m_attachment[ii].layer;
+							break;
+						}
+
 						device->CreateRenderTargetView(texture.m_ptr
-							, NULL
+							, &desc
 							, rtv
 							);
 						m_num++;
@@ -5219,8 +5336,8 @@ data.NumQualityLevels = 0;
  				box.bottom = blit.m_srcY + height;;
  				box.back   = blit.m_srcZ + bx::uint32_imax(1, depth);
 
-				D3D12_TEXTURE_COPY_LOCATION dstLocation = { dst.m_ptr, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX, {{0,{DXGI_FORMAT_UNKNOWN,0,0,0,0}}} };
-				D3D12_TEXTURE_COPY_LOCATION srcLocation = { src.m_ptr, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX, {{0,{DXGI_FORMAT_UNKNOWN,0,0,0,0}}} };
+				D3D12_TEXTURE_COPY_LOCATION dstLocation = { dst.m_ptr, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX, { { 0, { DXGI_FORMAT_UNKNOWN, 0, 0, 0, 0 } } } };
+				D3D12_TEXTURE_COPY_LOCATION srcLocation = { src.m_ptr, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX, { { 0, { DXGI_FORMAT_UNKNOWN, 0, 0, 0, 0 } } } };
 				m_commandList->CopyTextureRegion(&dstLocation
 					, blit.m_dstX
 					, blit.m_dstY
