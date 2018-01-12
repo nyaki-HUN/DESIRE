@@ -287,7 +287,7 @@ static DESIRE_FORCE_INLINE __m128 newtonrapson_rsqrt4(const __m128 v)
 {
 	const __m128 approx = _mm_rsqrt_ps(v);
 	const __m128 muls = SIMD::Mul(SIMD::Mul(v, approx), approx);
-	return SIMD::Mul(SIMD::Mul(_mm_set1_ps(0.5f), approx), SIMD::Sub(_mm_set1_ps(3.0f), muls));
+	return SIMD::Mul(SIMD::Mul(approx, 0.5f), SIMD::Sub(_mm_set1_ps(3.0f), muls));
 }
 
 static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
