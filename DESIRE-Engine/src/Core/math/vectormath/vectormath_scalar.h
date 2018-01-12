@@ -209,7 +209,6 @@ public:
 		);
 	}
 
-	// Multiply vectors per element
 	static DESIRE_FORCE_INLINE vec_float3_t Mul(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return vec_float3_t(
@@ -218,7 +217,6 @@ public:
 			a.z * b.z
 		);
 	}
-
 	static DESIRE_FORCE_INLINE vec_float4_t Mul(const vec_float4_t& a, const vec_float4_t& b)
 	{
 		return vec_float4_t(
@@ -229,7 +227,15 @@ public:
 		);
 	}
 
-	// Divide vectors per element
+	static DESIRE_FORCE_INLINE vec_float3_t MulAdd(const vec_float3_t& a, const vec_float3_t& b, const vec_float3_t& c)
+	{
+		return SIMD::Add(c, SIMD::Mul(a, b));
+	}
+	static DESIRE_FORCE_INLINE vec_float4_t MulAdd(const vec_float4_t& a, const vec_float4_t& b, const vec_float4_t& c)
+	{
+		return SIMD::Add(c, SIMD::Mul(a, b));
+	}
+
 	static DESIRE_FORCE_INLINE vec_float3_t Div(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return vec_float3_t(
@@ -238,7 +244,6 @@ public:
 			a.z / b.z
 		);
 	}
-
 	static DESIRE_FORCE_INLINE vec_float4_t Div(const vec_float4_t& a, const vec_float4_t& b)
 	{
 		return vec_float4_t(

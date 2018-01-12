@@ -220,10 +220,13 @@ public:
 	}
 
 	// Swizzle
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_XXXX(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 0, 0 }); }
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_YYYY(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 1, 1, 1 }); }
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_ZZZZ(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 2, 2 }); }
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_WWWW(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 3, 3, 3, 3 }); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_XXXX(float32x4_t vec)	{ return vdupq_lane_f32(vget_low_f32(vec), 0); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_YYYY(float32x4_t vec)	{ return vdupq_lane_f32(vget_low_f32(vec), 1); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_ZZZZ(float32x4_t vec)	{ return vdupq_lane_f32(vget_high_f32(vec), 0); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_WWWW(float32x4_t vec)	{ return vdupq_lane_f32(vget_high_f32(vec), 1); }
+
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_YZXW(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 2, 0, 3 }); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_ZXYW(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 3 }); }
 };
 
 // --------------------------------------------------------------------------------------------------------------------

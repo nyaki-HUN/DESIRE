@@ -194,7 +194,7 @@ public:
 	DESIRE_FORCE_INLINE Vector4 operator *(const Vector4& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
-		Vector4 result;
+		vec_float4_t result;
 		result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 		result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 		result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
@@ -223,7 +223,7 @@ public:
 	DESIRE_FORCE_INLINE Vector4 operator *(const Vector3& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
-		Vector4 result;
+		vec_float4_t result;
 		result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 		result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 		result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);

@@ -141,7 +141,7 @@ public:
 
 	static DESIRE_FORCE_INLINE __m128 MulAdd(__m128 a, __m128 b, __m128 c)
 	{
-		return _mm_add_ps(c, _mm_mul_ps(a, b));
+		return SIMD::Add(c, SIMD::Mul(a, b));
 	}
 
 	static DESIRE_FORCE_INLINE __m128 Div(__m128 a, __m128 b)
