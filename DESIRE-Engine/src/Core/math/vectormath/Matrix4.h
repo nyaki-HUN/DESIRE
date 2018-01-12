@@ -198,7 +198,7 @@ public:
 		result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 		result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 		result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
-		result = SIMD::MulAdd(col2, SIMD::Swizzle_WWWW(vec), result);
+		result = SIMD::MulAdd(col3, SIMD::Swizzle_WWWW(vec), result);
 		return result;
 #elif defined(__ARM_NEON__)
 		float32x4_t result;
