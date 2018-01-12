@@ -176,26 +176,6 @@ DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
 	return col0.GetX() * dx + col1.GetX() * dy + col2.GetX() * dz + col3.GetX() * dw;
 }
 
-DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector4& vec) const
-{
-	return Vector4(
-		col0.GetX() * vec.GetX() + col1.GetX() * vec.GetY() + col2.GetX() * vec.GetZ() + col3.GetX() * vec.GetW(),
-		col0.GetY() * vec.GetX() + col1.GetY() * vec.GetY() + col2.GetY() * vec.GetZ() + col3.GetY() * vec.GetW(),
-		col0.GetZ() * vec.GetX() + col1.GetZ() * vec.GetY() + col2.GetZ() * vec.GetZ() + col3.GetZ() * vec.GetW(),
-		col0.GetW() * vec.GetX() + col1.GetW() * vec.GetY() + col2.GetW() * vec.GetZ() + col3.GetW() * vec.GetW()
-	);
-}
-
-DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector3& vec) const
-{
-	return Vector4(
-		col0.GetX() * vec.GetX() + col1.GetX() * vec.GetY() + col2.GetX() * vec.GetZ(),
-		col0.GetY() * vec.GetX() + col1.GetY() * vec.GetY() + col2.GetY() * vec.GetZ(),
-		col0.GetZ() * vec.GetX() + col1.GetZ() * vec.GetY() + col2.GetZ() * vec.GetZ(),
-		col0.GetW() * vec.GetX() + col1.GetW() * vec.GetY() + col2.GetW() * vec.GetZ()
-	);
-}
-
 DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
 {
 	const float s = sinf(radians);

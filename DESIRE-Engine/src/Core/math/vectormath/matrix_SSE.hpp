@@ -97,7 +97,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ
 	__m128 tmp = SIMD::Mul(Z0, Y1);
 	return Matrix3(
 		SIMD::Mul(Z0, Y0),
-		vec_madd(Z1, X1, SIMD::Mul(tmp, X0)),
+		SIMD::MulAdd(Z1, X1, SIMD::Mul(tmp, X0)),
 		vec_nmsub(Z1, X0, SIMD::Mul(tmp, X1))
 	);
 }
@@ -125,9 +125,9 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	tmp1 = SIMD::Blend(tmp1, c, mask_y);
 	tmp2 = SIMD::Blend(tmp2, c, mask_z);
 	return Matrix3(
-		vec_madd(SIMD::Mul(axis, xxxx), oneMinusC, tmp0),
-		vec_madd(SIMD::Mul(axis, yyyy), oneMinusC, tmp1),
-		vec_madd(SIMD::Mul(axis, zzzz), oneMinusC, tmp2)
+		SIMD::MulAdd(SIMD::Mul(axis, xxxx), oneMinusC, tmp0),
+		SIMD::MulAdd(SIMD::Mul(axis, yyyy), oneMinusC, tmp1),
+		SIMD::MulAdd(SIMD::Mul(axis, zzzz), oneMinusC, tmp2)
 	);
 }
 
@@ -257,8 +257,8 @@ DESIRE_FORCE_INLINE void Matrix4::AffineInvert()
 	const __m128 yyyy = SIMD::Swizzle_YYYY(inv3);
 	const __m128 zzzz = SIMD::Swizzle_ZZZZ(inv3);
 	inv3 = _mm_mul_ps(inv0, xxxx);
-	inv3 = vec_madd(inv1, yyyy, inv3);
-	inv3 = vec_madd(inv2, zzzz, inv3);
+	inv3 = SIMD::MulAdd(inv1, yyyy, inv3);
+	inv3 = SIMD::MulAdd(inv2, zzzz, inv3);
 	inv0 = _mm_mul_ps(inv0, invdet);
 	inv1 = _mm_mul_ps(inv1, invdet);
 	inv2 = _mm_mul_ps(inv2, invdet);
@@ -288,8 +288,8 @@ DESIRE_FORCE_INLINE void Matrix4::OrthoInvert()
 	yyyy = SIMD::Swizzle_YYYY(inv3);
 	zzzz = SIMD::Swizzle_ZZZZ(inv3);
 	inv3 = _mm_mul_ps(inv0, xxxx);
-	inv3 = vec_madd(inv1, yyyy, inv3);
-	inv3 = vec_madd(inv2, zzzz, inv3);
+	inv3 = SIMD::MulAdd(inv1, yyyy, inv3);
+	inv3 = SIMD::MulAdd(inv2, zzzz, inv3);
 	col0 = Vector4(Vector3(inv0), 0.0f);
 	col1 = Vector4(Vector3(inv1), 0.0f);
 	col2 = Vector4(Vector3(inv2), 0.0f);
@@ -323,24 +323,6 @@ DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
 	// Testing the determinant
 	det = _mm_sub_ss(det, _mm_shuffle_ps(det, det, 1));
 	return _mm_cvtss_f32(det);
-}
-
-DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector4& vec) const
-{
-	return Vector4(
-		_mm_add_ps(
-			_mm_add_ps(_mm_mul_ps(col0, SIMD::Swizzle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Swizzle_YYYY(vec))),
-			_mm_add_ps(_mm_mul_ps(col2, SIMD::Swizzle_ZZZZ(vec)), _mm_mul_ps(col3, SIMD::Swizzle_WWWW(vec))))
-	);
-}
-
-DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector3& vec) const
-{
-	return Vector4(
-		_mm_add_ps(
-			_mm_add_ps(_mm_mul_ps(col0, SIMD::Swizzle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Swizzle_YYYY(vec))),
-			_mm_mul_ps(col2, SIMD::Swizzle_ZZZZ(vec)))
-	);
 }
 
 DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
@@ -423,7 +405,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ
 	__m128 tmp = _mm_mul_ps(Z0, Y1);
 	return Matrix4(
 		_mm_mul_ps(Z0, Y0),
-		vec_madd(Z1, X1, _mm_mul_ps(tmp, X0)),
+		SIMD::MulAdd(Z1, X1, _mm_mul_ps(tmp, X0)),
 		vec_nmsub(Z1, X0, _mm_mul_ps(tmp, X1)),
 		Vector4::AxisW()
 	);
@@ -461,9 +443,9 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 	tmp1 = _mm_and_ps(tmp1, mask_xyz);
 	tmp2 = _mm_and_ps(tmp2, mask_xyz);
 	return Matrix4(
-		vec_madd(_mm_mul_ps(axis, xxxx), oneMinusC, tmp0),
-		vec_madd(_mm_mul_ps(axis, yyyy), oneMinusC, tmp1),
-		vec_madd(_mm_mul_ps(axis, zzzz), oneMinusC, tmp2),
+		SIMD::MulAdd(_mm_mul_ps(axis, xxxx), oneMinusC, tmp0),
+		SIMD::MulAdd(_mm_mul_ps(axis, yyyy), oneMinusC, tmp1),
+		SIMD::MulAdd(_mm_mul_ps(axis, zzzz), oneMinusC, tmp2),
 		Vector4::AxisW()
 	);
 }

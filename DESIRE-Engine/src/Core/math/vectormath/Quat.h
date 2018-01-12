@@ -79,14 +79,14 @@ public:
 		const __m128 tmp2 = SIMD::Swizzle_ZXYW(mVec128);
 		const __m128 tmp3 = SIMD::Swizzle_YZXW(quat.mVec128);
 		__m128 qv = SIMD::Mul(SIMD::Swizzle_WWWW(mVec128), quat.mVec128);
-		qv = vec_madd(SIMD::Swizzle_WWWW(quat.mVec128), mVec128, qv);
-		qv = vec_madd(tmp0, tmp1, qv);
+		qv = SIMD::MulAdd(SIMD::Swizzle_WWWW(quat.mVec128), mVec128, qv);
+		qv = SIMD::MulAdd(tmp0, tmp1, qv);
 		qv = vec_nmsub(tmp2, tmp3, qv);
 		const __m128 product = SIMD::Mul(mVec128, quat.mVec128);
 		const __m128 l_wxyz = _mm_ror_ps(mVec128, 3);
 		const __m128 r_wxyz = _mm_ror_ps(quat.mVec128, 3);
 		__m128 qw = vec_nmsub(l_wxyz, r_wxyz, product);
-		const __m128 xy = vec_madd(l_wxyz, r_wxyz, product);
+		const __m128 xy = SIMD::MulAdd(l_wxyz, r_wxyz, product);
 		qw = SIMD::Sub(qw, _mm_ror_ps(xy, 2));
 		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
 		const __m128 mask_w = _mm_load_ps((float*)select_w);
@@ -201,16 +201,16 @@ public:
 		__m128 tmp3 = SIMD::Swizzle_YZXW(vec);
 		const __m128 wwww = SIMD::Swizzle_WWWW(mVec128);
 		__m128 qv = _mm_mul_ps(wwww, vec);
-		qv = vec_madd(tmp0, tmp1, qv);
+		qv = SIMD::MulAdd(tmp0, tmp1, qv);
 		qv = vec_nmsub(tmp2, tmp3, qv);
 		const __m128 product = _mm_mul_ps(mVec128, vec);
-		__m128 qw = vec_madd(_mm_ror_ps(mVec128, 1), _mm_ror_ps(vec, 1), product);
+		__m128 qw = SIMD::MulAdd(_mm_ror_ps(mVec128, 1), _mm_ror_ps(vec, 1), product);
 		qw = _mm_add_ps(_mm_ror_ps(product, 2), qw);
 		tmp1 = SIMD::Swizzle_ZXYW(qv);
 		tmp3 = SIMD::Swizzle_YZXW(qv);
 		__m128 res = _mm_mul_ps(SIMD::Swizzle_XXXX(qw), mVec128);
-		res = vec_madd(wwww, qv, res);
-		res = vec_madd(tmp0, tmp1, res);
+		res = SIMD::MulAdd(wwww, qv, res);
+		res = SIMD::MulAdd(tmp0, tmp1, res);
 		res = vec_nmsub(tmp2, tmp3, res);
 		return res;
 #else
@@ -257,12 +257,12 @@ public:
 		const __m128 oneMinusT = _mm_sub_ps(_mm_set1_ps(1.0f), tttt);
 		__m128 angles = _mm_unpacklo_ps(_mm_set1_ps(1.0f), tttt);
 		angles = _mm_unpacklo_ps(angles, oneMinusT);
-		angles = vec_madd(angles, angle, _mm_setzero_ps());
+		angles = SIMD::MulAdd(angles, angle, _mm_setzero_ps());
 		const __m128 sines = sinf4(angles);
 		const __m128 scales = _mm_div_ps(sines, SIMD::Swizzle_XXXX(sines));
 		const __m128 scale0 = SIMD::Blend(oneMinusT, SIMD::Swizzle_YYYY(scales), selectMask);
 		const __m128 scale1 = SIMD::Blend(tttt, SIMD::Swizzle_ZZZZ(scales), selectMask);
-		return vec_madd(start, scale0, _mm_mul_ps(unitQuat1, scale1));
+		return SIMD::MulAdd(start, scale0, _mm_mul_ps(unitQuat1, scale1));
 #else
 		Quat start;
 		float scale0, scale1;
@@ -411,7 +411,7 @@ public:
 	{
 #if defined(DESIRE_USE_SSE)
 		const __m128 cosAngle = SIMD::Dot3(unitVecFrom, unitVecTo);
-		const __m128 cosAngleX2Plus2 = vec_madd(cosAngle, _mm_set1_ps(2.0f), _mm_set1_ps(2.0f));
+		const __m128 cosAngleX2Plus2 = SIMD::MulAdd(cosAngle, _mm_set1_ps(2.0f), _mm_set1_ps(2.0f));
 		const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
 		const __m128 cosHalfAngleX2 = SIMD::Mul(recipCosHalfAngleX2, cosAngleX2Plus2);
 		const Vector3 crossVec = unitVecFrom.Cross(unitVecTo);

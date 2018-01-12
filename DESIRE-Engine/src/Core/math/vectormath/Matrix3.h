@@ -159,11 +159,11 @@ public:
 	DESIRE_FORCE_INLINE Vector3 operator *(const Vector3& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
-		return Vector3(
-			_mm_add_ps(
-				_mm_add_ps(_mm_mul_ps(col0, SIMD::Swizzle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Swizzle_YYYY(vec))),
-				_mm_mul_ps(col2, SIMD::Swizzle_ZZZZ(vec)))
-		);
+		Vector3 result;
+		result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
+		result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
+		result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
+		return result;
 #elif defined(__ARM_NEON__)
 		float32x4_t result;
 		result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);

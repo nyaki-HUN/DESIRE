@@ -86,6 +86,11 @@ public:
 		return vmulq_f32(a, b);
 	}
 
+	static DESIRE_FORCE_INLINE float32x4_t MulAdd(float32x4_t a, float32x4_t b, float32x4_t c)
+	{
+		return vmlaq_f32(c, a, b);
+	}
+
 	static DESIRE_FORCE_INLINE float32x4_t Div(float32x4_t a, float32x4_t b)
 	{
 		// Get an initial estimate of 1/vec

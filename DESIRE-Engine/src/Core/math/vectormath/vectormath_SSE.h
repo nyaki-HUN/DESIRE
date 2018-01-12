@@ -134,13 +134,16 @@ public:
 		return _mm_mul_ps(vec, _mm_set1_ps(scalar));
 	}
 
-	// Multiply vectors per element
 	static DESIRE_FORCE_INLINE __m128 Mul(__m128 a, __m128 b)
 	{
 		return _mm_mul_ps(a, b);
 	}
 
-	// Divide vectors per element
+	static DESIRE_FORCE_INLINE __m128 MulAdd(__m128 a, __m128 b, __m128 c)
+	{
+		return _mm_add_ps(c, _mm_mul_ps(a, b));
+	}
+
 	static DESIRE_FORCE_INLINE __m128 Div(__m128 a, __m128 b)
 	{
 		return _mm_div_ps(a, b);
@@ -278,7 +281,6 @@ public:
 // --------------------------------------------------------------------------------------------------------------------
 
 #define _mm_ror_ps(vec, i)	_mm_shuffle_ps(vec, vec, _MM_SHUFFLE((uint8_t)(i + 3) % 4,(uint8_t)(i + 2) % 4,(uint8_t)(i + 1) % 4,(uint8_t)(i + 0) % 4))
-#define vec_madd(a, b, c)	_mm_add_ps(c, _mm_mul_ps(a, b))
 #define vec_nmsub(a, b, c)	_mm_sub_ps(c, _mm_mul_ps(a, b))
 
 static DESIRE_FORCE_INLINE __m128 newtonrapson_rsqrt4(const __m128 v)
@@ -301,16 +303,16 @@ static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
 	*/
 	__m128 xabs2 = SIMD::Mul(xabs, xabs);
 	__m128 xabs4 = SIMD::Mul(xabs2, xabs2);
-	__m128 hi = vec_madd(vec_madd(vec_madd(_mm_set1_ps(-0.0012624911f),
+	__m128 hi = SIMD::MulAdd(SIMD::MulAdd(SIMD::MulAdd(_mm_set1_ps(-0.0012624911f),
 		xabs, _mm_set1_ps(0.0066700901f)),
 		xabs, _mm_set1_ps(-0.0170881256f)),
 		xabs, _mm_set1_ps(0.0308918810f));
-	__m128 lo = vec_madd(vec_madd(vec_madd(_mm_set1_ps(-0.0501743046f),
+	__m128 lo = SIMD::MulAdd(SIMD::MulAdd(SIMD::MulAdd(_mm_set1_ps(-0.0501743046f),
 		xabs, _mm_set1_ps(0.0889789874f)),
 		xabs, _mm_set1_ps(-0.2145988016f)),
 		xabs, _mm_set1_ps(1.5707963050f));
 
-	__m128 result = vec_madd(hi, xabs4, lo);
+	__m128 result = SIMD::MulAdd(hi, xabs4, lo);
 
 	// Adjust the result if x is negactive.
 	return SIMD::Blend(
@@ -357,13 +359,13 @@ static DESIRE_FORCE_INLINE __m128 sinf4(__m128 x)
 	//   cx = 1.0f + xl2 * ((C0 * xl2 + C1) * xl2 + C2), and
 	//   sx = xl + xl3 * ((S0 * xl2 + S1) * xl2 + S2)
 	__m128 cx =
-		vec_madd(
-			vec_madd(
-				vec_madd(_mm_set1_ps(_SINCOS_CC0), xl2, _mm_set1_ps(_SINCOS_CC1)), xl2, _mm_set1_ps(_SINCOS_CC2)), xl2, _mm_set1_ps(1.0f));
+		SIMD::MulAdd(
+			SIMD::MulAdd(
+				SIMD::MulAdd(_mm_set1_ps(_SINCOS_CC0), xl2, _mm_set1_ps(_SINCOS_CC1)), xl2, _mm_set1_ps(_SINCOS_CC2)), xl2, _mm_set1_ps(1.0f));
 	__m128 sx =
-		vec_madd(
-			vec_madd(
-				vec_madd(_mm_set1_ps(_SINCOS_SC0), xl2, _mm_set1_ps(_SINCOS_SC1)), xl2, _mm_set1_ps(_SINCOS_SC2)), xl3, xl);
+		SIMD::MulAdd(
+			SIMD::MulAdd(
+				SIMD::MulAdd(_mm_set1_ps(_SINCOS_SC0), xl2, _mm_set1_ps(_SINCOS_SC1)), xl2, _mm_set1_ps(_SINCOS_SC2)), xl3, xl);
 
 	// Use the cosine when the offset is odd and the sin
 	// when the offset is even
@@ -406,13 +408,13 @@ static DESIRE_FORCE_INLINE void sincosf4(__m128 x, __m128 *s, __m128 *c)
 	//   cx = 1.0f + xl2 * ((C0 * xl2 + C1) * xl2 + C2), and
 	//   sx = xl + xl3 * ((S0 * xl2 + S1) * xl2 + S2)
 	__m128 cx =
-		vec_madd(
-			vec_madd(
-				vec_madd(_mm_set1_ps(_SINCOS_CC0), xl2, _mm_set1_ps(_SINCOS_CC1)), xl2, _mm_set1_ps(_SINCOS_CC2)), xl2, _mm_set1_ps(1.0f));
+		SIMD::MulAdd(
+			SIMD::MulAdd(
+				SIMD::MulAdd(_mm_set1_ps(_SINCOS_CC0), xl2, _mm_set1_ps(_SINCOS_CC1)), xl2, _mm_set1_ps(_SINCOS_CC2)), xl2, _mm_set1_ps(1.0f));
 	__m128 sx =
-		vec_madd(
-			vec_madd(
-				vec_madd(_mm_set1_ps(_SINCOS_SC0), xl2, _mm_set1_ps(_SINCOS_SC1)), xl2, _mm_set1_ps(_SINCOS_SC2)), xl3, xl);
+		SIMD::MulAdd(
+			SIMD::MulAdd(
+				SIMD::MulAdd(_mm_set1_ps(_SINCOS_SC0), xl2, _mm_set1_ps(_SINCOS_SC1)), xl2, _mm_set1_ps(_SINCOS_SC2)), xl3, xl);
 
 	// Use the cosine when the offset is odd and the sin
 	// when the offset is even

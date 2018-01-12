@@ -191,10 +191,56 @@ public:
 	}
 
 	// Multiply a 4x4 matrix by a 4-D vector
-	DESIRE_FORCE_INLINE Vector4 operator *(const Vector4& vec) const;
+	DESIRE_FORCE_INLINE Vector4 operator *(const Vector4& vec) const
+	{
+#if defined(DESIRE_USE_SSE)
+		Vector4 result;
+		result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
+		result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
+		result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
+		result = SIMD::MulAdd(col2, SIMD::Swizzle_WWWW(vec), result);
+		return result;
+#elif defined(__ARM_NEON__)
+		float32x4_t result;
+		result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);
+		result = vmlaq_lane_f32(result, col1, vget_low_f32(vec), 1);
+		result = vmlaq_lane_f32(result, col2, vget_high_f32(vec), 0);
+		result = vmlaq_lane_f32(result, col3, vget_high_f32(vec), 1);
+		return result;
+#else
+		return Vector4(
+			col0.GetX() * vec.GetX() + col1.GetX() * vec.GetY() + col2.GetX() * vec.GetZ() + col3.GetX() * vec.GetW(),
+			col0.GetY() * vec.GetX() + col1.GetY() * vec.GetY() + col2.GetY() * vec.GetZ() + col3.GetY() * vec.GetW(),
+			col0.GetZ() * vec.GetX() + col1.GetZ() * vec.GetY() + col2.GetZ() * vec.GetZ() + col3.GetZ() * vec.GetW(),
+			col0.GetW() * vec.GetX() + col1.GetW() * vec.GetY() + col2.GetW() * vec.GetZ() + col3.GetW() * vec.GetW()
+		);
+#endif
+	}
 
 	// Multiply a 4x4 matrix by a 3-D vector
-	DESIRE_FORCE_INLINE Vector4 operator *(const Vector3& vec) const;
+	DESIRE_FORCE_INLINE Vector4 operator *(const Vector3& vec) const
+	{
+#if defined(DESIRE_USE_SSE)
+		Vector4 result;
+		result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
+		result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
+		result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
+		return result;
+#elif defined(__ARM_NEON__)
+		float32x4_t result;
+		result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);
+		result = vmlaq_lane_f32(result, col1, vget_low_f32(vec), 1);
+		result = vmlaq_lane_f32(result, col2, vget_high_f32(vec), 0);
+		return result;
+#else
+		return Vector4(
+			col0.GetX() * vec.GetX() + col1.GetX() * vec.GetY() + col2.GetX() * vec.GetZ(),
+			col0.GetY() * vec.GetX() + col1.GetY() * vec.GetY() + col2.GetY() * vec.GetZ(),
+			col0.GetZ() * vec.GetX() + col1.GetZ() * vec.GetY() + col2.GetZ() * vec.GetZ(),
+			col0.GetW() * vec.GetX() + col1.GetW() * vec.GetY() + col2.GetW() * vec.GetZ()
+		);
+#endif
+	}
 
 	// Multiply two 4x4 matrices
 	DESIRE_FORCE_INLINE Matrix4 operator *(const Matrix4& mat) const

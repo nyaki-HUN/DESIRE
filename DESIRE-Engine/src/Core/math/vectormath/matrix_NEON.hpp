@@ -176,25 +176,6 @@ DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
 	return col0.GetX() * dx + col1.GetX() * dy + col2.GetX() * dz + col3.GetX() * dw;
 }
 
-DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector4& vec) const
-{
-	float32x4_t result;
-	result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);
-	result = vmlaq_lane_f32(result, col1, vget_low_f32(vec), 1);
-	result = vmlaq_lane_f32(result, col2, vget_high_f32(vec), 0);
-	result = vmlaq_lane_f32(result, col3, vget_high_f32(vec), 1);
-	return result;
-}
-
-DESIRE_FORCE_INLINE Vector4 Matrix4::operator *(const Vector3& vec) const
-{
-	float32x4_t result;
-	result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);
-	result = vmlaq_lane_f32(result, col1, vget_low_f32(vec), 1);
-	result = vmlaq_lane_f32(result, col2, vget_high_f32(vec), 0);
-	return result;
-}
-
 DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
 {
 	const float s = sinf(radians);
