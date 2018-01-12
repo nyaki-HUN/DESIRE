@@ -66,6 +66,9 @@
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress.h">
       <Filter>Externals\zstd\src\compress</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_internal.h">
+      <Filter>Externals\zstd\src\compress</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_double_fast.h">
       <Filter>Externals\zstd\src\compress</Filter>
     </ClInclude>

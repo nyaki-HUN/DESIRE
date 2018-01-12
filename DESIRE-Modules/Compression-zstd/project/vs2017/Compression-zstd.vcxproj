@@ -115,6 +115,7 @@
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_errors.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_internal.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress.h" />
+    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_internal.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_double_fast.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_fast.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_lazy.h" />
