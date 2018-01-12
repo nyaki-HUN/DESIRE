@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <algorithm>
-#include <memory>		// for std::weak_ptr
 
 namespace stl_utils
 {
@@ -55,11 +54,3 @@ struct hash_pair
 };
 
 }	// end of namespace stl_utils
-
-
-// Checks whether weak_ptr 'a' equals to 'b'
-template<typename T>
-inline bool operator ==(const std::weak_ptr<T>& a, const std::weak_ptr<T>& b)
-{
-	return !a.owner_before(b) && !b.owner_before(a);
-}

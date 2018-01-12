@@ -40,7 +40,7 @@ public:
 	void Insert(HashedString key, const T& value)
 	{
 		auto it = stl_utils::binary_find_or_insert(elements, KeyValuePair(key, value));
-		ASSERT(it->value == value && "An other value is already added with this key");
+		ASSERT(memcmp(&it->value, &value, sizeof(T)) == 0 && "An other value is already added with this key");
 	}
 
 	T* Find(HashedString key)
