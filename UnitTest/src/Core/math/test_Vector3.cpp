@@ -150,7 +150,7 @@ TEST_CASE("Vector3", "[Core][math]")
 
 	SECTION("Length()")
 	{
-		CHECK(vec0.Length() == Approx(std::sqrtf(vec0.LengthSqr())));
+		CHECK(vec0.Length() == Approx(std::sqrt(vec0.LengthSqr())));
 	}
 
 	SECTION("Normalize() | Normalized()")

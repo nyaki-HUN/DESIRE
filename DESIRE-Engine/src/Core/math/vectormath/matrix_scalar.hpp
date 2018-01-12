@@ -288,7 +288,7 @@ DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
 	}
 
 	const float radicand = xx + yy + zz + 1.0f;
-	const float scale = 0.5f * (1.0f / sqrtf(radicand));
+	const float scale = 0.5f * (1.0f / std::sqrt(radicand));
 
 	float tmp[4] =
 	{

@@ -145,7 +145,7 @@ public:
 	// Compute the length of a 3-D vector
 	DESIRE_FORCE_INLINE float Length() const
 	{
-		return std::sqrtf(LengthSqr());
+		return std::sqrt(LengthSqr());
 	}
 
 	// Normalize a 3-D vector

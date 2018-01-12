@@ -243,8 +243,7 @@ public:
 	DESIRE_FORCE_INLINE void Transpose()
 	{
 #if defined(DESIRE_USE_SSE)
-		alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-		const __m128 mask_y = _mm_load_ps((float*)select_y);
+		const __m128 mask_y = SIMD::MaskY();
 
 		__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
 		__m128 tmp1 = _mm_unpackhi_ps(col0, col2);

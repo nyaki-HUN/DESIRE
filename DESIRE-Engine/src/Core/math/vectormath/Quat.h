@@ -149,7 +149,7 @@ public:
 	// Compute the length of a quaternion
 	DESIRE_FORCE_INLINE float Length() const
 	{
-		return sqrtf(Norm());
+		return std::sqrt(Norm());
 	}
 
 	// Compute the conjugate of a quaternion
@@ -163,7 +163,7 @@ public:
 		mask = vsetq_lane_u32(0, mask, 3);
 		return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(mVec128), mask));
 #else
-		return Quat(-quat.x, -quat.y, -quat.z, quat.w);
+		return Quat(-mVec128.x, -mVec128.y, -mVec128.z, mVec128.w);
 #endif
 	}
 
@@ -308,16 +308,19 @@ public:
 	// Construct a quaternion to rotate around a unit-length 3-D vector
 	static DESIRE_FORCE_INLINE Quat CreateRotation(float radians, const Vector3& unitVec)
 	{
+		Quat result;
+		const float halfAngle = radians * 0.5f;
 #if defined(DESIRE_USE_SSE)
-		__m128 s, c;
-		sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
-		return SIMD::Blend(SIMD::Mul(unitVec, s), c, SIMD::MaskW());
+		__m128 sinHalfAngle, cosHalfAngle;
+		sincosf4(_mm_set1_ps(halfAngle), &sinHalfAngle, &cosHalfAngle);
+		result = SIMD::Blend(SIMD::Mul(unitVec, sinHalfAngle), cosHalfAngle, SIMD::MaskW());
 #else
-		const float angle = radians * 0.5f;
-		const float s = std::sin(angle);
-		const float c = std::cos(angle);
-		return Quat(unitVec * s, c);
+		const float sinHalfAngle = std::sin(halfAngle);
+		const float cosHalfAngle = std::cos(halfAngle);
+		result.mVec128 = SIMD::Mul(unitVec, sinHalfAngle);
+		result.SetW(cosHalfAngle);
 #endif
+		return result;
 	}
 
 	// Construct a quaternion to rotate around the x axis
@@ -407,19 +410,21 @@ public:
 	// NOTE: The result is unpredictable if unitVec0 and unitVec1 point in opposite directions.
 	static DESIRE_FORCE_INLINE Quat CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo)
 	{
+		Quat result;
 #if defined(DESIRE_USE_SSE)
 		const __m128 cosAngle = SIMD::Dot3(unitVecFrom, unitVecTo);
 		const __m128 cosAngleX2Plus2 = SIMD::MulAdd(cosAngle, _mm_set1_ps(2.0f), _mm_set1_ps(2.0f));
 		const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
 		const __m128 cosHalfAngleX2 = SIMD::Mul(recipCosHalfAngleX2, cosAngleX2Plus2);
-		const Vector3 crossVec = unitVecFrom.Cross(unitVecTo);
-		const __m128 res = SIMD::Mul(crossVec, recipCosHalfAngleX2);
-		return SIMD::Blend(res, SIMD::Mul(cosHalfAngleX2, 0.5f), SIMD::MaskW());
+		const __m128 res = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
+		result = SIMD::Blend(res, SIMD::Mul(cosHalfAngleX2, 0.5f), SIMD::MaskW());
 #else
-		const float cosHalfAngleX2 = sqrtf((2.0f * (1.0f + unitVecFrom.Dot(unitVecTo))));
+		const float cosHalfAngleX2 = std::sqrt((2.0f * (1.0f + unitVecFrom.Dot(unitVecTo))));
 		const float recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);
-		return Quat((unitVecFrom.Cross(unitVecTo) * recipCosHalfAngleX2), (cosHalfAngleX2 * 0.5f));
+		result.mVec128 = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
+		result.SetW(cosHalfAngleX2 * 0.5f);
 #endif
+		return result;
 	}
 
 private:

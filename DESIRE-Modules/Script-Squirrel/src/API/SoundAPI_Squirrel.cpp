@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "API/SquirrelScriptAPI.h"
 
-#include "Sound/ISound.h"
+#include "Sound/Sound.h"
 
 void RegisterSoundAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
 	HSQUIRRELVM vm = rootTable.GetVM();
 
 	// Sound
-	DESIRE_UNUSED(vm);
-//	rootTable.SetInstance("Sound", Sound::Get());
+	rootTable.Bind("ISound", Sqrat::Class<Sound, Sqrat::NoConstructor<Sound>>(vm, "IPhysics")
+		.Func("PlaySound", &Sound::PlaySound)
+	);
+	rootTable.SetInstance("Sound", Sound::Get());
 }

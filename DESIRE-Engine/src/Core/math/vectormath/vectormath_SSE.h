@@ -265,7 +265,7 @@ public:
 	static DESIRE_FORCE_INLINE __m128 Swizzle_WWWW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
 
 	static DESIRE_FORCE_INLINE __m128 Swizzle_YZXW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1)); }
-	static DESIRE_FORCE_INLINE __m128 Swizzle_ZXYW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2));	}
+	static DESIRE_FORCE_INLINE __m128 Swizzle_ZXYW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2)); }
 };
 
 // --------------------------------------------------------------------------------------------------------------------
