@@ -312,6 +312,9 @@
     <ClInclude Include="..\..\Externals\bx\include\bx\bx.h">
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bx\include\bx\commandline.h">
+      <Filter>Externals\bx\include\bx</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\bx\config.h">
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
@@ -319,6 +322,9 @@
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\bx\debug.h">
+      <Filter>Externals\bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bx\include\bx\easing.h">
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\bx\endian.h">
@@ -366,10 +372,16 @@
     <ClInclude Include="..\..\Externals\bx\include\bx\platform.h">
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bx\include\bx\process.h">
+      <Filter>Externals\bx\include\bx</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\bx\readerwriter.h">
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\bx\ringbuffer.h">
+      <Filter>Externals\bx\include\bx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bx\include\bx\rng.h">
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\bx\semaphore.h">
@@ -396,6 +408,9 @@
     <ClInclude Include="..\..\Externals\bx\include\bx\uint32_t.h">
       <Filter>Externals\bx\include\bx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bx\include\bx\url.h">
+      <Filter>Externals\bx\include\bx</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\compat\freebsd\alloca.h">
       <Filter>Externals\bx\include\compat\freebsd</Filter>
     </ClInclude>
@@ -418,6 +433,9 @@
       <Filter>Externals\bx\include\compat\mingw</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\compat\mingw\sal.h">
+      <Filter>Externals\bx\include\compat\mingw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bx\include\compat\mingw\salieri.h">
       <Filter>Externals\bx\include\compat\mingw</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bx\include\compat\mingw\specstrings_strict.h">
@@ -539,6 +557,9 @@
     <ClCompile Include="..\..\Externals\bx\src\bx.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\bx\src\commandline.cpp">
+      <Filter>Externals\bx\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\bx\src\crtnone.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
@@ -546,6 +567,9 @@
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bx\src\dtoa.cpp">
+      <Filter>Externals\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bx\src\easing.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bx\src\file.cpp">
@@ -566,6 +590,9 @@
     <ClCompile Include="..\..\Externals\bx\src\os.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\bx\src\process.cpp">
+      <Filter>Externals\bx\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\bx\src\semaphore.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
@@ -579,6 +606,9 @@
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bx\src\timer.cpp">
+      <Filter>Externals\bx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bx\src\url.cpp">
       <Filter>Externals\bx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\BgfxRender.cpp">

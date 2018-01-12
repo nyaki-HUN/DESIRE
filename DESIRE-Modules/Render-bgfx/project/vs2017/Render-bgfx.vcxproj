@@ -170,9 +170,11 @@
     <ClInclude Include="..\..\Externals\bimg\src\bimg_p.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\allocator.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\bx.h" />
+    <ClInclude Include="..\..\Externals\bx\include\bx\commandline.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\config.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\cpu.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\debug.h" />
+    <ClInclude Include="..\..\Externals\bx\include\bx\easing.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\endian.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\error.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\file.h" />
@@ -188,8 +190,10 @@
     <ClInclude Include="..\..\Externals\bx\include\bx\os.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\pixelformat.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\platform.h" />
+    <ClInclude Include="..\..\Externals\bx\include\bx\process.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\readerwriter.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\ringbuffer.h" />
+    <ClInclude Include="..\..\Externals\bx\include\bx\rng.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\semaphore.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\simd_t.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\sort.h" />
@@ -198,6 +202,7 @@
     <ClInclude Include="..\..\Externals\bx\include\bx\thread.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\timer.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\uint32_t.h" />
+    <ClInclude Include="..\..\Externals\bx\include\bx\url.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\freebsd\alloca.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\freebsd\dirent.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\freebsd\malloc.h" />
@@ -206,6 +211,7 @@
     <ClInclude Include="..\..\Externals\bx\include\compat\mingw\alloca.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\mingw\dirent.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\mingw\sal.h" />
+    <ClInclude Include="..\..\Externals\bx\include\compat\mingw\salieri.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\mingw\specstrings_strict.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\mingw\specstrings_undef.h" />
     <ClInclude Include="..\..\Externals\bx\include\compat\msvc\alloca.h" />
@@ -247,20 +253,24 @@
     <ClCompile Include="..\..\Externals\bimg\src\image_gnf.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\allocator.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\bx.cpp" />
+    <ClCompile Include="..\..\Externals\bx\src\commandline.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\crtnone.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\debug.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\dtoa.cpp" />
+    <ClCompile Include="..\..\Externals\bx\src\easing.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\file.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\filepath.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\hash.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\math.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\mutex.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\os.cpp" />
+    <ClCompile Include="..\..\Externals\bx\src\process.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\semaphore.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\sort.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\string.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\thread.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\timer.cpp" />
+    <ClCompile Include="..\..\Externals\bx\src\url.cpp" />
     <ClCompile Include="..\..\src\BgfxRender.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
