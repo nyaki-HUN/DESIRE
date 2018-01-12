@@ -202,10 +202,12 @@ public:
 		return result;
 #elif defined(__ARM_NEON__)
 		float32x4_t result;
-		result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);
-		result = vmlaq_lane_f32(result, col1, vget_low_f32(vec), 1);
-		result = vmlaq_lane_f32(result, col2, vget_high_f32(vec), 0);
-		result = vmlaq_lane_f32(result, col3, vget_high_f32(vec), 1);
+		const float32x2_t vecLow = vget_low_f32(vec);
+		result = vmulq_lane_f32(col0, vecLow, 0);
+		result = vmlaq_lane_f32(result, col1, vecLow, 1);
+		const float32x2_t vecHigh = vget_high_f32(vec);
+		result = vmlaq_lane_f32(result, col2, vecHigh, 0);
+		result = vmlaq_lane_f32(result, col3, vecHigh, 1);
 		return result;
 #else
 		return Vector4(
@@ -228,9 +230,11 @@ public:
 		return result;
 #elif defined(__ARM_NEON__)
 		float32x4_t result;
-		result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);
-		result = vmlaq_lane_f32(result, col1, vget_low_f32(vec), 1);
-		result = vmlaq_lane_f32(result, col2, vget_high_f32(vec), 0);
+		const float32x2_t vecLow = vget_low_f32(vec);
+		result = vmulq_lane_f32(col0, vecLow, 0);
+		result = vmlaq_lane_f32(result, col1, vecLow, 1);
+		const float32x2_t vecHigh = vget_high_f32(vec);
+		result = vmlaq_lane_f32(result, col2, vecHigh, 0);
 		return result;
 #else
 		return Vector4(
