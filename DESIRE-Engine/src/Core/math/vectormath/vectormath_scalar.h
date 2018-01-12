@@ -209,6 +209,46 @@ public:
 		);
 	}
 
+	// Multiply vectors per element
+	static DESIRE_FORCE_INLINE vec_float3_t Mul(const vec_float3_t& a, const vec_float3_t& b)
+	{
+		return vec_float3_t(
+			a.x * b.x,
+			a.y * b.y,
+			a.z * b.z
+		);
+	}
+
+	static DESIRE_FORCE_INLINE vec_float4_t Mul(const vec_float4_t& a, const vec_float4_t& b)
+	{
+		return vec_float4_t(
+			a.x * b.x,
+			a.y * b.y,
+			a.z * b.z,
+			a.w * b.w
+		);
+	}
+
+	// Divide vectors per element
+	static DESIRE_FORCE_INLINE vec_float3_t Div(const vec_float3_t& a, const vec_float3_t& b)
+	{
+		return vec_float3_t(
+			a.x / b.x,
+			a.y / b.y,
+			a.z / b.z
+		);
+	}
+
+	static DESIRE_FORCE_INLINE vec_float4_t Div(const vec_float4_t& a, const vec_float4_t& b)
+	{
+		return vec_float4_t(
+			a.x / b.x,
+			a.y / b.y,
+			a.z / b.z,
+			a.w / b.w
+		);
+	}
+
 	// Comparison operators
 	static DESIRE_FORCE_INLINE bool OpCmpGE(const vec_float3_t& a, const vec_float3_t& b)
 	{
@@ -254,46 +294,6 @@ public:
 			a.y * b.z - a.z * b.y,
 			a.z * b.x - a.x * b.z,
 			a.x * b.y - a.y * b.x
-		);
-	}
-
-	// Multiply vectors per element
-	static DESIRE_FORCE_INLINE vec_float3_t MulPerElem(const vec_float3_t& a, const vec_float3_t& b)
-	{
-		return vec_float3_t(
-			a.x * b.x,
-			a.y * b.y,
-			a.z * b.z
-		);
-	}
-
-	static DESIRE_FORCE_INLINE vec_float4_t MulPerElem(const vec_float4_t& a, const vec_float4_t& b)
-	{
-		return vec_float4_t(
-			a.x * b.x,
-			a.y * b.y,
-			a.z * b.z,
-			a.w * b.w
-		);
-	}
-
-	// Divide vectors per element
-	static DESIRE_FORCE_INLINE vec_float3_t DivPerElem(const vec_float3_t& a, const vec_float3_t& b)
-	{
-		return vec_float3_t(
-			a.x / b.x,
-			a.y / b.y,
-			a.z / b.z
-		);
-	}
-
-	static DESIRE_FORCE_INLINE vec_float4_t DivPerElem(const vec_float4_t& a, const vec_float4_t& b)
-	{
-		return vec_float4_t(
-			a.x / b.x,
-			a.y / b.y,
-			a.z / b.z,
-			a.w / b.w
 		);
 	}
 

@@ -160,26 +160,26 @@ public:
 	// NOTE: The result is unpredictable when all elements of vec are at or near zero
 	DESIRE_FORCE_INLINE void Normalize()
 	{
-		mVec128 = SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
+		mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
 
 	// Get normalized 4-D vector
 	// NOTE: The result is unpredictable when all elements of vec are at or near zero
 	DESIRE_FORCE_INLINE Vector4 Normalized() const
 	{
-		return SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
+		return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
 
 	// Multiply two 4-D vectors per element
 	DESIRE_FORCE_INLINE Vector4 MulPerElem(const Vector4& vec) const
 	{
-		return SIMD::MulPerElem(mVec128, vec);
+		return SIMD::Mul(mVec128, vec);
 	}
 
 	// Divide two 4-D vectors per element
 	DESIRE_FORCE_INLINE Vector4 DivPerElem(const Vector4& vec) const
 	{
-		return SIMD::DivPerElem(mVec128, vec);
+		return SIMD::Div(mVec128, vec);
 	}
 
 	// Compute the absolute value of a 4-D vector per element

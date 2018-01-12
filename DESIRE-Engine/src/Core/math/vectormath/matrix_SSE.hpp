@@ -47,10 +47,8 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
 DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationY(float radians)
 {
 	__m128 s, c, res0, res2;
-	alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-	alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-	const __m128 mask_x = _mm_load_ps((float*)select_x);
-	const __m128 mask_z = _mm_load_ps((float*)select_z);
+	const __m128 mask_x = SIMD::MaskX();
+	const __m128 mask_z = SIMD::MaskZ();
 	const __m128 zero = _mm_setzero_ps();
 	sincosf4(_mm_set1_ps(radians), &s, &c);
 	res0 = SIMD::Blend(zero, c, mask_x);
@@ -67,10 +65,8 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationY(float radians)
 DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZ(float radians)
 {
 	__m128 s, c, res0, res1;
-	alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-	const __m128 mask_x = _mm_load_ps((float*)select_x);
-	const __m128 mask_y = _mm_load_ps((float*)select_y);
+	const __m128 mask_x = SIMD::MaskX();
+	const __m128 mask_y = SIMD::MaskY();
 	const __m128 zero = _mm_setzero_ps();
 	sincosf4(_mm_set1_ps(radians), &s, &c);
 	res0 = SIMD::Blend(zero, c, mask_x);
@@ -98,11 +94,11 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ
 	__m128 Y1 = _mm_shuffle_ps(s, c, _MM_SHUFFLE(0, 1, 1, 1));
 	__m128 X0 = SIMD::Swizzle_XXXX(s);
 	__m128 X1 = SIMD::Swizzle_XXXX(c);
-	__m128 tmp = _mm_mul_ps(Z0, Y1);
+	__m128 tmp = SIMD::Mul(Z0, Y1);
 	return Matrix3(
-		_mm_mul_ps(Z0, Y0),
-		vec_madd(Z1, X1, _mm_mul_ps(tmp, X0)),
-		vec_nmsub(Z1, X0, _mm_mul_ps(tmp, X1))
+		SIMD::Mul(Z0, Y0),
+		vec_madd(Z1, X1, SIMD::Mul(tmp, X0)),
+		vec_nmsub(Z1, X0, SIMD::Mul(tmp, X1))
 	);
 }
 
@@ -115,14 +111,11 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	__m128 yyyy = SIMD::Swizzle_YYYY(axis);
 	__m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
 	__m128 oneMinusC = _mm_sub_ps(_mm_set1_ps(1.0f), c);
-	__m128 axisS = _mm_mul_ps(axis, s);
+	__m128 axisS = SIMD::Mul(axis, s);
 	__m128 negAxisS = SIMD::Negate(axisS);
-	alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-	alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-	const __m128 mask_x = _mm_load_ps((float*)select_x);
-	const __m128 mask_y = _mm_load_ps((float*)select_y);
-	const __m128 mask_z = _mm_load_ps((float*)select_z);
+	const __m128 mask_x = SIMD::MaskX(); 
+	const __m128 mask_y = SIMD::MaskY();
+	const __m128 mask_z = SIMD::MaskZ();
 	tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
 	tmp0 = SIMD::Blend(tmp0, SIMD::Swizzle_YYYY(negAxisS), mask_z);
 	tmp1 = SIMD::Blend(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS), mask_x);
@@ -132,9 +125,9 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	tmp1 = SIMD::Blend(tmp1, c, mask_y);
 	tmp2 = SIMD::Blend(tmp2, c, mask_z);
 	return Matrix3(
-		vec_madd(_mm_mul_ps(axis, xxxx), oneMinusC, tmp0),
-		vec_madd(_mm_mul_ps(axis, yyyy), oneMinusC, tmp1),
-		vec_madd(_mm_mul_ps(axis, zzzz), oneMinusC, tmp2)
+		vec_madd(SIMD::Mul(axis, xxxx), oneMinusC, tmp0),
+		vec_madd(SIMD::Mul(axis, yyyy), oneMinusC, tmp1),
+		vec_madd(SIMD::Mul(axis, zzzz), oneMinusC, tmp2)
 	);
 }
 

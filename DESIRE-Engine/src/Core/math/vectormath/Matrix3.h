@@ -30,28 +30,25 @@ public:
 	explicit DESIRE_FORCE_INLINE Matrix3(const Quat& unitQuat)
 	{
 #if defined(DESIRE_USE_SSE)
-		alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-		alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-		const __m128 mask_x = _mm_load_ps((float*)select_x);
-		const __m128 mask_z = _mm_load_ps((float*)select_z);
+		const __m128 xyzw_2 = SIMD::Add(unitQuat, unitQuat);
+		const __m128 wwww = SIMD::Swizzle_WWWW(unitQuat);
+		const __m128 yzxw = SIMD::Swizzle_YZXW(unitQuat);
+		const __m128 zxyw = SIMD::Swizzle_ZXYW(unitQuat);
+		const __m128 yzxw_2 = SIMD::Swizzle_YZXW(xyzw_2);
+		const __m128 zxyw_2 = SIMD::Swizzle_ZXYW(xyzw_2);
 
-		__m128 xyzw_2 = SIMD::Add(unitQuat, unitQuat);
-		__m128 wwww = SIMD::Swizzle_WWWW(unitQuat);
-		__m128 yzxw = SIMD::Swizzle_YZXW(unitQuat);
-		__m128 zxyw = SIMD::Swizzle_ZXYW(unitQuat);
-		__m128 yzxw_2 = SIMD::Swizzle_YZXW(xyzw_2);
-		__m128 zxyw_2 = SIMD::Swizzle_ZXYW(xyzw_2);
+		__m128 tmp0 = SIMD::Mul(yzxw_2, wwww);								// tmp0 = 2yw, 2zw, 2xw, 2w2
+		__m128 tmp1 = SIMD::Sub(_mm_set1_ps(1.0f), SIMD::Mul(yzxw, yzxw_2));	// tmp1 = 1 - 2y2, 1 - 2z2, 1 - 2x2, 1 - 2w2
+		__m128 tmp2 = SIMD::Mul(yzxw, xyzw_2);								// tmp2 = 2xy, 2yz, 2xz, 2w2
+		tmp0 = SIMD::Add(SIMD::Mul(zxyw, xyzw_2), tmp0);						// tmp0 = 2yw + 2zx, 2zw + 2xy, 2xw + 2yz, 2w2 + 2w2
+		tmp1 = SIMD::Sub(tmp1, SIMD::Mul(zxyw, zxyw_2));						// tmp1 = 1 - 2y2 - 2z2, 1 - 2z2 - 2x2, 1 - 2x2 - 2y2, 1 - 2w2 - 2w2
+		tmp2 = SIMD::Sub(tmp2, SIMD::Mul(zxyw_2, wwww));						// tmp2 = 2xy - 2zw, 2yz - 2xw, 2xz - 2yw, 2w2 - 2w2
 
-		__m128 tmp0 = SIMD::MulPerElem(yzxw_2, wwww);								// tmp0 = 2yw, 2zw, 2xw, 2w2
-		__m128 tmp1 = SIMD::Sub(_mm_set1_ps(1.0f), SIMD::MulPerElem(yzxw, yzxw_2));	// tmp1 = 1 - 2y2, 1 - 2z2, 1 - 2x2, 1 - 2w2
-		__m128 tmp2 = SIMD::MulPerElem(yzxw, xyzw_2);								// tmp2 = 2xy, 2yz, 2xz, 2w2
-		tmp0 = SIMD::Add(SIMD::MulPerElem(zxyw, xyzw_2), tmp0);						// tmp0 = 2yw + 2zx, 2zw + 2xy, 2xw + 2yz, 2w2 + 2w2
-		tmp1 = SIMD::Sub(tmp1, SIMD::MulPerElem(zxyw, zxyw_2));						// tmp1 = 1 - 2y2 - 2z2, 1 - 2z2 - 2x2, 1 - 2x2 - 2y2, 1 - 2w2 - 2w2
-		tmp2 = SIMD::Sub(tmp2, SIMD::MulPerElem(zxyw_2, wwww));						// tmp2 = 2xy - 2zw, 2yz - 2xw, 2xz - 2yw, 2w2 - 2w2
-
-		__m128 tmp3 = SIMD::Blend(tmp0, tmp1, mask_x);
-		__m128 tmp4 = SIMD::Blend(tmp1, tmp2, mask_x);
-		__m128 tmp5 = SIMD::Blend(tmp2, tmp0, mask_x);
+		const __m128 mask_x = SIMD::MaskX();
+		const __m128 tmp3 = SIMD::Blend(tmp0, tmp1, mask_x);
+		const __m128 tmp4 = SIMD::Blend(tmp1, tmp2, mask_x);
+		const __m128 tmp5 = SIMD::Blend(tmp2, tmp0, mask_x);
+		const __m128 mask_z = SIMD::MaskZ();
 		col0 = SIMD::Blend(tmp3, tmp2, mask_z);
 		col1 = SIMD::Blend(tmp4, tmp0, mask_z);
 		col2 = SIMD::Blend(tmp5, tmp1, mask_z);

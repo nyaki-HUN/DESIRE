@@ -134,6 +134,18 @@ public:
 		return _mm_mul_ps(vec, _mm_set1_ps(scalar));
 	}
 
+	// Multiply vectors per element
+	static DESIRE_FORCE_INLINE __m128 Mul(__m128 a, __m128 b)
+	{
+		return _mm_mul_ps(a, b);
+	}
+
+	// Divide vectors per element
+	static DESIRE_FORCE_INLINE __m128 Div(__m128 a, __m128 b)
+	{
+		return _mm_div_ps(a, b);
+	}
+
 	// Comparison operators
 	static DESIRE_FORCE_INLINE bool OpCmpGE(__m128 a, __m128 b)
 	{
@@ -151,7 +163,7 @@ public:
 #if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0x77);
 #else
-		__m128 result = SIMD::MulPerElem(a, b);
+		__m128 result = SIMD::Mul(a, b);
 		return SIMD::Add(	SIMD::Swizzle_XXXX(result),
 							SIMD::Add(	SIMD::Swizzle_YYYY(result),
 										SIMD::Swizzle_ZZZZ(result)));
@@ -164,7 +176,7 @@ public:
 #if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0xff);
 #else
-		__m128 result = SIMD::MulPerElem(a, b);
+		__m128 result = SIMD::Mul(a, b);
 		return SIMD::Add(	SIMD::Swizzle_XXXX(result),
 							SIMD::Add(	SIMD::Swizzle_YYYY(result),
 										SIMD::Add(	SIMD::Swizzle_ZZZZ(result),
@@ -177,20 +189,8 @@ public:
 	{
 		__m128 yzx0 = SIMD::Swizzle_YZXW(a);
 		__m128 yzx1 = SIMD::Swizzle_YZXW(b);
-		__m128 result = SIMD::Sub(SIMD::MulPerElem(yzx1, a), SIMD::MulPerElem(yzx0, b));
+		__m128 result = SIMD::Sub(SIMD::Mul(yzx1, a), SIMD::Mul(yzx0, b));
 		return SIMD::Swizzle_YZXW(result);
-	}
-
-	// Multiply vectors per element
-	static DESIRE_FORCE_INLINE __m128 MulPerElem(__m128 a, __m128 b)
-	{
-		return _mm_mul_ps(a, b);
-	}
-
-	// Divide vectors per element
-	static DESIRE_FORCE_INLINE __m128 DivPerElem(__m128 a, __m128 b)
-	{
-		return _mm_div_ps(a, b);
 	}
 
 	// Compute the absolute value per element
@@ -284,8 +284,8 @@ public:
 static DESIRE_FORCE_INLINE __m128 newtonrapson_rsqrt4(const __m128 v)
 {
 	const __m128 approx = _mm_rsqrt_ps(v);
-	const __m128 muls = _mm_mul_ps(_mm_mul_ps(v, approx), approx);
-	return _mm_mul_ps(_mm_mul_ps(_mm_set1_ps(0.5f), approx), _mm_sub_ps(_mm_set1_ps(3.0f), muls));
+	const __m128 muls = SIMD::Mul(SIMD::Mul(v, approx), approx);
+	return SIMD::Mul(SIMD::Mul(_mm_set1_ps(0.5f), approx), _mm_sub_ps(_mm_set1_ps(3.0f), muls));
 }
 
 static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
@@ -299,8 +299,8 @@ static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
 	* to reduce the number of pipeline stalls, the polygon is evaluated
 	* in two halves (hi amd lo).
 	*/
-	__m128 xabs2 = _mm_mul_ps(xabs, xabs);
-	__m128 xabs4 = _mm_mul_ps(xabs2, xabs2);
+	__m128 xabs2 = SIMD::Mul(xabs, xabs);
+	__m128 xabs4 = SIMD::Mul(xabs2, xabs2);
 	__m128 hi = vec_madd(vec_madd(vec_madd(_mm_set1_ps(-0.0012624911f),
 		xabs, _mm_set1_ps(0.0066700901f)),
 		xabs, _mm_set1_ps(-0.0170881256f)),
@@ -314,7 +314,7 @@ static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
 
 	// Adjust the result if x is negactive.
 	return SIMD::Blend(
-		_mm_mul_ps(t1, result),									// Positive
+		SIMD::Mul(t1, result),									// Positive
 		vec_nmsub(t1, result, _mm_set1_ps(3.1415926535898f)),	// Negative
 		select);
 }
@@ -335,7 +335,7 @@ static DESIRE_FORCE_INLINE __m128 sinf4(__m128 x)
 	__m128 xl, xl2, xl3, res;
 
 	// Range reduction using : xl = angle * TwoOverPi;
-	xl = _mm_mul_ps(x, _mm_set1_ps(0.63661977236f));
+	xl = SIMD::Mul(x, _mm_set1_ps(0.63661977236f));
 
 	// Find the quadrant the angle falls in
 	// using:  q = (int)(ceil(abs(xl)) * sign(xl))
@@ -349,8 +349,8 @@ static DESIRE_FORCE_INLINE __m128 sinf4(__m128 x)
 	xl = vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC2), vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
-	xl2 = _mm_mul_ps(xl, xl);
-	xl3 = _mm_mul_ps(xl2, xl);
+	xl2 = SIMD::Mul(xl, xl);
+	xl3 = SIMD::Mul(xl2, xl);
 
 	// Compute both the sin and cos of the angles
 	// using a polynomial expression:
@@ -381,7 +381,7 @@ static DESIRE_FORCE_INLINE void sincosf4(__m128 x, __m128 *s, __m128 *c)
 	__m128 xl, xl2, xl3;
 
 	// Range reduction using : xl = angle * TwoOverPi;
-	xl = _mm_mul_ps(x, _mm_set1_ps(0.63661977236f));
+	xl = SIMD::Mul(x, _mm_set1_ps(0.63661977236f));
 
 	// Find the quadrant the angle falls in
 	// using:  q = (int)(ceil(abs(xl)) * sign(xl))
@@ -398,8 +398,8 @@ static DESIRE_FORCE_INLINE void sincosf4(__m128 x, __m128 *s, __m128 *c)
 	xl = vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC2), vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
-	xl2 = _mm_mul_ps(xl, xl);
-	xl3 = _mm_mul_ps(xl2, xl);
+	xl2 = SIMD::Mul(xl, xl);
+	xl3 = SIMD::Mul(xl2, xl);
 
 	// Compute both the sin and cos of the angles
 	// using a polynomial expression:

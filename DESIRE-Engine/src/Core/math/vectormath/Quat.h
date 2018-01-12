@@ -78,11 +78,11 @@ public:
 		const __m128 tmp1 = SIMD::Swizzle_ZXYW(quat.mVec128);
 		const __m128 tmp2 = SIMD::Swizzle_ZXYW(mVec128);
 		const __m128 tmp3 = SIMD::Swizzle_YZXW(quat.mVec128);
-		__m128 qv = SIMD::MulPerElem(SIMD::Swizzle_WWWW(mVec128), quat.mVec128);
+		__m128 qv = SIMD::Mul(SIMD::Swizzle_WWWW(mVec128), quat.mVec128);
 		qv = vec_madd(SIMD::Swizzle_WWWW(quat.mVec128), mVec128, qv);
 		qv = vec_madd(tmp0, tmp1, qv);
 		qv = vec_nmsub(tmp2, tmp3, qv);
-		const __m128 product = SIMD::MulPerElem(mVec128, quat.mVec128);
+		const __m128 product = SIMD::Mul(mVec128, quat.mVec128);
 		const __m128 l_wxyz = _mm_ror_ps(mVec128, 3);
 		const __m128 r_wxyz = _mm_ror_ps(quat.mVec128, 3);
 		__m128 qw = vec_nmsub(l_wxyz, r_wxyz, product);
@@ -172,7 +172,7 @@ public:
 	// Compute the Euler angle representation of the rotation in radians
 	DESIRE_FORCE_INLINE Vector3 EulerAngles() const
 	{
-		const vec_float4_t vecSq2 = SIMD::Mul(SIMD::MulPerElem(mVec128, mVec128), 2.0f);
+		const vec_float4_t vecSq2 = SIMD::Mul(SIMD::Mul(mVec128, mVec128), 2.0f);
 		const float tmpX1 = 1.0f - (SIMD::GetX(vecSq2) + SIMD::GetY(vecSq2));
 		const float tmpX2 = 1.0f - (SIMD::GetY(vecSq2) + SIMD::GetZ(vecSq2));
 
@@ -230,14 +230,14 @@ public:
 	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
 	DESIRE_FORCE_INLINE void Normalize()
 	{
-		mVec128 = SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
+		mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
 
 	// Get normalized quaternion
 	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
 	DESIRE_FORCE_INLINE Quat Normalized() const
 	{
-		return SIMD::MulPerElem(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
+		return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
 
 	// Spherical linear interpolation between two quaternions
@@ -313,9 +313,7 @@ public:
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
 		sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		const __m128 mask_w = _mm_load_ps((float*)select_w);
-		return SIMD::Blend(_mm_mul_ps(unitVec, s), c, mask_w);
+		return SIMD::Blend(SIMD::Mul(unitVec, s), c, SIMD::MaskW());
 #else
 		const float angle = radians * 0.5f;
 		const float s = std::sin(angle);
@@ -330,12 +328,8 @@ public:
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
 		sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
-		alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		const __m128 mask_x = _mm_load_ps((float*)select_x);
-		const __m128 mask_w = _mm_load_ps((float*)select_w);
-		const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, mask_x);
-		return SIMD::Blend(res, c, mask_w); 
+		const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskX());
+		return SIMD::Blend(res, c, SIMD::MaskW());
 #else
 		const float angle = radians * 0.5f;
 		const float s = std::sin(angle);
@@ -350,12 +344,8 @@ public:
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
 		sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
-		alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		const __m128 mask_y = _mm_load_ps((float*)select_y);
-		const __m128 mask_w = _mm_load_ps((float*)select_w);
-		const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, mask_y);
-		return SIMD::Blend(res, c, mask_w);
+		const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskY());
+		return SIMD::Blend(res, c, SIMD::MaskW());
 #else
 		const float angle = radians * 0.5f;
 		const float s = std::sin(angle);
@@ -370,12 +360,8 @@ public:
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
 		sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
-		alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		const __m128 mask_z = _mm_load_ps((float*)select_z);
-		const __m128 mask_w = _mm_load_ps((float*)select_w);
-		const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, mask_z);
-		return SIMD::Blend(res, c, mask_w);
+		const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskZ());
+		return SIMD::Blend(res, c, SIMD::MaskW());
 #else
 		const float angle = radians * 0.5f;
 		const float s = std::sin(angle);
@@ -427,9 +413,9 @@ public:
 		const __m128 cosAngle = SIMD::Dot3(unitVecFrom, unitVecTo);
 		const __m128 cosAngleX2Plus2 = vec_madd(cosAngle, _mm_set1_ps(2.0f), _mm_set1_ps(2.0f));
 		const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
-		const __m128 cosHalfAngleX2 = SIMD::MulPerElem(recipCosHalfAngleX2, cosAngleX2Plus2);
+		const __m128 cosHalfAngleX2 = SIMD::Mul(recipCosHalfAngleX2, cosAngleX2Plus2);
 		const Vector3 crossVec = unitVecFrom.Cross(unitVecTo);
-		const __m128 res = SIMD::MulPerElem(crossVec, recipCosHalfAngleX2);
+		const __m128 res = SIMD::Mul(crossVec, recipCosHalfAngleX2);
 		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
 		const __m128 mask_w = _mm_load_ps((float*)select_w);
 		return SIMD::Blend(res, SIMD::Mul(cosHalfAngleX2, 0.5f), mask_w);

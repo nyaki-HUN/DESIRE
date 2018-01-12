@@ -81,6 +81,22 @@ public:
 		return vmulq_n_f32(vec, scalar);
 	}
 
+	static DESIRE_FORCE_INLINE float32x4_t Mul(float32x4_t a, float32x4_t b)
+	{
+		return vmulq_f32(a, b);
+	}
+
+	static DESIRE_FORCE_INLINE float32x4_t Div(float32x4_t a, float32x4_t b)
+	{
+		// Get an initial estimate of 1/vec
+		float32x4_t reciprocal = vrecpeq_f32(b);
+		// Use a couple Newton-Raphson steps to refine the estimate
+		reciprocal = SIMD::Mul(vrecpsq_f32(b, reciprocal), reciprocal);
+		reciprocal = SIMD::Mul(vrecpsq_f32(b, reciprocal), reciprocal);
+
+		return SIMD::Mul(a, reciprocal);
+	}
+
 	// Comparison operators
 	static DESIRE_FORCE_INLINE bool OpCmpGE(float32x4_t a, float32x4_t b)
 	{
@@ -105,7 +121,7 @@ public:
 	// Compute the dot product of two 3-D vectors
 	static DESIRE_FORCE_INLINE float32x4_t Dot3(float32x4_t a, float32x4_t b)
 	{
-		float32x4_t vd = SIMD::MulPerElem(a, b);
+		float32x4_t vd = SIMD::Mul(a, b);
 		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_low_f32(vd));
 		return vadd_f32(x, vget_high_f32(vd));
 	}
@@ -113,7 +129,7 @@ public:
 	// Compute the dot product of two 4-D vectors
 	static DESIRE_FORCE_INLINE float32x4_t Dot4(float32x4_t a, float32x4_t b)
 	{
-		float32x4_t vd = SIMD::MulPerElem(a, b);
+		float32x4_t vd = SIMD::Mul(a, b);
 		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_high_f32(vd));
 		return vpadd_f32(x, x);
 	}
@@ -126,28 +142,10 @@ public:
 		float32x2_t yzx0 = vcombine_f32(vext_f32(xy0, vget_high_f32(a), 1), xy0);
 		float32x2_t yzx1 = vcombine_f32(vext_f32(xy1, vget_high_f32(b), 1), xy1);
 
-		float32x2_t result = vmlsq_f32(SIMD::MulPerElem(yzx1, a), yzx0, b);
+		float32x2_t result = vmlsq_f32(SIMD::Mul(yzx1, a), yzx0, b);
 		// form (Y, Z, X, _)
 		xy1 = vget_low_f32(result);
 		return vcombine_f32(vext_f32(xy1, vget_high_f32(result), 1), xy1);
-	}
-
-	// Multiply vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t MulPerElem(float32x4_t a, float32x4_t b)
-	{
-		return vmulq_f32(a, b);
-	}
-
-	// Divide vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t DivPerElem(float32x4_t a, float32x4_t b)
-	{
-		// Get an initial estimate of 1/vec
-		float32x4_t reciprocal = vrecpeq_f32(b);
-		// Use a couple Newton-Raphson steps to refine the estimate
-		reciprocal = SIMD::MulPerElem(vrecpsq_f32(b, reciprocal), reciprocal);
-		reciprocal = SIMD::MulPerElem(vrecpsq_f32(b, reciprocal), reciprocal);
-
-		return SIMD::MulPerElem(a, reciprocal);
 	}
 
 	// Compute the absolute value per element
