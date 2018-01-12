@@ -88,9 +88,7 @@ public:
 		__m128 qw = vec_nmsub(l_wxyz, r_wxyz, product);
 		const __m128 xy = SIMD::MulAdd(l_wxyz, r_wxyz, product);
 		qw = SIMD::Sub(qw, _mm_ror_ps(xy, 2));
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		const __m128 mask_w = _mm_load_ps((float*)select_w);
-		return SIMD::Blend(qv, qw, mask_w);
+		return SIMD::Blend(qv, qw, SIMD::MaskW());
 #else
 		return Quat(
 			((GetW() * quat.GetX() + GetX() * quat.GetW()) + GetY() * quat.GetZ()) - GetZ() * quat.GetY(),
@@ -416,9 +414,7 @@ public:
 		const __m128 cosHalfAngleX2 = SIMD::Mul(recipCosHalfAngleX2, cosAngleX2Plus2);
 		const Vector3 crossVec = unitVecFrom.Cross(unitVecTo);
 		const __m128 res = SIMD::Mul(crossVec, recipCosHalfAngleX2);
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		const __m128 mask_w = _mm_load_ps((float*)select_w);
-		return SIMD::Blend(res, SIMD::Mul(cosHalfAngleX2, 0.5f), mask_w);
+		return SIMD::Blend(res, SIMD::Mul(cosHalfAngleX2, 0.5f), SIMD::MaskW());
 #else
 		const float cosHalfAngleX2 = sqrtf((2.0f * (1.0f + unitVecFrom.Dot(unitVecTo))));
 		const float recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);

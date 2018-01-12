@@ -41,13 +41,6 @@ public:
 		vst1q_f32(fptr, vec);
 	}
 
-	// Set the x, y, and z elements (does not change the w element)
-	static DESIRE_FORCE_INLINE void SetXYZ(float32x4_t& vec, float32x4_t xyz)
-	{
-		const uint32x4_t mask_w = (uint32x4_t){ 0, 0, 0, 0xffffffff };
-		vec = SIMD::Blend(xyz, vec, mask_w);
-	}
-
 	// Set element
 	static DESIRE_FORCE_INLINE void SetX(float32x4_t& vec, float x)		{ vec = vsetq_lane_f32(x, vec, 0); }
 	static DESIRE_FORCE_INLINE void SetY(float32x4_t& vec, float y)		{ vec = vsetq_lane_f32(y, vec, 1); }

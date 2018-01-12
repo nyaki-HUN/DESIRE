@@ -72,14 +72,6 @@ public:
 		_mm_storeu_ps(fptr, vec);
 	}
 
-	// Set the x, y, and z elements (does not change the w element)
-	static DESIRE_FORCE_INLINE void SetXYZ(__m128& vec, __m128 xyz)
-	{
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		const __m128 mask_w = _mm_load_ps((float*)select_w);
-		vec = SIMD::Blend(xyz, vec, mask_w);
-	}
-
 	// Set element
 	static DESIRE_FORCE_INLINE void SetX(__m128& vec, float x)
 	{

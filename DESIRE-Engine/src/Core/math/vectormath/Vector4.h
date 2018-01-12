@@ -59,7 +59,7 @@ public:
 	// Set the x, y, and z elements of a 4-D vector (does not change the w element)
 	DESIRE_FORCE_INLINE void SetXYZ(const Vector3& vec)
 	{
-		SIMD::SetXYZ(mVec128, vec);
+		mVec128 = SIMD::Blend(vec, mVec128, SIMD::MaskW());
 	}
 
 	// Get the x, y, and z elements of a 4-D vector

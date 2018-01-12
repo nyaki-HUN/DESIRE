@@ -121,12 +121,6 @@ public:
 		memcpy(fptr, &vec, 4 * sizeof(float));
 	}
 
-	// Set the x, y, and z elements (does not change the w element)
-	static DESIRE_FORCE_INLINE void SetXYZ(vec_float4_t& vec, const vec_float3_t& xyz)
-	{
-		memcpy(&vec, &xyz, 3 * sizeof(float));
-	}
-
 	// Set element
 	static DESIRE_FORCE_INLINE void SetX(vec_float3_t& vec, float x)		{ vec.x = x; }
 	static DESIRE_FORCE_INLINE void SetX(vec_float4_t& vec, float x)		{ vec.x = x; }
