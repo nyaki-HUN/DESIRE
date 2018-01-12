@@ -37,6 +37,7 @@ void ImGuiImpl::Init()
 	io.KeyMap[ImGuiKey_PageDown] = KEY_PGDOWN;
 	io.KeyMap[ImGuiKey_Home] = KEY_HOME;
 	io.KeyMap[ImGuiKey_End] = KEY_END;
+	io.KeyMap[ImGuiKey_Insert] = KEY_INSERT;
 	io.KeyMap[ImGuiKey_Delete] = KEY_DELETE;
 	io.KeyMap[ImGuiKey_Backspace] = KEY_BACKSPACE;
 	io.KeyMap[ImGuiKey_Enter] = KEY_RETURN;
