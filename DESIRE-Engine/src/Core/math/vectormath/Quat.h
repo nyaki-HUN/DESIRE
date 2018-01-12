@@ -75,8 +75,8 @@ public:
 	{
 #if defined(DESIRE_USE_SSE)
 		const __m128 tmp0 = SIMD::Swizzle_YZXW(mVec128);
-		const __m128 tmp1 = _mm_shuffle_ps(quat.mVec128, quat.mVec128, _MM_SHUFFLE(3, 1, 0, 2));
-		const __m128 tmp2 = _mm_shuffle_ps(mVec128, mVec128, _MM_SHUFFLE(3, 1, 0, 2));
+		const __m128 tmp1 = SIMD::Swizzle_ZXYW(quat.mVec128);
+		const __m128 tmp2 = SIMD::Swizzle_ZXYW(mVec128);
 		const __m128 tmp3 = SIMD::Swizzle_YZXW(quat.mVec128);
 		__m128 qv = SIMD::MulPerElem(SIMD::Swizzle_WWWW(mVec128), quat.mVec128);
 		qv = vec_madd(SIMD::Swizzle_WWWW(quat.mVec128), mVec128, qv);
@@ -195,9 +195,9 @@ public:
 	DESIRE_FORCE_INLINE Vector3 RotateVec(const Vector3& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
-		__m128 tmp0 = SIMD::Swizzle_YZXW(mVec128);
-		__m128 tmp1 = _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2));
-		__m128 tmp2 = _mm_shuffle_ps(mVec128, mVec128, _MM_SHUFFLE(3, 1, 0, 2));
+		const __m128 tmp0 = SIMD::Swizzle_YZXW(mVec128);
+		__m128 tmp1 = SIMD::Swizzle_ZXYW(vec);
+		const __m128 tmp2 = SIMD::Swizzle_ZXYW(mVec128);
 		__m128 tmp3 = SIMD::Swizzle_YZXW(vec);
 		const __m128 wwww = SIMD::Swizzle_WWWW(mVec128);
 		__m128 qv = _mm_mul_ps(wwww, vec);
@@ -206,7 +206,7 @@ public:
 		const __m128 product = _mm_mul_ps(mVec128, vec);
 		__m128 qw = vec_madd(_mm_ror_ps(mVec128, 1), _mm_ror_ps(vec, 1), product);
 		qw = _mm_add_ps(_mm_ror_ps(product, 2), qw);
-		tmp1 = _mm_shuffle_ps(qv, qv, _MM_SHUFFLE(3, 1, 0, 2));
+		tmp1 = SIMD::Swizzle_ZXYW(qv);
 		tmp3 = SIMD::Swizzle_YZXW(qv);
 		__m128 res = _mm_mul_ps(SIMD::Swizzle_XXXX(qw), mVec128);
 		res = vec_madd(wwww, qv, res);

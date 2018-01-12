@@ -2,51 +2,6 @@
 //	SSE implementation of matrix class functions
 // --------------------------------------------------------------------------------------------------------------------
 
-DESIRE_FORCE_INLINE Matrix3::Matrix3(const Quat& unitQuat)
-{
-	alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-	alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-	const __m128 mask_x = _mm_load_ps((float*)select_x);
-	const __m128 mask_z = _mm_load_ps((float*)select_z);
-
-	__m128 xyzw_2 = _mm_add_ps(unitQuat, unitQuat);
-	__m128 wwww = SIMD::Swizzle_WWWW(unitQuat);
-	__m128 yzxw = SIMD::Swizzle_YZXW(unitQuat);
-	__m128 zxyw = _mm_shuffle_ps(unitQuat, unitQuat, _MM_SHUFFLE(3, 1, 0, 2));
-	__m128 yzxw_2 = SIMD::Swizzle_YZXW(xyzw_2);
-	__m128 zxyw_2 = _mm_shuffle_ps(xyzw_2, xyzw_2, _MM_SHUFFLE(3, 1, 0, 2));
-
-	__m128 tmp0 = _mm_mul_ps(yzxw_2, wwww);									// tmp0 = 2yw, 2zw, 2xw, 2w2
-	__m128 tmp1 = _mm_sub_ps(_mm_set1_ps(1.0f), _mm_mul_ps(yzxw, yzxw_2));	// tmp1 = 1 - 2y2, 1 - 2z2, 1 - 2x2, 1 - 2w2
-	__m128 tmp2 = _mm_mul_ps(yzxw, xyzw_2);									// tmp2 = 2xy, 2yz, 2xz, 2w2
-	tmp0 = _mm_add_ps(_mm_mul_ps(zxyw, xyzw_2), tmp0);						// tmp0 = 2yw + 2zx, 2zw + 2xy, 2xw + 2yz, 2w2 + 2w2
-	tmp1 = _mm_sub_ps(tmp1, _mm_mul_ps(zxyw, zxyw_2));						// tmp1 = 1 - 2y2 - 2z2, 1 - 2z2 - 2x2, 1 - 2x2 - 2y2, 1 - 2w2 - 2w2
-	tmp2 = _mm_sub_ps(tmp2, _mm_mul_ps(zxyw_2, wwww));						// tmp2 = 2xy - 2zw, 2yz - 2xw, 2xz - 2yw, 2w2 -2w2
-
-	__m128 tmp3 = SIMD::Blend(tmp0, tmp1, mask_x);
-	__m128 tmp4 = SIMD::Blend(tmp1, tmp2, mask_x);
-	__m128 tmp5 = SIMD::Blend(tmp2, tmp0, mask_x);
-	col0 = SIMD::Blend(tmp3, tmp2, mask_z);
-	col1 = SIMD::Blend(tmp4, tmp0, mask_z);
-	col2 = SIMD::Blend(tmp5, tmp1, mask_z);
-}
-
-DESIRE_FORCE_INLINE void Matrix3::Transpose()
-{
-	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-	const __m128 mask_y = _mm_load_ps((float*)select_y);
-
-	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
-	__m128 tmp1 = _mm_unpackhi_ps(col0, col2);
-	col0 = _mm_unpacklo_ps(tmp0, col1);
-
-	tmp1 = _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(0, 1, 1, 0));
-	col2 = SIMD::Blend(tmp1, SIMD::Swizzle_ZZZZ(col1), mask_y);
-
-	tmp0 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(0, 3, 2, 2));
-	col1 = SIMD::Blend(tmp0, col1, mask_y);
-}
-
 DESIRE_FORCE_INLINE void Matrix3::Invert()
 {
 	const __m128 tmp2 = col0.Cross(col1);
@@ -67,15 +22,6 @@ DESIRE_FORCE_INLINE void Matrix3::Invert()
 	col0 = _mm_mul_ps(inv0, invdet);
 	col1 = _mm_mul_ps(inv1, invdet);
 	col2 = _mm_mul_ps(inv2, invdet);
-}
-
-DESIRE_FORCE_INLINE Vector3 Matrix3::operator *(const Vector3& vec) const
-{
-	return Vector3(
-		_mm_add_ps(
-			_mm_add_ps(_mm_mul_ps(col0, SIMD::Swizzle_XXXX(vec)), _mm_mul_ps(col1, SIMD::Swizzle_YYYY(vec))),
-			_mm_mul_ps(col2, SIMD::Swizzle_ZZZZ(vec)))
-	);
 }
 
 DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
@@ -189,22 +135,6 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 		vec_madd(_mm_mul_ps(axis, xxxx), oneMinusC, tmp0),
 		vec_madd(_mm_mul_ps(axis, yyyy), oneMinusC, tmp1),
 		vec_madd(_mm_mul_ps(axis, zzzz), oneMinusC, tmp2)
-	);
-}
-
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateScale(const Vector3& scaleVec)
-{
-	const __m128 zero = _mm_setzero_ps();
-	alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-	alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-	const __m128 mask_x = _mm_load_ps((float*)select_x);
-	const __m128 mask_y = _mm_load_ps((float*)select_y);
-	const __m128 mask_z = _mm_load_ps((float*)select_z);
-	return Matrix3(
-		SIMD::Blend(zero, scaleVec, mask_x),
-		SIMD::Blend(zero, scaleVec, mask_y),
-		SIMD::Blend(zero, scaleVec, mask_z)
 	);
 }
 
@@ -541,23 +471,6 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 		vec_madd(_mm_mul_ps(axis, xxxx), oneMinusC, tmp0),
 		vec_madd(_mm_mul_ps(axis, yyyy), oneMinusC, tmp1),
 		vec_madd(_mm_mul_ps(axis, zzzz), oneMinusC, tmp2),
-		Vector4::AxisW()
-	);
-}
-
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateScale(const Vector3& scaleVec)
-{
-	__m128 zero = _mm_setzero_ps();
-	alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-	alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-	alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-	const __m128 mask_x = _mm_load_ps((float*)select_x);
-	const __m128 mask_y = _mm_load_ps((float*)select_y);
-	const __m128 mask_z = _mm_load_ps((float*)select_z);
-	return Matrix4(
-		SIMD::Blend(zero, scaleVec, mask_x),
-		SIMD::Blend(zero, scaleVec, mask_y),
-		SIMD::Blend(zero, scaleVec, mask_z),
 		Vector4::AxisW()
 	);
 }

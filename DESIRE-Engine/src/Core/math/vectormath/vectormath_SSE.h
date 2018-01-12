@@ -239,31 +239,38 @@ public:
 		return _mm_blendv_ps(a, b, mask);
 	}
 
-	// Shuffle
-	static DESIRE_FORCE_INLINE __m128 Swizzle_XXXX(__m128 vec)
+	// Select mask
+	static DESIRE_FORCE_INLINE __m128 MaskX()
 	{
-		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0));
+		alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
+		return _mm_load_ps((float*)select_x);
+	}
+	static DESIRE_FORCE_INLINE __m128 MaskY()
+	{
+		alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
+		return _mm_load_ps((float*)select_y);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Swizzle_YYYY(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 MaskZ()
 	{
-		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1));
+		alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
+		return _mm_load_ps((float*)select_z);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Swizzle_ZZZZ(__m128 vec)
+	static DESIRE_FORCE_INLINE __m128 MaskW()
 	{
-		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2));
+		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
+		return _mm_load_ps((float*)select_w);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Swizzle_WWWW(__m128 vec)
-	{
-		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3));
-	}
+	// Swizzle
+	static DESIRE_FORCE_INLINE __m128 Swizzle_XXXX(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0)); }
+	static DESIRE_FORCE_INLINE __m128 Swizzle_YYYY(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1)); }
+	static DESIRE_FORCE_INLINE __m128 Swizzle_ZZZZ(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); }
+	static DESIRE_FORCE_INLINE __m128 Swizzle_WWWW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
 
-	static DESIRE_FORCE_INLINE __m128 Swizzle_YZXW(__m128 vec)
-	{
-		return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1));
-	}
+	static DESIRE_FORCE_INLINE __m128 Swizzle_YZXW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1)); }
+	static DESIRE_FORCE_INLINE __m128 Swizzle_ZXYW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2));	}
 };
 
 // --------------------------------------------------------------------------------------------------------------------

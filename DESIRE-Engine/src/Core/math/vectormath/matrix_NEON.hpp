@@ -2,39 +2,6 @@
 //	NEON implementation of matrix class functions
 // --------------------------------------------------------------------------------------------------------------------
 
-DESIRE_FORCE_INLINE Matrix3::Matrix3(const Quat& unitQuat)
-{
-	const float qx = unitQuat.GetX();
-	const float qy = unitQuat.GetY();
-	const float qz = unitQuat.GetZ();
-	const float qw = unitQuat.GetW();
-	const float qx2 = qx + qx;
-	const float qy2 = qy + qy;
-	const float qz2 = qz + qz;
-	const float qxqx2 = qx * qx2;
-	const float qxqy2 = qx * qy2;
-	const float qxqz2 = qx * qz2;
-	const float qxqw2 = qw * qx2;
-	const float qyqy2 = qy * qy2;
-	const float qyqz2 = qy * qz2;
-	const float qyqw2 = qw * qy2;
-	const float qzqz2 = qz * qz2;
-	const float qzqw2 = qw * qz2;
-	col0 = Vector3(1.0f - qyqy2 - qzqz2, qxqy2 + qzqw2, qxqz2 - qyqw2);
-	col1 = Vector3(qxqy2 - qzqw2, (1.0f - qxqx2) - qzqz2, qyqz2 + qxqw2);
-	col2 = Vector3(qxqz2 + qyqw2, qyqz2 - qxqw2, (1.0f - qxqx2) - qyqy2);
-}
-
-DESIRE_FORCE_INLINE void Matrix3::Transpose()
-{
-	const Vector3 tmp0(col0.GetX(), col1.GetX(), col2.GetX());
-	const Vector3 tmp1(col0.GetY(), col1.GetY(), col2.GetY());
-	const Vector3 tmp2(col0.GetZ(), col1.GetZ(), col2.GetZ());
-	col0 = tmp0;
-	col1 = tmp1;
-	col2 = tmp2;
-}
-
 DESIRE_FORCE_INLINE void Matrix3::Invert()
 {
 	const Vector3 tmp0 = col1.Cross(col2);
@@ -44,15 +11,6 @@ DESIRE_FORCE_INLINE void Matrix3::Invert()
 	col0 = Vector3(tmp0.GetX() * detinv, tmp1.GetX() * detinv, tmp2.GetX() * detinv);
 	col1 = Vector3(tmp0.GetY() * detinv, tmp1.GetY() * detinv, tmp2.GetY() * detinv);
 	col2 = Vector3(tmp0.GetZ() * detinv, tmp1.GetZ() * detinv, tmp2.GetZ() * detinv);
-}
-
-DESIRE_FORCE_INLINE Vector3 Matrix3::operator *(const Vector3& vec) const
-{
-	float32x4_t result;
-	result = vmulq_lane_f32(col0, vget_low_f32(vec), 0);
-	result = vmlaq_lane_f32(result, col1, vget_low_f32(vec), 1);
-	result = vmlaq_lane_f32(result, col2, vget_high_f32(vec), 0);
-	return result;
 }
 
 DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
@@ -120,19 +78,6 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 		Vector3((((x * x) * oneMinusC) + c), ((xy * oneMinusC) + (z * s)), ((zx * oneMinusC) - (y * s))),
 		Vector3(((xy * oneMinusC) - (z * s)), (((y * y) * oneMinusC) + c), ((yz * oneMinusC) + (x * s))),
 		Vector3(((zx * oneMinusC) + (y * s)), ((yz * oneMinusC) - (x * s)), (((z * z) * oneMinusC) + c))
-	);
-}
-
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateScale(const Vector3& scaleVec)
-{
-	const float32x4_t zero = vdupq_n_f32(0.0f);
-	const uint32x4_t mask_x = (uint32x4_t){ 0xffffffff, 0, 0, 0 };
-	const uint32x4_t mask_y = (uint32x4_t){ 0, 0xffffffff, 0, 0 };
-	const uint32x4_t mask_z = (uint32x4_t){ 0, 0, 0xffffffff, 0 };
-	return Matrix3(
-		SIMD::Blend(zero, scaleVec, mask_x),
-		SIMD::Blend(zero, scaleVec, mask_y),
-		SIMD::Blend(zero, scaleVec, mask_z)
 	);
 }
 
@@ -319,20 +264,6 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 		Vector4(((x * x) * oneMinusC) + c, (xy * oneMinusC) + (z * s), (zx * oneMinusC) - (y * s), 0.0f),
 		Vector4((xy * oneMinusC) - (z * s), ((y * y) * oneMinusC) + c, (yz * oneMinusC) + (x * s), 0.0f),
 		Vector4((zx * oneMinusC) + (y * s), (yz * oneMinusC) - (x * s), ((z * z) * oneMinusC) + c, 0.0f),
-		Vector4::AxisW()
-	);
-}
-
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateScale(const Vector3& scaleVec)
-{
-	const float32x4_t zero = vdupq_n_f32(0.0f);
-	const uint32x4_t mask_x = (uint32x4_t) { 0xffffffff, 0, 0, 0 };
-	const uint32x4_t mask_y = (uint32x4_t) { 0, 0xffffffff, 0, 0 };
-	const uint32x4_t mask_z = (uint32x4_t) { 0, 0, 0xffffffff, 0 };
-	return Matrix4(
-		SIMD::Blend(zero, scaleVec, mask_x),
-		SIMD::Blend(zero, scaleVec, mask_y),
-		SIMD::Blend(zero, scaleVec, mask_z),
 		Vector4::AxisW()
 	);
 }

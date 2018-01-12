@@ -196,26 +196,31 @@ public:
 		return vbslq_f32(mask, b, a);
 	}
 
-	// Shuffle
-	static DESIRE_FORCE_INLINE float32x4_t Shuffle_XXXX(float32x4_t vec)
+	// Select mask
+	static DESIRE_FORCE_INLINE uint32x4_t MaskX()
 	{
-		return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 0, 0 });
+		return (uint32x4_t) { 0xffffffff, 0, 0, 0 };
+	}
+	static DESIRE_FORCE_INLINE uint32x4_t MaskY()
+	{
+		return (uint32x4_t) { 0, 0xffffffff, 0, 0 };
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Shuffle_YYYY(float32x4_t vec)
+	static DESIRE_FORCE_INLINE uint32x4_t MaskZ()
 	{
-		return __builtin_shuffle(vec, (uint32x4_t){ 1, 1, 1, 1 });
+		return (uint32x4_t) { 0, 0, 0xffffffff, 0 };
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Shuffle_ZZZZ(float32x4_t vec)
+	static DESIRE_FORCE_INLINE uint32x4_t MaskW()
 	{
-		return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 2, 2 });
+		return (uint32x4_t) { 0, 0, 0, 0xffffffff };
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Shuffle_WWWW(float32x4_t vec)
-	{
-		return __builtin_shuffle(vec, (uint32x4_t){ 3, 3, 3, 3 });
-	}
+	// Swizzle
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_XXXX(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 0, 0 }); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_YYYY(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 1, 1, 1 }); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_ZZZZ(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 2, 2 }); }
+	static DESIRE_FORCE_INLINE float32x4_t Swizzle_WWWW(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 3, 3, 3, 3 }); }
 };
 
 // --------------------------------------------------------------------------------------------------------------------

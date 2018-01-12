@@ -1,14 +1,12 @@
 #pragma once
 
-// --------------------------------------------------------------------------------------------------------------------
-//	Matrix4
-// --------------------------------------------------------------------------------------------------------------------
-
 class Matrix4
 {
 public:
-	// Default constructor; does no initialization
-	DESIRE_FORCE_INLINE Matrix4() {}
+	DESIRE_FORCE_INLINE Matrix4()
+	{
+		// No initialization
+	}
 
 	// Copy a 4x4 matrix
 	DESIRE_FORCE_INLINE Matrix4(const Matrix4& mat)
@@ -321,7 +319,25 @@ public:
 	}
 
 	// Construct a 4x4 matrix to perform scaling
-	static DESIRE_FORCE_INLINE Matrix4 CreateScale(const Vector3& scaleVec);
+	static DESIRE_FORCE_INLINE Matrix4 CreateScale(const Vector3& scaleVec)
+	{
+#if defined(DESIRE_USE_SSE) || defined(__ARM_NEON__)
+		const Vector4 zero(0.0f);
+		return Matrix4(
+			SIMD::Blend(zero, scaleVec, SIMD::MaskX()),
+			SIMD::Blend(zero, scaleVec, SIMD::MaskY()),
+			SIMD::Blend(zero, scaleVec, SIMD::MaskZ()),
+			Vector4::AxisW()
+		);
+#else
+		return Matrix4(
+			Vector4(scaleVec.GetX(), 0.0f, 0.0f, 0.0f),
+			Vector4(0.0f, scaleVec.GetY(), 0.0f, 0.0f),
+			Vector4(0.0f, 0.0f, scaleVec.GetZ(), 0.0f),
+			Vector4::AxisW()
+		);
+#endif
+	}
 
 	Vector4 col0;
 	Vector4 col1;
