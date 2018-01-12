@@ -1,13 +1,13 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
 // FPU math lib
 
-#ifndef BX_FPU_MATH_H_HEADER_GUARD
-#	error "Must be included from bx/fpumath.h!"
-#endif // BX_FPU_MATH_H_HEADER_GUARD
+#ifndef BX_MATH_H_HEADER_GUARD
+#	error "Must be included from bx/math.h!"
+#endif // BX_MATH_H_HEADER_GUARD
 
 namespace bx
 {
@@ -97,9 +97,19 @@ namespace bx
 		return ffloor(_f + 0.5f);
 	}
 
+	inline float fceil(float _a)
+	{
+		return -ffloor(-_a);
+	}
+
 	inline float flerp(float _a, float _b, float _t)
 	{
 		return _a + (_b - _a) * _t;
+	}
+
+	inline float fabs(float _a)
+	{
+		return _a < 0.0f ? -_a : _a;
 	}
 
 	inline float fsign(float _a)
@@ -127,9 +137,19 @@ namespace bx
 		return 1.0f/fsqrt(_a);
 	}
 
+	inline float ftrunc(float _a)
+	{
+		return float(int(_a) );
+	}
+
 	inline float ffract(float _a)
 	{
-		return _a - ffloor(_a);
+		return _a - ftrunc(_a);
+	}
+
+	inline float fmod(float _a, float _b)
+	{
+		return _a - _b * ffloor(_a / _b);
 	}
 
 	inline bool fequal(float _a, float _b, float _epsilon)
@@ -696,6 +716,22 @@ namespace bx
 		_result[0] = xx*invW;
 		_result[1] = yy*invW;
 		_result[2] = zz*invW;
+	}
+
+	inline void vec4Mul(float* _result, const float* _a, const float* _b)
+	{
+		_result[0] = _a[0] * _b[0];
+		_result[1] = _a[1] * _b[1];
+		_result[2] = _a[2] * _b[2];
+		_result[3] = _a[3] * _b[3];
+	}
+
+	inline void vec4Mul(float* _result, const float* _a, float _b)
+	{
+		_result[0] = _a[0] * _b;
+		_result[1] = _a[1] * _b;
+		_result[2] = _a[2] * _b;
+		_result[3] = _a[3] * _b;
 	}
 
 	inline void vec4MulMtx(float* _result, const float* _vec, const float* _mat)

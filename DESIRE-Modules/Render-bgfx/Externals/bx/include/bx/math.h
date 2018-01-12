@@ -1,12 +1,12 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
 // FPU math lib
 
-#ifndef BX_FPU_MATH_H_HEADER_GUARD
-#define BX_FPU_MATH_H_HEADER_GUARD
+#ifndef BX_MATH_H_HEADER_GUARD
+#define BX_MATH_H_HEADER_GUARD
 
 #include "bx.h"
 #include "uint32_t.h"
@@ -139,6 +139,9 @@ namespace bx
 
 	///
 	float frsqrt(float _a);
+
+	///
+	float ftrunc(float _a);
 
 	///
 	float ffract(float _a);
@@ -435,6 +438,12 @@ namespace bx
 	void vec3MulMtxH(float* _result, const float* _vec, const float* _mat);
 
 	///
+	void vec4Mul(float* _result, const float* _a, const float* _b);
+
+	///
+	void vec4Mul(float* _result, const float* _a, float _b);
+
+	///
 	void vec4MulMtx(float* _result, const float* _vec, const float* _mat);
 
 	///
@@ -479,4 +488,4 @@ namespace bx
 
 #include "inline/math.inl"
 
-#endif // BX_FPU_MATH_H_HEADER_GUARD
+#endif // BX_MATH_H_HEADER_GUARD

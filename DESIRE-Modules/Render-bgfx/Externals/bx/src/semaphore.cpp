@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
@@ -104,7 +104,7 @@ namespace bx
 	void add(timespec& _ts, int32_t _msecs)
 	{
 		uint64_t ns = toNs(_ts);
-		toTimespecNs(_ts, ns + _msecs*1000000);
+		toTimespecNs(_ts, ns + uint64_t(_msecs)*1000000);
 	}
 
 	Semaphore::Semaphore()
