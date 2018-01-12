@@ -60,13 +60,13 @@ inline vec_float4_t& vec_float4_t::operator =(const vec_float3_t& vec)
 
 static DESIRE_FORCE_INLINE vec_float3_t newtonrapson_rsqrt4(const vec_float3_t& v)
 {
-	const float result = 1.0f / sqrtf(v.x);
+	const float result = 1.0f / std::sqrt(v.x);
 	return vec_float3_t(result, result, result);
 }
 
 static DESIRE_FORCE_INLINE vec_float4_t newtonrapson_rsqrt4(const vec_float4_t& v)
 {
-	const float result = 1.0f / sqrtf(v.x);
+	const float result = 1.0f / std::sqrt(v.x);
 	return vec_float4_t(result, result, result, result);
 }
 
@@ -391,4 +391,50 @@ public:
 		result = (vec.w < result) ? vec.w : result;
 		return vec_float4_t(result, result, result, result);
 	}
+
+	// Select packed single precision floating-point values from a and b using the mask
+	static DESIRE_FORCE_INLINE vec_float4_t Blend(const vec_float3_t& a, const vec_float4_t& b, uint8_t mask)
+	{
+		const vec_float4_t A(a.x, a.y, a.z, 0.0);
+		return Blend(A, b, mask);
+	}
+
+	static DESIRE_FORCE_INLINE vec_float4_t Blend(const vec_float4_t& a, const vec_float4_t& b, uint8_t mask)
+	{
+		vec_float4_t result;
+		result.x = (mask & 0b1000) ? b.x : a.x;
+		result.y = (mask & 0b0100) ? b.y : a.y;
+		result.z = (mask & 0b0010) ? b.z : a.z;
+		result.w = (mask & 0b0001) ? b.w : a.w;
+		return result;
+	}
+
+	// Select mask
+	static DESIRE_FORCE_INLINE uint8_t MaskX()
+	{
+		return 0b1000;
+	}
+	static DESIRE_FORCE_INLINE uint8_t MaskY()
+	{
+		return 0b0100;
+	}
+
+	static DESIRE_FORCE_INLINE uint8_t MaskZ()
+	{
+		return 0b0010;
+	}
+
+	static DESIRE_FORCE_INLINE uint8_t MaskW()
+	{
+		return 0b0001;
+	}
+
+	// Swizzle
+	static DESIRE_FORCE_INLINE vec_float4_t Swizzle_XXXX(const vec_float4_t& vec)	{ return vec_float4_t(vec.x, vec.x, vec.x, vec.x); }
+	static DESIRE_FORCE_INLINE vec_float4_t Swizzle_YYYY(const vec_float4_t& vec)	{ return vec_float4_t(vec.y, vec.y, vec.y, vec.y); }
+	static DESIRE_FORCE_INLINE vec_float4_t Swizzle_ZZZZ(const vec_float4_t& vec)	{ return vec_float4_t(vec.z, vec.z, vec.z, vec.z); }
+	static DESIRE_FORCE_INLINE vec_float4_t Swizzle_WWWW(const vec_float4_t& vec)	{ return vec_float4_t(vec.w, vec.w, vec.w, vec.w); }
+
+	static DESIRE_FORCE_INLINE vec_float4_t Swizzle_YZXW(const vec_float4_t& vec)	{ return vec_float4_t(vec.y, vec.z, vec.x, vec.w); }
+	static DESIRE_FORCE_INLINE vec_float4_t Swizzle_ZXYW(const vec_float4_t& vec)	{ return vec_float4_t(vec.z, vec.x, vec.y, vec.w); }
 };
