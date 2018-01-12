@@ -8,7 +8,6 @@
 #include <DirectXMath.h>
 #include <unordered_map>
 
-class MeshRenderDataD3D11;
 class ShaderRenderDataD3D11;
 
 class Direct3D11Render : public Render
@@ -61,6 +60,7 @@ private:
 	void SetFragmentShader(Shader *fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode) override;
 	void UpdateShaderParams(const Material *material) override;
+	void UpdateShaderParams(const Material *material, const ShaderRenderDataD3D11 *shaderRenderData);
 	static bool CheckAndUpdateShaderParam(const void *value, void *valueInConstantBuffer, uint32_t size);
 
 	void DoRender() override;

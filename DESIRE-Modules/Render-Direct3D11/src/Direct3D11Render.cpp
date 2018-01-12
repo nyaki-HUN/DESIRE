@@ -1046,13 +1046,20 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterM
 void Direct3D11Render::UpdateShaderParams(const Material *material)
 {
 	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
+	UpdateShaderParams(material, vertexShaderRenderData);
 
+	const ShaderRenderDataD3D11 *fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeFragmentShader->renderData);
+	UpdateShaderParams(material, fragmentShaderRenderData);
+}
+
+void Direct3D11Render::UpdateShaderParams(const Material *material, const ShaderRenderDataD3D11 *shaderRenderData)
+{
 	const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
 
-	for(size_t i = 0; i < vertexShaderRenderData->constantBuffers.size(); ++i)
+	for(size_t i = 0; i < shaderRenderData->constantBuffers.size(); ++i)
 	{
 		bool isChanged = false;
-		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = vertexShaderRenderData->constantBuffersData[i];
+		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = shaderRenderData->constantBuffersData[i];
 
 		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
 		{
@@ -1076,46 +1083,6 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
 			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
-		}
-
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
-		if(offsetSizePair != nullptr && offsetSizePair->second == 2 * sizeof(float))
-		{
-			float resolution[2];
-			if(activeView != nullptr)
-			{
-				resolution[0] = activeView->GetWidth();
-				resolution[1] = activeView->GetHeight();
-			}
-			else
-			{
-				resolution[0] = activeWindow->GetWidth();
-				resolution[1] = activeWindow->GetHeight();
-			}
-
-			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
-		}
-
-		if(isChanged)
-		{
-			deviceCtx->UpdateSubresource(vertexShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.buffer.data, 0, 0);
-		}
-	}
-
-	const ShaderRenderDataD3D11 *fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeFragmentShader->renderData);
-
-	for(size_t i = 0; i < fragmentShaderRenderData->constantBuffers.size(); ++i)
-	{
-		bool isChanged = false;
-		const ShaderRenderDataD3D11::ConstantBufferData& bufferData = fragmentShaderRenderData->constantBuffersData[i];
-
-		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
-		{
-			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
-			if(offsetSizePair != nullptr)
-			{
-				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
-			}
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
@@ -1152,7 +1119,7 @@ void Direct3D11Render::UpdateShaderParams(const Material *material)
 
 		if(isChanged)
 		{
-			deviceCtx->UpdateSubresource(fragmentShaderRenderData->constantBuffers[i], 0, nullptr, fragmentShaderRenderData->constantBuffersData[i].buffer.data, 0, 0);
+			deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, bufferData.buffer.data, 0, 0);
 		}
 	}
 }
