@@ -192,10 +192,8 @@ public:
 	// Construct a quaternion to rotate around the x axis
 	static inline Quat CreateRotationX(float radians);
 
-
 	// Construct a quaternion to rotate around the y axis
 	static inline Quat CreateRotationY(float radians);
-
 
 	// Construct a quaternion to rotate around the z axis
 	static inline Quat CreateRotationZ(float radians);
@@ -352,49 +350,51 @@ inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 // Construct a quaternion to rotate around a unit-length 3-D vector
 inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 {
-	Quat result;
 	const float halfAngle = radians * 0.5f;
+
 #if defined(DESIRE_USE_SSE)
-	__m128 sinHalfAngle, cosHalfAngle;
-	sincosf4(_mm_set1_ps(halfAngle), &sinHalfAngle, &cosHalfAngle);
-	result = SIMD::Blend(SIMD::Mul(unitVec, sinHalfAngle), cosHalfAngle, SIMD::MaskW());
+	__m128 s, c;
+	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
+	return SIMD::Blend(SIMD::Mul(unitVec, s), c, SIMD::MaskW());
 #else
 	const float sinHalfAngle = std::sin(halfAngle);
 	const float cosHalfAngle = std::cos(halfAngle);
-	result.mVec128 = SIMD::Mul(unitVec, sinHalfAngle);
+	Quat result = SIMD::Mul(unitVec, sinHalfAngle);
 	result.SetW(cosHalfAngle);
-#endif
 	return result;
+#endif
 }
 
 // Construct a quaternion to rotate around the x axis
 inline Quat Quat::CreateRotationX(float radians)
 {
+	const float halfAngle = radians * 0.5f;
+
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
+	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
 	const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskX());
 	return SIMD::Blend(res, c, SIMD::MaskW());
 #else
-	const float angle = radians * 0.5f;
-	const float s = std::sin(angle);
-	const float c = std::cos(angle);
+	const float s = std::sin(halfAngle);
+	const float c = std::cos(halfAngle);
 	return Quat(s, 0.0f, 0.0f, c);
 #endif
 }
 
 // Construct a quaternion to rotate around the y axis
-static inline Quat CreateRotationY(float radians)
+inline Quat Quat::CreateRotationY(float radians)
 {
+	const float halfAngle = radians * 0.5f;
+
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
+	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
 	const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskY());
 	return SIMD::Blend(res, c, SIMD::MaskW());
 #else
-	const float angle = radians * 0.5f;
-	const float s = std::sin(angle);
-	const float c = std::cos(angle);
+	const float s = std::sin(halfAngle);
+	const float c = std::cos(halfAngle);
 	return Quat(0.0f, s, 0.0f, c);
 #endif
 }
@@ -402,15 +402,16 @@ static inline Quat CreateRotationY(float radians)
 // Construct a quaternion to rotate around the z axis
 inline Quat Quat::CreateRotationZ(float radians)
 {
+	const float halfAngle = radians * 0.5f;
+
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians * 0.5f), &s, &c);
+	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
 	const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskZ());
 	return SIMD::Blend(res, c, SIMD::MaskW());
 #else
-	const float angle = radians * 0.5f;
-	const float s = std::sin(angle);
-	const float c = std::cos(angle);
+	const float s = std::sin(halfAngle);
+	const float c = std::cos(halfAngle);
 	return Quat(0.0f, 0.0f, s, c);
 #endif
 }

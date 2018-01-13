@@ -61,9 +61,6 @@
     <Filter Include="src\Input\WINDOWS">
       <UniqueIdentifier>{66E2B6C1-D2F8-B457-1B70-407987C585DF}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Network">
-      <UniqueIdentifier>{A66A4775-1220-C06A-9B14-BA4107C9B66E}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Physics">
       <UniqueIdentifier>{9F8B9316-0B41-0C0C-9435-06E300EA0210}</UniqueIdentifier>
     </Filter>
@@ -402,9 +399,6 @@
     <ClInclude Include="..\..\src\Input\keyCodes.h">
       <Filter>src\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Network\NetworkFileSource.h">
-      <Filter>src\Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Physics\Collision.h">
       <Filter>src\Physics</Filter>
     </ClInclude>
@@ -619,9 +613,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp">
       <Filter>src\Input\WINDOWS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Network\NetworkFileSource.cpp">
-      <Filter>src\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Physics\Physics.cpp">
       <Filter>src\Physics</Filter>

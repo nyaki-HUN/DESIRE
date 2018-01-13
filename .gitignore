@@ -8,6 +8,9 @@
 *.suo
 *.user
 *.ilk
+*.iobj
+*.ipdb
+*.pdb
 ipch/
 .vs/
 
