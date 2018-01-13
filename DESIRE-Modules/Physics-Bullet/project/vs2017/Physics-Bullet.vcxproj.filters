@@ -120,6 +120,9 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcher.h">
       <Filter>Externals\Bullet\src\BulletCollision\CollisionDispatch</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.h">
+      <Filter>Externals\Bullet\src\BulletCollision\CollisionDispatch</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionObject.h">
       <Filter>Externals\Bullet\src\BulletCollision\CollisionDispatch</Filter>
     </ClInclude>
@@ -564,6 +567,9 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.h">
       <Filter>Externals\Bullet\src\BulletDynamics\Featherstone</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyGearConstraint.h">
+      <Filter>Externals\Bullet\src\BulletDynamics\Featherstone</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointFeedback.h">
       <Filter>Externals\Bullet\src\BulletDynamics\Featherstone</Filter>
     </ClInclude>
@@ -819,6 +825,9 @@
       <Filter>Externals\Bullet\src\BulletCollision\CollisionDispatch</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp">
+      <Filter>Externals\Bullet\src\BulletCollision\CollisionDispatch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.cpp">
       <Filter>Externals\Bullet\src\BulletCollision\CollisionDispatch</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionObject.cpp">
@@ -1137,6 +1146,9 @@
       <Filter>Externals\Bullet\src\BulletDynamics\Featherstone</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.cpp">
+      <Filter>Externals\Bullet\src\BulletDynamics\Featherstone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyGearConstraint.cpp">
       <Filter>Externals\Bullet\src\BulletDynamics\Featherstone</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp">

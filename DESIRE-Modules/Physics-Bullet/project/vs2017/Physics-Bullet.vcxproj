@@ -122,6 +122,7 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionConfiguration.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionCreateFunc.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcher.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionObject.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionObjectWrapper.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionWorld.h" />
@@ -270,6 +271,7 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyGearConstraint.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointFeedback.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointMotor.h" />
@@ -357,6 +359,7 @@
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btBoxBoxDetector.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionDispatcherMt.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionObject.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionWorld.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionDispatch\btCollisionWorldImporter.cpp" />
@@ -463,6 +466,7 @@
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyFixedConstraint.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyGearConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointMotor.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyPoint2Point.cpp" />
