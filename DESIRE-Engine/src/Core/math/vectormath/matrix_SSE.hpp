@@ -2,7 +2,7 @@
 //	SSE implementation of matrix class functions
 // --------------------------------------------------------------------------------------------------------------------
 
-DESIRE_FORCE_INLINE void Matrix3::Invert()
+inline void Matrix3::Invert()
 {
 	const __m128 tmp2 = col0.Cross(col1);
 	const __m128 tmp0 = col1.Cross(col2);
@@ -23,7 +23,7 @@ DESIRE_FORCE_INLINE void Matrix3::Invert()
 	col2 = SIMD::Mul(inv2, invdet);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
+inline Matrix3 Matrix3::CreateRotationX(float radians)
 {
 	__m128 s, c, res1, res2;
 	const __m128 mask_y = SIMD::MaskY();
@@ -41,7 +41,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationY(float radians)
+inline Matrix3 Matrix3::CreateRotationY(float radians)
 {
 	__m128 s, c, res0, res2;
 	const __m128 mask_x = SIMD::MaskX();
@@ -59,7 +59,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationY(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZ(float radians)
+inline Matrix3 Matrix3::CreateRotationZ(float radians)
 {
 	__m128 s, c, res0, res1;
 	const __m128 mask_x = SIMD::MaskX();
@@ -77,7 +77,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZ(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
+inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 {
 	__m128 s, c;
 	__m128 angles = Vector4(radiansXYZ, 0.0f);
@@ -99,7 +99,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
+inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 {
 	__m128 s, c, tmp0, tmp1, tmp2;
 	__m128 axis = unitVec;
@@ -128,7 +128,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	);
 }
 
-DESIRE_FORCE_INLINE void Matrix4::Transpose()
+inline void Matrix4::Transpose()
 {
 	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
 	__m128 tmp1 = _mm_unpacklo_ps(col1, col3);
@@ -140,7 +140,7 @@ DESIRE_FORCE_INLINE void Matrix4::Transpose()
 	col3 = _mm_unpackhi_ps(tmp2, tmp3);
 }
 
-DESIRE_FORCE_INLINE void Matrix4::Invert()
+inline void Matrix4::Invert()
 {
 	// Calculating the minterms for the first line
 	__m128 tt2 = _mm_ror_ps(col2, 1);
@@ -231,7 +231,7 @@ DESIRE_FORCE_INLINE void Matrix4::Invert()
 	col3 = _mm_movehl_ps(trns3, trns2);
 }
 
-DESIRE_FORCE_INLINE void Matrix4::AffineInvert()
+inline void Matrix4::AffineInvert()
 {
 	__m128 inv0, inv1, inv2, inv3;
 	const __m128 tmp2 = col0.GetXYZ().Cross(col1.GetXYZ());
@@ -265,7 +265,7 @@ DESIRE_FORCE_INLINE void Matrix4::AffineInvert()
 	col3 = Vector4(Vector3(inv3), 1.0f);
 }
 
-DESIRE_FORCE_INLINE void Matrix4::OrthoInvert()
+inline void Matrix4::OrthoInvert()
 {
 	__m128 inv0, inv1, inv2, inv3;
 	__m128 tmp0, tmp1;
@@ -291,7 +291,7 @@ DESIRE_FORCE_INLINE void Matrix4::OrthoInvert()
 	col3 = Vector4(Vector3(inv3), 1.0f);
 }
 
-DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
+inline float Matrix4::CalculateDeterminant() const
 {
 	// Calculating the minterms for the first line
 	__m128 tt2 = _mm_ror_ps(col2, 1);
@@ -320,7 +320,7 @@ DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
 	return _mm_cvtss_f32(det);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
+inline Matrix4 Matrix4::CreateRotationX(float radians)
 {
 	__m128 s, c, res1, res2;
 	const __m128 mask_y = SIMD::MaskY();
@@ -339,7 +339,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationY(float radians)
+inline Matrix4 Matrix4::CreateRotationY(float radians)
 {
 	__m128 s, c, res0, res2;
 	const __m128 mask_x = SIMD::MaskX();
@@ -358,7 +358,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationY(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZ(float radians)
+inline Matrix4 Matrix4::CreateRotationZ(float radians)
 {
 	__m128 s, c, res0, res1;
 	const __m128 mask_x = SIMD::MaskX();
@@ -377,7 +377,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZ(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
+inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 {
 	__m128 s, c, X0, X1, Y0, Y1;
 	__m128 angles = Vector4(radiansXYZ, 0.0f);
@@ -400,7 +400,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
+inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 {
 	__m128 s, c, tmp0, tmp1, tmp2;
 	__m128 axis = unitVec;
@@ -436,7 +436,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 	);
 }
 
-DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& rotMat)
+inline Quat::Quat(const Matrix3& rotMat)
 {
 	const __m128 mask_x = SIMD::MaskX();
 	const __m128 mask_y = SIMD::MaskY();

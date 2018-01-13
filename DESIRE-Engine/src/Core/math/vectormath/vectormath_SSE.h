@@ -26,7 +26,7 @@
 	// isn't supported by Windows 8.1 x64 native due to the requirements for CMPXCHG16b, PrefetchW, and LAHF/SAHF
 	#include <pmmintrin.h>
 
-	static DESIRE_FORCE_INLINE __m128 _mm_blendv_ps(__m128 a, __m128 b, __m128 mask)
+	static inline __m128 _mm_blendv_ps(__m128 a, __m128 b, __m128 mask)
 	{
 		return _mm_or_ps(_mm_and_ps(mask, b), _mm_andnot_ps(mask, a));
 	}
@@ -35,7 +35,7 @@
 typedef __m128	vec_float3_t;
 typedef __m128	vec_float4_t;
 
-static DESIRE_FORCE_INLINE __m128 toM128(uint32_t x)
+static inline __m128 toM128(uint32_t x)
 {
 	return _mm_set1_ps(*(float*)&x);
 }
@@ -49,50 +49,50 @@ class SIMD
 {
 public:
 	// Construct from x, y, z, and w elements
-	static DESIRE_FORCE_INLINE void Construct(__m128& vec, float x, float y, float z, float w = 0.0f)
+	static inline void Construct(__m128& vec, float x, float y, float z, float w = 0.0f)
 	{
 		vec = _mm_setr_ps(x, y, z, w);
 	}
 
 	// Construct by setting all elements to the same scalar value
-	static DESIRE_FORCE_INLINE void Construct(__m128& vec, float scalar)
+	static inline void Construct(__m128& vec, float scalar)
 	{
 		vec = _mm_set1_ps(scalar);
 	}
 
 	// Load x, y, z, and w elements from the first four elements of a float array
-	static DESIRE_FORCE_INLINE void LoadXYZW(__m128& vec, const float *fptr)
+	static inline void LoadXYZW(__m128& vec, const float *fptr)
 	{
 		vec = _mm_castsi128_ps(_mm_lddqu_si128((const __m128i*)fptr));
 	}
 
 	// Store x, y, z, and w elements in the first four elements of a float array
-	static DESIRE_FORCE_INLINE void StoreXYZW(__m128 vec, float *fptr)
+	static inline void StoreXYZW(__m128 vec, float *fptr)
 	{
 		_mm_storeu_ps(fptr, vec);
 	}
 
 	// Set element
-	static DESIRE_FORCE_INLINE void SetX(__m128& vec, float x)
+	static inline void SetX(__m128& vec, float x)
 	{
 		vec = _mm_move_ss(vec, _mm_set_ss(x));
 	}
 
-	static DESIRE_FORCE_INLINE void SetY(__m128& vec, float y)
+	static inline void SetY(__m128& vec, float y)
 	{
 		__m128 t = _mm_move_ss(vec, _mm_set_ss(y));
 		t = _mm_shuffle_ps(t, t, _MM_SHUFFLE(3, 2, 0, 0));
 		vec = _mm_move_ss(t, vec);
 	}
 
-	static DESIRE_FORCE_INLINE void SetZ(__m128& vec, float z)
+	static inline void SetZ(__m128& vec, float z)
 	{
 		__m128 t = _mm_move_ss(vec, _mm_set_ss(z));
 		t = _mm_shuffle_ps(t, t, _MM_SHUFFLE(3, 0, 1, 0));
 		vec = _mm_move_ss(t, vec);
 	}
 
-	static DESIRE_FORCE_INLINE void SetW(__m128& vec, float w)
+	static inline void SetW(__m128& vec, float w)
 	{
 		__m128 t = _mm_move_ss(vec, _mm_set_ss(w));
 		t = _mm_shuffle_ps(t, t, _MM_SHUFFLE(0, 2, 1, 0));
@@ -100,60 +100,60 @@ public:
 	}
 
 	// Get element
-	static DESIRE_FORCE_INLINE float GetX(__m128 vec)		{ return _mm_cvtss_f32(vec); }
-	static DESIRE_FORCE_INLINE float GetY(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_YYYY(vec)); }
-	static DESIRE_FORCE_INLINE float GetZ(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_ZZZZ(vec)); }
-	static DESIRE_FORCE_INLINE float GetW(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_WWWW(vec)); }
+	static inline float GetX(__m128 vec)		{ return _mm_cvtss_f32(vec); }
+	static inline float GetY(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_YYYY(vec)); }
+	static inline float GetZ(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_ZZZZ(vec)); }
+	static inline float GetW(__m128 vec)		{ return _mm_cvtss_f32(SIMD::Swizzle_WWWW(vec)); }
 
 	// Operator overloads
-	static DESIRE_FORCE_INLINE __m128 Negate(__m128 vec)
+	static inline __m128 Negate(__m128 vec)
 	{
 		return _mm_xor_ps(vec, toM128(0x80000000));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Add(__m128 a, __m128 b)
+	static inline __m128 Add(__m128 a, __m128 b)
 	{
 		return _mm_add_ps(a, b);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Sub(__m128 a, __m128 b)
+	static inline __m128 Sub(__m128 a, __m128 b)
 	{
 		return _mm_sub_ps(a, b);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Mul(__m128 vec, float scalar)
+	static inline __m128 Mul(__m128 vec, float scalar)
 	{
 		return _mm_mul_ps(vec, _mm_set1_ps(scalar));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Mul(__m128 a, __m128 b)
+	static inline __m128 Mul(__m128 a, __m128 b)
 	{
 		return _mm_mul_ps(a, b);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 MulAdd(__m128 a, __m128 b, __m128 c)
+	static inline __m128 MulAdd(__m128 a, __m128 b, __m128 c)
 	{
 		return SIMD::Add(c, SIMD::Mul(a, b));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 Div(__m128 a, __m128 b)
+	static inline __m128 Div(__m128 a, __m128 b)
 	{
 		return _mm_div_ps(a, b);
 	}
 
 	// Comparison operators
-	static DESIRE_FORCE_INLINE bool OpCmpGE(__m128 a, __m128 b)
+	static inline bool OpCmpGE(__m128 a, __m128 b)
 	{
 		return (_mm_movemask_ps(_mm_cmpge_ps(a, b)) & 0x7) == 0x7;
 	}
 
-	static DESIRE_FORCE_INLINE bool OpCmpLE(__m128 a, __m128 b)
+	static inline bool OpCmpLE(__m128 a, __m128 b)
 	{
 		return (_mm_movemask_ps(_mm_cmple_ps(a, b)) & 0x7) == 0x7;
 	}
 
 	// Compute the dot product of two 3-D vectors
-	static DESIRE_FORCE_INLINE __m128 Dot3(__m128 a, __m128 b)
+	static inline __m128 Dot3(__m128 a, __m128 b)
 	{
 #if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0x77);
@@ -166,7 +166,7 @@ public:
 	}
 
 	// Compute the dot product of two 4-D vectors
-	static DESIRE_FORCE_INLINE __m128 Dot4(__m128 a, __m128 b)
+	static inline __m128 Dot4(__m128 a, __m128 b)
 	{
 #if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0xff);
@@ -180,7 +180,7 @@ public:
 	}
 
 	// Compute cross product of two 3-D vectors
-	static DESIRE_FORCE_INLINE __m128 Cross(__m128 a, __m128 b)
+	static inline __m128 Cross(__m128 a, __m128 b)
 	{
 		__m128 yzx0 = SIMD::Swizzle_YZXW(a);
 		__m128 yzx1 = SIMD::Swizzle_YZXW(b);
@@ -189,83 +189,91 @@ public:
 	}
 
 	// Compute the absolute value per element
-	static DESIRE_FORCE_INLINE __m128 AbsPerElem(__m128 vec)
+	static inline __m128 AbsPerElem(__m128 vec)
 	{
 		return _mm_and_ps(vec, toM128(0x7fffffff));
 	}
 
 	// Maximum of two vectors per element
-	static DESIRE_FORCE_INLINE __m128 MaxPerElem(__m128 a, __m128 b)
+	static inline __m128 MaxPerElem(__m128 a, __m128 b)
 	{
 		return _mm_max_ps(a, b);
 	}
 
 	// Minimum of two vectors per element
-	static DESIRE_FORCE_INLINE __m128 MinPerElem(__m128 a, __m128 b)
+	static inline __m128 MinPerElem(__m128 a, __m128 b)
 	{
 		return _mm_min_ps(a, b);
 	}
 
 	// Get maximum element
-	static DESIRE_FORCE_INLINE __m128 MaxElem3(__m128 vec)
+	static inline __m128 MaxElem3(__m128 vec)
 	{
 		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 MaxElem4(__m128 vec)
+	static inline __m128 MaxElem4(__m128 vec)
 	{
 		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Get minimum element
-	static DESIRE_FORCE_INLINE __m128 MinElem3(__m128 vec)
+	static inline __m128 MinElem3(__m128 vec)
 	{
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
-	static DESIRE_FORCE_INLINE __m128 MinElem4(__m128 vec)
+	static inline __m128 MinElem4(__m128 vec)
 	{
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Select packed single precision floating-point values from a and b using the mask
-	static DESIRE_FORCE_INLINE __m128 Blend(__m128 a, __m128 b, __m128 mask)
+	static inline __m128 Blend(__m128 a, __m128 b, __m128 mask)
 	{
 		return _mm_blendv_ps(a, b, mask);
 	}
 
 	// Select mask
-	static DESIRE_FORCE_INLINE __m128 MaskX()
+	static inline __m128 MaskX()
 	{
 		alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
 		return _mm_load_ps((float*)select_x);
 	}
-	static DESIRE_FORCE_INLINE __m128 MaskY()
+	static inline __m128 MaskY()
 	{
 		alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
 		return _mm_load_ps((float*)select_y);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 MaskZ()
+	static inline __m128 MaskZ()
 	{
 		alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
 		return _mm_load_ps((float*)select_z);
 	}
 
-	static DESIRE_FORCE_INLINE __m128 MaskW()
+	static inline __m128 MaskW()
 	{
 		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
 		return _mm_load_ps((float*)select_w);
 	}
 
 	// Swizzle
-	static DESIRE_FORCE_INLINE __m128 Swizzle_XXXX(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0)); }
-	static DESIRE_FORCE_INLINE __m128 Swizzle_YYYY(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1)); }
-	static DESIRE_FORCE_INLINE __m128 Swizzle_ZZZZ(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); }
-	static DESIRE_FORCE_INLINE __m128 Swizzle_WWWW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
+	static inline __m128 Swizzle_XXXX(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0)); }
+	static inline __m128 Swizzle_XXYY(__m128 vec)	{ return _mm_unpacklo_ps(vec, vec); }
+	static inline __m128 Swizzle_XXZZ(__m128 vec)	{ return _mm_moveldup_ps(vec); }
+	static inline __m128 Swizzle_XYXY(__m128 vec)	{ return _mm_movelh_ps(vec, vec); }
 
-	static DESIRE_FORCE_INLINE __m128 Swizzle_YZXW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1)); }
-	static DESIRE_FORCE_INLINE __m128 Swizzle_ZXYW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2)); }
+	static inline __m128 Swizzle_YYYY(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1)); }
+	static inline __m128 Swizzle_YYWW(__m128 vec)	{ return _mm_movehdup_ps(vec); }
+	static inline __m128 Swizzle_YZXW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1)); }
+
+	static inline __m128 Swizzle_ZXYW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2)); }
+	static inline __m128 Swizzle_ZWZW(__m128 vec)	{ return _mm_movehl_ps(vec, vec); }
+	static inline __m128 Swizzle_ZZWW(__m128 vec)	{ return _mm_unpackhi_ps(vec, vec); }
+	static inline __m128 Swizzle_ZZZZ(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); }
+
+	static inline __m128 Swizzle_WWWW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -275,14 +283,14 @@ public:
 #define _mm_ror_ps(vec, i)	_mm_shuffle_ps(vec, vec, _MM_SHUFFLE((uint8_t)(i + 3) % 4,(uint8_t)(i + 2) % 4,(uint8_t)(i + 1) % 4,(uint8_t)(i + 0) % 4))
 #define vec_nmsub(a, b, c)	SIMD::Sub(c, SIMD::Mul(a, b))
 
-static DESIRE_FORCE_INLINE __m128 newtonrapson_rsqrt4(const __m128 v)
+static inline __m128 newtonrapson_rsqrt4(const __m128 v)
 {
 	const __m128 approx = _mm_rsqrt_ps(v);
 	const __m128 muls = SIMD::Mul(SIMD::Mul(v, approx), approx);
 	return SIMD::Mul(SIMD::Mul(approx, 0.5f), SIMD::Sub(_mm_set1_ps(3.0f), muls));
 }
 
-static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
+static inline __m128 acosf4(__m128 x)
 {
 	__m128 xabs = _mm_and_ps(x, toM128(0x7fffffff));
 	__m128 select = _mm_cmplt_ps(x, _mm_setzero_ps());
@@ -313,7 +321,7 @@ static DESIRE_FORCE_INLINE __m128 acosf4(__m128 x)
 		select);
 }
 
-static DESIRE_FORCE_INLINE __m128 sinf4(__m128 x)
+static inline __m128 sinf4(__m128 x)
 {
 	// Common constants used to evaluate sinf4/cosf4/tanf4
 #define _SINCOS_CC0  -0.0013602249f
@@ -370,7 +378,7 @@ static DESIRE_FORCE_INLINE __m128 sinf4(__m128 x)
 		_mm_cmpeq_ps(_mm_and_ps(offset, toM128(0x2)), _mm_setzero_ps()));
 }
 
-static DESIRE_FORCE_INLINE void sincosf4(__m128 x, __m128 *s, __m128 *c)
+static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 {
 	__m128 xl, xl2, xl3;
 

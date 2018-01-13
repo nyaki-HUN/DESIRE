@@ -3,13 +3,13 @@
 class Matrix4
 {
 public:
-	DESIRE_FORCE_INLINE Matrix4()
+	inline Matrix4()
 	{
 		// No initialization
 	}
 
 	// Copy a 4x4 matrix
-	DESIRE_FORCE_INLINE Matrix4(const Matrix4& mat)
+	inline Matrix4(const Matrix4& mat)
 		: col0(mat.col0)
 		, col1(mat.col1)
 		, col2(mat.col2)
@@ -19,7 +19,7 @@ public:
 	}
 
 	// Construct a 4x4 matrix containing the specified columns
-	DESIRE_FORCE_INLINE Matrix4(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3)
+	inline Matrix4(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3)
 		: col0(col0)
 		, col1(col1)
 		, col2(col2)
@@ -29,7 +29,7 @@ public:
 	}
 
 	// Construct a 4x4 matrix from a 3x3 matrix and a 3-D vector
-	DESIRE_FORCE_INLINE Matrix4(const Matrix3& mat, const Vector3& translateVec)
+	inline Matrix4(const Matrix3& mat, const Vector3& translateVec)
 		: col0(mat.col0, 0.0f)
 		, col1(mat.col1, 0.0f)
 		, col2(mat.col2, 0.0f)
@@ -39,7 +39,7 @@ public:
 	}
 
 	// Construct a 4x4 matrix from a unit-length quaternion and a 3-D vector
-	DESIRE_FORCE_INLINE Matrix4(const Quat& unitQuat, const Vector3& translateVec)
+	inline Matrix4(const Quat& unitQuat, const Vector3& translateVec)
 	{
 		Matrix3 mat = Matrix3(unitQuat);
 		col0 = Vector4(mat.col0, 0.0f);
@@ -49,7 +49,7 @@ public:
 	}
 
 	// Set elements of a 4x4 matrix from a 16 element float array
-	DESIRE_FORCE_INLINE Matrix4(const float(&fptr)[16])
+	inline Matrix4(const float(&fptr)[16])
 	{
 		col0.LoadXYZW(&fptr[0]);
 		col1.LoadXYZW(&fptr[4]);
@@ -58,7 +58,7 @@ public:
 	}
 
 	// Store elements of a 4x4 matrix in a 16 elements float array
-	DESIRE_FORCE_INLINE void Store(float(&fptr)[16]) const
+	inline void Store(float(&fptr)[16]) const
 	{
 		col0.StoreXYZW(&fptr[0]);
 		col1.StoreXYZW(&fptr[4]);
@@ -68,7 +68,7 @@ public:
 
 	// Set the upper-left 3x3 submatrix
 	// NOTE: This function does not change the bottom row elements.
-	DESIRE_FORCE_INLINE Matrix4& SetUpper3x3(const Matrix3& mat3)
+	inline Matrix4& SetUpper3x3(const Matrix3& mat3)
 	{
 		col0.SetXYZ(mat3.col0);
 		col1.SetXYZ(mat3.col1);
@@ -77,7 +77,7 @@ public:
 	}
 
 	// Get the upper-left 3x3 submatrix of a 4x4 matrix
-	DESIRE_FORCE_INLINE Matrix3 GetUpper3x3() const
+	inline Matrix3 GetUpper3x3() const
 	{
 		return Matrix3(
 			col0.GetXYZ(),
@@ -88,33 +88,33 @@ public:
 
 	// Set translation component
 	// NOTE: This function does not change the bottom row elements.
-	DESIRE_FORCE_INLINE Matrix4& SetTranslation(const Vector3& translateVec)
+	inline Matrix4& SetTranslation(const Vector3& translateVec)
 	{
 		col3.SetXYZ(translateVec);
 		return *this;
 	}
 
 	// Get the translation component of a 4x4 matrix
-	DESIRE_FORCE_INLINE Vector3 GetTranslation() const
+	inline Vector3 GetTranslation() const
 	{
 		return col3.GetXYZ();
 	}
 
 	// Set the column of a 4x4 matrix referred to by the specified index
-	DESIRE_FORCE_INLINE Matrix4& SetCol(int idx, const Vector4& vec)
+	inline Matrix4& SetCol(int idx, const Vector4& vec)
 	{
 		*(&col0 + idx) = vec;
 		return *this;
 	}
 
 	// Get the column of a 4x4 matrix referred to by the specified index
-	DESIRE_FORCE_INLINE const Vector4& GetCol(int idx) const
+	inline const Vector4& GetCol(int idx) const
 	{
 		return *(&col0 + idx);
 	}
 
 	// Set the first row of a 4x4 matrix
-	DESIRE_FORCE_INLINE void SetRow0(const Vector4& vec)
+	inline void SetRow0(const Vector4& vec)
 	{
 		col0.SetX(vec.GetX());
 		col1.SetX(vec.GetY());
@@ -123,31 +123,31 @@ public:
 	}
 
 	// Get the first row of a 4x4 matrix
-	DESIRE_FORCE_INLINE Vector4 GetRow0() const
+	inline Vector4 GetRow0() const
 	{
 		return Vector4(col0.GetX(), col1.GetX(), col2.GetX(), col3.GetX());
 	}
 
 	// Get the second row of a 4x4 matrix
-	DESIRE_FORCE_INLINE Vector4 GetRow1() const
+	inline Vector4 GetRow1() const
 	{
 		return Vector4(col0.GetY(), col1.GetY(), col2.GetY(), col3.GetY());
 	}
 
 	// Get the third row of a 4x4 matrix
-	DESIRE_FORCE_INLINE Vector4 GetRow2() const
+	inline Vector4 GetRow2() const
 	{
 		return Vector4(col0.GetZ(), col1.GetZ(), col2.GetZ(), col3.GetZ());
 	}
 
 	// Get the fourth row of a 4x4 matrix
-	DESIRE_FORCE_INLINE Vector4 GetRow3() const
+	inline Vector4 GetRow3() const
 	{
 		return Vector4(col0.GetW(), col1.GetW(), col2.GetW(), col3.GetW());
 	}
 
 	// Assign one 4x4 matrix to another
-	DESIRE_FORCE_INLINE Matrix4& operator =(const Matrix4& mat)
+	inline Matrix4& operator =(const Matrix4& mat)
 	{
 		col0 = mat.col0;
 		col1 = mat.col1;
@@ -157,13 +157,13 @@ public:
 	}
 
 	// Negate all elements of a 4x4 matrix
-	DESIRE_FORCE_INLINE Matrix4 operator -() const
+	inline Matrix4 operator -() const
 	{
 		return Matrix4(-col0, -col1, -col2, -col3);
 	}
 
 	// Add two 4x4 matrices
-	DESIRE_FORCE_INLINE Matrix4 operator +(const Matrix4& mat) const
+	inline Matrix4 operator +(const Matrix4& mat) const
 	{
 		return Matrix4(
 			col0 + mat.col0,
@@ -174,7 +174,7 @@ public:
 	}
 
 	// Subtract a 4x4 matrix from another 4x4 matrix
-	DESIRE_FORCE_INLINE Matrix4 operator -(const Matrix4& mat) const
+	inline Matrix4 operator -(const Matrix4& mat) const
 	{
 		return Matrix4(
 			col0 - mat.col0,
@@ -185,13 +185,13 @@ public:
 	}
 
 	// Multiply a 4x4 matrix by a scalar
-	DESIRE_FORCE_INLINE Matrix4 operator *(float scalar) const
+	inline Matrix4 operator *(float scalar) const
 	{
 		return Matrix4(col0 * scalar, col1 * scalar, col2 * scalar, col3 * scalar);
 	}
 
 	// Multiply a 4x4 matrix by a 4-D vector
-	DESIRE_FORCE_INLINE Vector4 operator *(const Vector4& vec) const
+	inline Vector4 operator *(const Vector4& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
 		vec_float4_t result;
@@ -220,7 +220,7 @@ public:
 	}
 
 	// Multiply a 4x4 matrix by a 3-D vector
-	DESIRE_FORCE_INLINE Vector4 operator *(const Vector3& vec) const
+	inline Vector4 operator *(const Vector3& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
 		vec_float4_t result;
@@ -247,7 +247,7 @@ public:
 	}
 
 	// Multiply two 4x4 matrices
-	DESIRE_FORCE_INLINE Matrix4 operator *(const Matrix4& mat) const
+	inline Matrix4 operator *(const Matrix4& mat) const
 	{
 		return Matrix4(
 			*this * mat.col0,
@@ -258,28 +258,28 @@ public:
 	}
 
 	// Perform compound assignment and addition with a 4x4 matrix
-	DESIRE_FORCE_INLINE Matrix4& operator +=(const Matrix4& mat)
+	inline Matrix4& operator +=(const Matrix4& mat)
 	{
 		*this = *this + mat;
 		return *this;
 	}
 
 	// Perform compound assignment and subtraction by a 4x4 matrix
-	DESIRE_FORCE_INLINE Matrix4& operator -=(const Matrix4& mat)
+	inline Matrix4& operator -=(const Matrix4& mat)
 	{
 		*this = *this - mat;
 		return *this;
 	}
 
 	// Perform compound assignment and multiplication by a scalar
-	DESIRE_FORCE_INLINE Matrix4& operator *=(float scalar)
+	inline Matrix4& operator *=(float scalar)
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
 	// Perform compound assignment and multiplication by a 4x4 matrix
-	DESIRE_FORCE_INLINE Matrix4& operator *=(const Matrix4& mat)
+	inline Matrix4& operator *=(const Matrix4& mat)
 	{
 		*this = *this * mat;
 		return *this;
@@ -287,7 +287,7 @@ public:
 
 	// Append (post-multiply) a scale transformation to a 4x4 matrix
 	// NOTE: Faster than creating and multiplying a scale transformation matrix
-	DESIRE_FORCE_INLINE Matrix4& AppendScale(const Vector3& scaleVec)
+	inline Matrix4& AppendScale(const Vector3& scaleVec)
 	{
 		col0 *= scaleVec.GetX();
 		col1 *= scaleVec.GetY();
@@ -297,7 +297,7 @@ public:
 
 	// Prepend (pre-multiply) a scale transformation to a 4x4 matrix
 	// NOTE: Faster than creating and multiplying a scale transformation matrix
-	DESIRE_FORCE_INLINE Matrix4& PrependScale(const Vector3& scaleVec)
+	inline Matrix4& PrependScale(const Vector3& scaleVec)
 	{
 		const Vector4 scale4(scaleVec, 1.0f);
 		col0 = col0.MulPerElem(scale4);
@@ -308,25 +308,25 @@ public:
 	}
 
 	// Transpose a 4x4 matrix
-	DESIRE_FORCE_INLINE void Transpose();
+	inline void Transpose();
 
 	// Compute the inverse of a 4x4 matrix
 	// NOTE: Result is unpredictable when the determinant of mat is equal to or near 0
-	DESIRE_FORCE_INLINE void Invert();
+	inline void Invert();
 
 	// Compute the inverse of a 4x4 matrix, which is expected to be an affine matrix
 	// NOTE: This can be used to achieve better performance than a general inverse when the specified 4x4 matrix meets the given restrictions. The result is unpredictable when the determinant of mat is equal to or near 0
-	DESIRE_FORCE_INLINE void AffineInvert();
+	inline void AffineInvert();
 
 	// Compute the inverse of a 4x4 matrix, which is expected to be an affine matrix with an orthogonal upper-left 3x3 submatrix
 	// NOTE: This can be used to achieve better performance than a general inverse when the specified 4x4 matrix meets the given restrictions
-	DESIRE_FORCE_INLINE void OrthoInvert();
+	inline void OrthoInvert();
 
 	// Determinant of a 4x4 matrix
-	DESIRE_FORCE_INLINE float CalculateDeterminant() const;
+	inline float CalculateDeterminant() const;
 
 	// Construct an identity 4x4 matrix
-	static DESIRE_FORCE_INLINE Matrix4 Identity()
+	static inline Matrix4 Identity()
 	{
 		return Matrix4(
 			Vector4::AxisX(),
@@ -337,7 +337,7 @@ public:
 	}
 
 	// Construct a 4x4 matrix to perform translation
-	static DESIRE_FORCE_INLINE Matrix4 CreateTranslation(const Vector3& translateVec)
+	static inline Matrix4 CreateTranslation(const Vector3& translateVec)
 	{
 		return Matrix4(
 			Vector4::AxisX(),
@@ -348,28 +348,28 @@ public:
 	}
 
 	// Construct a 4x4 matrix to rotate around the x axis
-	static DESIRE_FORCE_INLINE Matrix4 CreateRotationX(float radians);
+	static inline Matrix4 CreateRotationX(float radians);
 
 	// Construct a 4x4 matrix to rotate around the y axis
-	static DESIRE_FORCE_INLINE Matrix4 CreateRotationY(float radians);
+	static inline Matrix4 CreateRotationY(float radians);
 
 	// Construct a 4x4 matrix to rotate around the z axis
-	static DESIRE_FORCE_INLINE Matrix4 CreateRotationZ(float radians);
+	static inline Matrix4 CreateRotationZ(float radians);
 
 	// Construct a 4x4 matrix to rotate around the x, y, and z axes
-	static DESIRE_FORCE_INLINE Matrix4 CreateRotationZYX(const Vector3& radiansXYZ);
+	static inline Matrix4 CreateRotationZYX(const Vector3& radiansXYZ);
 
 	// Construct a 4x4 matrix to rotate around a unit-length 3-D vector
-	static DESIRE_FORCE_INLINE Matrix4 CreateRotation(float radians, const Vector3& unitVec);
+	static inline Matrix4 CreateRotation(float radians, const Vector3& unitVec);
 
 	// Construct a rotation matrix from a unit-length quaternion
-	static DESIRE_FORCE_INLINE Matrix4 CreateRotation(const Quat& unitQuat)
+	static inline Matrix4 CreateRotation(const Quat& unitQuat)
 	{
 		return Matrix4(unitQuat, Vector3(0.0f));
 	}
 
 	// Construct a 4x4 matrix to perform scaling
-	static DESIRE_FORCE_INLINE Matrix4 CreateScale(const Vector3& scaleVec)
+	static inline Matrix4 CreateScale(const Vector3& scaleVec)
 	{
 #if defined(DESIRE_USE_SSE) || defined(__ARM_NEON__)
 		const Vector4 zero(0.0f);
@@ -396,7 +396,7 @@ public:
 };
 
 // Multiply a 4x4 matrix by a scalar
-DESIRE_FORCE_INLINE Matrix4 operator *(float scalar, const Matrix4& mat)
+inline Matrix4 operator *(float scalar, const Matrix4& mat)
 {
 	return mat * scalar;
 }

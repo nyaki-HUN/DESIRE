@@ -3,13 +3,13 @@
 class Matrix3
 {
 public:
-	DESIRE_FORCE_INLINE Matrix3()
+	inline Matrix3()
 	{
 		// No initialization
 	}
 
 	// Copy a 3x3 matrix
-	DESIRE_FORCE_INLINE Matrix3(const Matrix3& mat)
+	inline Matrix3(const Matrix3& mat)
 		: col0(mat.col0)
 		, col1(mat.col1)
 		, col2(mat.col2)
@@ -18,7 +18,7 @@ public:
 	}
 
 	// Construct a 3x3 matrix containing the specified columns
-	DESIRE_FORCE_INLINE Matrix3(const Vector3& col0, const Vector3& col1, const Vector3& col2)
+	inline Matrix3(const Vector3& col0, const Vector3& col1, const Vector3& col2)
 		: col0(col0)
 		, col1(col1)
 		, col2(col2)
@@ -27,7 +27,7 @@ public:
 	}
 
 	// Construct a 3x3 rotation matrix from a unit-length quaternion
-	explicit DESIRE_FORCE_INLINE Matrix3(const Quat& unitQuat)
+	explicit inline Matrix3(const Quat& unitQuat);
 	{
 #if defined(DESIRE_USE_SSE)
 		const __m128 xyzw_2 = SIMD::Add(unitQuat, unitQuat);
@@ -76,20 +76,20 @@ public:
 	}
 
 	// Set the column of a 3x3 matrix referred to by the specified index
-	DESIRE_FORCE_INLINE Matrix3& SetCol(int idx, const Vector3& vec)
+	inline Matrix3& SetCol(int idx, const Vector3& vec)
 	{
 		*(&col0 + idx) = vec;
 		return *this;
 	}
 
 	// Get the column of a 3x3 matrix referred to by the specified index
-	DESIRE_FORCE_INLINE const Vector3& GetCol(int idx) const
+	inline const Vector3& GetCol(int idx) const
 	{
 		return *(&col0 + idx);
 	}
 
 	// Set the first row of a 3x3 matrix
-	DESIRE_FORCE_INLINE void SetRow0(const Vector3& vec)
+	inline void SetRow0(const Vector3& vec)
 	{
 		col0.SetX(vec.GetX());
 		col1.SetX(vec.GetY());
@@ -97,25 +97,25 @@ public:
 	}
 
 	// Get the first row of a 3x3 matrix
-	DESIRE_FORCE_INLINE Vector3 GetRow0() const
+	inline Vector3 GetRow0() const
 	{
 		return Vector3(col0.GetX(), col1.GetX(), col2.GetX());
 	}
 
 	// Get the second row of a 3x3 matrix
-	DESIRE_FORCE_INLINE Vector3 GetRow1() const
+	inline Vector3 GetRow1() const
 	{
 		return Vector3(col0.GetY(), col1.GetY(), col2.GetY());
 	}
 
 	// Get the third row of a 3x3 matrix
-	DESIRE_FORCE_INLINE Vector3 GetRow2() const
+	inline Vector3 GetRow2() const
 	{
 		return Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ());
 	}
 
 	// Assign one 3x3 matrix to another
-	DESIRE_FORCE_INLINE Matrix3& operator =(const Matrix3& mat)
+	inline Matrix3& operator =(const Matrix3& mat)
 	{
 		col0 = mat.col0;
 		col1 = mat.col1;
@@ -124,13 +124,13 @@ public:
 	}
 
 	// Negate all elements of a 3x3 matrix
-	DESIRE_FORCE_INLINE Matrix3 operator -() const
+	inline Matrix3 operator -() const
 	{
 		return Matrix3(-col0, -col1, -col2);
 	}
 
 	// Add two 3x3 matrices
-	DESIRE_FORCE_INLINE Matrix3 operator +(const Matrix3& mat) const
+	inline Matrix3 operator +(const Matrix3& mat) const
 	{
 		return Matrix3(
 			col0 + mat.col0,
@@ -140,7 +140,7 @@ public:
 	}
 
 	// Subtract a 3x3 matrix from another 3x3 matrix
-	DESIRE_FORCE_INLINE Matrix3 operator -(const Matrix3& mat) const
+	inline Matrix3 operator -(const Matrix3& mat) const
 	{
 		return Matrix3(
 			col0 - mat.col0,
@@ -150,13 +150,13 @@ public:
 	}
 
 	// Multiply a 3x3 matrix by a scalar
-	DESIRE_FORCE_INLINE Matrix3 operator *(float scalar) const
+	inline Matrix3 operator *(float scalar) const
 	{
 		return Matrix3(col0 * scalar, col1 * scalar, col2 * scalar);
 	}
 
 	// Multiply a 3x3 matrix by a 3-D vector
-	DESIRE_FORCE_INLINE Vector3 operator *(const Vector3& vec) const
+	inline Vector3 operator *(const Vector3& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
 		vec_float3_t result;
@@ -182,7 +182,7 @@ public:
 	}
 
 	// Multiply two 3x3 matrices
-	DESIRE_FORCE_INLINE Matrix3 operator *(const Matrix3& mat) const
+	inline Matrix3 operator *(const Matrix3& mat) const
 	{
 		return Matrix3(
 			*this * mat.col0,
@@ -192,28 +192,28 @@ public:
 	}
 
 	// Perform compound assignment and addition with a 3x3 matrix
-	DESIRE_FORCE_INLINE Matrix3& operator +=(const Matrix3& mat)
+	inline Matrix3& operator +=(const Matrix3& mat)
 	{
 		*this = *this + mat;
 		return *this;
 	}
 
 	// Perform compound assignment and subtraction by a 3x3 matrix
-	DESIRE_FORCE_INLINE Matrix3& operator -=(const Matrix3& mat)
+	inline Matrix3& operator -=(const Matrix3& mat)
 	{
 		*this = *this - mat;
 		return *this;
 	}
 
 	// Perform compound assignment and multiplication by a scalar
-	DESIRE_FORCE_INLINE Matrix3& operator *=(float scalar)
+	inline Matrix3& operator *=(float scalar)
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
 	// Perform compound assignment and multiplication by a 3x3 matrix
-	DESIRE_FORCE_INLINE Matrix3& operator *=(const Matrix3& mat)
+	inline Matrix3& operator *=(const Matrix3& mat)
 	{
 		*this = *this * mat;
 		return *this;
@@ -221,7 +221,7 @@ public:
 
 	// Append (post-multiply) a scale transformation to a 3x3 matrix
 	// NOTE: Faster than creating and multiplying a scale transformation matrix.
-	DESIRE_FORCE_INLINE Matrix3& AppendScale(const Vector3& scaleVec)
+	inline Matrix3& AppendScale(const Vector3& scaleVec)
 	{
 		col0 *= scaleVec.GetX();
 		col1 *= scaleVec.GetY();
@@ -231,7 +231,7 @@ public:
 
 	// Prepend (pre-multiply) a scale transformation to a 3x3 matrix
 	// NOTE: Faster than creating and multiplying a scale transformation matrix.
-	DESIRE_FORCE_INLINE Matrix3& PrependScale(const Vector3& scaleVec)
+	inline Matrix3& PrependScale(const Vector3& scaleVec)
 	{
 		col0 = col0.MulPerElem(scaleVec);
 		col1 = col1.MulPerElem(scaleVec);
@@ -240,7 +240,7 @@ public:
 	}
 
 	// Transpose a 3x3 matrix
-	DESIRE_FORCE_INLINE void Transpose()
+	inline void Transpose()
 	{
 #if defined(DESIRE_USE_SSE)
 		const __m128 mask_y = SIMD::MaskY();
@@ -266,16 +266,16 @@ public:
 
 	// Compute the inverse of a 3x3 matrix
 	// NOTE: Result is unpredictable when the determinant of mat is equal to or near 0
-	DESIRE_FORCE_INLINE void Invert();
+	inline void Invert();
 
 	// Determinant of a 3x3 matrix
-	DESIRE_FORCE_INLINE float CalculateDeterminant() const
+	inline float CalculateDeterminant() const
 	{
 		return col2.Dot(col0.Cross(col1));
 	}
 
 	// Construct an identity 3x3 matrix
-	static DESIRE_FORCE_INLINE Matrix3 Identity()
+	static inline Matrix3 Identity()
 	{
 		return Matrix3(
 			Vector3::AxisX(),
@@ -285,28 +285,28 @@ public:
 	}
 
 	// Construct a 3x3 matrix to rotate around the x axis
-	static DESIRE_FORCE_INLINE Matrix3 CreateRotationX(float radians);
+	static inline Matrix3 CreateRotationX(float radians);
 
 	// Construct a 3x3 matrix to rotate around the y axis
-	static DESIRE_FORCE_INLINE Matrix3 CreateRotationY(float radians);
+	static inline Matrix3 CreateRotationY(float radians);
 
 	// Construct a 3x3 matrix to rotate around the z axis
-	static DESIRE_FORCE_INLINE Matrix3 CreateRotationZ(float radians);
+	static inline Matrix3 CreateRotationZ(float radians);
 
 	// Construct a 3x3 matrix to rotate around the x, y, and z axes
-	static DESIRE_FORCE_INLINE Matrix3 CreateRotationZYX(const Vector3& radiansXYZ);
+	static inline Matrix3 CreateRotationZYX(const Vector3& radiansXYZ);
 
 	// Construct a 3x3 matrix to rotate around a unit-length 3-D vector
-	static DESIRE_FORCE_INLINE Matrix3 CreateRotation(float radians, const Vector3& unitVec);
+	static inline Matrix3 CreateRotation(float radians, const Vector3& unitVec);
 
 	// Construct a rotation matrix from a unit-length quaternion
-	static DESIRE_FORCE_INLINE Matrix3 CreateRotation(const Quat& unitQuat)
+	static inline Matrix3 CreateRotation(const Quat& unitQuat)
 	{
 		return Matrix3(unitQuat);
 	}
 
 	// Construct a 3x3 matrix to perform scaling
-	static DESIRE_FORCE_INLINE Matrix3 CreateScale(const Vector3& scaleVec)
+	static inline Matrix3 CreateScale(const Vector3& scaleVec)
 	{
 #if defined(DESIRE_USE_SSE) || defined(__ARM_NEON__)
 		const Vector3 zero(0.0f);
@@ -330,7 +330,7 @@ public:
 };
 
 // Multiply a 3x3 matrix by a scalar
-DESIRE_FORCE_INLINE Matrix3 operator *(float scalar, const Matrix3& mat)
+inline Matrix3 operator *(float scalar, const Matrix3& mat)
 {
 	return mat * scalar;
 }

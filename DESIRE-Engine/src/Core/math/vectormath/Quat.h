@@ -5,73 +5,73 @@ class Matrix3;
 class Quat
 {
 public:
-	DESIRE_FORCE_INLINE Quat()
+	inline Quat()
 	{
 		// No initialization
 	}
 
-	DESIRE_FORCE_INLINE Quat(const Quat& vec)
+	inline Quat(const Quat& vec)
 		: mVec128(vec.mVec128)
 	{
 
 	}
 	
-	DESIRE_FORCE_INLINE Quat(vec_float4_t vf4)
+	inline Quat(vec_float4_t vf4)
 		: mVec128(vf4)
 	{
 
 	}
 	
-	DESIRE_FORCE_INLINE Quat(float x, float y, float z, float w)
+	inline Quat(float x, float y, float z, float w)
 	{
 		SIMD::Construct(mVec128, x, y, z, w);
 	}
 
 	// Convert a rotation matrix to a unit-length quaternion
-	explicit DESIRE_FORCE_INLINE Quat(const Matrix3& rotMat);
+	explicit inline Quat(const Matrix3& rotMat);
 
 	// Load x, y, z, and w elements from the first four words of a float array
-	DESIRE_FORCE_INLINE void LoadXYZW(const float *fptr)
+	inline void LoadXYZW(const float *fptr)
 	{
 		SIMD::LoadXYZW(mVec128, fptr);
 	}
 
 	// Store x, y, z, and w elements of a quaternion in the first four words of a float array
-	DESIRE_FORCE_INLINE void StoreXYZW(float *fptr) const
+	inline void StoreXYZW(float *fptr) const
 	{
 		SIMD::StoreXYZW(mVec128, fptr);
 	}
 
 	// Set element
-	DESIRE_FORCE_INLINE void SetX(float x)		{ SIMD::SetX(mVec128, x); }
-	DESIRE_FORCE_INLINE void SetY(float y)		{ SIMD::SetY(mVec128, y); }
-	DESIRE_FORCE_INLINE void SetZ(float z)		{ SIMD::SetZ(mVec128, z); }
-	DESIRE_FORCE_INLINE void SetW(float w)		{ SIMD::SetW(mVec128, w); }
+	inline void SetX(float x)		{ SIMD::SetX(mVec128, x); }
+	inline void SetY(float y)		{ SIMD::SetY(mVec128, y); }
+	inline void SetZ(float z)		{ SIMD::SetZ(mVec128, z); }
+	inline void SetW(float w)		{ SIMD::SetW(mVec128, w); }
 
 	// Get element
-	DESIRE_FORCE_INLINE float GetX() const		{ return SIMD::GetX(mVec128); }
-	DESIRE_FORCE_INLINE float GetY() const		{ return SIMD::GetY(mVec128); }
-	DESIRE_FORCE_INLINE float GetZ() const		{ return SIMD::GetZ(mVec128); }
-	DESIRE_FORCE_INLINE float GetW() const		{ return SIMD::GetW(mVec128); }
+	inline float GetX() const		{ return SIMD::GetX(mVec128); }
+	inline float GetY() const		{ return SIMD::GetY(mVec128); }
+	inline float GetZ() const		{ return SIMD::GetZ(mVec128); }
+	inline float GetW() const		{ return SIMD::GetW(mVec128); }
 
 	// Operator overloads
-	DESIRE_FORCE_INLINE operator vec_float4_t() const
+	inline operator vec_float4_t() const
 	{
 		return mVec128;
 	}
 
-	DESIRE_FORCE_INLINE Quat& operator =(const Quat& quat)
+	inline Quat& operator =(const Quat& quat)
 	{
 		mVec128 = quat.mVec128;
 		return *this;
 	}
 
-	DESIRE_FORCE_INLINE Quat operator -() const						{ return SIMD::Negate(mVec128); }
-	DESIRE_FORCE_INLINE Quat operator +(const Quat& quat) const		{ return SIMD::Add(mVec128, quat.mVec128); }
-	DESIRE_FORCE_INLINE Quat operator -(const Quat& quat) const		{ return SIMD::Sub(mVec128, quat.mVec128); }
-	DESIRE_FORCE_INLINE Quat operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
+	inline Quat operator -() const						{ return SIMD::Negate(mVec128); }
+	inline Quat operator +(const Quat& quat) const		{ return SIMD::Add(mVec128, quat.mVec128); }
+	inline Quat operator -(const Quat& quat) const		{ return SIMD::Sub(mVec128, quat.mVec128); }
+	inline Quat operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
 
-	DESIRE_FORCE_INLINE Quat operator *(const Quat& quat) const
+	inline Quat operator *(const Quat& quat) const
 	{
 #if defined(DESIRE_USE_SSE)
 		const __m128 tmp0 = SIMD::Swizzle_YZXW(mVec128);
@@ -99,61 +99,61 @@ public:
 #endif
 	}
 
-	DESIRE_FORCE_INLINE Quat operator /(float scalar) const
+	inline Quat operator /(float scalar) const
 	{
 		return (*this * (1.0f / scalar));
 	}
 
-	DESIRE_FORCE_INLINE Quat& operator +=(const Quat& quat)
+	inline Quat& operator +=(const Quat& quat)
 	{
 		*this = *this + quat;
 		return *this;
 	}
 
-	DESIRE_FORCE_INLINE Quat& operator -=(const Quat& quat)
+	inline Quat& operator -=(const Quat& quat)
 	{
 		*this = *this - quat;
 		return *this;
 	}
 
-	DESIRE_FORCE_INLINE Quat& operator *=(float scalar)
+	inline Quat& operator *=(float scalar)
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
-	DESIRE_FORCE_INLINE Quat& operator *=(const Quat& quat)
+	inline Quat& operator *=(const Quat& quat)
 	{
 		*this = *this * quat;
 		return *this;
 	}
 
-	DESIRE_FORCE_INLINE Quat& operator /=(float scalar)
+	inline Quat& operator /=(float scalar)
 	{
 		*this = *this / scalar;
 		return *this;
 	}
 
 	// Compute the dot product of two quaternions
-	DESIRE_FORCE_INLINE float Dot(const Quat& quat) const
+	inline float Dot(const Quat& quat) const
 	{
 		return SIMD::GetX(SIMD::Dot4(mVec128, quat));
 	}
 
 	// Compute the norm of a quaternion
-	DESIRE_FORCE_INLINE float Norm() const
+	inline float Norm() const
 	{
 		return Dot(*this);
 	}
 
 	// Compute the length of a quaternion
-	DESIRE_FORCE_INLINE float Length() const
+	inline float Length() const
 	{
 		return std::sqrt(Norm());
 	}
 
 	// Compute the conjugate of a quaternion
-	DESIRE_FORCE_INLINE Quat Conjugate() const
+	inline Quat Conjugate() const
 	{
 #if defined(DESIRE_USE_SSE)
 		alignas(16) const uint32_t mask[4] = { 0x80000000, 0x80000000, 0x80000000, 0 };
@@ -168,7 +168,7 @@ public:
 	}
 
 	// Compute the Euler angle representation of the rotation in radians
-	DESIRE_FORCE_INLINE Vector3 EulerAngles() const
+	inline Vector3 EulerAngles() const
 	{
 		const vec_float4_t vecSq2 = SIMD::Mul(SIMD::Mul(mVec128, mVec128), 2.0f);
 		const float tmpX1 = 1.0f - (SIMD::GetX(vecSq2) + SIMD::GetY(vecSq2));
@@ -190,7 +190,7 @@ public:
 	}
 
 	// Rotate a 3-D vector with this unit-length quaternion
-	DESIRE_FORCE_INLINE Vector3 RotateVec(const Vector3& vec) const
+	inline Vector3 RotateVec(const Vector3& vec) const
 	{
 #if defined(DESIRE_USE_SSE)
 		const __m128 tmp0 = SIMD::Swizzle_YZXW(mVec128);
@@ -226,14 +226,14 @@ public:
 
 	// Normalize a quaternion
 	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
-	DESIRE_FORCE_INLINE void Normalize()
+	inline void Normalize()
 	{
 		mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
 
 	// Get normalized quaternion
 	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
-	DESIRE_FORCE_INLINE Quat Normalized() const
+	inline Quat Normalized() const
 	{
 		return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
 	}
@@ -242,7 +242,7 @@ public:
 	// NOTE: 
 	// Interpolates along the shortest path between orientations
 	// Does not clamp t between 0 and 1.
-	static DESIRE_FORCE_INLINE Quat Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
+	static inline Quat Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 	{
 #if defined(DESIRE_USE_SSE)
 		__m128 cosAngle = SIMD::Dot4(unitQuat0, unitQuat1);
@@ -294,19 +294,19 @@ public:
 
 
 	// Spherical quadrangle interpolation
-	static DESIRE_FORCE_INLINE Quat Squad(float t, const Quat& unitQuat0, const Quat& unitQuat1, const Quat& unitQuat2, const Quat& unitQuat3)
+	static inline Quat Squad(float t, const Quat& unitQuat0, const Quat& unitQuat1, const Quat& unitQuat2, const Quat& unitQuat3)
 	{
 		return Quat::Slerp((2.0f * t) * (1.0f - t), Quat::Slerp(t, unitQuat0, unitQuat3), Quat::Slerp(t, unitQuat1, unitQuat2));
 	}
 
 	// Construct an identity quaternion
-	static DESIRE_FORCE_INLINE Quat Identity()
+	static inline Quat Identity()
 	{
 		return Quat(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	// Construct a quaternion to rotate around a unit-length 3-D vector
-	static DESIRE_FORCE_INLINE Quat CreateRotation(float radians, const Vector3& unitVec)
+	static inline Quat CreateRotation(float radians, const Vector3& unitVec)
 	{
 		Quat result;
 		const float halfAngle = radians * 0.5f;
@@ -324,7 +324,7 @@ public:
 	}
 
 	// Construct a quaternion to rotate around the x axis
-	static DESIRE_FORCE_INLINE Quat CreateRotationX(float radians)
+	static inline Quat CreateRotationX(float radians)
 	{
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
@@ -340,7 +340,7 @@ public:
 	}
 
 	// Construct a quaternion to rotate around the y axis
-	static DESIRE_FORCE_INLINE Quat CreateRotationY(float radians)
+	static inline Quat CreateRotationY(float radians)
 	{
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
@@ -356,7 +356,7 @@ public:
 	}
 
 	// Construct a quaternion to rotate around the z axis
-	static DESIRE_FORCE_INLINE Quat CreateRotationZ(float radians)
+	static inline Quat CreateRotationZ(float radians)
 	{
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
@@ -372,7 +372,7 @@ public:
 	}
 
 	// Construct a quaternion to rotate using Euler angles for each axis
-	static DESIRE_FORCE_INLINE Quat CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
+	static inline Quat CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
 	{
 #if defined(DESIRE_USE_SSE)
 		__m128 s, c;
@@ -408,7 +408,7 @@ public:
 
 	// Construct a quaternion to rotate between two unit-length 3-D vectors
 	// NOTE: The result is unpredictable if unitVec0 and unitVec1 point in opposite directions.
-	static DESIRE_FORCE_INLINE Quat CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo)
+	static inline Quat CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo)
 	{
 		Quat result;
 #if defined(DESIRE_USE_SSE)
@@ -432,7 +432,7 @@ private:
 };
 
 // Multiply a quaternion by a scalar
-DESIRE_FORCE_INLINE Quat operator *(float scalar, const Quat& quat)
+inline Quat operator *(float scalar, const Quat& quat)
 {
 	return quat * scalar;
 }

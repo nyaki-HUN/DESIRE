@@ -5,7 +5,11 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 #define ARM_NEON_GCC_COMPATIBILITY 1
-#include <arm_neon.h>
+#if defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64)
+	#include <arm64_neon.h>
+#else
+	#include <arm_neon.h>
+#endif
 
 typedef float32x4_t	vec_float3_t;
 typedef float32x4_t	vec_float4_t;
@@ -18,73 +22,73 @@ class SIMD
 {
 public:
 	// Construct from x, y, z, and w elements
-	static DESIRE_FORCE_INLINE void Construct(float32x4_t& vec, float x, float y, float z, float w = 0.0f)
+	static inline void Construct(float32x4_t& vec, float x, float y, float z, float w = 0.0f)
 	{
 		vec = (float32x4_t){ x, y, z, w };
 	}
 
 	// Construct by setting all elements to the same scalar value
-	static DESIRE_FORCE_INLINE void Construct(float32x4_t& vec, float scalar)
+	static inline void Construct(float32x4_t& vec, float scalar)
 	{
 		vec = vdupq_n_f32(scalar);
 	}
 
 	// Load x, y, z, and w elements from the first four elements of a float array
-	static DESIRE_FORCE_INLINE void LoadXYZW(float32x4_t& vec, const float *fptr)
+	static inline void LoadXYZW(float32x4_t& vec, const float *fptr)
 	{
 		vec = vld1q_f32(fptr);
 	}
 
 	// Store x, y, z, and w elements in the first four elements of a float array
-	static DESIRE_FORCE_INLINE void StoreXYZW(float32x4_t vec, float *fptr)
+	static inline void StoreXYZW(float32x4_t vec, float *fptr)
 	{
 		vst1q_f32(fptr, vec);
 	}
 
 	// Set element
-	static DESIRE_FORCE_INLINE void SetX(float32x4_t& vec, float x)		{ vec = vsetq_lane_f32(x, vec, 0); }
-	static DESIRE_FORCE_INLINE void SetY(float32x4_t& vec, float y)		{ vec = vsetq_lane_f32(y, vec, 1); }
-	static DESIRE_FORCE_INLINE void SetZ(float32x4_t& vec, float z)		{ vec = vsetq_lane_f32(z, vec, 2); }
-	static DESIRE_FORCE_INLINE void SetZ(float32x4_t& vec, float w)		{ vec = vsetq_lane_f32(w, vec, 3); }
+	static inline void SetX(float32x4_t& vec, float x)		{ vec = vsetq_lane_f32(x, vec, 0); }
+	static inline void SetY(float32x4_t& vec, float y)		{ vec = vsetq_lane_f32(y, vec, 1); }
+	static inline void SetZ(float32x4_t& vec, float z)		{ vec = vsetq_lane_f32(z, vec, 2); }
+	static inline void SetZ(float32x4_t& vec, float w)		{ vec = vsetq_lane_f32(w, vec, 3); }
 
 	// Get element
-	static DESIRE_FORCE_INLINE float GetX(float32x4_t vec)				{ return vgetq_lane_f32(vec, 0); }
-	static DESIRE_FORCE_INLINE float GetY(float32x4_t vec)				{ return vgetq_lane_f32(vec, 1); }
-	static DESIRE_FORCE_INLINE float GetZ(float32x4_t vec)				{ return vgetq_lane_f32(vec, 2); }
-	static DESIRE_FORCE_INLINE float GetW(float32x4_t vec)				{ return vgetq_lane_f32(vec, 3); }
+	static inline float GetX(float32x4_t vec)				{ return vgetq_lane_f32(vec, 0); }
+	static inline float GetY(float32x4_t vec)				{ return vgetq_lane_f32(vec, 1); }
+	static inline float GetZ(float32x4_t vec)				{ return vgetq_lane_f32(vec, 2); }
+	static inline float GetW(float32x4_t vec)				{ return vgetq_lane_f32(vec, 3); }
 
 	// Operator overloads
-	static DESIRE_FORCE_INLINE float32x4_t Negate(float32x4_t vec)
+	static inline float32x4_t Negate(float32x4_t vec)
 	{
 		return vnegq_f32(vec);
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Add(float32x4_t a, float32x4_t b)
+	static inline float32x4_t Add(float32x4_t a, float32x4_t b)
 	{
 		return vaddq_f32(a, b);
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Sub(float32x4_t a, float32x4_t b)
+	static inline float32x4_t Sub(float32x4_t a, float32x4_t b)
 	{
 		return vsubq_f32(a, b);
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Mul(float32x4_t vec, float scalar)
+	static inline float32x4_t Mul(float32x4_t vec, float scalar)
 	{
 		return vmulq_n_f32(vec, scalar);
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Mul(float32x4_t a, float32x4_t b)
+	static inline float32x4_t Mul(float32x4_t a, float32x4_t b)
 	{
 		return vmulq_f32(a, b);
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t MulAdd(float32x4_t a, float32x4_t b, float32x4_t c)
+	static inline float32x4_t MulAdd(float32x4_t a, float32x4_t b, float32x4_t c)
 	{
 		return vmlaq_f32(c, a, b);
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t Div(float32x4_t a, float32x4_t b)
+	static inline float32x4_t Div(float32x4_t a, float32x4_t b)
 	{
 		// Get an initial estimate of 1/vec
 		float32x4_t reciprocal = vrecpeq_f32(b);
@@ -96,7 +100,7 @@ public:
 	}
 
 	// Comparison operators
-	static DESIRE_FORCE_INLINE bool OpCmpGE(float32x4_t a, float32x4_t b)
+	static inline bool OpCmpGE(float32x4_t a, float32x4_t b)
 	{
 //		uint32x4_t result = vcgeq_f32(a, b);
 		return (
@@ -106,7 +110,7 @@ public:
 		);
 	}
 
-	static DESIRE_FORCE_INLINE bool OpCmpLE(float32x4_t a, float32x4_t b)
+	static inline bool OpCmpLE(float32x4_t a, float32x4_t b)
 	{
 //		uint32x4_t result = vcleq_f32(a, b);
 		return (
@@ -117,7 +121,7 @@ public:
 	}
 
 	// Compute the dot product of two 3-D vectors
-	static DESIRE_FORCE_INLINE float32x4_t Dot3(float32x4_t a, float32x4_t b)
+	static inline float32x4_t Dot3(float32x4_t a, float32x4_t b)
 	{
 		float32x4_t vd = SIMD::Mul(a, b);
 		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_low_f32(vd));
@@ -125,7 +129,7 @@ public:
 	}
 
 	// Compute the dot product of two 4-D vectors
-	static DESIRE_FORCE_INLINE float32x4_t Dot4(float32x4_t a, float32x4_t b)
+	static inline float32x4_t Dot4(float32x4_t a, float32x4_t b)
 	{
 		float32x4_t vd = SIMD::Mul(a, b);
 		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_high_f32(vd));
@@ -133,7 +137,7 @@ public:
 	}
 
 	// Compute cross product of two 3-D vectors
-	static DESIRE_FORCE_INLINE float32x4_t Cross(float32x4_t a, float32x4_t b)
+	static inline float32x4_t Cross(float32x4_t a, float32x4_t b)
 	{
 		float32x2_t xy0 = vget_low_f32(a);
 		float32x2_t xy1 = vget_low_f32(b);
@@ -147,89 +151,110 @@ public:
 	}
 
 	// Compute the absolute value per element
-	static DESIRE_FORCE_INLINE float32x4_t AbsPerElem(float32x4_t vec)
+	static inline float32x4_t AbsPerElem(float32x4_t vec)
 	{
 		return vabsq_f32(vec);
 	}
 
 	// Maximum of two vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t MaxPerElem(float32x4_t a, float32x4_t b)
+	static inline float32x4_t MaxPerElem(float32x4_t a, float32x4_t b)
 	{
 		return vmaxq_f32(a, b);
 	}
 
 	// Minimum of two vectors per element
-	static DESIRE_FORCE_INLINE float32x4_t MinPerElem(float32x4_t a, float32x4_t b)
+	static inline float32x4_t MinPerElem(float32x4_t a, float32x4_t b)
 	{
 		return vminq_f32(a, b);
 	}
 
 	// Get maximum element
-	static DESIRE_FORCE_INLINE float32x4_t MaxElem3(float32x4_t vec)
+	static inline float32x4_t MaxElem3(float32x4_t vec)
 	{
 		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t MaxElem4(float32x4_t vec)
+	static inline float32x4_t MaxElem4(float32x4_t vec)
 	{
 		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Get minimum element
-	static DESIRE_FORCE_INLINE float32x4_t MinElem3(float32x4_t vec)
+	static inline float32x4_t MinElem3(float32x4_t vec)
 	{
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
 	}
 
-	static DESIRE_FORCE_INLINE float32x4_t MinElem4(float32x4_t vec)
+	static inline float32x4_t MinElem4(float32x4_t vec)
 	{
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
 	// Select packed single precision floating-point values from a and b using the mask
-	static DESIRE_FORCE_INLINE float32x4_t Blend(float32x4_t a, float32x4_t b, uint32x4_t mask)
+	static inline float32x4_t Blend(float32x4_t a, float32x4_t b, uint32x4_t mask)
 	{
 		return vbslq_f32(mask, b, a);
 	}
 
 	// Select mask
-	static DESIRE_FORCE_INLINE uint32x4_t MaskX()
+	static inline uint32x4_t MaskX()
 	{
-		return (uint32x4_t) { 0xffffffff, 0, 0, 0 };
+		return (uint32x4_t){ 0xffffffff, 0, 0, 0 };
 	}
-	static DESIRE_FORCE_INLINE uint32x4_t MaskY()
+	static inline uint32x4_t MaskY()
 	{
-		return (uint32x4_t) { 0, 0xffffffff, 0, 0 };
-	}
-
-	static DESIRE_FORCE_INLINE uint32x4_t MaskZ()
-	{
-		return (uint32x4_t) { 0, 0, 0xffffffff, 0 };
+		return (uint32x4_t){ 0, 0xffffffff, 0, 0 };
 	}
 
-	static DESIRE_FORCE_INLINE uint32x4_t MaskW()
+	static inline uint32x4_t MaskZ()
 	{
-		return (uint32x4_t) { 0, 0, 0, 0xffffffff };
+		return (uint32x4_t){ 0, 0, 0xffffffff, 0 };
+	}
+
+	static inline uint32x4_t MaskW()
+	{
+		return (uint32x4_t){ 0, 0, 0, 0xffffffff };
 	}
 
 	// Swizzle
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_XXXX(float32x4_t vec)	{ return vdupq_lane_f32(vget_low_f32(vec), 0); }
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_YYYY(float32x4_t vec)	{ return vdupq_lane_f32(vget_low_f32(vec), 1); }
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_ZZZZ(float32x4_t vec)	{ return vdupq_lane_f32(vget_high_f32(vec), 0); }
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_WWWW(float32x4_t vec)	{ return vdupq_lane_f32(vget_high_f32(vec), 1); }
+	static inline float32x4_t Swizzle_XXXX(float32x4_t vec)		{ return vdupq_lane_f32(vget_low_f32(vec), 0); }
+	static inline float32x4_t Swizzle_XXYY(float32x4_t vec)		{ return vzipq_f32(vec, vec).val[0]; }
+	static inline float32x4_t Swizzle_XXZZ(float32x4_t vec)		{ return vtrnq_f32(vec, vec).val[0]; }
+	static inline float32x4_t Swizzle_XYXY(float32x4_t vec)		{ const float32x2_t v = vget_low_f32(vec); return vcombine_f32(v, v); }
+	static inline float32x4_t Swizzle_XYWZ(float32x4_t vec)		{ return vcombine_f32(vget_low_f32(vec), vrev64_f32(vget_high_f32(vec))); }
+	static inline float32x4_t Swizzle_XZXZ(float32x4_t vec)		{ return vuzpq_f32(vec, vec).val[0]; }
 
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_YZXW(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 2, 0, 3 }); }
-	static DESIRE_FORCE_INLINE float32x4_t Swizzle_ZXYW(float32x4_t vec)	{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 3 }); }
+	static inline float32x4_t Swizzle_YXYX(float32x4_t vec)		{ const float32x2_t v = vrev64_f32(vget_low_f32(vec)); return vcombine_f32(v, v); }
+	static inline float32x4_t Swizzle_YXZW(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_low_f32(vec)), vget_high_f32(vec)); }
+	static inline float32x4_t Swizzle_YYYY(float32x4_t vec)		{ return vdupq_lane_f32(vget_low_f32(vec), 1); }
+	static inline float32x4_t Swizzle_YYWW(float32x4_t vec)		{ return vtrnq_f32(vec, vec).val[1]; }
+	static inline float32x4_t Swizzle_YZXW(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 2, 0, 3 }); }
+	static inline float32x4_t Swizzle_YZWX(float32x4_t vec)		{ return vextq_f32(vec, vec, 1); }
+	static inline float32x4_t Swizzle_YWYW(float32x4_t vec)		{ return vuzpq_f32(vec, vec).val[1]; }
+
+	static inline float32x4_t Swizzle_ZXYW(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 3 }); }
+	static inline float32x4_t Swizzle_ZXWY(float32x4_t vec)		{ return vrev64q_f32(vec); }
+	static inline float32x4_t Swizzle_ZZZZ(float32x4_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 0); }
+	static inline float32x4_t Swizzle_ZZWW(float32x4_t vec)		{ return vzipq_f32(vec, vec).val[1]; }
+	static inline float32x4_t Swizzle_ZWXY(float32x4_t vec)		{ return vextq_f32(vec, vec, 2); }
+	static inline float32x4_t Swizzle_ZWYX(float32x4_t vec)		{ return vcombine_f32(vget_high_f32(vec), vrev64_f32(vget_low_f32(vec))); }
+	static inline float32x4_t Swizzle_ZWZW(float32x4_t vec)		{ const float32x2_t v = vget_high_f32(vec); return vcombine_f32(v, v); }
+
+	static inline float32x4_t Swizzle_WXYZ(float32x4_t vec)		{ return vextq_f32(vec, vec, 3); }
+	static inline float32x4_t Swizzle_WZXY(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_high_f32(vec)), vget_low_f32(vec)); }
+	static inline float32x4_t Swizzle_WZYX(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_high_f32(vec)), vrev64_f32(vget_low_f32(vec))); }
+	static inline float32x4_t Swizzle_WZWZ(float32x4_t vec)		{ const float32x2_t v = vrev64_f32(vget_high_f32(vec)); return vcombine_f32(v, v); }
+	static inline float32x4_t Swizzle_WWWW(float32x4_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 1); }
 };
 
 // --------------------------------------------------------------------------------------------------------------------
 //	NEON Helper functions
 // --------------------------------------------------------------------------------------------------------------------
 
-static DESIRE_FORCE_INLINE float32x4_t newtonrapson_rsqrt4(float32x4_t vec)
+static inline float32x4_t newtonrapson_rsqrt4(float32x4_t vec)
 {
 	float32x4_t result = vrsqrteq_f32(vec);
-	result = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result, result), vec), result);
-	result = vmulq_f32(vrsqrtsq_f32(vmulq_f32(result, result), vec), result);
+	result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
+	result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
 	return result;
 }

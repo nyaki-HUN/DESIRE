@@ -26,7 +26,6 @@
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
 	#define DESIRE_ATTRIBUTE_PACKED
-	#define DESIRE_FORCE_INLINE				__forceinline
 
 	#define DESIRE_PRAGMA(X)				__pragma(X)
 	#define DESIRE_DISABLE_WARNINGS			DESIRE_PRAGMA(warning(push, 1))
@@ -34,7 +33,6 @@
 
 #elif defined(DESIRE_PLATFORM_LINUX) || defined(DESIRE_PLATFORM_OSX) || defined(DESIRE_PLATFORM_IOS) || defined(DESIRE_PLATFORM_TVOS)
 	#define DESIRE_ATTRIBUTE_PACKED			__attribute__((packed))
-	#define DESIRE_FORCE_INLINE				inline __attribute__ ((always_inline))
 
 	#define DESIRE_PRAGMA(X)				_Pragma(#X)
 //	#define DESIRE_DISABLE_WARNINGS			DESIRE_PRAGMA(GCC diagnostic ignored "-Wall")
@@ -44,9 +42,6 @@
 
 #else
 	#define DESIRE_ATTRIBUTE_PACKED
-	#define DESIRE_FORCE_INLINE				inline
-
-	#define DESIRE_NO_SWITCH_DEFAULT
 
 	#define DESIRE_PRAGMA(X)
 	#define DESIRE_DISABLE_WARNINGS

@@ -2,7 +2,7 @@
 //	NEON implementation of matrix class functions
 // --------------------------------------------------------------------------------------------------------------------
 
-DESIRE_FORCE_INLINE void Matrix3::Invert()
+inline void Matrix3::Invert()
 {
 	const Vector3 tmp0 = col1.Cross(col2);
 	const Vector3 tmp1 = col2.Cross(col0);
@@ -13,7 +13,7 @@ DESIRE_FORCE_INLINE void Matrix3::Invert()
 	col2 = Vector3(tmp0.GetZ() * detinv, tmp1.GetZ() * detinv, tmp2.GetZ() * detinv);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
+inline Matrix3 Matrix3::CreateRotationX(float radians)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -24,7 +24,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationX(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationY(float radians)
+inline Matrix3 Matrix3::CreateRotationY(float radians)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -35,7 +35,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationY(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZ(float radians)
+inline Matrix3 Matrix3::CreateRotationZ(float radians)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -46,7 +46,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZ(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
+inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 {
 	const float sX = sinf(radiansXYZ.GetX());
 	const float cX = cosf(radiansXYZ.GetX());
@@ -63,7 +63,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
+inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -81,7 +81,7 @@ DESIRE_FORCE_INLINE Matrix3 Matrix3::CreateRotation(float radians, const Vector3
 	);
 }
 
-DESIRE_FORCE_INLINE void Matrix4::Transpose()
+inline void Matrix4::Transpose()
 {
 	const Vector4 tmp0(col0.GetX(), col1.GetX(), col2.GetX(), col3.GetX());
 	const Vector4 tmp1(col0.GetY(), col1.GetY(), col2.GetY(), col3.GetY());
@@ -93,7 +93,7 @@ DESIRE_FORCE_INLINE void Matrix4::Transpose()
 	col3 = tmp3;
 }
 
-DESIRE_FORCE_INLINE void Matrix4::Invert()
+inline void Matrix4::Invert()
 {
 	float tmp0 = col2.GetZ() * col0.GetW() - col0.GetZ() * col2.GetW();
 	float tmp1 = col3.GetZ() * col1.GetW() - col1.GetZ() * col3.GetW();
@@ -135,7 +135,7 @@ DESIRE_FORCE_INLINE void Matrix4::Invert()
 	col3 = res3 * detInv;
 }
 
-DESIRE_FORCE_INLINE void Matrix4::AffineInvert()
+inline void Matrix4::AffineInvert()
 {
 	const Vector3 tmp0 = col1.GetXYZ().Cross(col2.GetXYZ());
 	const Vector3 tmp1 = col2.GetXYZ().Cross(col0.GetXYZ());
@@ -150,7 +150,7 @@ DESIRE_FORCE_INLINE void Matrix4::AffineInvert()
 	col3 = Vector4(-((inv0 * col3.GetX()) + ((inv1 * col3.GetY()) + (inv2 * col3.GetZ()))), 1.0f);
 }
 
-DESIRE_FORCE_INLINE void Matrix4::OrthoInvert()
+inline void Matrix4::OrthoInvert()
 {
 	const Vector3 inv0(col0.GetX(), col1.GetX(), col2.GetX());
 	const Vector3 inv1(col0.GetY(), col1.GetY(), col2.GetY());
@@ -161,7 +161,7 @@ DESIRE_FORCE_INLINE void Matrix4::OrthoInvert()
 	col3 = Vector4(-((inv0 * col3.GetX()) + ((inv1 * col3.GetY()) + (inv2 * col3.GetZ()))), 1.0f);
 }
 
-DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
+inline float Matrix4::CalculateDeterminant() const
 {
 	const float tmp0 = col2.GetZ() * col0.GetW() - col0.GetZ() * col2.GetW();
 	const float tmp1 = col3.GetZ() * col1.GetW() - col1.GetZ() * col3.GetW();
@@ -176,7 +176,7 @@ DESIRE_FORCE_INLINE float Matrix4::CalculateDeterminant() const
 	return col0.GetX() * dx + col1.GetX() * dy + col2.GetX() * dz + col3.GetX() * dw;
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
+inline Matrix4 Matrix4::CreateRotationX(float radians)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -188,7 +188,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationX(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationY(float radians)
+inline Matrix4 Matrix4::CreateRotationY(float radians)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -200,7 +200,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationY(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZ(float radians)
+inline Matrix4 Matrix4::CreateRotationZ(float radians)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -212,7 +212,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZ(float radians)
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
+inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 {
 	const float sX = sinf(radiansXYZ.GetX());
 	const float cX = cosf(radiansXYZ.GetX());
@@ -230,7 +230,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ
 	);
 }
 
-DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
+inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 {
 	const float s = sinf(radians);
 	const float c = cosf(radians);
@@ -249,7 +249,7 @@ DESIRE_FORCE_INLINE Matrix4 Matrix4::CreateRotation(float radians, const Vector3
 	);
 }
 
-DESIRE_FORCE_INLINE Quat::Quat(const Matrix3& tfrm)
+inline Quat::Quat(const Matrix3& tfrm)
 {
 	float q[4];
 
