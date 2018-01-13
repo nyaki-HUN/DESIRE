@@ -19,10 +19,10 @@ public:
 	int RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints = nullptr, Vector3 *o_collisionNormals = nullptr, int layerMask = Physics::MASK_ALL) override;
 
 private:
-	physx::PxFoundation *foundation;
-	physx::PxPhysics *physics;
-	physx::PxCooking *cooking;
-	physx::PxScene *scene;
+	physx::PxFoundation *foundation = nullptr;
+	physx::PxPhysics *physics = nullptr;
+	physx::PxCooking *cooking = nullptr;
+	physx::PxScene *scene = nullptr;
 
 	physx::PxDefaultAllocator allocator;
 	physx::PxDefaultErrorCallback errorCallback;

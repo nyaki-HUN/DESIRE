@@ -17,9 +17,6 @@
 #endif
 
 PhysXPhysics::PhysXPhysics()
-	: foundation(nullptr)
-	, physics(nullptr)
-	, cooking(nullptr)
 {
 	foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, allocator, errorCallback);
 	if(foundation == nullptr)
