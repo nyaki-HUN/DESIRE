@@ -345,15 +345,6 @@
     <ClInclude Include="..\..\src\Core\math\vectormath\Vector4.h">
       <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\matrix_NEON.hpp">
-      <Filter>src\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\matrix_SSE.hpp">
-      <Filter>src\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\matrix_scalar.hpp">
-      <Filter>src\Core\math\vectormath</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_NEON.h">
       <Filter>src\Core\math\vectormath</Filter>
     </ClInclude>

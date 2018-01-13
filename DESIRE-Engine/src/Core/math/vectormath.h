@@ -24,11 +24,3 @@ constexpr float _VECTORMATH_SLERP_TOL = 0.999f;
 #include "Core/math/vectormath/Quat.h"
 #include "Core/math/vectormath/Matrix3.h"
 #include "Core/math/vectormath/Matrix4.h"
-
-#if defined(DESIRE_USE_SSE)
-	#include "Core/math/vectormath/matrix_SSE.hpp"
-#elif defined(__ARM_NEON__)
-	#include "Core/math/vectormath/matrix_NEON.hpp"
-#else
-	#include "Core/math/vectormath/matrix_scalar.hpp"
-#endif
