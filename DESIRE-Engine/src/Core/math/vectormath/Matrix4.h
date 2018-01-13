@@ -146,7 +146,7 @@ public:
 		return Vector4(col0.GetW(), col1.GetW(), col2.GetW(), col3.GetW());
 	}
 
-	// Assign one 4x4 matrix to another
+	// Operator overloads
 	inline Matrix4& operator =(const Matrix4& mat)
 	{
 		col0 = mat.col0;
@@ -156,13 +156,11 @@ public:
 		return *this;
 	}
 
-	// Negate all elements of a 4x4 matrix
 	inline Matrix4 operator -() const
 	{
 		return Matrix4(-col0, -col1, -col2, -col3);
 	}
 
-	// Add two 4x4 matrices
 	inline Matrix4 operator +(const Matrix4& mat) const
 	{
 		return Matrix4(
@@ -173,7 +171,6 @@ public:
 		);
 	}
 
-	// Subtract a 4x4 matrix from another 4x4 matrix
 	inline Matrix4 operator -(const Matrix4& mat) const
 	{
 		return Matrix4(
@@ -184,19 +181,20 @@ public:
 		);
 	}
 
-	// Multiply a 4x4 matrix by a scalar
 	inline Matrix4 operator *(float scalar) const
 	{
-		return Matrix4(col0 * scalar, col1 * scalar, col2 * scalar, col3 * scalar);
+		return Matrix4(
+			col0 * scalar,
+			col1 * scalar,
+			col2 * scalar,
+			col3 * scalar
+		);
 	}
 
-	// Multiply a 4x4 matrix by a 4-D vector
 	inline Vector4 operator *(const Vector4& vec) const;
 
-	// Multiply a 4x4 matrix by a 3-D vector
 	inline Vector4 operator *(const Vector3& vec) const;
 
-	// Multiply two 4x4 matrices
 	inline Matrix4 operator *(const Matrix4& mat) const
 	{
 		return Matrix4(
@@ -207,28 +205,24 @@ public:
 		);
 	}
 
-	// Perform compound assignment and addition with a 4x4 matrix
 	inline Matrix4& operator +=(const Matrix4& mat)
 	{
 		*this = *this + mat;
 		return *this;
 	}
 
-	// Perform compound assignment and subtraction by a 4x4 matrix
 	inline Matrix4& operator -=(const Matrix4& mat)
 	{
 		*this = *this - mat;
 		return *this;
 	}
 
-	// Perform compound assignment and multiplication by a scalar
 	inline Matrix4& operator *=(float scalar)
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
-	// Perform compound assignment and multiplication by a 4x4 matrix
 	inline Matrix4& operator *=(const Matrix4& mat)
 	{
 		*this = *this * mat;

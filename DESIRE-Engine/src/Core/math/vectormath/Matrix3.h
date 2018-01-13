@@ -68,7 +68,7 @@ public:
 		return Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ());
 	}
 
-	// Assign one 3x3 matrix to another
+	// Operator overloads
 	inline Matrix3& operator =(const Matrix3& mat)
 	{
 		col0 = mat.col0;
@@ -77,13 +77,11 @@ public:
 		return *this;
 	}
 
-	// Negate all elements of a 3x3 matrix
 	inline Matrix3 operator -() const
 	{
 		return Matrix3(-col0, -col1, -col2);
 	}
 
-	// Add two 3x3 matrices
 	inline Matrix3 operator +(const Matrix3& mat) const
 	{
 		return Matrix3(
@@ -93,7 +91,6 @@ public:
 		);
 	}
 
-	// Subtract a 3x3 matrix from another 3x3 matrix
 	inline Matrix3 operator -(const Matrix3& mat) const
 	{
 		return Matrix3(
@@ -103,7 +100,6 @@ public:
 		);
 	}
 
-	// Multiply a 3x3 matrix by a scalar
 	inline Matrix3 operator *(float scalar) const
 	{
 		return Matrix3(
@@ -113,10 +109,8 @@ public:
 		);
 	}
 
-	// Multiply a 3x3 matrix by a 3-D vector
 	inline Vector3 operator *(const Vector3& vec) const;
 
-	// Multiply two 3x3 matrices
 	inline Matrix3 operator *(const Matrix3& mat) const
 	{
 		return Matrix3(
@@ -126,28 +120,24 @@ public:
 		);
 	}
 
-	// Perform compound assignment and addition with a 3x3 matrix
 	inline Matrix3& operator +=(const Matrix3& mat)
 	{
 		*this = *this + mat;
 		return *this;
 	}
 
-	// Perform compound assignment and subtraction by a 3x3 matrix
 	inline Matrix3& operator -=(const Matrix3& mat)
 	{
 		*this = *this - mat;
 		return *this;
 	}
 
-	// Perform compound assignment and multiplication by a scalar
 	inline Matrix3& operator *=(float scalar)
 	{
 		*this = *this * scalar;
 		return *this;
 	}
 
-	// Perform compound assignment and multiplication by a 3x3 matrix
 	inline Matrix3& operator *=(const Matrix3& mat)
 	{
 		*this = *this * mat;
