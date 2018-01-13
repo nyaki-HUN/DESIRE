@@ -355,7 +355,15 @@ public:
 	{
 		return btSqrt(length2());
 	}
-
+	btQuaternion& safeNormalize()
+	{
+		btScalar l2 = length2();
+		if (l2>SIMD_EPSILON)
+		{
+			normalize();
+		}
+		return *this;
+	}
   /**@brief Normalize the quaternion 
    * Such that x^2 + y^2 + z^2 +w^2 = 1 */
 	btQuaternion& normalize() 
@@ -594,7 +602,9 @@ public:
 
 	SIMD_FORCE_INLINE	void	serialize(struct	btQuaternionData& dataOut) const;
 
-	SIMD_FORCE_INLINE	void	deSerialize(const struct	btQuaternionData& dataIn);
+	SIMD_FORCE_INLINE	void	deSerialize(const struct	btQuaternionFloatData& dataIn);
+
+	SIMD_FORCE_INLINE	void	deSerialize(const struct	btQuaternionDoubleData& dataIn);
 
 	SIMD_FORCE_INLINE	void	serializeFloat(struct	btQuaternionFloatData& dataOut) const;
 
@@ -995,10 +1005,16 @@ SIMD_FORCE_INLINE	void	btQuaternion::serialize(struct	btQuaternionData& dataOut)
 		dataOut.m_floats[i] = m_floats[i];
 }
 
-SIMD_FORCE_INLINE void	btQuaternion::deSerialize(const struct	btQuaternionData& dataIn)
+SIMD_FORCE_INLINE void	btQuaternion::deSerialize(const struct	btQuaternionFloatData& dataIn)
+{
+	for (int i = 0; i<4; i++)
+		m_floats[i] = (btScalar)dataIn.m_floats[i];
+}
+
+SIMD_FORCE_INLINE void	btQuaternion::deSerialize(const struct	btQuaternionDoubleData& dataIn)
 {
 	for (int i=0;i<4;i++)
-		m_floats[i] = dataIn.m_floats[i];
+		m_floats[i] = (btScalar)dataIn.m_floats[i];
 }
 
 

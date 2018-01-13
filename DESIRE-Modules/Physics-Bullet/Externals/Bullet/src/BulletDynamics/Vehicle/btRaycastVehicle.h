@@ -214,8 +214,8 @@ public:
 		return m_userConstraintId;
 	}
 
-	btScalar fwdFactor;
-	btScalar sideFrictionStiffness2;
+	btScalar fwdFactor = 0.5f;
+	btScalar sideFrictionStiffness2 = 1.0f;
 };
 
 class btDefaultVehicleRaycaster : public btVehicleRaycaster

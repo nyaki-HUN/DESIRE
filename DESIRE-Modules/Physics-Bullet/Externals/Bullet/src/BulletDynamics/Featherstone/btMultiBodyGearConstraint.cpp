@@ -15,93 +15,71 @@ subject to the following restrictions:
 
 ///This file was written by Erwin Coumans
 
-#include "btMultiBodyJointMotor.h"
+#include "btMultiBodyGearConstraint.h"
 #include "btMultiBody.h"
 #include "btMultiBodyLinkCollider.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 
-
-btMultiBodyJointMotor::btMultiBodyJointMotor(btMultiBody* body, int link, btScalar desiredVelocity, btScalar maxMotorImpulse)
-	:btMultiBodyConstraint(body,body,link,body->getLink(link).m_parent,1,true),
-	m_desiredVelocity(desiredVelocity),
-	m_desiredPosition(0),
-	m_kd(1.),
-	m_kp(0),
-	m_erp(1),
-	m_rhsClamp(SIMD_INFINITY)
+btMultiBodyGearConstraint::btMultiBodyGearConstraint(btMultiBody* bodyA, int linkA, btMultiBody* bodyB, int linkB, const btVector3& pivotInA, const btVector3& pivotInB, const btMatrix3x3& frameInA, const btMatrix3x3& frameInB)
+	:btMultiBodyConstraint(bodyA,bodyB,linkA,linkB,1,false),
+	m_gearRatio(1),
+	m_gearAuxLink(-1),
+	m_erp(0),
+	m_relativePositionTarget(0)
 {
-
-	m_maxAppliedImpulse = maxMotorImpulse;
-	// the data.m_jacobians never change, so may as well
-    // initialize them here
-
-
+   
 }
 
-void btMultiBodyJointMotor::finalizeMultiDof()
+void btMultiBodyGearConstraint::finalizeMultiDof()
 {
+	
 	allocateJacobiansMultiDof();
-	// note: we rely on the fact that data.m_jacobians are
-	// always initialized to zero by the Constraint ctor
-	int linkDoF = 0;
-	unsigned int offset = 6 + (m_bodyA->getLink(m_linkA).m_dofOffset + linkDoF);
-
-	// row 0: the lower bound
-	// row 0: the lower bound
-	jacobianA(0)[offset] = 1;
-
+	
 	m_numDofsFinalized = m_jacSizeBoth;
 }
 
-btMultiBodyJointMotor::btMultiBodyJointMotor(btMultiBody* body, int link, int linkDoF, btScalar desiredVelocity, btScalar maxMotorImpulse)
-	//:btMultiBodyConstraint(body,0,link,-1,1,true),
-	:btMultiBodyConstraint(body,body,link,body->getLink(link).m_parent,1,true),
-	m_desiredVelocity(desiredVelocity),
-	m_desiredPosition(0),
-	m_kd(1.),
-	m_kp(0),
-    m_erp(1),
-	m_rhsClamp(SIMD_INFINITY)
-{
-	btAssert(linkDoF < body->getLink(link).m_dofCount);
-
-	m_maxAppliedImpulse = maxMotorImpulse;
-
-}
-btMultiBodyJointMotor::~btMultiBodyJointMotor()
+btMultiBodyGearConstraint::~btMultiBodyGearConstraint()
 {
 }
 
-int btMultiBodyJointMotor::getIslandIdA() const
+
+int btMultiBodyGearConstraint::getIslandIdA() const
 {
-	btMultiBodyLinkCollider* col = m_bodyA->getBaseCollider();
-	if (col)
-		return col->getIslandTag();
-	for (int i=0;i<m_bodyA->getNumLinks();i++)
+
+	if (m_bodyA)
 	{
-		if (m_bodyA->getLink(i).m_collider)
-			return m_bodyA->getLink(i).m_collider->getIslandTag();
-	}
-	return -1;
-}
-
-int btMultiBodyJointMotor::getIslandIdB() const
-{
-	btMultiBodyLinkCollider* col = m_bodyB->getBaseCollider();
-	if (col)
-		return col->getIslandTag();
-
-	for (int i=0;i<m_bodyB->getNumLinks();i++)
-	{
-		col = m_bodyB->getLink(i).m_collider;
+		btMultiBodyLinkCollider* col = m_bodyA->getBaseCollider();
 		if (col)
 			return col->getIslandTag();
+		for (int i=0;i<m_bodyA->getNumLinks();i++)
+		{
+			if (m_bodyA->getLink(i).m_collider)
+				return m_bodyA->getLink(i).m_collider->getIslandTag();
+		}
+	}
+	return -1;
+}
+
+int btMultiBodyGearConstraint::getIslandIdB() const
+{
+	if (m_bodyB)
+	{
+		btMultiBodyLinkCollider* col = m_bodyB->getBaseCollider();
+		if (col)
+			return col->getIslandTag();
+
+		for (int i=0;i<m_bodyB->getNumLinks();i++)
+		{
+			col = m_bodyB->getLink(i).m_collider;
+			if (col)
+				return col->getIslandTag();
+		}
 	}
 	return -1;
 }
 
 
-void btMultiBodyJointMotor::createConstraintRows(btMultiBodyConstraintArray& constraintRows,
+void btMultiBodyGearConstraint::createConstraintRows(btMultiBodyConstraintArray& constraintRows,
 		btMultiBodyJacobianData& data,
 		const btContactSolverInfo& infoGlobal)
 {
@@ -117,34 +95,55 @@ void btMultiBodyJointMotor::createConstraintRows(btMultiBodyConstraintArray& con
 	if (m_numDofsFinalized != m_jacSizeBoth)
 		return;
 
+	
 	if (m_maxAppliedImpulse==0.f)
 		return;
+	
+	// note: we rely on the fact that data.m_jacobians are
+	// always initialized to zero by the Constraint ctor
+	int linkDoF = 0;
+	unsigned int offsetA = 6 + (m_bodyA->getLink(m_linkA).m_dofOffset + linkDoF);
+	unsigned int offsetB = 6 + (m_bodyB->getLink(m_linkB).m_dofOffset + linkDoF);
 
-	const btScalar posError = 0;
+	// row 0: the lower bound
+	jacobianA(0)[offsetA] = 1;
+	jacobianB(0)[offsetB] = m_gearRatio;
+
+	btScalar posError = 0;
 	const btVector3 dummy(0, 0, 0);
+	
+	btScalar kp = 1;
+	btScalar kd = 1;
+	int numRows = getNumRows();
 
-	for (int row=0;row<getNumRows();row++)
+	for (int row=0;row<numRows;row++)
 	{
 		btMultiBodySolverConstraint& constraintRow = constraintRows.expandNonInitializing();
+
 
         int dof = 0;
         btScalar currentPosition = m_bodyA->getJointPosMultiDof(m_linkA)[dof];
         btScalar currentVelocity = m_bodyA->getJointVelMultiDof(m_linkA)[dof];
-        btScalar positionStabiliationTerm = m_erp*(m_desiredPosition-currentPosition)/infoGlobal.m_timeStep;
+		btScalar auxVel = 0;
 		
-        btScalar velocityError = (m_desiredVelocity - currentVelocity);
-        btScalar rhs =   m_kp * positionStabiliationTerm + currentVelocity+m_kd * velocityError;
-		if (rhs>m_rhsClamp)
+		if (m_gearAuxLink>=0)
 		{
-			rhs=m_rhsClamp;
+			auxVel = m_bodyA->getJointVelMultiDof(m_gearAuxLink)[dof];
 		}
-		if (rhs<-m_rhsClamp)
+		currentVelocity += auxVel;
+		if (m_erp!=0)
 		{
-			rhs=-m_rhsClamp;
+			btScalar currentPositionA = m_bodyA->getJointPosMultiDof(m_linkA)[dof];
+			btScalar currentPositionB = m_gearRatio*m_bodyA->getJointPosMultiDof(m_linkB)[dof];
+			btScalar diff = currentPositionB+currentPositionA;
+			btScalar desiredPositionDiff = this->m_relativePositionTarget;
+			posError = -m_erp*(desiredPositionDiff - diff);
 		}
-        
-        
-		fillMultiBodyConstraint(constraintRow,data,jacobianA(row),jacobianB(row),dummy,dummy,dummy,dummy,posError,infoGlobal,-m_maxAppliedImpulse,m_maxAppliedImpulse,false,1,false,rhs);
+		
+        btScalar desiredRelativeVelocity =   auxVel;
+    
+		fillMultiBodyConstraint(constraintRow,data,jacobianA(row),jacobianB(row),dummy,dummy,dummy,dummy,posError,infoGlobal,-m_maxAppliedImpulse,m_maxAppliedImpulse,false,1,false,desiredRelativeVelocity);
+
 		constraintRow.m_orgConstraint = this;
 		constraintRow.m_orgDofIndex = row;
 		{
@@ -168,8 +167,7 @@ void btMultiBodyJointMotor::createConstraintRows(btMultiBodyConstraintArray& con
 					constraintRow.m_contactNormal1=prismaticAxisInWorld;
 					constraintRow.m_contactNormal2=-prismaticAxisInWorld;
 					constraintRow.m_relpos1CrossNormal.setZero();
-					constraintRow.m_relpos2CrossNormal.setZero();
-					
+					constraintRow.m_relpos2CrossNormal.setZero();					
 					break;
 				}
 				default:

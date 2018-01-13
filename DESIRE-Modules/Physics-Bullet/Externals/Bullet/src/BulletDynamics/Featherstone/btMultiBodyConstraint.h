@@ -119,6 +119,14 @@ public:
 		return m_bodyB;
 	}
 
+	int getLinkA() const
+	{
+		return m_linkA;
+	}
+	int getLinkB() const
+	{
+		return m_linkB;
+	}
 	void	internalSetAppliedImpulse(int dof, btScalar appliedImpulse)
 	{
 		btAssert(dof>=0);
@@ -183,6 +191,12 @@ public:
 
 	virtual void debugDraw(class btIDebugDraw* drawer)=0;
 
+	virtual void setGearRatio(btScalar ratio) {}
+	virtual void setGearAuxLink(int gearAuxLink) {}
+	virtual void setRelativePositionTarget(btScalar relPosTarget){}
+	virtual void setErp(btScalar erp){}
+	
+	
 };
 
 #endif //BT_MULTIBODY_CONSTRAINT_H
