@@ -77,7 +77,7 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	body = new btRigidBody(cInfo);
 	body->setUserPointer(this);
 
-	BulletPhysics *physics = static_cast<BulletPhysics*>(IPhysics::Get());
+	BulletPhysics *physics = static_cast<BulletPhysics*>(Physics::Get());
 	physics->dynamicsWorld->addRigidBody(body, (1 << (int)collisionLayer), physics->GetMaskForCollisionLayer(collisionLayer));
 
 	if(dynamic)
@@ -94,7 +94,7 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 BulletPhysicsComponent::~BulletPhysicsComponent()
 {
-	BulletPhysics *physics = static_cast<BulletPhysics*>(IPhysics::Get());
+	BulletPhysics *physics = static_cast<BulletPhysics*>(Physics::Get());
 	physics->dynamicsWorld->removeRigidBody(body);
 	delete body;
 
@@ -129,7 +129,7 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisio
 		body->forceActivationState(ISLAND_SLEEPING);
 	}
 
-	BulletPhysics *physics = static_cast<BulletPhysics*>(IPhysics::Get());
+	BulletPhysics *physics = static_cast<BulletPhysics*>(Physics::Get());
 	btBroadphaseProxy *handle = body->getBroadphaseHandle();
 	handle->m_collisionFilterGroup = (1 << (int)collisionLayer);
 	handle->m_collisionFilterMask = physics->GetMaskForCollisionLayer(collisionLayer);

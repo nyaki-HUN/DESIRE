@@ -19,7 +19,6 @@ void ContactListener::BeginContact(b2Contact *contact)
 	std::vector<Collision>& contacts = static_cast<Box2DPhysics*>(Physics::Get())->contactsBegin;
 	contacts.emplace_back();
 	FillCollisionFromContact(contacts.back(), contact);
-
 }
 
 void ContactListener::EndContact(b2Contact *contact)

@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "PhysXPhysics.h"
+#include "PhysXPhysicsComponent.h"
+
+#include "Scene/Object.h"
 
 #if defined(DESIRE_DEBUG)
 	#pragma comment(lib, "PhysX3DEBUG_x64.lib")
@@ -63,21 +66,25 @@ PhysXPhysics::~PhysXPhysics()
 	if(scene != nullptr)
 	{
 		scene->release();
+		scene = nullptr;
 	}
 
 	if(cooking != nullptr)
 	{
 		cooking->release();
+		cooking = nullptr;
 	}
 
 	if(physics != nullptr)
 	{
 		physics->release();
+		physics = nullptr;
 	}
 
 	if(foundation != nullptr)
 	{
 		foundation->release();
+		foundation = nullptr;
 	}
 }
 
@@ -86,22 +93,23 @@ void PhysXPhysics::Update()
 
 }
 
-PhysicsComponent* PhysXPhysics::CreatePhysicsComponent()
+PhysicsComponent& PhysXPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
-	return nullptr;
+	PhysXPhysicsComponent& component = object.AddComponent<PhysXPhysicsComponent>();
+	return component;
 }
 
-void PhysXPhysics::SetCollisionEnabled(EPhysicsCollisionGroup a, EPhysicsCollisionGroup b, bool enabled)
+bool PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr, Vector3 *o_collisionNormalPtr, int layerMask)
 {
-
-}
-
-bool PhysXPhysics::RayTest(const Vector3& startPoint, const Vector3& direction, Vector3 *o_hitpoint, PhysicsComponent **o_component, int collisionGroupMask)
-{
-	DESIRE_UNUSED(startPoint);
-	DESIRE_UNUSED(direction);
-	DESIRE_UNUSED(o_hitpoint);
-	DESIRE_UNUSED(o_component);
-	DESIRE_UNUSED(collisionGroupMask);
 	return false;
+}
+
+bool PhysXPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask)
+{
+	return false;
+}
+
+int PhysXPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints, Vector3 *o_collisionNormals, int layerMask)
+{
+	return 0;
 }

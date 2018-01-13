@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "BulletVehicleRaycaster.h"
 
-#include "Physics/IPhysics.h"
+#include "Physics/Physics.h"
 
 #include "BulletDynamics/Dynamics/btDynamicsWorld.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
@@ -15,8 +15,8 @@ BulletVehicleRaycaster::BulletVehicleRaycaster(btDynamicsWorld *world)
 void* BulletVehicleRaycaster::castRay(const btVector3& from, const btVector3& to, btVehicleRaycasterResult& result)
 {
 	btCollisionWorld::ClosestRayResultCallback rayCallback(from, to);
-	rayCallback.m_collisionFilterGroup = IPhysics::MASK_WHEEL;
-	rayCallback.m_collisionFilterMask = IPhysics::MASK_DEFAULT;
+	rayCallback.m_collisionFilterGroup = Physics::MASK_WHEEL;
+	rayCallback.m_collisionFilterMask = Physics::MASK_DEFAULT;
 
 	dynamicsWorld->rayTest(from, to, rayCallback);
 

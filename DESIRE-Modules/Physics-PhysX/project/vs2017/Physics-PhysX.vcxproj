@@ -313,9 +313,11 @@
     <ClInclude Include="..\..\Externals\PxShared\include\task\PxTaskDefine.h" />
     <ClInclude Include="..\..\Externals\PxShared\include\task\PxTaskManager.h" />
     <ClInclude Include="..\..\src\PhysXPhysics.h" />
+    <ClInclude Include="..\..\src\PhysXPhysicsComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\PhysXPhysics.cpp" />
+    <ClCompile Include="..\..\src\PhysXPhysicsComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

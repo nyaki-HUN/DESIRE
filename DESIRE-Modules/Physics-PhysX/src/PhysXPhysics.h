@@ -12,11 +12,11 @@ public:
 
 	void Update() override;
 
-	PhysicsComponent* CreatePhysicsComponent() override;
+	PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) override;
 
-	void SetCollisionEnabled(EPhysicsCollisionGroup a, EPhysicsCollisionGroup b, bool enabled) override;
-
-	bool RayTest(const Vector3& startPoint, const Vector3& direction, Vector3 *o_hitpoint = nullptr, PhysicsComponent **o_component = nullptr, int collisionGroupMask = 0xffffffff) override;
+	bool RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr = nullptr, Vector3 *o_collisionNormalPtr = nullptr, int layerMask = Physics::MASK_ALL) override;
+	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
+	int RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints = nullptr, Vector3 *o_collisionNormals = nullptr, int layerMask = Physics::MASK_ALL) override;
 
 private:
 	physx::PxFoundation *foundation;
