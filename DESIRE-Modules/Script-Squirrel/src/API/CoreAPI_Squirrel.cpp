@@ -132,8 +132,7 @@ void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 		.StaticFunc("CreateRotationY", &Matrix3::CreateRotationY)
 		.StaticFunc("CreateRotationZ", &Matrix3::CreateRotationZ)
 		.StaticFunc("CreateRotationZYX", &Matrix3::CreateRotationZYX)
-		.StaticOverload<Matrix3(*)(float, const Vector3&)>("CreateRotation", &Matrix3::CreateRotation)
-		.StaticOverload<Matrix3(*)(const Quat&)>("CreateRotation", &Matrix3::CreateRotation)
+		.StaticFunc("CreateRotation", &Matrix3::CreateRotation)
 		.StaticFunc("CreateScale", &Matrix3::CreateScale)
 	);
 
@@ -171,8 +170,7 @@ void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 		.StaticFunc("CreateRotationY", &Matrix4::CreateRotationY)
 		.StaticFunc("CreateRotationZ", &Matrix4::CreateRotationZ)
 		.StaticFunc("CreateRotationZYX", &Matrix4::CreateRotationZYX)
-		.StaticOverload<Matrix4(*)(float, const Vector3&)>("CreateRotation", &Matrix4::CreateRotation)
-		.StaticOverload<Matrix4(*)(const Quat&)>("CreateRotation", &Matrix4::CreateRotation)
+		.StaticFunc("CreateRotation", &Matrix4::CreateRotation)
 		.StaticFunc("CreateScale", &Matrix4::CreateScale)
 	);
 }

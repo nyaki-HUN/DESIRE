@@ -124,8 +124,7 @@ void RegisterVectormathFunctions_Lua(lua_State *L)
 		.addStaticFunction("CreateRotationY", &Matrix3::CreateRotationY)
 		.addStaticFunction("CreateRotationZ", &Matrix3::CreateRotationZ)
 		.addStaticFunction("CreateRotationZYX", &Matrix3::CreateRotationZYX)
-//		.addStaticFunction<Matrix3(*)(float, const Vector3&)>("CreateRotation", &Matrix3::CreateRotation)
-		.addStaticFunction<Matrix3(*)(const Quat&)>("CreateRotation", &Matrix3::CreateRotation)
+		.addStaticFunction("CreateRotation", &Matrix3::CreateRotation)
 		.addStaticFunction("CreateScale", &Matrix3::CreateScale)
 		.endClass();
 
@@ -162,8 +161,7 @@ void RegisterVectormathFunctions_Lua(lua_State *L)
 		.addStaticFunction("CreateRotationY", &Matrix4::CreateRotationY)
 		.addStaticFunction("CreateRotationZ", &Matrix4::CreateRotationZ)
 		.addStaticFunction("CreateRotationZYX", &Matrix4::CreateRotationZYX)
-//		.addStaticFunction<Matrix4(*)(float, const Vector3&)>("CreateRotation", &Matrix4::CreateRotation)
-		.addStaticFunction<Matrix4(*)(const Quat&)>("CreateRotation", &Matrix4::CreateRotation)
+		.addStaticFunction("CreateRotation", &Matrix4::CreateRotation)
 		.addStaticFunction("CreateScale", &Matrix4::CreateScale)
 		.endClass();
 }

@@ -183,7 +183,6 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterGlobalFunction("Matrix3@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<float, &Matrix3::CreateRotationZ>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Matrix3@ CreateRotationZYX(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<const Vector3&, &Matrix3::CreateRotationZYX>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Matrix3@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<float, const Vector3&, &Matrix3::CreateRotation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix3@ CreateRotation(const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<const Quat&, &Matrix3::CreateRotation>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Matrix3@ CreateScale(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix3>::StaticFunc<const Vector3&, &Matrix3::CreateScale>)), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 
@@ -237,7 +236,6 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterGlobalFunction("Matrix4@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<float, &Matrix4::CreateRotationZ>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Matrix4@ CreateRotationZYX(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<const Vector3&, &Matrix4::CreateRotationZYX>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Matrix4@ CreateRotation(float, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<float, const Vector3&, &Matrix4::CreateRotation>)), asCALL_GENERIC);
-	engine->RegisterGlobalFunction("Matrix4@ CreateRotation(const Quat& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<const Quat&, &Matrix4::CreateRotation>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Matrix4@ CreateScale(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Matrix4>::StaticFunc<const Vector3&, &Matrix4::CreateScale>)), asCALL_GENERIC);
 	engine->SetDefaultNamespace("");
 }
