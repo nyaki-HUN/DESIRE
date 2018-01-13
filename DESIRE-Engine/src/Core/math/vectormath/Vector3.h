@@ -67,38 +67,15 @@ public:
 	}
 
 	inline Vector3 operator -() const						{ return SIMD::Negate(mVec128); }
-	inline Vector3 operator +(const Vector3& vec) const	{ return SIMD::Add(mVec128, vec.mVec128); }
-	inline Vector3 operator -(const Vector3& vec) const	{ return SIMD::Sub(mVec128, vec.mVec128); }
+	inline Vector3 operator +(const Vector3& vec) const		{ return SIMD::Add(mVec128, vec.mVec128); }
+	inline Vector3 operator -(const Vector3& vec) const		{ return SIMD::Sub(mVec128, vec.mVec128); }
 	inline Vector3 operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
+	inline Vector3 operator /(float scalar) const			{ return SIMD::Mul(mVec128, 1.0f / scalar); }
 
-	inline Vector3 operator /(float scalar) const
-	{
-		return (*this * (1.0f / scalar));
-	}
-
-	inline Vector3& operator +=(const Vector3& vec)
-	{
-		*this = *this + vec;
-		return *this;
-	}
-
-	inline Vector3& operator -=(const Vector3& vec)
-	{
-		*this = *this - vec;
-		return *this;
-	}
-
-	inline Vector3& operator *=(float scalar)
-	{
-		*this = *this * scalar;
-		return *this;
-	}
-
-	inline Vector3& operator /=(float scalar)
-	{
-		*this = *this / scalar;
-		return *this;
-	}
+	inline Vector3& operator +=(const Vector3& vec)			{ *this = *this + vec;		return *this; }
+	inline Vector3& operator -=(const Vector3& vec)			{ *this = *this - vec;		return *this; }
+	inline Vector3& operator *=(float scalar)				{ *this = *this * scalar;	return *this; }
+	inline Vector3& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
 	// Compare 3-D vector to another 3-D vector for greater-than or equal
 	inline bool operator >=(const Vector3& vec) const

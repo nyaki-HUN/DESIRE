@@ -122,29 +122,11 @@ public:
 		col3.SetX(vec.GetW());
 	}
 
-	// Get the first row of a 4x4 matrix
-	inline Vector4 GetRow0() const
-	{
-		return Vector4(col0.GetX(), col1.GetX(), col2.GetX(), col3.GetX());
-	}
-
-	// Get the second row of a 4x4 matrix
-	inline Vector4 GetRow1() const
-	{
-		return Vector4(col0.GetY(), col1.GetY(), col2.GetY(), col3.GetY());
-	}
-
-	// Get the third row of a 4x4 matrix
-	inline Vector4 GetRow2() const
-	{
-		return Vector4(col0.GetZ(), col1.GetZ(), col2.GetZ(), col3.GetZ());
-	}
-
-	// Get the fourth row of a 4x4 matrix
-	inline Vector4 GetRow3() const
-	{
-		return Vector4(col0.GetW(), col1.GetW(), col2.GetW(), col3.GetW());
-	}
+	// Get the row of a 4x4 matrix
+	inline Vector4 GetRow0() const		{ return Vector4(col0.GetX(), col1.GetX(), col2.GetX(), col3.GetX()); }
+	inline Vector4 GetRow1() const		{ return Vector4(col0.GetY(), col1.GetY(), col2.GetY(), col3.GetY()); }
+	inline Vector4 GetRow2() const		{ return Vector4(col0.GetZ(), col1.GetZ(), col2.GetZ(), col3.GetZ()); }
+	inline Vector4 GetRow3() const		{ return Vector4(col0.GetW(), col1.GetW(), col2.GetW(), col3.GetW()); }
 
 	// Operator overloads
 	inline Matrix4& operator =(const Matrix4& mat)
@@ -192,7 +174,6 @@ public:
 	}
 
 	inline Vector4 operator *(const Vector4& vec) const;
-
 	inline Vector4 operator *(const Vector3& vec) const;
 
 	inline Matrix4 operator *(const Matrix4& mat) const
@@ -205,29 +186,10 @@ public:
 		);
 	}
 
-	inline Matrix4& operator +=(const Matrix4& mat)
-	{
-		*this = *this + mat;
-		return *this;
-	}
-
-	inline Matrix4& operator -=(const Matrix4& mat)
-	{
-		*this = *this - mat;
-		return *this;
-	}
-
-	inline Matrix4& operator *=(float scalar)
-	{
-		*this = *this * scalar;
-		return *this;
-	}
-
-	inline Matrix4& operator *=(const Matrix4& mat)
-	{
-		*this = *this * mat;
-		return *this;
-	}
+	inline Matrix4& operator +=(const Matrix4& mat)		{ *this = *this + mat;		return *this; }
+	inline Matrix4& operator -=(const Matrix4& mat)		{ *this = *this - mat;		return *this; }
+	inline Matrix4& operator *=(float scalar)			{ *this = *this * scalar;	return *this; }
+	inline Matrix4& operator *=(const Matrix4& mat)		{ *this = *this * mat;		return *this; }
 
 	// Append (post-multiply) a scale transformation to a 4x4 matrix
 	// NOTE: Faster than creating and multiplying a scale transformation matrix

@@ -50,23 +50,10 @@ public:
 		col2.SetX(vec.GetZ());
 	}
 
-	// Get the first row of a 3x3 matrix
-	inline Vector3 GetRow0() const
-	{
-		return Vector3(col0.GetX(), col1.GetX(), col2.GetX());
-	}
-
-	// Get the second row of a 3x3 matrix
-	inline Vector3 GetRow1() const
-	{
-		return Vector3(col0.GetY(), col1.GetY(), col2.GetY());
-	}
-
-	// Get the third row of a 3x3 matrix
-	inline Vector3 GetRow2() const
-	{
-		return Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ());
-	}
+	// Get the row of a 3x3 matrix
+	inline Vector3 GetRow0() const		{ return Vector3(col0.GetX(), col1.GetX(), col2.GetX()); }
+	inline Vector3 GetRow1() const		{ return Vector3(col0.GetY(), col1.GetY(), col2.GetY()); }
+	inline Vector3 GetRow2() const		{ return Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ()); }
 
 	// Operator overloads
 	inline Matrix3& operator =(const Matrix3& mat)
@@ -120,32 +107,13 @@ public:
 		);
 	}
 
-	inline Matrix3& operator +=(const Matrix3& mat)
-	{
-		*this = *this + mat;
-		return *this;
-	}
-
-	inline Matrix3& operator -=(const Matrix3& mat)
-	{
-		*this = *this - mat;
-		return *this;
-	}
-
-	inline Matrix3& operator *=(float scalar)
-	{
-		*this = *this * scalar;
-		return *this;
-	}
-
-	inline Matrix3& operator *=(const Matrix3& mat)
-	{
-		*this = *this * mat;
-		return *this;
-	}
+	inline Matrix3& operator +=(const Matrix3& mat)		{ *this = *this + mat;		return *this; }
+	inline Matrix3& operator -=(const Matrix3& mat)		{ *this = *this - mat;		return *this; }
+	inline Matrix3& operator *=(float scalar)			{ *this = *this * scalar;	return *this; }
+	inline Matrix3& operator *=(const Matrix3& mat)		{ *this = *this * mat;		return *this; }
 
 	// Append (post-multiply) a scale transformation to a 3x3 matrix
-	// NOTE: Faster than creating and multiplying a scale transformation matrix.
+	// NOTE: Faster than creating and multiplying a scale transformation matrix
 	inline Matrix3& AppendScale(const Vector3& scaleVec)
 	{
 		col0 *= scaleVec.GetX();
@@ -155,7 +123,7 @@ public:
 	}
 
 	// Prepend (pre-multiply) a scale transformation to a 3x3 matrix
-	// NOTE: Faster than creating and multiplying a scale transformation matrix.
+	// NOTE: Faster than creating and multiplying a scale transformation matrix
 	inline Matrix3& PrependScale(const Vector3& scaleVec)
 	{
 		col0 = col0.MulPerElem(scaleVec);
