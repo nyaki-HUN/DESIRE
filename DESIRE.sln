@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Box2D", "DESIRE-Mod
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Bullet", "DESIRE-Modules\Physics-Bullet\project\vs2017\Physics-Bullet.vcxproj", "{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-PhysX", "DESIRE-Modules\Physics-PhysX\project\vs2017\Physics-PhysX.vcxproj", "{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-bgfx", "DESIRE-Modules\Render-bgfx\project\vs2017\Render-bgfx.vcxproj", "{39620121-0C61-49D9-9BF4-B67638336D45}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-Direct3D11", "DESIRE-Modules\Render-Direct3D11\project\vs2017\Render-Direct3D11.vcxproj", "{E43F8824-C03E-469C-8C0D-64F609E14E0D}"
@@ -69,6 +71,10 @@ Global
 		{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}.Debug|x64.Build.0 = Debug|x64
 		{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}.Release|x64.ActiveCfg = Release|x64
 		{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}.Release|x64.Build.0 = Release|x64
+		{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}.Debug|x64.ActiveCfg = Debug|x64
+		{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}.Debug|x64.Build.0 = Debug|x64
+		{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}.Release|x64.ActiveCfg = Release|x64
+		{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}.Release|x64.Build.0 = Release|x64
 		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.ActiveCfg = Debug|x64
 		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.Build.0 = Debug|x64
 		{39620121-0C61-49D9-9BF4-B67638336D45}.Release|x64.ActiveCfg = Release|x64

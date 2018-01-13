@@ -4,7 +4,8 @@ project "Physics-PhysX"
 
 	includedirs
 	{
-		"../Externals/PhysX/include",
+		"../Externals/PhysX_3.4/Include",
+		"../Externals/PxShared/include",
 	}
 
 	files

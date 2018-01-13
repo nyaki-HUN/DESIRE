@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Physics/IPhysics.h"
+#include "Physics/Physics.h"
 
-#include "../Externals/PhysX/include/PxPhysicsAPI.h"
+#include "../Externals/PhysX_3.4/Include/PxPhysicsAPI.h"
 
-class PhysXPhysics : public IPhysics
+class PhysXPhysics : public Physics
 {
 public:
 	PhysXPhysics();
