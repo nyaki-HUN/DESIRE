@@ -13,46 +13,32 @@ struct vec_float3_t
 	float y;
 	float z;
 
-	vec_float3_t() {}
-	vec_float3_t(float x, float y, float z) : x(x), y(y), z(z) {}
-	vec_float3_t(const vec_float4_t& vec);
-	vec_float3_t& operator =(const vec_float4_t& vec);
+	inline vec_float3_t() {}
+	inline vec_float3_t(float x, float y, float z) : x(x), y(y), z(z) {}
 };
 
-struct vec_float4_t
+struct vec_float4_t : vec_float3_t
 {
-	float x;
-	float y;
-	float z;
 	float w;
 
-	vec_float4_t() {}
-	vec_float4_t(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-	vec_float4_t& operator =(const vec_float3_t& vec);
+	inline vec_float4_t() {}
+	inline vec_float4_t(float x, float y, float z, float w) : vec_float3_t(x, y, z), w(w) {}
+
+	inline vec_float4_t(const vec_float3_t& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
+	}
+
+	inline vec_float4_t& operator =(const vec_float3_t& vec)
+	{
+		x = vec.x;
+		y = vec.y;
+		z = vec.z;
+		return *this;
+	}
 };
-
-inline vec_float3_t::vec_float3_t(const vec_float4_t& vec)
-{
-	x = vec.x;
-	y = vec.y;
-	z = vec.z;
-}
-
-inline vec_float3_t& vec_float3_t::operator =(const vec_float4_t& vec)
-{
-	x = vec.x;
-	y = vec.y;
-	z = vec.z;
-	return *this;
-}
-
-inline vec_float4_t& vec_float4_t::operator =(const vec_float3_t& vec)
-{
-	x = vec.x;
-	y = vec.y;
-	z = vec.z;
-	return *this;
-}
 
 // --------------------------------------------------------------------------------------------------------------------
 //	SCALAR Helper functions
@@ -112,13 +98,19 @@ public:
 	// Load x, y, z, and w elements from the first four elements of a float array
 	static inline void LoadXYZW(vec_float4_t& vec, const float *fptr)
 	{
-		memcpy(&vec, fptr, 4 * sizeof(float));
+		vec.x = fptr[0];
+		vec.y = fptr[1];
+		vec.z = fptr[2];
+		vec.w = fptr[3];
 	}
 
 	// Store x, y, z, and w elements in the first four elements of a float array
 	static inline void StoreXYZW(const vec_float4_t& vec, float *fptr)
 	{
-		memcpy(fptr, &vec, 4 * sizeof(float));
+		fptr[0] = vec.x;
+		fptr[1] = vec.y;
+		fptr[2] = vec.z;
+		fptr[3] = vec.w;
 	}
 
 	// Set element
@@ -300,19 +292,19 @@ public:
 	static inline vec_float3_t AbsPerElem(const vec_float3_t& vec)
 	{
 		return vec_float3_t(
-			fabsf(vec.x),
-			fabsf(vec.y),
-			fabsf(vec.z)
+			std::abs(vec.x),
+			std::abs(vec.y),
+			std::abs(vec.z)
 		);
 	}
 
 	static inline vec_float4_t AbsPerElem(const vec_float4_t& vec)
 	{
 		return vec_float4_t(
-			fabsf(vec.x),
-			fabsf(vec.y),
-			fabsf(vec.z),
-			fabsf(vec.w)
+			std::abs(vec.x),
+			std::abs(vec.y),
+			std::abs(vec.z),
+			std::abs(vec.w)
 		);
 	}
 
@@ -393,29 +385,38 @@ public:
 	}
 
 	// Special blends for one single precision floating-point value
-	static inline vec_float3_t Blend_X(const vec_float3_t& to, const vec_float3_t& from)	{ return { from.x, to.y, to.z }; }
-	static inline vec_float3_t Blend_Y(const vec_float3_t& to, const vec_float3_t& from)	{ return { to.x, from.y, to.z }; }
-	static inline vec_float3_t Blend_Z(const vec_float3_t& to, const vec_float3_t& from)	{ return { to.x, to.y, from.z }; }
+	static inline vec_float3_t Blend_X(const vec_float3_t& to, const vec_float3_t& from)	{ return vec_float3_t(from.x, to.y, to.z); }
+	static inline vec_float3_t Blend_Y(const vec_float3_t& to, const vec_float3_t& from)	{ return vec_float3_t(to.x, from.y, to.z); }
+	static inline vec_float3_t Blend_Z(const vec_float3_t& to, const vec_float3_t& from)	{ return vec_float3_t(to.x, to.y, from.z); }
 
-	static inline vec_float4_t Blend_X(const vec_float4_t& to, const vec_float4_t& from)	{ return { from.x, to.y, to.z, to.w }; }
-	static inline vec_float4_t Blend_Y(const vec_float4_t& to, const vec_float4_t& from)	{ return { to.x, from.y, to.z, to.w }; }
-	static inline vec_float4_t Blend_Z(const vec_float4_t& to, const vec_float4_t& from)	{ return { to.x, to.y, from.z, to.w }; }
-	static inline vec_float4_t Blend_W(const vec_float4_t& to, const vec_float4_t& from)	{ return { to.x, to.y, to.z, from.w }; }
+	static inline vec_float4_t Blend_X(const vec_float3_t& to, const vec_float4_t& from)	{ return vec_float4_t(from.x, to.y, to.z, 0.0f); }
+	static inline vec_float4_t Blend_Y(const vec_float3_t& to, const vec_float4_t& from)	{ return vec_float4_t(to.x, from.y, to.z, 0.0f); }
+	static inline vec_float4_t Blend_Z(const vec_float3_t& to, const vec_float4_t& from)	{ return vec_float4_t(to.x, to.y, from.z, 0.0f); }
+	static inline vec_float4_t Blend_W(const vec_float3_t& to, const vec_float4_t& from)	{ return vec_float4_t(to.x, to.y, to.z, from.w); }
+
+	static inline vec_float4_t Blend_X(const vec_float4_t& to, const vec_float3_t& from)	{ return vec_float4_t(from.x, to.y, to.z, to.w); }
+	static inline vec_float4_t Blend_Y(const vec_float4_t& to, const vec_float3_t& from)	{ return vec_float4_t(to.x, from.y, to.z, to.w); }
+	static inline vec_float4_t Blend_Z(const vec_float4_t& to, const vec_float3_t& from)	{ return vec_float4_t(to.x, to.y, from.z, to.w); }
+
+	static inline vec_float4_t Blend_X(const vec_float4_t& to, const vec_float4_t& from)	{ return vec_float4_t(from.x, to.y, to.z, to.w); }
+	static inline vec_float4_t Blend_Y(const vec_float4_t& to, const vec_float4_t& from)	{ return vec_float4_t(to.x, from.y, to.z, to.w); }
+	static inline vec_float4_t Blend_Z(const vec_float4_t& to, const vec_float4_t& from)	{ return vec_float4_t(to.x, to.y, from.z, to.w); }
+	static inline vec_float4_t Blend_W(const vec_float4_t& to, const vec_float4_t& from)	{ return vec_float4_t(to.x, to.y, to.z, from.w); }
 
 	// Swizzle
-	static inline vec_float4_t Swizzle_XXXX(const vec_float4_t& vec)		{ return { vec.x, vec.x, vec.x, vec.x }; }
-	static inline vec_float4_t Swizzle_XXYY(const vec_float4_t& vec)		{ return { vec.x, vec.x, vec.y, vec.y }; }
-	static inline vec_float4_t Swizzle_XXZZ(const vec_float4_t& vec)		{ return { vec.x, vec.x, vec.z, vec.z }; }
-	static inline vec_float4_t Swizzle_XYXY(const vec_float4_t& vec)		{ return { vec.x, vec.y, vec.x, vec.y }; }
+	static inline vec_float4_t Swizzle_XXXX(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.x, vec.x, vec.x); }
+	static inline vec_float4_t Swizzle_XXYY(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.x, vec.y, vec.y); }
+	static inline vec_float4_t Swizzle_XXZZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.x, vec.z, vec.z); }
+	static inline vec_float4_t Swizzle_XYXY(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.y, vec.x, vec.y); }
 
-	static inline vec_float4_t Swizzle_YYYY(const vec_float4_t& vec)		{ return { vec.y, vec.y, vec.y, vec.y }; }
-	static inline vec_float4_t Swizzle_YYWW(const vec_float4_t& vec)		{ return { vec.y, vec.y, vec.w, vec.w }; }
-	static inline vec_float4_t Swizzle_YZXW(const vec_float4_t& vec)		{ return { vec.y, vec.z, vec.x, vec.w }; }
+	static inline vec_float4_t Swizzle_YYYY(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.y, vec.y, vec.y); }
+	static inline vec_float4_t Swizzle_YYWW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.y, vec.w, vec.w); }
+	static inline vec_float4_t Swizzle_YZXW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.z, vec.x, vec.w); }
 
-	static inline vec_float4_t Swizzle_ZXYW(const vec_float4_t& vec)		{ return { vec.z, vec.x, vec.y, vec.w }; }
-	static inline vec_float4_t Swizzle_ZWZW(const vec_float4_t& vec)		{ return { vec.z, vec.w, vec.z, vec.w }; }
-	static inline vec_float4_t Swizzle_ZZWW(const vec_float4_t& vec)		{ return { vec.z, vec.z, vec.w, vec.w }; }
-	static inline vec_float4_t Swizzle_ZZZZ(const vec_float4_t& vec)		{ return { vec.z, vec.z, vec.z, vec.z }; }
+	static inline vec_float4_t Swizzle_ZXYW(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.x, vec.y, vec.w); }
+	static inline vec_float4_t Swizzle_ZWZW(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.w, vec.z, vec.w); }
+	static inline vec_float4_t Swizzle_ZZWW(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.z, vec.w, vec.w); }
+	static inline vec_float4_t Swizzle_ZZZZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.z, vec.z, vec.z); }
 
-	static inline vec_float4_t Swizzle_WWWW(const vec_float4_t& vec)		{ return { vec.w, vec.w, vec.w, vec.w }; }
+	static inline vec_float4_t Swizzle_WWWW(const vec_float4_t& vec)		{ return vec_float4_t(vec.w, vec.w, vec.w, vec.w); }
 };
