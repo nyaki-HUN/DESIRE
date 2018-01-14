@@ -273,9 +273,9 @@ public:
 	{
 		const Vector4 zero(0.0f);
 		return Matrix4(
-			SIMD::Blend_X(zero, scaleVec),
-			SIMD::Blend_Y(zero, scaleVec),
-			SIMD::Blend_Z(zero, scaleVec),
+			Vector4(SIMD::Blend_X(zero, scaleVec)),
+			Vector4(SIMD::Blend_Y(zero, scaleVec)),
+			Vector4(SIMD::Blend_Z(zero, scaleVec)),
 			Vector4::AxisW()
 		);
 	}

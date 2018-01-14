@@ -355,14 +355,11 @@ inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
-	return SIMD::Blend_W(SIMD::Mul(unitVec, s), c);
 #else
-	const float sinHalfAngle = std::sin(halfAngle);
-	const float cosHalfAngle = std::cos(halfAngle);
-	Quat result = SIMD::Mul(unitVec, sinHalfAngle);
-	result.SetW(cosHalfAngle);
-	return result;
+	const float s = std::sin(halfAngle);
+	const Vector4 c(std::cos(halfAngle));
 #endif
+	return SIMD::Blend_W(SIMD::Mul(unitVec, s), c);
 }
 
 // Construct a quaternion to rotate around the x axis

@@ -175,9 +175,9 @@ public:
 	{
 		const Vector3 zero(0.0f);
 		return Matrix3(
-			SIMD::Blend_X(zero, scaleVec),
-			SIMD::Blend_Y(zero, scaleVec),
-			SIMD::Blend_Z(zero, scaleVec)
+			Vector3(SIMD::Blend_X(zero, scaleVec)),
+			Vector3(SIMD::Blend_Y(zero, scaleVec)),
+			Vector3(SIMD::Blend_Z(zero, scaleVec))
 		);
 	}
 

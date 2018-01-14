@@ -197,10 +197,10 @@ public:
 	}
 
 	// Special blends for one single precision floating-point value
-	static inline float32x4_t Blend_X(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0xffffffff, 0, 0, 0 }); }
-	static inline float32x4_t Blend_Y(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0, 0xffffffff, 0, 0 }); }
-	static inline float32x4_t Blend_Z(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0, 0, 0xffffffff, 0 }); }
-	static inline float32x4_t Blend_W(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0, 0, 0, 0xffffffff }); }
+	static inline float32x4_t Blend_X(float32x4_t to, float32x4_t from)		{ return SIMD::Blend(to, from, (uint32x4_t){ 0xffffffff, 0, 0, 0 }); }
+	static inline float32x4_t Blend_Y(float32x4_t to, float32x4_t from)		{ return SIMD::Blend(to, from, (uint32x4_t){ 0, 0xffffffff, 0, 0 }); }
+	static inline float32x4_t Blend_Z(float32x4_t to, float32x4_t from)		{ return SIMD::Blend(to, from, (uint32x4_t){ 0, 0, 0xffffffff, 0 }); }
+	static inline float32x4_t Blend_W(float32x4_t to, float32x4_t from)		{ return SIMD::Blend(to, from, (uint32x4_t){ 0, 0, 0, 0xffffffff }); }
 
 	// Swizzle
 	static inline float32x4_t Swizzle_XXXX(float32x4_t vec)		{ return vdupq_lane_f32(vget_low_f32(vec), 0); }
