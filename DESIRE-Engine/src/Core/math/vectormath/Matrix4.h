@@ -269,7 +269,16 @@ public:
 	static inline Matrix4 CreateRotation(float radians, const Vector3& unitVec);
 
 	// Construct a 4x4 matrix to perform scaling
-	static inline Matrix4 CreateScale(const Vector3& scaleVec);
+	static inline Matrix4 CreateScale(const Vector3& scaleVec)
+	{
+		const Vector4 zero(0.0f);
+		return Matrix4(
+			SIMD::Blend_X(zero, scaleVec),
+			SIMD::Blend_Y(zero, scaleVec),
+			SIMD::Blend_Z(zero, scaleVec),
+			Vector4::AxisW()
+		);
+	}
 
 	Vector4 col0;
 	Vector4 col1;
@@ -514,11 +523,10 @@ inline void Matrix4::AffineInvert()
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);
 	inv0 = _mm_unpacklo_ps(tmp3, tmp1);
 	const __m128 xxxx = SIMD::Swizzle_XXXX(inv3);
-	const __m128 mask_y = SIMD::MaskY();
 	inv1 = _mm_shuffle_ps(tmp3, tmp3, _MM_SHUFFLE(0, 3, 2, 2));
-	inv1 = SIMD::Blend(inv1, tmp1, mask_y);
+	inv1 = SIMD::Blend_Y(inv1, tmp1);
 	inv2 = _mm_shuffle_ps(tmp4, tmp4, _MM_SHUFFLE(0, 1, 1, 0));
-	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(tmp1), mask_y);
+	inv2 = SIMD::Blend_Y(inv2, SIMD::Swizzle_ZZZZ(tmp1));
 	const __m128 yyyy = SIMD::Swizzle_YYYY(inv3);
 	const __m128 zzzz = SIMD::Swizzle_ZZZZ(inv3);
 	inv3 = SIMD::Mul(inv0, xxxx);
@@ -558,11 +566,10 @@ inline void Matrix4::OrthoInvert()
 	inv3 = SIMD::Negate(col3);
 	inv0 = _mm_unpacklo_ps(tmp0, col1);
 	const __m128 xxxx = SIMD::Swizzle_XXXX(inv3);
-	const __m128 mask_y = SIMD::MaskY();
 	inv1 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(0, 3, 2, 2));
-	inv1 = SIMD::Blend(inv1, col1, mask_y);
+	inv1 = SIMD::Blend_Y(inv1, col1);
 	inv2 = _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(0, 1, 1, 0));
-	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(col1), mask_y);
+	inv2 = SIMD::Blend_Y(inv2, SIMD::Swizzle_ZZZZ(col1));
 	const __m128 yyyy = SIMD::Swizzle_YYYY(inv3);
 	const __m128 zzzz = SIMD::Swizzle_ZZZZ(inv3);
 	inv3 = SIMD::Mul(inv0, xxxx);
@@ -631,18 +638,16 @@ inline Matrix4 Matrix4::CreateRotationX(float radians)
 	Vector4 vecY, vecZ;
 
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_y = SIMD::MaskY();
-	const __m128 mask_z = SIMD::MaskZ();
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	vecY = SIMD::Blend(zero, c, mask_y);
-	vecY = SIMD::Blend(vecY, s, mask_z);
-	vecZ = SIMD::Blend(zero, SIMD::Negate(s), mask_y);
-	vecZ = SIMD::Blend(vecZ, c, mask_z);
+	vecY = SIMD::Blend_Y(zero, c);
+	vecY = SIMD::Blend_Z(vecY, s);
+	vecZ = SIMD::Blend_Y(zero, SIMD::Negate(s));
+	vecZ = SIMD::Blend_Z(vecZ, c);
 #else
-	const float s = sinf(radians);
-	const float c = cosf(radians);
+	const float s = std::sin(radians);
+	const float c = std::cos(radians);
 	vecY = Vector4(0.0f, c, s, 0.0f);
 	vecZ = Vector4(0.0f, -s, c, 0.0f);
 #endif
@@ -661,18 +666,16 @@ inline Matrix4 Matrix4::CreateRotationY(float radians)
 	Vector4 vecX, vecZ;
 
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 mask_z = SIMD::MaskZ();
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	vecX = SIMD::Blend(zero, c, mask_x);
-	vecX = SIMD::Blend(vecX, SIMD::Negate(s), mask_z);
-	vecZ = SIMD::Blend(zero, s, mask_x);
-	vecZ = SIMD::Blend(vecZ, c, mask_z);
+	vecX = SIMD::Blend_X(zero, c);
+	vecX = SIMD::Blend_Z(vecX, SIMD::Negate(s));
+	vecZ = SIMD::Blend_X(zero, s);
+	vecZ = SIMD::Blend_Z(vecZ, c);
 #else
-	const float s = sinf(radians);
-	const float c = cosf(radians);
+	const float s = std::sin(radians);
+	const float c = std::cos(radians);
 	vecX = Vector4(c, 0.0f, -s, 0.0f);
 	vecZ = Vector4(s, 0.0f, c, 0.0f);
 #endif
@@ -691,18 +694,16 @@ inline Matrix4 Matrix4::CreateRotationZ(float radians)
 	Vector4 vecX, vecY;
 
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 mask_y = SIMD::MaskY();
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	vecX = SIMD::Blend(zero, c, mask_x);
-	vecX = SIMD::Blend(vecX, s, mask_y);
-	vecY = SIMD::Blend(zero, SIMD::Negate(s), mask_x);
-	vecY = SIMD::Blend(vecY, c, mask_y);
+	vecX = SIMD::Blend_X(zero, c);
+	vecX = SIMD::Blend_Y(vecX, s);
+	vecY = SIMD::Blend_X(zero, SIMD::Negate(s));
+	vecY = SIMD::Blend_Y(vecY, c);
 #else
-	const float s = sinf(radians);
-	const float c = cosf(radians);
+	const float s = std::sin(radians);
+	const float c = std::cos(radians);
 	vecX = Vector4(c, s, 0.0f, 0.0f);
 	vecY = Vector4(-s, c, 0.0f, 0.0f);
 #endif
@@ -738,18 +739,18 @@ inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 		Vector4::AxisW()
 	);
 #else
-	const float sX = sinf(radiansXYZ.GetX());
-	const float cX = cosf(radiansXYZ.GetX());
-	const float sY = sinf(radiansXYZ.GetY());
-	const float cY = cosf(radiansXYZ.GetY());
-	const float sZ = sinf(radiansXYZ.GetZ());
-	const float cZ = cosf(radiansXYZ.GetZ());
+	const float sX = std::sin(radiansXYZ.GetX());
+	const float cX = std::cos(radiansXYZ.GetX());
+	const float sY = std::sin(radiansXYZ.GetY());
+	const float cY = std::cos(radiansXYZ.GetY());
+	const float sZ = std::sin(radiansXYZ.GetZ());
+	const float cZ = std::cos(radiansXYZ.GetZ());
 	const float tmp0 = cZ * sY;
 	const float tmp1 = sZ * sY;
 	return Matrix4(
 		Vector4(cZ * cY, sZ * cY, -sY, 0.0f),
-		Vector4(((tmp0 * sX) - (sZ * cX)), ((tmp1 * sX) + (cZ * cX)), cY * sX, 0.0f),
-		Vector4(((tmp0 * cX) + (sZ * sX)), ((tmp1 * cX) - (cZ * sX)), cY * cX, 0.0f),
+		Vector4((tmp0 * sX) - (sZ * cX), (tmp1 * sX) + (cZ * cX), cY * sX, 0.0f),
+		Vector4((tmp0 * cX) + (sZ * sX), (tmp1 * cX) - (cZ * sX), cY * cX, 0.0f),
 		Vector4::AxisW()
 	);
 #endif
@@ -759,28 +760,25 @@ inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 {
 #if defined(DESIRE_USE_SSE)
-	__m128 s, c, tmp0, tmp1, tmp2;
 	__m128 axis = unitVec;
+	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	__m128 xxxx = SIMD::Swizzle_XXXX(axis);
-	__m128 yyyy = SIMD::Swizzle_YYYY(axis);
-	__m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
-	__m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
-	__m128 axisS = SIMD::Mul(axis, s);
-	__m128 negAxisS = SIMD::Negate(axisS);
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 mask_y = SIMD::MaskY();
-	const __m128 mask_z = SIMD::MaskZ();
-	tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
-	tmp0 = SIMD::Blend(tmp0, SIMD::Swizzle_YYYY(negAxisS), mask_z);
-	tmp1 = SIMD::Blend(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS), mask_x);
-	tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
-	tmp2 = SIMD::Blend(tmp2, SIMD::Swizzle_XXXX(negAxisS), mask_y);
-	tmp0 = SIMD::Blend(tmp0, c, mask_x);
-	tmp1 = SIMD::Blend(tmp1, c, mask_y);
-	tmp2 = SIMD::Blend(tmp2, c, mask_z);
+	const __m128 xxxx = SIMD::Swizzle_XXXX(axis);
+	const __m128 yyyy = SIMD::Swizzle_YYYY(axis);
+	const __m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
+	const __m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
+	const __m128 axisS = SIMD::Mul(axis, s);
+	const __m128 negAxisS = SIMD::Negate(axisS);
+	__m128 tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
+	tmp0 = SIMD::Blend_Z(tmp0, SIMD::Swizzle_YYYY(negAxisS));
+	__m128 tmp1 = SIMD::Blend_X(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS));
+	__m128 tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
+	tmp2 = SIMD::Blend_Y(tmp2, SIMD::Swizzle_XXXX(negAxisS));
+	tmp0 = SIMD::Blend_X(tmp0, c);
+	tmp1 = SIMD::Blend_Y(tmp1, c);
+	tmp2 = SIMD::Blend_Z(tmp2, c);
 	alignas(16) const uint32_t select_xyz[4] = { 0xffffffff, 0xffffffff, 0xffffffff, 0 };
-	const __m128 mask_xyz = _mm_load_ps((float *)select_xyz);
+	const __m128 mask_xyz = _mm_load_ps((float*)select_xyz);
 	axis = _mm_and_ps(axis, mask_xyz);
 	tmp0 = _mm_and_ps(tmp0, mask_xyz);
 	tmp1 = _mm_and_ps(tmp1, mask_xyz);
@@ -792,8 +790,8 @@ inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 		Vector4::AxisW()
 	);
 #else
-	const float s = sinf(radians);
-	const float c = cosf(radians);
+	const float s = std::sin(radians);
+	const float c = std::cos(radians);
 	const float x = unitVec.GetX();
 	const float y = unitVec.GetY();
 	const float z = unitVec.GetZ();
@@ -805,27 +803,6 @@ inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 		Vector4(((x * x) * oneMinusC) + c, (xy * oneMinusC) + (z * s), (zx * oneMinusC) - (y * s), 0.0f),
 		Vector4((xy * oneMinusC) - (z * s), ((y * y) * oneMinusC) + c, (yz * oneMinusC) + (x * s), 0.0f),
 		Vector4((zx * oneMinusC) + (y * s), (yz * oneMinusC) - (x * s), ((z * z) * oneMinusC) + c, 0.0f),
-		Vector4::AxisW()
-	);
-#endif
-}
-
-// Construct a 4x4 matrix to perform scaling
-inline Matrix4 Matrix4::CreateScale(const Vector3& scaleVec)
-{
-#if defined(DESIRE_USE_SSE) || defined(__ARM_NEON__)
-	const Vector4 zero(0.0f);
-	return Matrix4(
-		SIMD::Blend(zero, scaleVec, SIMD::MaskX()),
-		SIMD::Blend(zero, scaleVec, SIMD::MaskY()),
-		SIMD::Blend(zero, scaleVec, SIMD::MaskZ()),
-		Vector4::AxisW()
-	);
-#else
-	return Matrix4(
-		Vector4(scaleVec.GetX(), 0.0f, 0.0f, 0.0f),
-		Vector4(0.0f, scaleVec.GetY(), 0.0f, 0.0f),
-		Vector4(0.0f, 0.0f, scaleVec.GetZ(), 0.0f),
 		Vector4::AxisW()
 	);
 #endif

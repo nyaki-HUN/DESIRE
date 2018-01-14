@@ -190,31 +190,17 @@ public:
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
-	// Select packed single precision floating-point values from a and b using the mask
+	// Blend (select) elements from a and b using the mask
 	static inline float32x4_t Blend(float32x4_t a, float32x4_t b, uint32x4_t mask)
 	{
 		return vbslq_f32(mask, b, a);
 	}
 
-	// Select mask
-	static inline uint32x4_t MaskX()
-	{
-		return (uint32x4_t){ 0xffffffff, 0, 0, 0 };
-	}
-	static inline uint32x4_t MaskY()
-	{
-		return (uint32x4_t){ 0, 0xffffffff, 0, 0 };
-	}
-
-	static inline uint32x4_t MaskZ()
-	{
-		return (uint32x4_t){ 0, 0, 0xffffffff, 0 };
-	}
-
-	static inline uint32x4_t MaskW()
-	{
-		return (uint32x4_t){ 0, 0, 0, 0xffffffff };
-	}
+	// Special blends for one single precision floating-point value
+	static inline float32x4_t Blend_X(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0xffffffff, 0, 0, 0 }); }
+	static inline float32x4_t Blend_Y(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0, 0xffffffff, 0, 0 }); }
+	static inline float32x4_t Blend_Z(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0, 0, 0xffffffff, 0 }); }
+	static inline float32x4_t Blend_W(float32x4_t to, float32x4_t from)		{ return Blend(to, from, (uint32x4_t){ 0, 0, 0, 0xffffffff }); }
 
 	// Swizzle
 	static inline float32x4_t Swizzle_XXXX(float32x4_t vec)		{ return vdupq_lane_f32(vget_low_f32(vec), 0); }

@@ -228,52 +228,34 @@ public:
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
 	}
 
-	// Select packed single precision floating-point values from a and b using the mask
+	// Blend (select) elements from a and b using the mask
 	static inline __m128 Blend(__m128 a, __m128 b, __m128 mask)
 	{
 		return _mm_blendv_ps(a, b, mask);
 	}
 
-	// Select mask
-	static inline __m128 MaskX()
-	{
-		alignas(16) const uint32_t select_x[4] = { 0xffffffff, 0, 0, 0 };
-		return _mm_load_ps((float*)select_x);
-	}
-	static inline __m128 MaskY()
-	{
-		alignas(16) const uint32_t select_y[4] = { 0, 0xffffffff, 0, 0 };
-		return _mm_load_ps((float*)select_y);
-	}
-
-	static inline __m128 MaskZ()
-	{
-		alignas(16) const uint32_t select_z[4] = { 0, 0, 0xffffffff, 0 };
-		return _mm_load_ps((float*)select_z);
-	}
-
-	static inline __m128 MaskW()
-	{
-		alignas(16) const uint32_t select_w[4] = { 0, 0, 0, 0xffffffff };
-		return _mm_load_ps((float*)select_w);
-	}
+	// Special blends for one single precision floating-point value
+	static inline __m128 Blend_X(__m128 to, __m128 from)	{ return _mm_blend_ps(to, from, 0b0001); }
+	static inline __m128 Blend_Y(__m128 to, __m128 from)	{ return _mm_blend_ps(to, from, 0b0010); }
+	static inline __m128 Blend_Z(__m128 to, __m128 from)	{ return _mm_blend_ps(to, from, 0b0100); }
+	static inline __m128 Blend_W(__m128 to, __m128 from)	{ return _mm_blend_ps(to, from, 0b1000); }
 
 	// Swizzle
-	static inline __m128 Swizzle_XXXX(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0)); }
-	static inline __m128 Swizzle_XXYY(__m128 vec)	{ return _mm_unpacklo_ps(vec, vec); }
-	static inline __m128 Swizzle_XXZZ(__m128 vec)	{ return _mm_moveldup_ps(vec); }
-	static inline __m128 Swizzle_XYXY(__m128 vec)	{ return _mm_movelh_ps(vec, vec); }
+	static inline __m128 Swizzle_XXXX(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0)); }
+	static inline __m128 Swizzle_XXYY(__m128 vec)		{ return _mm_unpacklo_ps(vec, vec); }
+	static inline __m128 Swizzle_XXZZ(__m128 vec)		{ return _mm_moveldup_ps(vec); }
+	static inline __m128 Swizzle_XYXY(__m128 vec)		{ return _mm_movelh_ps(vec, vec); }
 
-	static inline __m128 Swizzle_YYYY(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1)); }
-	static inline __m128 Swizzle_YYWW(__m128 vec)	{ return _mm_movehdup_ps(vec); }
-	static inline __m128 Swizzle_YZXW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1)); }
+	static inline __m128 Swizzle_YYYY(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1)); }
+	static inline __m128 Swizzle_YYWW(__m128 vec)		{ return _mm_movehdup_ps(vec); }
+	static inline __m128 Swizzle_YZXW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1)); }
 
-	static inline __m128 Swizzle_ZXYW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2)); }
-	static inline __m128 Swizzle_ZWZW(__m128 vec)	{ return _mm_movehl_ps(vec, vec); }
-	static inline __m128 Swizzle_ZZWW(__m128 vec)	{ return _mm_unpackhi_ps(vec, vec); }
-	static inline __m128 Swizzle_ZZZZ(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); }
+	static inline __m128 Swizzle_ZXYW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2)); }
+	static inline __m128 Swizzle_ZWZW(__m128 vec)		{ return _mm_movehl_ps(vec, vec); }
+	static inline __m128 Swizzle_ZZWW(__m128 vec)		{ return _mm_unpackhi_ps(vec, vec); }
+	static inline __m128 Swizzle_ZZZZ(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); }
 
-	static inline __m128 Swizzle_WWWW(__m128 vec)	{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
+	static inline __m128 Swizzle_WWWW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
 };
 
 // --------------------------------------------------------------------------------------------------------------------

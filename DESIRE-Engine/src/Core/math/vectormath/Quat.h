@@ -235,7 +235,7 @@ inline Quat Quat::operator *(const Quat& quat) const
 	__m128 qw = vec_nmsub(l_wxyz, r_wxyz, product);
 	const __m128 xy = SIMD::MulAdd(l_wxyz, r_wxyz, product);
 	qw = SIMD::Sub(qw, _mm_ror_ps(xy, 2));
-	return SIMD::Blend(qv, qw, SIMD::MaskW());
+	return SIMD::Blend_W(qv, qw);
 #else
 	return Quat(
 		((GetW() * quat.GetX() + GetX() * quat.GetW()) + GetY() * quat.GetZ()) - GetZ() * quat.GetY(),
@@ -355,7 +355,7 @@ inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
-	return SIMD::Blend(SIMD::Mul(unitVec, s), c, SIMD::MaskW());
+	return SIMD::Blend_W(SIMD::Mul(unitVec, s), c);
 #else
 	const float sinHalfAngle = std::sin(halfAngle);
 	const float cosHalfAngle = std::cos(halfAngle);
@@ -373,8 +373,8 @@ inline Quat Quat::CreateRotationX(float radians)
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
-	const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskX());
-	return SIMD::Blend(res, c, SIMD::MaskW());
+	const __m128 res = SIMD::Blend_X(_mm_setzero_ps(), s);
+	return SIMD::Blend_W(res, c);
 #else
 	const float s = std::sin(halfAngle);
 	const float c = std::cos(halfAngle);
@@ -390,8 +390,8 @@ inline Quat Quat::CreateRotationY(float radians)
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
-	const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskY());
-	return SIMD::Blend(res, c, SIMD::MaskW());
+	const __m128 res = SIMD::Blend_Y(_mm_setzero_ps(), s);
+	return SIMD::Blend_W(res, c);
 #else
 	const float s = std::sin(halfAngle);
 	const float c = std::cos(halfAngle);
@@ -407,8 +407,8 @@ inline Quat Quat::CreateRotationZ(float radians)
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
-	const __m128 res = SIMD::Blend(_mm_setzero_ps(), s, SIMD::MaskZ());
-	return SIMD::Blend(res, c, SIMD::MaskW());
+	const __m128 res = SIMD::Blend_Z(_mm_setzero_ps(), s);
+	return SIMD::Blend_W(res, c);
 #else
 	const float s = std::sin(halfAngle);
 	const float c = std::cos(halfAngle);
@@ -462,7 +462,7 @@ inline Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3
 	const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
 	const __m128 cosHalfAngleX2 = SIMD::Mul(recipCosHalfAngleX2, cosAngleX2Plus2);
 	const __m128 res = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
-	result = SIMD::Blend(res, SIMD::Mul(cosHalfAngleX2, 0.5f), SIMD::MaskW());
+	result = SIMD::Blend_W(res, SIMD::Mul(cosHalfAngleX2, 0.5f));
 #else
 	const float cosHalfAngleX2 = std::sqrt((2.0f * (1.0f + unitVecFrom.Dot(unitVecTo))));
 	const float recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);

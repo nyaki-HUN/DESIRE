@@ -171,7 +171,15 @@ public:
 	static inline Matrix3 CreateRotation(float radians, const Vector3& unitVec);
 
 	// Construct a 3x3 matrix to perform scaling
-	static inline Matrix3 CreateScale(const Vector3& scaleVec);
+	static inline Matrix3 CreateScale(const Vector3& scaleVec)
+	{
+		const Vector3 zero(0.0f);
+		return Matrix3(
+			SIMD::Blend_X(zero, scaleVec),
+			SIMD::Blend_Y(zero, scaleVec),
+			SIMD::Blend_Z(zero, scaleVec)
+		);
+	}
 
 	Vector3 col0;
 	Vector3 col1;
@@ -204,14 +212,12 @@ inline Matrix3::Matrix3(const Quat& unitQuat)
 	tmp1 = SIMD::Sub(tmp1, SIMD::Mul(zxyw, zxyw_2));						// tmp1 = 1 - 2y2 - 2z2, 1 - 2z2 - 2x2, 1 - 2x2 - 2y2, 1 - 2w2 - 2w2
 	tmp2 = SIMD::Sub(tmp2, SIMD::Mul(zxyw_2, wwww));						// tmp2 = 2xy - 2zw, 2yz - 2xw, 2xz - 2yw, 2w2 - 2w2
 
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 tmp3 = SIMD::Blend(tmp0, tmp1, mask_x);
-	const __m128 tmp4 = SIMD::Blend(tmp1, tmp2, mask_x);
-	const __m128 tmp5 = SIMD::Blend(tmp2, tmp0, mask_x);
-	const __m128 mask_z = SIMD::MaskZ();
-	col0 = SIMD::Blend(tmp3, tmp2, mask_z);
-	col1 = SIMD::Blend(tmp4, tmp0, mask_z);
-	col2 = SIMD::Blend(tmp5, tmp1, mask_z);
+	const __m128 tmp3 = SIMD::Blend_X(tmp0, tmp1);
+	const __m128 tmp4 = SIMD::Blend_X(tmp1, tmp2);
+	const __m128 tmp5 = SIMD::Blend_X(tmp2, tmp0);
+	col0 = SIMD::Blend_Z(tmp3, tmp2);
+	col1 = SIMD::Blend_Z(tmp4, tmp0);
+	col2 = SIMD::Blend_Z(tmp5, tmp1);
 #else
 	const float qx = unitQuat.GetX();
 	const float qy = unitQuat.GetY();
@@ -265,17 +271,15 @@ inline Vector3 Matrix3::operator *(const Vector3& vec) const
 inline void Matrix3::Transpose()
 {
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_y = SIMD::MaskY();
-
 	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
 	__m128 tmp1 = _mm_unpackhi_ps(col0, col2);
 	col0 = _mm_unpacklo_ps(tmp0, col1);
 
 	tmp1 = _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(0, 1, 1, 0));
-	col2 = SIMD::Blend(tmp1, SIMD::Swizzle_ZZZZ(col1), mask_y);
+	col2 = SIMD::Blend_Y(tmp1, SIMD::Swizzle_ZZZZ(col1));
 
 	tmp0 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(0, 3, 2, 2));
-	col1 = SIMD::Blend(tmp0, col1, mask_y);
+	col1 = SIMD::Blend_Y(tmp0, col1);
 #else
 	const Vector3 tmp0(col0.GetX(), col1.GetX(), col2.GetX());
 	const Vector3 tmp1(col0.GetY(), col1.GetY(), col2.GetY());
@@ -300,11 +304,10 @@ inline void Matrix3::Invert()
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);
 	const __m128 inv0 = _mm_unpacklo_ps(tmp3, tmp1);
-	const __m128 mask_y = SIMD::MaskY();
 	__m128 inv1 = _mm_shuffle_ps(tmp3, tmp3, _MM_SHUFFLE(0, 3, 2, 2));
 	__m128 inv2 = _mm_shuffle_ps(tmp4, tmp4, _MM_SHUFFLE(0, 1, 1, 0));
-	inv1 = SIMD::Blend(inv1, tmp1, mask_y);
-	inv2 = SIMD::Blend(inv2, SIMD::Swizzle_ZZZZ(tmp1), mask_y);
+	inv1 = SIMD::Blend_Y(inv1, tmp1);
+	inv2 = SIMD::Blend_Y(inv2, SIMD::Swizzle_ZZZZ(tmp1));
 	col0 = SIMD::Mul(inv0, invDet);
 	col1 = SIMD::Mul(inv1, invDet);
 	col2 = SIMD::Mul(inv2, invDet);
@@ -322,15 +325,13 @@ inline Matrix3 Matrix3::Matrix3::CreateRotationX(float radians)
 	Vector3 vecY, vecZ;
 
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_y = SIMD::MaskY();
-	const __m128 mask_z = SIMD::MaskZ();
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	vecY = SIMD::Blend(zero, c, mask_y);
-	vecY = SIMD::Blend(vecY, s, mask_z);
-	vecZ = SIMD::Blend(zero, SIMD::Negate(s), mask_y);
-	vecZ = SIMD::Blend(vecZ, c, mask_z);
+	vecY = SIMD::Blend_Y(zero, c);
+	vecY = SIMD::Blend_Z(vecY, s);
+	vecZ = SIMD::Blend_Y(zero, SIMD::Negate(s));
+	vecZ = SIMD::Blend_Z(vecZ, c);
 #else
 	const float s = std::sin(radians);
 	const float c = std::cos(radians);
@@ -338,7 +339,11 @@ inline Matrix3 Matrix3::Matrix3::CreateRotationX(float radians)
 	vecZ = Vector3(0.0f, -s, c);
 #endif
 
-	return Matrix3(Vector3::AxisX(), vecY, vecZ);
+	return Matrix3(
+		Vector3::AxisX(),
+		vecY,
+		vecZ
+	);
 }
 
 // Construct a 3x3 matrix to rotate around the y axis
@@ -347,15 +352,13 @@ inline Matrix3 Matrix3::CreateRotationY(float radians)
 	Vector3 vecX, vecZ;
 
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 mask_z = SIMD::MaskZ();
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	vecX = SIMD::Blend(zero, c, mask_x);
-	vecX = SIMD::Blend(vecX, SIMD::Negate(s), mask_z);
-	vecZ = SIMD::Blend(zero, s, mask_x);
-	vecZ = SIMD::Blend(vecZ, c, mask_z);
+	vecX = SIMD::Blend_X(zero, c);
+	vecX = SIMD::Blend_Z(vecX, SIMD::Negate(s));
+	vecZ = SIMD::Blend_X(zero, s);
+	vecZ = SIMD::Blend_Z(vecZ, c);
 #else
 	const float s = std::sin(radians);
 	const float c = std::cos(radians);
@@ -363,7 +366,11 @@ inline Matrix3 Matrix3::CreateRotationY(float radians)
 	vecZ = Vector3(s, 0.0f, c);
 #endif
 
-	return Matrix3(vecX, Vector3::AxisY(), vecZ);
+	return Matrix3(
+		vecX,
+		Vector3::AxisY(),
+		vecZ
+	);
 }
 
 // Construct a 3x3 matrix to rotate around the z axis
@@ -372,15 +379,13 @@ inline Matrix3 Matrix3::CreateRotationZ(float radians)
 	Vector3 vecX, vecY;
 
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 mask_y = SIMD::MaskY();
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	vecX = SIMD::Blend(zero, c, mask_x);
-	vecX = SIMD::Blend(vecX, s, mask_y);
-	vecY = SIMD::Blend(zero, SIMD::Negate(s), mask_x);
-	vecY = SIMD::Blend(vecY, c, mask_y);
+	vecX = SIMD::Blend_X(zero, c);
+	vecX = SIMD::Blend_Y(vecX, s);
+	vecY = SIMD::Blend_X(zero, SIMD::Negate(s));
+	vecY = SIMD::Blend_Y(vecY, c);
 #else
 	const float s = std::sin(radians);
 	const float c = std::cos(radians);
@@ -388,7 +393,11 @@ inline Matrix3 Matrix3::CreateRotationZ(float radians)
 	vecY = Vector3(-s, c, 0.0f);
 #endif
 
-	return Matrix3(vecX, vecY, Vector3::AxisZ());
+	return Matrix3(
+		vecX,
+		vecY,
+		Vector3::AxisZ()
+	);
 }
 
 // Construct a 3x3 matrix to rotate around the x, y, and z axes
@@ -433,26 +442,23 @@ inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 {
 #if defined(DESIRE_USE_SSE)
-	__m128 s, c, tmp0, tmp1, tmp2;
 	__m128 axis = unitVec;
+	__m128 s, c;
 	sincosf4(_mm_set1_ps(radians), &s, &c);
-	__m128 xxxx = SIMD::Swizzle_XXXX(axis);
-	__m128 yyyy = SIMD::Swizzle_YYYY(axis);
-	__m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
-	__m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
-	__m128 axisS = SIMD::Mul(axis, s);
-	__m128 negAxisS = SIMD::Negate(axisS);
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 mask_y = SIMD::MaskY();
-	const __m128 mask_z = SIMD::MaskZ();
-	tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
-	tmp0 = SIMD::Blend(tmp0, SIMD::Swizzle_YYYY(negAxisS), mask_z);
-	tmp1 = SIMD::Blend(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS), mask_x);
-	tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
-	tmp2 = SIMD::Blend(tmp2, SIMD::Swizzle_XXXX(negAxisS), mask_y);
-	tmp0 = SIMD::Blend(tmp0, c, mask_x);
-	tmp1 = SIMD::Blend(tmp1, c, mask_y);
-	tmp2 = SIMD::Blend(tmp2, c, mask_z);
+	const __m128 xxxx = SIMD::Swizzle_XXXX(axis);
+	const __m128 yyyy = SIMD::Swizzle_YYYY(axis);
+	const __m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
+	const __m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
+	const __m128 axisS = SIMD::Mul(axis, s);
+	const __m128 negAxisS = SIMD::Negate(axisS);
+	__m128 tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
+	tmp0 = SIMD::Blend_Z(tmp0, SIMD::Swizzle_YYYY(negAxisS));
+	__m128 tmp1 = SIMD::Blend_X(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS));
+	__m128 tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
+	tmp2 = SIMD::Blend_Y(tmp2, SIMD::Swizzle_XXXX(negAxisS));
+	tmp0 = SIMD::Blend_X(tmp0, c);
+	tmp1 = SIMD::Blend_Y(tmp1, c);
+	tmp2 = SIMD::Blend_Z(tmp2, c);
 	return Matrix3(
 		SIMD::MulAdd(SIMD::Mul(axis, xxxx), oneMinusC, tmp0),
 		SIMD::MulAdd(SIMD::Mul(axis, yyyy), oneMinusC, tmp1),
@@ -464,33 +470,14 @@ inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 	const float x = unitVec.GetX();
 	const float y = unitVec.GetY();
 	const float z = unitVec.GetZ();
-	const float xy = (x * y);
-	const float yz = (y * z);
-	const float zx = (z * x);
+	const float xy = x * y;
+	const float yz = y * z;
+	const float zx = z * x;
 	const float oneMinusC = (1.0f - c);
 	return Matrix3(
-		Vector3((((x * x) * oneMinusC) + c), ((xy * oneMinusC) + (z * s)), ((zx * oneMinusC) - (y * s))),
-		Vector3(((xy * oneMinusC) - (z * s)), (((y * y) * oneMinusC) + c), ((yz * oneMinusC) + (x * s))),
-		Vector3(((zx * oneMinusC) + (y * s)), ((yz * oneMinusC) - (x * s)), (((z * z) * oneMinusC) + c))
-	);
-#endif
-}
-
-// Construct a 3x3 matrix to perform scaling
-inline Matrix3 Matrix3::CreateScale(const Vector3& scaleVec)
-{
-#if defined(DESIRE_USE_SSE) || defined(__ARM_NEON__)
-	const Vector3 zero(0.0f);
-	return Matrix3(
-		SIMD::Blend(zero, scaleVec, SIMD::MaskX()),
-		SIMD::Blend(zero, scaleVec, SIMD::MaskY()),
-		SIMD::Blend(zero, scaleVec, SIMD::MaskZ())
-	);
-#else
-	return Matrix3(
-		Vector3(scaleVec.GetX(), 0.0f, 0.0f),
-		Vector3(0.0f, scaleVec.GetY(), 0.0f),
-		Vector3(0.0f, 0.0f, scaleVec.GetZ())
+		Vector3(((x * x) * oneMinusC) + c, (xy * oneMinusC) + (z * s), (zx * oneMinusC) - (y * s)),
+		Vector3((xy * oneMinusC) - (z * s), ((y * y) * oneMinusC) + c, (yz * oneMinusC) + (x * s)),
+		Vector3((zx * oneMinusC) + (y * s), (yz * oneMinusC) - (x * s), ((z * z) * oneMinusC) + c)
 	);
 #endif
 }
@@ -500,11 +487,6 @@ inline Matrix3 Matrix3::CreateScale(const Vector3& scaleVec)
 inline Quat::Quat(const Matrix3& rotMat)
 {
 #if defined(DESIRE_USE_SSE)
-	const __m128 mask_x = SIMD::MaskX();
-	const __m128 mask_y = SIMD::MaskY();
-	const __m128 mask_z = SIMD::MaskZ();
-	const __m128 mask_w = SIMD::MaskW();
-
 	/* four cases: */
 	/* trace > 0 */
 	/* else */
@@ -514,24 +496,24 @@ inline Quat::Quat(const Matrix3& rotMat)
 
 	/* compute quaternion for each case */
 
-	const __m128 xx_yy = SIMD::Blend(rotMat.col0, rotMat.col1, mask_y);
+	const __m128 xx_yy = SIMD::Blend_Y(rotMat.col0, rotMat.col1);
 	__m128 xx_yy_zz_xx = _mm_shuffle_ps(xx_yy, xx_yy, _MM_SHUFFLE(0, 0, 1, 0));
-	xx_yy_zz_xx = SIMD::Blend(xx_yy_zz_xx, rotMat.col2, mask_z); // TODO: Ck
+	xx_yy_zz_xx = SIMD::Blend_Z(xx_yy_zz_xx, rotMat.col2); // TODO: Ck
 	const __m128 yy_zz_xx_yy = _mm_shuffle_ps(xx_yy_zz_xx, xx_yy_zz_xx, _MM_SHUFFLE(1, 0, 2, 1));
 	const __m128 zz_xx_yy_zz = _mm_shuffle_ps(xx_yy_zz_xx, xx_yy_zz_xx, _MM_SHUFFLE(2, 1, 0, 2));
 
 	const __m128 diagSum = SIMD::Add(SIMD::Add(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
 	const __m128 diagDiff = SIMD::Sub(SIMD::Sub(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
-	const __m128 radicand = SIMD::Add(SIMD::Blend(diagDiff, diagSum, mask_w), _mm_set1_ps(1.0f));
+	const __m128 radicand = SIMD::Add(SIMD::Blend_W(diagDiff, diagSum), _mm_set1_ps(1.0f));
 	const __m128 invSqrt = newtonrapson_rsqrt4(radicand);
 
 	__m128 zy_xz_yx, yz_zx_xy;
-	zy_xz_yx = SIMD::Blend(rotMat.col0, rotMat.col1, mask_z);					// zy_xz_yx = 00 01 12 03
+	zy_xz_yx = SIMD::Blend_Z(rotMat.col0, rotMat.col1);							// zy_xz_yx = 00 01 12 03
 	zy_xz_yx = _mm_shuffle_ps(zy_xz_yx, zy_xz_yx, _MM_SHUFFLE(0, 1, 2, 2));		// zy_xz_yx = 12 12 01 00
-	zy_xz_yx = SIMD::Blend(zy_xz_yx, SIMD::Swizzle_XXXX(rotMat.col2), mask_y);	// zy_xz_yx = 12 20 01 00
-	yz_zx_xy = SIMD::Blend(rotMat.col0, rotMat.col1, mask_x);					// yz_zx_xy = 10 01 02 03
+	zy_xz_yx = SIMD::Blend_Y(zy_xz_yx, SIMD::Swizzle_XXXX(rotMat.col2));		// zy_xz_yx = 12 20 01 00
+	yz_zx_xy = SIMD::Blend_X(rotMat.col0, rotMat.col1);							// yz_zx_xy = 10 01 02 03
 	yz_zx_xy = _mm_shuffle_ps(yz_zx_xy, yz_zx_xy, _MM_SHUFFLE(0, 0, 2, 0));		// yz_zx_xy = 10 02 10 10
-	yz_zx_xy = SIMD::Blend(yz_zx_xy, SIMD::Swizzle_YYYY(rotMat.col2), mask_x);	// yz_zx_xy = 21 02 10 10
+	yz_zx_xy = SIMD::Blend_X(yz_zx_xy, SIMD::Swizzle_YYYY(rotMat.col2));		// yz_zx_xy = 21 02 10 10
 
 	const __m128 sum = SIMD::Add(zy_xz_yx, yz_zx_xy);
 	const __m128 diff = SIMD::Sub(zy_xz_yx, yz_zx_xy);
@@ -540,16 +522,16 @@ inline Quat::Quat(const Matrix3& rotMat)
 
 	__m128 res0, res1, res2, res3;
 	res0 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 1, 2, 0));
-	res0 = SIMD::Blend(res0, SIMD::Swizzle_XXXX(diff), mask_w);  // TODO: Ck
+	res0 = SIMD::Blend_W(res0, SIMD::Swizzle_XXXX(diff));  // TODO: Ck
 	res1 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 2));
-	res1 = SIMD::Blend(res1, SIMD::Swizzle_YYYY(diff), mask_w);  // TODO: Ck
+	res1 = SIMD::Blend_W(res1, SIMD::Swizzle_YYYY(diff));  // TODO: Ck
 	res2 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 1));
-	res2 = SIMD::Blend(res2, SIMD::Swizzle_ZZZZ(diff), mask_w);  // TODO: Ck
+	res2 = SIMD::Blend_W(res2, SIMD::Swizzle_ZZZZ(diff));  // TODO: Ck
 	res3 = diff;
-	res0 = SIMD::Blend(res0, radicand, mask_x);
-	res1 = SIMD::Blend(res1, radicand, mask_y);
-	res2 = SIMD::Blend(res2, radicand, mask_z);
-	res3 = SIMD::Blend(res3, radicand, mask_w);
+	res0 = SIMD::Blend_X(res0, radicand);
+	res1 = SIMD::Blend_Y(res1, radicand);
+	res2 = SIMD::Blend_Z(res2, radicand);
+	res3 = SIMD::Blend_W(res3, radicand);
 	res0 = SIMD::Mul(res0, SIMD::Swizzle_XXXX(scale));
 	res1 = SIMD::Mul(res1, SIMD::Swizzle_YYYY(scale));
 	res2 = SIMD::Mul(res2, SIMD::Swizzle_ZZZZ(scale));
