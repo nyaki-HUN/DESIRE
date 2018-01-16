@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/assert.h"
-#include "Core/HashedString.h"
-#include "Core/STL_utils.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/HashedString.h"
+#include "Engine/Core/STL_utils.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	HashedStringMap is a sorted associative container that contains key-value pairs with unique HashedString keys.

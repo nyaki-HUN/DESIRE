@@ -1,9 +1,9 @@
-#include "stdafx.h"
-#include "Input/WINDOWS/WINDOWSInput.h"
-#include "Input/Input.h"
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
-#include "Core/WINDOWS/WINDOWSWindow.h"
+#include "Engine/stdafx.h"
+#include "Engine/Input/WINDOWS/WINDOWSInput.h"
+#include "Engine/Input/Input.h"
+#include "Engine/Input/Keyboard.h"
+#include "Engine/Input/Mouse.h"
+#include "Engine/Core/WINDOWS/WINDOWSWindow.h"
 
 #define GET_MOUSE_X(lParam)	((int)(short)LOWORD(lParam))
 #define GET_MOUSE_Y(lParam)	((int)(short)HIWORD(lParam))

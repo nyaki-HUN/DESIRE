@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Input/ANDROID/ANDROIDInput.h"
-#include "Input/Input.h"
+#include "Engine/stdafx.h"
+#include "Engine/Input/ANDROID/ANDROIDInput.h"
+#include "Engine/Input/Input.h"
 
 void Input::Init(IWindow *window)
 {

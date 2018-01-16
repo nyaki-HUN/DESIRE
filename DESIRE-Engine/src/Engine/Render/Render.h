@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Core/String.h"
+#include "Engine/Core/Singleton.h"
+#include "Engine/Core/String.h"
 
 #include <memory>
 

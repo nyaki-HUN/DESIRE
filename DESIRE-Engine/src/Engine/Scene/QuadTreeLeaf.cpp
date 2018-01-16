@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Scene/QuadTreeLeaf.h"
-#include "Scene/Object.h"
+#include "Engine/stdafx.h"
+#include "Engine/Scene/QuadTreeLeaf.h"
+#include "Engine/Scene/Object.h"
 
 QuadTreeLeaf::QuadTreeLeaf(uint8_t level)
 	: level(level)

@@ -1,11 +1,11 @@
 // TODO: finish this
-#include "stdafx.h"
-#include "Scene/QuadTreeSceneManager.h"
-#include "Scene/QuadTreeLeaf.h"
-#include "Scene/Object.h"
-#include "Core/math/AABB.h"
-#include "Render/Camera.h"
-#include "Render/DebugDraw.h"
+#include "Engine/stdafx.h"
+#include "Engine/Scene/QuadTreeSceneManager.h"
+#include "Engine/Scene/QuadTreeLeaf.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Core/math/AABB.h"
+#include "Engine/Render/Camera.h"
+#include "Engine/Render/DebugDraw.h"
 
 DESIRE_DEFINE_SINGLETON_INSTANCE(ISceneManager, QuadTreeSceneManager)
 

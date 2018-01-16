@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Render/Material.h"
+#include "Engine/stdafx.h"
+#include "Engine/Render/Material.h"
 
 Material::ShaderParam::ShaderParam(HashedString name, std::function<void(void*)>&& func)
 	: name(name)

@@ -1,10 +1,10 @@
-#include "stdafx.h"
-#include "Scene/Object.h"
-#include "Scene/Transform.h"
-#include "Component/Component.h"
-#include "Component/ScriptComponent.h"
-#include "Core/math/AABB.h"
-#include "Core/StrUtils.h"
+#include "Engine/stdafx.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
+#include "Engine/Component/Component.h"
+#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Core/math/AABB.h"
+#include "Engine/Core/StrUtils.h"
 
 #define MAX_TRANSFORMS	10000
 static Transform preallocatedTransforms[MAX_TRANSFORMS];

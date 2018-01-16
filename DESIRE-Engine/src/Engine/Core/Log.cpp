@@ -1,13 +1,13 @@
-#include "stdafx.h"
-#include "Core/Log.h"
-#include "Core/Logger.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/Logger.h"
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
-	#include "Core/WINDOWS/WINDOWSLoggerPolicies.h"
+	#include "Engine/Core/WINDOWS/WINDOWSLoggerPolicies.h"
 #elif defined(DESIRE_PLATFORM_IOS)
-	#include "Core/IOS/IOSLoggerPolicies.h"
+	#include "Engine/Core/IOS/IOSLoggerPolicies.h"
 #elif defined(DESIRE_PLATFORM_ANDROID)
-	#include "Core/ANDROID/ANDROIDLoggerPolicies.h"
+	#include "Engine/Core/ANDROID/ANDROIDLoggerPolicies.h"
 #endif
 
 #include <stdarg.h>

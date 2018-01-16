@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/fs/IReadFile.h"
-#include "Core/fs/IWriteFile.h"
-#include "Core/WINDOWS/os.h"
+#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/fs/IWriteFile.h"
+#include "Engine/Core/WINDOWS/os.h"
 
 class WINDOWSFile : public IReadFile, public IWriteFile
 {

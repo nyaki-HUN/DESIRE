@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "Input/InputMapping.h"
-#include "Input/Input.h"
-#include "Core/STL_utils.h"
+#include "Engine/stdafx.h"
+#include "Engine/Input/InputMapping.h"
+#include "Engine/Input/Input.h"
+#include "Engine/Core/STL_utils.h"
 
 InputMapping::InputMapping()
 {

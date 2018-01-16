@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "Render/View.h"
-#include "Render/RenderTarget.h"
-#include "Resource/Texture.h"
+#include "Engine/stdafx.h"
+#include "Engine/Render/View.h"
+#include "Engine/Render/RenderTarget.h"
+#include "Engine/Resource/Texture.h"
 
 View::View(uint16_t renderTextureWidth, uint16_t renderTextureHeight)
 	: width(renderTextureWidth)

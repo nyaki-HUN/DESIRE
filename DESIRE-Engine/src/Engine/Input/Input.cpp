@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Input/Input.h"
+#include "Engine/stdafx.h"
+#include "Engine/Input/Input.h"
 
 Input::Input()
 {

@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Compression/Compression.h"
+#include "Engine/stdafx.h"
+#include "Engine/Compression/Compression.h"
 
 Compression::Compression()
 {

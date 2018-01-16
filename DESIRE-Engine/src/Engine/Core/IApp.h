@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Core/IWindow.h"
+#include "Engine/Core/Singleton.h"
+#include "Engine/Core/IWindow.h"
 
 #include <stdint.h>
 

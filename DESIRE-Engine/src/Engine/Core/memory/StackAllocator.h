@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/memory/LinearAllocator.h"
+#include "Engine/Core/memory/LinearAllocator.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	StackAllocator is a scoped linear allocator that reserves STACK_SIZE amount of local stack memory

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Component/ScriptComponent.h"
-#include "Script/IScript.h"
+#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Script/IScript.h"
 
 class NativeScriptComponent : public ScriptComponent
 {

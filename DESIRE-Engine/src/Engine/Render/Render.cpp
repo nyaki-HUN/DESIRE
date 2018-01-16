@@ -1,10 +1,10 @@
-#include "stdafx.h"
-#include "Render/Render.h"
-#include "Render/Material.h"
-#include "Core/math/vectormath.h"
-#include "Resource/Mesh.h"
-#include "Resource/Shader.h"
-#include "Resource/Texture.h"
+#include "Engine/stdafx.h"
+#include "Engine/Render/Render.h"
+#include "Engine/Render/Material.h"
+#include "Engine/Core/math/vectormath.h"
+#include "Engine/Resource/Mesh.h"
+#include "Engine/Resource/Shader.h"
+#include "Engine/Resource/Texture.h"
 
 Render::Render()
 {

@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Core/ConfigValue/IConfigValue.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/ConfigValue/IConfigValue.h"
 
 IConfigValue *IConfigValue::listHead = nullptr;
 IConfigValue *IConfigValue::listTail = nullptr;

@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "Core/WINDOWS/WINDOWSWindow.h"
-#include "Core/IApp.h"
-#include "Core/EAppEventType.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/WINDOWS/WINDOWSWindow.h"
+#include "Engine/Core/IApp.h"
+#include "Engine/Core/EAppEventType.h"
 
 WINDOWSWindow::WINDOWSWindow(const IWindow::CreationParams& creationParams)
 	: IWindow(creationParams)

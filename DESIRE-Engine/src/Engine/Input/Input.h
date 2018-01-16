@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Core/math/Point.h"
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
-#include "Input/GameController.h"
+#include "Engine/Core/Singleton.h"
+#include "Engine/Core/math/Point.h"
+#include "Engine/Input/Keyboard.h"
+#include "Engine/Input/Mouse.h"
+#include "Engine/Input/GameController.h"
 
 #include <vector>
 

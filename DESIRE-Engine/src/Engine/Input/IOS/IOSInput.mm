@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Input/IOS/IOSInput.h"
-#include "Input/Input.h"
+#include "Engine/stdafx.h"
+#include "Engine/Input/IOS/IOSInput.h"
+#include "Engine/Input/Input.h"
 
 CMMotionManager *InputImpl::motionManager = nil;
 CMAttitude *InputImpl::referenceAttitude = nil;

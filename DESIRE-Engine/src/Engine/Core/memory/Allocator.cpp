@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#include "Core/memory/Allocator.h"
-#include "Core/memory/MallocAllocator.h"
-#include "Core/memory/LinearAllocator.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/memory/Allocator.h"
+#include "Engine/Core/memory/MallocAllocator.h"
+#include "Engine/Core/memory/LinearAllocator.h"
 
 #define DESIRE_FRAME_ALLOCATOR_SIZE	4 * 1024 * 1024
 

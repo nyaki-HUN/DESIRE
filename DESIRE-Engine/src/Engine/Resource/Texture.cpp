@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Resource/Texture.h"
-#include "Render/Render.h"
+#include "Engine/stdafx.h"
+#include "Engine/Resource/Texture.h"
+#include "Engine/Render/Render.h"
 
 Texture::Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMipMaps)
 	: width(width)

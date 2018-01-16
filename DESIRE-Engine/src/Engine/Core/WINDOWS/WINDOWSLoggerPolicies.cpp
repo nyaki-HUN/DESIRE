@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Core/WINDOWS/WINDOWSLoggerPolicies.h"
-#include "Core/WINDOWS/os.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/WINDOWS/WINDOWSLoggerPolicies.h"
+#include "Engine/Core/WINDOWS/os.h"
 
 WIN32ConsoleOutputPolicy::WIN32ConsoleOutputPolicy()
 {

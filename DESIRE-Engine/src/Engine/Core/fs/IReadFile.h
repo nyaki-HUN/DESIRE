@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/MemoryBuffer.h"
-#include "Core/String.h"
+#include "Engine/Core/MemoryBuffer.h"
+#include "Engine/Core/String.h"
 
 #include <functional>
 

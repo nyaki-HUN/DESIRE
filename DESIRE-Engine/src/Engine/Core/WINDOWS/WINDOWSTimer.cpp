@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Core/Timer.h"
-#include "Core/WINDOWS/os.h"	// we need <windows.h> for the LARGE_INTEGER type
+#include "Engine/stdafx.h"
+#include "Engine/Core/Timer.h"
+#include "Engine/Core/WINDOWS/os.h"		// we need <windows.h> for the LARGE_INTEGER type
 
 double GetTicksPerMicroSecond()
 {

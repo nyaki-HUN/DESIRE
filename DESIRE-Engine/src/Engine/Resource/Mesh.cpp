@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Resource/Mesh.h"
-#include "Render/Render.h"
+#include "Engine/stdafx.h"
+#include "Engine/Resource/Mesh.h"
+#include "Engine/Render/Render.h"
 
 Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
 	: attrib(attrib)

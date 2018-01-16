@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Compression/CompressionManager.h"
+#include "Engine/stdafx.h"
+#include "Engine/Compression/CompressionManager.h"
 
 CompressionManager::CompressionManager()
 {

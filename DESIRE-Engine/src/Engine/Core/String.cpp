@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Core/String.h"
-#include "Core/StrUtils.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/String.h"
+#include "Engine/Core/StrUtils.h"
 
 #include <stdarg.h>
 

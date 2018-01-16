@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Core/IWindow.h"
-#include "Render/Render.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/IWindow.h"
+#include "Engine/Render/Render.h"
 
 IWindow::IWindow(const CreationParams& creationParams)
 	: isFullscreen(creationParams.isFullscreen)

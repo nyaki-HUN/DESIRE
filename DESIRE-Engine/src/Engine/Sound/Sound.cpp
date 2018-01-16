@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Sound/Sound.h"
+#include "Engine/stdafx.h"
+#include "Engine/Sound/Sound.h"
 
 Sound::Sound()
 {

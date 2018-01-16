@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Core/Timer.h"
-#include "Utils/TaskManager.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/Timer.h"
+#include "Engine/Utils/TaskManager.h"
 
 TaskManager::TaskManager()
 	: timer(0)

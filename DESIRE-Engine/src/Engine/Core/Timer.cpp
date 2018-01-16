@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Timer.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/Timer.h"
 
 Timer::Timer()
 	: microSec(0)

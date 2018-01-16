@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Component/ScriptComponent.h"
-#include "Script/ScriptSystem.h"
+#include "Engine/stdafx.h"
+#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Script/ScriptSystem.h"
 
 ScriptComponent::ScriptComponent(Object& object)
 	: Component(object)

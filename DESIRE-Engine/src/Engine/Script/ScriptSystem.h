@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Core/HashedStringMap.h"
+#include "Engine/Core/Singleton.h"
+#include "Engine/Core/HashedStringMap.h"
 
 #include <vector>
 #include <memory>

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/fs/FileSystemWatcher.h"
-#include "Core/WINDOWS/os.h"
+#include "Engine/Core/fs/FileSystemWatcher.h"
+#include "Engine/Core/WINDOWS/os.h"
 
 class WINDOWSFileSystemWatcher : public FileSystemWatcher
 {

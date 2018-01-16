@@ -1,11 +1,11 @@
-#include "stdafx.h"
-#include "Core/IApp.h"
-#include "Core/CoreAppEvent.h"
-#include "Core/Timer.h"
-#include "Input/Input.h"
-#include "Physics/Physics.h"
-#include "Render/Render.h"
-#include "Script/ScriptSystem.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/IApp.h"
+#include "Engine/Core/CoreAppEvent.h"
+#include "Engine/Core/Timer.h"
+#include "Engine/Input/Input.h"
+#include "Engine/Physics/Physics.h"
+#include "Engine/Render/Render.h"
+#include "Engine/Script/ScriptSystem.h"
 
 IApp* IApp::instance = nullptr;
 bool IApp::isMainLoopRunning = false;

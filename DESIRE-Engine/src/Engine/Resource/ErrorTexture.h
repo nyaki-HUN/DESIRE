@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Resource/Texture.h"
+#include "Engine/Core/Singleton.h"
+#include "Engine/Resource/Texture.h"
 
 class ErrorTexture : public Texture
 {

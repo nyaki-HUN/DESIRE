@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component/Component.h"
+#include "Engine/Component/Component.h"
 
 class String;
 

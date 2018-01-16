@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Core/math/vectormath.h"
+#include "Engine/Core/Singleton.h"
+#include "Engine/Core/math/vectormath.h"
 
 class PhysicsComponent;
 class Object;

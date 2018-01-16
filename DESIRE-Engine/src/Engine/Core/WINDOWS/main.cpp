@@ -1,12 +1,12 @@
-#include "stdafx.h"
-#include "Core/IApp.h"
-#include "Core/WINDOWS/os.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/IApp.h"
+#include "Engine/Core/WINDOWS/os.h"
 
 #include <crtdbg.h>
 
 int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nCmdShow*/)
 {
-#if defined(DESIRE_DEBUG)
+#if defined(_DEBUG)
 	int debugFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	debugFlag |= _CRTDBG_ALLOC_MEM_DF;
 	debugFlag |= _CRTDBG_LEAK_CHECK_DF;

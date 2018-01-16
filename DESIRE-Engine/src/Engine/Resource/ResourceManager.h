@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/Singleton.h"
-#include "Core/HashedStringMap.h"
-#include "Core/fs/FilePtr_fwd.h"
+#include "Engine/Core/Singleton.h"
+#include "Engine/Core/HashedStringMap.h"
+#include "Engine/Core/fs/FilePtr_fwd.h"
 
 #include <memory>
 #include <vector>

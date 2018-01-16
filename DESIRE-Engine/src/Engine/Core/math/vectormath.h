@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/platform.h"
+#include "Engine/Core/platform.h"
 
 #include <stdint.h>
 #include <cmath>
@@ -8,19 +8,19 @@
 constexpr float _VECTORMATH_SLERP_TOL = 0.999f;
 
 #if defined(DESIRE_USE_SSE)
-	#include "Core/math/vectormath/vectormath_SSE.h"
+	#include "Engine/Core/math/vectormath/vectormath_SSE.h"
 #elif defined(__ARM_NEON__)
-	#include "Core/math/vectormath/vectormath_NEON.h"
+	#include "Engine/Core/math/vectormath/vectormath_NEON.h"
 #else
-	#include "Core/math/vectormath/vectormath_scalar.h"
+	#include "Engine/Core/math/vectormath/vectormath_scalar.h"
 #endif
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Vectormath Classes
 // --------------------------------------------------------------------------------------------------------------------
 
-#include "Core/math/vectormath/Vector3.h"
-#include "Core/math/vectormath/Vector4.h"
-#include "Core/math/vectormath/Quat.h"
-#include "Core/math/vectormath/Matrix3.h"
-#include "Core/math/vectormath/Matrix4.h"
+#include "Engine/Core/math/vectormath/Vector3.h"
+#include "Engine/Core/math/vectormath/Vector4.h"
+#include "Engine/Core/math/vectormath/Quat.h"
+#include "Engine/Core/math/vectormath/Matrix3.h"
+#include "Engine/Core/math/vectormath/Matrix4.h"

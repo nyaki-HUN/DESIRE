@@ -1,9 +1,9 @@
-#include "stdafx.h"
-#include "Input/LINUX/LINUXInput.h"
-#include "Input/Input.h"
-#include "Input/Keyboard.h"
-#include "Input/Mouse.h"
-#include "Core/IWindow.h"
+#include "Engine/stdafx.h"
+#include "Engine/Input/LINUX/LINUXInput.h"
+#include "Engine/Input/Input.h"
+#include "Engine/Input/Keyboard.h"
+#include "Engine/Input/Mouse.h"
+#include "Engine/Core/IWindow.h"
 
 Display *InputImpl::display = nullptr;
 EKeyCode InputImpl::keyConversionTable[InputImpl::LAST_MAPPED_KEY_CODE - InputImpl::FIRST_MAPPED_KEY_CODE + 1] = { (EKeyCode)0 };

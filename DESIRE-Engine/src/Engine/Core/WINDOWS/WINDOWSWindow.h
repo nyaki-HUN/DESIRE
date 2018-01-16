@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/IWindow.h"
-#include "Core/WINDOWS/os.h"
+#include "Engine/Core/IWindow.h"
+#include "Engine/Core/WINDOWS/os.h"
 
 #include <map>
 

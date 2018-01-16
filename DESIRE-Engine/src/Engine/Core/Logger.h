@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Log.h"
-#include "Core/fs/FilePtr_fwd.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/fs/FilePtr_fwd.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a very generic logger class which passes on the task of filtering, formatting and outputting messages to

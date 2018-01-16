@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Input/InputDevice.h"
-#include "Input/keyCodes.h"
+#include "Engine/Input/InputDevice.h"
+#include "Engine/Input/keyCodes.h"
 
 class Keyboard : public InputDevice
 {

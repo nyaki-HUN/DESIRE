@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Resource/Shader.h"
-#include "Render/Render.h"
+#include "Engine/stdafx.h"
+#include "Engine/Resource/Shader.h"
+#include "Engine/Render/Render.h"
 
 Shader::Shader(const String& name)
 	: name(name)

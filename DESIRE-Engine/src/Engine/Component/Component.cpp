@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#include "Component/Component.h"
-#include "Scene/Object.h"
+#include "Engine/stdafx.h"
+#include "Engine/Component/Component.h"
+#include "Engine/Scene/Object.h"
 
 Component::Component(Object& object)
 	: object(object)

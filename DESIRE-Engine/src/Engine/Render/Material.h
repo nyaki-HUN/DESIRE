@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/HashedString.h"
-#include "Render/Render.h"
+#include "Engine/Core/HashedString.h"
+#include "Engine/Render/Render.h"
 
 #include <memory>
 #include <vector>

@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Core/fs/MemoryFile.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/fs/MemoryFile.h"
 
 MemoryFile::MemoryFile(void *buffer, int64_t size)
 	: IReadFile(size)
