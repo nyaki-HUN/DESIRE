@@ -1,8 +1,8 @@
 #pragma once
 
-#if defined(DESIRE_DEBUG)
+#if defined(_DEBUG)
 	#include <assert.h>
 	#define ASSERT(COND)		assert(COND)
 #else
-	#define ASSERT(COND)		__noop
+	#define ASSERT(COND)		((void)0)
 #endif

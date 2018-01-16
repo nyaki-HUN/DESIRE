@@ -8,6 +8,10 @@
 namespace Math
 {
 
+constexpr float PI = 3.14159265358979323846f;
+constexpr float PI_2 = (PI / 2.0f);
+constexpr float PI_4 = (PI / 4.0f);
+
 int RandInt(int rangeMin, int rangeMax);
 float RandFloat(float rangeMin, float rangeMax);
 

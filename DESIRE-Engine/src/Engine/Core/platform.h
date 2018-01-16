@@ -21,7 +21,7 @@
 #endif
 
 // --------------------------------------------------------------------------------------------------------------------
-//	Platform specific stuff
+//	Platform specific macros
 // --------------------------------------------------------------------------------------------------------------------
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
@@ -64,10 +64,6 @@
 //	Macros
 // --------------------------------------------------------------------------------------------------------------------
 
-#if defined(_DEBUG) || defined(DEBUG)
-	#define DESIRE_DEBUG
-#endif
-
 // Stringify utility macro
 #define _DESIRE_STRINGIFY(STR)				#STR
 #define DESIRE_STRINGIFY(STR)				_DESIRE_STRINGIFY(STR)
@@ -94,11 +90,3 @@ constexpr size_t DesireArraySizeHelper(T(&)[N])
 
 // The value of this macro represents the maximum length of a file name string
 #define DESIRE_MAX_PATH_LEN					512
-
-// --------------------------------------------------------------------------------------------------------------------
-//	Constant Expressions
-// --------------------------------------------------------------------------------------------------------------------
-
-constexpr float PI = 3.14159265358979323846f;
-constexpr float PI_2 = (PI / 2.0f);
-constexpr float PI_4 = (PI / 4.0f);

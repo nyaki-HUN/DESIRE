@@ -28,7 +28,7 @@ private:
 #define LOG_WARNING(format, ...)				Log::LogWithFormat(__FILE__, __LINE__, "WRN", format, __VA_ARGS__)
 #define LOG_MESSAGE(format, ...)				Log::LogWithFormat(__FILE__, __LINE__, "MSG", format, __VA_ARGS__)
 
-#if defined(DESIRE_DEBUG)
+#if defined(_DEBUG)
 	#define LOG_DEBUG(format, ...)				Log::LogWithFormat(__FILE__, __LINE__, "DBG", format, __VA_ARGS__)
 #else
 	#define LOG_DEBUG(format, ...)
