@@ -32,8 +32,6 @@
 //  distribution.
 //
 
-#include <cassert>
-#include <unordered_map>
 #include "squirrel.h"
 
 #include "Engine/Core/String.h"

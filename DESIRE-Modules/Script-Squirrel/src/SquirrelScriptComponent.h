@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component/ScriptComponent.h"
+#include "Engine/Component/ScriptComponent.h"
 
 #include "squirrel.h"
 

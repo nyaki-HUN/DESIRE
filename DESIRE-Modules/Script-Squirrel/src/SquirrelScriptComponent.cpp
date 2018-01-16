@@ -1,8 +1,9 @@
-#include "stdafx.h"
 #include "SquirrelScriptComponent.h"
 
-#include "Core/String.h"
-#include "Utils/Enumerator.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/String.h"
+#include "Engine/Utils/Enumerator.h"
 
 #include "sqrat/sqratTypes.h"
 

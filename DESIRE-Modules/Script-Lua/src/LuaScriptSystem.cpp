@@ -2,6 +2,7 @@
 #include "LuaScriptComponent.h"
 #include "API/LuaScriptAPI.h"
 
+#include "Engine/Core/Log.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/IReadFile.h"
 #include "Engine/Scene/Object.h"

@@ -1,5 +1,7 @@
 #include "LuaScriptComponent.h"
 
+#include "Engine/Core/platform.h"
+#include "Engine/Core/assert.h"
 #include "Engine/Core/Log.h"
 #include "Engine/Core/String.h"
 

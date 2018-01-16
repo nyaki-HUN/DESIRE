@@ -35,6 +35,10 @@
 #include "squirrel.h"
 #include "sqratUtil.h"
 
+#include <assert.h>
+#include <memory>
+#include <unordered_map>
+
 namespace Sqrat
 {
 

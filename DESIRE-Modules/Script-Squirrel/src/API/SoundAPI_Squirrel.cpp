@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "API/SquirrelScriptAPI.h"
 
-#include "Sound/Sound.h"
+#include "Engine/Sound/Sound.h"
 
 void RegisterSoundAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
