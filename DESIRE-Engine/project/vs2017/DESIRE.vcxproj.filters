@@ -28,65 +28,68 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Component">
-      <UniqueIdentifier>{CF1FD8F2-3BE0-5329-041B-9DA6709A9805}</UniqueIdentifier>
+    <Filter Include="src\Engine">
+      <UniqueIdentifier>{12A1320E-FE58-745B-6760-4DB753370F4C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Compression">
-      <UniqueIdentifier>{0E8D4FDC-7A18-BDA0-8329-4095EF3319A1}</UniqueIdentifier>
+    <Filter Include="src\Engine\Component">
+      <UniqueIdentifier>{F4772622-E006-B0EB-8925-C4E67593C091}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core">
-      <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
+    <Filter Include="src\Engine\Compression">
+      <UniqueIdentifier>{73829418-5F7C-BD6A-48E9-537B348223D7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core\ConfigValue">
-      <UniqueIdentifier>{47E09D33-336F-27FD-DC8D-3BF8C8FB37A3}</UniqueIdentifier>
+    <Filter Include="src\Engine\Core">
+      <UniqueIdentifier>{AA407579-16CC-E23D-1FDD-65328BE73E3E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core\WINDOWS">
-      <UniqueIdentifier>{1F168809-0B0F-A75B-3441-8CE020998667}</UniqueIdentifier>
+    <Filter Include="src\Engine\Core\ConfigValue">
+      <UniqueIdentifier>{CCFCDC25-380A-0B0C-C1F0-06F72DFDD6C2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core\fs">
-      <UniqueIdentifier>{0D43AB3D-79F8-2333-02ED-1D0A6EA11A37}</UniqueIdentifier>
+    <Filter Include="src\Engine\Core\WINDOWS">
+      <UniqueIdentifier>{24B86BCE-90EF-B365-99F9-178905B0DA5E}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core\math">
-      <UniqueIdentifier>{BED38B55-2A94-078C-F3CE-50095F4E4C68}</UniqueIdentifier>
+    <Filter Include="src\Engine\Core\fs">
+      <UniqueIdentifier>{F24DCB24-DE31-8C7A-4792-86CD339576FC}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core\math\vectormath">
-      <UniqueIdentifier>{8AD54F6B-76FA-9EEB-9F45-847B8BC99D09}</UniqueIdentifier>
+    <Filter Include="src\Engine\Core\math">
+      <UniqueIdentifier>{E32BDA84-CFBA-634E-78D9-7749644774F4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Core\memory">
-      <UniqueIdentifier>{8D7314E8-F9FE-81AC-0210-05A16E1ADEAC}</UniqueIdentifier>
+    <Filter Include="src\Engine\Core\math\vectormath">
+      <UniqueIdentifier>{8FAC2369-FB8F-32A9-0493-60E570F5F8F9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Input">
-      <UniqueIdentifier>{EC4823B3-58B3-D729-A1F1-88CF0D9BB57E}</UniqueIdentifier>
+    <Filter Include="src\Engine\Core\memory">
+      <UniqueIdentifier>{F2685924-DE62-8276-C7CF-1887B368E8E2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Input\WINDOWS">
-      <UniqueIdentifier>{66E2B6C1-D2F8-B457-1B70-407987C585DF}</UniqueIdentifier>
+    <Filter Include="src\Engine\Input">
+      <UniqueIdentifier>{915689A8-7D4F-A8FA-A681-8D7F92D98706}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Physics">
-      <UniqueIdentifier>{9F8B9316-0B41-0C0C-9435-06E300EA0210}</UniqueIdentifier>
+    <Filter Include="src\Engine\Input\WINDOWS">
+      <UniqueIdentifier>{0BC50E23-F7E9-5DA3-2035-43330CB95CC1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Render">
-      <UniqueIdentifier>{FC94E62B-E84C-2879-5154-01D53D2BC369}</UniqueIdentifier>
+    <Filter Include="src\Engine\Physics">
+      <UniqueIdentifier>{8496B3FD-707A-7453-D9DA-6EA6C5DD5ED5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Resource">
-      <UniqueIdentifier>{E46F59CC-D0D2-E870-7958-2127659AB4F3}</UniqueIdentifier>
+    <Filter Include="src\Engine\Render">
+      <UniqueIdentifier>{41570ECE-AD6D-0C64-F6E4-9785623ADDEB}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Resource\ShaderLoader">
-      <UniqueIdentifier>{E18D89D1-4D50-BD5B-9600-4CE802029639}</UniqueIdentifier>
+    <Filter Include="src\Engine\Resource">
+      <UniqueIdentifier>{69D77A97-D538-58A5-5EA6-9E57CA068F64}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Resource\TextureLoader">
-      <UniqueIdentifier>{9BB3CB76-87C3-7747-F07C-DC65DCAB66E0}</UniqueIdentifier>
+    <Filter Include="src\Engine\Resource\ShaderLoader">
+      <UniqueIdentifier>{8645D889-7296-C3CB-9BFA-B18D87AA5635}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Scene">
-      <UniqueIdentifier>{0A06D2B3-7670-862A-BFAE-37D02B58647F}</UniqueIdentifier>
+    <Filter Include="src\Engine\Resource\TextureLoader">
+      <UniqueIdentifier>{E05FF138-4CCE-46B8-95B7-01B801653C54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Script">
-      <UniqueIdentifier>{D1D4192E-BD8C-5B7B-2694-34D7126BF66B}</UniqueIdentifier>
+    <Filter Include="src\Engine\Scene">
+      <UniqueIdentifier>{AF1338A9-9B0C-57FB-C43E-3C80B0963607}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Sound">
-      <UniqueIdentifier>{A5DED8B3-1149-8D2A-5A87-3ED0C6306B7F}</UniqueIdentifier>
+    <Filter Include="src\Engine\Script">
+      <UniqueIdentifier>{169741D0-82AD-3F66-CB24-CB87377A10EE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Utils">
-      <UniqueIdentifier>{4D9AFFB3-B904-B42A-0243-65D06EEC917F}</UniqueIdentifier>
+    <Filter Include="src\Engine\Sound">
+      <UniqueIdentifier>{4AEC3EA9-36E5-5DFB-5F17-43804B6F3D07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine\Utils">
+      <UniqueIdentifier>{F2A765A9-DEA0-84FB-07D3-6980F32A6407}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -201,490 +204,490 @@
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h">
       <Filter>3rdparty\stb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Component\Component.h">
-      <Filter>src\Component</Filter>
+    <ClInclude Include="..\..\src\Engine\Component\Component.h">
+      <Filter>src\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Component\PhysicsComponent.h">
-      <Filter>src\Component</Filter>
+    <ClInclude Include="..\..\src\Engine\Component\PhysicsComponent.h">
+      <Filter>src\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Component\RenderComponent.h">
-      <Filter>src\Component</Filter>
+    <ClInclude Include="..\..\src\Engine\Component\RenderComponent.h">
+      <Filter>src\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Component\ScriptComponent.h">
-      <Filter>src\Component</Filter>
+    <ClInclude Include="..\..\src\Engine\Component\ScriptComponent.h">
+      <Filter>src\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Compression\Compression.h">
-      <Filter>src\Compression</Filter>
+    <ClInclude Include="..\..\src\Engine\Compression\Compression.h">
+      <Filter>src\Engine\Compression</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Compression\CompressionManager.h">
-      <Filter>src\Compression</Filter>
+    <ClInclude Include="..\..\src\Engine\Compression\CompressionManager.h">
+      <Filter>src\Engine\Compression</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueFloat.h">
-      <Filter>src\Core\ConfigValue</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.h">
+      <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\ConfigValue\ConfigValueInt.h">
-      <Filter>src\Core\ConfigValue</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.h">
+      <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\ConfigValue\IConfigValue.h">
-      <Filter>src\Core\ConfigValue</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h">
+      <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\CoreAppEvent.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\EAppEventType.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\HashedString.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\HashedString.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\HashedStringMap.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\HashedStringMap.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\IApp.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\IApp.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\IWindow.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\IWindow.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\LockFreeRingBuffer.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\LockFreeRingBuffer.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\Log.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\Log.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\Logger.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\Logger.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\MemoryBuffer.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\STL_utils.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\STL_utils.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\Singleton.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\Singleton.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\StrUtils.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\StrUtils.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\String.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\String.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\Timer.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\Timer.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSFile.h">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.h">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSFileSystemWatcher.h">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFileSystemWatcher.h">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSLoggerPolicies.h">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.h">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\WINDOWS\WINDOWSWindow.h">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSWindow.h">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\WINDOWS\os.h">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\assert.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\assert.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\FilePtr_fwd.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\FilePtr_fwd.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\FileSourceZip.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\FileSourceZip.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\FileSystem.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\FileSystem.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\FileSystemWatcher.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\FileSystemWatcher.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\IFileSource.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\IFileSource.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\IReadFile.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\IReadFile.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\IWriteFile.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\IWriteFile.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\fs\MemoryFile.h">
-      <Filter>src\Core\fs</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\fs\MemoryFile.h">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\AABB.h">
-      <Filter>src\Core\math</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\AABB.h">
+      <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\Point.h">
-      <Filter>src\Core\math</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\Point.h">
+      <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\math.h">
-      <Filter>src\Core\math</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\math.h">
+      <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath.h">
-      <Filter>src\Core\math</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath.h">
+      <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\Matrix3.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Matrix3.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\Matrix4.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Matrix4.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\Quat.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Quat.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\Vector3.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Vector3.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\Vector4.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Vector4.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_NEON.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_NEON.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_SSE.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_SSE.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\math\vectormath\vectormath_scalar.h">
-      <Filter>src\Core\math\vectormath</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_scalar.h">
+      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\Allocator.h">
-      <Filter>src\Core\memory</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\memory\Allocator.h">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\FreeList.h">
-      <Filter>src\Core\memory</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\memory\FreeList.h">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\LinearAllocator.h">
-      <Filter>src\Core\memory</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\memory\LinearAllocator.h">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\MallocAllocator.h">
-      <Filter>src\Core\memory</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\memory\MallocAllocator.h">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\PoolAllocator.h">
-      <Filter>src\Core\memory</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\memory\PoolAllocator.h">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\StackAllocator.h">
-      <Filter>src\Core\memory</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\memory\StackAllocator.h">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\memory\StdAllocatorWrapper.h">
-      <Filter>src\Core\memory</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\memory\StdAllocatorWrapper.h">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Core\platform.h">
-      <Filter>src\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\platform.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\GameController.h">
-      <Filter>src\Input</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\GameController.h">
+      <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\Input.h">
-      <Filter>src\Input</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\Input.h">
+      <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\InputDevice.h">
-      <Filter>src\Input</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\InputDevice.h">
+      <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\InputMapping.h">
-      <Filter>src\Input</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\InputMapping.h">
+      <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\Keyboard.h">
-      <Filter>src\Input</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\Keyboard.h">
+      <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\Mouse.h">
-      <Filter>src\Input</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\Mouse.h">
+      <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\WINDOWS\WINDOWSInput.h">
-      <Filter>src\Input\WINDOWS</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\WINDOWS\WINDOWSInput.h">
+      <Filter>src\Engine\Input\WINDOWS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Input\keyCodes.h">
-      <Filter>src\Input</Filter>
+    <ClInclude Include="..\..\src\Engine\Input\keyCodes.h">
+      <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Physics\Collision.h">
-      <Filter>src\Physics</Filter>
+    <ClInclude Include="..\..\src\Engine\Physics\Collision.h">
+      <Filter>src\Engine\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Physics\Physics.h">
-      <Filter>src\Physics</Filter>
+    <ClInclude Include="..\..\src\Engine\Physics\Physics.h">
+      <Filter>src\Engine\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\Camera.h">
-      <Filter>src\Render</Filter>
+    <ClInclude Include="..\..\src\Engine\Render\Camera.h">
+      <Filter>src\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\DebugDraw.h">
-      <Filter>src\Render</Filter>
+    <ClInclude Include="..\..\src\Engine\Render\DebugDraw.h">
+      <Filter>src\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\Material.h">
-      <Filter>src\Render</Filter>
+    <ClInclude Include="..\..\src\Engine\Render\Material.h">
+      <Filter>src\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\Render.h">
-      <Filter>src\Render</Filter>
+    <ClInclude Include="..\..\src\Engine\Render\Render.h">
+      <Filter>src\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\RenderTarget.h">
-      <Filter>src\Render</Filter>
+    <ClInclude Include="..\..\src\Engine\Render\RenderTarget.h">
+      <Filter>src\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Render\View.h">
-      <Filter>src\Render</Filter>
+    <ClInclude Include="..\..\src\Engine\Render\View.h">
+      <Filter>src\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\ErrorTexture.h">
-      <Filter>src\Resource</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\ErrorTexture.h">
+      <Filter>src\Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\Mesh.h">
-      <Filter>src\Resource</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\Mesh.h">
+      <Filter>src\Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\ResourceManager.h">
-      <Filter>src\Resource</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\ResourceManager.h">
+      <Filter>src\Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\Shader.h">
-      <Filter>src\Resource</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\Shader.h">
+      <Filter>src\Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\ShaderLoader\FileShaderLoader.h">
-      <Filter>src\Resource\ShaderLoader</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\ShaderLoader\FileShaderLoader.h">
+      <Filter>src\Engine\Resource\ShaderLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\Texture.h">
-      <Filter>src\Resource</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\Texture.h">
+      <Filter>src\Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\TextureLoader\StbImageLoader.h">
-      <Filter>src\Resource\TextureLoader</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\TextureLoader\StbImageLoader.h">
+      <Filter>src\Engine\Resource\TextureLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Resource\TextureLoader\TgaLoader.h">
-      <Filter>src\Resource\TextureLoader</Filter>
+    <ClInclude Include="..\..\src\Engine\Resource\TextureLoader\TgaLoader.h">
+      <Filter>src\Engine\Resource\TextureLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Scene\ISceneManager.h">
-      <Filter>src\Scene</Filter>
+    <ClInclude Include="..\..\src\Engine\Scene\ISceneManager.h">
+      <Filter>src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Scene\Object.h">
-      <Filter>src\Scene</Filter>
+    <ClInclude Include="..\..\src\Engine\Scene\Object.h">
+      <Filter>src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Scene\QuadTreeLeaf.h">
-      <Filter>src\Scene</Filter>
+    <ClInclude Include="..\..\src\Engine\Scene\QuadTreeLeaf.h">
+      <Filter>src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Scene\QuadTreeSceneManager.h">
-      <Filter>src\Scene</Filter>
+    <ClInclude Include="..\..\src\Engine\Scene\QuadTreeSceneManager.h">
+      <Filter>src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Scene\SceneGraphTraversal.h">
-      <Filter>src\Scene</Filter>
+    <ClInclude Include="..\..\src\Engine\Scene\SceneGraphTraversal.h">
+      <Filter>src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Scene\Transform.h">
-      <Filter>src\Scene</Filter>
+    <ClInclude Include="..\..\src\Engine\Scene\Transform.h">
+      <Filter>src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Script\IScript.h">
-      <Filter>src\Script</Filter>
+    <ClInclude Include="..\..\src\Engine\Script\IScript.h">
+      <Filter>src\Engine\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Script\NativeScriptComponent.h">
-      <Filter>src\Script</Filter>
+    <ClInclude Include="..\..\src\Engine\Script\NativeScriptComponent.h">
+      <Filter>src\Engine\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Script\ScriptSystem.h">
-      <Filter>src\Script</Filter>
+    <ClInclude Include="..\..\src\Engine\Script\ScriptSystem.h">
+      <Filter>src\Engine\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Sound\Sound.h">
-      <Filter>src\Sound</Filter>
+    <ClInclude Include="..\..\src\Engine\Sound\Sound.h">
+      <Filter>src\Engine\Sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Utils\Enumerator.h">
-      <Filter>src\Utils</Filter>
+    <ClInclude Include="..\..\src\Engine\Utils\Enumerator.h">
+      <Filter>src\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Utils\GuardedCallbackFactory.h">
-      <Filter>src\Utils</Filter>
+    <ClInclude Include="..\..\src\Engine\Utils\GuardedCallbackFactory.h">
+      <Filter>src\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Utils\JsonDataTranslator.h">
-      <Filter>src\Utils</Filter>
+    <ClInclude Include="..\..\src\Engine\Utils\JsonDataTranslator.h">
+      <Filter>src\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Utils\TaskManager.h">
-      <Filter>src\Utils</Filter>
+    <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h">
+      <Filter>src\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\stdafx.h">
-      <Filter>src</Filter>
+    <ClInclude Include="..\..\src\Engine\stdafx.h">
+      <Filter>src\Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\Component\Component.cpp">
-      <Filter>src\Component</Filter>
+    <ClCompile Include="..\..\src\Engine\Component\Component.cpp">
+      <Filter>src\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Component\PhysicsComponent.cpp">
-      <Filter>src\Component</Filter>
+    <ClCompile Include="..\..\src\Engine\Component\PhysicsComponent.cpp">
+      <Filter>src\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Component\RenderComponent.cpp">
-      <Filter>src\Component</Filter>
+    <ClCompile Include="..\..\src\Engine\Component\RenderComponent.cpp">
+      <Filter>src\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Component\ScriptComponent.cpp">
-      <Filter>src\Component</Filter>
+    <ClCompile Include="..\..\src\Engine\Component\ScriptComponent.cpp">
+      <Filter>src\Engine\Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Compression\Compression.cpp">
-      <Filter>src\Compression</Filter>
+    <ClCompile Include="..\..\src\Engine\Compression\Compression.cpp">
+      <Filter>src\Engine\Compression</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Compression\CompressionManager.cpp">
-      <Filter>src\Compression</Filter>
+    <ClCompile Include="..\..\src\Engine\Compression\CompressionManager.cpp">
+      <Filter>src\Engine\Compression</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueFloat.cpp">
-      <Filter>src\Core\ConfigValue</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.cpp">
+      <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\ConfigValue\ConfigValueInt.cpp">
-      <Filter>src\Core\ConfigValue</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.cpp">
+      <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\ConfigValue\IConfigValue.cpp">
-      <Filter>src\Core\ConfigValue</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp">
+      <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\IApp.cpp">
-      <Filter>src\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\IApp.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\IWindow.cpp">
-      <Filter>src\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\Log.cpp">
-      <Filter>src\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\Log.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\Logger.cpp">
-      <Filter>src\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\Logger.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\StrUtils.cpp">
-      <Filter>src\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\StrUtils.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\String.cpp">
-      <Filter>src\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\String.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\Timer.cpp">
-      <Filter>src\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\Timer.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSFile.cpp">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.cpp">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSFileSystemWatcher.cpp">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFileSystemWatcher.cpp">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSLoggerPolicies.cpp">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.cpp">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSTimer.cpp">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSTimer.cpp">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\WINDOWS\WINDOWSWindow.cpp">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSWindow.cpp">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\WINDOWS\main.cpp">
-      <Filter>src\Core\WINDOWS</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\main.cpp">
+      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\fs\FileSourceZip.cpp">
-      <Filter>src\Core\fs</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\fs\FileSourceZip.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\fs\FileSystem.cpp">
-      <Filter>src\Core\fs</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystem.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\fs\IReadFile.cpp">
-      <Filter>src\Core\fs</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\fs\IReadFile.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\fs\IWriteFile.cpp">
-      <Filter>src\Core\fs</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\fs\IWriteFile.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\fs\MemoryFile.cpp">
-      <Filter>src\Core\fs</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\fs\MemoryFile.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\math\AABB.cpp">
-      <Filter>src\Core\math</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp">
+      <Filter>src\Engine\Core\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\math\math.cpp">
-      <Filter>src\Core\math</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\math\math.cpp">
+      <Filter>src\Engine\Core\math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\Allocator.cpp">
-      <Filter>src\Core\memory</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\memory\Allocator.cpp">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\FreeList.cpp">
-      <Filter>src\Core\memory</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\memory\FreeList.cpp">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\LinearAllocator.cpp">
-      <Filter>src\Core\memory</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\memory\LinearAllocator.cpp">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\MallocAllocator.cpp">
-      <Filter>src\Core\memory</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\memory\MallocAllocator.cpp">
+      <Filter>src\Engine\Core\memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\GameController.cpp">
-      <Filter>src\Input</Filter>
+    <ClCompile Include="..\..\src\Engine\Input\GameController.cpp">
+      <Filter>src\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\Input.cpp">
-      <Filter>src\Input</Filter>
+    <ClCompile Include="..\..\src\Engine\Input\Input.cpp">
+      <Filter>src\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\InputDevice.cpp">
-      <Filter>src\Input</Filter>
+    <ClCompile Include="..\..\src\Engine\Input\InputDevice.cpp">
+      <Filter>src\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\InputMapping.cpp">
-      <Filter>src\Input</Filter>
+    <ClCompile Include="..\..\src\Engine\Input\InputMapping.cpp">
+      <Filter>src\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\Keyboard.cpp">
-      <Filter>src\Input</Filter>
+    <ClCompile Include="..\..\src\Engine\Input\Keyboard.cpp">
+      <Filter>src\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\Mouse.cpp">
-      <Filter>src\Input</Filter>
+    <ClCompile Include="..\..\src\Engine\Input\Mouse.cpp">
+      <Filter>src\Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Input\WINDOWS\WINDOWSInput.cpp">
-      <Filter>src\Input\WINDOWS</Filter>
+    <ClCompile Include="..\..\src\Engine\Input\WINDOWS\WINDOWSInput.cpp">
+      <Filter>src\Engine\Input\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Physics\Physics.cpp">
-      <Filter>src\Physics</Filter>
+    <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp">
+      <Filter>src\Engine\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\Camera.cpp">
-      <Filter>src\Render</Filter>
+    <ClCompile Include="..\..\src\Engine\Render\Camera.cpp">
+      <Filter>src\Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\DebugDraw.cpp">
-      <Filter>src\Render</Filter>
+    <ClCompile Include="..\..\src\Engine\Render\DebugDraw.cpp">
+      <Filter>src\Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\Material.cpp">
-      <Filter>src\Render</Filter>
+    <ClCompile Include="..\..\src\Engine\Render\Material.cpp">
+      <Filter>src\Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\Render.cpp">
-      <Filter>src\Render</Filter>
+    <ClCompile Include="..\..\src\Engine\Render\Render.cpp">
+      <Filter>src\Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\RenderTarget.cpp">
-      <Filter>src\Render</Filter>
+    <ClCompile Include="..\..\src\Engine\Render\RenderTarget.cpp">
+      <Filter>src\Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Render\View.cpp">
-      <Filter>src\Render</Filter>
+    <ClCompile Include="..\..\src\Engine\Render\View.cpp">
+      <Filter>src\Engine\Render</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\ErrorTexture.cpp">
-      <Filter>src\Resource</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\ErrorTexture.cpp">
+      <Filter>src\Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\Mesh.cpp">
-      <Filter>src\Resource</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\Mesh.cpp">
+      <Filter>src\Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\ResourceManager.cpp">
-      <Filter>src\Resource</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\ResourceManager.cpp">
+      <Filter>src\Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\Shader.cpp">
-      <Filter>src\Resource</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\Shader.cpp">
+      <Filter>src\Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\ShaderLoader\FileShaderLoader.cpp">
-      <Filter>src\Resource\ShaderLoader</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\ShaderLoader\FileShaderLoader.cpp">
+      <Filter>src\Engine\Resource\ShaderLoader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\Texture.cpp">
-      <Filter>src\Resource</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\Texture.cpp">
+      <Filter>src\Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\TextureLoader\StbImageLoader.cpp">
-      <Filter>src\Resource\TextureLoader</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\TextureLoader\StbImageLoader.cpp">
+      <Filter>src\Engine\Resource\TextureLoader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Resource\TextureLoader\TgaLoader.cpp">
-      <Filter>src\Resource\TextureLoader</Filter>
+    <ClCompile Include="..\..\src\Engine\Resource\TextureLoader\TgaLoader.cpp">
+      <Filter>src\Engine\Resource\TextureLoader</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Scene\Object.cpp">
-      <Filter>src\Scene</Filter>
+    <ClCompile Include="..\..\src\Engine\Scene\Object.cpp">
+      <Filter>src\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Scene\QuadTreeLeaf.cpp">
-      <Filter>src\Scene</Filter>
+    <ClCompile Include="..\..\src\Engine\Scene\QuadTreeLeaf.cpp">
+      <Filter>src\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Scene\QuadTreeSceneManager.cpp">
-      <Filter>src\Scene</Filter>
+    <ClCompile Include="..\..\src\Engine\Scene\QuadTreeSceneManager.cpp">
+      <Filter>src\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Scene\Transform.cpp">
-      <Filter>src\Scene</Filter>
+    <ClCompile Include="..\..\src\Engine\Scene\Transform.cpp">
+      <Filter>src\Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Script\NativeScriptComponent.cpp">
-      <Filter>src\Script</Filter>
+    <ClCompile Include="..\..\src\Engine\Script\NativeScriptComponent.cpp">
+      <Filter>src\Engine\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Script\ScriptSystem.cpp">
-      <Filter>src\Script</Filter>
+    <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp">
+      <Filter>src\Engine\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Sound\Sound.cpp">
-      <Filter>src\Sound</Filter>
+    <ClCompile Include="..\..\src\Engine\Sound\Sound.cpp">
+      <Filter>src\Engine\Sound</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Utils\TaskManager.cpp">
-      <Filter>src\Utils</Filter>
+    <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp">
+      <Filter>src\Engine\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\stdafx.cpp">
-      <Filter>src</Filter>
+    <ClCompile Include="..\..\src\Engine\stdafx.cpp">
+      <Filter>src\Engine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -48,6 +48,8 @@ public:
 	// Returns a string from the characters typed since the last frame (maximized by MAX_NUM_TYPING_CHARACTERS)
 	const char* GetTypingCharacters() const;
 
+	const char* GetButtonName(int buttonId) const;
+
 	const Point<int16_t>& GetOsMouseCursorPos() const;
 
 private:

@@ -141,6 +141,8 @@ Matrix4 Camera::CreateViewMatrix(const Vector3& eyePos, const Vector3& lookAtPos
 
 Matrix4 Camera::CreatePerspectiveProjectionMatrix(float fov, float aspect, float zNear, float zFar)
 {
+	// TODO: swap near and far for better depth precision
+
 	const float yScale = tanf(PI_2 - (Math::DegToRad(fov) * 0.5f));
 	const float xScale = yScale / aspect;
 	const float invFN = 1.0f / (zFar - zNear);
