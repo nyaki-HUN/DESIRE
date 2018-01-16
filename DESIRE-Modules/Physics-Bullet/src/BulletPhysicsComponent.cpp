@@ -1,9 +1,8 @@
-#include "stdafx.h"
 #include "BulletPhysicsComponent.h"
 #include "BulletPhysics.h"
 #include "BulletVectormathExt.h"
 
-#include "Core/math/AABB.h"
+#include "Engine/Core/math/AABB.h"
 
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
@@ -153,6 +152,6 @@ float BulletPhysicsComponent::GetMass() const
 
 bool BulletPhysicsComponent::IsTrigger() const
 {
-	ASSERT(false && "TODO");
+	// TODO
 	return false;
 }

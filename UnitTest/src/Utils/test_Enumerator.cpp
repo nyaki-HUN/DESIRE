@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Utils/Enumerator.h"
+#include "Engine/Utils/Enumerator.h"
 
 TEST_CASE("Enumerator", "[Utils]")
 {

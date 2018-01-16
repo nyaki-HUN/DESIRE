@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component/ScriptComponent.h"
+#include "Engine/Component/ScriptComponent.h"
 
 struct lua_State;
 

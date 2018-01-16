@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component/PhysicsComponent.h"
+#include "Engine/Component/PhysicsComponent.h"
 
 #include "Box2D/Dynamics/b2Fixture.h"
 #include <vector>

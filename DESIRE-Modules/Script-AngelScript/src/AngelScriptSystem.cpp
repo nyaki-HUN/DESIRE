@@ -1,13 +1,13 @@
-#include "stdafx.h"
 #include "AngelScriptSystem.h"
 #include "AngelScriptComponent.h"
 #include "API/AngelScriptAPI.h"
 
-#include "Core/fs/FileSystem.h"
-#include "Core/fs/IReadFile.h"
-#include "Core/String.h"
-#include "Scene/Object.h"
-#include "Utils/Enumerator.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/fs/FileSystem.h"
+#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/String.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Utils/Enumerator.h"
 
 #define CONTEXT_POOL_DEFAULT_SIZE	10
 

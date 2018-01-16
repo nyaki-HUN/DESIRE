@@ -1,7 +1,7 @@
-#include "stdafx.h"
 #include "API/AngelScriptAPI.h"
 
-#include "Core/String.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/String.h"
 
 #include <unordered_map> 
 

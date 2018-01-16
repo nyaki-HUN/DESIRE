@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Core/String.h"
+#include "Engine/Core/String.h"
 
 TEST_CASE("String", "[Core]")
 {

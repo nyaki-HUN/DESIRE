@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "API/AngelScriptAPI.h"
 
 void RegisterNetworkAPI_AngelScript(asIScriptEngine *engine)

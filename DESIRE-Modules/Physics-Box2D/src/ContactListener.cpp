@@ -1,8 +1,9 @@
-#include "stdafx.h"
 #include "ContactListener.h"
 #include "Box2DPhysics.h"
 
 #include "Box2D/Dynamics/Contacts/b2Contact.h"
+
+#include <algorithm>		// for std::min
 
 ContactListener::ContactListener()
 {

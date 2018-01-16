@@ -1,9 +1,8 @@
-#include "stdafx.h"
 #include "API/LuaScriptAPI.h"
 
-#include "Core/math/vectormath.h"
-#include "Core/math/math.h"
-#include "Core/Timer.h"
+#include "Engine/Core/math/vectormath.h"
+#include "Engine/Core/math/math.h"
+#include "Engine/Core/Timer.h"
 
 void RegisterVectormathFunctions_Lua(lua_State *L)
 {

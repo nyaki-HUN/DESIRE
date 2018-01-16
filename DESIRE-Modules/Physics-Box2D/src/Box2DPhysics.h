@@ -3,6 +3,8 @@
 #include "Engine/Physics/Physics.h"
 #include "Engine/Physics/Collision.h"
 
+#include <vector>
+
 class b2World;
 class b2ContactListener;
 class b2DestructionListener;

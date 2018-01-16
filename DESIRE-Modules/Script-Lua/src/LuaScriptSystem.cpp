@@ -1,11 +1,10 @@
-#include "stdafx.h"
 #include "LuaScriptSystem.h"
 #include "LuaScriptComponent.h"
 #include "API/LuaScriptAPI.h"
 
-#include "Core/fs/FileSystem.h"
-#include "Core/fs/IReadFile.h"
-#include "Scene/Object.h"
+#include "Engine/Core/fs/FileSystem.h"
+#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Scene/Object.h"
 
 #include "lua.hpp"
 

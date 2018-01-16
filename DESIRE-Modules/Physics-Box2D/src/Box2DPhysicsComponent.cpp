@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Box2DPhysicsComponent.h"
 #include "Box2DPhysics.h"
 
@@ -37,7 +36,7 @@ void Box2DPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 
 void Box2DPhysicsComponent::SetMass(float mass)
 {
-	ASSERT(false && "TODO");
+
 }
 
 float Box2DPhysicsComponent::GetMass() const

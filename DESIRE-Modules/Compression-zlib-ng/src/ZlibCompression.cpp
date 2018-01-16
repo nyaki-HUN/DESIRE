@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #include "ZlibCompression.h"
+
+#include "Engine/Core/Log.h"
 
 #include "zlib.h"
 

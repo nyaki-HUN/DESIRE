@@ -1,9 +1,8 @@
-#include "stdafx.h"
 #include "API/AngelScriptAPI.h"
 
-#include "Core/math/vectormath.h"
-#include "Core/math/math.h"
-#include "Core/Timer.h"
+#include "Engine/Core/math/vectormath.h"
+#include "Engine/Core/math/math.h"
+#include "Engine/Core/Timer.h"
 
 Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)
 {

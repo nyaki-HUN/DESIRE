@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "API/LuaScriptAPI.h"
 
-#include "Input/Input.h"
+#include "Engine/Input/Input.h"
 
 void RegisterInputAPI_Lua(lua_State *L)
 {

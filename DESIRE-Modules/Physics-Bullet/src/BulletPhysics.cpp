@@ -1,16 +1,18 @@
-#include "stdafx.h"
 #include "BulletPhysics.h"
 #include "BulletPhysicsComponent.h"
 #include "BulletDebugDraw.h"
 #include "BulletVectormathExt.h"
 
-#include "Core/Timer.h"
-#include "Component/ScriptComponent.h"
-#include "Physics/Collision.h"
-#include "Scene/Object.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/Timer.h"
+#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Physics/Collision.h"
+#include "Engine/Scene/Object.h"
 
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
+
+#include <algorithm>		// for std::min
 
 BulletPhysics::BulletPhysics()
 {
@@ -36,7 +38,7 @@ BulletPhysics::BulletPhysics()
 	class DebugDraw *debugDraw = nullptr;
 	if(debugDraw != nullptr)
 	{
-		blletDebugDraw = new BulletDebugDraw(debugDraw);
+		blletDebugDraw = new BulletDebugDraw(*debugDraw);
 		blletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
 	}
 	dynamicsWorld->setDebugDrawer(blletDebugDraw);
@@ -57,7 +59,7 @@ void BulletPhysics::Update()
 {
 	if(blletDebugDraw != nullptr)
 	{
-		blletDebugDraw->debugDraw->Reset();
+		blletDebugDraw->debugDraw.Reset();
 	}
 
 	const float deltaT = Timer::Get()->GetSecDelta();

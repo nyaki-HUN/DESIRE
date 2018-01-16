@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "API/LuaScriptAPI.h"
 
-#include "Render/Render.h"
+#include "Engine/Render/Render.h"
 
 void RegisterRenderAPI_Lua(lua_State *L)
 {

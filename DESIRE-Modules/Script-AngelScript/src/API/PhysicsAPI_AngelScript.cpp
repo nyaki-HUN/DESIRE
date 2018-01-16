@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "API/AngelScriptAPI.h"
 
-#include "Physics/Physics.h"
+#include "Engine/Physics/Physics.h"
 
 void RegisterPhysicsAPI_AngelScript(asIScriptEngine *engine)
 {

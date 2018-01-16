@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "API/LuaScriptAPI.h"
 
-#include "Physics/Physics.h"
+#include "Engine/Physics/Physics.h"
 
 void RegisterPhysicsAPI_Lua(lua_State *L)
 {

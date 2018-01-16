@@ -1,7 +1,7 @@
-#include "stdafx.h"
 #include "LuaScriptComponent.h"
 
-#include "Core/String.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/String.h"
 
 #include "lua.hpp"
 #include "LuaBridge/LuaBridge.h"

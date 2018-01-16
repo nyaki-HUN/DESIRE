@@ -1,11 +1,10 @@
-#include "stdafx.h"
 #include "API/AngelScriptAPI.h"
 #include "AngelScriptComponent.h"
 
-#include "Component/PhysicsComponent.h"
-#include "Component/RenderComponent.h"
-#include "Scene/Object.h"
-#include "Scene/Transform.h"
+#include "Engine/Component/PhysicsComponent.h"
+#include "Engine/Component/RenderComponent.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 // Template function for registering a class derived from Component
 #define SCRIPT_API_REGISTER_COMPONENT(CLASS)																												\

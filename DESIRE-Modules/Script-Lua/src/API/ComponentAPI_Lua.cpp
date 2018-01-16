@@ -1,11 +1,10 @@
-#include "stdafx.h"
 #include "API/LuaScriptAPI.h"
 #include "LuaScriptComponent.h"
 
-#include "Component/PhysicsComponent.h"
-#include "Component/RenderComponent.h"
-#include "Scene/Object.h"
-#include "Scene/Transform.h"
+#include "Engine/Component/PhysicsComponent.h"
+#include "Engine/Component/RenderComponent.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 void RegisterComponentAPI_Lua(lua_State *L)
 {

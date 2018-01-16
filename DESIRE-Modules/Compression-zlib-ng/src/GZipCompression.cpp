@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "GZipCompression.h"
 
 #include "zlib.h"

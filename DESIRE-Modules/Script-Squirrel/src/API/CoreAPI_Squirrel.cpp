@@ -1,9 +1,8 @@
-#include "stdafx.h"
 #include "API/SquirrelScriptAPI.h"
 
-#include "Core/math/vectormath.h"
-#include "Core/math/math.h"
-#include "Core/Timer.h"
+#include "Engine/Core/math/vectormath.h"
+#include "Engine/Core/math/math.h"
+#include "Engine/Core/Timer.h"
 
 void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 {

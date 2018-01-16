@@ -1,7 +1,6 @@
-#include "stdafx.h"
 #include "API/SquirrelScriptAPI.h"
 
-#include "Input/Input.h"
+#include "Engine/Input/Input.h"
 
 void RegisterInputAPI_Squirrel(Sqrat::RootTable& rootTable)
 {

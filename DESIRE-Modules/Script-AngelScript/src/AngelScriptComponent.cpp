@@ -1,7 +1,9 @@
-#include "stdafx.h"
 #include "AngelScriptComponent.h"
 
-#include "Core/String.h"
+#include "Engine/Core/platform.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/String.h"
 
 DESIRE_DISABLE_WARNINGS
 #include "angelscript.h"

@@ -1,13 +1,13 @@
-#include "stdafx.h"
 #include "Box2DPhysics.h"
 #include "Box2DPhysicsComponent.h"
 #include "ContactListener.h"
 #include "DestructorListener.h"
 #include "RaycastCallbacks.h"
 
-#include "Component/PhysicsComponent.h"
-#include "Component/ScriptComponent.h"
-#include "Scene/Object.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Component/PhysicsComponent.h"
+#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Scene/Object.h"
 
 #include "Box2D/Dynamics/b2World.h"
 #include "Box2D/Dynamics/Contacts/b2Contact.h"

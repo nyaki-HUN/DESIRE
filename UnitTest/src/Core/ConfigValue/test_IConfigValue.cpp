@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "Core/ConfigValue/ConfigValueInt.h"
-#include "Core/ConfigValue/ConfigValueFloat.h"
+#include "Engine/Core/ConfigValue/ConfigValueInt.h"
+#include "Engine/Core/ConfigValue/ConfigValueFloat.h"
 
 TEST_CASE("IConfigValue", "[Core]")
 {

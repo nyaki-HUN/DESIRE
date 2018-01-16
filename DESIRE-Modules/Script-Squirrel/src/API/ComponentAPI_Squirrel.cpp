@@ -1,11 +1,10 @@
-#include "stdafx.h"
 #include "API/SquirrelScriptAPI.h"
 #include "SquirrelScriptComponent.h"
 
-#include "Component/PhysicsComponent.h"
-#include "Component/RenderComponent.h"
-#include "Scene/Object.h"
-#include "Scene/Transform.h"
+#include "Engine/Component/PhysicsComponent.h"
+#include "Engine/Component/RenderComponent.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
