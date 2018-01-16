@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script/ScriptSystem.h"
+#include "Engine/Script/ScriptSystem.h"
 
 class String;
 class asIScriptEngine;

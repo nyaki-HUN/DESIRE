@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Compression/Compression.h"
+#include "Engine/Compression/Compression.h"
 
 typedef struct ZSTD_CCtx_s ZSTD_CStream;
 typedef struct ZSTD_DCtx_s ZSTD_DStream;

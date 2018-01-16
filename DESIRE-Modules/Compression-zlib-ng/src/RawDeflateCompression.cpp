@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "RawDeflateCompression.h"
 
 #include "zlib.h"

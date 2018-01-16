@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Physics/Physics.h"
-#include "Physics/Collision.h"
+#include "Engine/Physics/Physics.h"
+#include "Engine/Physics/Collision.h"
 
 class b2World;
 class b2ContactListener;

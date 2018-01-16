@@ -1,5 +1,6 @@
-#include "stdafx.h"
 #include "PhysXPhysicsComponent.h"
+
+#include "Engine/Core/assert.h"
 
 PhysXPhysicsComponent::PhysXPhysicsComponent(Object& object)
 	: PhysicsComponent(object)

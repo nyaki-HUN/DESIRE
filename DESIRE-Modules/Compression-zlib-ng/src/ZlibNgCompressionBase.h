@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Compression/Compression.h"
+#include "Engine/Compression/Compression.h"
+
+#include <stdint.h>
 
 typedef struct z_stream_s z_stream;
 

@@ -1,7 +1,7 @@
-#include "stdafx.h"
 #include "AssimpLoader.h"
 
-#include "Core/fs/IReadFile.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/fs/IReadFile.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
@@ -25,9 +25,10 @@ public:
 
 	size_t Write(const void *pvBuffer, size_t pSize, size_t pCount) override
 	{
-		DESIRE_UNUSED(pvBuffer);
-		DESIRE_UNUSED(pSize);
-		DESIRE_UNUSED(pCount);
+		(void)pvBuffer;
+		(void)pSize;
+		(void)pCount;
+
 		ASSERT(false && "Not supported");
 		return 0;
 	}
@@ -85,7 +86,7 @@ public:
 
 	Assimp::IOStream* Open(const char *pFile, const char *pMode) override
 	{
-		DESIRE_UNUSED(pMode);
+		(void)pMode;
 
 		if(!Exists(pFile))
 		{

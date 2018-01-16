@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Direct3D11Render.h"
 #include "DirectXMathExt.h"
 #include "MeshRenderDataD3D11.h"
@@ -6,16 +5,18 @@
 #include "TextureRenderDataD3D11.h"
 #include "RenderTargetRenderDataD3D11.h"
 
-#include "Core/IWindow.h"
-#include "Core/String.h"
-#include "Core/fs/FileSystem.h"
-#include "Core/fs/IReadFile.h"
-#include "Core/math/vectormath.h"
-#include "Render/Material.h"
-#include "Render/RenderTarget.h"
-#include "Render/View.h"
-#include "Resource/Mesh.h"
-#include "Resource/Shader.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/IWindow.h"
+#include "Engine/Core/String.h"
+#include "Engine/Core/fs/FileSystem.h"
+#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/math/vectormath.h"
+#include "Engine/Render/Material.h"
+#include "Engine/Render/RenderTarget.h"
+#include "Engine/Render/View.h"
+#include "Engine/Resource/Mesh.h"
+#include "Engine/Resource/Shader.h"
 
 #include <d3dcompiler.h>
 
@@ -129,7 +130,7 @@ void Direct3D11Render::Init(IWindow *mainWindow)
 		nullptr,					// might fail with two adapters in machine
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-#if defined(DESIRE_DEBUG)
+#if defined(_DEBUG)
 		D3D11_CREATE_DEVICE_DEBUG,
 #else
 		D3D11_CREATE_DEVICE_SINGLETHREADED,

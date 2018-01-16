@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Render/Render.h"
-#include "Resource/Texture.h"
-#include "Core/STL_utils.h"
+#include "Engine/Render/Render.h"
+#include "Engine/Resource/Texture.h"
+#include "Engine/Core/STL_utils.h"
 
 #include "../Externals/bgfx/include/bgfx/bgfx.h"
 #include <unordered_map>

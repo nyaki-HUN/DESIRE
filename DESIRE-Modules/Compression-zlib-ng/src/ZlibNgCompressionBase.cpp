@@ -1,7 +1,8 @@
-#include "stdafx.h"
 #include "ZlibNgCompressionBase.h"
 
-#include "Core/memory/Allocator.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Core/memory/Allocator.h"
 
 #include "zlib.h"
 
@@ -191,5 +192,5 @@ void ZlibNgCompressionBase::StreamInit(z_stream& stream)
 	stream.zalloc = &ZlibNgCompressionBase::CustomAlloc;
 	stream.zfree = &ZlibNgCompressionBase::CustomFree;
 	stream.opaque = &Allocator::GetDefaultAllocator();
-	DESIRE_TODO("Test and use a LinearAllocator");
+	// TODO: Test and use a LinearAllocator
 }

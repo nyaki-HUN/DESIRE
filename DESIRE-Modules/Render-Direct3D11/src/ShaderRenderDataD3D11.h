@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/MemoryBuffer.h"
-#include "Core/HashedStringMap.h"
+#include "Engine/Core/MemoryBuffer.h"
+#include "Engine/Core/HashedStringMap.h"
 
 #include <d3d11.h>
 

@@ -1,10 +1,10 @@
-#include "stdafx.h"
 #include "PhysXPhysics.h"
 #include "PhysXPhysicsComponent.h"
 
-#include "Scene/Object.h"
+#include "Engine/Core/Log.h"
+#include "Engine/Scene/Object.h"
 
-#if defined(DESIRE_DEBUG)
+#if defined(_DEBUG)
 	#pragma comment(lib, "PhysX3DEBUG_x64.lib")
 	#pragma comment(lib, "PhysX3CookingDEBUG_x64.lib")
 	#pragma comment(lib, "PhysX3ExtensionsDEBUG.lib")
