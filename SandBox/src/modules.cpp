@@ -7,7 +7,7 @@ DESIRE_APP_CLASS(SandBox)
 // --------------------------------------------------------------------------------------------------------------------
 //	Compression
 // --------------------------------------------------------------------------------------------------------------------
-#include "Compression/CompressionManager.h"
+#include "Engine/Compression/CompressionManager.h"
 
 #include "Compression-zlib-ng/src/GZipCompression.h"
 #include "Compression-zlib-ng/src/ZlibCompression.h"
@@ -42,7 +42,7 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(Render, BgfxRender)
 // --------------------------------------------------------------------------------------------------------------------
 //	Resource
 // --------------------------------------------------------------------------------------------------------------------
-#include "Resource/ResourceManager.h"
+#include "Engine/Resource/ResourceManager.h"
 
 #include "ResourceLoader-Assimp/src/AssimpLoader.h"
 const std::vector<ResourceManager::MeshLoaderFunc_t> ResourceManager::meshLoaders =
@@ -50,14 +50,14 @@ const std::vector<ResourceManager::MeshLoaderFunc_t> ResourceManager::meshLoader
 	&AssimpLoader::Load,
 };
 
-#include "Resource/ShaderLoader/FileShaderLoader.h"
+#include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
 const std::vector<ResourceManager::ShaderLoaderFunc_t> ResourceManager::shaderLoaders =
 {
 	&FileShaderLoader::Load,
 };
 
-#include "Resource/TextureLoader/TgaLoader.h"
-#include "Resource/TextureLoader/StbImageLoader.h"
+#include "Engine/Resource/TextureLoader/TgaLoader.h"
+#include "Engine/Resource/TextureLoader/StbImageLoader.h"
 const std::vector<ResourceManager::TextureLoaderFunc_t> ResourceManager::textureLoaders =
 {
 	&TgaLoader::Load,
@@ -77,5 +77,5 @@ DESIRE_DEFINE_SINGLETON_INSTANCE(ScriptSystem, SquirrelScriptSystem)
 // --------------------------------------------------------------------------------------------------------------------
 //	Sound
 // --------------------------------------------------------------------------------------------------------------------
-#include "Sound/Sound.h"
+#include "Engine/Sound/Sound.h"
 DESIRE_DEFINE_EMPTY_SINGLETON_INSTANCE(Sound)

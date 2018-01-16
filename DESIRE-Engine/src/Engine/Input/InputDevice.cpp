@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#include "Input/InputDevice.h"
+#include "Engine/stdafx.h"
+#include "Engine/Input/InputDevice.h"
 
 InputDevice::InputDevice(void *handle, size_t offsetOfButtonStates, uint16_t numButtonStates, size_t offsetOfAxisStates, uint16_t numAxisStates)
 	: handle(handle)

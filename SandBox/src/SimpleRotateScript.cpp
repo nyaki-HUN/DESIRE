@@ -1,8 +1,9 @@
 #include "SimpleRotateScript.h"
-#include "Component/ScriptComponent.h"
-#include "Core/Timer.h"
-#include "Scene/Object.h"
-#include "Scene/Transform.h"
+
+#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Core/Timer.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 SimpleRotateScript::SimpleRotateScript()
 {

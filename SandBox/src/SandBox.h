@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/IApp.h"
-#include "Input/InputMapping.h"
+#include "Engine/Core/IApp.h"
+#include "Engine/Input/InputMapping.h"
 
 #include <memory>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script/IScript.h"
+#include "Engine/Script/IScript.h"
 
 class SimpleRotateScript : public IScript
 {
