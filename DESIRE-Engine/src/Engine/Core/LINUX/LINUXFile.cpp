@@ -119,7 +119,7 @@ void FileSystem::SetupDirectories()
 	char exePath[DESIRE_MAX_PATH_LEN] = {};
 
 	// Find the real executable by reading the process symlink
-	char str[DESIRE_MAX_PATH_LEN] = { 0 };
+	char str[DESIRE_MAX_PATH_LEN] = {};
 	snprintf(str, sizeof(str), "/proc/%d/exe", getpid());
 	const int len = readlink(str, exePath, DESIRE_MAX_PATH_LEN - 1);
 	if(len > 0)
@@ -139,5 +139,5 @@ void FileSystem::SetupDirectories()
 		exePath[0] = '\0';
 	}
 
-	appDir = exePath;
+	appDir = String(exePath, strlen(exePath));
 }

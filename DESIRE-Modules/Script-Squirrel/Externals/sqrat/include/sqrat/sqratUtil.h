@@ -36,6 +36,8 @@
 
 #include "Engine/Core/String.h"
 
+#include <string.h>
+
 namespace Sqrat
 {
 
@@ -228,7 +230,7 @@ inline String LastErrorString(HSQUIRRELVM vm)
 	sq_tostring(vm, -1);
 	sq_getstring(vm, -1, &sqErr);
 	sq_pop(vm, 2);
-	return String(sqErr);
+	return String(sqErr, strlen(sqErr));
 }
 
 }

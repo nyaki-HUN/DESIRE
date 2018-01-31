@@ -104,7 +104,7 @@ WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
 	HANDLE hFile = CreateFileA(filename.c_str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
-		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename);
+		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename.c_str());
 		return nullptr;
 	}
 
@@ -114,6 +114,7 @@ WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
 void FileSystem::SetupDirectories()
 {
 	char exePath[DESIRE_MAX_PATH_LEN] = {};
+
 	const DWORD len = GetModuleFileNameA(NULL, exePath, DESIRE_MAX_PATH_LEN);
 	if(len > 0 && len < DESIRE_MAX_PATH_LEN)
 	{
@@ -129,7 +130,7 @@ void FileSystem::SetupDirectories()
 		exePath[0] = '\0';
 	}
 
-	appDir = exePath;
+	appDir = String(exePath, strlen(exePath));
 
 	DESIRE_TODO("Set dataDir and cacheDir properly");
 	dataDir = appDir;

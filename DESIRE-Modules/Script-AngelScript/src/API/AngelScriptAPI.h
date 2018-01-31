@@ -129,7 +129,7 @@ public:
 		ASSERT(gen->GetArgCount() == 0);
 		const T *self = static_cast<const T*>(gen->GetObject());
 		const char *rv = (self->*func)();
-		new (gen->GetAddressOfReturnLocation()) String(rv);
+		new (gen->GetAddressOfReturnLocation()) String(rv, strlen(rv));
 	}
 
 	template<T(*func)()>

@@ -44,7 +44,7 @@ std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const
 {
 	ASSERT(defines != nullptr);
 
-	const String name = String::CreateFormattedString("%s|%s", filename, defines);
+	const String name = String::CreateFormattedString("%s|%s", filename.c_str(), defines);
 	const HashedString filenameHash = HashedString::CreateFromDynamicString(name.c_str(), name.Length());
 	std::weak_ptr<Shader> *shaderPtr = loadedShaders.Find(filenameHash);
 	if(shaderPtr != nullptr && !shaderPtr->expired())
