@@ -10,24 +10,25 @@
 class Mesh;
 class Shader;
 class Texture;
+class String;
 
 class ResourceManager
 {
 	DESIRE_SINGLETON(ResourceManager)
 
 public:
-	std::shared_ptr<Mesh> GetMesh(const char *filename);
-	std::shared_ptr<Shader> GetShader(const char *filename, const char *defines = "");
-	std::shared_ptr<Texture> GetTexture(const char *filename);
+	std::shared_ptr<Mesh> GetMesh(const String& filename);
+	std::shared_ptr<Shader> GetShader(const String& filename, const char *defines = "");
+	std::shared_ptr<Texture> GetTexture(const String& filename);
 
 	typedef Mesh*(*MeshLoaderFunc_t)(const ReadFilePtr&);
 	typedef Shader*(*ShaderLoaderFunc_t)(const ReadFilePtr&);
 	typedef Texture*(*TextureLoaderFunc_t)(const ReadFilePtr&);
 
 private:
-	std::shared_ptr<Mesh> LoadMesh(const char *filename);
-	std::shared_ptr<Shader> LoadShader(const char *filename);
-	std::shared_ptr<Texture> LoadTexture(const char *filename);
+	std::shared_ptr<Mesh> LoadMesh(const String& filename);
+	std::shared_ptr<Shader> LoadShader(const String& filename);
+	std::shared_ptr<Texture> LoadTexture(const String& filename);
 
 	HashedStringMap<std::weak_ptr<Mesh>> loadedMeshes;
 	HashedStringMap<std::weak_ptr<Shader>> loadedShaders;

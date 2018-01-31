@@ -101,13 +101,13 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 	return std::make_unique<LINUXFile>(fileDesc, fileStat.st_size, filename);
 }
 
-WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
+WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
 {
 	// 0644 - RW for owner, R for group and others
-	int fileDesc = creat64(filename, 0644);
+	int fileDesc = creat64(filename.c_str(), 0644);
 	if(fileDesc == -1)
 	{
-		LOG_ERROR("Failed to open file %s (Error: %d)", filename, errno);
+		LOG_ERROR("Failed to open file %s (Error: %d)", filename.c_str(), errno);
 		return nullptr;
 	}
 

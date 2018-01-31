@@ -17,11 +17,9 @@ ResourceManager::~ResourceManager()
 
 }
 
-std::shared_ptr<Mesh> ResourceManager::GetMesh(const char *filename)
+std::shared_ptr<Mesh> ResourceManager::GetMesh(const String& filename)
 {
-	ASSERT(filename != nullptr);
-
-	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
+	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename.c_str(), filename.Length());
 	std::weak_ptr<Mesh> *meshPtr = loadedMeshes.Find(filenameHash);
 	if(meshPtr != nullptr && !meshPtr->expired())
 	{
@@ -42,9 +40,8 @@ std::shared_ptr<Mesh> ResourceManager::GetMesh(const char *filename)
 	return mesh;
 }
 
-std::shared_ptr<Shader> ResourceManager::GetShader(const char *filename, const char *defines)
+std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const char *defines)
 {
-	ASSERT(filename != nullptr);
 	ASSERT(defines != nullptr);
 
 	const String name = String::CreateFormattedString("%s|%s", filename, defines);
@@ -69,11 +66,9 @@ std::shared_ptr<Shader> ResourceManager::GetShader(const char *filename, const c
 	return shader;
 }
 
-std::shared_ptr<Texture> ResourceManager::GetTexture(const char *filename)
+std::shared_ptr<Texture> ResourceManager::GetTexture(const String& filename)
 {
-	ASSERT(filename != nullptr);
-
-	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename);
+	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename.c_str(), filename.Length());
 	std::weak_ptr<Texture> *texturePtr = loadedTextures.Find(filenameHash);
 	if(texturePtr != nullptr && !texturePtr->expired())
 	{
@@ -94,7 +89,7 @@ std::shared_ptr<Texture> ResourceManager::GetTexture(const char *filename)
 	return texture;
 }
 
-std::shared_ptr<Mesh> ResourceManager::LoadMesh(const char *filename)
+std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 {
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file)
@@ -111,15 +106,15 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const char *filename)
 		}
 	}
 
-	LOG_ERROR("Failed to load mesh from: %s", filename);
+	LOG_ERROR("Failed to load mesh from: %s", filename.c_str());
 	return nullptr;
 }
 
-std::shared_ptr<Shader> ResourceManager::LoadShader(const char *filename)
+std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 {
-	const String filenameWithPath = Render::Get()->GetShaderFilenameWithPath(filename);
+	const String filenameWithPath = Render::Get()->GetShaderFilenameWithPath(filename.c_str());
 
-	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath.c_str());
+	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath);
 	if(file)
 	{
 		for(ShaderLoaderFunc_t loaderFunc : shaderLoaders)
@@ -138,7 +133,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const char *filename)
 	return nullptr;
 }
 
-std::shared_ptr<Texture> ResourceManager::LoadTexture(const char *filename)
+std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 {
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file)
@@ -155,6 +150,6 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const char *filename)
 		}
 	}
 
-	LOG_ERROR("Failed to load texture from: %s", filename);
+	LOG_ERROR("Failed to load texture from: %s", filename.c_str());
 	return nullptr;
 }

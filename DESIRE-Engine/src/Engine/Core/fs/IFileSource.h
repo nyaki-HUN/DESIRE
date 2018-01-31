@@ -2,6 +2,8 @@
 
 #include "Engine/Core/fs/FilePtr_fwd.h"
 
+class String;
+
 class IFileSource
 {
 protected:
@@ -10,5 +12,5 @@ protected:
 public:
 	virtual ~IFileSource() {}
 
-	virtual ReadFilePtr OpenFile(const char *filename) = 0;
+	virtual ReadFilePtr OpenFile(const String& filename) = 0;
 };

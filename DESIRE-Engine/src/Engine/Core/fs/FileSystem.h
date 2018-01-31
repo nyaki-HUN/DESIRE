@@ -38,16 +38,16 @@ public:
 	};
 
 	// Opens a file for reading
-	ReadFilePtr Open(const char *filename, ELocation location = ELocation::APP_DIR);
+	ReadFilePtr Open(const String& filename, ELocation location = ELocation::APP_DIR);
 	
 	// Creates a file for writing
-	WriteFilePtr CreateWriteFile(const char *filename);
+	WriteFilePtr CreateWriteFile(const String& filename);
 
 	void AddFileSource(IFileSource *fileSource);
 
 	// Helper functions for adding built-in file sources
-	bool AddDirectoryFileSource(const char *dir, int fileSourceFlags = 0);
-	bool AddZipFileSource(const char *zipFilename, int fileSourceFlags = 0);
+	bool AddDirectoryFileSource(const String& dir, int fileSourceFlags = 0);
+	bool AddZipFileSource(const String& zipFilename, int fileSourceFlags = 0);
 
 	const String& GetAppDirectory();
 

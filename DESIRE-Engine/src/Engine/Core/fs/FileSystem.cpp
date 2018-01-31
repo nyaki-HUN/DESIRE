@@ -13,10 +13,8 @@ FileSystem::~FileSystem()
 
 }
 
-ReadFilePtr FileSystem::Open(const char *filename, ELocation location)
+ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 {
-	ASSERT(filename != nullptr);
-
 	for(IFileSource *fileSrc : fileSources)
 	{
 		ReadFilePtr file = fileSrc->OpenFile(filename);
@@ -42,13 +40,13 @@ void FileSystem::AddFileSource(IFileSource *fileSource)
 	fileSources.push_back(fileSource);
 }
 
-bool FileSystem::AddDirectoryFileSource(const char *dir, int fileSourceFlags)
+bool FileSystem::AddDirectoryFileSource(const String& dir, int fileSourceFlags)
 {
 	DESIRE_TODO("implement");
 	return false;
 }
 
-bool FileSystem::AddZipFileSource(const char *zipFilename, int fileSourceFlags)
+bool FileSystem::AddZipFileSource(const String& zipFilename, int fileSourceFlags)
 {
 	ReadFilePtr file = Open(zipFilename);
 	if(file != nullptr)

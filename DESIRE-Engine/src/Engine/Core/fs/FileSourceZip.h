@@ -13,7 +13,7 @@ public:
 
 	bool Load();
 
-	ReadFilePtr OpenFile(const char *filename) override;
+	ReadFilePtr OpenFile(const String& filename) override;
 
 private:
 	struct ZipFileEntry
@@ -25,7 +25,7 @@ private:
 	};
 
 	void ProcessLocalHeaders();
-	String ConvertFilename(const char *filename);
+	String ConvertFilename(const String& filename);
 
 	std::map<String, ZipFileEntry> fileList;
 	ReadFilePtr zipFile;

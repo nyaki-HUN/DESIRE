@@ -143,7 +143,7 @@ bool FileSourceZip::Load()
 	return true;
 }
 
-ReadFilePtr FileSourceZip::OpenFile(const char *filename)
+ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 {
 	const auto it = fileList.find(ConvertFilename(filename));
 	if(it == fileList.end())
@@ -230,13 +230,13 @@ void FileSourceZip::ProcessLocalHeaders()
 	}
 
 	// Read filename
-	char filename[DESIRE_MAX_PATH_LEN];
-	ASSERT(header.filenameLength < sizeof(filename));
-	zipFile->ReadBuffer(filename, header.filenameLength);
-	filename[header.filenameLength] = '\0';
+	char str[DESIRE_MAX_PATH_LEN];
+	ASSERT(header.filenameLength < sizeof(str));
+	zipFile->ReadBuffer(str, header.filenameLength);
+	str[header.filenameLength] = '\0';
 
 	// Skip if directory
-	const bool isDirectory = (filename[header.filenameLength - 1] == '/');
+	const bool isDirectory = (str[header.filenameLength - 1] == '/');
 	if(isDirectory)
 	{
 		return;
@@ -260,19 +260,20 @@ void FileSourceZip::ProcessLocalHeaders()
 	entry.uncompressedSize = header.dataDescriptor.uncompressedSize;
 	entry.compressionMethod = header.compressionMethod;
 
-	fileList[ConvertFilename(filename)] = entry;
+	String filename = ConvertFilename(String(str, header.filenameLength));
+	fileList.insert_or_assign(std::move(filename), std::move(entry));
 }
 
-String FileSourceZip::ConvertFilename(const char *filename)
+String FileSourceZip::ConvertFilename(const String& filename)
 {
 	String strFilename;
 
 	if(flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_PATH)
 	{
-		const char *lastSlash = strrchr(filename, '/');
-		if(lastSlash != nullptr)
+		const size_t pos = filename.FindLast('/');
+		if(pos != String::INVALID_POS)
 		{
-			strFilename = lastSlash + 1;
+			strFilename = filename.SubString(pos + 1);
 		}
 		else
 		{

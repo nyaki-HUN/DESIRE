@@ -99,9 +99,9 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 	return std::make_unique<WINDOWSFile>(hFile, finfo.EndOfFile.QuadPart, filename);
 }
 
-WriteFilePtr FileSystem::CreateWriteFile(const char *filename)
+WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
 {
-	HANDLE hFile = CreateFileA(filename, GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile = CreateFileA(filename.c_str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
 		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename);
