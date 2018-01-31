@@ -11,8 +11,15 @@ public:
 	String();
 	String(const String& string);
 	String(String&& string);
-	String(const char *s);
-	String(const char *data, size_t size);
+	explicit String(const char *str);
+	String(const char *str, size_t size);
+
+	template<size_t SIZE>
+	String(const char(&str)[SIZE])
+	{
+		InitWithData(str, SIZE - 1);
+	}
+
 	~String();
 
 	void ToLower();
@@ -21,15 +28,19 @@ public:
 	// Remove whitespaces from both the beginning and end of the string
 	void Trim();
 
-	// Append characters
-	void Append(const String& string);
-	void Append(const char *s);
-	void Append(const char *s, size_t numChars);
-
 	// Insert characters
-	void Insert(size_t startIndex, const String& string);
-	void Insert(size_t startIndex, const char *s);
-	void Insert(size_t startIndex, const char *s, size_t numChars);
+	inline void Insert(size_t startIndex, const String& string)
+	{
+		Insert(startIndex, string.c_str(), string.size);
+	}
+
+	template<size_t SIZE>
+	void Insert(size_t startIndex, const char(&str)[SIZE])
+	{
+		Insert(startIndex, str, SIZE - 1);
+	}
+
+	void Insert(size_t startIndex, const char *str, size_t numChars);
 
 	// Remove characters
 	void Remove(size_t startIndex, size_t numChars);
@@ -65,14 +76,14 @@ public:
 	// Generate substring
 	String SubString(size_t startIndex, size_t numChars = INVALID_POS) const;
 
+	// Returns the data (C string equivalent)
+	const char* c_str() const;
+
 	// Returns the number of characters
 	size_t Length() const;
 
 	// Returns the number of UTF8 characters
 	size_t LengthUTF8() const;
-
-	// Returns the data (C string equivalent)
-	const char* c_str() const;
 
 	// Convert string to numeric value
 	int IntValue() const;
@@ -80,27 +91,36 @@ public:
 
 	String& operator =(const String& string);
 	String& operator =(String&& string);
-	String& operator =(const char *s);
+	String& operator =(const char *str);
 
 	inline String operator +(const String& string) const
 	{
-		return (String(*this) += string);
+		String newString(*this);
+		newString.Append(string.data, string.size);
+		return newString;
 	}
 
-	inline String operator +(const char *s) const
+	template<size_t SIZE>
+	inline String operator +(const char(&str)[SIZE]) const
 	{
-		return (String(*this) += s);
+		String newString(*this);
+		newString.Append(str, SIZE - 1);
+		return newString;
 	}
 
 	// Append characters
+	void Append(const char *str, size_t numChars);
+
 	inline String& operator +=(const String& string)
 	{
-		Append(string);
+		Append(string.data, string.size);
 		return *this;
 	}
-	inline String& operator +=(const char *s)
+
+	template<size_t SIZE>
+	inline String& operator +=(const char(&str)[SIZE])
 	{
-		Append(s);
+		Append(str, SIZE - 1);
 		return *this;
 	}
 
@@ -111,14 +131,11 @@ public:
 	String& operator +=(uint64_t number);
 	String& operator +=(float number);
 
-	// Append bool value
-	String& operator +=(bool b);
-
 	// Compare strings
 	int Compare(const String& string) const;
-	int Compare(const char *s) const;
+	int Compare(const char *str) const;
 	int CompareIgnoreCase(const String& string) const;
-	int CompareIgnoreCase(const char *s) const;
+	int CompareIgnoreCase(const char *str) const;
 
 	inline bool operator <(const String& string) const
 	{
@@ -129,18 +146,18 @@ public:
 	{
 		return (Compare(string.data) == 0);
 	}
-	inline bool Equals(const char *s) const
+	inline bool Equals(const char *str) const
 	{
-		return (Compare(s) == 0);
+		return (Compare(str) == 0);
 	}
 
 	inline bool EqualsIgnoreCase(const String& string) const
 	{
 		return (CompareIgnoreCase(string.data) == 0);
 	}
-	inline bool EqualsIgnoreCase(const char *s) const
+	inline bool EqualsIgnoreCase(const char *str) const
 	{
-		return (CompareIgnoreCase(s) == 0);
+		return (CompareIgnoreCase(str) == 0);
 	}
 
 	bool StartsWith(const String& prefix) const;
@@ -159,7 +176,7 @@ private:
 
 	static const size_t kStackSize = 16;
 
-	char *data;
-	size_t size;
-	char staticContent[kStackSize];
+	char *data = staticContent;
+	size_t size = 0;
+	char staticContent[kStackSize] = {};
 };

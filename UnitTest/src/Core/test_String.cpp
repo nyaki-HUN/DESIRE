@@ -4,11 +4,11 @@
 TEST_CASE("String", "[Core]")
 {
 	// The string variable represents a String which stores its data in the stack
-	const char *charSeq = "String ASD";
+	const char charSeq[] = "String ASD";
 	String string = charSeq;
 
 	// The bigString variable represents a String wich contains more data than String::kStackSize and stores it in the heap
-	const char *charSeq2 = "String1234567890 QWE1234567890 asd1234567890";
+	const char charSeq2[] = "String1234567890 QWE1234567890 asd1234567890";
 	String bigString = charSeq2;
 
 	SECTION("Constructors | Equals()")
@@ -70,7 +70,7 @@ TEST_CASE("String", "[Core]")
 		CHECK(s.Equals(charSeq2));
 	}
 
-	SECTION("ToLower() and EqualsIgnoreCase()")
+	SECTION("ToLower() | EqualsIgnoreCase()")
 	{
 		string.ToLower();
 		CHECK(string.Equals("string asd"));
@@ -81,7 +81,7 @@ TEST_CASE("String", "[Core]")
 		CHECK(bigString.EqualsIgnoreCase(charSeq2));
 	}
 
-	SECTION("ToUpper() and EqualsIgnoreCase()")
+	SECTION("ToUpper() | EqualsIgnoreCase()")
 	{
 		string.ToUpper();
 		CHECK(string.Equals("STRING ASD"));
@@ -109,8 +109,13 @@ TEST_CASE("String", "[Core]")
 		CHECK(trimString.Length() == 0);
 	}
 
-	SECTION("operator += | Append()")
+	SECTION("operator +() | operator +=() | Append()")
 	{
+		const String operator_plus = string + "123";
+		CHECK(operator_plus.Equals("String ASD123"));
+		const String operator_plus2 = operator_plus + string;
+		CHECK(operator_plus2.Equals("String ASD123String ASD"));
+
 		String numberString = string;
 		numberString += -12;
 		CHECK(numberString.Equals("String ASD-12"));
@@ -120,36 +125,32 @@ TEST_CASE("String", "[Core]")
 		CHECK(numberString.Equals("String ASD-1212345-123456789123456789"));
 		numberString += 123456789123456789ull;
 		CHECK(numberString.Equals("String ASD-1212345-123456789123456789123456789123456789"));
-//		numberString += 654.321f;
-//		numberString += true;
-//		numberString += false;
+		numberString += 654.321f;
+		CHECK(numberString.Equals("String ASD-1212345-123456789123456789123456789123456789654.321"));
 
 		String string_copy = string;
 		String bigString_copy = bigString;
 
-		string += " Append";
+		string += " XYZ";
 		bigString += " Append";
-		CHECK(string.Equals("String ASD Append"));
+		CHECK(string.Equals("String ASD XYZ"));
+		CHECK(string.Length() == 14);
 		CHECK(bigString.Equals("String1234567890 QWE1234567890 asd1234567890 Append"));
-		string_copy.Append(" Append");
-		bigString_copy.Append(" Append");
-		CHECK(string_copy.Equals(string));
-		CHECK(bigString_copy.Equals(bigString));
 
 		string += bigString;
-		CHECK(string.Equals("String ASD AppendString1234567890 QWE1234567890 asd1234567890 Append"));
-		string_copy.Append(bigString_copy);
-		CHECK(string_copy.Equals(string));
+		CHECK(string.Equals("String ASD XYZString1234567890 QWE1234567890 asd1234567890 Append"));
 	}
 
 	SECTION("Insert()")
 	{
-		string.Insert(0, charSeq);
+		string.Insert(0, string);
 		CHECK(string.Equals("String ASDString ASD"));
+		string.Insert(0, charSeq);
+		CHECK(string.Equals("String ASDString ASDString ASD"));
 		string.Insert(6, charSeq, 3);
-		CHECK(string.Equals("StringStr ASDString ASD"));
+		CHECK(string.Equals("StringStr ASDString ASDString ASD"));
 		string.Insert(string.Length(), charSeq, 3);
-		CHECK(string.Equals("StringStr ASDString ASDStr"));
+		CHECK(string.Equals("StringStr ASDString ASDString ASDStr"));
 	}
 
 	SECTION("Remove()")
@@ -261,14 +262,6 @@ TEST_CASE("String", "[Core]")
 		CHECK(floatInString.FloatValue() == FLT_MAX);
 		floatInString = ".123.0";
 		CHECK(floatInString.FloatValue() == FLT_MAX);
-	}
-
-	SECTION("operator +")
-	{
-		String operator_plus1 = string + String("123");
-		String operator_plus2 = String(" qwe") + "!";
-		String operator_plus = operator_plus1 + operator_plus2;
-		CHECK(operator_plus.Equals("String ASD123 qwe!"));
 	}
 
 	SECTION("Compare() | CompareIgnoreCase() | operator <")

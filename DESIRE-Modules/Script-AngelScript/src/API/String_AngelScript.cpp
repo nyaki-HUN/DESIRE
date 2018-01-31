@@ -104,7 +104,6 @@ void RegisterString_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("String", "String& opAddAssign(int64)", asMETHODPR(String, operator +=, (int64_t), String&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "String& opAddAssign(uint64)", asMETHODPR(String, operator +=, (uint64_t), String&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "String& opAddAssign(float)", asMETHODPR(String, operator +=, (float), String&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("String", "String& opAddAssign(bool)", asMETHODPR(String, operator +=, (bool), String&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "int opCmp(const String &in) const", asMETHODPR(String, Compare, (const String&) const, int), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "int Compare(const String &in) const", asMETHODPR(String, Compare, (const String&) const, int), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "int CompareIgnoreCase(const String &in) const", asMETHODPR(String, CompareIgnoreCase, (const String&) const, int), asCALL_THISCALL);

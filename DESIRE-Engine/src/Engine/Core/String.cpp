@@ -7,15 +7,11 @@
 const String String::emptyString;
 
 String::String()
-	: data(staticContent)
-	, size(0)
 {
-	staticContent[0] = '\0';
+
 }
 
 String::String(const String& string)
-	: data(staticContent)
-	, size(0)
 {
 	InitWithData(string.data, string.size);
 }
@@ -37,20 +33,16 @@ String::String(String&& string)
 	}
 }
 
-String::String(const char *s)
-	: data(staticContent)
-	, size(0)
+String::String(const char *str)
 {
-	ASSERT(s != nullptr);
-	InitWithData(s, strlen(s));
+	ASSERT(str != nullptr);
+	InitWithData(str, strlen(str));
 }
 
-String::String(const char *i_data, size_t size)
-	: data(staticContent)
-	, size(0)
+String::String(const char *str, size_t size)
 {
-	ASSERT(i_data != nullptr);
-	InitWithData(i_data, size);
+	ASSERT(str != nullptr);
+	InitWithData(str, size);
 }
 
 String::~String()
@@ -89,40 +81,9 @@ void String::Trim()
 	}
 }
 
-void String::Append(const String& string)
+void String::Insert(size_t startIndex, const char *str, size_t numChars)
 {
-	Append(string.c_str(), string.size);
-}
-
-void String::Append(const char *s)
-{
-	Append(s, strlen(s));
-}
-
-void String::Append(const char *s, size_t numChars)
-{
-	ASSERT(s != nullptr);
-
-	const size_t oldSize = size;
-	EnsureSize(size + numChars, true);
-	memcpy(data + oldSize, s, numChars);
-	data[size] = '\0';
-}
-
-void String::Insert(size_t startIndex, const String& string)
-{
-	Insert(startIndex, string.c_str(), string.size);
-}
-
-void String::Insert(size_t startIndex, const char *s)
-{
-	ASSERT(s != nullptr);
-	Insert(startIndex, s, strlen(s));
-}
-
-void String::Insert(size_t startIndex, const char *s, size_t numChars)
-{
-	ASSERT(s != nullptr);
+	ASSERT(str != nullptr);
 
 	if(startIndex > size)
 	{
@@ -132,7 +93,7 @@ void String::Insert(size_t startIndex, const char *s, size_t numChars)
 	const size_t oldSize = size;
 	EnsureSize(size + numChars, true);
 	memmove(data + startIndex + numChars, data + startIndex, oldSize - startIndex + 1);
-	memcpy(data + startIndex, s, numChars);
+	memcpy(data + startIndex, str, numChars);
 }
 
 void String::Remove(size_t startIndex, size_t numChars)
@@ -226,6 +187,11 @@ String String::SubString(size_t startIndex, size_t numChars) const
 	return String(&data[startIndex], std::min(numChars, size - startIndex));
 }
 
+const char* String::c_str() const
+{
+	return data;
+}
+
 size_t String::Length() const
 {
 	return size;
@@ -255,11 +221,6 @@ size_t String::LengthUTF8() const
 	}
 
 	return len;
-}
-
-const char* String::c_str() const
-{
-	return data;
 }
 
 int String::IntValue() const
@@ -310,62 +271,82 @@ String& String::operator =(String&& string)
 	return *this;
 }
 
-String& String::operator =(const char *s)
+String& String::operator =(const char *str)
 {
-	ASSERT(data != s);			// It's not allowed to copy from ourself
+	ASSERT(data != str);			// It's not allowed to copy from ourself
 
 	if(data != staticContent)
 	{
 		delete[] data;
 		data = staticContent;
 	}
-	InitWithData(s, strlen(s));
+	InitWithData(str, strlen(str));
 	return *this;
 }
 
+void String::Append(const char *str, size_t numChars)
+{
+	ASSERT(str != nullptr);
+
+	const size_t oldSize = size;
+	EnsureSize(size + numChars, true);
+	memcpy(data + oldSize, str, numChars);
+	data[size] = '\0';
+}
+
+
 String& String::operator +=(int32_t number)
 {
-	char s[10 + 2];
-	snprintf(s, sizeof(s), "%d", number);
-	Append(s);
+	char str[10 + 2];
+	const int len = snprintf(str, sizeof(str), "%d", number);
+	if(len > 0)
+	{
+		Append(str, len);
+	}
 	return *this;
 }
 
 String& String::operator +=(uint32_t number)
 {
-	char s[10 + 2];
-	snprintf(s, sizeof(s), "%u", number);
-	Append(s);
+	char str[10 + 2];
+	const int len = snprintf(str, sizeof(str), "%u", number);
+	if(len > 0)
+	{
+		Append(str, len);
+	}
 	return *this;
 }
 
 String& String::operator +=(int64_t number)
 {
-	char s[20 + 2];
-	snprintf(s, sizeof(s), "%lld", number);
-	Append(s);
+	char str[20 + 2];
+	const int len = snprintf(str, sizeof(str), "%lld", number);
+	if(len > 0)
+	{
+		Append(str, len);
+	}
 	return *this;
 }
 
 String& String::operator +=(uint64_t number)
 {
-	char s[20 + 2];
-	snprintf(s, sizeof(s), "%llu", number);
-	Append(s);
+	char str[20 + 2];
+	const int len = snprintf(str, sizeof(str), "%llu", number);
+	if(len > 0)
+	{
+		Append(str, len);
+	}
 	return *this;
 }
 
 String& String::operator +=(float number)
 {
-	char s[32];
-	snprintf(s, sizeof(s), "%.3f", number);
-	Append(s);
-	return *this;
-}
-
-String& String::operator +=(bool b)
-{
-	Append(b ? "true" : "false");
+	char str[32];
+	const int len = snprintf(str, sizeof(str), "%.3f", number);
+	if(len > 0)
+	{
+		Append(str, len);
+	}
 	return *this;
 }
 
@@ -374,9 +355,9 @@ int String::Compare(const String& string) const
 	return strcmp(data, string.data);
 }
 
-int String::Compare(const char *s) const
+int String::Compare(const char *str) const
 {
-	return strcmp(data, s);
+	return strcmp(data, str);
 }
 
 int String::CompareIgnoreCase(const String& string) const
@@ -384,9 +365,9 @@ int String::CompareIgnoreCase(const String& string) const
 	return StrUtils::Stricmp(data, string.data);
 }
 
-int String::CompareIgnoreCase(const char *s) const
+int String::CompareIgnoreCase(const char *str) const
 {
-	return StrUtils::Stricmp(data, s);
+	return StrUtils::Stricmp(data, str);
 }
 
 bool String::StartsWith(const String& prefix) const
@@ -469,7 +450,7 @@ void String::Replace_Internal(const char *search, const char *replaceTo, bool al
 		}
 	}
 	// Add remaining part
-	newString += dataTmp;
+	newString.Append(dataTmp, strlen(dataTmp));
 
 	// Move back the content from newString
 	*this = std::move(newString);

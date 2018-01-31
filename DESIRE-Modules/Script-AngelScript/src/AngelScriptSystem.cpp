@@ -124,7 +124,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 		"	TestScript(ScriptComponent @component) { @self = component; }"
 		, scriptName);
 	scriptSrc.Append(content.data, content.size);
-	scriptSrc.Append("}");
+	scriptSrc += "}";
 
 	asIScriptModule *module = engine->GetModule(scriptName, asGM_ALWAYS_CREATE);
 	module->AddScriptSection(scriptName, scriptSrc.c_str(), scriptSrc.Length());
