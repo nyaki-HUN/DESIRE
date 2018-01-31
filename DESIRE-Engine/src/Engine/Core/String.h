@@ -55,23 +55,10 @@ public:
 	size_t FindLast(char search) const;
 
 	// Replace characters in string
-	inline void Replace(const String& search, const String& replaceTo)
-	{
-		Replace_Internal(search.c_str(), replaceTo.c_str(), false);
-	}
-	inline void Replace(const char *search, const char *replaceTo)
-	{
-		Replace_Internal(search, replaceTo, false);
-	}
-
-	inline void ReplaceAll(const String& search, const String& replaceTo)
-	{
-		Replace_Internal(search.c_str(), replaceTo.c_str(), true);
-	}
-	inline void ReplaceAll(const char *search, const char *replaceTo)
-	{
-		Replace_Internal(search, replaceTo, true);
-	}
+	void Replace(const String& search, const String& replaceTo);
+	void Replace(const char *search, const char *replaceTo);
+	void ReplaceAll(const String& search, const String& replaceTo);
+	void ReplaceAll(const char *search, const char *replaceTo);
 
 	// Generate substring
 	String SubString(size_t startIndex, size_t numChars = INVALID_POS) const;
@@ -170,7 +157,7 @@ public:
 	static String CreateFromInt(int num);
 
 private:
-	void Replace_Internal(const char *search, const char *replaceTo, bool all);
+	void Replace_Internal(const char *search, size_t searchLen, const char *replaceTo, size_t replaceToLen, bool all);
 	void EnsureSize(size_t size, bool keepOld);
 	void InitWithData(const char *data, size_t size);
 

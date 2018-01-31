@@ -177,6 +177,32 @@ size_t String::FindLast(char search) const
 	return (foundPtr != nullptr) ? foundPtr - data : INVALID_POS;
 }
 
+void String::Replace(const String& search, const String& replaceTo)
+{
+	Replace_Internal(search.c_str(), search.Length(), replaceTo.c_str(), replaceTo.Length(), false);
+}
+
+void String::Replace(const char *search, const char *replaceTo)
+{
+	ASSERT(search != nullptr);
+	ASSERT(replaceTo != nullptr);
+
+	Replace_Internal(search, strlen(search), replaceTo, strlen(replaceTo), false);
+}
+
+void String::ReplaceAll(const String& search, const String& replaceTo)
+{
+	Replace_Internal(search.c_str(), search.Length(), replaceTo.c_str(), replaceTo.Length(), true);
+}
+
+void String::ReplaceAll(const char *search, const char *replaceTo)
+{
+	ASSERT(search != nullptr);
+	ASSERT(replaceTo != nullptr);
+
+	Replace_Internal(search, strlen(search), replaceTo, strlen(replaceTo), true);
+}
+
 String String::SubString(size_t startIndex, size_t numChars) const
 {
 	if(startIndex >= size)
@@ -423,14 +449,8 @@ String String::CreateFromInt(int num)
 	return string;
 }
 
-void String::Replace_Internal(const char *search, const char *replaceTo, bool all)
+void String::Replace_Internal(const char *search, size_t searchLen, const char *replaceTo, size_t replaceToLen, bool all)
 {
-	ASSERT(search != nullptr);
-	ASSERT(replaceTo != nullptr);
-
-	const size_t searchLen = strlen(search);
-	const size_t replaceToLen = strlen(replaceTo);
-
 	char *dataTmp = data;
 	String newString;
 	for(;;)
