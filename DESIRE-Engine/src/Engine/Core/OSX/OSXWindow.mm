@@ -95,7 +95,7 @@ String OSXWindow::GetClipboardString()
 		NSString *object = [pasteboard stringForType:NSStringPboardType];
 		if(object != nullptr)
 		{
-			str = [object UTF8String];
+			str = String([object UTF8String]);
 		}
 	}
 

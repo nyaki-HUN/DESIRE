@@ -78,7 +78,6 @@ public:
 
 	String& operator =(const String& string);
 	String& operator =(String&& string);
-	String& operator =(const char *str);
 
 	inline String operator +(const String& string) const
 	{

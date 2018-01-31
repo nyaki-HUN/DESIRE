@@ -297,19 +297,6 @@ String& String::operator =(String&& string)
 	return *this;
 }
 
-String& String::operator =(const char *str)
-{
-	ASSERT(data != str);			// It's not allowed to copy from ourself
-
-	if(data != staticContent)
-	{
-		delete[] data;
-		data = staticContent;
-	}
-	InitWithData(str, strlen(str));
-	return *this;
-}
-
 void String::Append(const char *str, size_t numChars)
 {
 	ASSERT(str != nullptr);
@@ -319,7 +306,6 @@ void String::Append(const char *str, size_t numChars)
 	memcpy(data + oldSize, str, numChars);
 	data[size] = '\0';
 }
-
 
 String& String::operator +=(int32_t number)
 {

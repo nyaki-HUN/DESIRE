@@ -175,7 +175,7 @@ String WINDOWSWindow::GetClipboardString()
 			char *ptr = (char*)GlobalLock(stringHandle);
 			if(ptr != nullptr)
 			{
-				str = ptr;
+				str = String(ptr);
 				GlobalUnlock(stringHandle);
 			}
 		}
