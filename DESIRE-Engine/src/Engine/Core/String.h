@@ -11,7 +11,6 @@ public:
 	String();
 	String(const String& string);
 	String(String&& string);
-	explicit String(const char *str);
 	String(const char *str, size_t size);
 
 	template<size_t SIZE>

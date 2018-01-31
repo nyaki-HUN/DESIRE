@@ -33,12 +33,6 @@ String::String(String&& string)
 	}
 }
 
-String::String(const char *str)
-{
-	ASSERT(str != nullptr);
-	InitWithData(str, strlen(str));
-}
-
 String::String(const char *str, size_t size)
 {
 	ASSERT(str != nullptr);
