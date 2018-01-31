@@ -20,7 +20,7 @@ flags
 }
 
 if _ACTION == "vs2017" then
-	systemversion "10.0.15063.0"
+	systemversion "10.0.16299.0"
 	defines
 	{
 		"WIN32",
