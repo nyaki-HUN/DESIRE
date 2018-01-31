@@ -112,13 +112,11 @@ void RegisterString_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("String", "bool StartsWith(const String &in) const", asMETHODPR(String, StartsWith, (const String&) const, bool), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "bool EndsWith(const String &in) const", asMETHODPR(String, EndsWith, (const String&) const, bool), asCALL_THISCALL);
 
-	// Add operators are not implementd in String class, but we add them to the script system for ease of use
+	// Add operators are not implemented in String class, but we add them to the script system for ease of use
 	engine->RegisterObjectMethod("String", "String opAdd(int64) const", asFUNCTION((OpAddString<const String&, int64_t>)), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("String", "String opAdd_r(int64) const", asFUNCTION((OpAddString<int64_t, const String&>)), asCALL_CDECL_OBJLAST);
 	engine->RegisterObjectMethod("String", "String opAdd(uint64) const", asFUNCTION((OpAddString<const String&, uint64_t>)), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("String", "String opAdd_r(uint64) const", asFUNCTION((OpAddString<uint64_t, const String&>)), asCALL_CDECL_OBJLAST);
 	engine->RegisterObjectMethod("String", "String opAdd(float) const", asFUNCTION((OpAddString<const String&, float>)), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("String", "String opAdd_r(float) const", asFUNCTION((OpAddString<float, const String&>)), asCALL_CDECL_OBJLAST);
-	engine->RegisterObjectMethod("String", "String opAdd(bool) const", asFUNCTION((OpAddString<const String&, bool>)), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("String", "String opAdd_r(bool) const", asFUNCTION((OpAddString<bool, const String&>)), asCALL_CDECL_OBJLAST);
 }

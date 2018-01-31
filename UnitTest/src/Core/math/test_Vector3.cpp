@@ -50,7 +50,7 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(result.GetZ() == Approx(-vec0.GetZ()));
 	}
 
-	SECTION("operator +")
+	SECTION("operator +()")
 	{
 		const Vector3 result = vec0 + vec1;
 
@@ -59,7 +59,7 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(result.GetZ() == Approx(vec0.GetZ() + vec1.GetZ()));
 	}
 
-	SECTION("operator -")
+	SECTION("operator -()")
 	{
 		const Vector3 result = vec0 - vec1;
 
@@ -77,7 +77,7 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(result.GetZ() == Approx(vec0.GetZ() * 123.0f));
 	}
 
-	SECTION("operator >=")
+	SECTION("operator >=()")
 	{
 		auto func = [](const Vector3& vec0, const Vector3& vec1) -> bool
 		{
@@ -94,7 +94,7 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK((vec0 >= Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
 	}
 
-	SECTION("operator <=")
+	SECTION("operator <=()")
 	{
 		auto func = [](const Vector3& vec0, const Vector3& vec1) -> bool
 		{
