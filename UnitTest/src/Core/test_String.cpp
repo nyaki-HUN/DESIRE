@@ -153,21 +153,21 @@ TEST_CASE("String", "[Core]")
 		CHECK(string.Equals("StringStr ASDString ASDString ASDStr"));
 	}
 
-	SECTION("Remove()")
+	SECTION("RemoveFrom()")
 	{
-		string.Remove(0, 3);
+		string.RemoveFrom(0, 3);
 		CHECK(string.Equals("ing ASD"));
 
-		string.Remove(string.Length(), 3);
+		string.RemoveFrom(string.Length(), 3);
 		CHECK(string.Equals("ing ASD"));
 
 		string = charSeq;
-		string.Remove(5, 3);
+		string.RemoveFrom(5, 3);
 		CHECK(string.Equals("StrinSD"));
 
 		string = charSeq;
-		string.Remove(1, 100);
-		CHECK(string.Equals("S"));
+		string.RemoveFrom(3);
+		CHECK(string.Equals("Str"));
 	}
 
 	SECTION("RemoveFromEnd()")
@@ -209,6 +209,16 @@ TEST_CASE("String", "[Core]")
 		CHECK(bigString.Equals("String1234567890QWE1234567890 asd1234567890"));
 		bigString.ReplaceAll("234", "X");
 		CHECK(bigString.Equals("String1X567890QWE1X567890 asd1X567890"));
+	}
+
+	SECTION("ReplaceAllChar()")
+	{
+		String replaceStr = "aabbc";
+		replaceStr.ReplaceAllChar('b', 'X');
+		CHECK(replaceStr.Equals("aaXXc"));
+
+		bigString.ReplaceAllChar(' ', '\0');
+		CHECK(bigString.Equals("String1234567890"));
 	}
 
 	SECTION("SubString()")

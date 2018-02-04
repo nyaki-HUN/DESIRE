@@ -42,7 +42,7 @@ public:
 	void Insert(size_t startIndex, const char *str, size_t numChars);
 
 	// Remove characters
-	void Remove(size_t startIndex, size_t numChars);
+	void RemoveFrom(size_t startIndex, size_t numChars = SIZE_MAX);
 	void RemoveFromEnd(size_t numChars);
 
 	// Find character(s) in string
@@ -58,9 +58,10 @@ public:
 	void Replace(const char *search, const char *replaceTo);
 	void ReplaceAll(const String& search, const String& replaceTo);
 	void ReplaceAll(const char *search, const char *replaceTo);
+	void ReplaceAllChar(char search, char replaceTo);
 
 	// Generate substring
-	String SubString(size_t startIndex, size_t numChars = INVALID_POS) const;
+	String SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 
 	// Returns the data (C string equivalent)
 	const char* c_str() const;

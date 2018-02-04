@@ -90,19 +90,17 @@ void String::Insert(size_t startIndex, const char *str, size_t numChars)
 	memcpy(data + startIndex, str, numChars);
 }
 
-void String::Remove(size_t startIndex, size_t numChars)
+void String::RemoveFrom(size_t startIndex, size_t numChars)
 {
 	if(startIndex >= size)
 	{
 		return;
 	}
 
-	if(startIndex + numChars > size)
-	{
-		numChars = size - startIndex;
-	}
-	size -= startIndex + numChars;
-	memmove(data + startIndex, data + startIndex + numChars, size + 1);
+	numChars = std::min(numChars, size - startIndex);
+
+	memmove(data + startIndex, data + startIndex + numChars, size - numChars + 1);
+	size -= numChars;
 }
 
 void String::RemoveFromEnd(size_t numChars)
@@ -195,6 +193,24 @@ void String::ReplaceAll(const char *search, const char *replaceTo)
 	ASSERT(replaceTo != nullptr);
 
 	Replace_Internal(search, strlen(search), replaceTo, strlen(replaceTo), true);
+}
+
+void String::ReplaceAllChar(char search, char replaceTo)
+{
+	ASSERT(search != '\0');
+
+	char *dataTmp = data;
+	for(;;)
+	{
+		char *foundPtr = strchr(dataTmp, search);
+		if(foundPtr == nullptr)
+		{
+			break;
+		}
+
+		*foundPtr = replaceTo;
+		dataTmp = foundPtr + 1;
+	}
 }
 
 String String::SubString(size_t startIndex, size_t numChars) const
@@ -431,8 +447,8 @@ String String::CreateFromInt(int num)
 
 void String::Replace_Internal(const char *search, size_t searchLen, const char *replaceTo, size_t replaceToLen, bool all)
 {
-	char *dataTmp = data;
 	String newString;
+	char *dataTmp = data;
 	for(;;)
 	{
 		char *foundPtr = strstr(dataTmp, search);
@@ -440,6 +456,7 @@ void String::Replace_Internal(const char *search, size_t searchLen, const char *
 		{
 			break;
 		}
+
 		*foundPtr = '\0';
 		newString.Append(dataTmp, static_cast<size_t>(foundPtr - dataTmp));
 		newString.Append(replaceTo, replaceToLen);
