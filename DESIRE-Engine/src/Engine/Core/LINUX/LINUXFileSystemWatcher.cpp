@@ -11,7 +11,7 @@ int LINUXFileSystemWatcher::inotifyFD = -1;
 //	FileSystemWatcher
 // --------------------------------------------------------------------------------------------------------------------
 
-std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const char *filename)> actionCallback)
+std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
 {
 	if(inotifyFD < 0)
 	{
@@ -63,19 +63,21 @@ void FileSystemWatcher::Update()
 		while(offset < numRead)
 		{
 			inotify_event *event = reinterpret_cast<inotify_event*>(buffer + offset);
+			const String filename(event->name, event->len);
+
 			LINUXFileSystemWatcher *watcher = watchers[event->wd];
 
 			if(event->mask & IN_MOVED_TO || event->mask & IN_CREATE)
 			{
-				watcher->actionCallback(FileSystemWatcher::EAction::ADDED, event->name);
+				watcher->actionCallback(FileSystemWatcher::EAction::ADDED, filename);
 			}
 			else if(event->mask & IN_MOVED_FROM || event->mask & IN_DELETE)
 			{
-				watcher->actionCallback(FileSystemWatcher::EAction::DELETED, event->name);
+				watcher->actionCallback(FileSystemWatcher::EAction::DELETED, filename);
 			}
 			else if(event->mask & IN_CLOSE_WRITE)
 			{
-				watcher->actionCallback(FileSystemWatcher::EAction::MODIFIED, event->name);
+				watcher->actionCallback(FileSystemWatcher::EAction::MODIFIED, filename);
 			}
 
 			offset += sizeof(inotify_event) + event->len;

@@ -27,7 +27,7 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 
 	if(dwErrorCode == ERROR_SUCCESS)
 	{
-		char filename[MAX_PATH];
+		char str[MAX_PATH];
 		FILE_NOTIFY_INFORMATION *notify = nullptr;
 		size_t offset = 0;
 		do
@@ -35,8 +35,9 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 			notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(watcher->buffer + offset);
 
 			// Convert filename to UTF-8
-			const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), filename, MAX_PATH - 1, nullptr, nullptr);
-			filename[count] = '\0';
+			const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, MAX_PATH - 1, nullptr, nullptr);
+			String filename(str, count);
+			filename.ReplaceAllChar('\\', '/');
 
 			switch(notify->Action)
 			{
@@ -69,7 +70,7 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 //	FileSystemWatcher
 // --------------------------------------------------------------------------------------------------------------------
 
-std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const char *filename)> actionCallback)
+std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
 {
 	HANDLE dirHandle = CreateFileA(
 		directory.c_str(),
