@@ -27,9 +27,8 @@ void IOSWindow::SetCursor(ECursor cursor)
 
 }
 
-bool IOSWindow::SetClipboardString(const char *str)
+bool IOSWindow::SetClipboardString(const String& string)
 {
-	ASSERT(str != nullptr);
 	return false;
 }
 

@@ -59,7 +59,7 @@ public:
 	virtual void SetCursor(ECursor cursor) = 0;
 
 	// Clipboard
-	virtual bool SetClipboardString(const char *str) = 0;
+	virtual bool SetClipboardString(const String& string) = 0;
 	virtual String GetClipboardString() = 0;
 
 	// Create a new IWindow

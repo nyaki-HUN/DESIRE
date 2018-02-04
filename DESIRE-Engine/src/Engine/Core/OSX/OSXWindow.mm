@@ -73,15 +73,13 @@ void OSXWindow::SetCursor(ECursor cursor)
 	[cursors[cursor] set];
 }
 
-bool OSXWindow::SetClipboardString(const char *str)
+bool OSXWindow::SetClipboardString(const String& string)
 {
-	ASSERT(str != nullptr);
-
 	NSArray *types = [NSArray arrayWithObjects:NSStringPboardType, nil];
 
 	NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
 	[pasteboard declareTypes:types owner:nil];
-	[pasteboard setString:[NSString stringWithUTF8String:str] forType:NSStringPboardType];
+	[pasteboard setString:[NSString stringWithUTF8String:string.c_str()] forType:NSStringPboardType];
 	return true;
 }
 

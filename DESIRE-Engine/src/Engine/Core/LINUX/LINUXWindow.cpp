@@ -164,15 +164,12 @@ void LINUXWindow::SetCursor(ECursor cursor)
 	XFlush(display);
 }
 
-bool LINUXWindow::SetClipboardString(const char *str)
+bool LINUXWindow::SetClipboardString(const String& string)
 {
-	ASSERT(str != nullptr);
-
 	if(display != nullptr)
 	{
-		const size_t size = strlen(str);
 		XSetSelectionOwner(display, XA_PRIMARY, None, CurrentTime);
-		XStoreBytes(display, str, size);
+		XStoreBytes(display, string.c_str(), string.Length());
 		return true;
 	}
 

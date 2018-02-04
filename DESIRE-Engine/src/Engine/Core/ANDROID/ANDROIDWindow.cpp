@@ -32,9 +32,8 @@ void ANDROIDWindow::SetCursor(ECursor cursor)
 
 }
 
-bool ANDROIDWindow::SetClipboardString(const char *str)
+bool ANDROIDWindow::SetClipboardString(const String& string)
 {
-	ASSERT(str != nullptr);
 	return false;
 }
 

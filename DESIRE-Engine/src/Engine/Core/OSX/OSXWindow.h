@@ -17,7 +17,7 @@ public:
 
 	void SetCursor(ECursor cursor) override;
 
-	bool SetClipboardString(const char *str) override;
+	bool SetClipboardString(const String& string) override;
 	String GetClipboardString() override;
 
 private:

@@ -133,10 +133,9 @@ void WINDOWSWindow::SetCursor(ECursor cursor)
 	}
 }
 
-bool WINDOWSWindow::SetClipboardString(const char *str)
+bool WINDOWSWindow::SetClipboardString(const String& string)
 {
-	ASSERT(str != nullptr);
-	const size_t size = strlen(str) + 1;
+	const size_t size = string.Length() + 1;
 	HANDLE stringHandle = GlobalAlloc(GMEM_MOVEABLE, size);
 	if(stringHandle == nullptr)
 	{
