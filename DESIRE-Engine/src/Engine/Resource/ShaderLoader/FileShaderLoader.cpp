@@ -5,12 +5,9 @@
 
 Shader* FileShaderLoader::Load(const ReadFilePtr& file)
 {
-	String name = file->GetFilename();
-	const size_t pos = name.FindLast('/');
-	if(pos != String::INVALID_POS)
-	{
-		name.Remove(0, pos + 1);
-	}
+	const String& filename = file->GetFilename();
+	const size_t pos = filename.FindLast('/');
+	const String name = (pos != String::INVALID_POS) ? filename.SubString(pos + 1) : filename;
 
 	Shader *shader = new Shader(name);
 	shader->data = file->ReadFileContent();
