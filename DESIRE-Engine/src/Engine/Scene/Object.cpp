@@ -4,6 +4,7 @@
 #include "Engine/Component/Component.h"
 #include "Engine/Component/ScriptComponent.h"
 #include "Engine/Core/math/AABB.h"
+#include "Engine/Core/STL_utils.h"
 #include "Engine/Core/StrUtils.h"
 
 #define MAX_TRANSFORMS	10000
@@ -95,15 +96,12 @@ void Object::RemoveComponent(const Component *component)
 
 Component* Object::GetComponentByTypeID(int typeID) const
 {
-	for(const std::unique_ptr<Component>& component : components)
+	// Specialized variant of stl_utils::binary_find_by_id()
+	auto it = std::lower_bound(components.begin(), components.end(), typeID, [](const std::unique_ptr<Component>& component, int id)
 	{
-		if(component->GetTypeID() == typeID)
-		{
-			return component.get();
-		}
-	}
-
-	return nullptr;
+		return component->GetTypeID() < id;
+	});
+	return (it != components.end() && !(typeID < (*it)->GetTypeID())) ? it->get() : nullptr;
 }
 
 const std::vector<std::unique_ptr<Component>>& Object::GetComponents() const
@@ -218,6 +216,16 @@ void Object::UpdateAllTransformsInHierarchy()
 		transformTmp->UpdateWorldMatrix();
 		transformTmp++;
 	}
+}
+
+Component& Object::AddComponent_Internal(std::unique_ptr<Component>&& component)
+{
+	// Note: It was necessary to explicitly define function template parameters here to avoid a compile error
+	auto it = stl_utils::binary_find_or_insert<decltype(components)::value_type, decltype(components)::allocator_type>(components, std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
+	{
+		return (a->GetTypeID() < b->GetTypeID());
+	});
+	return *(it->get());
 }
 
 void Object::RemoveChild_Internal(Object *child)

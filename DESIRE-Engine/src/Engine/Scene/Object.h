@@ -26,13 +26,7 @@ public:
 	template<class T, class... Args>
 	T& AddComponent(Args&&... args)
 	{
-		T *component = GetComponent<T>();
-		if(component == nullptr)
-		{
-			components.push_back(std::make_unique<T>(*this, std::forward<Args>(args)...));
-			component = static_cast<T*>(components.back().get());
-		}
-		return *component;
+		return static_cast<T&>(AddComponent_Internal(std::make_unique<T>(*this, std::forward<Args>(args)...)));
 	}
 
 	// Removes and destroys a component
@@ -73,6 +67,7 @@ public:
 	void UpdateAllTransformsInHierarchy();
 
 private:
+	Component& AddComponent_Internal(std::unique_ptr<Component>&& component);
 	void RemoveChild_Internal(Object *child);
 	void SetNewParent(Object *newParent);
 	
