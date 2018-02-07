@@ -45,13 +45,13 @@ public:
 
 	T* Find(HashedString key)
 	{
-		auto it = stl_utils::binary_find(elements, key);
+		auto it = stl_utils::binary_find_by_id(elements, key);
 		return (it != elements.end()) ? &it->value : nullptr;
 	}
 
 	const T* Find(HashedString key) const
 	{
-		auto it = stl_utils::binary_find(elements, key);
+		auto it = stl_utils::binary_find_by_id(elements, key);
 		return (it != elements.end()) ? &it->value : nullptr;
 	}
 
