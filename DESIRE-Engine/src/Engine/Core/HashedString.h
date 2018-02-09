@@ -28,7 +28,7 @@ public:
 		DESIRE_ENABLE_WARNINGS
 	}
 
-	explicit HashedString(uint64_t hash)
+	explicit constexpr HashedString(uint64_t hash)
 		: hash(hash)
 	{
 

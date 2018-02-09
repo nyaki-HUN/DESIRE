@@ -85,13 +85,13 @@ void RegisterString_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("String", "void ToUpper()", asMETHODPR(String, ToUpper, (), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "void Trim()", asMETHODPR(String, Trim, (), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "void Insert(uint64, const String &in)", asMETHODPR(String, Insert, (size_t, const String&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("String", "void Remove(uint64, uint64)", asMETHODPR(String, Remove, (size_t, size_t), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("String", "void RemoveFrom(uint64, uint64 numChars = -1)", asMETHODPR(String, RemoveFrom, (size_t, size_t), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "void RemoveFromEnd(uint64)", asMETHODPR(String, RemoveFromEnd, (size_t), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "uint64 Find(const String &in, uint64 start = 0) const", asMETHODPR(String, Find, (const String&, size_t) const, size_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "uint64 FindLast(const String &in) const", asMETHODPR(String, FindLast, (const String&) const, size_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "void Replace(const String &in, const String &in)", asMETHODPR(String, Replace, (const String&, const String&), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "void ReplaceAll(const String &in, const String &in)", asMETHODPR(String, ReplaceAll, (const String&, const String&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("String", "String SubString(uint64 start, uint64 numChars = -1) const", asMETHODPR(String, SubString, (size_t, size_t) const, String), asCALL_THISCALL);
+	engine->RegisterObjectMethod("String", "String SubString(uint64, uint64 numChars = -1) const", asMETHODPR(String, SubString, (size_t, size_t) const, String), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "uint64 Length() const", asMETHODPR(String, Length, () const, size_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "uint64 LengthUTF8() const", asMETHODPR(String, LengthUTF8, () const, size_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("String", "int IntValue() const", asMETHODPR(String, IntValue, () const, int), asCALL_THISCALL);
