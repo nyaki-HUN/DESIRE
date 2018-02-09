@@ -834,6 +834,14 @@ void Direct3D11Render::Unbind(Shader *shader)
 		return;
 	}
 
+	if((shader->renderData == errorVertexShader->renderData || shader->renderData == errorPixelShader->renderData) &&
+		shader != errorVertexShader.get() &&
+		shader != errorPixelShader.get())
+	{
+		shader->renderData = nullptr;
+		return;
+	}
+
 	ShaderRenderDataD3D11 *renderData = static_cast<ShaderRenderDataD3D11*>(shader->renderData);
 
 	delete renderData;
