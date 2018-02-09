@@ -215,7 +215,6 @@
     <ClInclude Include="..\..\src\Engine\Render\Render.h" />
     <ClInclude Include="..\..\src\Engine\Render\RenderTarget.h" />
     <ClInclude Include="..\..\src\Engine\Render\View.h" />
-    <ClInclude Include="..\..\src\Engine\Resource\ErrorTexture.h" />
     <ClInclude Include="..\..\src\Engine\Resource\Mesh.h" />
     <ClInclude Include="..\..\src\Engine\Resource\ResourceManager.h" />
     <ClInclude Include="..\..\src\Engine\Resource\Shader.h" />
@@ -287,7 +286,6 @@
     <ClCompile Include="..\..\src\Engine\Render\Render.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\RenderTarget.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\View.cpp" />
-    <ClCompile Include="..\..\src\Engine\Resource\ErrorTexture.cpp" />
     <ClCompile Include="..\..\src\Engine\Resource\Mesh.cpp" />
     <ClCompile Include="..\..\src\Engine\Resource\ResourceManager.cpp" />
     <ClCompile Include="..\..\src\Engine\Resource\Shader.cpp" />

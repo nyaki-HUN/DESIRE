@@ -9,7 +9,7 @@
 
 ResourceManager::ResourceManager()
 {
-
+	CreateErrorTexture();
 }
 
 ResourceManager::~ResourceManager()
@@ -19,48 +19,44 @@ ResourceManager::~ResourceManager()
 
 std::shared_ptr<Mesh> ResourceManager::GetMesh(const String& filename)
 {
-	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename.c_str(), filename.Length());
-	std::weak_ptr<Mesh> *meshPtr = loadedMeshes.Find(filenameHash);
-	if(meshPtr != nullptr && !meshPtr->expired())
+	auto it = loadedMeshes.find(filename);
+	if(it != loadedMeshes.end() && !it->second.expired())
 	{
-		return meshPtr->lock();
+		return it->second.lock();
 	}
 
 	std::shared_ptr<Mesh> mesh = LoadMesh(filename);
 
-	if(meshPtr != nullptr)
+	if(it != loadedMeshes.end())
 	{
-		*meshPtr = mesh;
+		it->second = mesh;
 	}
 	else
 	{
-		loadedMeshes.Insert(filenameHash, mesh);
+		loadedMeshes.emplace(filename, mesh);
 	}
 
 	return mesh;
 }
 
-std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const char *defines)
+std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const String& defines)
 {
-	ASSERT(defines != nullptr);
-
-	const String shaderNameWithDefines = filename + "|" + String(defines, strlen(defines));
-	const HashedString filenameHash = HashedString::CreateFromDynamicString(shaderNameWithDefines.c_str(), shaderNameWithDefines.Length());
-	std::weak_ptr<Shader> *shaderPtr = loadedShaders.Find(filenameHash);
-	if(shaderPtr != nullptr && !shaderPtr->expired())
+	const String shaderNameWithDefines = filename + "|" + defines;
+	auto it = loadedShaders.find(shaderNameWithDefines);
+	if(it != loadedShaders.end() && !it->second.expired())
 	{
-		return shaderPtr->lock();
+		return it->second.lock();
 	}
 
 	std::shared_ptr<Shader> shader = LoadShader(filename);
 
-	if(shaderPtr != nullptr)
+	if(it != loadedShaders.end())
 	{
-		*shaderPtr = shader;
+		it->second = shader;
 	}
 	else
 	{
-		loadedShaders.Insert(filenameHash, shader);
+		loadedShaders.emplace(shaderNameWithDefines, shader);
 	}
 
 	return shader;
@@ -68,25 +64,87 @@ std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const
 
 std::shared_ptr<Texture> ResourceManager::GetTexture(const String& filename)
 {
-	const HashedString filenameHash = HashedString::CreateFromDynamicString(filename.c_str(), filename.Length());
-	std::weak_ptr<Texture> *texturePtr = loadedTextures.Find(filenameHash);
-	if(texturePtr != nullptr && !texturePtr->expired())
+	auto it = loadedTextures.find(filename);
+	if(it != loadedTextures.end() && !it->second.expired())
 	{
-		return texturePtr->lock();
+		return it->second.lock();
 	}
 
 	std::shared_ptr<Texture> texture = LoadTexture(filename);
 
-	if(texturePtr != nullptr)
+	if(it != loadedTextures.end())
 	{
-		*texturePtr = texture;
+		it->second = texture;
 	}
 	else
 	{
-		loadedTextures.Insert(filenameHash, texture);
+		loadedTextures.emplace(filename, texture);
 	}
 
 	return texture;
+}
+
+void ResourceManager::ReloadMesh(const String& filename)
+{
+	auto it = loadedMeshes.find(filename);
+	if(it == loadedMeshes.end() || !it->second.expired())
+	{
+		return;
+	}
+
+	std::shared_ptr<Mesh> newMesh = LoadMesh(filename);
+	if(newMesh != nullptr)
+	{
+		std::shared_ptr<Mesh> mesh = it->second.lock();
+		Render::Get()->Unbind(mesh.get());
+
+		mesh->indices = std::move(newMesh->indices);
+		mesh->numIndices = newMesh->numIndices;
+		mesh->vertices = std::move(newMesh->vertices);
+		mesh->numVertices = newMesh->numVertices;
+		mesh->stride = newMesh->stride;
+		mesh->vertexDecl = std::move(newMesh->vertexDecl);
+	}
+}
+
+void ResourceManager::ReloadTexture(const String& filename)
+{
+	auto it = loadedTextures.find(filename);
+	if(it == loadedTextures.end() || !it->second.expired())
+	{
+		return;
+	}
+
+	std::shared_ptr<Texture> newTexture = LoadTexture(filename);
+	if(newTexture != nullptr)
+	{
+		std::shared_ptr<Texture> texture = it->second.lock();
+		Render::Get()->Unbind(texture.get());
+
+		ASSERT(texture->width == newTexture->width);
+		ASSERT(texture->height == newTexture->height);
+		ASSERT(texture->format == newTexture->format);
+		ASSERT(texture->numMipMaps == newTexture->numMipMaps);
+		texture->data = std::move(newTexture->data);
+	}
+}
+
+void ResourceManager::ReloadShader(const String& filename)
+{
+	for(auto& pair : loadedShaders)
+	{
+		std::shared_ptr<Shader> shader = pair.second.lock();
+		if(shader != nullptr && shader->name.Equals(filename))
+		{
+			std::shared_ptr<Shader> newShader = LoadShader(filename);
+			if(newShader != nullptr)
+			{
+				Render::Get()->Unbind(shader.get());
+
+				shader->data = std::move(newShader->data);
+			}
+		}
+	}
 }
 
 std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
@@ -107,7 +165,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 	}
 
 	LOG_ERROR("Failed to load mesh from: %s", filename.c_str());
-	return nullptr;
+	return std::make_shared<Mesh>();
 }
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
@@ -130,7 +188,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 	}
 
 	LOG_ERROR("Failed to load texture from: %s", filenameWithPath.c_str());
-	return nullptr;
+	return std::make_shared<Shader>(filename);
 }
 
 std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
@@ -151,5 +209,18 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 	}
 
 	LOG_ERROR("Failed to load texture from: %s", filename.c_str());
-	return nullptr;
+	return errorTexture;
+}
+
+void ResourceManager::CreateErrorTexture()
+{
+	const uint16_t textureSize = 128;
+	errorTexture = std::make_shared<Texture>(textureSize, textureSize, Texture::EFormat::RGBA8);
+	errorTexture->data = MemoryBuffer(textureSize * textureSize * 4);
+	uint32_t *pixel = reinterpret_cast<uint32_t*>(errorTexture->data.data);
+	for(int i = 0; i < textureSize * textureSize; ++i)
+	{
+		*pixel = ((i % 26) < 14) ? 0xFFFF8000 : 0xFF000000;
+		pixel++;
+	}
 }

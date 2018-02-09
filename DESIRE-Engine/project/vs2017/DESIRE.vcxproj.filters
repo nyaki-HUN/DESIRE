@@ -426,9 +426,6 @@
     <ClInclude Include="..\..\src\Engine\Render\View.h">
       <Filter>src\Engine\Render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Resource\ErrorTexture.h">
-      <Filter>src\Engine\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Resource\Mesh.h">
       <Filter>src\Engine\Resource</Filter>
     </ClInclude>
@@ -637,9 +634,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Render\View.cpp">
       <Filter>src\Engine\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Resource\ErrorTexture.cpp">
-      <Filter>src\Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Resource\Mesh.cpp">
       <Filter>src\Engine\Resource</Filter>
