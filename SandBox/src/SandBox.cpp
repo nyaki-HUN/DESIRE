@@ -95,7 +95,7 @@ void SandBox::Init(IWindow *mainWindow)
 
 	//////////
 
-	dataDirWatcher = FileSystemWatcher::Create(FileSystem::Get()->GetAppDirectory() + "data", [](FileSystemWatcher::EAction action, const char *filename)
+	dataDirWatcher = FileSystemWatcher::Create(FileSystem::Get()->GetAppDirectory() + "data", [](FileSystemWatcher::EAction action, const String& filename)
 	{
 		const char *strAction = "";
 		switch(action)
@@ -104,7 +104,7 @@ void SandBox::Init(IWindow *mainWindow)
 			case FileSystemWatcher::EAction::DELETED:	strAction = "deleted"; break;
 			case FileSystemWatcher::EAction::MODIFIED:	strAction = "modified"; break;
 		}
-		LOG_MESSAGE("%s %s", filename, strAction);
+		LOG_MESSAGE("%s %s", filename.c_str(), strAction);
 	});
 
 	//////////

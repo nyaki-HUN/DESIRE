@@ -88,7 +88,7 @@ inline auto binary_find_or_insert_by_id(std::vector<T1, A>& container, const T2&
 template<typename T1, typename T2>
 struct hash_pair
 {
-	std::size_t operator()(const std::pair<T1, T2>& pair) const
+	size_t operator()(const std::pair<T1, T2>& pair) const
 	{
 		return std::hash<T1>{}(pair.first) ^ std::hash<T2>{}(pair.second);
 	}
