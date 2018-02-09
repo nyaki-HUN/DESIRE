@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 class Mesh
 {
 public:
@@ -54,11 +56,11 @@ public:
 	void *renderData;
 
 	// Index data
-	uint16_t *indices;
+	std::unique_ptr<uint16_t[]> indices;
 	uint32_t numIndices;
 
 	// Vertex data
-	float *vertices;
+	std::unique_ptr<float[]> vertices;
 	uint32_t numVertices;
 	uint32_t stride;
 	std::vector<VertexDecl> vertexDecl;

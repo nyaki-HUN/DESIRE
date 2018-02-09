@@ -350,13 +350,13 @@ void BgfxRender::Bind(Mesh *mesh)
 		{
 			if(mesh->numIndices != 0)
 			{
-				const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices, mesh->GetSizeOfIndices());
+				const bgfx::Memory *indexData = bgfx::makeRef(mesh->indices.get(), mesh->GetSizeOfIndices());
 				renderData->indexBuffer = bgfx::createIndexBuffer(indexData, BGFX_BUFFER_NONE);
 			}
 
 			if(mesh->numVertices != 0)
 			{
-				const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices, mesh->GetSizeOfVertices());
+				const bgfx::Memory *vertexData = bgfx::makeRef(mesh->vertices.get(), mesh->GetSizeOfVertices());
 				renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
 			}
 			break;
@@ -368,13 +368,13 @@ void BgfxRender::Bind(Mesh *mesh)
 
 			if(dynamicMesh->maxNumOfIndices != 0)
 			{
-				const bgfx::Memory *indexData = bgfx::copy(dynamicMesh->indices, dynamicMesh->GetMaxSizeOfIndices());
+				const bgfx::Memory *indexData = bgfx::copy(dynamicMesh->indices.get(), dynamicMesh->GetMaxSizeOfIndices());
 				renderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(indexData, BGFX_BUFFER_NONE);
 			}
 
 			if(dynamicMesh->maxNumOfVertices != 0)
 			{
-				const bgfx::Memory *vertexData = bgfx::copy(dynamicMesh->vertices, dynamicMesh->GetMaxSizeOfVertices());
+				const bgfx::Memory *vertexData = bgfx::copy(dynamicMesh->vertices.get(), dynamicMesh->GetMaxSizeOfVertices());
 				renderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
 			}
 			break;
@@ -590,13 +590,13 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh *mesh)
 
 	if(mesh->isIndexDataUpdateRequired)
 	{
-		bgfx::updateDynamicIndexBuffer(renderData->dynamicIndexBuffer, 0, bgfx::copy(mesh->indices, mesh->GetSizeOfIndices()));
+		bgfx::updateDynamicIndexBuffer(renderData->dynamicIndexBuffer, 0, bgfx::copy(mesh->indices.get(), mesh->GetSizeOfIndices()));
 		mesh->isIndexDataUpdateRequired = false;
 	}
 
 	if(mesh->isVertexDataUpdateRequired)
 	{
-		bgfx::updateDynamicVertexBuffer(renderData->dynamicVertexBuffer, 0, bgfx::copy(mesh->vertices, mesh->GetSizeOfVertices()));
+		bgfx::updateDynamicVertexBuffer(renderData->dynamicVertexBuffer, 0, bgfx::copy(mesh->vertices.get(), mesh->GetSizeOfVertices()));
 		mesh->isVertexDataUpdateRequired = false;
 	}
 }

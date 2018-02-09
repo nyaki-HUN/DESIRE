@@ -41,9 +41,6 @@ Mesh::~Mesh()
 	{
 		Render::Get()->Unbind(this);
 	}
-
-	free(indices);
-	free(vertices);
 }
 
 uint32_t Mesh::GetSizeOfIndices() const

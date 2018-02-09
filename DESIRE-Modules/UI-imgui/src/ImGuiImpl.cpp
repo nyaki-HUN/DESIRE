@@ -1,5 +1,6 @@
 #include "ImGuiImpl.h"
 
+#include "Engine/Core/assert.h"
 #include "Engine/Core/IWindow.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
@@ -11,6 +12,8 @@
 #include "Engine/Resource/Texture.h"
 
 #include "imgui.h"
+
+#include <algorithm>	// for std::max()
 
 ImGuiImpl::ImGuiImpl()
 {
@@ -61,10 +64,10 @@ void ImGuiImpl::Init()
 	mesh->maxNumOfIndices = 30000;
 	mesh->maxNumOfVertices = 20000;
 
-	mesh->indices = (uint16_t*)malloc(mesh->GetMaxSizeOfIndices());
-	mesh->vertices = (float*)malloc(mesh->GetMaxSizeOfVertices());
-	memset(mesh->indices, 0, mesh->GetMaxSizeOfIndices());
-	memset(mesh->vertices, 0, mesh->GetMaxSizeOfVertices());
+	mesh->indices = std::make_unique<uint16_t[]>(mesh->GetMaxSizeOfIndices());
+	mesh->vertices = std::make_unique<float[]>(mesh->GetSizeOfVertices());
+	memset(mesh->indices.get(), 0, mesh->GetMaxSizeOfIndices());
+	memset(mesh->vertices.get(), 0, mesh->GetMaxSizeOfVertices());
 
 	ASSERT(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
 	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
@@ -194,7 +197,7 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 		memcpy(&mesh->indices[mesh->numIndices], drawList->IdxBuffer.Data, drawList->IdxBuffer.size() * sizeof(uint16_t));
 		mesh->numIndices += (uint32_t)drawList->IdxBuffer.size();
 
-		memcpy((uint8_t*)mesh->vertices + mesh->numVertices * mesh->stride, drawList->VtxBuffer.Data, drawList->VtxBuffer.size() * mesh->stride);
+		memcpy((uint8_t*)mesh->vertices.get() + mesh->numVertices * mesh->stride, drawList->VtxBuffer.Data, drawList->VtxBuffer.size() * mesh->stride);
 		mesh->numVertices += (uint32_t)drawList->VtxBuffer.size();
 	}
 	mesh->isIndexDataUpdateRequired = true;

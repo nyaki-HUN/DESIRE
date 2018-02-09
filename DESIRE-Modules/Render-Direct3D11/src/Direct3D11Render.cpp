@@ -509,10 +509,10 @@ void Direct3D11Render::Bind(Mesh *mesh)
 	}
 
 	D3D11_SUBRESOURCE_DATA initialIndexData = {};
-	initialIndexData.pSysMem = mesh->indices;
+	initialIndexData.pSysMem = mesh->indices.get();
 
 	D3D11_SUBRESOURCE_DATA initialVertexData = {};
-	initialVertexData.pSysMem = mesh->vertices;
+	initialVertexData.pSysMem = mesh->vertices.get();
 
 	D3D11_BUFFER_DESC bufferDesc = {};
 	switch(mesh->type)
@@ -907,13 +907,13 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh *mesh)
 
 	if(mesh->isIndexDataUpdateRequired)
 	{
-		UpdateD3D11Resource(renderData->indexBuffer, mesh->indices, mesh->GetSizeOfIndices());
+		UpdateD3D11Resource(renderData->indexBuffer, mesh->indices.get(), mesh->GetSizeOfIndices());
 		mesh->isIndexDataUpdateRequired = false;
 	}
 
 	if(mesh->isVertexDataUpdateRequired)
 	{
-		UpdateD3D11Resource(renderData->vertexBuffer, mesh->vertices, mesh->GetSizeOfVertices());
+		UpdateD3D11Resource(renderData->vertexBuffer, mesh->vertices.get(), mesh->GetSizeOfVertices());
 		mesh->isVertexDataUpdateRequired = false;
 	}
 }
