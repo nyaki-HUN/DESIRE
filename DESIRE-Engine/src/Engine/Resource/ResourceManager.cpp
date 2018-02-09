@@ -187,7 +187,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 		}
 	}
 
-	LOG_ERROR("Failed to load texture from: %s", filenameWithPath.c_str());
+	LOG_ERROR("Failed to load shader from: %s", filenameWithPath.c_str());
 	return std::make_shared<Shader>(filename);
 }
 
