@@ -65,7 +65,7 @@ void ImGuiImpl::Init()
 	mesh->maxNumOfVertices = 20000;
 
 	mesh->indices = std::make_unique<uint16_t[]>(mesh->GetMaxSizeOfIndices());
-	mesh->vertices = std::make_unique<float[]>(mesh->GetSizeOfVertices());
+	mesh->vertices = std::make_unique<float[]>(mesh->GetMaxSizeOfVertices());
 	memset(mesh->indices.get(), 0, mesh->GetMaxSizeOfIndices());
 	memset(mesh->vertices.get(), 0, mesh->GetMaxSizeOfVertices());
 
