@@ -99,7 +99,7 @@ void String::RemoveFrom(size_t startIndex, size_t numChars)
 
 	numChars = std::min(numChars, size - startIndex);
 
-	memmove(data + startIndex, data + startIndex + numChars, size - numChars + 1);
+	memmove(data + startIndex, data + startIndex + numChars, size - startIndex - numChars + 1);
 	size -= numChars;
 }
 
