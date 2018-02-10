@@ -27,6 +27,7 @@ ImGuiImpl::~ImGuiImpl()
 
 void ImGuiImpl::Init()
 {
+	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	ASSERT(io.UserData == nullptr && "ImGui is already initialized");
 
@@ -42,6 +43,7 @@ void ImGuiImpl::Init()
 	io.KeyMap[ImGuiKey_Insert] = KEY_INSERT;
 	io.KeyMap[ImGuiKey_Delete] = KEY_DELETE;
 	io.KeyMap[ImGuiKey_Backspace] = KEY_BACKSPACE;
+	io.KeyMap[ImGuiKey_Space] = KEY_SPACE;
 	io.KeyMap[ImGuiKey_Enter] = KEY_RETURN;
 	io.KeyMap[ImGuiKey_Escape] = KEY_ESCAPE;
 	io.KeyMap[ImGuiKey_A] = KEY_A;
@@ -95,7 +97,7 @@ void ImGuiImpl::Init()
 
 void ImGuiImpl::Kill()
 {
-	ImGui::Shutdown();
+	ImGui::DestroyContext();
 
 	mesh = nullptr;
 	material = nullptr;
