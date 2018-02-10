@@ -34,8 +34,8 @@ Modules
 
 ### Physics
 
-* [Box2D](http://box2d.org)
-* [Bullet](http://bulletphysics.org)
+* [Box2D](http://box2d.org) *(WIP)*
+* [Bullet](http://bulletphysics.org) *(WIP)*
 * [PhysX](https://developer.nvidia.com/physx-sdk) *(WIP)*
 
 ### Render
