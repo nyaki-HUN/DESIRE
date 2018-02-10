@@ -28,7 +28,7 @@ Modules
 
 ### Compression
 
- * [LZ4](http://lz4.github.io/lz4)
+ * [LZ4](http://lz4.github.io/lz4) *(WIP)*
  * [zlib-ng](https://github.com/Dead2/zlib-ng)
  * [zstd](http://facebook.github.io/zstd)
 
@@ -36,7 +36,7 @@ Modules
 
 * [Box2D](http://box2d.org)
 * [Bullet](http://bulletphysics.org)
-* [PhysX](https://developer.nvidia.com/physx-sdk)
+* [PhysX](https://developer.nvidia.com/physx-sdk) *(WIP)*
 
 ### Render
 
