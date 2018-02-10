@@ -614,6 +614,7 @@ namespace bgfx
 			uint32_t maxDrawCalls;            //!< Maximum number of draw calls.
 			uint32_t maxBlits;                //!< Maximum number of blit calls.
 			uint32_t maxTextureSize;          //!< Maximum texture size.
+			uint32_t maxTextureLayers;        //!< Maximum texture layers.
 			uint32_t maxViews;                //!< Maximum number of views.
 			uint32_t maxFrameBuffers;         //!< Maximum number of frame buffer handles.
 			uint32_t maxFBAttachments;        //!< Maximum number of frame buffer attachments.
@@ -1378,7 +1379,6 @@ namespace bgfx
 		/// Set compute image from texture.
 		///
 		/// @param[in] _stage Texture unit.
-		/// @param[in] _sampler Program sampler.
 		/// @param[in] _handle Texture handle.
 		/// @param[in] _mip Mip level.
 		/// @param[in] _access Texture access. See `Access::Enum`.
@@ -1388,7 +1388,6 @@ namespace bgfx
 		///
 		void setImage(
 			  uint8_t _stage
-			, UniformHandle _sampler
 			, TextureHandle _handle
 			, uint8_t _mip
 			, Access::Enum _access
@@ -1943,7 +1942,7 @@ namespace bgfx
 	///
 	/// @param[in] _x, _y 2D position from top-left.
 	/// @param[in] _attr Color palette. Where top 4-bits represent index of background, and bottom
-	///   4-bits represent foreground color from standard VGA text palette.
+	///   4-bits represent foreground color from standard VGA text palette (ANSI escape codes).
 	/// @param[in] _format `printf` style format.
 	///
 	/// @attention C99 equivalent is `bgfx_dbg_text_printf`.
@@ -1960,7 +1959,7 @@ namespace bgfx
 	///
 	/// @param[in] _x, _y 2D position from top-left.
 	/// @param[in] _attr Color palette. Where top 4-bits represent index of background, and bottom
-	///   4-bits represent foreground color from standard VGA text palette.
+	///   4-bits represent foreground color from standard VGA text palette (ANSI escape codes).
 	/// @param[in] _format `printf` style format.
 	/// @param[in] _argList additional arguments for format string
 	///
@@ -2201,7 +2200,7 @@ namespace bgfx
 	///
 	void destroy(DynamicVertexBufferHandle _handle);
 
-	/// Returns number of available indices.
+	/// Returns number of requested or maximum available indices.
 	///
 	/// @param[in] _num Number of required indices.
 	///
@@ -2209,7 +2208,7 @@ namespace bgfx
 	///
 	uint32_t getAvailTransientIndexBuffer(uint32_t _num);
 
-	/// Returns number of available vertices.
+	/// Returns number of requested or maximum available vertices.
 	///
 	/// @param[in] _num Number of required vertices.
 	/// @param[in] _decl Vertex declaration.
@@ -2221,7 +2220,7 @@ namespace bgfx
 		, const VertexDecl& _decl
 		);
 
-	/// Returns number of available instance buffer slots.
+	/// Returns number of requested or maximum available instance buffer slots.
 	///
 	/// @param[in] _num Number of required instances.
 	/// @param[in] _stride Stride per instance.
@@ -2644,7 +2643,7 @@ namespace bgfx
 	///                  +----------+
 	///                  |-z       2|
 	///                  | ^  +y    |
-	///                  | |        |
+	///                  | |        |    Unfolded cube:
 	///                  | +---->+x |
 	///       +----------+----------+----------+----------+
 	///       |+y       1|+y       4|+y       0|+y       5|
@@ -3714,7 +3713,6 @@ namespace bgfx
 	/// Set compute image from texture.
 	///
 	/// @param[in] _stage Texture unit.
-	/// @param[in] _sampler Program sampler.
 	/// @param[in] _handle Texture handle.
 	/// @param[in] _mip Mip level.
 	/// @param[in] _access Texture access. See `Access::Enum`.
@@ -3724,7 +3722,6 @@ namespace bgfx
 	///
 	void setImage(
 		  uint8_t _stage
-		, UniformHandle _sampler
 		, TextureHandle _handle
 		, uint8_t _mip
 		, Access::Enum _access
@@ -3798,7 +3795,7 @@ namespace bgfx
 	/// @attention Destination texture must be created with `BGFX_TEXTURE_BLIT_DST` flag.
 	/// @attention Availability depends on: `BGFX_CAPS_TEXTURE_BLIT`.
 	/// @attention C99 equivalent is `bgfx_blit`.
-	/// 	
+	///
 	void blit(
 		  ViewId _id
 		, TextureHandle _dst

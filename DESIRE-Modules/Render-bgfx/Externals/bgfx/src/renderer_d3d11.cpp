@@ -674,6 +674,9 @@ namespace bgfx { namespace d3d11
 	void amdAgsMultiDrawInstancedIndirect(uint32_t _numDrawIndirect, ID3D11Buffer* _ptr, uint32_t _offset, uint32_t _stride);
 	void amdAgsMultiDrawIndexedInstancedIndirect(uint32_t _numDrawIndirect, ID3D11Buffer* _ptr, uint32_t _offset, uint32_t _stride);
 
+	void nvapiMultiDrawInstancedIndirect(uint32_t _numDrawIndirect, ID3D11Buffer* _ptr, uint32_t _offset, uint32_t _stride);
+	void nvapiMultiDrawIndexedInstancedIndirect(uint32_t _numDrawIndirect, ID3D11Buffer* _ptr, uint32_t _offset, uint32_t _stride);
+
 	static MultiDrawIndirectFn multiDrawInstancedIndirect;
 	static MultiDrawIndirectFn multiDrawIndexedInstancedIndirect;
 
@@ -1242,6 +1245,11 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					;
 				g_caps.deviceId = (uint16_t)m_adapterDesc.DeviceId;
 
+				if (BGFX_PCI_ID_NVIDIA != m_adapterDesc.VendorId)
+				{
+					m_nvapi.shutdown();
+				}
+
 				if (NULL == g_platformData.backBuffer)
 				{
 #if !BX_PLATFORM_WINDOWS
@@ -1253,6 +1261,9 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 						goto error;
 					}
 
+					m_swapEffect      = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+					m_swapBufferCount = 2;
+
 					bx::memSet(&m_scd, 0, sizeof(m_scd) );
 					m_scd.Width  = _init.resolution.m_width;
 					m_scd.Height = _init.resolution.m_height;
@@ -1261,11 +1272,12 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					m_scd.SampleDesc.Count   = 1;
 					m_scd.SampleDesc.Quality = 0;
 					m_scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-					m_scd.BufferCount = 2;
+					m_scd.BufferCount = m_swapBufferCount;
 					m_scd.Scaling = 0 == g_platformData.ndt
 						? DXGI_SCALING_NONE
-						: DXGI_SCALING_STRETCH;
-					m_scd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+						: DXGI_SCALING_STRETCH
+						;
+					m_scd.SwapEffect = m_swapEffect;
 					m_scd.AlphaMode  = DXGI_ALPHA_MODE_IGNORE;
 					m_scd.Flags      = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
@@ -1525,6 +1537,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 				{
 					g_caps.supported |= BGFX_CAPS_TEXTURE_COMPARE_ALL;
 					g_caps.limits.maxTextureSize   = D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+					g_caps.limits.maxTextureLayers = D3D11_REQ_TEXTURE2D_ARRAY_AXIS_DIMENSION;
 					g_caps.limits.maxFBAttachments = uint8_t(bx::uint32_min(
 						  D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT
 						, BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS
@@ -1833,6 +1846,13 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 							m_ags = NULL;
 						}
 					}
+					else if (m_nvapi.isInitialized()
+						 &&  NULL != m_nvapi.nvApiD3D11MultiDrawInstancedIndirect
+						 &&  NULL != m_nvapi.nvApiD3D11MultiDrawIndexedInstancedIndirect)
+					{
+						multiDrawInstancedIndirect        = nvapiMultiDrawInstancedIndirect;
+						multiDrawIndexedInstancedIndirect = nvapiMultiDrawIndexedInstancedIndirect;
+					}
 				}
 
 				//
@@ -1851,6 +1871,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 				DX_RELEASE(m_deviceCtx, 0);
 				DX_RELEASE(m_device, 0);
 				DX_RELEASE(m_factory, 0);
+				BX_FALLTHROUGH;
 
 #if USE_D3D11_DYNAMIC_LIB
 			case ErrorState::LoadedDXGI:
@@ -1868,10 +1889,13 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 
 				bx::dlclose(m_dxgidll);
 				m_dxgidll = NULL;
+				BX_FALLTHROUGH;
 
 			case ErrorState::LoadedD3D11:
 				bx::dlclose(m_d3d11dll);
 				m_d3d11dll = NULL;
+				BX_FALLTHROUGH;
+
 #endif // USE_D3D11_DYNAMIC_LIB
 
 			case ErrorState::Default:
@@ -2345,8 +2369,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 			uint32_t width  = getBufferWidth();
 			uint32_t height = getBufferHeight();
 
-			FrameBufferHandle fbh = BGFX_INVALID_HANDLE;
-			setFrameBuffer(fbh, false, false);
+			setFrameBuffer(BGFX_INVALID_HANDLE, false, false);
 
 			D3D11_VIEWPORT vp;
 			vp.TopLeftX = 0;
@@ -3990,6 +4013,16 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 		agsDriverExtensions_MultiDrawIndexedInstancedIndirect(s_renderD3D11->m_ags, _numDrawIndirect, _ptr, _offset, _stride);
 	}
 
+	void nvapiMultiDrawInstancedIndirect(uint32_t _numDrawIndirect, ID3D11Buffer* _ptr, uint32_t _offset, uint32_t _stride)
+	{
+		s_renderD3D11->m_nvapi.nvApiD3D11MultiDrawInstancedIndirect(s_renderD3D11->m_deviceCtx, _numDrawIndirect, _ptr, _offset, _stride);
+	}
+
+	void nvapiMultiDrawIndexedInstancedIndirect(uint32_t _numDrawIndirect, ID3D11Buffer* _ptr, uint32_t _offset, uint32_t _stride)
+	{
+		s_renderD3D11->m_nvapi.nvApiD3D11MultiDrawIndexedInstancedIndirect(s_renderD3D11->m_deviceCtx, _numDrawIndirect, _ptr, _offset, _stride);
+	}
+
 	int  WINAPI d3d11Annotation_BeginEvent(DWORD _color, LPCWSTR _name)
 	{
 		BX_UNUSED(_color);
@@ -5127,7 +5160,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 		box.left   = _rect.m_x;
 		box.top    = _rect.m_y;
 		box.right  = box.left + _rect.m_width;
-		box.bottom = box.top + _rect.m_height;
+		box.bottom = box.top  + _rect.m_height;
 
 		uint32_t layer = 0;
 
@@ -5144,6 +5177,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 		}
 
 		const uint32_t subres = _mip + ( (layer + _side) * m_numMips);
+		const bool     depth  = bimg::isDepth(bimg::TextureFormat::Enum(m_textureFormat) );
 		const uint32_t bpp    = bimg::getBitsPerPixel(bimg::TextureFormat::Enum(m_textureFormat) );
 		const uint32_t rectpitch  = _rect.m_width*bpp/8;
 		const uint32_t srcpitch   = UINT16_MAX == _pitch ? rectpitch : _pitch;
@@ -5164,7 +5198,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 		deviceCtx->UpdateSubresource(
 			  m_ptr
 			, subres
-			, &box
+			, depth ? NULL : &box
 			, data
 			, srcpitch
 			, TextureD3D11::Texture3D == m_type ? slicepitch : 0
@@ -5937,8 +5971,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 		{
 			// reset the framebuffer to be the backbuffer; depending on the swap effect,
 			// if we don't do this we'll only see one frame of output and then nothing
-			FrameBufferHandle invalid = BGFX_INVALID_HANDLE;
-			setFrameBuffer(invalid, true, false);
+			setFrameBuffer(BGFX_INVALID_HANDLE, true, false);
 
 			bool viewRestart = false;
 			uint8_t eye = 0;
@@ -6606,7 +6639,8 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 								: draw.m_numIndirect
 								;
 
-							multiDrawIndexedInstancedIndirect(numDrawIndirect
+							multiDrawIndexedInstancedIndirect(
+								  numDrawIndirect
 								, ptr
 								, draw.m_startIndirect * BGFX_CONFIG_DRAW_INDIRECT_STRIDE
 								, BGFX_CONFIG_DRAW_INDIRECT_STRIDE
@@ -6619,7 +6653,8 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 								: draw.m_numIndirect
 								;
 
-							multiDrawInstancedIndirect(numDrawIndirect
+							multiDrawInstancedIndirect(
+								  numDrawIndirect
 								, ptr
 								, draw.m_startIndirect * BGFX_CONFIG_DRAW_INDIRECT_STRIDE
 								, BGFX_CONFIG_DRAW_INDIRECT_STRIDE
@@ -6806,7 +6841,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 
 				tvm.clear();
 				uint16_t pos = 0;
-				tvm.printf(0, pos++, BGFX_CONFIG_DEBUG ? 0x89 : 0x8f
+				tvm.printf(0, pos++, BGFX_CONFIG_DEBUG ? 0x8c : 0x8f
 					, " %s.%d (FL %d.%d) / " BX_COMPILER_NAME " / " BX_CPU_NAME " / " BX_ARCH_NAME " / " BX_PLATFORM_NAME " "
 					, getRendererName()
 					, m_deviceInterfaceVersion
@@ -6839,7 +6874,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					);
 
 				pos = 10;
-				tvm.printf(10, pos++, 0x8e, "        Frame: %7.3f, % 7.3f \x1f, % 7.3f \x1e [ms] / % 6.2f FPS "
+				tvm.printf(10, pos++, 0x8b, "        Frame: %7.3f, % 7.3f \x1f, % 7.3f \x1e [ms] / % 6.2f FPS "
 					, double(frameTime)*toMs
 					, double(min)*toMs
 					, double(max)*toMs
@@ -6850,7 +6885,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 				bx::snprintf(hmd, BX_COUNTOF(hmd), ", [%c] HMD ", hmdEnabled ? '\xfe' : ' ');
 
 				const uint32_t msaa = (m_resolution.m_flags&BGFX_RESET_MSAA_MASK)>>BGFX_RESET_MSAA_SHIFT;
-				tvm.printf(10, pos++, 0x8e, "  Reset flags: [%c] vsync, [%c] MSAAx%d%s, [%c] MaxAnisotropy "
+				tvm.printf(10, pos++, 0x8b, "  Reset flags: [%c] vsync, [%c] MSAAx%d%s, [%c] MaxAnisotropy "
 					, !!(m_resolution.m_flags&BGFX_RESET_VSYNC) ? '\xfe' : ' '
 					, 0 != msaa ? '\xfe' : ' '
 					, 1<<msaa
@@ -6859,7 +6894,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					);
 
 				double elapsedCpuMs = double(frameTime)*toMs;
-				tvm.printf(10, pos++, 0x8e, "    Submitted: %5d (draw %5d, compute %4d) / CPU %7.4f [ms] %c GPU %7.4f [ms] (latency %d) "
+				tvm.printf(10, pos++, 0x8b, "    Submitted: %5d (draw %5d, compute %4d) / CPU %7.4f [ms] %c GPU %7.4f [ms] (latency %d) "
 					, _render->m_numRenderItems
 					, statsKeyType[0]
 					, statsKeyType[1]
@@ -6873,7 +6908,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 
 				for (uint32_t ii = 0; ii < BX_COUNTOF(s_primName); ++ii)
 				{
-					tvm.printf(10, pos++, 0x8e, "   %10s: %7d (#inst: %5d), submitted: %7d, indirect %7d"
+					tvm.printf(10, pos++, 0x8b, "   %10s: %7d (#inst: %5d), submitted: %7d, indirect %7d"
 						, s_primName[ii]
 						, statsNumPrimsRendered[ii]
 						, statsNumInstances[ii]
@@ -6887,18 +6922,18 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 					tvm.printf(tvm.m_width-27, 0, 0x1f, " [F11 - RenderDoc capture] ");
 				}
 
-				tvm.printf(10, pos++, 0x8e, "      Indices: %7d ", statsNumIndices);
-//				tvm.printf(10, pos++, 0x8e, " Uniform size: %7d, Max: %7d ", _render->m_uniformEnd, _render->m_uniformMax);
-				tvm.printf(10, pos++, 0x8e, "     DVB size: %7d ", _render->m_vboffset);
-				tvm.printf(10, pos++, 0x8e, "     DIB size: %7d ", _render->m_iboffset);
+				tvm.printf(10, pos++, 0x8b, "      Indices: %7d ", statsNumIndices);
+//				tvm.printf(10, pos++, 0x8b, " Uniform size: %7d, Max: %7d ", _render->m_uniformEnd, _render->m_uniformMax);
+				tvm.printf(10, pos++, 0x8b, "     DVB size: %7d ", _render->m_vboffset);
+				tvm.printf(10, pos++, 0x8b, "     DIB size: %7d ", _render->m_iboffset);
 
 				pos++;
-				tvm.printf(10, pos++, 0x8e, " Occlusion queries: %3d ", m_occlusionQuery.m_control.available() );
+				tvm.printf(10, pos++, 0x8b, " Occlusion queries: %3d ", m_occlusionQuery.m_control.available() );
 
 				pos++;
-				tvm.printf(10, pos++, 0x8e, " State cache:                                ");
-				tvm.printf(10, pos++, 0x8e, " Blend  | DepthS | Input  | Raster | Sampler ");
-				tvm.printf(10, pos++, 0x8e, " %6d | %6d | %6d | %6d | %6d  "
+				tvm.printf(10, pos++, 0x8b, " State cache:                                ");
+				tvm.printf(10, pos++, 0x8b, " Blend  | DepthS | Input  | Raster | Sampler ");
+				tvm.printf(10, pos++, 0x8b, " %6d | %6d | %6d | %6d | %6d  "
 					, m_blendStateCache.getCount()
 					, m_depthStencilStateCache.getCount()
 					, m_inputLayoutCache.getCount()
@@ -6908,9 +6943,9 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 				pos++;
 
 				double captureMs = double(captureElapsed)*toMs;
-				tvm.printf(10, pos++, 0x8e, "     Capture: %7.4f [ms] ", captureMs);
+				tvm.printf(10, pos++, 0x8b, "     Capture: %7.4f [ms] ", captureMs);
 
-				uint8_t attr[2] = { 0x89, 0x8a };
+				uint8_t attr[2] = { 0x8c, 0x8a };
 				uint8_t attrIndex = _render->m_waitSubmit < _render->m_waitRender;
 
 				tvm.printf(10, pos++, attr[attrIndex&1], " Submit wait: %7.4f [ms] ", _render->m_waitSubmit*toMs);
