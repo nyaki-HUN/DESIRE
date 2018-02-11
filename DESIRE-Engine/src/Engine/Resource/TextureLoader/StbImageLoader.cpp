@@ -35,7 +35,9 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 	int width = 0;
 	int height = 0;
 	int numComponents = 0;
-	if(stbi_is_hdr_from_callbacks(&callbacks, file.get()))
+	const bool isHDR = stbi_is_hdr_from_callbacks(&callbacks, file.get());
+	file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+	if(isHDR)
 	{
 		data = stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 4);
 		format = Texture::EFormat::RGBA32F;
