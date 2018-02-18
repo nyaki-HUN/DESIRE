@@ -396,9 +396,34 @@ void BgfxRender::Bind(Shader *shader)
 	
 	ShaderRenderDataBgfx *renderData = new ShaderRenderDataBgfx();
 
-	const bgfx::Memory *shaderDara = bgfx::makeRef(shader->data.data, (uint32_t)shader->data.size);
+	const bgfx::Memory *shaderData = nullptr;
+	if(shader->defines.empty())
+	{
+		shaderData = bgfx::makeRef(shader->data.data, (uint32_t)shader->data.size);
+	}
+	else
+	{
+		size_t totalDefinesLength = 0;
+		for(const String& define : shader->defines)
+		{
+			totalDefinesLength += 8 + define.Length() + 3;	// "#define ASD 1\n"
+		}
 
-	renderData->shaderHandle = bgfx::createShader(shaderDara);
+		shaderData = bgfx::alloc((uint32_t)(totalDefinesLength + shader->data.size));
+		uint8_t *ptr = shaderData->data;
+		for(const String& define : shader->defines)
+		{
+			memcpy(ptr, "#define ", 8);
+			ptr += 8;
+			memcpy(ptr, define.c_str(), define.Length());
+			ptr += define.Length();
+			memcpy(ptr, " 1\n", 3);
+			ptr += 3;
+		}
+		memcpy(ptr, shader->data.data, shader->data.size);
+	}
+
+	renderData->shaderHandle = bgfx::createShader(shaderData);
 	ASSERT(bgfx::isValid(renderData->shaderHandle));
 	bgfx::setName(renderData->shaderHandle, shader->name.c_str());
 

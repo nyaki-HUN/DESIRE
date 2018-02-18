@@ -3,6 +3,8 @@
 #include "Engine/Core/MemoryBuffer.h"
 #include "Engine/Core/String.h"
 
+#include <set>
+
 class Shader
 {
 public:
@@ -13,5 +15,6 @@ public:
 	void *renderData = nullptr;
 
 	MemoryBuffer data;
+	std::set<String> defines;
 	const String name;
 };

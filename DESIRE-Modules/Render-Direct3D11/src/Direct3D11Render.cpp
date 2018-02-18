@@ -586,8 +586,18 @@ void Direct3D11Render::Bind(Shader *shader)
 	
 	ShaderRenderDataD3D11 *renderData = new ShaderRenderDataD3D11();
 
+	D3D_SHADER_MACRO defines[32] = {};
+	ASSERT(shader->defines.size() < DESIRE_ASIZEOF(defines));
+	D3D_SHADER_MACRO *definePtr = &defines[0];
+	for(const String& define : shader->defines)
+	{
+		definePtr->Name = define.c_str();
+		definePtr->Definition = "1";
+		definePtr++;
+	}
+
 	ID3DBlob *errorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), nullptr, nullptr, "main", isVertexShader ? "vs_5_0" : "ps_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
+	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), defines, nullptr, "main", isVertexShader ? "vs_5_0" : "ps_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
 	if(FAILED(hr))
 	{
 		if(errorBlob != nullptr)
