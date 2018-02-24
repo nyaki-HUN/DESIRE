@@ -222,6 +222,15 @@ public:
 		return SIMD::Add(c, SIMD::Mul(a, b));
 	}
 
+	static inline vec_float3_t MulSub(const vec_float3_t& a, const vec_float3_t& b, const vec_float3_t& c)
+	{
+		return SIMD::Sub(c, SIMD::Mul(a, b));
+	}
+	static inline vec_float4_t MulSub(const vec_float4_t& a, const vec_float4_t& b, const vec_float4_t& c)
+	{
+		return SIMD::Sub(c, SIMD::Mul(a, b));
+	}
+
 	static inline vec_float3_t Div(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return vec_float3_t(

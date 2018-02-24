@@ -87,6 +87,11 @@ public:
 	{
 		return vmlaq_f32(c, a, b);
 	}
+	
+	static inline float32x4_t MulSub(float32x4_t a, float32x4_t b, float32x4_t c)
+	{
+		return vmlsq_f32(c, a, b);
+	}
 
 	static inline float32x4_t Div(float32x4_t a, float32x4_t b)
 	{

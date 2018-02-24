@@ -136,6 +136,11 @@ public:
 		return SIMD::Add(c, SIMD::Mul(a, b));
 	}
 
+	static inline __m128 MulSub(__m128 a, __m128 b, __m128 c)
+	{
+		return SIMD::Sub(c, SIMD::Mul(a, b));
+	}
+
 	static inline __m128 Div(__m128 a, __m128 b)
 	{
 		return _mm_div_ps(a, b);
@@ -263,7 +268,6 @@ public:
 // --------------------------------------------------------------------------------------------------------------------
 
 #define _mm_ror_ps(vec, i)	_mm_shuffle_ps(vec, vec, _MM_SHUFFLE((uint8_t)(i + 3) % 4,(uint8_t)(i + 2) % 4,(uint8_t)(i + 1) % 4,(uint8_t)(i + 0) % 4))
-#define vec_nmsub(a, b, c)	SIMD::Sub(c, SIMD::Mul(a, b))
 
 static inline __m128 newtonrapson_rsqrt4(const __m128 v)
 {
@@ -299,7 +303,7 @@ static inline __m128 acosf4(__m128 x)
 	// Adjust the result if x is negactive.
 	return SIMD::Blend(
 		SIMD::Mul(t1, result),									// Positive
-		vec_nmsub(t1, result, _mm_set1_ps(3.1415926535898f)),	// Negative
+		SIMD::MulSub(t1, result, _mm_set1_ps(3.1415926535898f)),	// Negative
 		select);
 }
 
@@ -330,7 +334,7 @@ static inline __m128 sinf4(__m128 x)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC2), vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC1), x));
+	xl = SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC2), SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
@@ -379,7 +383,7 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC2), vec_nmsub(qf, _mm_set1_ps(_SINCOS_KC1), x));
+	xl = SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC2), SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
