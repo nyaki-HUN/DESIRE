@@ -735,7 +735,7 @@ inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 	return Matrix4(
 		SIMD::Mul(Z0, Y0),
 		SIMD::MulAdd(Z1, X1, SIMD::Mul(tmp, X0)),
-		vec_nmsub(Z1, X0, SIMD::Mul(tmp, X1)),
+		SIMD::MulSub(Z1, X0, SIMD::Mul(tmp, X1)),
 		Vector4::AxisW()
 	);
 #else

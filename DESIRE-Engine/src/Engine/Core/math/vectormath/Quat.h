@@ -228,11 +228,11 @@ inline Quat Quat::operator *(const Quat& quat) const
 	__m128 qv = SIMD::Mul(SIMD::Swizzle_WWWW(mVec128), quat.mVec128);
 	qv = SIMD::MulAdd(SIMD::Swizzle_WWWW(quat.mVec128), mVec128, qv);
 	qv = SIMD::MulAdd(tmp0, tmp1, qv);
-	qv = vec_nmsub(tmp2, tmp3, qv);
+	qv = SIMD::MulSub(tmp2, tmp3, qv);
 	const __m128 product = SIMD::Mul(mVec128, quat.mVec128);
 	const __m128 l_wxyz = _mm_ror_ps(mVec128, 3);
 	const __m128 r_wxyz = _mm_ror_ps(quat.mVec128, 3);
-	__m128 qw = vec_nmsub(l_wxyz, r_wxyz, product);
+	__m128 qw = SIMD::MulSub(l_wxyz, r_wxyz, product);
 	const __m128 xy = SIMD::MulAdd(l_wxyz, r_wxyz, product);
 	qw = SIMD::Sub(qw, _mm_ror_ps(xy, 2));
 	return SIMD::Blend_W(qv, qw);
@@ -272,7 +272,7 @@ inline Vector3 Quat::RotateVec(const Vector3& vec) const
 	const __m128 wwww = SIMD::Swizzle_WWWW(mVec128);
 	__m128 qv = SIMD::Mul(wwww, vec);
 	qv = SIMD::MulAdd(tmp0, tmp1, qv);
-	qv = vec_nmsub(tmp2, tmp3, qv);
+	qv = SIMD::MulSub(tmp2, tmp3, qv);
 	const __m128 product = SIMD::Mul(mVec128, vec);
 	__m128 qw = SIMD::MulAdd(_mm_ror_ps(mVec128, 1), _mm_ror_ps(vec, 1), product);
 	qw = SIMD::Add(_mm_ror_ps(product, 2), qw);
@@ -281,7 +281,7 @@ inline Vector3 Quat::RotateVec(const Vector3& vec) const
 	__m128 res = SIMD::Mul(SIMD::Swizzle_XXXX(qw), mVec128);
 	res = SIMD::MulAdd(wwww, qv, res);
 	res = SIMD::MulAdd(tmp0, tmp1, res);
-	res = vec_nmsub(tmp2, tmp3, res);
+	res = SIMD::MulSub(tmp2, tmp3, res);
 	return res;
 #else
 	const float tmpX = ((GetW() * vec.GetX()) + (GetY() * vec.GetZ())) - (GetZ() * vec.GetY());
