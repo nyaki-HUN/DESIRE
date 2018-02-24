@@ -95,12 +95,16 @@ public:
 	inline Vector4 operator -() const						{ return SIMD::Negate(mVec128); }
 	inline Vector4 operator +(const Vector4& vec) const		{ return SIMD::Add(mVec128, vec.mVec128); }
 	inline Vector4 operator -(const Vector4& vec) const		{ return SIMD::Sub(mVec128, vec.mVec128); }
+	inline Vector4 operator *(const Vector4& vec) const		{ return SIMD::Mul(mVec128, vec.mVec128); }
 	inline Vector4 operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
+	inline Vector4 operator /(const Vector4& vec) const		{ return SIMD::Div(mVec128, vec.mVec128); }
 	inline Vector4 operator /(float scalar) const			{ return SIMD::Mul(mVec128, 1.0f / scalar); }
 
 	inline Vector4& operator +=(const Vector4& vec)			{ *this = *this + vec;		return *this; }
 	inline Vector4& operator -=(const Vector4& vec)			{ *this = *this - vec;		return *this; }
+	inline Vector4& operator *=(const Vector4& vec)			{ *this = *this * vec;		return *this; }
 	inline Vector4& operator *=(float scalar)				{ *this = *this * scalar;	return *this; }
+	inline Vector4& operator /=(const Vector4& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector4& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
 	// Maximum element of a 4-D vector
@@ -145,18 +149,6 @@ public:
 	inline Vector4 Normalized() const
 	{
 		return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
-	}
-
-	// Multiply two 4-D vectors per element
-	inline Vector4 MulPerElem(const Vector4& vec) const
-	{
-		return SIMD::Mul(mVec128, vec);
-	}
-
-	// Divide two 4-D vectors per element
-	inline Vector4 DivPerElem(const Vector4& vec) const
-	{
-		return SIMD::Div(mVec128, vec);
 	}
 
 	// Compute the absolute value of a 4-D vector per element

@@ -65,7 +65,7 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(result.GetW() == Approx(-vec0.GetW()));
 	}
 
-	SECTION("operator +")
+	SECTION("operator +()")
 	{
 		const Vector4 result = vec0 + vec1;
 
@@ -75,7 +75,7 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(result.GetW() == Approx(vec0.GetW() + vec1.GetW()));
 	}
 
-	SECTION("operator -")
+	SECTION("operator -()")
 	{
 		const Vector4 result = vec0 - vec1;
 
@@ -85,14 +85,34 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(result.GetW() == Approx(vec0.GetW() - vec1.GetW()));
 	}
 
-	SECTION("operator *(float)")
+	SECTION("operator *()")
 	{
-		const Vector4 result = vec0 * 123.0f;
+		Vector4 result = vec0 * vec1;
+		CHECK(result.GetX() == Approx(vec0.GetX() * vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() * vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() * vec1.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW() * vec1.GetW()));
 
+		result = vec0 * 123.0f;
 		CHECK(result.GetX() == Approx(vec0.GetX() * 123.0f));
 		CHECK(result.GetY() == Approx(vec0.GetY() * 123.0f));
 		CHECK(result.GetZ() == Approx(vec0.GetZ() * 123.0f));
 		CHECK(result.GetW() == Approx(vec0.GetW() * 123.0f));
+	}
+
+	SECTION("operator /()")
+	{
+		Vector4 result = vec0 / vec1;
+		CHECK(result.GetX() == Approx(vec0.GetX() / vec1.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY() / vec1.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() / vec1.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW() / vec1.GetW()));
+
+		result = vec0 / 123.0f;
+		CHECK(result.GetX() == Approx(vec0.GetX() / 123.0f));
+		CHECK(result.GetY() == Approx(vec0.GetY() / 123.0f));
+		CHECK(result.GetZ() == Approx(vec0.GetZ() / 123.0f));
+		CHECK(result.GetW() == Approx(vec0.GetW() / 123.0f));
 	}
 
 	SECTION("GetMaxElem()")
@@ -146,26 +166,6 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(result2.GetY() == Approx(result.GetY()));
 		CHECK(result2.GetZ() == Approx(result.GetZ()));
 		CHECK(result2.GetW() == Approx(result.GetW()));
-	}
-
-	SECTION("MulPerElem()")
-	{
-		const Vector4 result = vec0.MulPerElem(vec1);
-
-		CHECK(result.GetX() == Approx(vec0.GetX() * vec1.GetX()));
-		CHECK(result.GetY() == Approx(vec0.GetY() * vec1.GetY()));
-		CHECK(result.GetZ() == Approx(vec0.GetZ() * vec1.GetZ()));
-		CHECK(result.GetW() == Approx(vec0.GetW() * vec1.GetW()));
-	}
-
-	SECTION("DivPerElem()")
-	{
-		const Vector4 result = vec0.DivPerElem(vec1);
-
-		CHECK(result.GetX() == Approx(vec0.GetX() / vec1.GetX()));
-		CHECK(result.GetY() == Approx(vec0.GetY() / vec1.GetY()));
-		CHECK(result.GetZ() == Approx(vec0.GetZ() / vec1.GetZ()));
-		CHECK(result.GetW() == Approx(vec0.GetW() / vec1.GetW()));
 	}
 
 	SECTION("AbsPerElem()")

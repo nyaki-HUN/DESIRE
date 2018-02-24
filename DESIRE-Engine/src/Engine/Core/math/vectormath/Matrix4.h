@@ -206,10 +206,10 @@ public:
 	inline Matrix4& PrependScale(const Vector3& scaleVec)
 	{
 		const Vector4 scale4(scaleVec, 1.0f);
-		col0 = col0.MulPerElem(scale4);
-		col1 = col1.MulPerElem(scale4);
-		col2 = col2.MulPerElem(scale4);
-		col3 = col3.MulPerElem(scale4);
+		col0 *= scale4;
+		col1 *= scale4;
+		col2 *= scale4;
+		col3 *= scale4;
 		return *this;
 	}
 

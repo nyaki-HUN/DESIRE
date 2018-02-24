@@ -126,9 +126,9 @@ public:
 	// NOTE: Faster than creating and multiplying a scale transformation matrix
 	inline Matrix3& PrependScale(const Vector3& scaleVec)
 	{
-		col0 = col0.MulPerElem(scaleVec);
-		col1 = col1.MulPerElem(scaleVec);
-		col2 = col2.MulPerElem(scaleVec);
+		col0 *= scaleVec;
+		col1 *= scaleVec;
+		col2 *= scaleVec;
 		return *this;
 	}
 

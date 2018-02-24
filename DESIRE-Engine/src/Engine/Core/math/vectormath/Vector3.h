@@ -69,12 +69,16 @@ public:
 	inline Vector3 operator -() const						{ return SIMD::Negate(mVec128); }
 	inline Vector3 operator +(const Vector3& vec) const		{ return SIMD::Add(mVec128, vec.mVec128); }
 	inline Vector3 operator -(const Vector3& vec) const		{ return SIMD::Sub(mVec128, vec.mVec128); }
+	inline Vector3 operator *(const Vector3& vec) const		{ return SIMD::Mul(mVec128, vec.mVec128); }
 	inline Vector3 operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
+	inline Vector3 operator /(const Vector3& vec) const		{ return SIMD::Div(mVec128, vec.mVec128); }
 	inline Vector3 operator /(float scalar) const			{ return SIMD::Mul(mVec128, 1.0f / scalar); }
 
 	inline Vector3& operator +=(const Vector3& vec)			{ *this = *this + vec;		return *this; }
 	inline Vector3& operator -=(const Vector3& vec)			{ *this = *this - vec;		return *this; }
+	inline Vector3& operator *=(const Vector3& vec)			{ *this = *this * vec;		return *this; }
 	inline Vector3& operator *=(float scalar)				{ *this = *this * scalar;	return *this; }
+	inline Vector3& operator /=(const Vector3& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector3& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
 	// Compare 3-D vector to another 3-D vector for greater-than or equal
@@ -137,18 +141,6 @@ public:
 	inline Vector3 Normalized() const
 	{
 		return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot3(mVec128, mVec128)));
-	}
-
-	// Multiply two 3-D vectors per element
-	inline Vector3 MulPerElem(const Vector3& vec) const
-	{
-		return SIMD::Mul(mVec128, vec);
-	}
-
-	// Divide two 3-D vectors per element
-	inline Vector3 DivPerElem(const Vector3& vec) const
-	{
-		return SIMD::Div(mVec128, vec);
 	}
 
 	// Compute the absolute value of a 3-D vector per element

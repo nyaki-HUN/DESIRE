@@ -115,7 +115,7 @@ void Transform::SetScale(const Vector3& scale)
 	if(parent != nullptr)
 	{
 		const Vector3 parentScale = parent->GetScale();
-		SetLocalScale(scale.DivPerElem(parentScale));
+		SetLocalScale(scale / parentScale);
 	}
 	else
 	{
