@@ -49,9 +49,9 @@ class SIMD
 {
 public:
 	// Construct from x, y, z, and w elements
-	static inline void Construct(__m128& vec, float x, float y, float z, float w = 0.0f)
+	static inline __m128 Construct(float x, float y, float z, float w = 0.0f)
 	{
-		vec = _mm_setr_ps(x, y, z, w);
+		return _mm_setr_ps(x, y, z, w);
 	}
 
 	// Construct by setting all elements to the same scalar value

@@ -64,20 +64,15 @@ class SIMD
 {
 public:
 	// Construct from x, y, and z elements
-	static inline void Construct(vec_float3_t& vec, float x, float y, float z)
+	static inline vec_float3_t Construct(float x, float y, float z)
 	{
-		vec.x = x;
-		vec.y = y;
-		vec.z = z;
+		return vec_float3_t(x, y, z);
 	}
 
 	// Construct from x, y, z, and w elements
-	static inline void Construct(vec_float4_t& vec, float x, float y, float z, float w)
+	static inline vec_float4_t Construct(float x, float y, float z, float w)
 	{
-		vec.x = x;
-		vec.y = y;
-		vec.z = z;
-		vec.w = w;
+		return vec_float4_t(x, y, z, w);
 	}
 
 	// Construct by setting all elements to the same scalar value

@@ -22,7 +22,7 @@ public:
 
 	inline Vector4(float x, float y, float z, float w)
 	{
-		SIMD::Construct(mVec128, x, y, z, w);
+		mVec128 = SIMD::Construct(x, y, z, w);
 	}
 
 	explicit inline Vector4(float scalar)

@@ -22,9 +22,9 @@ class SIMD
 {
 public:
 	// Construct from x, y, z, and w elements
-	static inline void Construct(float32x4_t& vec, float x, float y, float z, float w = 0.0f)
+	static inline float32x4_t Construct(float x, float y, float z, float w = 0.0f)
 	{
-		vec = (float32x4_t){ x, y, z, w };
+		return (float32x4_t){ x, y, z, w };
 	}
 
 	// Construct by setting all elements to the same scalar value

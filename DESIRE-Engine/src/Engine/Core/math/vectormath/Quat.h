@@ -24,7 +24,7 @@ public:
 	
 	inline Quat(float x, float y, float z, float w)
 	{
-		SIMD::Construct(mVec128, x, y, z, w);
+		mVec128 = SIMD::Construct(x, y, z, w);
 	}
 
 	// Convert a rotation matrix to a unit-length quaternion
