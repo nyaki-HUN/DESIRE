@@ -28,8 +28,10 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opNeg()", asFUNCTION(AngelScriptAPI<Vector3>::OpNeg), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opAdd(const Vector3& in) const", asFUNCTION(AngelScriptAPI<Vector3>::OpAdd<const Vector3&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opSub(const Vector3& in) const", asFUNCTION(AngelScriptAPI<Vector3>::OpSub<const Vector3&>), asCALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod("Vector3", "Vector3@ opMul(const Vector3& in) const", asFUNCTION(AngelScriptAPI<Vector3>::OpMul<const Vector3&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opMul(float) const", asFUNCTION(AngelScriptAPI<Vector3>::OpMul<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opMul_r(float) const", asFUNCTION(AngelScriptAPI<Vector3>::OpMul<float>), asCALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod("Vector3", "Vector3@ opDiv(const Vector3& in) const", asFUNCTION(AngelScriptAPI<Vector3>::OpDiv<const Vector3&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opDiv(float) const", asFUNCTION(AngelScriptAPI<Vector3>::OpDiv<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "void opAddAssign(const Vector3& in)", asFUNCTION(AngelScriptAPI<Vector3>::OpAddAssign<const Vector3&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "void subAssign(const Vector3& in)", asFUNCTION(AngelScriptAPI<Vector3>::OpSubAssign<const Vector3&>), asCALL_CDECL_OBJFIRST);
@@ -78,8 +80,10 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opNeg()", asFUNCTION(AngelScriptAPI<Vector4>::OpNeg), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opAdd(const Vector4& in) const", asFUNCTION(AngelScriptAPI<Vector4>::OpAdd<const Vector4&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opSub(const Vector4& in) const", asFUNCTION(AngelScriptAPI<Vector4>::OpSub<const Vector4&>), asCALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod("Vector4", "Vector4@ opMul(const Vector4& in) const", asFUNCTION(AngelScriptAPI<Vector4>::OpMul<const Vector4&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opMul(float) const", asFUNCTION(AngelScriptAPI<Vector4>::OpMul<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opMul_r(float) const", asFUNCTION(AngelScriptAPI<Vector4>::OpMul<float>), asCALL_CDECL_OBJFIRST);
+	engine->RegisterObjectMethod("Vector4", "Vector4@ opDiv(const Vector4& in) const", asFUNCTION(AngelScriptAPI<Vector4>::OpDiv<const Vector4&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opDiv(float) const", asFUNCTION(AngelScriptAPI<Vector4>::OpDiv<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "void opAddAssign(const Vector4& in)", asFUNCTION(AngelScriptAPI<Vector4>::OpAddAssign<const Vector4&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "void subAssign(const Vector4& in)", asFUNCTION(AngelScriptAPI<Vector4>::OpSubAssign<const Vector4&>), asCALL_CDECL_OBJFIRST);
