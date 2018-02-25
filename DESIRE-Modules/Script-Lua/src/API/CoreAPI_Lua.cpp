@@ -165,8 +165,8 @@ void RegisterMathFunctions_Lua(lua_State *L)
 	luabridge::Namespace rootTable = luabridge::getGlobalNamespace(L);
 
 	// Trigonometric functions
-	rootTable.addFunction("cos", std::cosf);
-	rootTable.addFunction("sin", std::sinf);
+	rootTable.addFunction("cos", &std::cosf);
+	rootTable.addFunction("sin", &std::sinf);
 	rootTable.addFunction("tan", &std::tanf);
 	rootTable.addFunction("acos", &std::acosf);
 	rootTable.addFunction("asin", &std::asinf);

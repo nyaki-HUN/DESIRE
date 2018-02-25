@@ -174,8 +174,8 @@ void RegisterMathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 	HSQUIRRELVM vm = rootTable.GetVM();
 
 	// Trigonometric functions
-	rootTable.Func("cos", std::cosf);
-	rootTable.Func("sin", std::sinf);
+	rootTable.Func("cos", &std::cosf);
+	rootTable.Func("sin", &std::sinf);
 	rootTable.Func("tan", &std::tanf);
 	rootTable.Func("acos", &std::acosf);
 	rootTable.Func("asin", &std::asinf);

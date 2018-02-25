@@ -149,8 +149,8 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectProperty("Matrix3", "Vector3& col0", asOFFSET(Matrix3, col0));
 	engine->RegisterObjectProperty("Matrix3", "Vector3& col1", asOFFSET(Matrix3, col1));
 	engine->RegisterObjectProperty("Matrix3", "Vector3& col2", asOFFSET(Matrix3, col2));
-	engine->RegisterObjectMethod("Matrix3", "void SetCol(int, const Vector3& in)", asMETHODPR(Matrix3, SetCol, (int, const Vector3&), Matrix3&), asCALL_THISCALL);
-//	const Vector3& GetCol(int col) const
+	engine->RegisterObjectMethod("Matrix3", "void SetCol(int, const Vector3& in)", asMETHODPR(Matrix3, SetCol, (int, const Vector3&), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Matrix3", "Vector3& GetCol(int) const", asMETHODPR(Matrix3, GetCol, (int) const, const Vector3&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Matrix3", "void SetRow0(const Vector3& in)", asMETHODPR(Matrix3, SetRow0, (const Vector3&), void), asCALL_THISCALL);
 //	Vector3 GetRow0() const
 	engine->RegisterObjectMethod("Matrix3", "void opAssign(const Matrix3& in)", asFUNCTION(AngelScriptAPI<Matrix3>::OpAssign<Matrix3&>), asCALL_CDECL_OBJFIRST);
@@ -198,8 +198,8 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectProperty("Matrix4", "Vector4& col1", asOFFSET(Matrix4, col1));
 	engine->RegisterObjectProperty("Matrix4", "Vector4& col2", asOFFSET(Matrix4, col2));
 	engine->RegisterObjectProperty("Matrix4", "Vector4& col3", asOFFSET(Matrix4, col3));
-	engine->RegisterObjectMethod("Matrix4", "void SetCol(int, const Vector4& in)", asMETHODPR(Matrix4, SetCol, (int, const Vector4&), Matrix4&), asCALL_THISCALL);
-//	const Vector4& GetCol(int col) const
+	engine->RegisterObjectMethod("Matrix4", "void SetCol(int, const Vector4& in)", asMETHODPR(Matrix4, SetCol, (int, const Vector4&), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Matrix4", "Vector4& GetCol(int) const", asMETHODPR(Matrix4, GetCol, (int) const, const Vector4&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Matrix4", "void SetRow0(const Vector4& in)", asMETHODPR(Matrix4, SetRow0, (const Vector4&), void), asCALL_THISCALL);
 //	Vector4 GetRow0() const
 	engine->RegisterObjectMethod("Matrix4", "void opAssign(const Matrix4& in)", asFUNCTION(AngelScriptAPI<Matrix4>::OpAssign<Matrix4&>), asCALL_CDECL_OBJFIRST);

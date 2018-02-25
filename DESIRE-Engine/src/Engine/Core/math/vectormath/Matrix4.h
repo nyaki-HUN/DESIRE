@@ -101,10 +101,9 @@ public:
 	}
 
 	// Set the column of a 4x4 matrix referred to by the specified index
-	inline Matrix4& SetCol(int idx, const Vector4& vec)
+	inline void SetCol(int idx, const Vector4& vec)
 	{
 		*(&col0 + idx) = vec;
-		return *this;
 	}
 
 	// Get the column of a 4x4 matrix referred to by the specified index

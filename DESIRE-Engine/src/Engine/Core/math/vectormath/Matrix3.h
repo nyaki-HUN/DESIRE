@@ -30,10 +30,9 @@ public:
 	explicit inline Matrix3(const Quat& unitQuat);
 
 	// Set the column of a 3x3 matrix referred to by the specified index
-	inline Matrix3& SetCol(int idx, const Vector3& vec)
+	inline void SetCol(int idx, const Vector3& vec)
 	{
 		*(&col0 + idx) = vec;
-		return *this;
 	}
 
 	// Get the column of a 3x3 matrix referred to by the specified index
