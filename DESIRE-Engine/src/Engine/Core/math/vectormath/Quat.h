@@ -69,14 +69,8 @@ public:
 	inline Quat operator -() const						{ return SIMD::Negate(mVec128); }
 	inline Quat operator +(const Quat& quat) const		{ return SIMD::Add(mVec128, quat.mVec128); }
 	inline Quat operator -(const Quat& quat) const		{ return SIMD::Sub(mVec128, quat.mVec128); }
-	inline Quat operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
 
 	inline Quat operator *(const Quat& quat) const;
-
-	inline Quat operator /(float scalar) const
-	{
-		return (*this * (1.0f / scalar));
-	}
 
 	inline Quat& operator +=(const Quat& quat)
 	{
@@ -90,21 +84,9 @@ public:
 		return *this;
 	}
 
-	inline Quat& operator *=(float scalar)
-	{
-		*this = *this * scalar;
-		return *this;
-	}
-
 	inline Quat& operator *=(const Quat& quat)
 	{
 		*this = *this * quat;
-		return *this;
-	}
-
-	inline Quat& operator /=(float scalar)
-	{
-		*this = *this / scalar;
 		return *this;
 	}
 
@@ -208,12 +190,6 @@ public:
 private:
 	vec_float4_t mVec128;
 };
-
-// Multiply a quaternion by a scalar
-inline Quat operator *(float scalar, const Quat& quat)
-{
-	return quat * scalar;
-}
 
 // --------------------------------------------------------------------------------------------------------------------
 

@@ -44,9 +44,7 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector3", "float LengthSqr() const", asMETHODPR(Vector3, LengthSqr, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector3", "float Length() const", asMETHODPR(Vector3, Length, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector3", "void Normalize()", asMETHOD(Vector3, Normalize), asCALL_THISCALL);
-//	engine->RegisterObjectMethod("Vector3", "Vector3@ Normalized() const", asMETHODPR(Vector3, Normalize, () const, Vector3), asCALL_THISCALL);
-//	Vector3 MulPerElem(const Vector3& vec) const;
-//	Vector3 DivPerElem(const Vector3& vec) const;
+//	engine->RegisterObjectMethod("Vector3", "Vector3@ Normalized() const", asMETHODPR(Vector3, Normalized, () const, Vector3), asCALL_THISCALL);
 //	Vector3 AbsPerElem() const;
 	engine->SetDefaultNamespace("Vector3");
 	engine->RegisterGlobalFunction("Vector3@ MaxPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<const Vector3&, const Vector3&, &Vector3::MaxPerElem>)), asCALL_GENERIC);
@@ -95,9 +93,7 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Vector4", "float LengthSqr() const", asMETHODPR(Vector4, LengthSqr, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector4", "float Length() const", asMETHODPR(Vector4, Length, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector4", "void Normalize()", asMETHOD(Vector4, Normalize), asCALL_THISCALL);
-//	engine->RegisterObjectMethod("Vector4", "Vector4@ Normalized() const", asMETHODPR(Vector4, Normalize, () const, Vector4), asCALL_THISCALL);
-//	Vector4 MulPerElem(const Vector4& vec) const
-//	Vector4 DivPerElem(const Vector4& vec) const
+//	engine->RegisterObjectMethod("Vector4", "Vector4@ Normalized() const", asMETHODPR(Vector4, Normalized, () const, Vector4), asCALL_THISCALL);
 //	Vector4 AbsPerElem() const
 	engine->SetDefaultNamespace("Vector4");
 	engine->RegisterGlobalFunction("Vector4@ MaxPerElem(const Vector4& in, const Vector4& in)", asFUNCTION((AngelScriptGenericAPI<Vector4>::StaticFunc<const Vector4&, const Vector4&, &Vector4::MaxPerElem>)), asCALL_GENERIC);
@@ -120,14 +116,9 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->RegisterObjectMethod("Quat", "Quat@ opAdd(const Quat& in) const", asFUNCTION(AngelScriptAPI<Quat>::OpAdd<const Quat&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "Quat@ opSub(const Quat& in) const", asFUNCTION(AngelScriptAPI<Quat>::OpSub<const Quat&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "Quat@ opMul(const Quat& in) const", asFUNCTION(AngelScriptAPI<Quat>::OpMul<const Quat&>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Quat", "Quat@ opMul(float) const", asFUNCTION(AngelScriptAPI<Quat>::OpMul<float>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Quat", "Quat@ opMul_r(float) const", asFUNCTION(AngelScriptAPI<Quat>::OpMul<float>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Quat", "Quat@ opDiv(float) const", asFUNCTION(AngelScriptAPI<Quat>::OpDiv<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "void opAddAssign(const Quat& in)", asFUNCTION(AngelScriptAPI<Quat>::OpAddAssign<const Quat&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "void subAssign(const Quat& in)", asFUNCTION(AngelScriptAPI<Quat>::OpSubAssign<const Quat&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "void opMulAssign(const Quat& in)", asFUNCTION(AngelScriptAPI<Quat>::OpMulAssign<const Quat&>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Quat", "void opMulAssign(float)", asFUNCTION(AngelScriptAPI<Quat>::OpMulAssign<float>), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Quat", "void opDivAssign(float)", asFUNCTION(AngelScriptAPI<Quat>::OpDivAssign<float>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Quat", "float Dot(const Quat& in) const", asMETHODPR(Quat, Dot, (const Quat&) const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Quat", "float Norm()", asMETHODPR(Quat, Norm, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Quat", "float Length() const", asMETHODPR(Quat, Length, () const, float), asCALL_THISCALL);
