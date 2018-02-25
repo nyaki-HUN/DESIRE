@@ -16,7 +16,7 @@ template<class T>
 class SquirrelScriptAPI
 {
 public:
-	// Native squirrel function to support multiplication operator overrides (with 1 arguments, but different types)
+	// Native squirrel function to support multiplication operator overrides with different types
 	template<typename... TypeList>
 	static SQInteger OpMulOverrides(HSQUIRRELVM vm)
 	{
@@ -36,22 +36,32 @@ public:
 		return 1;
 	}
 
-private:
-	// Multiplication base variant
-	template<typename FirstType>
-	static bool OpMul_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	// Native squirrel function to support division operator overrides with different types
+	template<typename... TypeList>
+	static SQInteger OpDivOverrides(HSQUIRRELVM vm)
 	{
-		Sqrat::Var<FirstType> otherVar(vm, 2);
-		if(!Sqrat::Error::Occurred(vm))
+		if(sq_gettop(vm) != 2)
 		{
-			Sqrat::PushVar(vm, thisVar.value * otherVar.value);
-			return true;
+			// Only 2 arguments are supported
+			return 0;
 		}
-		Sqrat::Error::Clear(vm);
-		return false;
+
+		Sqrat::Var<const T&> thisVar(vm, 1);
+		if(OpDiv_Recursive<TypeList...>(vm, thisVar) == false)
+		{
+			// If failed, just push back the original variable unchanged
+			Sqrat::PushVar(vm, thisVar);
+		}
+
+		return 1;
 	}
 
-	// Multiplication recursive variant to iterate over the types provided by the variadic template
+private:
+	// --------------------------------------------------------------------------------------------------------------------
+	// Multiplication
+	// --------------------------------------------------------------------------------------------------------------------
+
+	// Recursive variant to iterate over the types provided by the variadic template
 	template<typename FirstType, typename SecondType, typename... TypeList>
 	static bool OpMul_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
 	{
@@ -62,5 +72,50 @@ private:
 
 		// Try with the next type
 		return OpMul_Recursive<SecondType, TypeList...>(vm, thisVar);
+	}
+
+	template<typename FirstType>
+	static bool OpMul_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	{
+		Sqrat::Var<FirstType> otherVar(vm, 2);
+		if(Sqrat::Error::Occurred(vm))
+		{
+			Sqrat::Error::Clear(vm);
+			return false;
+		}
+
+		Sqrat::PushVar(vm, thisVar.value * otherVar.value);
+		return true;
+	}
+
+	// --------------------------------------------------------------------------------------------------------------------
+	// Division
+	// --------------------------------------------------------------------------------------------------------------------
+
+	// Recursive variant to iterate over the types provided by the variadic template
+	template<typename FirstType, typename SecondType, typename... TypeList>
+	static bool OpDiv_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	{
+		if(OpDiv_Recursive<FirstType>(vm, thisVar))
+		{
+			return true;
+		}
+
+		// Try with the next type
+		return OpDiv_Recursive<SecondType, TypeList...>(vm, thisVar);
+	}
+
+	template<typename FirstType>
+	static bool OpDiv_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	{
+		Sqrat::Var<FirstType> otherVar(vm, 2);
+		if(Sqrat::Error::Occurred(vm))
+		{
+			Sqrat::Error::Clear(vm);
+			return false;
+		}
+
+		Sqrat::PushVar(vm, thisVar.value / otherVar.value);
+		return true;
 	}
 };
