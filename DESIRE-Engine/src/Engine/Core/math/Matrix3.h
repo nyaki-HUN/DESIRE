@@ -456,8 +456,7 @@ inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 	const __m128 negAxisS = SIMD::Negate(axisS);
 	__m128 tmp0 = SIMD::Blend_Z(SIMD::Swizzle_XZXX(axisS), SIMD::Swizzle_YYYY(negAxisS));
 	__m128 tmp1 = SIMD::Blend_X(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS));
-	__m128 tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
-	tmp2 = SIMD::Blend_Y(tmp2, SIMD::Swizzle_XXXX(negAxisS));
+	__m128 tmp2 = SIMD::Blend_Y(SIMD::Swizzle_YXXX(axisS), SIMD::Swizzle_XXXX(negAxisS));
 	tmp0 = SIMD::Blend_X(tmp0, c);
 	tmp1 = SIMD::Blend_Y(tmp1, c);
 	tmp2 = SIMD::Blend_Z(tmp2, c);
@@ -527,8 +526,7 @@ inline Quat::Quat(const Matrix3& rotMat)
 	res0 = SIMD::Blend_W(res0, SIMD::Swizzle_XXXX(diff));  // TODO: Ck
 	res1 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 2));
 	res1 = SIMD::Blend_W(res1, SIMD::Swizzle_YYYY(diff));  // TODO: Ck
-	res2 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 1));
-	res2 = SIMD::Blend_W(res2, SIMD::Swizzle_ZZZZ(diff));  // TODO: Ck
+	res2 = SIMD::Blend_W(SIMD::Swizzle_YXXX(sum), SIMD::Swizzle_ZZZZ(diff));  // TODO: Ck
 	res3 = diff;
 	res0 = SIMD::Blend_X(res0, radicand);
 	res1 = SIMD::Blend_Y(res1, radicand);
