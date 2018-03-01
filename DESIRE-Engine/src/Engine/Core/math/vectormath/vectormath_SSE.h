@@ -252,6 +252,7 @@ public:
 	static inline __m128 Swizzle_XXZW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 2, 0, 0)); }
 	static inline __m128 Swizzle_XYXY(__m128 vec)		{ return _mm_movelh_ps(vec, vec); }
 	static inline __m128 Swizzle_XYXW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 1, 0)); }
+	static inline __m128 Swizzle_XYYX(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 1, 1, 0)); }
 	static inline __m128 Swizzle_XYZX(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 2, 1, 0)); }
 	static inline __m128 Swizzle_XYWZ(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 3, 1, 0)); }
 	static inline __m128 Swizzle_XZXZ(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 0, 2, 0)); }
@@ -268,10 +269,12 @@ public:
 	static inline __m128 Swizzle_ZXYW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 1, 0, 2)); }
 	static inline __m128 Swizzle_ZXWY(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 3, 0, 2)); }
 	static inline __m128 Swizzle_ZZZZ(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); }
+	static inline __m128 Swizzle_ZZWX(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 3, 2, 2)); }
 	static inline __m128 Swizzle_ZZWW(__m128 vec)		{ return _mm_unpackhi_ps(vec, vec); }
 	static inline __m128 Swizzle_ZWXY(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 0, 3, 2)); }
 	static inline __m128 Swizzle_ZWYX(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 1, 3, 2)); }
 	static inline __m128 Swizzle_ZWZW(__m128 vec)		{ return _mm_movehl_ps(vec, vec); }
+	static inline __m128 Swizzle_ZWWZ(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 3, 3, 2)); }
 
 	static inline __m128 Swizzle_WXYZ(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 1, 0, 3)); }
 	static inline __m128 Swizzle_WZXY(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 0, 2, 3)); }

@@ -276,10 +276,10 @@ inline void Matrix3::Transpose()
 	__m128 tmp1 = _mm_unpackhi_ps(col0, col2);
 	col0 = _mm_unpacklo_ps(tmp0, col1);
 
-	tmp1 = _mm_shuffle_ps(tmp1, tmp1, _MM_SHUFFLE(0, 1, 1, 0));
+	tmp1 = SIMD::Swizzle_XYYX(tmp1);
 	col2 = SIMD::Blend_Y(tmp1, SIMD::Swizzle_ZZZZ(col1));
 
-	tmp0 = _mm_shuffle_ps(tmp0, tmp0, _MM_SHUFFLE(0, 3, 2, 2));
+	tmp0 = SIMD::Swizzle_ZZWX(tmp0);
 	col1 = SIMD::Blend_Y(tmp0, col1);
 #else
 	const Vector3 tmp0(col0.GetX(), col1.GetX(), col2.GetX());
@@ -305,8 +305,8 @@ inline void Matrix3::Invert()
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);
 	const __m128 inv0 = _mm_unpacklo_ps(tmp3, tmp1);
-	__m128 inv1 = _mm_shuffle_ps(tmp3, tmp3, _MM_SHUFFLE(0, 3, 2, 2));
-	__m128 inv2 = _mm_shuffle_ps(tmp4, tmp4, _MM_SHUFFLE(0, 1, 1, 0));
+	__m128 inv1 = SIMD::Swizzle_ZZWX(tmp3);
+	__m128 inv2 = SIMD::Swizzle_XYYX(tmp4);
 	inv1 = SIMD::Blend_Y(inv1, tmp1);
 	inv2 = SIMD::Blend_Y(inv2, SIMD::Swizzle_ZZZZ(tmp1));
 	col0 = SIMD::Mul(inv0, invDet);
@@ -405,10 +405,12 @@ inline Matrix3 Matrix3::CreateRotationZ(float radians)
 inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 {
 #if defined(DESIRE_USE_SSE)
+	__m128 angles = radiansXYZ;
+	SIMD::SetW(angles, 0.0f);
 	__m128 s, c;
-	sincosf4(Vector4(radiansXYZ, 0.0f), &s, &c);
-	__m128 negS = SIMD::Negate(s);
-	__m128 Z0 = _mm_unpackhi_ps(c, s);
+	sincosf4(angles, &s, &c);
+	const __m128 negS = SIMD::Negate(s);
+	const __m128 Z0 = _mm_unpackhi_ps(c, s);
 	__m128 Z1 = _mm_unpackhi_ps(negS, c);
 	alignas(16) const uint32_t select_xyz[4] = { 0xffffffff, 0xffffffff, 0xffffffff, 0 };
 	Z1 = _mm_and_ps(Z1, _mm_load_ps((float*)select_xyz));
