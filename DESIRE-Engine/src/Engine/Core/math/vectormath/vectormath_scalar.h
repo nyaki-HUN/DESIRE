@@ -420,6 +420,7 @@ public:
 
 	static inline vec_float4_t Swizzle_YXYX(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.x, vec.y, vec.x); }
 	static inline vec_float4_t Swizzle_YXZW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.x, vec.z, vec.w); }
+	static inline vec_float4_t Swizzle_YXWZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.x, vec.w, vec.z); }
 	static inline vec_float4_t Swizzle_YYYY(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.y, vec.y, vec.y); }
 	static inline vec_float4_t Swizzle_YYWW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.y, vec.w, vec.w); }
 	static inline vec_float4_t Swizzle_YZXW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.z, vec.x, vec.w); }

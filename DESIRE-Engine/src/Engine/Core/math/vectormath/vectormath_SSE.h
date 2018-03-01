@@ -258,6 +258,7 @@ public:
 
 	static inline __m128 Swizzle_YXYX(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 1, 0, 1)); }
 	static inline __m128 Swizzle_YXZW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 2, 0, 1)); }
+	static inline __m128 Swizzle_YXWZ(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 3, 0, 1)); }
 	static inline __m128 Swizzle_YYYY(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 1, 1, 1)); }
 	static inline __m128 Swizzle_YYWW(__m128 vec)		{ return _mm_movehdup_ps(vec); }
 	static inline __m128 Swizzle_YZXW(__m128 vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 0, 2, 1)); }
