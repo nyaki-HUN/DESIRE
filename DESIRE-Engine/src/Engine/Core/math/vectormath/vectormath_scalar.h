@@ -412,6 +412,7 @@ public:
 	static inline vec_float4_t Swizzle_XXYY(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.x, vec.y, vec.y); }
 	static inline vec_float4_t Swizzle_XXZZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.x, vec.z, vec.z); }
 	static inline vec_float4_t Swizzle_XXZW(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.x, vec.z, vec.w); }
+	static inline vec_float4_t Swizzle_XYXX(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.y, vec.x, vec.x); }
 	static inline vec_float4_t Swizzle_XYXY(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.y, vec.x, vec.y); }
 	static inline vec_float4_t Swizzle_XYXW(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.y, vec.x, vec.w); }
 	static inline vec_float4_t Swizzle_XYYX(const vec_float4_t& vec)		{ return vec_float4_t(vec.x, vec.y, vec.y, vec.x); }
@@ -427,15 +428,17 @@ public:
 	static inline vec_float4_t Swizzle_YXWZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.x, vec.w, vec.z); }
 	static inline vec_float4_t Swizzle_YYYY(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.y, vec.y, vec.y); }
 	static inline vec_float4_t Swizzle_YYWW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.y, vec.w, vec.w); }
+	static inline vec_float4_t Swizzle_YZXY(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.z, vec.x, vec.y); }
 	static inline vec_float4_t Swizzle_YZXW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.z, vec.x, vec.w); }
 	static inline vec_float4_t Swizzle_YZWX(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.z, vec.w, vec.x); }
 	static inline vec_float4_t Swizzle_YWYW(const vec_float4_t& vec)		{ return vec_float4_t(vec.y, vec.w, vec.y, vec.w); }
 
 	static inline vec_float4_t Swizzle_ZXXX(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.x, vec.x, vec.x); }
+	static inline vec_float4_t Swizzle_ZXYZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.x, vec.y, vec.z); }
 	static inline vec_float4_t Swizzle_ZXYW(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.x, vec.y, vec.w); }
 	static inline vec_float4_t Swizzle_ZXWY(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.x, vec.w, vec.y); }
-	static inline vec_float4_t Swizzle_ZZZZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.z, vec.z, vec.z); }
 	static inline vec_float4_t Swizzle_ZZYX(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.z, vec.y, vec.x); }
+	static inline vec_float4_t Swizzle_ZZZZ(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.z, vec.z, vec.z); }
 	static inline vec_float4_t Swizzle_ZZWX(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.z, vec.w, vec.x); }
 	static inline vec_float4_t Swizzle_ZZWW(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.z, vec.w, vec.w); }
 	static inline vec_float4_t Swizzle_ZWXY(const vec_float4_t& vec)		{ return vec_float4_t(vec.z, vec.w, vec.x, vec.y); }

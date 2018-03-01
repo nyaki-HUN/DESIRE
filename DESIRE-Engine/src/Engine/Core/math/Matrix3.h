@@ -498,10 +498,9 @@ inline Quat::Quat(const Matrix3& rotMat)
 	/* compute quaternion for each case */
 
 	const __m128 xx_yy = SIMD::Blend_Y(rotMat.col0, rotMat.col1);
-	__m128 xx_yy_zz_xx = _mm_shuffle_ps(xx_yy, xx_yy, _MM_SHUFFLE(0, 0, 1, 0));
-	xx_yy_zz_xx = SIMD::Blend_Z(xx_yy_zz_xx, rotMat.col2); // TODO: Ck
-	const __m128 yy_zz_xx_yy = _mm_shuffle_ps(xx_yy_zz_xx, xx_yy_zz_xx, _MM_SHUFFLE(1, 0, 2, 1));
-	const __m128 zz_xx_yy_zz = _mm_shuffle_ps(xx_yy_zz_xx, xx_yy_zz_xx, _MM_SHUFFLE(2, 1, 0, 2));
+	const __m128 xx_yy_zz_xx = SIMD::Blend_Z(SIMD::Swizzle_XYXX(xx_yy), rotMat.col2);
+	const __m128 yy_zz_xx_yy = SIMD::Swizzle_YZXY(xx_yy_zz_xx);
+	const __m128 zz_xx_yy_zz = SIMD::Swizzle_ZXYZ(xx_yy_zz_xx);
 
 	const __m128 diagSum = SIMD::Add(SIMD::Add(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
 	const __m128 diagDiff = SIMD::Sub(SIMD::Sub(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
