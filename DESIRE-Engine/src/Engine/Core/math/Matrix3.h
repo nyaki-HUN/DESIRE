@@ -520,11 +520,10 @@ inline Quat::Quat(const Matrix3& rotMat)
 
 	const __m128 scale = SIMD::Mul(invSqrt, 0.5f);
 
-	__m128 res0, res1, res2, res3;
-	res0 = SIMD::Blend_W(_mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 1, 2, 0)), SIMD::Swizzle_XXXX(diff));  // TODO: Ck
-	res1 = SIMD::Blend_W(_mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 2)), SIMD::Swizzle_YYYY(diff));  // TODO: Ck
-	res2 = SIMD::Blend_W(SIMD::Swizzle_YXXX(sum), SIMD::Swizzle_ZZZZ(diff));  // TODO: Ck
-	res3 = diff;
+	__m128 res0 = SIMD::Blend_W(SIMD::Swizzle_XZYX(sum), SIMD::Swizzle_XXXX(diff));
+	__m128 res1 = SIMD::Blend_W(SIMD::Swizzle_ZXXX(sum), SIMD::Swizzle_YYYY(diff));
+	__m128 res2 = SIMD::Blend_W(SIMD::Swizzle_YXXX(sum), SIMD::Swizzle_ZZZZ(diff));
+	__m128 res3 = diff;
 	res0 = SIMD::Blend_X(res0, radicand);
 	res1 = SIMD::Blend_Y(res1, radicand);
 	res2 = SIMD::Blend_Z(res2, radicand);
