@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/math/Vector3.h"
+
 class Vector4
 {
 public:
@@ -11,18 +13,19 @@ public:
 	inline Vector4(const Vector4& vec)
 		: mVec128(vec.mVec128)
 	{
-	
+
 	}
-	
+
 	inline Vector4(vec_float4_t vf)
-		: mVec128(vf) 
+		: mVec128(vf)
 	{
-	
+
 	}
 
 	inline Vector4(float x, float y, float z, float w)
+		: mVec128(SIMD::Construct(x, y, z, w))
 	{
-		mVec128 = SIMD::Construct(x, y, z, w);
+
 	}
 
 	explicit inline Vector4(float scalar)
@@ -177,12 +180,12 @@ public:
 	{
 		float scale0, scale1;
 		const float cosAngle = unitVec0.Dot(unitVec1);
-		if(cosAngle < _VECTORMATH_SLERP_TOL)
+		if(cosAngle < 0.999f)
 		{
-			const float angle = std::acosf(cosAngle);
-			const float recipSinAngle = 1.0f / std::sinf(angle);
-			scale0 = std::sinf((1.0f - t) * angle) * recipSinAngle;
-			scale1 = std::sinf(t * angle) * recipSinAngle;
+			const float angle = std::acos(cosAngle);
+			const float recipSinAngle = 1.0f / std::sin(angle);
+			scale0 = std::sin((1.0f - t) * angle) * recipSinAngle;
+			scale1 = std::sin(t * angle) * recipSinAngle;
 		}
 		else
 		{

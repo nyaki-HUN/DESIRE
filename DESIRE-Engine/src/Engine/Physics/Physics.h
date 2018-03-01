@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Engine/Core/Singleton.h"
-#include "Engine/Core/math/vectormath.h"
 
 class PhysicsComponent;
 class Object;
+class Vector3;
 
 enum class EPhysicsCollisionLayer
 {

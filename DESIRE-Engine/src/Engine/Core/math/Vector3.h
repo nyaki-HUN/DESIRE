@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/math/vectormath/vectormath.h"
+
 class Vector3
 {
 public:
@@ -19,12 +21,13 @@ public:
 	{
 
 	}
-	
+
 	inline Vector3(float x, float y, float z)
+		: mVec128(SIMD::Construct(x, y, z))
 	{
-		mVec128 = SIMD::Construct(x, y, z);
+
 	}
-	
+
 	explicit inline Vector3(float scalar)
 	{
 		SIMD::Construct(mVec128, scalar);
@@ -81,13 +84,11 @@ public:
 	inline Vector3& operator /=(const Vector3& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector3& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
-	// Compare 3-D vector to another 3-D vector for greater-than or equal
 	inline bool operator >=(const Vector3& vec) const
 	{
 		return SIMD::OpCmpGE(mVec128, vec);
 	}
 
-	// Compare 3-D vector to another 3-D vector for less-than or equal
 	inline bool operator <=(const Vector3& vec) const
 	{
 		return SIMD::OpCmpLE(mVec128, vec);
@@ -169,12 +170,12 @@ public:
 	{
 		float scale0, scale1;
 		const float cosAngle = unitVec0.Dot(unitVec1);
-		if(cosAngle < _VECTORMATH_SLERP_TOL)
+		if(cosAngle < 0.999f)
 		{
-			const float angle = std::acosf(cosAngle);
-			const float recipSinAngle = 1.0f / std::sinf(angle);
-			scale0 = std::sinf((1.0f - t) * angle) * recipSinAngle;
-			scale1 = std::sinf(t * angle) * recipSinAngle;
+			const float angle = std::acos(cosAngle);
+			const float recipSinAngle = 1.0f / std::sin(angle);
+			scale0 = std::sin((1.0f - t) * angle) * recipSinAngle;
+			scale1 = std::sin(t * angle) * recipSinAngle;
 		}
 		else
 		{

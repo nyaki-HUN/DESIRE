@@ -123,7 +123,7 @@ const char* Input::GetTypingCharacters() const
 	return typingCharacters;
 }
 
-const Point<int16_t>& Input::GetOsMouseCursorPos() const
+const Vector2& Input::GetOsMouseCursorPos() const
 {
 	return mouseCursorPos;
 }

@@ -321,28 +321,28 @@
     <ClInclude Include="..\..\src\Engine\Core\math\AABB.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Point.h">
+    <ClInclude Include="..\..\src\Engine\Core\math\Matrix3.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\Matrix4.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\Quat.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\Vector2.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\Vector3.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\Vector4.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\math.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Matrix3.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Matrix4.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Quat.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Vector3.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\Vector4.h">
+    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath.h">
       <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_NEON.h">

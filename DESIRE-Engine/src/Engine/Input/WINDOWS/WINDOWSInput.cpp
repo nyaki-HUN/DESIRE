@@ -197,7 +197,7 @@ void InputImpl::Handle_WM_MOUSEMOVE(WPARAM wParam, LPARAM lParam)
 {
 	DESIRE_UNUSED(wParam);
 
-	Input::Get()->mouseCursorPos.Set(GET_MOUSE_X(lParam), GET_MOUSE_Y(lParam));
+	Input::Get()->mouseCursorPos = Vector2((float)GET_MOUSE_X(lParam), (float)GET_MOUSE_Y(lParam));
 }
 
 void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)

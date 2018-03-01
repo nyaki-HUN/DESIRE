@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/math/Quat.h"
+
 class Matrix3
 {
 public:

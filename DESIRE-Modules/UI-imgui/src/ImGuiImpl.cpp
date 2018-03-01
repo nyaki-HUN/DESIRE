@@ -135,12 +135,14 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	}
 
 	// Mouse
+	const Vector2& mousePos = Input::Get()->GetOsMouseCursorPos();
+	io.MousePos = ImVec2(mousePos.GetX(), mousePos.GetY());
+
 	io.MouseWheel = 0.0f;
 	for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 	{
 		io.MouseDown[i] = false;
 	}
-
 	for(const Mouse& mouse : Input::Get()->GetMouses())
 	{
 		io.MouseWheel += mouse.GetAxisDelta(Mouse::WHEEL);
@@ -149,9 +151,6 @@ void ImGuiImpl::NewFrame(IWindow *window)
 			io.MouseDown[i] |= mouse.IsDown(i);
 		}
 	}
-
-	const Point<int16_t>& mousePos = Input::Get()->GetOsMouseCursorPos();
-	io.MousePos = ImVec2(mousePos.x, mousePos.y);
 
 	ImGui::NewFrame();
 }

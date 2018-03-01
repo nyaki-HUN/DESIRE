@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/math/vectormath.h"
+#include "Engine/Core/math/Vector3.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Axis Aligned Bounding Box in 3D space

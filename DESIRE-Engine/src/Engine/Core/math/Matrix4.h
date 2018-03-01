@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Engine/Core/math/Vector4.h"
+#include "Engine/Core/math/Matrix3.h"
+
 class Matrix4
 {
 public:

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/math/Vector3.h"
+
 class Matrix3;
 
 class Quat
@@ -280,7 +282,7 @@ inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 	__m128 selectMask = _mm_cmpgt_ps(_mm_setzero_ps(), cosAngle);
 	cosAngle = SIMD::Blend(cosAngle, SIMD::Negate(cosAngle), selectMask);
 	const __m128 start = SIMD::Blend(unitQuat0, SIMD::Negate(unitQuat0), selectMask);
-	selectMask = _mm_cmpgt_ps(_mm_set1_ps(_VECTORMATH_SLERP_TOL), cosAngle);
+	selectMask = _mm_cmpgt_ps(_mm_set1_ps(0.999f), cosAngle);
 	const __m128 angle = acosf4(cosAngle);
 	const __m128 tttt = _mm_set1_ps(t);
 	const __m128 oneMinusT = _mm_sub_ps(_mm_set1_ps(1.0f), tttt);
@@ -299,23 +301,23 @@ inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 	if(cosAngle < 0.0f)
 	{
 		cosAngle = -cosAngle;
-		start = (-unitQuat0);
+		start = -unitQuat0;
 	}
 	else
 	{
 		start = unitQuat0;
 	}
 
-	if(cosAngle < _VECTORMATH_SLERP_TOL)
+	if(cosAngle < 0.999f)
 	{
 		const float angle = std::acos(cosAngle);
-		const float recipSinAngle = (1.0f / std::sin(angle));
-		scale0 = (std::sin(((1.0f - t) * angle)) * recipSinAngle);
-		scale1 = (std::sin((t * angle)) * recipSinAngle);
+		const float recipSinAngle = 1.0f / std::sin(angle);
+		scale0 = std::sin((1.0f - t) * angle) * recipSinAngle;
+		scale1 = std::sin(t * angle) * recipSinAngle;
 	}
 	else
 	{
-		scale0 = (1.0f - t);
+		scale0 = 1.0f - t;
 		scale1 = t;
 	}
 

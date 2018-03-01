@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Singleton.h"
-#include "Engine/Core/math/Point.h"
+#include "Engine/Core/math/Vector2.h"
 #include "Engine/Input/Keyboard.h"
 #include "Engine/Input/Mouse.h"
 #include "Engine/Input/GameController.h"
@@ -50,7 +50,7 @@ public:
 
 	const char* GetButtonName(int buttonId) const;
 
-	const Point<int16_t>& GetOsMouseCursorPos() const;
+	const Vector2& GetOsMouseCursorPos() const;
 
 private:
 	struct Hotkey
@@ -69,5 +69,5 @@ private:
 
 	char typingCharacters[MAX_NUM_TYPING_CHARACTERS];
 
-	Point<int16_t> mouseCursorPos;
+	Vector2 mouseCursorPos;
 };

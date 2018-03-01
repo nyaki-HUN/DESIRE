@@ -1,6 +1,7 @@
 #include "API/LuaScriptAPI.h"
 
 #include "Engine/Physics/Physics.h"
+#include "Engine/Core/math/Vector3.h"
 
 void RegisterPhysicsAPI_Lua(lua_State *L)
 {

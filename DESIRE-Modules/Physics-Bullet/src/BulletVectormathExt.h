@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Engine/Core/math/vectormath.h"
+#include "Engine/Core/math/Vector3.h"
+#include "Engine/Core/math/Quat.h"
 
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btQuaternion.h"

@@ -297,7 +297,7 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 
 			HIPoint location = { 0.0f, 0.0f };
 			GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &location);
-			Input::Get()->mouseCursorPos.Set((int16_t)location.x, (int16_t)location.y);
+			Input::Get()->mouseCursorPos = Vector2(location.x, location.y);
 			break;
 		}
 

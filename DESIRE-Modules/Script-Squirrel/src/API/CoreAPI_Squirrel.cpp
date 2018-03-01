@@ -1,6 +1,6 @@
 #include "API/SquirrelScriptAPI.h"
 
-#include "Engine/Core/math/vectormath.h"
+#include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
 #include "Engine/Core/Timer.h"
 

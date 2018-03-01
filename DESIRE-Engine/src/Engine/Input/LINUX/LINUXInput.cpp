@@ -151,6 +151,5 @@ void InputImpl::Handle_MotionNotify(const XEvent& event)
 	mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)event.xmotion.x);
 	mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)event.xmotion.y);
 
-	SPoint<int16_t>& mouseCursorPos = Input::Get()->mouseCursorPos;
-	mouseCursorPos.Set((int16_t)event.xmotion.x, (int16_t)event.xmotion.y);
+	Input::Get()->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
 }
