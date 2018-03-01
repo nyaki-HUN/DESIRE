@@ -508,11 +508,10 @@ inline Quat::Quat(const Matrix3& rotMat)
 	const __m128 radicand = SIMD::Add(SIMD::Blend_W(diagDiff, diagSum), _mm_set1_ps(1.0f));
 	const __m128 invSqrt = newtonrapson_rsqrt4(radicand);
 
-	__m128 zy_xz_yx, yz_zx_xy;
-	zy_xz_yx = SIMD::Blend_Z(rotMat.col0, rotMat.col1);							// zy_xz_yx = 00 01 12 03
-	zy_xz_yx = _mm_shuffle_ps(zy_xz_yx, zy_xz_yx, _MM_SHUFFLE(0, 1, 2, 2));		// zy_xz_yx = 12 12 01 00
+	__m128 zy_xz_yx = SIMD::Blend_Z(rotMat.col0, rotMat.col1);					// zy_xz_yx = 00 01 12 03
+	zy_xz_yx = SIMD::Swizzle_ZZYX(zy_xz_yx);									// zy_xz_yx = 12 12 01 00
 	zy_xz_yx = SIMD::Blend_Y(zy_xz_yx, SIMD::Swizzle_XXXX(rotMat.col2));		// zy_xz_yx = 12 20 01 00
-	yz_zx_xy = SIMD::Blend_X(rotMat.col0, rotMat.col1);							// yz_zx_xy = 10 01 02 03
+	__m128 yz_zx_xy = SIMD::Blend_X(rotMat.col0, rotMat.col1);					// yz_zx_xy = 10 01 02 03
 	yz_zx_xy = SIMD::Swizzle_XZXX(yz_zx_xy);									// yz_zx_xy = 10 02 10 10
 	yz_zx_xy = SIMD::Blend_X(yz_zx_xy, SIMD::Swizzle_YYYY(rotMat.col2));		// yz_zx_xy = 21 02 10 10
 
@@ -522,10 +521,8 @@ inline Quat::Quat(const Matrix3& rotMat)
 	const __m128 scale = SIMD::Mul(invSqrt, 0.5f);
 
 	__m128 res0, res1, res2, res3;
-	res0 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 1, 2, 0));
-	res0 = SIMD::Blend_W(res0, SIMD::Swizzle_XXXX(diff));  // TODO: Ck
-	res1 = _mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 2));
-	res1 = SIMD::Blend_W(res1, SIMD::Swizzle_YYYY(diff));  // TODO: Ck
+	res0 = SIMD::Blend_W(_mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 1, 2, 0)), SIMD::Swizzle_XXXX(diff));  // TODO: Ck
+	res1 = SIMD::Blend_W(_mm_shuffle_ps(sum, sum, _MM_SHUFFLE(0, 0, 0, 2)), SIMD::Swizzle_YYYY(diff));  // TODO: Ck
 	res2 = SIMD::Blend_W(SIMD::Swizzle_YXXX(sum), SIMD::Swizzle_ZZZZ(diff));  // TODO: Ck
 	res3 = diff;
 	res0 = SIMD::Blend_X(res0, radicand);

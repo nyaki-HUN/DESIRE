@@ -232,6 +232,7 @@ public:
 
 	static inline float32x4_t Swizzle_ZXYW(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 3 }); }
 	static inline float32x4_t Swizzle_ZXWY(float32x4_t vec)		{ return vrev64q_f32(vec); }
+	static inline float32x4_t Swizzle_ZZYX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 1, 0 }); }
 	static inline float32x4_t Swizzle_ZZZZ(float32x4_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 0); }
 	static inline float32x4_t Swizzle_ZZWX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 3, 0 }); }
 	static inline float32x4_t Swizzle_ZZWW(float32x4_t vec)		{ return vzipq_f32(vec, vec).val[1]; }
