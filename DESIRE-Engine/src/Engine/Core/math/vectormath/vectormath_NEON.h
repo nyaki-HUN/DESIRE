@@ -217,6 +217,7 @@ public:
 	static inline float32x4_t Swizzle_XYYX(float32x4_t vec)		{ const float32x2_t v = vget_low_f32(vec); return vcombine_f32(v, vrev64_f32(v)); }
 	static inline float32x4_t Swizzle_XYZX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 1, 2, 0 }); }
 	static inline float32x4_t Swizzle_XYWZ(float32x4_t vec)		{ return vcombine_f32(vget_low_f32(vec), vrev64_f32(vget_high_f32(vec))); }
+	static inline float32x4_t Swizzle_XZXX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 2, 0, 0 }); }
 	static inline float32x4_t Swizzle_XZXZ(float32x4_t vec)		{ return vuzpq_f32(vec, vec).val[0]; }
 
 	static inline float32x4_t Swizzle_YXYX(float32x4_t vec)		{ const float32x2_t v = vrev64_f32(vget_low_f32(vec)); return vcombine_f32(v, v); }

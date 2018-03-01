@@ -454,8 +454,7 @@ inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 	const __m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
 	const __m128 axisS = SIMD::Mul(axis, s);
 	const __m128 negAxisS = SIMD::Negate(axisS);
-	__m128 tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
-	tmp0 = SIMD::Blend_Z(tmp0, SIMD::Swizzle_YYYY(negAxisS));
+	__m128 tmp0 = SIMD::Blend_Z(SIMD::Swizzle_XZXX(axisS), SIMD::Swizzle_YYYY(negAxisS));
 	__m128 tmp1 = SIMD::Blend_X(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS));
 	__m128 tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
 	tmp2 = SIMD::Blend_Y(tmp2, SIMD::Swizzle_XXXX(negAxisS));
@@ -515,7 +514,7 @@ inline Quat::Quat(const Matrix3& rotMat)
 	zy_xz_yx = _mm_shuffle_ps(zy_xz_yx, zy_xz_yx, _MM_SHUFFLE(0, 1, 2, 2));		// zy_xz_yx = 12 12 01 00
 	zy_xz_yx = SIMD::Blend_Y(zy_xz_yx, SIMD::Swizzle_XXXX(rotMat.col2));		// zy_xz_yx = 12 20 01 00
 	yz_zx_xy = SIMD::Blend_X(rotMat.col0, rotMat.col1);							// yz_zx_xy = 10 01 02 03
-	yz_zx_xy = _mm_shuffle_ps(yz_zx_xy, yz_zx_xy, _MM_SHUFFLE(0, 0, 2, 0));		// yz_zx_xy = 10 02 10 10
+	yz_zx_xy = SIMD::Swizzle_XZXX(yz_zx_xy);									// yz_zx_xy = 10 02 10 10
 	yz_zx_xy = SIMD::Blend_X(yz_zx_xy, SIMD::Swizzle_YYYY(rotMat.col2));		// yz_zx_xy = 21 02 10 10
 
 	const __m128 sum = SIMD::Add(zy_xz_yx, yz_zx_xy);

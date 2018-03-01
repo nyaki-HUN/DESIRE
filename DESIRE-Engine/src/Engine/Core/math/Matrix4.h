@@ -773,8 +773,7 @@ inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 	const __m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
 	const __m128 axisS = SIMD::Mul(axis, s);
 	const __m128 negAxisS = SIMD::Negate(axisS);
-	__m128 tmp0 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 2, 0));
-	tmp0 = SIMD::Blend_Z(tmp0, SIMD::Swizzle_YYYY(negAxisS));
+	__m128 tmp0 = SIMD::Blend_Z(SIMD::Swizzle_XZXX(axisS), SIMD::Swizzle_YYYY(negAxisS));
 	__m128 tmp1 = SIMD::Blend_X(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS));
 	__m128 tmp2 = _mm_shuffle_ps(axisS, axisS, _MM_SHUFFLE(0, 0, 0, 1));
 	tmp2 = SIMD::Blend_Y(tmp2, SIMD::Swizzle_XXXX(negAxisS));
