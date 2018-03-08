@@ -45,5 +45,5 @@ void android_main(android_app *androidApp)
 	androidApp->onAppCmd = ANDROIDWindow::HandleOnAppCmd;
 	androidApp->onInputEvent = Desire_AndroidOnInputEvent;
 
-	IApp::Run(0, nullptr);
+	IApp::Start(0, nullptr);
 }

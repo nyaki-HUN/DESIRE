@@ -16,5 +16,5 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
 //	_CrtSetBreakAlloc(123);
 #endif
 
-	return IApp::Run(__argc, __argv);
+	return IApp::Start(__argc, __argv);
 }

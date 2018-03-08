@@ -310,7 +310,7 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
 {
-	return new WINDOWSWindow(creationParams);
+	return std::make_unique<WINDOWSWindow>(creationParams);
 }

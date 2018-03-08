@@ -14,7 +14,7 @@ class IApp
 	static void CreateInstance();
 
 public:
-	virtual void Init(IWindow *mainWindow) = 0;
+	virtual void Init() = 0;
 	virtual void Kill() = 0;
 	virtual void Update() = 0;
 
@@ -24,7 +24,7 @@ public:
 	// Send generic application event (without parameters) with 'eventType'
 	void SendEvent(EAppEventType eventType);
 
-	static int Run(int argc, const char * const *argv);
+	static int Start(int argc, const char * const *argv);
 	static void Stop(int returnValue = 0);
 
 protected:
@@ -51,10 +51,17 @@ protected:
 		uint8_t supportedOrientations;
 	};
 
+protected:
+	std::unique_ptr<IWindow> mainWindow;
+
 private:
+	void Run();
+
 	virtual CreationParams GetCreationParams(int argc, const char * const *argv);
 
-	static IApp* instance;
+	void InitModules();
+	void KillModules();
+
 	static bool isMainLoopRunning;
 	static int returnValue;
 };

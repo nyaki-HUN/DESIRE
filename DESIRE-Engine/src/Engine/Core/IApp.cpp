@@ -7,7 +7,7 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Script/ScriptSystem.h"
 
-IApp* IApp::instance = nullptr;
+IApp *IApp::instance = nullptr;
 bool IApp::isMainLoopRunning = false;
 int IApp::returnValue = 0;
 
@@ -19,11 +19,6 @@ IApp::IApp()
 IApp::~IApp()
 {
 
-}
-
-IApp* IApp::Get()
-{
-	return instance;
 }
 
 void IApp::SendEvent(const CoreAppEvent& event)
@@ -39,7 +34,7 @@ void IApp::SendEvent(EAppEventType eventType)
 	SendEvent(CoreAppEvent(eventType));
 }
 
-int IApp::Run(int argc, const char * const *argv)
+int IApp::Start(int argc, const char * const *argv)
 {
 	ASSERT(!isMainLoopRunning);
 
@@ -52,47 +47,13 @@ int IApp::Run(int argc, const char * const *argv)
 
 	LOG_DEBUG("DESIRE Engine is starting up...");
 
-	// Init engine
-	Timer::Get();
-	Input::Get();
-	Physics *physics = Physics::Get();
-	ScriptSystem *scriptSystem = ScriptSystem::Get();
+	CreationParams params = instance->GetCreationParams(argc, argv);
+	instance->mainWindow = IWindow::Create(params.windowParams);
 
-	CreationParams params = IApp::Get()->GetCreationParams(argc, argv);
-	IWindow *mainWindow = IWindow::Create(params.windowParams);
-	Render::Get()->Init(mainWindow);
-	Input::Init(mainWindow);
+	instance->Run();
 
-	// Run App
-	instance->Init(mainWindow);
-	isMainLoopRunning = true;
-	while(isMainLoopRunning)
-	{
-		Timer::Get()->Update();
-		Input::Get()->Update();
-
-		mainWindow->HandleWindowMessages();
-
-		if(scriptSystem != nullptr)
-		{
-			scriptSystem->Update();
-		}
-
-		if(physics != nullptr)
-		{
-			physics->Update();
-		}
-
-		instance->Update();
-	}
-	instance->Kill();
 	delete instance;
 	instance = nullptr;
-
-	// DeInit engine
-	Input::Kill();
-	Render::Get()->Kill();
-	delete mainWindow;
 
 	return returnValue;
 }
@@ -103,9 +64,51 @@ void IApp::Stop(int i_returnValue)
 	isMainLoopRunning = false;
 }
 
+void IApp::Run()
+{
+	InitModules();
+	Init();
+
+	isMainLoopRunning = true;
+	while(isMainLoopRunning)
+	{
+		Timer::Get()->Update();
+		Input::Get()->Update();
+
+		mainWindow->HandleWindowMessages();
+
+		if(ScriptSystem::Get() != nullptr)
+		{
+			ScriptSystem::Get()->Update();
+		}
+
+		if(Physics::Get() != nullptr)
+		{
+			Physics::Get()->Update();
+		}
+
+		Update();
+	}
+
+	Kill();
+	KillModules();
+}
+
 IApp::CreationParams IApp::GetCreationParams(int argc, const char * const *argv)
 {
 	DESIRE_UNUSED(argc);
 	DESIRE_UNUSED(argv);
 	return CreationParams();
+}
+
+void IApp::InitModules()
+{
+	Render::Get()->Init(mainWindow.get());
+	Input::Init(mainWindow.get());
+}
+
+void IApp::KillModules()
+{
+	Input::Kill();
+	Render::Get()->Kill();
 }

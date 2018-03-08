@@ -14,12 +14,11 @@ public:
 	SandBox();
 	~SandBox() override;
 
-	void Init(IWindow *mainWindow) override;
+	void Init() override;
 	void Kill() override;
 	void Update() override;
 
 private:
-	IWindow *window = nullptr;
 	Object *scriptedObject = nullptr;
 	Object *cubeObj = nullptr;
 

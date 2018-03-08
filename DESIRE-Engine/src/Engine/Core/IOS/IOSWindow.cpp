@@ -42,7 +42,7 @@ String IOSWindow::GetClipboardString()
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
 {
-	return new IOSWindow(creationParams);
+	return std::make_unique<IOSWindow>(creationParams);
 }

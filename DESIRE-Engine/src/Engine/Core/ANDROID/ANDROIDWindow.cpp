@@ -145,7 +145,7 @@ void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
 {
 	DESIRE_TODO("Return global instance");
 	return nullptr;

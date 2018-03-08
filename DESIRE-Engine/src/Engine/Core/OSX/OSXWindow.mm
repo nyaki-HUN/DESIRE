@@ -104,7 +104,7 @@ String OSXWindow::GetClipboardString()
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
 {
-	return new OSXWindow(creationParams);
+	return std::make_unique<OSXWindow>(creationParams);
 }

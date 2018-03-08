@@ -2,7 +2,7 @@
 
 #include "Engine/Core/String.h"
 
-#include <stdint.h>
+#include <memory>
 
 class IWindow
 {
@@ -63,7 +63,7 @@ public:
 	virtual String GetClipboardString() = 0;
 
 	// Create a new IWindow
-	static IWindow* Create(const CreationParams& creationParams);
+	static std::unique_ptr<IWindow> Create(const CreationParams& creationParams);
 
 protected:
 	void SetSize(uint16_t width, uint16_t height);

@@ -33,10 +33,8 @@ SandBox::~SandBox()
 
 }
 
-void SandBox::Init(IWindow *mainWindow)
+void SandBox::Init()
 {
-	window = mainWindow;
-
 	ImGuiImpl::Get()->Init();
 
 	FileSystem::Get()->AddZipFileSource("data/zip.zip");
@@ -135,8 +133,8 @@ void SandBox::Update()
 
 	dataDirWatcher->Update();
 
-	Render::Get()->BeginFrame(window);
-	ImGuiImpl::Get()->NewFrame(window);
+	Render::Get()->BeginFrame(mainWindow.get());
+	ImGuiImpl::Get()->NewFrame(mainWindow.get());
 
 	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Another Window");

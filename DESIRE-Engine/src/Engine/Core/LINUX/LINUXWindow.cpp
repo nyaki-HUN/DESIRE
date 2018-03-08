@@ -204,7 +204,7 @@ void LINUXWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHa
 //	IWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-IWindow* IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
 {
-	return new LINUXWindow(creationParams);
+	return std::make_unique<LINUXWindow>(creationParams);
 }

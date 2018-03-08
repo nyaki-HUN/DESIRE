@@ -9,7 +9,7 @@
 
 #define DESIRE_SINGLETON(Class)							\
 public:													\
-	static Class* Get()									\
+	inline static Class* Get()							\
 	{													\
 		static Class instance;							\
 		return &instance;								\
@@ -25,24 +25,16 @@ private:												\
 
 #define DESIRE_DECLARE_SINGLETON(Class)					\
 public:													\
-	static Class* Get();								\
+	inline static Class* Get()							\
+	{													\
+		return instance;								\
+	}													\
 protected:												\
 	Class();											\
 	virtual ~Class();									\
+private:												\
+	static Class *instance;								\
 	Class(const Class&) = delete;						\
 	Class(Class&&) = delete;							\
 	Class& operator=(const Class&) = delete;			\
 	Class& operator=(Class&&) = delete;
-
-#define DESIRE_DEFINE_SINGLETON_INSTANCE(Class, Impl)	\
-	Class* Class::Get()									\
-	{													\
-		static Impl instance;							\
-		return &instance;								\
-	}	
-
-#define DESIRE_DEFINE_EMPTY_SINGLETON_INSTANCE(Class)	\
-	Class* Class::Get()									\
-	{													\
-		return nullptr;									\
-	}	

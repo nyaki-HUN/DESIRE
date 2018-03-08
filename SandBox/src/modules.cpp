@@ -27,17 +27,17 @@ const HashedStringMap<CompressionManager::CompressionFactoryFunc_t> CompressionM
 #include "Physics-Box2D/src/Box2DPhysics.h"
 #include "Physics-Bullet/src/BulletPhysics.h"
 //#include "Physics-PhysX/src/PhysXPhysics.h"
-DESIRE_DEFINE_SINGLETON_INSTANCE(Physics, Box2DPhysics)
-//DESIRE_DEFINE_SINGLETON_INSTANCE(Physics, BulletPhysics)
-//DESIRE_DEFINE_SINGLETON_INSTANCE(Physics, PhysXPhysics)
+Physics *Physics::instance = new Box2DPhysics();
+//Physics *Physics::instance = new BulletPhysics();
+//Physics *Physics::instance = new PhysXPhysics();
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Render
 // --------------------------------------------------------------------------------------------------------------------
 #include "Render-bgfx/src/BgfxRender.h"
 #include "Render-Direct3D11/src/Direct3D11Render.h"
-DESIRE_DEFINE_SINGLETON_INSTANCE(Render, BgfxRender)
-//DESIRE_DEFINE_SINGLETON_INSTANCE(Render, Direct3D11Render)
+//Render *Render::instance = new BgfxRender;
+Render *Render::instance = new Direct3D11Render;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Resource
@@ -70,12 +70,12 @@ const std::vector<ResourceManager::TextureLoaderFunc_t> ResourceManager::texture
 #include "Script-AngelScript/src/AngelScriptSystem.h"
 #include "Script-Lua/src/LuaScriptSystem.h"
 #include "Script-Squirrel/src/SquirrelScriptSystem.h"
-//DESIRE_DEFINE_SINGLETON_INSTANCE(ScriptSystem, AngelScriptSystem)
-//DESIRE_DEFINE_SINGLETON_INSTANCE(ScriptSystem, LuaScriptSystem)
-DESIRE_DEFINE_SINGLETON_INSTANCE(ScriptSystem, SquirrelScriptSystem)
+//ScriptSystem *ScriptSystem::instance = new AngelScriptSystem();
+//ScriptSystem *ScriptSystem::instance = new LuaScriptSystem();
+ScriptSystem *ScriptSystem::instance = new SquirrelScriptSystem();
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Sound
 // --------------------------------------------------------------------------------------------------------------------
 #include "Engine/Sound/Sound.h"
-DESIRE_DEFINE_EMPTY_SINGLETON_INSTANCE(Sound)
+Sound *Sound::instance = nullptr;

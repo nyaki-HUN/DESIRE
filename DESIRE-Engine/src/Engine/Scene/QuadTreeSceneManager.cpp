@@ -7,7 +7,7 @@
 #include "Engine/Render/Camera.h"
 #include "Engine/Render/DebugDraw.h"
 
-DESIRE_DEFINE_SINGLETON_INSTANCE(ISceneManager, QuadTreeSceneManager)
+ISceneManager *ISceneManager::instance = new QuadTreeSceneManager();
 
 QuadTreeSceneManager::QuadTreeSceneManager()
 	: rootLeaf(new QuadTreeLeaf(0))
