@@ -480,7 +480,7 @@
     <ClInclude Include="..\..\src\Engine\Script\ScriptSystem.h">
       <Filter>src\Engine\Script</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Sound\Sound.h">
+    <ClInclude Include="..\..\src\Engine\Sound\SoundSystem.h">
       <Filter>src\Engine\Sound</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Utils\Enumerator.h">
@@ -683,7 +683,7 @@
     <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp">
       <Filter>src\Engine\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Sound\Sound.cpp">
+    <ClCompile Include="..\..\src\Engine\Sound\SoundSystem.cpp">
       <Filter>src\Engine\Sound</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp">

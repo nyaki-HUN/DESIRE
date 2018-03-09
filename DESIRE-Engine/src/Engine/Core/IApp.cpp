@@ -7,6 +7,7 @@
 #include "Engine/Physics/Physics.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Script/ScriptSystem.h"
+#include "Engine/Sound/SoundSystem.h"
 
 IApp *IApp::instance = nullptr;
 bool IApp::isMainLoopRunning = false;
@@ -48,6 +49,8 @@ int IApp::Start(int argc, const char * const *argv)
 
 	LOG_DEBUG("DESIRE Engine is starting up...");
 
+	instance->CreateModules();
+
 	CreationParams params = instance->GetCreationParams(argc, argv);
 	instance->mainWindow = IWindow::Create(params.windowParams);
 
@@ -55,6 +58,8 @@ int IApp::Start(int argc, const char * const *argv)
 
 	delete instance;
 	instance = nullptr;
+
+	DestroyModules();
 
 	return returnValue;
 }
@@ -67,7 +72,9 @@ void IApp::Stop(int i_returnValue)
 
 void IApp::Run()
 {
-	InitModules();
+	Modules::Render->Init(mainWindow.get());
+	Input::Init(mainWindow.get());
+
 	Init();
 
 	isMainLoopRunning = true;
@@ -78,21 +85,23 @@ void IApp::Run()
 
 		mainWindow->HandleWindowMessages();
 
-		if(ScriptSystem::Get() != nullptr)
+		if(Modules::ScriptSystem != nullptr)
 		{
-			ScriptSystem::Get()->Update();
+			Modules::ScriptSystem->Update();
 		}
 
-		if(Physics::Get() != nullptr)
+		if(Modules::Physics != nullptr)
 		{
-			Physics::Get()->Update();
+			Modules::Physics->Update();
 		}
 
 		Update();
 	}
 
 	Kill();
-	KillModules();
+
+	Input::Kill();
+	Modules::Render->Kill();
 }
 
 IApp::CreationParams IApp::GetCreationParams(int argc, const char * const *argv)
@@ -102,16 +111,32 @@ IApp::CreationParams IApp::GetCreationParams(int argc, const char * const *argv)
 	return CreationParams();
 }
 
-void IApp::InitModules()
+void IApp::CreateModules()
 {
-	Modules::Render = renderCreator();
+	if(physicsFactory != nullptr)
+	{
+		Modules::Physics = physicsFactory();
+	}
 
-	Modules::Render->Init(mainWindow.get());
-	Input::Init(mainWindow.get());
+	if(renderFactory != nullptr)
+	{
+		Modules::Render = renderFactory();
+	}
+	
+	if(scriptSystemFactory != nullptr)
+	{
+		Modules::ScriptSystem = scriptSystemFactory();
+	}
+
+	if(soundSystemFactory != nullptr)
+	{
+		Modules::SoundSystem = soundSystemFactory();
+	}
 }
 
-void IApp::KillModules()
+void IApp::DestroyModules()
 {
-	Input::Kill();
-	Modules::Render->Kill();
+	Modules::Physics = nullptr;
+	Modules::Render = nullptr;
+	Modules::ScriptSystem = nullptr;
 }

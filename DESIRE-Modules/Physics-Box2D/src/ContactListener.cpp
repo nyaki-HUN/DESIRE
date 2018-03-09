@@ -1,6 +1,8 @@
 #include "ContactListener.h"
 #include "Box2DPhysics.h"
 
+#include "Engine/Core/Modules.h"
+
 #include "Box2D/Dynamics/Contacts/b2Contact.h"
 
 #include <algorithm>		// for std::min
@@ -17,14 +19,14 @@ ContactListener::~ContactListener()
 
 void ContactListener::BeginContact(b2Contact *contact)
 {
-	std::vector<Collision>& contacts = static_cast<Box2DPhysics*>(Physics::Get())->contactsBegin;
+	std::vector<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsBegin;
 	contacts.emplace_back();
 	FillCollisionFromContact(contacts.back(), contact);
 }
 
 void ContactListener::EndContact(b2Contact *contact)
 {
-	std::vector<Collision>& contacts = static_cast<Box2DPhysics*>(Physics::Get())->contactsEnd;
+	std::vector<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsEnd;
 	contacts.emplace_back();
 	FillCollisionFromContact(contacts.back(), contact);
 }

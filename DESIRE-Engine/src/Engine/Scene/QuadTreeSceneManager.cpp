@@ -7,8 +7,6 @@
 #include "Engine/Render/Camera.h"
 #include "Engine/Render/DebugDraw.h"
 
-ISceneManager *ISceneManager::instance = new QuadTreeSceneManager();
-
 QuadTreeSceneManager::QuadTreeSceneManager()
 	: rootLeaf(new QuadTreeLeaf(0))
 	, activeCamera(nullptr)

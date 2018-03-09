@@ -8,11 +8,17 @@
 
 class CoreAppEvent;
 enum class EAppEventType;
+class Physics;
 class Render;
+class ScriptSystem;
+class SoundSystem;
 
 class IApp
 {
-	DESIRE_DECLARE_SINGLETON(IApp)
+protected:
+	IApp();
+	virtual ~IApp();
+
 	static void CreateInstance();
 
 public:
@@ -28,6 +34,11 @@ public:
 
 	static int Start(int argc, const char * const *argv);
 	static void Stop(int returnValue = 0);
+
+	inline static IApp* Get()
+	{
+		return instance;
+	}
 
 protected:
 	enum EOrientation
@@ -61,11 +72,16 @@ private:
 
 	virtual CreationParams GetCreationParams(int argc, const char * const *argv);
 
-	void InitModules();
-	void KillModules();
+	void CreateModules();
+	static void DestroyModules();
 
-	static const Factory<Render>::Func_t renderCreator;
+	// Module factories
+	static const Factory<Physics>::Func_t physicsFactory;
+	static const Factory<Render>::Func_t renderFactory;
+	static const Factory<ScriptSystem>::Func_t scriptSystemFactory;
+	static const Factory<SoundSystem>::Func_t soundSystemFactory;
 
+	static IApp *instance;
 	static bool isMainLoopRunning;
 	static int returnValue;
 };

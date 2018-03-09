@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
-
 class PhysicsComponent;
 class Object;
 class Vector3;
@@ -18,8 +16,6 @@ enum class EPhysicsCollisionLayer
 
 class Physics
 {
-	DESIRE_DECLARE_SINGLETON(Physics)
-
 public:
 	enum EPhysicsCollisionLayerMask
 	{
@@ -30,6 +26,9 @@ public:
 		MASK_NO_COLLISION		= 1 << (int)EPhysicsCollisionLayer::NO_COLLISION,
 		MASK_ALL				= 0xFFFFFFFF
 	};
+
+	Physics();
+	virtual ~Physics();
 
 	virtual void Update() = 0;
 

@@ -13,7 +13,7 @@ ScriptSystem::~ScriptSystem()
 
 }
 
-void ScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory_t factory)
+void ScriptSystem::RegisterScript(HashedString scriptName, Factory<IScript>::Func_t factory)
 {
 	ASSERT(factory != nullptr);
 
@@ -24,7 +24,7 @@ void ScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scr
 {
 	// Try to create as a native script 
 	HashedString scriptNameHash = HashedString::CreateFromDynamicString(scriptName);
-	ScriptFactory_t *scriptFactory = scriptFactories.Find(scriptNameHash);
+	Factory<IScript>::Func_t *scriptFactory = scriptFactories.Find(scriptNameHash);
 	if(scriptFactory != nullptr)
 	{
 		object.AddComponent<NativeScriptComponent>((*scriptFactory)());

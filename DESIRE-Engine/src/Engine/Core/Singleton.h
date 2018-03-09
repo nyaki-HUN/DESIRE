@@ -21,20 +21,3 @@ private:												\
 	Class(Class&&) = delete;							\
 	Class& operator=(const Class&) = delete;			\
 	Class& operator=(Class&&) = delete;
-
-
-#define DESIRE_DECLARE_SINGLETON(Class)					\
-public:													\
-	inline static Class* Get()							\
-	{													\
-		return instance;								\
-	}													\
-protected:												\
-	Class();											\
-	virtual ~Class();									\
-private:												\
-	static Class *instance;								\
-	Class(const Class&) = delete;						\
-	Class(Class&&) = delete;							\
-	Class& operator=(const Class&) = delete;			\
-	Class& operator=(Class&&) = delete;

@@ -1,12 +1,14 @@
 #include "Box2DPhysicsComponent.h"
 #include "Box2DPhysics.h"
 
+#include "Engine/Core/Modules.h"
+
 #include "Box2D/Dynamics/b2World.h"
 
 Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	: PhysicsComponent(object)
 {
-	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Physics::Get());
+	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Modules::Physics.get());
 
 	b2BodyDef bodyDef;
 	bodyDef.userData = this;
@@ -15,7 +17,7 @@ Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 
 Box2DPhysicsComponent::~Box2DPhysicsComponent()
 {
-	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Physics::Get());
+	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Modules::Physics.get());
 
 	ReleaseFixtures();
 
@@ -61,7 +63,7 @@ void Box2DPhysicsComponent::ReleaseFixtures()
 
 void Box2DPhysicsComponent::UpdateFilterData()
 {
-	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Physics::Get());
+	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Modules::Physics.get());
 
 	filterData.categoryBits = 1 << (int)collisionLayer;
 	filterData.maskBits = physics->GetMaskForCollisionLayer(collisionLayer);

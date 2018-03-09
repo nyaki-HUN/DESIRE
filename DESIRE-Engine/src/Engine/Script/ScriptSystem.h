@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
+#include "Engine/Core/Factory.h"
 #include "Engine/Core/HashedStringMap.h"
 
 #include <vector>
@@ -12,14 +12,13 @@ class Object;
 
 class ScriptSystem
 {
-	DESIRE_DECLARE_SINGLETON(ScriptSystem)
-
 public:
-	typedef std::unique_ptr<IScript>(*ScriptFactory_t)();
+	ScriptSystem();
+	virtual ~ScriptSystem();
 
 	void Update();
 
-	void RegisterScript(HashedString scriptName, ScriptFactory_t factory);
+	void RegisterScript(HashedString scriptName, Factory<IScript>::Func_t factory);
 	void CreateScriptComponentOnObject(Object& object, const char *scriptName);
 
 	void OnScriptComponentCreate(ScriptComponent *component);
@@ -29,18 +28,7 @@ private:
 	virtual void CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) = 0;
 
 	std::vector<ScriptComponent*> scriptComponents;
-	HashedStringMap<ScriptFactory_t> scriptFactories;
+	HashedStringMap<Factory<IScript>::Func_t> scriptFactories;
 };
 
-// Helper class for registering native scripts
-template<class T>
-class NativeScriptFactory
-{
-public:
-	inline static std::unique_ptr<IScript> Create()
-	{
-		return std::make_unique<T>();
-	}
-};
-
-#define REGISTER_NATIVE_SCRIPT(SCRIPT)	ScriptSystem::Get()->RegisterScript(HashedString(#SCRIPT), &NativeScriptFactory<SCRIPT>::Create)
+#define REGISTER_NATIVE_SCRIPT(SCRIPT)	Modules::ScriptSystem->RegisterScript(HashedString(#SCRIPT), &Factory<SCRIPT>::Create)

@@ -233,7 +233,7 @@
     <ClInclude Include="..\..\src\Engine\Script\IScript.h" />
     <ClInclude Include="..\..\src\Engine\Script\NativeScriptComponent.h" />
     <ClInclude Include="..\..\src\Engine\Script\ScriptSystem.h" />
-    <ClInclude Include="..\..\src\Engine\Sound\Sound.h" />
+    <ClInclude Include="..\..\src\Engine\Sound\SoundSystem.h" />
     <ClInclude Include="..\..\src\Engine\Utils\Enumerator.h" />
     <ClInclude Include="..\..\src\Engine\Utils\GuardedCallbackFactory.h" />
     <ClInclude Include="..\..\src\Engine\Utils\JsonDataTranslator.h" />
@@ -302,7 +302,7 @@
     <ClCompile Include="..\..\src\Engine\Scene\Transform.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\NativeScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp" />
-    <ClCompile Include="..\..\src\Engine\Sound\Sound.cpp" />
+    <ClCompile Include="..\..\src\Engine\Sound\SoundSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp" />
     <ClCompile Include="..\..\src\Engine\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

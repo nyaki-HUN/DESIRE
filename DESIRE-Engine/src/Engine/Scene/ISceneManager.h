@@ -1,15 +1,16 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
-
 class Object;
 class Camera;
 
 class ISceneManager
 {
-	DESIRE_DECLARE_SINGLETON(ISceneManager)
+protected:
+	ISceneManager() {}
 
 public:
+	virtual ~ISceneManager() {}
+
 	virtual void AddObject(Object *obj, bool dynamic) = 0;
 	virtual void RemoveObject(Object *obj) = 0;
 

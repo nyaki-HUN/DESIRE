@@ -27,17 +27,19 @@ const HashedStringMap<Factory<Compression>::Func_t> CompressionManager::compress
 #include "Physics-Box2D/src/Box2DPhysics.h"
 #include "Physics-Bullet/src/BulletPhysics.h"
 //#include "Physics-PhysX/src/PhysXPhysics.h"
-Physics *Physics::instance = new Box2DPhysics();
-//Physics *Physics::instance = new BulletPhysics();
-//Physics *Physics::instance = new PhysXPhysics();
+const Factory<Physics>::Func_t IApp::physicsFactory =
+	&Factory<Physics>::Create<Box2DPhysics>;
+//	&Factory<Physics>::Create<BulletPhysics>;
+//	&Factory<Physics>::Create<PhysXPhysics>;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Render
 // --------------------------------------------------------------------------------------------------------------------
 #include "Render-bgfx/src/BgfxRender.h"
 #include "Render-Direct3D11/src/Direct3D11Render.h"
-//const Factory<Render>::Func_t IApp::renderCreator = &Factory<Render>::Create<BgfxRender>;
-const Factory<Render>::Func_t IApp::renderCreator = &Factory<Render>::Create<Direct3D11Render>;
+const Factory<Render>::Func_t IApp::renderFactory =
+//	&Factory<Render>::Create<BgfxRender>;
+	&Factory<Render>::Create<Direct3D11Render>;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Resource
@@ -70,12 +72,12 @@ const std::vector<ResourceManager::TextureLoaderFunc_t> ResourceManager::texture
 #include "Script-AngelScript/src/AngelScriptSystem.h"
 #include "Script-Lua/src/LuaScriptSystem.h"
 #include "Script-Squirrel/src/SquirrelScriptSystem.h"
-//ScriptSystem *ScriptSystem::instance = new AngelScriptSystem();
-//ScriptSystem *ScriptSystem::instance = new LuaScriptSystem();
-ScriptSystem *ScriptSystem::instance = new SquirrelScriptSystem();
+const Factory<ScriptSystem>::Func_t IApp::scriptSystemFactory =
+//	&Factory<ScriptSystem>::Create<AngelScriptSystem>;
+//	&Factory<ScriptSystem>::Create<LuaScriptSystem>;
+	&Factory<ScriptSystem>::Create<SquirrelScriptSystem>;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Sound
 // --------------------------------------------------------------------------------------------------------------------
-#include "Engine/Sound/Sound.h"
-Sound *Sound::instance = nullptr;
+const Factory<SoundSystem>::Func_t IApp::soundSystemFactory = nullptr;

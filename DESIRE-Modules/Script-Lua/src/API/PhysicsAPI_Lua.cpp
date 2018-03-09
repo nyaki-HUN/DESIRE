@@ -1,7 +1,8 @@
 #include "API/LuaScriptAPI.h"
 
-#include "Engine/Physics/Physics.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/math/Vector3.h"
+#include "Engine/Physics/Physics.h"
 
 void RegisterPhysicsAPI_Lua(lua_State *L)
 {
@@ -10,5 +11,5 @@ void RegisterPhysicsAPI_Lua(lua_State *L)
 		.addFunction("RaycastAny", &Physics::RaycastAny)
 		.endClass();
 
-	luabridge::setGlobal(L, Physics::Get(), "Physics");
+	luabridge::setGlobal(L, Modules::Physics.get(), "Physics");
 }

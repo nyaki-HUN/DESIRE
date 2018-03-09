@@ -1,5 +1,6 @@
 #include "API/SquirrelScriptAPI.h"
 
+#include "Engine/Core/Modules.h"
 #include "Engine/Physics/Physics.h"
 
 void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable)
@@ -10,5 +11,5 @@ void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable)
 	rootTable.Bind("IPhysics", Sqrat::Class<Physics, Sqrat::NoConstructor<Physics>>(vm, "IPhysics")
 		.Func("RaycastAny", &Physics::RaycastAny)
 	);
-	rootTable.SetInstance("Physics", Physics::Get());
+	rootTable.SetInstance("Physics", Modules::Physics.get());
 }
