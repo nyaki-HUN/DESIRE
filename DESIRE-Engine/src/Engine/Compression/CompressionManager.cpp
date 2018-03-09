@@ -13,13 +13,11 @@ CompressionManager::~CompressionManager()
 
 std::unique_ptr<Compression> CompressionManager::CreateCompression(HashedString name) const
 {
-	Compression *compression = nullptr;
-
-	const CompressionFactoryFunc_t *factoryFunc = compressionFactories.Find(name);
+	const Factory<Compression>::Func_t *factoryFunc = compressionFactories.Find(name);
 	if(factoryFunc != nullptr)
 	{
-		compression = (*factoryFunc)();
+		return (*factoryFunc)();
 	}
 
-	return std::unique_ptr<Compression>(compression);
+	return nullptr;
 }

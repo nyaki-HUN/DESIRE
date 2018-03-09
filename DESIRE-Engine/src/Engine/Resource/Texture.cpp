@@ -1,4 +1,5 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Resource/Texture.h"
 #include "Engine/Render/Render.h"
 
@@ -15,7 +16,7 @@ Texture::~Texture()
 {
 	if(renderData != nullptr)
 	{
-		Render::Get()->Unbind(this);
+		Modules::Render->Unbind(this);
 	}
 }
 

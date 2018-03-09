@@ -2,6 +2,7 @@
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/IWindow.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Render/Material.h"
@@ -175,11 +176,9 @@ void ImGuiImpl::EndFrame()
 
 void ImGuiImpl::DoRender(ImDrawData *drawData)
 {
-	Render *render = Render::Get();
-
-	render->SetDepthWriteEnabled(false);
-	render->SetCullMode(Render::ECullMode::NONE);
-	render->SetBlendMode(Render::EBlend::SRC_ALPHA, Render::EBlend::INV_SRC_ALPHA, Render::EBlendOp::ADD);
+	Modules::Render->SetDepthWriteEnabled(false);
+	Modules::Render->SetCullMode(Render::ECullMode::NONE);
+	Modules::Render->SetBlendMode(Render::EBlend::SRC_ALPHA, Render::EBlend::INV_SRC_ALPHA, Render::EBlendOp::ADD);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
 	ASSERT((uint32_t)drawData->TotalIdxCount <= mesh->maxNumOfIndices);
@@ -203,7 +202,7 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 	}
 	mesh->isIndexDataUpdateRequired = true;
 	mesh->isVertexDataUpdateRequired = true;
-	render->UpdateDynamicMesh(mesh.get());
+	Modules::Render->UpdateDynamicMesh(mesh.get());
 
 	mesh->indexOffset = 0;
 	mesh->vertexOffset = 0;
@@ -216,7 +215,7 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 		{
 			const uint16_t clipX = std::max<uint16_t>(0, (uint16_t)cmd.ClipRect.x);
 			const uint16_t clipY = std::max<uint16_t>(0, (uint16_t)cmd.ClipRect.y);
-			render->SetScissor(clipX, clipY, (uint16_t)(cmd.ClipRect.z - clipX), (uint16_t)(cmd.ClipRect.w - clipY));
+			Modules::Render->SetScissor(clipX, clipY, (uint16_t)(cmd.ClipRect.z - clipX), (uint16_t)(cmd.ClipRect.w - clipY));
 
 			if(cmd.UserCallback)
 			{
@@ -227,7 +226,7 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 			mesh->numIndices = cmd.ElemCount;
 			material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
-			render->RenderMesh(mesh.get(), material.get());
+			Modules::Render->RenderMesh(mesh.get(), material.get());
 
 			mesh->indexOffset += mesh->numIndices;
 		}
@@ -235,7 +234,7 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 		mesh->vertexOffset += mesh->numVertices;
 	}
 
-	render->SetScissor();
+	Modules::Render->SetScissor();
 }
 
 void ImGuiImpl::RenderDrawListsCallback(ImDrawData *drawData)

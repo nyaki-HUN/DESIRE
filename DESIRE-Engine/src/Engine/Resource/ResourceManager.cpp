@@ -3,6 +3,7 @@
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/IReadFile.h"
 #include "Engine/Render/Render.h"
@@ -96,7 +97,7 @@ void ResourceManager::ReloadMesh(const String& filename)
 	if(newMesh != nullptr)
 	{
 		std::shared_ptr<Mesh> mesh = it->second.lock();
-		Render::Get()->Unbind(mesh.get());
+		Modules::Render->Unbind(mesh.get());
 
 		mesh->indices = std::move(newMesh->indices);
 		mesh->numIndices = newMesh->numIndices;
@@ -119,7 +120,7 @@ void ResourceManager::ReloadTexture(const String& filename)
 	if(newTexture != nullptr)
 	{
 		std::shared_ptr<Texture> texture = it->second.lock();
-		Render::Get()->Unbind(texture.get());
+		Modules::Render->Unbind(texture.get());
 
 		ASSERT(texture->width == newTexture->width);
 		ASSERT(texture->height == newTexture->height);
@@ -139,7 +140,7 @@ void ResourceManager::ReloadShader(const String& filename)
 			std::shared_ptr<Shader> newShader = LoadShader(filename);
 			if(newShader != nullptr)
 			{
-				Render::Get()->Unbind(shader.get());
+				Modules::Render->Unbind(shader.get());
 
 				shader->data = std::move(newShader->data);
 			}
@@ -170,7 +171,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 {
-	const String filenameWithPath = Render::Get()->GetShaderFilenameWithPath(filename.c_str());
+	const String filenameWithPath = Modules::Render->GetShaderFilenameWithPath(filename.c_str());
 
 	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath);
 	if(file)

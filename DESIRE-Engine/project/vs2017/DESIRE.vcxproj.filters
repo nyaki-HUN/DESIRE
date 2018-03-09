@@ -237,6 +237,9 @@
     <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Factory.h">
+      <Filter>src\Engine\Core</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\HashedString.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -259,6 +262,9 @@
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
+      <Filter>src\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Modules.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\STL_utils.h">
@@ -531,6 +537,9 @@
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Modules.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\StrUtils.cpp">

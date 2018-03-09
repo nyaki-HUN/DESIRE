@@ -13,12 +13,12 @@ DESIRE_APP_CLASS(SandBox)
 #include "Compression-zlib-ng/src/ZlibCompression.h"
 #include "Compression-zlib-ng/src/RawDeflateCompression.h"
 #include "Compression-zstd/src/ZstdCompression.h"
-const HashedStringMap<CompressionManager::CompressionFactoryFunc_t> CompressionManager::compressionFactories =
+const HashedStringMap<Factory<Compression>::Func_t> CompressionManager::compressionFactories =
 {
-	{ "gzip", &CompressionFactory<GZipCompression> },
-	{ "zlib", &CompressionFactory<ZlibCompression> },
-	{ "deflate", &CompressionFactory<RawDeflateCompression> },
-	{ "zstd", &CompressionFactory<ZstdCompression> },
+	{ "gzip", &Factory<Compression>::Create<GZipCompression> },
+	{ "zlib", &Factory<Compression>::Create<ZlibCompression> },
+	{ "deflate", &Factory<Compression>::Create<RawDeflateCompression> },
+	{ "zstd", &Factory<Compression>::Create<ZstdCompression> },
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -36,8 +36,8 @@ Physics *Physics::instance = new Box2DPhysics();
 // --------------------------------------------------------------------------------------------------------------------
 #include "Render-bgfx/src/BgfxRender.h"
 #include "Render-Direct3D11/src/Direct3D11Render.h"
-//Render *Render::instance = new BgfxRender;
-Render *Render::instance = new Direct3D11Render;
+//const Factory<Render>::Func_t IApp::renderCreator = &Factory<Render>::Create<BgfxRender>;
+const Factory<Render>::Func_t IApp::renderCreator = &Factory<Render>::Create<Direct3D11Render>;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Resource

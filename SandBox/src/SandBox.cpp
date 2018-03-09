@@ -2,6 +2,7 @@
 #include "SimpleRotateScript.h"
 
 #include "Engine/Core/Log.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/FileSystemWatcher.h"
 #include "Engine/Core/fs/IReadFile.h"
@@ -133,7 +134,7 @@ void SandBox::Update()
 
 	dataDirWatcher->Update();
 
-	Render::Get()->BeginFrame(mainWindow.get());
+	Modules::Render->BeginFrame(mainWindow.get());
 	ImGuiImpl::Get()->NewFrame(mainWindow.get());
 
 	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
@@ -142,5 +143,5 @@ void SandBox::Update()
 	ImGui::End();
 
 	ImGuiImpl::Get()->EndFrame();
-	Render::Get()->EndFrame();
+	Modules::Render->EndFrame();
 }

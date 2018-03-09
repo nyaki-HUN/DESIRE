@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/IWindow.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
 
 IWindow::IWindow(const CreationParams& creationParams)
@@ -44,5 +45,5 @@ void IWindow::SetSize(uint16_t i_width, uint16_t i_height)
 
 	width = i_width;
 	height = i_height;
-	Render::Get()->UpdateRenderWindow(this);
+	Modules::Render->UpdateRenderWindow(this);
 }

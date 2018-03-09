@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Singleton.h"
 #include "Engine/Core/HashedStringMap.h"
+#include "Engine/Core/Factory.h"
 #include "Engine/Compression/Compression.h"
 
 #include <memory>
@@ -14,13 +15,5 @@ public:
 	std::unique_ptr<Compression> CreateCompression(HashedString name) const;
 
 private:
-	typedef Compression*(*CompressionFactoryFunc_t)();
-
-	template<class T>
-	static Compression* CompressionFactory()
-	{
-		return new T();
-	}
-
-	static const HashedStringMap<CompressionFactoryFunc_t> compressionFactories;
+	static const HashedStringMap<Factory<Compression>::Func_t> compressionFactories;
 };

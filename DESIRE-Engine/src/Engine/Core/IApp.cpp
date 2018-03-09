@@ -1,6 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/IApp.h"
 #include "Engine/Core/CoreAppEvent.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Physics/Physics.h"
@@ -103,12 +104,14 @@ IApp::CreationParams IApp::GetCreationParams(int argc, const char * const *argv)
 
 void IApp::InitModules()
 {
-	Render::Get()->Init(mainWindow.get());
+	Modules::Render = renderCreator();
+
+	Modules::Render->Init(mainWindow.get());
 	Input::Init(mainWindow.get());
 }
 
 void IApp::KillModules()
 {
 	Input::Kill();
-	Render::Get()->Kill();
+	Modules::Render->Kill();
 }

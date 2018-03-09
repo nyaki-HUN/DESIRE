@@ -1,4 +1,5 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Resource/Shader.h"
 #include "Engine/Render/Render.h"
 
@@ -12,6 +13,6 @@ Shader::~Shader()
 {
 	if(renderData != nullptr)
 	{
-		Render::Get()->Unbind(this);
+		Modules::Render->Unbind(this);
 	}
 }

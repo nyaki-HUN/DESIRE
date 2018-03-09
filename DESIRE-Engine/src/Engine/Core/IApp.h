@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Engine/Core/Singleton.h"
+#include "Engine/Core/Factory.h"
 #include "Engine/Core/IWindow.h"
 
 #include <stdint.h>
 
 class CoreAppEvent;
 enum class EAppEventType;
+class Render;
 
 class IApp
 {
@@ -61,6 +63,8 @@ private:
 
 	void InitModules();
 	void KillModules();
+
+	static const Factory<Render>::Func_t renderCreator;
 
 	static bool isMainLoopRunning;
 	static int returnValue;

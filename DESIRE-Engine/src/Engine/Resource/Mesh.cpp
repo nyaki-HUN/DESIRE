@@ -1,4 +1,5 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Render/Render.h"
 
@@ -39,7 +40,7 @@ Mesh::~Mesh()
 {
 	if(renderData != nullptr)
 	{
-		Render::Get()->Unbind(this);
+		Modules::Render->Unbind(this);
 	}
 }
 

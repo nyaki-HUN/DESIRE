@@ -152,6 +152,7 @@
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h" />
     <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h" />
     <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Factory.h" />
     <ClInclude Include="..\..\src\Engine\Core\HashedString.h" />
     <ClInclude Include="..\..\src\Engine\Core\HashedStringMap.h" />
     <ClInclude Include="..\..\src\Engine\Core\IApp.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="..\..\src\Engine\Core\Log.h" />
     <ClInclude Include="..\..\src\Engine\Core\Logger.h" />
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Modules.h" />
     <ClInclude Include="..\..\src\Engine\Core\STL_utils.h" />
     <ClInclude Include="..\..\src\Engine\Core\Singleton.h" />
     <ClInclude Include="..\..\src\Engine\Core\StrUtils.h" />
@@ -252,6 +254,7 @@
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Log.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Modules.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\StrUtils.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\String.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp" />

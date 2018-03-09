@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
 #include "Engine/Core/String.h"
 
 #include <memory>
@@ -17,8 +16,6 @@ class Matrix4;
 
 class Render
 {
-	DESIRE_DECLARE_SINGLETON(Render)
-
 public:
 	enum class EDepthTest
 	{
@@ -80,6 +77,9 @@ public:
 		TRILINEAR,		// Texture samples are averaged and also blended between mipmap levels (at most 8 samples)
 		ANISOTROPIC,	// Use anisotropic interpolation
 	};
+
+	Render();
+	virtual ~Render();
 
 	virtual void Init(IWindow *mainWindow) = 0;
 	virtual void UpdateRenderWindow(IWindow *window) = 0;
