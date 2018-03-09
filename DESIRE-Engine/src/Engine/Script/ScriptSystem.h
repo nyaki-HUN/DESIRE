@@ -31,4 +31,4 @@ private:
 	HashedStringMap<Factory<IScript>::Func_t> scriptFactories;
 };
 
-#define REGISTER_NATIVE_SCRIPT(SCRIPT)	Modules::ScriptSystem->RegisterScript(HashedString(#SCRIPT), &Factory<SCRIPT>::Create)
+#define REGISTER_NATIVE_SCRIPT(SCRIPT)	Modules::ScriptSystem->RegisterScript(HashedString(#SCRIPT), &Factory<IScript>::Create<SCRIPT>)
