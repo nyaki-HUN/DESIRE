@@ -23,8 +23,6 @@ public:
 private:
 	void DoRender(ImDrawData *data);
 
-	static void RenderDrawListsCallback(ImDrawData *data);
-
 	std::unique_ptr<DynamicMesh> mesh;
 	std::unique_ptr<Material> material;
 	std::shared_ptr<Texture> fontTexture;

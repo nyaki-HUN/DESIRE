@@ -56,7 +56,6 @@ void ImGuiImpl::Init()
 	io.KeyMap[ImGuiKey_Z] = KEY_Z;
 
 	io.IniFilename = nullptr;
-	io.RenderDrawListsFn = ImGuiImpl::RenderDrawListsCallback;
 
 	// Dynamic mesh for the draw list
 	mesh = std::make_unique<DynamicMesh>();
@@ -173,6 +172,11 @@ void ImGuiImpl::EndFrame()
 	};
 
 	ImGui::Render();
+	ImDrawData *drawData = ImGui::GetDrawData();
+	if(drawData != nullptr)
+	{
+		DoRender(drawData);
+	}
 }
 
 void ImGuiImpl::DoRender(ImDrawData *drawData)
@@ -236,9 +240,4 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 	}
 
 	Modules::Render->SetScissor();
-}
-
-void ImGuiImpl::RenderDrawListsCallback(ImDrawData *drawData)
-{
-	ImGuiImpl::Get()->DoRender(drawData);
 }
