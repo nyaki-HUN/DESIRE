@@ -4,7 +4,6 @@
 #include "BulletVectormathExt.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Core/Timer.h"
 #include "Engine/Component/ScriptComponent.h"
 #include "Engine/Physics/Collision.h"
 #include "Engine/Scene/Object.h"
@@ -55,15 +54,14 @@ BulletPhysics::~BulletPhysics()
 	delete collisionConfiguration;
 }
 
-void BulletPhysics::Update()
+void BulletPhysics::Update(float deltaTime)
 {
 	if(blletDebugDraw != nullptr)
 	{
 		blletDebugDraw->debugDraw.Reset();
 	}
 
-	const float deltaT = Timer::Get()->GetSecDelta();
-	dynamicsWorld->stepSimulation(deltaT, 7);
+	dynamicsWorld->stepSimulation(deltaTime, 7);
 }
 
 PhysicsComponent& BulletPhysics::CreatePhysicsComponentOnObject(Object& object)

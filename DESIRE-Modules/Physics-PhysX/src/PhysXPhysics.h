@@ -10,7 +10,7 @@ public:
 	PhysXPhysics();
 	~PhysXPhysics() override;
 
-	void Update() override;
+	void Update(float deltaTime) override;
 
 	PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) override;
 

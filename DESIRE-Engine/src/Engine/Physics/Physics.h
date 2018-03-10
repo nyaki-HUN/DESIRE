@@ -30,7 +30,7 @@ public:
 	Physics();
 	virtual ~Physics();
 
-	virtual void Update() = 0;
+	virtual void Update(float deltaTime) = 0;
 
 	virtual PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) = 0;
 

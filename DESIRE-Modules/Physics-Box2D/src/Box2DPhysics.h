@@ -16,7 +16,7 @@ public:
 	Box2DPhysics();
 	~Box2DPhysics() override;
 
-	void Update() override;
+	void Update(float deltaTime) override;
 
 	PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) override;
 

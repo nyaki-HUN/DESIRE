@@ -60,23 +60,19 @@ Box2DPhysics::~Box2DPhysics()
 	contactListener = nullptr;
 }
 
-void Box2DPhysics::Update()
+void Box2DPhysics::Update(float deltaTime)
 {
 	const float dt = 1.0f / 60.0f;
 
-	{
-		contactsBegin.clear();
-		contactsEnd.clear();
+	contactsBegin.clear();
+	contactsEnd.clear();
 
-		const int32 velocityIterations = 8;
-		const int32 positionIterations = 3;
-		world->Step(dt, velocityIterations, positionIterations);
+	const int32 velocityIterations = 8;
+	const int32 positionIterations = 3;
+	world->Step(dt, velocityIterations, positionIterations);
 
-		HandleCollisionEnds();
-		HandleCollisionBegins();
-	}
-
-	world->ClearForces();
+	HandleCollisionEnds();
+	HandleCollisionBegins();
 }
 
 PhysicsComponent& Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)

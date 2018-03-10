@@ -85,7 +85,7 @@ PhysXPhysics::~PhysXPhysics()
 	}
 }
 
-void PhysXPhysics::Update()
+void PhysXPhysics::Update(float deltaTime)
 {
 
 }
