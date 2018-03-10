@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
-
 #include <mutex>
 #include <deque>
 #include <queue>		// for std::priority_queue
@@ -9,13 +7,14 @@
 
 class TaskManager
 {
-	DESIRE_SINGLETON(TaskManager)
-
 public:
+	TaskManager();
+	~TaskManager();
+
 	void AddTask(std::function<void()> task, bool toFront = false);
 	void AddDelayedTask(float delaySecs, std::function<void()> task);
 
-	void Update();
+	void Update(float deltaTime);
 	void Clear();
 
 private:
@@ -33,5 +32,5 @@ private:
 	std::mutex mutex;
 	std::deque<std::function<void()>> taskQueue;
 	std::priority_queue<TimedTask, std::vector<TimedTask>, std::greater<TimedTask>> timedTasks;
-	float timer;
+	float timer = 0;
 };

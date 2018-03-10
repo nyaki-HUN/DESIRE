@@ -1,9 +1,7 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/Timer.h"
 #include "Engine/Utils/TaskManager.h"
 
 TaskManager::TaskManager()
-	: timer(0)
 {
 
 }
@@ -36,14 +34,14 @@ void TaskManager::AddDelayedTask(float delaySecs, std::function<void()> task)
 	timedTasks.push({ timer + delaySecs, task });
 }
 
-void TaskManager::Update()
+void TaskManager::Update(float deltaTime)
 {
 	// Check timed tasks
 	if(!timedTasks.empty())
 	{
 		mutex.lock();
 
-		timer += Timer::Get()->GetSecDelta();
+		timer += deltaTime;
 
 		while(!timedTasks.empty() && timedTasks.top().time < timer)
 		{
