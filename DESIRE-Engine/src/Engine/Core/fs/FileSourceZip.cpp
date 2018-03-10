@@ -188,7 +188,7 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 
 		case 8:		// Deflated
 		{
-			std::unique_ptr<Compression> zlibRawDeflate = CompressionManager::Get()->CreateCompression("deflate");
+			std::unique_ptr<Compression> zlibRawDeflate = CompressionManager::CreateCompression("deflate");
 			if(zlibRawDeflate != nullptr)
 			{
 				std::unique_ptr<uint8_t[]> compressedData = std::make_unique<uint8_t[]>(entry.compressedSize);
