@@ -77,8 +77,8 @@ void ImGuiImpl::Init()
 
 	// Setup material
 	material = std::make_unique<Material>();
-	material->vertexShader = ResourceManager::Get()->GetShader("vs_ocornut_imgui");
-	material->fragmentShader = ResourceManager::Get()->GetShader("fs_ocornut_imgui");
+	material->vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
+	material->fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
 
 	// Setup font texture
 	unsigned char *textureData;
@@ -114,7 +114,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	io.ImeWindowHandle = window->GetHandle();
 
 	// Keyboard
-	const std::vector<Keyboard>& keyboards = Input::Get()->GetKeyboards();
+	const std::vector<Keyboard>& keyboards = Modules::Input->GetKeyboards();
 	if(!keyboards.empty())
 	{
 		const Keyboard& keyboard = keyboards.back();
@@ -129,14 +129,14 @@ void ImGuiImpl::NewFrame(IWindow *window)
 		}
 	}
 
-	const char *typedCharacters = Input::Get()->GetTypingCharacters();
+	const char *typedCharacters = Modules::Input->GetTypingCharacters();
 	for(int i = 0; typedCharacters[i] != '\0'; ++i)
 	{
 		io.AddInputCharacter((ImWchar)typedCharacters[i]);
 	}
 
 	// Mouse
-	const Vector2& mousePos = Input::Get()->GetOsMouseCursorPos();
+	const Vector2& mousePos = Modules::Input->GetOsMouseCursorPos();
 	io.MousePos = ImVec2(mousePos.GetX(), mousePos.GetY());
 
 	io.MouseWheel = 0.0f;
@@ -144,7 +144,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	{
 		io.MouseDown[i] = false;
 	}
-	for(const Mouse& mouse : Input::Get()->GetMouses())
+	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
 		io.MouseWheel += mouse.GetAxisDelta(Mouse::WHEEL);
 		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
 #include "Engine/Core/math/Vector2.h"
 #include "Engine/Input/Keyboard.h"
 #include "Engine/Input/Mouse.h"
@@ -8,13 +7,11 @@
 
 #include <vector>
 
-class InputImpl;
 class IWindow;
 
 class Input
 {
 	friend class InputImpl;
-	DESIRE_SINGLETON(Input)
 
 public:
 	static const int MAX_NUM_TYPING_CHARACTERS = 8;
@@ -30,6 +27,9 @@ public:
 		MODIFIER_COMMAND	= 0x08,
 		MODIFIER_DONT_CARE	= 0xff,
 	};
+
+	Input();
+	~Input();
 
 	static void Init(IWindow *window);
 	static void Kill();
@@ -47,8 +47,6 @@ public:
 
 	// Returns a string from the characters typed since the last frame (maximized by MAX_NUM_TYPING_CHARACTERS)
 	const char* GetTypingCharacters() const;
-
-	const char* GetButtonName(int buttonId) const;
 
 	const Vector2& GetOsMouseCursorPos() const;
 

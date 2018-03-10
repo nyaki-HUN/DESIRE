@@ -1,5 +1,6 @@
 #include "API/LuaScriptAPI.h"
 
+#include "Engine/Core/Modules.h"
 #include "Engine/Input/Input.h"
 
 void RegisterInputAPI_Lua(lua_State *L)
@@ -9,5 +10,5 @@ void RegisterInputAPI_Lua(lua_State *L)
 		.addFunction("GetOsMouseCursorPos", &Input::GetOsMouseCursorPos)
 		.endClass();
 
-	luabridge::setGlobal(L, Input::Get(), "Input");
+	luabridge::setGlobal(L, Modules::Input.get(), "Input");
 }

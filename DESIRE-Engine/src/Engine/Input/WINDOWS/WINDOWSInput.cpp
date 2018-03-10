@@ -3,6 +3,7 @@
 #include "Engine/Input/Input.h"
 #include "Engine/Input/Keyboard.h"
 #include "Engine/Input/Mouse.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/WINDOWS/WINDOWSWindow.h"
 
 #define GET_MOUSE_X(lParam)	((int)(short)LOWORD(lParam))
@@ -73,9 +74,9 @@ void Input::Kill()
 	RegisterRawInputDevices(rawInputDevices, 2, sizeof(RAWINPUTDEVICE));
 
 	// Reset input devices
-	Input::Get()->keyboards.clear();
-	Input::Get()->mouses.clear();
-	Input::Get()->gameControllers.clear();
+	Modules::Input->keyboards.clear();
+	Modules::Input->mouses.clear();
+	Modules::Input->gameControllers.clear();
 }
 
 void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
@@ -197,7 +198,7 @@ void InputImpl::Handle_WM_MOUSEMOVE(WPARAM wParam, LPARAM lParam)
 {
 	DESIRE_UNUSED(wParam);
 
-	Input::Get()->mouseCursorPos = Vector2((float)GET_MOUSE_X(lParam), (float)GET_MOUSE_Y(lParam));
+	Modules::Input->mouseCursorPos = Vector2((float)GET_MOUSE_X(lParam), (float)GET_MOUSE_Y(lParam));
 }
 
 void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)
@@ -211,7 +212,7 @@ void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)
 		return;
 	}
 
-	char *typingCharacters = Input::Get()->typingCharacters;
+	char *typingCharacters = Modules::Input->typingCharacters;
 	size_t len = strlen(typingCharacters);
 	if(len + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
 	{
@@ -222,7 +223,7 @@ void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)
 
 Keyboard& InputImpl::GetKeyboardByHandle(HANDLE handle)
 {
-	std::vector<Keyboard>& keyboards = Input::Get()->keyboards;
+	std::vector<Keyboard>& keyboards = Modules::Input->keyboards;
 	for(Keyboard& keyboard : keyboards)
 	{
 		if(keyboard.handle == handle)
@@ -238,7 +239,7 @@ Keyboard& InputImpl::GetKeyboardByHandle(HANDLE handle)
 
 Mouse& InputImpl::GetMouseByHandle(HANDLE handle)
 {
-	std::vector<Mouse>& mouses = Input::Get()->mouses;
+	std::vector<Mouse>& mouses = Modules::Input->mouses;
 	for(Mouse& mouse : mouses)
 	{
 		if(mouse.handle == handle)

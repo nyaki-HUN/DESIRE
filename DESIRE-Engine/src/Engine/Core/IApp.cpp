@@ -6,6 +6,7 @@
 #include "Engine/Input/Input.h"
 #include "Engine/Physics/Physics.h"
 #include "Engine/Render/Render.h"
+#include "Engine/Resource/ResourceManager.h"
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Sound/SoundSystem.h"
 
@@ -81,7 +82,7 @@ void IApp::Run()
 	while(isMainLoopRunning)
 	{
 		Timer::Get()->Update();
-		Input::Get()->Update();
+		Modules::Input->Update();
 
 		mainWindow->HandleWindowMessages();
 
@@ -113,6 +114,8 @@ IApp::CreationParams IApp::GetCreationParams(int argc, const char * const *argv)
 
 void IApp::CreateModules()
 {
+	Modules::Input = std::make_unique<Input>();
+
 	if(physicsFactory != nullptr)
 	{
 		Modules::Physics = physicsFactory();
@@ -122,7 +125,9 @@ void IApp::CreateModules()
 	{
 		Modules::Render = renderFactory();
 	}
-	
+
+	Modules::ResourceManager = std::make_unique<ResourceManager>();
+
 	if(scriptSystemFactory != nullptr)
 	{
 		Modules::ScriptSystem = scriptSystemFactory();
@@ -136,7 +141,10 @@ void IApp::CreateModules()
 
 void IApp::DestroyModules()
 {
-	Modules::Physics = nullptr;
-	Modules::Render = nullptr;
+	Modules::SoundSystem = nullptr;
 	Modules::ScriptSystem = nullptr;
+	Modules::ResourceManager = nullptr;
+	Modules::Render = nullptr;
+	Modules::Physics = nullptr;
+	Modules::Input = nullptr;
 }

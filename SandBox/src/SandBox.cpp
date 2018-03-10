@@ -69,25 +69,25 @@ void SandBox::Init()
 
 	//////////
 
-	std::shared_ptr<Mesh> mesh = ResourceManager::Get()->GetMesh("data/meshes/sibenik/sibenik.obj");
-	std::shared_ptr<Texture> texture = ResourceManager::Get()->GetTexture("data/meshes/sibenik/mramor6x6.png");
+	std::shared_ptr<Mesh> mesh = Modules::ResourceManager->GetMesh("data/meshes/sibenik/sibenik.obj");
+	std::shared_ptr<Texture> texture = Modules::ResourceManager->GetTexture("data/meshes/sibenik/mramor6x6.png");
 
 	//////////
 
-	for(const Keyboard& keyboard : Input::Get()->GetKeyboards())
+	for(const Keyboard& keyboard : Modules::Input->GetKeyboards())
 	{
 		inputMapping.MapButton(EAction::EXIT, keyboard, KEY_ESCAPE);
 		inputMapping.MapButton(EAction::FIRE, keyboard, KEY_SPACE);
 	}
 
-	for(const Mouse& mouse : Input::Get()->GetMouses())
+	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
 		inputMapping.MapButton(EAction::FIRE, mouse, Mouse::BUTTON_LEFT);
 		inputMapping.MapAxis(EAction::CAMERA_YAW, mouse, Mouse::MOUSE_X);
 		inputMapping.MapAxis(EAction::CAMERA_PITCH, mouse, Mouse::MOUSE_Y);
 	}
 
-	for(const GameController& gamepad : Input::Get()->GetControllers())
+	for(const GameController& gamepad : Modules::Input->GetControllers())
 	{
 		inputMapping.MapButton(EAction::FIRE, gamepad, GameController::BTN_X);
 	}

@@ -1,6 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/InputMapping.h"
 #include "Engine/Input/Input.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/STL_utils.h"
 
 InputMapping::InputMapping()
@@ -71,7 +72,7 @@ bool InputMapping::WentDown(int userActionId) const
 	{
 		for(const MappedInput& button : it->mappedButtons)
 		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
+			const InputDevice *inputDevice = Modules::Input->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr && inputDevice->WentDown(button.id))
 			{
 				return true;
@@ -91,7 +92,7 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 	{
 		for(const MappedInput& button : it->mappedButtons)
 		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
+			const InputDevice *inputDevice = Modules::Input->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr)
 			{
 				pressedCount += inputDevice->GetPressedCount(button.id);
@@ -109,7 +110,7 @@ float InputMapping::GetFloatState(int userActionId) const
 	{
 		for(const MappedInput& button : it->mappedButtons)
 		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(button.inputDeviceHandle);
+			const InputDevice *inputDevice = Modules::Input->GetInputDeviceByHandle(button.inputDeviceHandle);
 			if(inputDevice != nullptr && inputDevice->IsDown(button.id))
 			{
 				return 1.0f;
@@ -118,7 +119,7 @@ float InputMapping::GetFloatState(int userActionId) const
 
 		for(const MappedAxis& axis : it->mappedAxes)
 		{
-			const InputDevice *inputDevice = Input::Get()->GetInputDeviceByHandle(axis.inputDeviceHandle);
+			const InputDevice *inputDevice = Modules::Input->GetInputDeviceByHandle(axis.inputDeviceHandle);
 			if(inputDevice != nullptr)
 			{
 				float pos = inputDevice->GetAxisPos(axis.id);

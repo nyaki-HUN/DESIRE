@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
 #include "Engine/Core/String.h"
 #include "Engine/Core/fs/FilePtr_fwd.h"
 
@@ -14,9 +13,10 @@ class Texture;
 
 class ResourceManager
 {
-	DESIRE_SINGLETON(ResourceManager)
-
 public:
+	ResourceManager();
+	~ResourceManager();
+
 	std::shared_ptr<Mesh> GetMesh(const String& filename);
 	std::shared_ptr<Shader> GetShader(const String& filename, const String& defines = String::emptyString);
 	std::shared_ptr<Texture> GetTexture(const String& filename);
