@@ -1,9 +1,10 @@
 #include "API/LuaScriptAPI.h"
 
-#include "Engine/Sound/Sound.h"
+#include "Engine/Core/Modules.h"
+#include "Engine/Sound/SoundSystem.h"
 
 void RegisterSoundAPI_Lua(lua_State *L)
 {
-	// Sound
-//	luabridge::setGlobal(L, Sound::Get(), "Sound");
+	// SoundSystem
+//	luabridge::setGlobal(L, Modules::SoundSystem.get(), "SoundSystem");
 }
