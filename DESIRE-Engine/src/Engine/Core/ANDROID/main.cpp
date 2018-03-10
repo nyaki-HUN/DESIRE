@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Core/IApp.h"
+#include "Core/Application.h"
 #include "Core/ANDROID/ANDROIDWindow.h"
 
 #include <android_native_app_glue.h>
@@ -45,5 +45,5 @@ void android_main(android_app *androidApp)
 	androidApp->onAppCmd = ANDROIDWindow::HandleOnAppCmd;
 	androidApp->onInputEvent = Desire_AndroidOnInputEvent;
 
-	IApp::Start(0, nullptr);
+	Application::Start(0, nullptr);
 }

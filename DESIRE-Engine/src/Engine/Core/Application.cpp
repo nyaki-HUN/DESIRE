@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/IApp.h"
+#include "Engine/Core/Application.h"
 #include "Engine/Core/CoreAppEvent.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
@@ -10,26 +10,30 @@
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Sound/SoundSystem.h"
 
-IApp *IApp::instance = nullptr;
-bool IApp::isMainLoopRunning = false;
-int IApp::returnValue = 0;
+bool Application::isMainLoopRunning = false;
+int Application::returnValue = 0;
 
-IApp::IApp()
+Application::Application()
+{
+	timer = std::make_unique<Timer>();
+}
+
+Application::~Application()
 {
 
 }
 
-IApp::~IApp()
+const Timer* Application::GetTimer() const
 {
-
+	return timer.get();
 }
 
-void IApp::SendEvent(const CoreAppEvent& event)
+void Application::SendEvent(const CoreAppEvent& event)
 {
 	DESIRE_UNUSED(event);
 }
 
-void IApp::SendEvent(EAppEventType eventType)
+void Application::SendEvent(EAppEventType eventType)
 {
 	ASSERT(eventType != EAppEventType::NOTIFICATION && "Use NotificationEvent class");
 	ASSERT(eventType != EAppEventType::KEYBOARD_WILL_SHOW && "Use KeyboardWillShowEvent class");
@@ -37,51 +41,51 @@ void IApp::SendEvent(EAppEventType eventType)
 	SendEvent(CoreAppEvent(eventType));
 }
 
-int IApp::Start(int argc, const char * const *argv)
+int Application::Start(int argc, const char * const *argv)
 {
 	ASSERT(!isMainLoopRunning);
 
-	CreateInstance();
-	if(instance == nullptr)
+	if(applicationFactory == nullptr)
 	{
-		ASSERT(false && "Application instance not found");
+		ASSERT(false && "Application factory is not set");
 		return -1;
 	}
 
 	LOG_DEBUG("DESIRE Engine is starting up...");
+	Modules::Application = applicationFactory();
+	CreateModules();
 
-	instance->CreateModules();
+	// Create main window
+	{
+		CreationParams params = Modules::Application->GetCreationParams(argc, argv);
+		Modules::Application->mainWindow = IWindow::Create(params.windowParams);
 
-	CreationParams params = instance->GetCreationParams(argc, argv);
-	instance->mainWindow = IWindow::Create(params.windowParams);
+		Modules::Render->Init(Modules::Application->mainWindow.get());
+		Input::Init(Modules::Application->mainWindow.get());
+	}
 
-	instance->Run();
+	Modules::Application->Run();
 
-	delete instance;
-	instance = nullptr;
-
+	Modules::Application = nullptr;
 	DestroyModules();
 
 	return returnValue;
 }
 
-void IApp::Stop(int i_returnValue)
+void Application::Stop(int i_returnValue)
 {
 	returnValue = i_returnValue;
 	isMainLoopRunning = false;
 }
 
-void IApp::Run()
+void Application::Run()
 {
-	Modules::Render->Init(mainWindow.get());
-	Input::Init(mainWindow.get());
-
 	Init();
 
 	isMainLoopRunning = true;
 	while(isMainLoopRunning)
 	{
-		Timer::Get()->Update();
+		timer->Update();
 		Modules::Input->Update();
 
 		mainWindow->HandleWindowMessages();
@@ -93,7 +97,8 @@ void IApp::Run()
 
 		if(Modules::Physics != nullptr)
 		{
-			Modules::Physics->Update();
+			const float deltaTime = timer->GetSecDelta();
+			Modules::Physics->Update(deltaTime);
 		}
 
 		Update();
@@ -105,14 +110,14 @@ void IApp::Run()
 	Modules::Render->Kill();
 }
 
-IApp::CreationParams IApp::GetCreationParams(int argc, const char * const *argv)
+Application::CreationParams Application::GetCreationParams(int argc, const char * const *argv)
 {
 	DESIRE_UNUSED(argc);
 	DESIRE_UNUSED(argv);
 	return CreationParams();
 }
 
-void IApp::CreateModules()
+void Application::CreateModules()
 {
 	Modules::Input = std::make_unique<Input>();
 
@@ -128,21 +133,21 @@ void IApp::CreateModules()
 
 	Modules::ResourceManager = std::make_unique<ResourceManager>();
 
-	if(scriptSystemFactory != nullptr)
-	{
-		Modules::ScriptSystem = scriptSystemFactory();
-	}
-
 	if(soundSystemFactory != nullptr)
 	{
 		Modules::SoundSystem = soundSystemFactory();
 	}
+
+	if(scriptSystemFactory != nullptr)
+	{
+		Modules::ScriptSystem = scriptSystemFactory();
+	}
 }
 
-void IApp::DestroyModules()
+void Application::DestroyModules()
 {
-	Modules::SoundSystem = nullptr;
 	Modules::ScriptSystem = nullptr;
+	Modules::SoundSystem = nullptr;
 	Modules::ResourceManager = nullptr;
 	Modules::Render = nullptr;
 	Modules::Physics = nullptr;

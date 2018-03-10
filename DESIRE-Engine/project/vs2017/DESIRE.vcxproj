@@ -147,6 +147,7 @@
     <ClInclude Include="..\..\src\Engine\Component\ScriptComponent.h" />
     <ClInclude Include="..\..\src\Engine\Compression\Compression.h" />
     <ClInclude Include="..\..\src\Engine\Compression\CompressionManager.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Application.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h" />
@@ -155,7 +156,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Factory.h" />
     <ClInclude Include="..\..\src\Engine\Core\HashedString.h" />
     <ClInclude Include="..\..\src\Engine\Core\HashedStringMap.h" />
-    <ClInclude Include="..\..\src\Engine\Core\IApp.h" />
     <ClInclude Include="..\..\src\Engine\Core\IWindow.h" />
     <ClInclude Include="..\..\src\Engine\Core\LockFreeRingBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\Log.h" />
@@ -163,7 +163,6 @@
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\Modules.h" />
     <ClInclude Include="..\..\src\Engine\Core\STL_utils.h" />
-    <ClInclude Include="..\..\src\Engine\Core\Singleton.h" />
     <ClInclude Include="..\..\src\Engine\Core\StrUtils.h" />
     <ClInclude Include="..\..\src\Engine\Core\String.h" />
     <ClInclude Include="..\..\src\Engine\Core\Timer.h" />
@@ -247,10 +246,10 @@
     <ClCompile Include="..\..\src\Engine\Component\ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\Compression.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\CompressionManager.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Application.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\IApp.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Log.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp" />

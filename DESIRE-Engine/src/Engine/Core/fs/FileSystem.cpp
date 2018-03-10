@@ -13,6 +13,14 @@ FileSystem::~FileSystem()
 
 }
 
+FileSystem* FileSystem::Get()
+{
+	//	Singleton behaviour using lazy initialization. In C++11 standard, this is thread safe. 
+	//	§6.7[stmt.dcl] p4: "If control enters the declaration concurrently while the variable is being initialized, the concurrent execution shall wait for completion of the initialization."
+	static FileSystem instance;
+	return &instance;
+}
+
 ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 {
 	for(IFileSource *fileSrc : fileSources)

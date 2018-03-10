@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Engine/Core/IApp.h"
+#include "Engine/Core/Application.h"
 #include "Engine/Input/InputMapping.h"
 
 #include <memory>
 
-class Object;
+class ImGuiImpl;
 class FileSystemWatcher;
+class Object;
 
-class SandBox : public IApp
+class SandBox : public Application
 {
 public:
 	SandBox();
@@ -19,10 +20,11 @@ public:
 	void Update() override;
 
 private:
+	std::unique_ptr<ImGuiImpl> UI;
+	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
+
 	Object *scriptedObject = nullptr;
 	Object *cubeObj = nullptr;
 
 	InputMapping inputMapping;
-
-	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
 };

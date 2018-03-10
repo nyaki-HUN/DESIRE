@@ -1,7 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/WINDOWS/WINDOWSWindow.h"
-#include "Engine/Core/IApp.h"
+#include "Engine/Core/Application.h"
 #include "Engine/Core/EAppEventType.h"
+#include "Engine/Core/Modules.h"
 
 WINDOWSWindow::WINDOWSWindow(const IWindow::CreationParams& creationParams)
 	: IWindow(creationParams)
@@ -242,12 +243,12 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 			if(wParam == WA_INACTIVE)
 			{
 				window->isActive = false;
-				IApp::Get()->SendEvent(EAppEventType::ENTER_BACKGROUND);
+				Modules::Application->SendEvent(EAppEventType::ENTER_BACKGROUND);
 			}
 			else if(wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE)
 			{
 				window->isActive = true;
-				IApp::Get()->SendEvent(EAppEventType::ENTER_FOREGROUND);
+				Modules::Application->SendEvent(EAppEventType::ENTER_FOREGROUND);
 			}
 			break;
 
@@ -299,7 +300,7 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 		case WM_QUIT:				// Generated when the application calls the PostQuitMessage() function
 		case WM_CLOSE:				// Sent as a signal that a window or an application should terminate
-			IApp::Stop();
+			Application::Stop();
 			return 0;
 	}
 

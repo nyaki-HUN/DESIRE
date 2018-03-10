@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
 #include "Engine/Core/String.h"
 #include "Engine/Core/fs/FilePtr_fwd.h"
 
@@ -10,7 +9,9 @@ class IFileSource;
 
 class FileSystem
 {
-	DESIRE_SINGLETON(FileSystem)
+private:
+	FileSystem();
+	~FileSystem();
 
 public:
 	enum class ELocation
@@ -36,6 +37,8 @@ public:
 		FILESOURCE_IGNORE_PATH = 0x01,
 		FILESOURCE_IGNORE_CASE = 0x02
 	};
+
+	static FileSystem* Get();
 
 	// Opens a file for reading
 	ReadFilePtr Open(const String& filename, ELocation location = ELocation::APP_DIR);

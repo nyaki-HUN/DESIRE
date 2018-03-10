@@ -36,7 +36,8 @@ SandBox::~SandBox()
 
 void SandBox::Init()
 {
-	ImGuiImpl::Get()->Init();
+	UI = std::make_unique<ImGuiImpl>();
+	UI->Init();
 
 	FileSystem::Get()->AddZipFileSource("data/zip.zip");
 //	FileSystem::Get()->AddZipFileSource("data/zip.zip", FileSystem::FLAG_IGNORE_CASE | FileSystem::FLAG_IGNORE_PATH);
@@ -115,8 +116,9 @@ void SandBox::Init()
 void SandBox::Kill()
 {
 	delete scriptedObject;
+	scriptedObject = nullptr;
 
-	ImGuiImpl::Get()->Kill();
+	UI->Kill();
 }
 
 void SandBox::Update()
@@ -135,13 +137,13 @@ void SandBox::Update()
 	dataDirWatcher->Update();
 
 	Modules::Render->BeginFrame(mainWindow.get());
-	ImGuiImpl::Get()->NewFrame(mainWindow.get());
+	UI->NewFrame(mainWindow.get());
 
 	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Another Window");
 	ImGui::Text("Hello");
 	ImGui::End();
 
-	ImGuiImpl::Get()->EndFrame();
+	UI->EndFrame();
 	Modules::Render->EndFrame();
 }

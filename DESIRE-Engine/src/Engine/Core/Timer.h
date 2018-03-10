@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
-
 class Timer
 {
-	DESIRE_SINGLETON(Timer)
-
 public:
+	Timer();
+	~Timer();
+
 	void Update();
 
 	uint64_t GetTimeMicroSec() const;
@@ -20,10 +19,10 @@ public:
 	static uint64_t GetMicroTime();
 
 private:
-	uint64_t microSec;
-	uint64_t microDelta;
-	uint32_t milliSec;
-	uint32_t milliDelta;
-	float sec;
-	float secDelta;
+	uint64_t microSec = 0;
+	uint64_t microDelta = 0;
+	uint32_t milliSec = 0;
+	uint32_t milliDelta = 0;
+	float sec = 0.0f;
+	float secDelta = 0.0f;
 };

@@ -1,6 +1,7 @@
 #include "ImGuiImpl.h"
 
 #include "Engine/Core/assert.h"
+#include "Engine/Core/Application.h"
 #include "Engine/Core/IWindow.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
@@ -109,7 +110,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(window->GetWidth(), window->GetHeight());
-	io.DeltaTime = Timer::Get()->GetSecDelta();
+	io.DeltaTime = Modules::Application->GetTimer()->GetSecDelta();
 	io.UserData = window;
 	io.ImeWindowHandle = window->GetHandle();
 

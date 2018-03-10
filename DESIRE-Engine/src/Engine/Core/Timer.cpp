@@ -2,12 +2,6 @@
 #include "Engine/Core/Timer.h"
 
 Timer::Timer()
-	: microSec(0)
-	, microDelta(0)
-	, milliSec(0)
-	, milliDelta(0)
-	, sec(0.0f)
-	, secDelta(0.0f)
 {
 	Update();
 }

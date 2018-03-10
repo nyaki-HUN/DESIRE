@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Engine/Core/Singleton.h"
-
 #include <memory>
 
 class IWindow;
@@ -12,9 +10,10 @@ struct ImDrawData;
 
 class ImGuiImpl
 {
-	DESIRE_SINGLETON(ImGuiImpl)
-
 public:
+	ImGuiImpl();
+	~ImGuiImpl();
+
 	void Init();
 	void Kill();
 

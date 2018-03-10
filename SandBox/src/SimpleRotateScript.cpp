@@ -1,6 +1,8 @@
 #include "SimpleRotateScript.h"
 
 #include "Engine/Component/ScriptComponent.h"
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
@@ -27,7 +29,7 @@ void SimpleRotateScript::Kill()
 
 void SimpleRotateScript::Update()
 {
-	rot += Timer::Get()->GetSecDelta();
+	rot += Modules::Application->GetTimer()->GetSecDelta();
 
 	self->GetObject().GetTransform().SetLocalRotation(Quat::CreateRotation(rot, Vector3::AxisX()));
 }

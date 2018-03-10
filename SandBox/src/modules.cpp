@@ -2,7 +2,8 @@
 //	App
 // --------------------------------------------------------------------------------------------------------------------
 #include "SandBox.h"
-DESIRE_APP_CLASS(SandBox)
+const Factory<Application>::Func_t Application::applicationFactory =
+	&Factory<Application>::Create<SandBox>;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Compression
@@ -27,7 +28,7 @@ const HashedStringMap<Factory<Compression>::Func_t> CompressionManager::compress
 #include "Physics-Box2D/src/Box2DPhysics.h"
 #include "Physics-Bullet/src/BulletPhysics.h"
 //#include "Physics-PhysX/src/PhysXPhysics.h"
-const Factory<Physics>::Func_t IApp::physicsFactory =
+const Factory<Physics>::Func_t Application::physicsFactory =
 	&Factory<Physics>::Create<Box2DPhysics>;
 //	&Factory<Physics>::Create<BulletPhysics>;
 //	&Factory<Physics>::Create<PhysXPhysics>;
@@ -37,7 +38,7 @@ const Factory<Physics>::Func_t IApp::physicsFactory =
 // --------------------------------------------------------------------------------------------------------------------
 #include "Render-bgfx/src/BgfxRender.h"
 #include "Render-Direct3D11/src/Direct3D11Render.h"
-const Factory<Render>::Func_t IApp::renderFactory =
+const Factory<Render>::Func_t Application::renderFactory =
 //	&Factory<Render>::Create<BgfxRender>;
 	&Factory<Render>::Create<Direct3D11Render>;
 
@@ -72,7 +73,7 @@ const std::vector<ResourceManager::TextureLoaderFunc_t> ResourceManager::texture
 #include "Script-AngelScript/src/AngelScriptSystem.h"
 #include "Script-Lua/src/LuaScriptSystem.h"
 #include "Script-Squirrel/src/SquirrelScriptSystem.h"
-const Factory<ScriptSystem>::Func_t IApp::scriptSystemFactory =
+const Factory<ScriptSystem>::Func_t Application::scriptSystemFactory =
 //	&Factory<ScriptSystem>::Create<AngelScriptSystem>;
 //	&Factory<ScriptSystem>::Create<LuaScriptSystem>;
 	&Factory<ScriptSystem>::Create<SquirrelScriptSystem>;
@@ -80,4 +81,4 @@ const Factory<ScriptSystem>::Func_t IApp::scriptSystemFactory =
 // --------------------------------------------------------------------------------------------------------------------
 //	Sound
 // --------------------------------------------------------------------------------------------------------------------
-const Factory<SoundSystem>::Func_t IApp::soundSystemFactory = nullptr;
+const Factory<SoundSystem>::Func_t Application::soundSystemFactory = nullptr;

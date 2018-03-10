@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/IApp.h"
+#include "Engine/Core/Application.h"
 #include "Engine/Core/WINDOWS/os.h"
 
 #include <crtdbg.h>
@@ -16,5 +16,5 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
 //	_CrtSetBreakAlloc(123);
 #endif
 
-	return IApp::Start(__argc, __argv);
+	return Application::Start(__argc, __argv);
 }

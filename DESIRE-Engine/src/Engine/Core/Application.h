@@ -7,23 +7,21 @@
 
 class CoreAppEvent;
 enum class EAppEventType;
+class Timer;
 class Physics;
 class Render;
 class ScriptSystem;
 class SoundSystem;
 
-class IApp
+class Application
 {
 protected:
-	IApp();
-	virtual ~IApp();
-
-	static void CreateInstance();
+	Application();
 
 public:
-	virtual void Init() = 0;
-	virtual void Kill() = 0;
-	virtual void Update() = 0;
+	virtual ~Application();
+
+	const Timer* GetTimer() const;
 
 	// Send application event
 	virtual void SendEvent(const CoreAppEvent& event);
@@ -31,13 +29,12 @@ public:
 	// Send generic application event (without parameters) with 'eventType'
 	void SendEvent(EAppEventType eventType);
 
+	virtual void Init() = 0;
+	virtual void Kill() = 0;
+	virtual void Update() = 0;
+
 	static int Start(int argc, const char * const *argv);
 	static void Stop(int returnValue = 0);
-
-	inline static IApp* Get()
-	{
-		return instance;
-	}
 
 protected:
 	enum EOrientation
@@ -63,7 +60,7 @@ protected:
 		uint8_t supportedOrientations;
 	};
 
-protected:
+	std::unique_ptr<Timer> timer;
 	std::unique_ptr<IWindow> mainWindow;
 
 private:
@@ -71,23 +68,16 @@ private:
 
 	virtual CreationParams GetCreationParams(int argc, const char * const *argv);
 
-	void CreateModules();
+	static void CreateModules();
 	static void DestroyModules();
 
 	// Module factories
+	static const Factory<Application>::Func_t applicationFactory;
 	static const Factory<Physics>::Func_t physicsFactory;
 	static const Factory<Render>::Func_t renderFactory;
 	static const Factory<ScriptSystem>::Func_t scriptSystemFactory;
 	static const Factory<SoundSystem>::Func_t soundSystemFactory;
 
-	static IApp *instance;
 	static bool isMainLoopRunning;
 	static int returnValue;
 };
-
-
-#define DESIRE_APP_CLASS(APP_CLASS)		\
-	void IApp::CreateInstance()			\
-	{									\
-		instance = new APP_CLASS();		\
-	}

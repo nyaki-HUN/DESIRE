@@ -2,6 +2,7 @@
 
 #include <memory>
 
+class Application;
 class Input;
 class Physics;
 class Render;
@@ -12,6 +13,7 @@ class SoundSystem;
 class Modules
 {
 public:
+	static std::unique_ptr<Application> Application;
 	static std::unique_ptr<Input> Input;
 	static std::unique_ptr<Physics> Physics;
 	static std::unique_ptr<Render> Render;

@@ -1,8 +1,10 @@
 #include "API/AngelScriptAPI.h"
 
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Modules.h"
+#include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
-#include "Engine/Core/Timer.h"
 
 Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)
 {
@@ -277,7 +279,7 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
 
 	// Timer
 	engine->RegisterObjectType("ITimer", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterGlobalProperty("ITimer Timer", Timer::Get());
+	engine->RegisterGlobalProperty("ITimer Timer", (void*)Modules::Application->GetTimer());
 	engine->RegisterObjectMethod("ITimer", "uint64 GetTimeMicroSec() const", asMETHODPR(Timer, GetTimeMicroSec, () const, uint64_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("ITimer", "uint GetTimeMilliSec() const", asMETHODPR(Timer, GetTimeMilliSec, () const, uint32_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("ITimer", "float GetTimeSec() const", asMETHODPR(Timer, GetTimeSec, () const, float), asCALL_THISCALL);

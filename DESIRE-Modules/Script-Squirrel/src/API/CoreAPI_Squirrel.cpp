@@ -1,8 +1,10 @@
 #include "API/SquirrelScriptAPI.h"
 
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Modules.h"
+#include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
-#include "Engine/Core/Timer.h"
 
 void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 {
@@ -222,5 +224,5 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Func("GetMilliDelta", &Timer::GetMilliDelta)
 		.Func("GetSecDelta", &Timer::GetSecDelta)
 	);
-	rootTable.SetInstance("Timer", Timer::Get());
+	rootTable.SetInstance("Timer", Modules::Application->GetTimer());
 }

@@ -1,8 +1,10 @@
 #include "API/LuaScriptAPI.h"
 
+#include "Engine/Core/Application.h"
+#include "Engine/Core/Modules.h"
+#include "Engine/Core/Timer.h"
 #include "Engine/Core/math/MAtrix4.h"
 #include "Engine/Core/math/math.h"
-#include "Engine/Core/Timer.h"
 
 void RegisterVectormathFunctions_Lua(lua_State *L)
 {
@@ -212,5 +214,5 @@ void RegisterCoreAPI_Lua(lua_State *L)
 		.addFunction("GetSecDelta", &Timer::GetSecDelta)
 		.endClass();
 
-	luabridge::setGlobal(L, Timer::Get(), "Timer");
+	luabridge::setGlobal(L, Modules::Application->GetTimer(), "Timer");
 }
