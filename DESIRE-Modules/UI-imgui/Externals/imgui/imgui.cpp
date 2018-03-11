@@ -8423,7 +8423,7 @@ static bool DataTypeApplyOpFromText(const char* buf, const char* initial_value_b
         else if (op == '*') { *v = arg0f * arg1f; }                    // Multiply
         else if (op == '/') { if (arg1f != 0.0f) *v = arg0f / arg1f; } // Divide
         else                { *v = arg1f; }                            // Assign constant
-        return (old_v != *v);
+        return (old_v != *v || isnan(old_v) != isnan(*v));
     }
 
     return false;
