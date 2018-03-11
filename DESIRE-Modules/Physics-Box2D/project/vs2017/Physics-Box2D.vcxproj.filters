@@ -34,6 +34,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Joints">
+      <UniqueIdentifier>{93B3EF19-7F6B-3167-E872-0AC3D449CC57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Box2D.h">
@@ -189,10 +192,22 @@
     <ClInclude Include="..\..\src\DestructorListener.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Joints\AnchoredJoint2D.h">
+      <Filter>src\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Joints\Joint2D.h">
+      <Filter>src\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Joints\SpringJoint2D.h">
+      <Filter>src\Joints</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\PhysicsMaterial.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RaycastCallbacks.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\b2MathExt.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -346,6 +361,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\DestructorListener.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Joints\AnchoredJoint2D.cpp">
+      <Filter>src\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Joints\Joint2D.cpp">
+      <Filter>src\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Joints\SpringJoint2D.cpp">
+      <Filter>src\Joints</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

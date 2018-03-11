@@ -8,20 +8,19 @@
 Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	: PhysicsComponent(object)
 {
-	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Modules::Physics.get());
+	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 
 	b2BodyDef bodyDef;
 	bodyDef.userData = this;
-	body = physics->GetWorld()->CreateBody(&bodyDef);
+	body = world->CreateBody(&bodyDef);
 }
 
 Box2DPhysicsComponent::~Box2DPhysicsComponent()
 {
-	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Modules::Physics.get());
-
 	ReleaseFixtures();
 
-	physics->GetWorld()->DestroyBody(body);
+	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
+	world->DestroyBody(body);
 	body = nullptr;
 }
 
@@ -49,6 +48,11 @@ float Box2DPhysicsComponent::GetMass() const
 bool Box2DPhysicsComponent::IsTrigger() const
 {
 	return isTrigger;
+}
+
+b2Body* Box2DPhysicsComponent::GetBody() const
+{
+	return body;
 }
 
 void Box2DPhysicsComponent::ReleaseFixtures()

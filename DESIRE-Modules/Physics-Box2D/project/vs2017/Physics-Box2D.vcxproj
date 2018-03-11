@@ -153,8 +153,12 @@
     <ClInclude Include="..\..\src\Box2DPhysicsComponent.h" />
     <ClInclude Include="..\..\src\ContactListener.h" />
     <ClInclude Include="..\..\src\DestructorListener.h" />
+    <ClInclude Include="..\..\src\Joints\AnchoredJoint2D.h" />
+    <ClInclude Include="..\..\src\Joints\Joint2D.h" />
+    <ClInclude Include="..\..\src\Joints\SpringJoint2D.h" />
     <ClInclude Include="..\..\src\PhysicsMaterial.h" />
     <ClInclude Include="..\..\src\RaycastCallbacks.h" />
+    <ClInclude Include="..\..\src\b2MathExt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\Box2D\Box2D\Collision\Shapes\b2ChainShape.cpp" />
@@ -207,6 +211,9 @@
     <ClCompile Include="..\..\src\Box2DPhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\ContactListener.cpp" />
     <ClCompile Include="..\..\src\DestructorListener.cpp" />
+    <ClCompile Include="..\..\src\Joints\AnchoredJoint2D.cpp" />
+    <ClCompile Include="..\..\src\Joints\Joint2D.cpp" />
+    <ClCompile Include="..\..\src\Joints\SpringJoint2D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
