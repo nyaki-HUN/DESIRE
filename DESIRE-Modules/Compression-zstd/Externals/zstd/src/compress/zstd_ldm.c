@@ -28,8 +28,17 @@ size_t ZSTD_ldm_initializeParameters(ldmParams_t* params, U32 enableLdm)
     return 0;
 }
 
-void ZSTD_ldm_adjustParameters(ldmParams_t* params, U32 windowLog)
+void ZSTD_ldm_adjustParameters(ldmParams_t* params,
+                               ZSTD_compressionParameters const* cParams)
 {
+    U32 const windowLog = cParams->windowLog;
+    if (cParams->strategy >= ZSTD_btopt) {
+      /* Get out of the way of the optimal parser */
+      U32 const minMatch = MAX(cParams->targetLength, params->minMatchLength);
+      assert(minMatch >= ZSTD_LDM_MINMATCH_MIN);
+      assert(minMatch <= ZSTD_LDM_MINMATCH_MAX);
+      params->minMatchLength = minMatch;
+    }
     if (params->hashLog == 0) {
         params->hashLog = MAX(ZSTD_HASHLOG_MIN, windowLog - LDM_HASH_RLOG);
         assert(params->hashLog <= ZSTD_HASHLOG_MAX);
@@ -41,12 +50,19 @@ void ZSTD_ldm_adjustParameters(ldmParams_t* params, U32 windowLog)
     params->bucketSizeLog = MIN(params->bucketSizeLog, params->hashLog);
 }
 
-size_t ZSTD_ldm_getTableSize(U32 hashLog, U32 bucketSizeLog) {
-    size_t const ldmHSize = ((size_t)1) << hashLog;
-    size_t const ldmBucketSizeLog = MIN(bucketSizeLog, hashLog);
+size_t ZSTD_ldm_getTableSize(ldmParams_t params)
+{
+    size_t const ldmHSize = ((size_t)1) << params.hashLog;
+    size_t const ldmBucketSizeLog = MIN(params.bucketSizeLog, params.hashLog);
     size_t const ldmBucketSize =
-        ((size_t)1) << (hashLog - ldmBucketSizeLog);
-    return ldmBucketSize + (ldmHSize * (sizeof(ldmEntry_t)));
+        ((size_t)1) << (params.hashLog - ldmBucketSizeLog);
+    size_t const totalSize = ldmBucketSize + ldmHSize * sizeof(ldmEntry_t);
+    return params.enableLdm ? totalSize : 0;
+}
+
+size_t ZSTD_ldm_getMaxNbSeq(ldmParams_t params, size_t maxChunkSize)
+{
+    return params.enableLdm ? (maxChunkSize / params.minMatchLength) : 0;
 }
 
 /** ZSTD_ldm_getSmallHash() :
@@ -205,21 +221,22 @@ static size_t ZSTD_ldm_countBackwardsMatch(
  *
  *  The tables for the other strategies are filled within their
  *  block compressors. */
-static size_t ZSTD_ldm_fillFastTables(ZSTD_CCtx* zc, const void* end)
+static size_t ZSTD_ldm_fillFastTables(ZSTD_matchState_t* ms,
+                                      ZSTD_compressionParameters const* cParams,
+                                      void const* end)
 {
     const BYTE* const iend = (const BYTE*)end;
-    const U32 mls = zc->appliedParams.cParams.searchLength;
 
-    switch(zc->appliedParams.cParams.strategy)
+    switch(cParams->strategy)
     {
     case ZSTD_fast:
-        ZSTD_fillHashTable(zc, iend, mls);
-        zc->nextToUpdate = (U32)(iend - zc->base);
+        ZSTD_fillHashTable(ms, cParams, iend);
+        ms->nextToUpdate = (U32)(iend - ms->window.base);
         break;
 
     case ZSTD_dfast:
-        ZSTD_fillDoubleHashTable(zc, iend, mls);
-        zc->nextToUpdate = (U32)(iend - zc->base);
+        ZSTD_fillDoubleHashTable(ms, cParams, iend);
+        ms->nextToUpdate = (U32)(iend - ms->window.base);
         break;
 
     case ZSTD_greedy:
@@ -268,69 +285,63 @@ static U64 ZSTD_ldm_fillLdmHashTable(ldmState_t* state,
  *  Sets cctx->nextToUpdate to a position corresponding closer to anchor
  *  if it is far way
  *  (after a long match, only update tables a limited amount). */
-static void ZSTD_ldm_limitTableUpdate(ZSTD_CCtx* cctx, const BYTE* anchor)
+static void ZSTD_ldm_limitTableUpdate(ZSTD_matchState_t* ms, const BYTE* anchor)
 {
-    U32 const current = (U32)(anchor - cctx->base);
-    if (current > cctx->nextToUpdate + 1024) {
-        cctx->nextToUpdate =
-            current - MIN(512, current - cctx->nextToUpdate - 1024);
+    U32 const current = (U32)(anchor - ms->window.base);
+    if (current > ms->nextToUpdate + 1024) {
+        ms->nextToUpdate =
+            current - MIN(512, current - ms->nextToUpdate - 1024);
     }
 }
 
-typedef size_t (*ZSTD_blockCompressor) (ZSTD_CCtx* ctx, const void* src, size_t srcSize);
-/* defined in zstd_compress.c */
-ZSTD_blockCompressor ZSTD_selectBlockCompressor(ZSTD_strategy strat, int extDict);
-
-FORCE_INLINE_TEMPLATE
-size_t ZSTD_compressBlock_ldm_generic(ZSTD_CCtx* cctx,
-                                      const void* src, size_t srcSize)
+static size_t ZSTD_ldm_generateSequences_internal(
+        ldmState_t* ldmState, rawSeq* sequences,
+        ldmParams_t const* params, void const* src, size_t srcSize,
+        int const extDict)
 {
-    ldmState_t* const ldmState = &(cctx->ldmState);
-    const ldmParams_t ldmParams = cctx->appliedParams.ldmParams;
-    const U64 hashPower = ldmState->hashPower;
-    const U32 hBits = ldmParams.hashLog - ldmParams.bucketSizeLog;
-    const U32 ldmBucketSize = ((U32)1 << ldmParams.bucketSizeLog);
-    const U32 ldmTagMask = ((U32)1 << ldmParams.hashEveryLog) - 1;
-    seqStore_t* const seqStorePtr = &(cctx->seqStore);
-    const BYTE* const base = cctx->base;
-    const BYTE* const istart = (const BYTE*)src;
-    const BYTE* ip = istart;
-    const BYTE* anchor = istart;
-    const U32   lowestIndex = cctx->dictLimit;
-    const BYTE* const lowest = base + lowestIndex;
-    const BYTE* const iend = istart + srcSize;
-    const BYTE* const ilimit = iend - MAX(ldmParams.minMatchLength, HASH_READ_SIZE);
-
-    const ZSTD_blockCompressor blockCompressor =
-        ZSTD_selectBlockCompressor(cctx->appliedParams.cParams.strategy, 0);
-    U32* const repToConfirm = seqStorePtr->repToConfirm;
-    U32 savedRep[ZSTD_REP_NUM];
+    rawSeq const* const sequencesStart = sequences;
+    /* LDM parameters */
+    U32 const minMatchLength = params->minMatchLength;
+    U64 const hashPower = ldmState->hashPower;
+    U32 const hBits = params->hashLog - params->bucketSizeLog;
+    U32 const ldmBucketSize = 1U << params->bucketSizeLog;
+    U32 const hashEveryLog = params->hashEveryLog;
+    U32 const ldmTagMask = (1U << params->hashEveryLog) - 1;
+    /* Prefix and extDict parameters */
+    U32 const dictLimit = ldmState->window.dictLimit;
+    U32 const lowestIndex = extDict ? ldmState->window.lowLimit : dictLimit;
+    BYTE const* const base = ldmState->window.base;
+    BYTE const* const dictBase = extDict ? ldmState->window.dictBase : NULL;
+    BYTE const* const dictStart = extDict ? dictBase + lowestIndex : NULL;
+    BYTE const* const dictEnd = extDict ? dictBase + dictLimit : NULL;
+    BYTE const* const lowPrefixPtr = base + dictLimit;
+    /* Input bounds */
+    BYTE const* const istart = (BYTE const*)src;
+    BYTE const* const iend = istart + srcSize;
+    BYTE const* const ilimit = iend - MAX(minMatchLength, HASH_READ_SIZE);
+    /* Input positions */
+    BYTE const* anchor = istart;
+    BYTE const* ip = istart;
+    /* Rolling hash */
+    BYTE const* lastHashed = NULL;
     U64 rollingHash = 0;
-    const BYTE* lastHashed = NULL;
-    size_t i, lastLiterals;
 
-    /* Save seqStorePtr->rep and copy repToConfirm */
-    for (i = 0; i < ZSTD_REP_NUM; i++)
-        savedRep[i] = repToConfirm[i] = seqStorePtr->rep[i];
-
-    /* Main Search Loop */
-    while (ip < ilimit) {   /* < instead of <=, because repcode check at (ip+1) */
+    while (ip <= ilimit) {
         size_t mLength;
         U32 const current = (U32)(ip - base);
         size_t forwardMatchLength = 0, backwardMatchLength = 0;
         ldmEntry_t* bestEntry = NULL;
         if (ip != istart) {
             rollingHash = ZSTD_ldm_updateHash(rollingHash, lastHashed[0],
-                                              lastHashed[ldmParams.minMatchLength],
+                                              lastHashed[minMatchLength],
                                               hashPower);
         } else {
-            rollingHash = ZSTD_ldm_getRollingHash(ip, ldmParams.minMatchLength);
+            rollingHash = ZSTD_ldm_getRollingHash(ip, minMatchLength);
         }
         lastHashed = ip;
 
         /* Do not insert and do not look for a match */
-        if (ZSTD_ldm_getTag(rollingHash, hBits, ldmParams.hashEveryLog) !=
-                ldmTagMask) {
+        if (ZSTD_ldm_getTag(rollingHash, hBits, hashEveryLog) != ldmTagMask) {
            ip++;
            continue;
         }
@@ -340,27 +351,49 @@ size_t ZSTD_compressBlock_ldm_generic(ZSTD_CCtx* cctx,
             ldmEntry_t* const bucket =
                 ZSTD_ldm_getBucket(ldmState,
                                    ZSTD_ldm_getSmallHash(rollingHash, hBits),
-                                   ldmParams);
+                                   *params);
             ldmEntry_t* cur;
             size_t bestMatchLength = 0;
             U32 const checksum = ZSTD_ldm_getChecksum(rollingHash, hBits);
 
             for (cur = bucket; cur < bucket + ldmBucketSize; ++cur) {
-                const BYTE* const pMatch = cur->offset + base;
                 size_t curForwardMatchLength, curBackwardMatchLength,
                        curTotalMatchLength;
                 if (cur->checksum != checksum || cur->offset <= lowestIndex) {
                     continue;
                 }
+                if (extDict) {
+                    BYTE const* const curMatchBase =
+                        cur->offset < dictLimit ? dictBase : base;
+                    BYTE const* const pMatch = curMatchBase + cur->offset;
+                    BYTE const* const matchEnd =
+                        cur->offset < dictLimit ? dictEnd : iend;
+                    BYTE const* const lowMatchPtr =
+                        cur->offset < dictLimit ? dictStart : lowPrefixPtr;
 
-                curForwardMatchLength = ZSTD_count(ip, pMatch, iend);
-                if (curForwardMatchLength < ldmParams.minMatchLength) {
-                    continue;
+                    curForwardMatchLength = ZSTD_count_2segments(
+                                                ip, pMatch, iend,
+                                                matchEnd, lowPrefixPtr);
+                    if (curForwardMatchLength < minMatchLength) {
+                        continue;
+                    }
+                    curBackwardMatchLength =
+                        ZSTD_ldm_countBackwardsMatch(ip, anchor, pMatch,
+                                                     lowMatchPtr);
+                    curTotalMatchLength = curForwardMatchLength +
+                                          curBackwardMatchLength;
+                } else { /* !extDict */
+                    BYTE const* const pMatch = base + cur->offset;
+                    curForwardMatchLength = ZSTD_count(ip, pMatch, iend);
+                    if (curForwardMatchLength < minMatchLength) {
+                        continue;
+                    }
+                    curBackwardMatchLength =
+                        ZSTD_ldm_countBackwardsMatch(ip, anchor, pMatch,
+                                                     lowPrefixPtr);
+                    curTotalMatchLength = curForwardMatchLength +
+                                          curBackwardMatchLength;
                 }
-                curBackwardMatchLength = ZSTD_ldm_countBackwardsMatch(
-                                             ip, anchor, pMatch, lowest);
-                curTotalMatchLength = curForwardMatchLength +
-                                      curBackwardMatchLength;
 
                 if (curTotalMatchLength > bestMatchLength) {
                     bestMatchLength = curTotalMatchLength;
@@ -375,7 +408,7 @@ size_t ZSTD_compressBlock_ldm_generic(ZSTD_CCtx* cctx,
         if (bestEntry == NULL) {
             ZSTD_ldm_makeEntryAndInsertByTag(ldmState, rollingHash,
                                              hBits, current,
-                                             ldmParams);
+                                             *params);
             ip++;
             continue;
         }
@@ -384,324 +417,203 @@ size_t ZSTD_compressBlock_ldm_generic(ZSTD_CCtx* cctx,
         mLength = forwardMatchLength + backwardMatchLength;
         ip -= backwardMatchLength;
 
-        /* Call the block compressor on the remaining literals */
         {
+            /* Store the sequence:
+             * ip = current - backwardMatchLength
+             * The match is at (bestEntry->offset - backwardMatchLength)
+             */
             U32 const matchIndex = bestEntry->offset;
-            const BYTE* const match = base + matchIndex - backwardMatchLength;
-            U32 const offset = (U32)(ip - match);
+            U32 const offset = current - matchIndex;
 
-            /* Overwrite rep codes */
-            for (i = 0; i < ZSTD_REP_NUM; i++)
-                seqStorePtr->rep[i] = repToConfirm[i];
-
-            /* Fill tables for block compressor */
-            ZSTD_ldm_limitTableUpdate(cctx, anchor);
-            ZSTD_ldm_fillFastTables(cctx, anchor);
-
-            /* Call block compressor and get remaining literals */
-            lastLiterals = blockCompressor(cctx, anchor, ip - anchor);
-            cctx->nextToUpdate = (U32)(ip - base);
-
-            /* Update repToConfirm with the new offset */
-            for (i = ZSTD_REP_NUM - 1; i > 0; i--)
-                repToConfirm[i] = repToConfirm[i-1];
-            repToConfirm[0] = offset;
-
-            /* Store the sequence with the leftover literals */
-            ZSTD_storeSeq(seqStorePtr, lastLiterals, ip - lastLiterals,
-                          offset + ZSTD_REP_MOVE, mLength - MINMATCH);
+            sequences->litLength = (U32)(ip - anchor);
+            sequences->matchLength = (U32)mLength;
+            sequences->offset = offset;
+            ++sequences;
         }
 
         /* Insert the current entry into the hash table */
         ZSTD_ldm_makeEntryAndInsertByTag(ldmState, rollingHash, hBits,
                                          (U32)(lastHashed - base),
-                                         ldmParams);
+                                         *params);
 
         assert(ip + backwardMatchLength == lastHashed);
 
         /* Fill the hash table from lastHashed+1 to ip+mLength*/
         /* Heuristic: don't need to fill the entire table at end of block */
-        if (ip + mLength < ilimit) {
+        if (ip + mLength <= ilimit) {
             rollingHash = ZSTD_ldm_fillLdmHashTable(
                               ldmState, rollingHash, lastHashed,
-                              ip + mLength, base, hBits, ldmParams);
+                              ip + mLength, base, hBits, *params);
             lastHashed = ip + mLength - 1;
         }
         ip += mLength;
         anchor = ip;
-        /* Check immediate repcode */
-        while ( (ip < ilimit)
-             && ( (repToConfirm[1] > 0) && (repToConfirm[1] <= (U32)(ip-lowest))
-             && (MEM_read32(ip) == MEM_read32(ip - repToConfirm[1])) )) {
+    }
+    /* Return the number of sequences generated */
+    return sequences - sequencesStart;
+}
 
-            size_t const rLength = ZSTD_count(ip+4, ip+4-repToConfirm[1],
-                                              iend) + 4;
-            /* Swap repToConfirm[1] <=> repToConfirm[0] */
-            {
-                U32 const tmpOff = repToConfirm[1];
-                repToConfirm[1] = repToConfirm[0];
-                repToConfirm[0] = tmpOff;
-            }
+/*! ZSTD_ldm_reduceTable() :
+ *  reduce table indexes by `reducerValue` */
+static void ZSTD_ldm_reduceTable(ldmEntry_t* const table, U32 const size,
+                                 U32 const reducerValue)
+{
+    U32 u;
+    for (u = 0; u < size; u++) {
+        if (table[u].offset < reducerValue) table[u].offset = 0;
+        else table[u].offset -= reducerValue;
+    }
+}
 
-            ZSTD_storeSeq(seqStorePtr, 0, anchor, 0, rLength-MINMATCH);
+size_t ZSTD_ldm_generateSequences(
+        ldmState_t* ldmState, rawSeq* sequences,
+        ldmParams_t const* params, void const* src, size_t srcSize,
+        int const extDict)
+{
+    U32 const maxDist = 1U << params->windowLog;
+    BYTE const* const istart = (BYTE const*)src;
+    size_t const kMaxChunkSize = 1 << 20;
+    size_t const nbChunks = (srcSize / kMaxChunkSize) + ((srcSize % kMaxChunkSize) != 0);
+    size_t nbSeq = 0;
+    size_t chunk;
 
-            /* Fill the  hash table from lastHashed+1 to ip+rLength*/
-            if (ip + rLength < ilimit) {
-                rollingHash = ZSTD_ldm_fillLdmHashTable(
-                                ldmState, rollingHash, lastHashed,
-                                ip + rLength, base, hBits, ldmParams);
-                lastHashed = ip + rLength - 1;
-            }
-            ip += rLength;
-            anchor = ip;
+    assert(ZSTD_CHUNKSIZE_MAX >= kMaxChunkSize);
+    /* Check that ZSTD_window_update() has been called for this chunk prior
+     * to passing it to this function.
+     */
+    assert(ldmState->window.nextSrc >= (BYTE const*)src + srcSize);
+    for (chunk = 0; chunk < nbChunks; ++chunk) {
+        size_t const chunkStart = chunk * kMaxChunkSize;
+        size_t const chunkEnd = MIN(chunkStart + kMaxChunkSize, srcSize);
+        size_t const chunkSize = chunkEnd - chunkStart;
+
+        assert(chunkStart < srcSize);
+        if (ZSTD_window_needOverflowCorrection(ldmState->window)) {
+            U32 const ldmHSize = 1U << params->hashLog;
+            U32 const correction = ZSTD_window_correctOverflow(
+                &ldmState->window, /* cycleLog */ 0, maxDist, src);
+            ZSTD_ldm_reduceTable(ldmState->hashTable, ldmHSize, correction);
         }
+        /* kMaxChunkSize should be small enough that we don't lose too much of
+         * the window through early invalidation.
+         * TODO: * Test the chunk size.
+         *       * Try invalidation after the sequence generation and test the
+         *         the offset against maxDist directly.
+         */
+        ZSTD_window_enforceMaxDist(&ldmState->window, istart + chunkEnd,
+                                   maxDist);
+        nbSeq += ZSTD_ldm_generateSequences_internal(
+            ldmState, sequences + nbSeq, params, istart + chunkStart, chunkSize,
+            extDict);
     }
-
-    /* Overwrite rep */
-    for (i = 0; i < ZSTD_REP_NUM; i++)
-        seqStorePtr->rep[i] = repToConfirm[i];
-
-    ZSTD_ldm_limitTableUpdate(cctx, anchor);
-    ZSTD_ldm_fillFastTables(cctx, anchor);
-
-    lastLiterals = blockCompressor(cctx, anchor, iend - anchor);
-    cctx->nextToUpdate = (U32)(iend - base);
-
-    /* Restore seqStorePtr->rep */
-    for (i = 0; i < ZSTD_REP_NUM; i++)
-        seqStorePtr->rep[i] = savedRep[i];
-
-    /* Return the last literals size */
-    return lastLiterals;
+    return nbSeq;
 }
 
-size_t ZSTD_compressBlock_ldm(ZSTD_CCtx* ctx,
-                              const void* src, size_t srcSize)
+#if 0
+/**
+ * If the sequence length is longer than remaining then the sequence is split
+ * between this block and the next.
+ *
+ * Returns the current sequence to handle, or if the rest of the block should
+ * be literals, it returns a sequence with offset == 0.
+ */
+static rawSeq maybeSplitSequence(rawSeq* sequences, size_t* nbSeq,
+                                 size_t const seq, size_t const remaining,
+                                 U32 const minMatch)
 {
-    return ZSTD_compressBlock_ldm_generic(ctx, src, srcSize);
-}
+    rawSeq sequence = sequences[seq];
+    assert(sequence.offset > 0);
+    /* Handle partial sequences */
+    if (remaining <= sequence.litLength) {
+        /* Split the literals that we have out of the sequence.
+         * They will become the last literals of this block.
+         * The next block starts off with the remaining literals.
+         */
+        sequences[seq].litLength -= remaining;
+        *nbSeq = seq;
+        sequence.offset = 0;
+    } else if (remaining < sequence.litLength + sequence.matchLength) {
+        /* Split the match up into two sequences. One in this block, and one
+         * in the next with no literals. If either match would be shorter
+         * than searchLength we omit it.
+         */
+        U32 const matchPrefix = remaining - sequence.litLength;
+        U32 const matchSuffix = sequence.matchLength - matchPrefix;
 
-static size_t ZSTD_compressBlock_ldm_extDict_generic(
-                                 ZSTD_CCtx* ctx,
-                                 const void* src, size_t srcSize)
-{
-    ldmState_t* const ldmState = &(ctx->ldmState);
-    const ldmParams_t ldmParams = ctx->appliedParams.ldmParams;
-    const U64 hashPower = ldmState->hashPower;
-    const U32 hBits = ldmParams.hashLog - ldmParams.bucketSizeLog;
-    const U32 ldmBucketSize = ((U32)1 << ldmParams.bucketSizeLog);
-    const U32 ldmTagMask = ((U32)1 << ldmParams.hashEveryLog) - 1;
-    seqStore_t* const seqStorePtr = &(ctx->seqStore);
-    const BYTE* const base = ctx->base;
-    const BYTE* const dictBase = ctx->dictBase;
-    const BYTE* const istart = (const BYTE*)src;
-    const BYTE* ip = istart;
-    const BYTE* anchor = istart;
-    const U32   lowestIndex = ctx->lowLimit;
-    const BYTE* const dictStart = dictBase + lowestIndex;
-    const U32   dictLimit = ctx->dictLimit;
-    const BYTE* const lowPrefixPtr = base + dictLimit;
-    const BYTE* const dictEnd = dictBase + dictLimit;
-    const BYTE* const iend = istart + srcSize;
-    const BYTE* const ilimit = iend - MAX(ldmParams.minMatchLength, HASH_READ_SIZE);
-
-    const ZSTD_blockCompressor blockCompressor =
-        ZSTD_selectBlockCompressor(ctx->appliedParams.cParams.strategy, 1);
-    U32* const repToConfirm = seqStorePtr->repToConfirm;
-    U32 savedRep[ZSTD_REP_NUM];
-    U64 rollingHash = 0;
-    const BYTE* lastHashed = NULL;
-    size_t i, lastLiterals;
-
-    /* Save seqStorePtr->rep and copy repToConfirm */
-    for (i = 0; i < ZSTD_REP_NUM; i++) {
-        savedRep[i] = repToConfirm[i] = seqStorePtr->rep[i];
-    }
-
-    /* Search Loop */
-    while (ip < ilimit) {  /* < instead of <=, because (ip+1) */
-        size_t mLength;
-        const U32 current = (U32)(ip-base);
-        size_t forwardMatchLength = 0, backwardMatchLength = 0;
-        ldmEntry_t* bestEntry = NULL;
-        if (ip != istart) {
-          rollingHash = ZSTD_ldm_updateHash(rollingHash, lastHashed[0],
-                                       lastHashed[ldmParams.minMatchLength],
-                                       hashPower);
+        assert(remaining > sequence.litLength);
+        assert(matchPrefix < sequence.matchLength);
+        assert(matchPrefix + matchSuffix == sequence.matchLength);
+        /* Update the current sequence */
+        sequence.matchLength = matchPrefix;
+        /* Update the next sequence when long enough, otherwise omit it. */
+        if (matchSuffix >= minMatch) {
+            sequences[seq].litLength = 0;
+            sequences[seq].matchLength = matchSuffix;
+            *nbSeq = seq;
         } else {
-            rollingHash = ZSTD_ldm_getRollingHash(ip, ldmParams.minMatchLength);
+            sequences[seq + 1].litLength += matchSuffix;
+            *nbSeq = seq + 1;
         }
-        lastHashed = ip;
-
-        if (ZSTD_ldm_getTag(rollingHash, hBits, ldmParams.hashEveryLog) !=
-                ldmTagMask) {
-            /* Don't insert and don't look for a match */
-           ip++;
-           continue;
-        }
-
-        /* Get the best entry and compute the match lengths */
-        {
-            ldmEntry_t* const bucket =
-                ZSTD_ldm_getBucket(ldmState,
-                                   ZSTD_ldm_getSmallHash(rollingHash, hBits),
-                                   ldmParams);
-            ldmEntry_t* cur;
-            size_t bestMatchLength = 0;
-            U32 const checksum = ZSTD_ldm_getChecksum(rollingHash, hBits);
-
-            for (cur = bucket; cur < bucket + ldmBucketSize; ++cur) {
-                const BYTE* const curMatchBase =
-                    cur->offset < dictLimit ? dictBase : base;
-                const BYTE* const pMatch = curMatchBase + cur->offset;
-                const BYTE* const matchEnd =
-                    cur->offset < dictLimit ? dictEnd : iend;
-                const BYTE* const lowMatchPtr =
-                    cur->offset < dictLimit ? dictStart : lowPrefixPtr;
-                size_t curForwardMatchLength, curBackwardMatchLength,
-                       curTotalMatchLength;
-
-                if (cur->checksum != checksum || cur->offset <= lowestIndex) {
-                    continue;
-                }
-
-                curForwardMatchLength = ZSTD_count_2segments(
-                                            ip, pMatch, iend,
-                                            matchEnd, lowPrefixPtr);
-                if (curForwardMatchLength < ldmParams.minMatchLength) {
-                    continue;
-                }
-                curBackwardMatchLength = ZSTD_ldm_countBackwardsMatch(
-                                             ip, anchor, pMatch, lowMatchPtr);
-                curTotalMatchLength = curForwardMatchLength +
-                                      curBackwardMatchLength;
-
-                if (curTotalMatchLength > bestMatchLength) {
-                    bestMatchLength = curTotalMatchLength;
-                    forwardMatchLength = curForwardMatchLength;
-                    backwardMatchLength = curBackwardMatchLength;
-                    bestEntry = cur;
-                }
-            }
-        }
-
-        /* No match found -- continue searching */
-        if (bestEntry == NULL) {
-            ZSTD_ldm_makeEntryAndInsertByTag(ldmState, rollingHash, hBits,
-                                             (U32)(lastHashed - base),
-                                             ldmParams);
-            ip++;
-            continue;
-        }
-
-        /* Match found */
-        mLength = forwardMatchLength + backwardMatchLength;
-        ip -= backwardMatchLength;
-
-        /* Call the block compressor on the remaining literals */
-        {
-            /* ip = current - backwardMatchLength
-             * The match is at (bestEntry->offset - backwardMatchLength) */
-            U32 const matchIndex = bestEntry->offset;
-            U32 const offset = current - matchIndex;
-
-            /* Overwrite rep codes */
-            for (i = 0; i < ZSTD_REP_NUM; i++)
-                seqStorePtr->rep[i] = repToConfirm[i];
-
-            /* Fill the hash table for the block compressor */
-            ZSTD_ldm_limitTableUpdate(ctx, anchor);
-            ZSTD_ldm_fillFastTables(ctx, anchor);
-
-            /* Call block compressor and get remaining literals  */
-            lastLiterals = blockCompressor(ctx, anchor, ip - anchor);
-            ctx->nextToUpdate = (U32)(ip - base);
-
-            /* Update repToConfirm with the new offset */
-            for (i = ZSTD_REP_NUM - 1; i > 0; i--)
-                repToConfirm[i] = repToConfirm[i-1];
-            repToConfirm[0] = offset;
-
-            /* Store the sequence with the leftover literals */
-            ZSTD_storeSeq(seqStorePtr, lastLiterals, ip - lastLiterals,
-                          offset + ZSTD_REP_MOVE, mLength - MINMATCH);
-        }
-
-        /* Insert the current entry into the hash table */
-        ZSTD_ldm_makeEntryAndInsertByTag(ldmState, rollingHash, hBits,
-                                         (U32)(lastHashed - base),
-                                         ldmParams);
-
-        /* Fill the hash table from lastHashed+1 to ip+mLength */
-        assert(ip + backwardMatchLength == lastHashed);
-        if (ip + mLength < ilimit) {
-            rollingHash = ZSTD_ldm_fillLdmHashTable(
-                              ldmState, rollingHash, lastHashed,
-                              ip + mLength, base, hBits,
-                              ldmParams);
-            lastHashed = ip + mLength - 1;
-        }
-        ip += mLength;
-        anchor = ip;
-
-        /* check immediate repcode */
-        while (ip < ilimit) {
-            U32 const current2 = (U32)(ip-base);
-            U32 const repIndex2 = current2 - repToConfirm[1];
-            const BYTE* repMatch2 = repIndex2 < dictLimit ?
-                                    dictBase + repIndex2 : base + repIndex2;
-            if ( (((U32)((dictLimit-1) - repIndex2) >= 3) &
-                        (repIndex2 > lowestIndex))  /* intentional overflow */
-               && (MEM_read32(repMatch2) == MEM_read32(ip)) ) {
-                const BYTE* const repEnd2 = repIndex2 < dictLimit ?
-                                            dictEnd : iend;
-                size_t const repLength2 =
-                        ZSTD_count_2segments(ip+4, repMatch2+4, iend,
-                                             repEnd2, lowPrefixPtr) + 4;
-
-                U32 tmpOffset = repToConfirm[1];
-                repToConfirm[1] = repToConfirm[0];
-                repToConfirm[0] = tmpOffset;
-
-                ZSTD_storeSeq(seqStorePtr, 0, anchor, 0, repLength2-MINMATCH);
-
-                /* Fill the  hash table from lastHashed+1 to ip+repLength2*/
-                if (ip + repLength2 < ilimit) {
-                    rollingHash = ZSTD_ldm_fillLdmHashTable(
-                                      ldmState, rollingHash, lastHashed,
-                                      ip + repLength2, base, hBits,
-                                      ldmParams);
-                    lastHashed = ip + repLength2 - 1;
-                }
-                ip += repLength2;
-                anchor = ip;
-                continue;
-            }
-            break;
+        if (sequence.matchLength < minMatch) {
+            /* Skip the current sequence if it is too short */
+            sequence.offset = 0;
         }
     }
-
-    /* Overwrite rep */
-    for (i = 0; i < ZSTD_REP_NUM; i++)
-        seqStorePtr->rep[i] = repToConfirm[i];
-
-    ZSTD_ldm_limitTableUpdate(ctx, anchor);
-    ZSTD_ldm_fillFastTables(ctx, anchor);
-
-    /* Call the block compressor one last time on the last literals */
-    lastLiterals = blockCompressor(ctx, anchor, iend - anchor);
-    ctx->nextToUpdate = (U32)(iend - base);
-
-    /* Restore seqStorePtr->rep */
-    for (i = 0; i < ZSTD_REP_NUM; i++)
-        seqStorePtr->rep[i] = savedRep[i];
-
-    /* Return the last literals size */
-    return lastLiterals;
+    return sequence;
 }
+#endif
 
-size_t ZSTD_compressBlock_ldm_extDict(ZSTD_CCtx* ctx,
-                                      const void* src, size_t srcSize)
+size_t ZSTD_ldm_blockCompress(rawSeq const* sequences, size_t nbSeq,
+    ZSTD_matchState_t* ms, seqStore_t* seqStore, U32 rep[ZSTD_REP_NUM],
+    ZSTD_compressionParameters const* cParams, void const* src, size_t srcSize,
+    int const extDict)
 {
-    return ZSTD_compressBlock_ldm_extDict_generic(ctx, src, srcSize);
+    ZSTD_blockCompressor const blockCompressor =
+        ZSTD_selectBlockCompressor(cParams->strategy, extDict);
+    BYTE const* const base = ms->window.base;
+    /* Input bounds */
+    BYTE const* const istart = (BYTE const*)src;
+    BYTE const* const iend = istart + srcSize;
+    /* Input positions */
+    BYTE const* ip = istart;
+    size_t seq;
+    /* Loop through each sequence and apply the block compressor to the lits */
+    for (seq = 0; seq < nbSeq; ++seq) {
+        rawSeq const sequence = sequences[seq];
+        int i;
+
+        if (sequence.offset == 0)
+            break;
+
+        assert(ip + sequence.litLength + sequence.matchLength <= iend);
+
+        /* Fill tables for block compressor */
+        ZSTD_ldm_limitTableUpdate(ms, ip);
+        ZSTD_ldm_fillFastTables(ms, cParams, ip);
+        /* Run the block compressor */
+        {
+            size_t const newLitLength =
+                blockCompressor(ms, seqStore, rep, cParams, ip,
+                                sequence.litLength);
+            ip += sequence.litLength;
+            ms->nextToUpdate = (U32)(ip - base);
+            /* Update the repcodes */
+            for (i = ZSTD_REP_NUM - 1; i > 0; i--)
+                rep[i] = rep[i-1];
+            rep[0] = sequence.offset;
+            /* Store the sequence */
+            ZSTD_storeSeq(seqStore, newLitLength, ip - newLitLength,
+                          sequence.offset + ZSTD_REP_MOVE,
+                          sequence.matchLength - MINMATCH);
+            ip += sequence.matchLength;
+        }
+    }
+    ZSTD_ldm_limitTableUpdate(ms, ip);
+    ZSTD_ldm_fillFastTables(ms, cParams, ip);
+    {
+        size_t const lastLiterals = blockCompressor(ms, seqStore, rep, cParams,
+                                                    ip, iend - ip);
+        ms->nextToUpdate = (U32)(iend - base);
+        return lastLiterals;
+    }
 }
