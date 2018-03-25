@@ -18,7 +18,8 @@ Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	bodyDef.userData = this;
 	body = world->CreateBody(&bodyDef);
 
-	UpdateFilterData();
+	filterData.categoryBits = 1 << (int)collisionLayer;
+	filterData.maskBits = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
 Box2DPhysicsComponent::~Box2DPhysicsComponent()
@@ -32,13 +33,15 @@ Box2DPhysicsComponent::~Box2DPhysicsComponent()
 
 void Box2DPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
-	if(collisionLayer == i_collisionLayer)
-	{
-		return;
-	}
-
 	collisionLayer = i_collisionLayer;
-	UpdateFilterData();
+
+	filterData.categoryBits = 1 << (int)collisionLayer;
+	filterData.maskBits = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
+
+	for(b2Fixture *fixture : fixtures)
+	{
+		fixture->SetFilterData(filterData);
+	}
 }
 
 std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponents() const
@@ -215,17 +218,4 @@ void Box2DPhysicsComponent::ReleaseFixtures()
 	}
 
 	fixtures.clear();
-}
-
-void Box2DPhysicsComponent::UpdateFilterData()
-{
-	Box2DPhysics *physics = static_cast<Box2DPhysics*>(Modules::Physics.get());
-
-	filterData.categoryBits = 1 << (int)collisionLayer;
-	filterData.maskBits = physics->GetMaskForCollisionLayer(collisionLayer);
-
-	for(b2Fixture *fixture : fixtures)
-	{
-		fixture->SetFilterData(filterData);
-	}
 }

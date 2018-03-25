@@ -42,6 +42,7 @@ public:
 	virtual Vector3 GetGravity() const = 0;
 
 	void SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled);
+	int GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const;
 
 	virtual Collision RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
 	virtual bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;

@@ -135,12 +135,6 @@ std::vector<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector
 	return collisions;
 }
 
-int BulletPhysics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
-{
-	ASSERT(layer < EPhysicsCollisionLayer::NUM);
-	return collisionMasks[(size_t)layer];
-}
-
 void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeStep)
 {
 	DESIRE_UNUSED(timeStep);

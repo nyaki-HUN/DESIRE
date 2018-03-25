@@ -38,3 +38,9 @@ void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLay
 		collisionMasks[layerB] &= ~(1 << layerA);
 	}
 }
+
+int Physics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
+{
+	ASSERT(layer < EPhysicsCollisionLayer::NUM);
+	return collisionMasks[(size_t)layer];
+}

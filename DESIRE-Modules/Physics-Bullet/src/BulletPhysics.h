@@ -27,8 +27,6 @@ public:
 	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 	std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 
-	int GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const;
-
 	btDiscreteDynamicsWorld *dynamicsWorld = nullptr;
 
 private:

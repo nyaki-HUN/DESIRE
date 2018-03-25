@@ -52,7 +52,6 @@ public:
 private:
 	void CreateFixtures();
 	void ReleaseFixtures();
-	void UpdateFilterData();
 
 	b2Body *body = nullptr;
 	std::vector<b2Fixture*> fixtures;

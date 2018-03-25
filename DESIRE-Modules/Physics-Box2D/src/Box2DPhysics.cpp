@@ -122,12 +122,6 @@ std::vector<Collision> Box2DPhysics::RaycastAll(const Vector3& p1, const Vector3
 	return callback.collisions;
 }
 
-uint16_t Box2DPhysics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
-{
-	ASSERT(layer < EPhysicsCollisionLayer::NUM);
-	return (uint16_t)collisionMasks[(size_t)layer];
-}
-
 b2World* Box2DPhysics::GetWorld() const
 {
 	return world;

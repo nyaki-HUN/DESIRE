@@ -79,8 +79,8 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	body = new btRigidBody(cInfo);
 	body->setUserPointer(this);
 
-	BulletPhysics *physics = static_cast<BulletPhysics*>(Modules::Physics.get());
-	physics->dynamicsWorld->addRigidBody(body, (1 << (int)collisionLayer), physics->GetMaskForCollisionLayer(collisionLayer));
+	btDiscreteDynamicsWorld *world = static_cast<BulletPhysics*>(Modules::Physics.get())->dynamicsWorld;
+	world->addRigidBody(body, 1 << (int)collisionLayer, Modules::Physics->GetMaskForCollisionLayer(collisionLayer));
 
 	if(dynamic)
 	{
@@ -96,8 +96,8 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 BulletPhysicsComponent::~BulletPhysicsComponent()
 {
-	BulletPhysics *physics = static_cast<BulletPhysics*>(Modules::Physics.get());
-	physics->dynamicsWorld->removeRigidBody(body);
+	btDiscreteDynamicsWorld *world = static_cast<BulletPhysics*>(Modules::Physics.get())->dynamicsWorld;
+	world->removeRigidBody(body);
 	delete body;
 
 	if(!dynamic)
@@ -115,11 +115,6 @@ BulletPhysicsComponent::~BulletPhysicsComponent()
 
 void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
-	if(collisionLayer == i_collisionLayer)
-	{
-		return;
-	}
-
 	collisionLayer = i_collisionLayer;
 
 	if(collisionLayer == EPhysicsCollisionLayer::NO_COLLISION)
@@ -131,10 +126,9 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisio
 		body->forceActivationState(ISLAND_SLEEPING);
 	}
 
-	BulletPhysics *physics = static_cast<BulletPhysics*>(Modules::Physics.get());
 	btBroadphaseProxy *handle = body->getBroadphaseHandle();
-	handle->m_collisionFilterGroup = (1 << (int)collisionLayer);
-	handle->m_collisionFilterMask = physics->GetMaskForCollisionLayer(collisionLayer);
+	handle->m_collisionFilterGroup = 1 << (int)collisionLayer;
+	handle->m_collisionFilterMask = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
 std::vector<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
