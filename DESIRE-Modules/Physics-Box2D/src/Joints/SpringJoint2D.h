@@ -19,7 +19,7 @@ public:
 	float GetDistance() const;
 	void SetDistance(float value);
 
-	void CreateJointBetweenBodies(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent) override;
+	void CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent) override;
 
 	void OnJointDestroyed() override;
 

@@ -18,7 +18,7 @@ public:
 	const Vector2& GetConnectedAnchor() const;
 	void SetConnectedAnchor(const Vector2& value);
 
-	virtual void CreateJointBetweenBodies(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent) = 0;
+	virtual void CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent) = 0;
 
 private:
 	Vector2 anchorInLocalSpace = { 0.0f, 0.0f };

@@ -63,7 +63,7 @@ void SpringJoint2D::SetDistance(float value)
 	}
 }
 
-void SpringJoint2D::CreateJointBetweenBodies(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent)
+void SpringJoint2D::CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent)
 {
 	jointDef.bodyA = anchoredComponent->GetBody();
 	jointDef.bodyB = connectedComponent->GetBody();
