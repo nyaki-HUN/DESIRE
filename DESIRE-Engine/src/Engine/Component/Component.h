@@ -23,6 +23,9 @@ public:
 
 	void Destroy() const;
 
+	virtual void SetEnabled(bool value);
+	bool IsEnabled() const;
+
 	virtual int GetTypeID() const = 0;
 
 	inline Object& GetObject() const
@@ -32,4 +35,7 @@ public:
 
 protected:
 	Object& object;
+
+private:
+	bool enabled = true;
 };

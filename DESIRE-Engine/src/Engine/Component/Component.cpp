@@ -17,3 +17,13 @@ void Component::Destroy() const
 {
 	object.RemoveComponent(this);
 }
+
+void Component::SetEnabled(bool value)
+{
+	enabled = value;
+}
+
+bool Component::IsEnabled() const
+{
+	return enabled;
+}
