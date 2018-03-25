@@ -5,6 +5,7 @@
 #include "Engine/Physics/PhysicsMaterial.h"
 
 #include <memory>
+#include <vector>
 
 enum class EPhysicsCollisionLayer;
 class ColliderShape;
@@ -22,6 +23,8 @@ public:
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
 
 	const PhysicsMaterial& GetPhysicsMaterial() const;
+
+	virtual std::vector<PhysicsComponent*> GetActiveCollidingComponents() const = 0;
 
 	virtual void SetMass(float mass) = 0;
 	virtual float GetMass() const = 0;

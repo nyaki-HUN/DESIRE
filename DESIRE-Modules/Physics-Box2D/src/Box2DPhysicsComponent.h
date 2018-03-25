@@ -17,6 +17,8 @@ public:
 
 	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
 
+	std::vector<PhysicsComponent*> GetActiveCollidingComponents() const override;
+
 	void SetMass(float mass) override;
 	float GetMass() const override;
 

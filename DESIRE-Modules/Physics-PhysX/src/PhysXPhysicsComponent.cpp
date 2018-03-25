@@ -23,6 +23,13 @@ void PhysXPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 	collisionLayer = i_collisionLayer;
 }
 
+std::vector<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponents() const
+{
+	std::vector<PhysicsComponent*> collisions;
+	ASSERT(false && "TODO");
+	return collisions;
+}
+
 void PhysXPhysicsComponent::SetMass(float mass)
 {
 	ASSERT(false && "TODO");

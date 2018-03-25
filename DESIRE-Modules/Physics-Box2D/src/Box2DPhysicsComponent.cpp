@@ -6,6 +6,7 @@
 #include "Engine/Core/Modules.h"
 
 #include "Box2D/Dynamics/b2World.h"
+#include "Box2D/Dynamics/Contacts/b2Contact.h"
 
 Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	: PhysicsComponent(object)
@@ -38,6 +39,30 @@ void Box2DPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 
 	collisionLayer = i_collisionLayer;
 	UpdateFilterData();
+}
+
+std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponents() const
+{
+	std::vector<PhysicsComponent*> collisions;
+
+	int count = 0;
+	b2ContactEdge *contactEdge = body->GetContactList();
+	while(contactEdge != nullptr)
+	{
+		const b2Contact *contact = contactEdge->contact;
+		if(contact->IsTouching())
+		{
+			const b2Fixture *fixtureA = contact->GetFixtureA();
+			const b2Fixture *fixtureB = contact->GetFixtureB();
+			Box2DPhysicsComponent *componentA = static_cast<Box2DPhysicsComponent*>(fixtureA->GetUserData());
+			Box2DPhysicsComponent *componentB = static_cast<Box2DPhysicsComponent*>(fixtureB->GetUserData());
+			collisions.push_back((this == componentA) ? componentB : componentA);
+		}
+
+		contactEdge = contactEdge->next;
+	}
+
+	return collisions;
 }
 
 void Box2DPhysicsComponent::SetMass(float mass)

@@ -137,6 +137,13 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisio
 	handle->m_collisionFilterMask = physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
+std::vector<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
+{
+	std::vector<PhysicsComponent*> collisions;
+	// TODO
+	return collisions;
+}
+
 void BulletPhysicsComponent::SetMass(float mass)
 {
 	if(body->isStaticOrKinematicObject() == false)
