@@ -5,7 +5,6 @@
 
 #include "Engine/Core/assert.h"
 #include "Engine/Component/ScriptComponent.h"
-#include "Engine/Physics/Collision.h"
 #include "Engine/Scene/Object.h"
 
 #include "btBulletDynamicsCommon.h"
@@ -70,7 +69,18 @@ PhysicsComponent& BulletPhysics::CreatePhysicsComponentOnObject(Object& object)
 	return component;
 }
 
-bool BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr, Vector3 *o_collisionNormalPtr, int layerMask)
+void BulletPhysics::SetGravity(const Vector3& gravity)
+{
+	dynamicsWorld->setGravity(GetBtVector3(gravity));
+}
+
+Vector3 BulletPhysics::GetGravity() const
+{
+	const btVector3& gravity = dynamicsWorld->getGravity();
+	return GetVector3(gravity);
+}
+
+Collision BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)
 {
 	const btVector3 from = GetBtVector3(p1);
 	const btVector3 to = GetBtVector3(p2);
@@ -81,35 +91,15 @@ bool BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, Physics
 
 	dynamicsWorld->rayTest(from, to, rayCallback);
 
-	if(!rayCallback.hasHit())
-	{
-		return false;
-	}
-
-	if(o_componentPtr != nullptr)
+	Collision collision;
+	if(rayCallback.hasHit())
 	{
 		const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObject);
-		if(body != nullptr && body->hasContactResponse())
-		{
-			*o_componentPtr = static_cast<PhysicsComponent*>(body->getUserPointer());
-		}
-		else
-		{
-			*o_componentPtr = nullptr;
-		}
+		PhysicsComponent *component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
+		collision = Collision(component, GetVector3(rayCallback.m_hitPointWorld), GetVector3(rayCallback.m_hitNormalWorld));
 	}
 
-	if(o_collisionPointPtr != nullptr)
-	{
-		*o_collisionPointPtr = GetVector3(rayCallback.m_hitPointWorld);
-	}
-
-	if(o_collisionNormalPtr != nullptr)
-	{
-		*o_collisionNormalPtr = GetVector3(rayCallback.m_hitNormalWorld);
-	}
-
-	return true;
+	return collision;
 }
 
 bool BulletPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask)
@@ -118,7 +108,7 @@ bool BulletPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMa
 	return false;
 }
 
-int BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints, Vector3 *o_collisionNormals, int layerMask)
+std::vector<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
 {
 	const btVector3 from = GetBtVector3(p1);
 	const btVector3 to = GetBtVector3(p2);
@@ -129,39 +119,20 @@ int BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount
 
 	dynamicsWorld->rayTest(from, to, rayCallback);
 
-	if(!rayCallback.hasHit())
+	std::vector<Collision> collisions;
+	if(rayCallback.hasHit())
 	{
-		return 0;
-	}
-
-	const int count = std::min(maxCount, rayCallback.m_collisionObjects.size());
-	for(int i = 0; i < count; ++i)
-	{
-		if(o_components != nullptr)
+		const int count = rayCallback.m_collisionObjects.size();
+		collisions.reserve(count);
+		for(int i = 0; i < count; ++i)
 		{
 			const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
-			if(body != nullptr && body->hasContactResponse())
-			{
-				o_components[i] = static_cast<PhysicsComponent*>(body->getUserPointer());
-			}
-			else
-			{
-				o_components[i] = nullptr;
-			}
-		}
-
-		if(o_collisionPoints != nullptr)
-		{
-			o_collisionPoints[i] = GetVector3(rayCallback.m_hitPointWorld[i]);
-		}
-
-		if(o_collisionNormals != nullptr)
-		{
-			o_collisionNormals[i] = GetVector3(rayCallback.m_hitNormalWorld[i]);
+			PhysicsComponent *component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
+			collisions.emplace_back(component, GetVector3(rayCallback.m_hitPointWorld[i]), GetVector3(rayCallback.m_hitNormalWorld[i]));
 		}
 	}
 
-	return count;
+	return collisions;
 }
 
 int BulletPhysics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
@@ -184,7 +155,7 @@ void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeSte
 		const btPersistentManifold *manifold = physics->dispatcher->getManifoldByIndexInternal(manifoldIdx);
 		const btRigidBody *body0 = static_cast<const btRigidBody*>(manifold->getBody0());
 		const btRigidBody *body1 = static_cast<const btRigidBody*>(manifold->getBody1());
-		collision.pointCount = std::min(manifold->getNumContacts(), Collision::MAX_CONTACT_POINTS);
+		collision.pointCount = std::min(manifold->getNumContacts(), Collision::k_MaxContactPoints);
 		for(int i = 0; i < collision.pointCount; ++i)
 		{
 			const btManifoldPoint& pt = manifold->getContactPoint(i);

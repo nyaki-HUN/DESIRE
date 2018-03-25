@@ -34,7 +34,7 @@ Box2DPhysics::Box2DPhysics()
 	contactListener = new ContactListener();
 	destructorListener = new DestructorListener();
 
-	b2Vec2 gravity(0.0f, -10.0f);
+	b2Vec2 gravity(0.0f, -9.8f);
 	world = new b2World(gravity);
 	world->SetContinuousPhysics(true);
 	world->SetContactListener(contactListener);
@@ -42,13 +42,13 @@ Box2DPhysics::Box2DPhysics()
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2BodyType::b2_dynamicBody;
-	bodyForTargetJoint = world->CreateBody(&bodyDef);
+	worldBody = world->CreateBody(&bodyDef);
 }
 
 Box2DPhysics::~Box2DPhysics()
 {
-	world->DestroyBody(bodyForTargetJoint);
-	bodyForTargetJoint = nullptr;
+	world->DestroyBody(worldBody);
+	worldBody = nullptr;
 
 	delete world;
 	world = nullptr;
@@ -81,34 +81,25 @@ PhysicsComponent& Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)
 	return component;
 }
 
-bool Box2DPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr, Vector3 *o_collisionNormalPtr, int layerMask)
+void Box2DPhysics::SetGravity(const Vector3& gravity)
+{
+	world->SetGravity(b2Vec2(gravity.GetX(), gravity.GetY()));
+}
+
+Vector3 Box2DPhysics::GetGravity() const
+{
+	const b2Vec2& gravity = world->GetGravity();
+	return Vector3(gravity.x, gravity.y, 0.0f);
+}
+
+Collision Box2DPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)
 {
 	const std::pair<b2Vec2, b2Vec2> ray = GetValidRay(p1, p2);
 
 	RaycastClosestCallback callback(layerMask);
 	world->RayCast(&callback, ray.first, ray.second);
 
-	if(callback.component != nullptr)
-	{
-		if(o_componentPtr != nullptr)
-		{
-			*o_componentPtr = callback.component;
-		}
-
-		if(o_collisionPointPtr != nullptr)
-		{
-			*o_collisionPointPtr = Vector3(callback.contactPoint.x, callback.contactPoint.y, 0.0f);
-		}
-
-		if(o_collisionNormalPtr != nullptr)
-		{
-			*o_collisionNormalPtr = Vector3(callback.contactNormal.x, callback.contactNormal.y, 0.0f);
-		}
-
-		return true;
-	}
-
-	return false;
+	return callback.collision;
 }
 
 bool Box2DPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask)
@@ -121,33 +112,14 @@ bool Box2DPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMas
 	return callback.hasHit;
 }
 
-int Box2DPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints, Vector3 *o_collisionNormals, int layerMask)
+std::vector<Collision> Box2DPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
 {
 	const std::pair<b2Vec2, b2Vec2> ray = GetValidRay(p1, p2);
 
 	RaycastAllCallback callback(layerMask);
 	world->RayCast(&callback, ray.first, ray.second);
 
-	const int count = std::min(maxCount, (int)callback.collisions.size());
-	for(int i = 0; i < count; ++i)
-	{
-		if(o_components != nullptr)
-		{
-			o_components[i] = callback.collisions[i].component;
-		}
-
-		if(o_collisionPoints != nullptr)
-		{
-			o_collisionPoints[i] = Vector3(callback.collisions[i].contactPoint.x, callback.collisions[i].contactPoint.x, 0.0f);
-		}
-
-		if(o_collisionNormals != nullptr)
-		{
-			o_collisionNormals[i] = Vector3(callback.collisions[i].contactNormal.x, callback.collisions[i].contactNormal.x, 0.0f);
-		}
-	}
-
-	return count;
+	return callback.collisions;
 }
 
 uint16_t Box2DPhysics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
@@ -161,9 +133,9 @@ b2World* Box2DPhysics::GetWorld() const
 	return world;
 }
 
-b2Body* Box2DPhysics::GetBodyForTargetJoint() const
+b2Body* Box2DPhysics::GetWorldBody() const
 {
-	return bodyForTargetJoint;
+	return worldBody;
 }
 
 void Box2DPhysics::HandleCollisionBegins()

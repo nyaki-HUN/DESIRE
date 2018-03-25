@@ -52,7 +52,10 @@ void ContactListener::FillCollisionFromContact(Collision& collision, const b2Con
 	b2WorldManifold worldManifold;
 	contact->GetWorldManifold(&worldManifold);
 
-	collision.pointCount = std::min(contact->GetManifold()->pointCount, Collision::MAX_CONTACT_POINTS);
-	collision.contactPoints[0] = Vector3(worldManifold.points[0].x, worldManifold.points[0].y, 0.0f);
-	collision.contactPoints[1] = Vector3(worldManifold.points[1].x, worldManifold.points[1].y, 0.0f);
+	collision.pointCount = std::min(contact->GetManifold()->pointCount, Collision::k_MaxContactPoints);
+	for(int i = 0; i < collision.pointCount; ++i)
+	{
+		collision.contactPoints[i] = Vector3(worldManifold.points[i].x, worldManifold.points[i].y, 0.0f);
+		collision.contactNormals[i] = Vector3(0.0f);
+	}
 }

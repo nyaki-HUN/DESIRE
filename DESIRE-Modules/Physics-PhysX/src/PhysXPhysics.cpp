@@ -96,9 +96,20 @@ PhysicsComponent& PhysXPhysics::CreatePhysicsComponentOnObject(Object& object)
 	return component;
 }
 
-bool PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr, Vector3 *o_collisionNormalPtr, int layerMask)
+void PhysXPhysics::SetGravity(const Vector3& gravity)
 {
-	return false;
+
+}
+
+Vector3 PhysXPhysics::GetGravity() const
+{
+	return Vector3(0.0f);
+}
+
+Collision PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)
+{
+	Collision collision;
+	return collision;
 }
 
 bool PhysXPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask)
@@ -106,7 +117,8 @@ bool PhysXPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMas
 	return false;
 }
 
-int PhysXPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints, Vector3 *o_collisionNormals, int layerMask)
+std::vector<Collision> PhysXPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
 {
-	return 0;
+	std::vector<Collision> collisions;
+	return collisions;
 }

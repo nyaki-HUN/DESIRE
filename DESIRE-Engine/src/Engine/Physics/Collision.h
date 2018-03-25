@@ -7,12 +7,26 @@ class PhysicsComponent;
 class Collision
 {
 public:
-	static const int MAX_CONTACT_POINTS = 4;
+	static const int k_MaxContactPoints = 4;
+
+	Collision()
+	{
+
+	}
+
+	// Constructor to create single-point collision
+	Collision(PhysicsComponent *component, const Vector3& point, const Vector3& normal)
+		: component(component)
+		, pointCount(1)
+	{
+		contactPoints[0] = point;
+		contactNormals[0] = normal;
+	}
 
 	PhysicsComponent *component = nullptr;
 	PhysicsComponent *incomingComponent = nullptr;
 
-	Vector3 contactPoints[MAX_CONTACT_POINTS];
-	Vector3 contactNormals[MAX_CONTACT_POINTS];
+	Vector3 contactPoints[k_MaxContactPoints];
+	Vector3 contactNormals[k_MaxContactPoints];
 	int pointCount = 0;
 };

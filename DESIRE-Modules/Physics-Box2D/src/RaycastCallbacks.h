@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Physics/Collision.h"
+
 #include "Box2D/Dynamics/b2WorldCallbacks.h"
 #include "Box2D/Dynamics/b2Fixture.h"
 
@@ -41,15 +43,11 @@ public:
 			return -1;		// Filter out the fixture
 		}
 
-		component = static_cast<PhysicsComponent*>(fixture->GetUserData());
-		contactPoint = point;
-		contactNormal = normal;
+		collision = Collision(static_cast<PhysicsComponent*>(fixture->GetUserData()), Vector3(point.x, point.y, 0.0f), Vector3(normal.x, normal.y, 0.0f));
 		return fraction;	// The ray will be clipped to the current intersection point
 	}
 
-	PhysicsComponent *component = nullptr;
-	b2Vec2 contactPoint;
-	b2Vec2 contactNormal;
+	Collision collision;
 };
 
 class RaycastAnyCallback : public RaycastCallbackBase
@@ -92,24 +90,9 @@ public:
 		}
 
 		PhysicsComponent *component = static_cast<PhysicsComponent*>(fixture->GetUserData());
-		collisions.emplace_back(component, point, normal);
+		collisions.emplace_back(component, Vector3(point.x, point.y, 0.0f), Vector3(normal.x, normal.y, 0.0f));
 		return 1.0f;		// The raycast should continue as if no hit occurred
 	}
 
-	struct CollisionResult
-	{
-		PhysicsComponent *component = nullptr;
-		b2Vec2 contactPoint;
-		b2Vec2 contactNormal;
-
-		CollisionResult(PhysicsComponent *component, const b2Vec2& contactPoint, const b2Vec2& contactNormal)
-			: component(component)
-			, contactPoint(contactPoint)
-			, contactNormal(contactNormal)
-		{
-
-		}
-	};
-
-	std::vector<CollisionResult> collisions;
+	std::vector<Collision> collisions;
 };

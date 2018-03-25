@@ -1,7 +1,11 @@
 #pragma once
 
-class PhysicsComponent;
+#include "Engine/Physics/Collision.h"
+
+#include <vector>
+
 class Object;
+class PhysicsComponent;
 class Vector3;
 
 enum class EPhysicsCollisionLayer
@@ -34,11 +38,14 @@ public:
 
 	virtual PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) = 0;
 
+	virtual void SetGravity(const Vector3& gravity) = 0;
+	virtual Vector3 GetGravity() const = 0;
+
 	void SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled);
 
-	virtual bool RaycastClosest(const Vector3& p1, const Vector3& p2, PhysicsComponent **o_componentPtr, Vector3 *o_collisionPointPtr = nullptr, Vector3 *o_collisionNormalPtr = nullptr, int layerMask = Physics::MASK_ALL) = 0;
+	virtual Collision RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
 	virtual bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
-	virtual int RaycastAll(const Vector3& p1, const Vector3& p2, int maxCount, PhysicsComponent **o_components, Vector3 *o_collisionPoints = nullptr, Vector3 *o_collisionNormals = nullptr, int layerMask = Physics::MASK_ALL) = 0;
+	virtual std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
 
 protected:
 	int collisionMasks[(size_t)EPhysicsCollisionLayer::NUM];
