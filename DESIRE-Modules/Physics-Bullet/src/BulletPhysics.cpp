@@ -36,15 +36,15 @@ BulletPhysics::BulletPhysics()
 	class DebugDraw *debugDraw = nullptr;
 	if(debugDraw != nullptr)
 	{
-		blletDebugDraw = new BulletDebugDraw(*debugDraw);
-		blletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
+		bulletDebugDraw = new BulletDebugDraw(*debugDraw);
+		bulletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
 	}
-	dynamicsWorld->setDebugDrawer(blletDebugDraw);
+	dynamicsWorld->setDebugDrawer(bulletDebugDraw);
 }
 
 BulletPhysics::~BulletPhysics()
 {
-	delete blletDebugDraw;
+	delete bulletDebugDraw;
 
 	delete dynamicsWorld;
 	delete constraintSolver;
@@ -55,9 +55,9 @@ BulletPhysics::~BulletPhysics()
 
 void BulletPhysics::Update(float deltaTime)
 {
-	if(blletDebugDraw != nullptr)
+	if(bulletDebugDraw != nullptr)
 	{
-		blletDebugDraw->debugDraw.Reset();
+		bulletDebugDraw->debugDraw.Reset();
 	}
 
 	dynamicsWorld->stepSimulation(deltaTime, 7);
@@ -133,6 +133,11 @@ std::vector<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector
 	}
 
 	return collisions;
+}
+
+btDynamicsWorld* BulletPhysics::GetWorld() const
+{
+	return dynamicsWorld;
 }
 
 void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeStep)

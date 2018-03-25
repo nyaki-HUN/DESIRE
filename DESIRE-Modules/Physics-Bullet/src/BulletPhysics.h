@@ -27,15 +27,16 @@ public:
 	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 	std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 
-	btDiscreteDynamicsWorld *dynamicsWorld = nullptr;
+	btDynamicsWorld* GetWorld() const;
 
 private:
 	static void SimulationTickCallback(btDynamicsWorld *world, float timeStep);
 
-	BulletDebugDraw *blletDebugDraw = nullptr;
-
+	btDiscreteDynamicsWorld *dynamicsWorld = nullptr;
 	btDefaultCollisionConfiguration *collisionConfiguration = nullptr;
 	btCollisionDispatcher *dispatcher = nullptr;
 	btAxisSweep3 *broadphase = nullptr;
 	btSequentialImpulseConstraintSolver *constraintSolver = nullptr;
+
+	BulletDebugDraw *bulletDebugDraw = nullptr;
 };
