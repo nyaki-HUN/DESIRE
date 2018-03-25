@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Physics/Physics.h"
+#include "Engine/Component/PhysicsComponent.h"
 
 Physics::Physics()
 {
@@ -19,6 +20,20 @@ Physics::~Physics()
 
 }
 
+void Physics::OnPhysicsComponentCreated(PhysicsComponent *component)
+{
+	components.push_back(component);
+}
+
+void Physics::OnPhysicsComponentDestroyed(PhysicsComponent *component)
+{
+	auto it = std::find(components.begin(), components.end(), component);
+	if(it != components.end())
+	{
+		components.erase(it);
+	}
+}
+
 void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled)
 {
 	ASSERT(a < EPhysicsCollisionLayer::NUM);
@@ -36,6 +51,12 @@ void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLay
 	{
 		collisionMasks[layerA] &= ~(1 << layerB);
 		collisionMasks[layerB] &= ~(1 << layerA);
+	}
+
+	// Force refresh collision layer to apply changes in collision matrix
+	for(PhysicsComponent *component : components)
+	{
+		component->SetCollisionLayer(component->GetCollisionLayer());
 	}
 }
 

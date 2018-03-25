@@ -38,6 +38,9 @@ public:
 
 	virtual PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) = 0;
 
+	void OnPhysicsComponentCreated(PhysicsComponent *component);
+	void OnPhysicsComponentDestroyed(PhysicsComponent *component);
+
 	virtual void SetGravity(const Vector3& gravity) = 0;
 	virtual Vector3 GetGravity() const = 0;
 
@@ -49,5 +52,6 @@ public:
 	virtual std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
 
 protected:
+	std::vector<PhysicsComponent*> components;
 	int collisionMasks[(size_t)EPhysicsCollisionLayer::NUM];
 };

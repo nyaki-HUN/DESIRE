@@ -21,6 +21,7 @@ public:
 	~PhysicsComponent() override;
 
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
+	EPhysicsCollisionLayer GetCollisionLayer() const;
 
 	const PhysicsMaterial& GetPhysicsMaterial() const;
 
