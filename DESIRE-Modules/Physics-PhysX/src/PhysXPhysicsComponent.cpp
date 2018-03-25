@@ -4,6 +4,7 @@
 #include "Engine/Core/Modules.h"
 #include "Engine/Physics/Physics.h"
 
+#include "PxRigidDynamic.h"
 #include "PxFiltering.h"
 
 PhysXPhysicsComponent::PhysXPhysicsComponent(Object& object)
@@ -59,4 +60,24 @@ bool PhysXPhysicsComponent::IsTrigger() const
 {
 	ASSERT(false && "TODO");
 	return false;
+}
+
+void PhysXPhysicsComponent::SetLinearDamping(float value)
+{
+	body->setLinearDamping(value);
+}
+
+float PhysXPhysicsComponent::GetLinearDamping() const
+{
+	return body->getLinearDamping();
+}
+
+void PhysXPhysicsComponent::SetAngularDamping(float value)
+{
+	body->setAngularDamping(value);
+}
+
+float PhysXPhysicsComponent::GetAngularDamping() const
+{
+	return body->getAngularDamping();
 }

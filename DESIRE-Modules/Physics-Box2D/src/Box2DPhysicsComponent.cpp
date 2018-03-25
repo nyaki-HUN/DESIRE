@@ -122,24 +122,24 @@ bool Box2DPhysicsComponent::IsTrigger() const
 	return isTrigger;
 }
 
-float Box2DPhysicsComponent::GetLinearDrag() const
-{
-	return body->GetLinearDamping();
-}
-
-void Box2DPhysicsComponent::SetLinearDrag(float value)
+void Box2DPhysicsComponent::SetLinearDamping(float value)
 {
 	body->SetLinearDamping(value);
 }
 
-float Box2DPhysicsComponent::GetAngularDrag() const
+float Box2DPhysicsComponent::GetLinearDamping() const
 {
-	return body->GetAngularDamping();
+	return body->GetLinearDamping();
 }
 
-void Box2DPhysicsComponent::SetAngularDrag(float value)
+void Box2DPhysicsComponent::SetAngularDamping(float value)
 {
 	body->SetAngularDamping(value);
+}
+
+float Box2DPhysicsComponent::GetAngularDamping() const
+{
+	return body->GetAngularDamping();
 }
 
 Vector2 Box2DPhysicsComponent::GetLinearVelocity()

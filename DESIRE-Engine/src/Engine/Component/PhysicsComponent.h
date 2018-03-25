@@ -35,6 +35,11 @@ public:
 	virtual void SetTrigger(bool value) = 0;
 	virtual bool IsTrigger() const = 0;
 
+	virtual void SetLinearDamping(float value) = 0;
+	virtual float GetLinearDamping() const = 0;
+	virtual void SetAngularDamping(float value) = 0;
+	virtual float GetAngularDamping() const = 0;
+
 protected:
 	EPhysicsCollisionLayer collisionLayer;
 	PhysicsMaterial physicsMaterial;

@@ -25,6 +25,11 @@ public:
 	void SetTrigger(bool value) override;
 	bool IsTrigger() const override;
 
+	void SetLinearDamping(float value) override;
+	float GetLinearDamping() const override;
+	void SetAngularDamping(float value) override;
+	float GetAngularDamping() const override;
+
 private:
 	btRigidBody *body = nullptr;
 	btCollisionShape *shape = nullptr;

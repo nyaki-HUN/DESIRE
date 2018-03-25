@@ -30,11 +30,10 @@ public:
 	void SetTrigger(bool value) override;
 	bool IsTrigger() const override;
 
-	float GetLinearDrag() const;
-	void SetLinearDrag(float value);
-
-	float GetAngularDrag() const;
-	void SetAngularDrag(float value);
+	void SetLinearDamping(float value) override;
+	float GetLinearDamping() const override;
+	void SetAngularDamping(float value) override;
+	float GetAngularDamping() const override;
 
 	Vector2 GetLinearVelocity();
 	void SetLinearVelocity(const Vector2& velocity);

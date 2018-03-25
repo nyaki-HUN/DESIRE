@@ -169,3 +169,23 @@ bool BulletPhysicsComponent::IsTrigger() const
 	// TODO
 	return false;
 }
+
+void BulletPhysicsComponent::SetLinearDamping(float value)
+{
+	body->setDamping(value, body->getAngularDamping());
+}
+
+float BulletPhysicsComponent::GetLinearDamping() const
+{
+	return body->getLinearDamping();
+}
+
+void BulletPhysicsComponent::SetAngularDamping(float value)
+{
+	body->setDamping(body->getLinearDamping(), value);
+}
+
+float BulletPhysicsComponent::GetAngularDamping() const
+{
+	return body->getAngularDamping();
+}
