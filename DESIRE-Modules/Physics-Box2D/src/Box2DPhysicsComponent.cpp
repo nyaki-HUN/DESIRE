@@ -1,5 +1,7 @@
 #include "Box2DPhysicsComponent.h"
+#include "Box2DColliderShape.h"
 #include "Box2DPhysics.h"
+#include "b2MathExt.h"
 
 #include "Engine/Core/Modules.h"
 
@@ -11,8 +13,11 @@ Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 
 	b2BodyDef bodyDef;
+	bodyDef.angularDamping = 0.05f;
 	bodyDef.userData = this;
 	body = world->CreateBody(&bodyDef);
+
+	UpdateFilterData();
 }
 
 Box2DPhysicsComponent::~Box2DPhysicsComponent()
@@ -45,14 +50,131 @@ float Box2DPhysicsComponent::GetMass() const
 	return body->GetMass();
 }
 
+Vector3 Box2DPhysicsComponent::GetCenterOfMass() const
+{
+	const b2Vec2& vec = body->GetWorldCenter();
+	return Vector3(vec.x, vec.y, 0.0f);
+}
+
+void Box2DPhysicsComponent::SetDensity(float i_density)
+{
+	density = i_density;
+
+	for(b2Fixture *fixture : fixtures)
+	{
+		fixture->SetDensity(density);
+	}
+
+	// The SetDensity() didn't adjust the mass, so we need to do it
+	body->ResetMassData();
+}
+
+float Box2DPhysicsComponent::GetDensity() const
+{
+	return density;
+}
+
+void Box2DPhysicsComponent::SetTrigger(bool value)
+{
+	isTrigger = value;
+
+	for(b2Fixture *fixture : fixtures)
+	{
+		fixture->SetSensor(isTrigger);
+	}
+}
+
 bool Box2DPhysicsComponent::IsTrigger() const
 {
 	return isTrigger;
 }
 
+float Box2DPhysicsComponent::GetLinearDrag() const
+{
+	return body->GetLinearDamping();
+}
+
+void Box2DPhysicsComponent::SetLinearDrag(float value)
+{
+	body->SetLinearDamping(value);
+}
+
+float Box2DPhysicsComponent::GetAngularDrag() const
+{
+	return body->GetAngularDamping();
+}
+
+void Box2DPhysicsComponent::SetAngularDrag(float value)
+{
+	body->SetAngularDamping(value);
+}
+
+Vector2 Box2DPhysicsComponent::GetLinearVelocity()
+{
+	const b2Vec2& v = body->GetLinearVelocity();
+	return GetVector2(v);
+}
+
+void Box2DPhysicsComponent::SetLinearVelocity(const Vector2& velocity)
+{
+	body->SetLinearVelocity(GetB2Vec2(velocity));
+}
+
+float Box2DPhysicsComponent::GetAngularVelocity() const
+{
+	return body->GetAngularVelocity();
+}
+
+void Box2DPhysicsComponent::SetAngularVelocity(float value)
+{
+	body->SetAngularVelocity(value);
+}
+
+bool Box2DPhysicsComponent::IsAwake() const
+{
+	return body->IsAwake();
+}
+
+bool Box2DPhysicsComponent::IsSleeping() const
+{
+	return body->IsAwake() == false;
+}
+
+void Box2DPhysicsComponent::SetEnabled(bool value)
+{
+	PhysicsComponent::SetEnabled(value);
+	body->SetActive(value);
+}
+
 b2Body* Box2DPhysicsComponent::GetBody() const
 {
 	return body;
+}
+
+void Box2DPhysicsComponent::CreateFixtures()
+{
+	ReleaseFixtures();
+
+	if(shape == nullptr)
+	{
+		return;
+	}
+
+	Box2DColliderShape *colliderShape = static_cast<Box2DColliderShape*>(shape.get());
+	for(size_t i = 0; i < colliderShape->GetShapeCount(); ++i)
+	{
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = colliderShape->GetShape(i);
+		fixtureDef.userData = this;
+		fixtureDef.friction = physicsMaterial.friction;
+		fixtureDef.restitution = physicsMaterial.bounciness;
+		fixtureDef.density = density;
+		fixtureDef.isSensor = isTrigger;
+		fixtureDef.filter = filterData;
+
+		b2Fixture *fixture = body->CreateFixture(&fixtureDef);
+		fixtures.push_back(fixture);
+	}
 }
 
 void Box2DPhysicsComponent::ReleaseFixtures()

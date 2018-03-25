@@ -1,8 +1,13 @@
 #pragma once
 
 #include "Engine/Component/Component.h"
+#include "Engine/Core/math/Vector3.h"
+#include "Engine/Physics/PhysicsMaterial.h"
+
+#include <memory>
 
 enum class EPhysicsCollisionLayer;
+class ColliderShape;
 
 class PhysicsComponent : public Component
 {
@@ -16,11 +21,18 @@ public:
 
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
 
+	const PhysicsMaterial& GetPhysicsMaterial() const;
+
 	virtual void SetMass(float mass) = 0;
 	virtual float GetMass() const = 0;
 
+	virtual Vector3 GetCenterOfMass() const = 0;
+
+	virtual void SetTrigger(bool value) = 0;
 	virtual bool IsTrigger() const = 0;
 
 protected:
 	EPhysicsCollisionLayer collisionLayer;
+	PhysicsMaterial physicsMaterial;
+	std::unique_ptr<ColliderShape> shape;
 };

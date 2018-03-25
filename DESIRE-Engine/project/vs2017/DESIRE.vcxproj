@@ -208,8 +208,10 @@
     <ClInclude Include="..\..\src\Engine\Input\Mouse.h" />
     <ClInclude Include="..\..\src\Engine\Input\WINDOWS\WINDOWSInput.h" />
     <ClInclude Include="..\..\src\Engine\Input\keyCodes.h" />
+    <ClInclude Include="..\..\src\Engine\Physics\ColliderShape.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Collision.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Physics.h" />
+    <ClInclude Include="..\..\src\Engine\Physics\PhysicsMaterial.h" />
     <ClInclude Include="..\..\src\Engine\Render\Camera.h" />
     <ClInclude Include="..\..\src\Engine\Render\DebugDraw.h" />
     <ClInclude Include="..\..\src\Engine\Render\Material.h" />

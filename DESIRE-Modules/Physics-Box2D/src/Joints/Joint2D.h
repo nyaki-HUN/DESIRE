@@ -25,6 +25,8 @@ public:
 	Vector2 GetReactionForce(float timeStep) const;
 	float GetReactionTorque(float timeStep) const;
 
+	// This function will be called when a Box2D joint is destroyed (usually when a connecected RigidBody is destroyed).
+	// Make sure 'jointDef.userData' is properly set to 'this' in the derived class.
 	virtual void OnJointDestroyed() = 0;
 
 protected:

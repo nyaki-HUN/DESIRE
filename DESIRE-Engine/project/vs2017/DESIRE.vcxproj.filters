@@ -405,10 +405,16 @@
     <ClInclude Include="..\..\src\Engine\Input\keyCodes.h">
       <Filter>src\Engine\Input</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Physics\ColliderShape.h">
+      <Filter>src\Engine\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Physics\Collision.h">
       <Filter>src\Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Physics\Physics.h">
+      <Filter>src\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Physics\PhysicsMaterial.h">
       <Filter>src\Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Render\Camera.h">

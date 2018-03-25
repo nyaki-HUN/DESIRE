@@ -180,6 +180,9 @@
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Rope\b2Rope.h">
       <Filter>Externals\Box2D\Box2D\Rope</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Box2DColliderShape.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Box2DPhysics.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -200,9 +203,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Joints\SpringJoint2D.h">
       <Filter>src\Joints</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\PhysicsMaterial.h">
-      <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RaycastCallbacks.h">
       <Filter>src</Filter>

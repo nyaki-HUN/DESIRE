@@ -17,5 +17,5 @@ public:
 	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) override;
 
 private:
-	static void FillCollisionFromContact(Collision& contactData, const b2Contact *contact);
+	static void FillCollisionFromContact(Collision& collision, const b2Contact *contact);
 };

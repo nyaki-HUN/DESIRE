@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Dynamics\b2World.h" />
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Dynamics\b2WorldCallbacks.h" />
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Rope\b2Rope.h" />
+    <ClInclude Include="..\..\src\Box2DColliderShape.h" />
     <ClInclude Include="..\..\src\Box2DPhysics.h" />
     <ClInclude Include="..\..\src\Box2DPhysicsComponent.h" />
     <ClInclude Include="..\..\src\ContactListener.h" />
@@ -156,7 +157,6 @@
     <ClInclude Include="..\..\src\Joints\AnchoredJoint2D.h" />
     <ClInclude Include="..\..\src\Joints\Joint2D.h" />
     <ClInclude Include="..\..\src\Joints\SpringJoint2D.h" />
-    <ClInclude Include="..\..\src\PhysicsMaterial.h" />
     <ClInclude Include="..\..\src\RaycastCallbacks.h" />
     <ClInclude Include="..\..\src\b2MathExt.h" />
   </ItemGroup>

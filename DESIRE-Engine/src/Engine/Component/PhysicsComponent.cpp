@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Component/PhysicsComponent.h"
 #include "Engine/Physics/Physics.h"				// for EPhysicsCollisionLayer
-#include "Engine/Scene/Object.h"
+#include "Engine/Physics/ColliderShape.h"
 
 PhysicsComponent::PhysicsComponent(Object& object)
 	: Component(object)
@@ -18,4 +18,9 @@ PhysicsComponent::~PhysicsComponent()
 void PhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
 	collisionLayer = i_collisionLayer;
+}
+
+const PhysicsMaterial& PhysicsComponent::GetPhysicsMaterial() const
+{
+	return physicsMaterial;
 }

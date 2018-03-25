@@ -34,6 +34,17 @@ float PhysXPhysicsComponent::GetMass() const
 	return 0.0f;
 }
 
+Vector3 PhysXPhysicsComponent::GetCenterOfMass() const
+{
+	ASSERT(false && "TODO");
+	return Vector3(0.0f);
+}
+
+void PhysXPhysicsComponent::SetTrigger(bool value)
+{
+	ASSERT(false && "TODO");
+}
+
 bool PhysXPhysicsComponent::IsTrigger() const
 {
 	ASSERT(false && "TODO");

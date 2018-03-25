@@ -74,6 +74,8 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 	motionState = new btDefaultMotionState();
 	btRigidBody::btRigidBodyConstructionInfo cInfo(0.0f, motionState, shape, localInertia);
+	cInfo.m_friction = physicsMaterial.friction;
+	cInfo.m_restitution = physicsMaterial.bounciness;
 	body = new btRigidBody(cInfo);
 	body->setUserPointer(this);
 
@@ -149,6 +151,16 @@ float BulletPhysicsComponent::GetMass() const
 {
 	const float rv = body->getInvMass();
 	return (rv != 0.0f) ? 1.0f / rv : 0.0f;
+}
+
+Vector3 BulletPhysicsComponent::GetCenterOfMass() const
+{
+	return GetVector3(body->getCenterOfMassPosition());
+}
+
+void BulletPhysicsComponent::SetTrigger(bool value)
+{
+	// TODO
 }
 
 bool BulletPhysicsComponent::IsTrigger() const

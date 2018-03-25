@@ -18,6 +18,9 @@ public:
 	void SetMass(float mass) override;
 	float GetMass() const override;
 
+	Vector3 GetCenterOfMass() const override;
+
+	void SetTrigger(bool value) override;
 	bool IsTrigger() const override;
 
 private:
