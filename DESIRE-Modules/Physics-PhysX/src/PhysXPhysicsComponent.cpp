@@ -36,13 +36,12 @@ std::vector<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponen
 
 void PhysXPhysicsComponent::SetMass(float mass)
 {
-	ASSERT(false && "TODO");
+	return body->setMass(mass);
 }
 
 float PhysXPhysicsComponent::GetMass() const
 {
-	ASSERT(false && "TODO");
-	return 0.0f;
+	return body->getMass();
 }
 
 Vector3 PhysXPhysicsComponent::GetCenterOfMass() const
