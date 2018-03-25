@@ -85,9 +85,10 @@ void Box2DPhysicsComponent::SetDensity(float i_density)
 {
 	density = i_density;
 
+	const float densityToSet = GetDensity();
 	for(b2Fixture *fixture : fixtures)
 	{
-		fixture->SetDensity(density);
+		fixture->SetDensity(densityToSet);
 	}
 
 	// The SetDensity() didn't adjust the mass, so we need to do it
@@ -96,7 +97,8 @@ void Box2DPhysicsComponent::SetDensity(float i_density)
 
 float Box2DPhysicsComponent::GetDensity() const
 {
-	return density;
+	// Triggers are required to have zero density
+	return (isTrigger ? 0.0f : density);
 }
 
 void Box2DPhysicsComponent::SetTrigger(bool value)
@@ -107,6 +109,9 @@ void Box2DPhysicsComponent::SetTrigger(bool value)
 	{
 		fixture->SetSensor(isTrigger);
 	}
+
+	// Need to refresh density when isTrigger is changed
+	SetDensity(density);
 }
 
 bool Box2DPhysicsComponent::IsTrigger() const
@@ -193,7 +198,7 @@ void Box2DPhysicsComponent::CreateFixtures()
 		fixtureDef.userData = this;
 		fixtureDef.friction = physicsMaterial.friction;
 		fixtureDef.restitution = physicsMaterial.bounciness;
-		fixtureDef.density = density;
+		fixtureDef.density = GetDensity();
 		fixtureDef.isSensor = isTrigger;
 		fixtureDef.filter = filterData;
 

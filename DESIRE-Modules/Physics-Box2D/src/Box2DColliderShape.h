@@ -5,6 +5,6 @@
 class Box2DColliderShape : public ColliderShape
 {
 public:
-	virtual int GetShapeCount() const = 0;
-	virtual const b2Shape* GetShape(int idx) const = 0;
+	virtual size_t GetShapeCount() const = 0;
+	virtual const b2Shape* GetShape(size_t idx) const = 0;
 };
