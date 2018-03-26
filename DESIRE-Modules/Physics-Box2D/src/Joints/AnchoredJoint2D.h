@@ -10,14 +10,14 @@ protected:
 public:
 	~AnchoredJoint2D() override;
 
-	Box2DPhysicsComponent* GetConnectedComponent() const;
 	void SetConnectedComponent(Box2DPhysicsComponent *component);
+	Box2DPhysicsComponent* GetConnectedComponent() const;
 
-	const Vector2& GetAnchor() const;
 	void SetAnchor(const Vector2& value);
+	const Vector2& GetAnchor() const;
 
-	const Vector2& GetConnectedAnchor() const;
 	void SetConnectedAnchor(const Vector2& value);
+	const Vector2& GetConnectedAnchor() const;
 
 private:
 	Box2DPhysicsComponent *anchoredComponent = nullptr;
