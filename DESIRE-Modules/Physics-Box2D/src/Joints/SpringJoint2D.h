@@ -19,16 +19,14 @@ public:
 	float GetDistance() const;
 	void SetDistance(float value);
 
-	void CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent) override;
-
 	void OnJointDestroyed() override;
 
 private:
+	b2Joint* CreateJoint() override;
+
 	b2Joint* GetJoint() const override;
 	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
-
-	void RecreateJoint() override;
 
 	b2DistanceJointDef jointDef;
 	b2DistanceJoint *joint = nullptr;

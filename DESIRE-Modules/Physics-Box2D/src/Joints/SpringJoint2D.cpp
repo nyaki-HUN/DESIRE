@@ -1,11 +1,5 @@
 #include "Joints/SpringJoint2D.h"
-#include "Box2DPhysics.h"
-#include "Box2DPhysicsComponent.h"
 #include "b2MathExt.h"
-
-#include "Engine/Core/Modules.h"
-
-#include "Box2D/Dynamics/b2Body.h"
 
 SpringJoint2D::SpringJoint2D()
 {
@@ -63,16 +57,18 @@ void SpringJoint2D::SetDistance(float value)
 	}
 }
 
-void SpringJoint2D::CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent)
-{
-	jointDef.bodyA = anchoredComponent->GetBody();
-	jointDef.bodyB = connectedComponent->GetBody();
-	RecreateJoint();
-}
-
 void SpringJoint2D::OnJointDestroyed()
 {
 	joint = nullptr;
+}
+
+b2Joint* SpringJoint2D::CreateJoint()
+{
+	jointDef.localAnchorA = GetB2Vec2(GetAnchor());
+	jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
+
+	joint = static_cast<b2DistanceJoint*>(Joint2D::CreateJoint());
+	return joint;
 }
 
 b2Joint* SpringJoint2D::GetJoint() const
@@ -88,17 +84,4 @@ b2JointDef& SpringJoint2D::GetJointDef()
 const b2JointDef& SpringJoint2D::GetJointDef() const
 {
 	return jointDef;
-}
-
-void SpringJoint2D::RecreateJoint()
-{
-	if(jointDef.bodyA == nullptr || jointDef.bodyB == nullptr)
-	{
-		return;
-	}
-
-	jointDef.localAnchorA = GetB2Vec2(GetAnchor());
-	jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
-
-	joint = static_cast<b2DistanceJoint*>(CreateJoint());
 }

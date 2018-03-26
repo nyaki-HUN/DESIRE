@@ -1,5 +1,6 @@
 #include "Joints/Joint2D.h"
 #include "Box2DPhysics.h"
+#include "Box2DPhysicsComponent.h"
 #include "b2MathExt.h"
 
 #include "Engine/Core/assert.h"
@@ -26,7 +27,7 @@ bool Joint2D::IsCollisionEnabled() const
 void Joint2D::SetCollisionEnabled(bool value)
 {
 	GetJointDef().collideConnected = value;
-	RecreateJoint();
+	CreateJoint();
 }
 
 Vector2 Joint2D::GetReactionForce(float timeStep) const
@@ -43,12 +44,29 @@ float Joint2D::GetReactionTorque(float timeStep) const
 	return joint->GetReactionTorque(timeStep);
 }
 
+void Joint2D::CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent)
+{
+	if(anchoredComponent == nullptr || connectedComponent == nullptr)
+	{
+		return;
+	}
+
+	GetJointDef().bodyA = anchoredComponent->GetBody();
+	GetJointDef().bodyB = connectedComponent->GetBody();
+	CreateJoint();
+}
+
 b2Joint* Joint2D::CreateJoint()
 {
 	DestroyJoint();
 
-	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 	const b2JointDef& jointDef = GetJointDef();
+	if(jointDef.bodyA == nullptr || jointDef.bodyB == nullptr)
+	{
+		return nullptr;
+	}
+
+	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 	return world->CreateJoint(&jointDef);
 }
 
