@@ -10,24 +10,20 @@ public:
 	SpringJoint2D();
 	~SpringJoint2D() override;
 
-	float GetDampingRatio() const;
 	void SetDampingRatio(float value);
+	float GetDampingRatio() const;
 
-	float GetFrequency() const;
 	void SetFrequency(float value);
+	float GetFrequency() const;
 
-	float GetDistance() const;
 	void SetDistance(float value);
-
-	void OnJointDestroyed() override;
+	float GetDistance() const;
 
 private:
-	b2Joint* CreateJoint() override;
+	void CreateJoint() override;
 
-	b2Joint* GetJoint() const override;
 	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
 
 	b2DistanceJointDef jointDef;
-	b2DistanceJoint *joint = nullptr;
 };

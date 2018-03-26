@@ -20,8 +20,8 @@ public:
 
 	virtual ~Joint2D();
 
-	bool IsCollisionEnabled() const;
 	void SetCollisionEnabled(bool enabled);
+	bool IsCollisionEnabled() const;
 
 	Vector2 GetReactionForce(float timeStep) const;
 	float GetReactionTorque(float timeStep) const;
@@ -30,13 +30,14 @@ public:
 
 	// This function will be called when a Box2D joint is destroyed (usually when a connecected RigidBody is destroyed).
 	// Make sure 'jointDef.userData' is properly set to 'this' in the derived class.
-	virtual void OnJointDestroyed() = 0;
+	void OnJointDestroyed();
 
 protected:
-	virtual b2Joint* CreateJoint();
+	virtual void CreateJoint();
 	void DestroyJoint();
 
-	virtual b2Joint* GetJoint() const = 0;
 	virtual b2JointDef& GetJointDef() = 0;
 	virtual const b2JointDef& GetJointDef() const = 0;
+
+	b2Joint *joint = nullptr;
 };

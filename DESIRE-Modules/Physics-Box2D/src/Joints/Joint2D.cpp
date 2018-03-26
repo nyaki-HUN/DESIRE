@@ -19,60 +19,62 @@ Joint2D::~Joint2D()
 	DestroyJoint();
 }
 
-bool Joint2D::IsCollisionEnabled() const
-{
-	return GetJointDef().collideConnected;
-}
-
 void Joint2D::SetCollisionEnabled(bool value)
 {
 	GetJointDef().collideConnected = value;
 	CreateJoint();
 }
 
+bool Joint2D::IsCollisionEnabled() const
+{
+	return GetJointDef().collideConnected;
+}
+
 Vector2 Joint2D::GetReactionForce(float timeStep) const
 {
-	const b2Joint *joint = GetJoint();
 	ASSERT(joint != nullptr);
 	return GetVector2(joint->GetReactionForce(timeStep));
 }
 
 float Joint2D::GetReactionTorque(float timeStep) const
 {
-	const b2Joint *joint = GetJoint();
 	ASSERT(joint != nullptr);
 	return joint->GetReactionTorque(timeStep);
 }
 
 void Joint2D::CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent)
 {
-	if(anchoredComponent == nullptr || connectedComponent == nullptr)
+	if(anchoredComponent == nullptr)
 	{
 		return;
 	}
 
 	GetJointDef().bodyA = anchoredComponent->GetBody();
-	GetJointDef().bodyB = connectedComponent->GetBody();
+	GetJointDef().bodyB = (connectedComponent != nullptr) ? connectedComponent->GetBody() : static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorldBody();
 	CreateJoint();
 }
 
-b2Joint* Joint2D::CreateJoint()
+void Joint2D::OnJointDestroyed()
+{
+	joint = nullptr;
+}
+
+void Joint2D::CreateJoint()
 {
 	DestroyJoint();
 
 	const b2JointDef& jointDef = GetJointDef();
 	if(jointDef.bodyA == nullptr || jointDef.bodyB == nullptr)
 	{
-		return nullptr;
+		return;
 	}
 
 	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
-	return world->CreateJoint(&jointDef);
+	joint = world->CreateJoint(&jointDef);
 }
 
 void Joint2D::DestroyJoint()
 {
-	b2Joint *joint = GetJoint();
 	if(joint != nullptr)
 	{
 		b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
