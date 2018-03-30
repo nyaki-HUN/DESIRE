@@ -41,6 +41,9 @@ public:
 	void OnPhysicsComponentCreated(PhysicsComponent *component);
 	void OnPhysicsComponentDestroyed(PhysicsComponent *component);
 
+	void SetFixedStepTime(float stepTime);
+	float GetFixedStepTime() const;
+
 	virtual void SetGravity(const Vector3& gravity) = 0;
 	virtual Vector3 GetGravity() const = 0;
 

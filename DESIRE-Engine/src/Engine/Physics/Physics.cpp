@@ -34,6 +34,16 @@ void Physics::OnPhysicsComponentDestroyed(PhysicsComponent *component)
 	}
 }
 
+void Physics::SetFixedStepTime(float stepTime)
+{
+	fixedStepTime = stepTime;
+}
+
+float Physics::GetFixedStepTime() const
+{
+	return fixedStepTime;
+}
+
 void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled)
 {
 	ASSERT(a < EPhysicsCollisionLayer::NUM);
