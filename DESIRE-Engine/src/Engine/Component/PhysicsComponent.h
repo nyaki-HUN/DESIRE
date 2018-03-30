@@ -25,8 +25,15 @@ public:
 		KINEMATIC
 	};
 
+	enum EForceMode
+	{
+		FORCE,
+		IMPULSE
+	};
+
 	~PhysicsComponent() override;
 
+	// Collision
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
 	EPhysicsCollisionLayer GetCollisionLayer() const;
 
@@ -56,6 +63,11 @@ public:
 	virtual Vector3 GetLinearVelocity() const = 0;
 	virtual void SetAngularVelocity(const Vector3& angularVelocity) = 0;
 	virtual Vector3 GetAngularVelocity() const = 0;
+
+	// Forces
+	virtual void AddForce(const Vector3& force, EForceMode mode) = 0;
+	virtual void AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode) = 0;
+	virtual void AddTorque(const Vector3& torque, EForceMode mode) = 0;
 
 protected:
 	EPhysicsCollisionLayer collisionLayer;

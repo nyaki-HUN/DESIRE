@@ -110,7 +110,7 @@ bool Box2DPhysicsComponent::IsTrigger() const
 
 void Box2DPhysicsComponent::SetMass(float mass)
 {
-
+	// TODO
 }
 
 float Box2DPhysicsComponent::GetMass() const
@@ -166,13 +166,12 @@ float Box2DPhysicsComponent::GetAngularDamping() const
 
 void Box2DPhysicsComponent::SetLinearVelocity(const Vector3& linearVelocity)
 {
-	body->SetLinearVelocity(b2Vec2(linearVelocity.GetX(), linearVelocity.GetY()));
+	body->SetLinearVelocity(GetB2Vec2(linearVelocity));
 }
 
 Vector3 Box2DPhysicsComponent::GetLinearVelocity() const
 {
-	const b2Vec2& v = body->GetLinearVelocity();
-	return Vector3(v.x, v.y, 0.0f);
+	return GetVector3(body->GetLinearVelocity());
 }
 
 void Box2DPhysicsComponent::SetAngularVelocity(const Vector3& angularVelocity)
@@ -184,6 +183,36 @@ Vector3 Box2DPhysicsComponent::GetAngularVelocity() const
 {
 	const float angularVelocity = body->GetAngularVelocity();
 	return Vector3(0.0f, 0.0f, angularVelocity);
+}
+
+void Box2DPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
+{
+	const b2Vec2 f = GetB2Vec2(force);
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->ApplyForceToCenter(f, true); break;
+		case EForceMode::IMPULSE:	body->ApplyLinearImpulseToCenter(f, true); break;
+	}
+}
+
+void Box2DPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode)
+{
+	const b2Vec2 f = GetB2Vec2(force);
+	const b2Vec2 pos = GetB2Vec2(position);
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->ApplyForce(f, pos, true); break;
+		case EForceMode::IMPULSE:	body->ApplyLinearImpulse(f, pos, true); break;
+	}
+}
+
+void Box2DPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
+{
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->ApplyTorque(torque.GetZ(), true); break;
+		case EForceMode::IMPULSE:	body->ApplyAngularImpulse(torque.GetZ(), true); break;
+	}
 }
 
 bool Box2DPhysicsComponent::IsAwake() const

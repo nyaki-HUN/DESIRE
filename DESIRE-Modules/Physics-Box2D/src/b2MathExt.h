@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Core/math/Vector2.h"
+#include "Engine/Core/math/Vector3.h"
 
 #include "Box2D/Common/b2Math.h"
 
@@ -10,6 +11,16 @@ inline Vector2 GetVector2(const b2Vec2& vec)
 }
 
 inline b2Vec2 GetB2Vec2(const Vector2& vec)
+{
+	return b2Vec2(vec.GetX(), vec.GetY());
+}
+
+inline Vector3 GetVector3(const b2Vec2& vec)
+{
+	return Vector3(vec.x, vec.y, 0.0f);
+}
+
+inline b2Vec2 GetB2Vec2(const Vector3& vec)
 {
 	return b2Vec2(vec.GetX(), vec.GetY());
 }

@@ -7,6 +7,7 @@
 
 #include "PxRigidDynamic.h"
 #include "PxFiltering.h"
+#include "extensions/PxRigidBodyExt.h"
 
 PhysXPhysicsComponent::PhysXPhysicsComponent(Object& object)
 	: PhysicsComponent(object)
@@ -133,4 +134,31 @@ void PhysXPhysicsComponent::SetAngularVelocity(const Vector3& angularVelocity)
 Vector3 PhysXPhysicsComponent::GetAngularVelocity() const
 {
 	return GetVector3(body->getAngularVelocity());
+}
+
+void PhysXPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
+{
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->addForce(GetPxVec3(force), physx::PxForceMode::eFORCE); break;
+		case EForceMode::IMPULSE:	body->addForce(GetPxVec3(force), physx::PxForceMode::eIMPULSE); break;
+	}
+}
+
+void PhysXPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode)
+{
+	switch(mode)
+	{
+		case EForceMode::FORCE:		physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eFORCE);
+		case EForceMode::IMPULSE:	physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eIMPULSE);
+	}
+}
+
+void PhysXPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
+{
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->addTorque(GetPxVec3(torque), physx::PxForceMode::eFORCE); break;
+		case EForceMode::IMPULSE:	body->addTorque(GetPxVec3(torque), physx::PxForceMode::eIMPULSE); break;
+	}
 }

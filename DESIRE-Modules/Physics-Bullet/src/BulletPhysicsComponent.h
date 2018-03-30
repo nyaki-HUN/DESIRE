@@ -13,6 +13,7 @@ public:
 	BulletPhysicsComponent(Object& object, bool dynamic);
 	~BulletPhysicsComponent();
 
+	// Collision
 	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
 
 	std::vector<PhysicsComponent*> GetActiveCollidingComponents() const override;
@@ -39,6 +40,11 @@ public:
 	Vector3 GetLinearVelocity() const override;
 	void SetAngularVelocity(const Vector3& angularVelocity) override;
 	Vector3 GetAngularVelocity() const override;
+
+	// Forces
+	void AddForce(const Vector3& force, EForceMode mode) override;
+	void AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode) override;
+	void AddTorque(const Vector3& torque, EForceMode mode) override;
 
 private:
 	btRigidBody *body = nullptr;

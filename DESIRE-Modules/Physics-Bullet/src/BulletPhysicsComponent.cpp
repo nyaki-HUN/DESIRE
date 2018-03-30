@@ -242,3 +242,30 @@ Vector3 BulletPhysicsComponent::GetAngularVelocity() const
 {
 	return GetVector3(body->getAngularVelocity());
 }
+
+void BulletPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
+{
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->applyCentralForce(GetBtVector3(force)); break;
+		case EForceMode::IMPULSE:	body->applyCentralImpulse(GetBtVector3(force)); break;
+	}
+}
+
+void BulletPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode)
+{
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->applyForce(GetBtVector3(force), GetBtVector3(position));
+		case EForceMode::IMPULSE:	body->applyImpulse(GetBtVector3(force), GetBtVector3(position));
+	}
+}
+
+void BulletPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
+{
+	switch(mode)
+	{
+		case EForceMode::FORCE:		body->applyTorque(GetBtVector3(torque)); break;
+		case EForceMode::IMPULSE:	body->applyTorqueImpulse(GetBtVector3(torque)); break;
+	}
+}
