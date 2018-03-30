@@ -4,6 +4,8 @@
 #include "Engine/Core/Log.h"
 #include "Engine/Scene/Object.h"
 
+#include "PxPhysicsAPI.h"
+
 #if defined(_DEBUG)
 	#pragma comment(lib, "PhysX3DEBUG_x64.lib")
 	#pragma comment(lib, "PhysX3CookingDEBUG_x64.lib")
@@ -18,7 +20,10 @@
 
 PhysXPhysics::PhysXPhysics()
 {
-	foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, allocator, errorCallback);
+	allocator = std::make_unique<physx::PxDefaultAllocator>();
+	errorCallback = std::make_unique<physx::PxDefaultErrorCallback>();
+
+	foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, *allocator.get(), *errorCallback.get());
 	if(foundation == nullptr)
 	{
 		LOG_ERROR("PxCreateFoundation failed!");
@@ -87,7 +92,7 @@ PhysXPhysics::~PhysXPhysics()
 
 void PhysXPhysics::Update(float deltaTime)
 {
-
+	UpdateComponents();
 }
 
 PhysicsComponent& PhysXPhysics::CreatePhysicsComponentOnObject(Object& object)

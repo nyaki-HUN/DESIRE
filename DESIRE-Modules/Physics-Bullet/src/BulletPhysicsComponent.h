@@ -48,6 +48,9 @@ public:
 
 	bool IsSleeping() const override;
 
+	void UpdateGameObjectTransform() const override;
+	void SetTransformFromGameObject() override;
+
 	void SetEnabled(bool value) override;
 
 private:

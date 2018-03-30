@@ -4,6 +4,8 @@
 
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/math/AABB.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
@@ -273,6 +275,23 @@ void BulletPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 bool BulletPhysicsComponent::IsSleeping() const
 {
 	return (body->getActivationState() == ISLAND_SLEEPING);
+}
+
+void BulletPhysicsComponent::UpdateGameObjectTransform() const
+{
+	Transform& transform = object.GetTransform();
+	const btTransform& btTransform = body->getWorldTransform();
+	transform.SetPosition(GetVector3(btTransform.getOrigin()));
+	transform.SetRotation(GetQuat(btTransform.getRotation()));
+
+}
+
+void BulletPhysicsComponent::SetTransformFromGameObject()
+{
+	const Transform& transform = object.GetTransform();
+	btTransform& btTransform = body->getWorldTransform();
+	btTransform.setOrigin(GetBtVector3(transform.GetPosition()));
+	btTransform.setRotation(GetBtQuat(transform.GetRotation()));
 }
 
 void BulletPhysicsComponent::SetEnabled(bool value)

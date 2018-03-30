@@ -2,7 +2,17 @@
 
 #include "Engine/Physics/Physics.h"
 
-#include "../Externals/PhysX_3.4/Include/PxPhysicsAPI.h"
+#include <memory>
+
+namespace physx
+{
+	class PxFoundation;
+	class PxPhysics;
+	class PxCooking;
+	class PxScene;
+	class PxAllocatorCallback;
+	class PxErrorCallback;
+}
 
 class PhysXPhysics : public Physics
 {
@@ -27,6 +37,6 @@ private:
 	physx::PxCooking *cooking = nullptr;
 	physx::PxScene *scene = nullptr;
 
-	physx::PxDefaultAllocator allocator;
-	physx::PxDefaultErrorCallback errorCallback;
+	std::unique_ptr<physx::PxAllocatorCallback> allocator;
+	std::unique_ptr<physx::PxErrorCallback> errorCallback;
 };

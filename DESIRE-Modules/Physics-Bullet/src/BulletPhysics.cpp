@@ -61,6 +61,8 @@ void BulletPhysics::Update(float deltaTime)
 	}
 
 	dynamicsWorld->stepSimulation(deltaTime, 7);
+
+	UpdateComponents();
 }
 
 PhysicsComponent& BulletPhysics::CreatePhysicsComponentOnObject(Object& object)

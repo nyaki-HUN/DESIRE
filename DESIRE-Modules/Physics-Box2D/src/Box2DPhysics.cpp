@@ -73,6 +73,8 @@ void Box2DPhysics::Update(float deltaTime)
 
 	HandleCollisionEnds();
 	HandleCollisionBegins();
+
+	UpdateComponents();
 }
 
 PhysicsComponent& Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)

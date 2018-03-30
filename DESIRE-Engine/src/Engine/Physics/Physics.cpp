@@ -65,3 +65,18 @@ int Physics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
 	ASSERT(layer < EPhysicsCollisionLayer::NUM);
 	return collisionMasks[(size_t)layer];
 }
+
+void Physics::UpdateComponents()
+{
+	for(PhysicsComponent *component : components)
+	{
+		if(component->GetBodyType() == PhysicsComponent::EBodyType::DYNAMIC)
+		{
+			component->UpdateGameObjectTransform();
+		}
+		else
+		{
+			component->SetTransformFromGameObject();
+		}
+	}
+}

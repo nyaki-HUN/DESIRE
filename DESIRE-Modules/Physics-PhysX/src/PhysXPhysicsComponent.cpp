@@ -1,9 +1,11 @@
 #include "PhysXPhysicsComponent.h"
+#include "PhysXPhysics.h"
 #include "PxMathExt.h"
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/Modules.h"
-#include "Engine/Physics/Physics.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 #include "PxRigidDynamic.h"
 #include "PxFiltering.h"
@@ -166,6 +168,23 @@ void PhysXPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 bool PhysXPhysicsComponent::IsSleeping() const
 {
 	return (dynamicBody != nullptr) ? dynamicBody->isSleeping() : true;
+}
+
+void PhysXPhysicsComponent::UpdateGameObjectTransform() const
+{
+	Transform& transform = object.GetTransform();
+	const physx::PxTransform pxTransform = body->getGlobalPose();
+	transform.SetPosition(GetVector3(pxTransform.p));
+	transform.SetRotation(GetQuat(pxTransform.q));
+}
+
+void PhysXPhysicsComponent::SetTransformFromGameObject()
+{
+	const Transform& transform = object.GetTransform();
+	physx::PxTransform pxTransform = body->getGlobalPose();
+	pxTransform.p = GetPxVec3(transform.GetPosition());
+	pxTransform.q = GetPxQuat(transform.GetRotation());
+	body->setGlobalPose(pxTransform);
 }
 
 void PhysXPhysicsComponent::SetEnabled(bool value)

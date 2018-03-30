@@ -18,14 +18,14 @@ protected:
 	PhysicsComponent(Object& object);
 
 public:
-	enum EBodyType
+	enum class EBodyType
 	{
 		STATIC,
 		DYNAMIC,
 		KINEMATIC
 	};
 
-	enum EForceMode
+	enum class EForceMode
 	{
 		FORCE,
 		IMPULSE
@@ -70,6 +70,9 @@ public:
 	virtual void AddTorque(const Vector3& torque, EForceMode mode) = 0;
 
 	virtual bool IsSleeping() const = 0;
+
+	virtual void UpdateGameObjectTransform() const = 0;
+	virtual void SetTransformFromGameObject() = 0;
 
 protected:
 	EPhysicsCollisionLayer collisionLayer;

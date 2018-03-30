@@ -4,6 +4,8 @@
 #include "b2MathExt.h"
 
 #include "Engine/Core/Modules.h"
+#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 #include "Box2D/Dynamics/b2World.h"
 #include "Box2D/Dynamics/Contacts/b2Contact.h"
@@ -218,6 +220,23 @@ void Box2DPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 bool Box2DPhysicsComponent::IsSleeping() const
 {
 	return (body->IsAwake() == false);
+}
+
+void Box2DPhysicsComponent::UpdateGameObjectTransform() const
+{
+	Transform& transform = object.GetTransform();
+	const b2Vec2& pos = body->GetPosition();
+	const float rotAngle = body->GetTransform().q.GetAngle();
+	transform.SetPosition(Vector3(pos.x, pos.y, transform.GetPosition().GetZ()));
+	transform.SetRotation(Quat::CreateRotationFromEulerAngles(Vector3(0.0f, 0.0f, rotAngle)));
+}
+
+void Box2DPhysicsComponent::SetTransformFromGameObject()
+{
+	const Transform& transform = object.GetTransform();
+	const Vector3 pos = transform.GetPosition();
+	const float rotAngle = transform.GetRotation().EulerAngles().GetZ();
+	body->SetTransform(GetB2Vec2(pos), rotAngle);
 }
 
 void Box2DPhysicsComponent::SetEnabled(bool value)

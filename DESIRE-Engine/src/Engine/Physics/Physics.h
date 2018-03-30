@@ -52,6 +52,8 @@ public:
 	virtual std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
 
 protected:
+	void UpdateComponents();
+
 	std::vector<PhysicsComponent*> components;
 	int collisionMasks[(size_t)EPhysicsCollisionLayer::NUM];
 };
