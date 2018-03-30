@@ -178,7 +178,7 @@ bool AngelScriptSystem::IsBreakpoint(const char *scriptSection, int line, asIScr
 	DESIRE_UNUSED(line);
 	DESIRE_UNUSED(function);
 
-	// TODO: Add debugging functionality
+	DESIRE_TODO("Add debugging functionality");
 	return false;
 }
 

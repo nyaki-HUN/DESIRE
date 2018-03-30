@@ -134,7 +134,7 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisio
 std::vector<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
 {
 	std::vector<PhysicsComponent*> collisions;
-	// TODO
+	DESIRE_TODO("Implement GetActiveCollidingComponents()");
 	return collisions;
 }
 
@@ -173,12 +173,12 @@ void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
 
 void BulletPhysicsComponent::SetTrigger(bool value)
 {
-	// TODO
+	DESIRE_TODO("Implement SetTrigger()");
 }
 
 bool BulletPhysicsComponent::IsTrigger() const
 {
-	// TODO
+	DESIRE_TODO("Implement IsTrigger()");
 	return false;
 }
 

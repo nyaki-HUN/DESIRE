@@ -110,7 +110,7 @@ bool Box2DPhysicsComponent::IsTrigger() const
 
 void Box2DPhysicsComponent::SetMass(float mass)
 {
-	// TODO
+	DESIRE_TODO("Implement SetMass()");
 }
 
 float Box2DPhysicsComponent::GetMass() const
