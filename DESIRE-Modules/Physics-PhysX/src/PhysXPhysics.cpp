@@ -1,5 +1,6 @@
 #include "PhysXPhysics.h"
 #include "PhysXPhysicsComponent.h"
+#include "PxMathExt.h"
 
 #include "Engine/Core/Log.h"
 #include "Engine/Scene/Object.h"
@@ -51,7 +52,7 @@ PhysXPhysics::PhysXPhysics()
 	}
 
 	physx::PxSceneDesc sceneDesc(physics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
@@ -130,12 +131,12 @@ PhysicsComponent& PhysXPhysics::CreatePhysicsComponentOnObject(Object& object)
 
 void PhysXPhysics::SetGravity(const Vector3& gravity)
 {
-
+	return scene->setGravity(GetPxVec3(gravity));
 }
 
 Vector3 PhysXPhysics::GetGravity() const
 {
-	return Vector3::Zero();
+	return GetVector3(scene->getGravity());
 }
 
 Collision PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)
