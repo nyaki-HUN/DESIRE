@@ -6,10 +6,10 @@
 ScriptComponent::ScriptComponent(Object& object)
 	: Component(object)
 {
-	Modules::ScriptSystem->OnScriptComponentCreate(this);
+	Modules::ScriptSystem->OnScriptComponentCreated(this);
 }
 
 ScriptComponent::~ScriptComponent()
 {
-	Modules::ScriptSystem->OnScriptComponentDestroy(this);
+	Modules::ScriptSystem->OnScriptComponentDestroyed(this);
 }

@@ -4,7 +4,6 @@
 #include "Engine/Core/HashedStringMap.h"
 
 #include <vector>
-#include <memory>
 
 class IScript;
 class ScriptComponent;
@@ -21,8 +20,8 @@ public:
 	void RegisterScript(HashedString scriptName, Factory<IScript>::Func_t factory);
 	void CreateScriptComponentOnObject(Object& object, const char *scriptName);
 
-	void OnScriptComponentCreate(ScriptComponent *component);
-	void OnScriptComponentDestroy(ScriptComponent *component);
+	void OnScriptComponentCreated(ScriptComponent *component);
+	void OnScriptComponentDestroyed(ScriptComponent *component);
 
 private:
 	virtual void CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) = 0;

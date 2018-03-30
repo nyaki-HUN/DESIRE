@@ -35,12 +35,12 @@ void ScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scr
 	CreateScriptComponentOnObject_Internal(object, scriptName);
 }
 
-void ScriptSystem::OnScriptComponentCreate(ScriptComponent *component)
+void ScriptSystem::OnScriptComponentCreated(ScriptComponent *component)
 {
 	scriptComponents.push_back(component);
 }
 
-void ScriptSystem::OnScriptComponentDestroy(ScriptComponent *component)
+void ScriptSystem::OnScriptComponentDestroyed(ScriptComponent *component)
 {
 	auto it = std::find(scriptComponents.begin(), scriptComponents.end(), component);
 	if(it != scriptComponents.end())
