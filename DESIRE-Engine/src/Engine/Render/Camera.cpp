@@ -7,7 +7,7 @@ Camera::Camera()
 	viewMat = Matrix4::Identity();
 
 	SetPosition(Vector3(0.0f, 0.0f, -0.5f));
-	SetTarget(Vector3(0.0f));
+	SetTarget(Vector3::Zero());
 }
 
 Camera::~Camera()

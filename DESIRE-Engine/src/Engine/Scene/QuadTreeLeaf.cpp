@@ -11,7 +11,7 @@ QuadTreeLeaf::QuadTreeLeaf(uint8_t level)
 
 	for(int i = 0; i < 4; ++i)
 	{
-		aabbPoints[i] = Vector3(0.0f);
+		aabbPoints[i] = Vector3::Zero();
 	}
 }
 

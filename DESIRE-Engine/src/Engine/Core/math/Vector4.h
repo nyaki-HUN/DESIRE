@@ -195,7 +195,8 @@ public:
 		return unitVec0 * scale0 + unitVec1 * scale1;
 	}
 
-	// Construct axis 4-D vector
+	// Construct 4-D vector
+	static inline Vector4 Zero()		{ return Vector4(0.0f); }
 	static inline Vector4 AxisX()		{ return Vector4(1.0f, 0.0f, 0.0f, 0.0f); }
 	static inline Vector4 AxisY()		{ return Vector4(0.0f, 1.0f, 0.0f, 0.0f); }
 	static inline Vector4 AxisZ()		{ return Vector4(0.0f, 0.0f, 1.0f, 0.0f); }

@@ -58,8 +58,8 @@ public:
 	void UpdateWorldMatrix();
 
 private:
-	Vector3 localPosition = Vector3(0.0f);
-	Quat localRotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
+	Vector3 localPosition = Vector3::Zero();
+	Quat localRotation = Quat::Identity();
 	Vector3 localScale = Vector3(1.0f);
 
 	Matrix4 worldMatrix = Matrix4::Identity();

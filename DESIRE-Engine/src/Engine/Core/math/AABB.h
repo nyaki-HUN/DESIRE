@@ -9,7 +9,7 @@
 class AABB
 {
 public:
-	AABB(const Vector3& minEdge = Vector3(0.0f), const Vector3& maxEdge = Vector3(0.0f));
+	AABB(const Vector3& minEdge = Vector3::Zero(), const Vector3& maxEdge = Vector3::Zero());
 
 	bool IntersectsWithAABB(const AABB& other) const;
 	bool IntersectsWithAABB2D(const AABB& other) const;

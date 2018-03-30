@@ -14,7 +14,7 @@ Transform::~Transform()
 
 void Transform::ResetToIdentity()
 {
-	localPosition = Vector3(0.0f);
+	localPosition = Vector3::Zero();
 	localRotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
 	localScale = Vector3(1.0f);
 

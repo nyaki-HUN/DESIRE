@@ -141,7 +141,8 @@ public:
 		);
 	}
 
-	// Construct axis 2-D vector
+	// Construct 2-D vector
+	static inline Vector2 Zero()		{ return Vector2(0.0f); }
 	static inline Vector2 AxisX()		{ return Vector2(1.0f, 0.0f); }
 	static inline Vector2 AxisY()		{ return Vector2(0.0f, 1.0f); }
 
