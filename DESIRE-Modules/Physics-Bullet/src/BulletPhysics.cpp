@@ -60,7 +60,7 @@ void BulletPhysics::Update(float deltaTime)
 		bulletDebugDraw->debugDraw.Reset();
 	}
 
-	dynamicsWorld->stepSimulation(deltaTime, 7, fixedUpdateDeltaTime);
+	dynamicsWorld->stepSimulation(deltaTime, 7, fixedStepTime);
 
 	UpdateComponents();
 }

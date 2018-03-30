@@ -182,7 +182,7 @@ TEST_CASE("String", "[Core]")
 
 	SECTION("Find()")
 	{
-		// TODO
+		// TODO: Add test cases
 //		size_t Find(const String& search, size_t startIndex = 0) const;
 //		size_t Find(const char *search, size_t startIndex = 0) const;
 //		size_t Find(char search, size_t startIndex = 0) const;
@@ -190,7 +190,7 @@ TEST_CASE("String", "[Core]")
 	
 	SECTION("FindLast()")
 	{
-		// TODO
+		// TODO: Add test cases
 //		size_t FindLast(const String& search) const;
 //		size_t FindLast(const char *search) const;
 //		size_t FindLast(char search) const;
@@ -223,7 +223,7 @@ TEST_CASE("String", "[Core]")
 
 	SECTION("SubString()")
 	{
-		// TODO
+		// TODO: Add test cases
 //		String SubString(size_t start, size_t numChars = SIZE_MAX) const;
 	}
 
