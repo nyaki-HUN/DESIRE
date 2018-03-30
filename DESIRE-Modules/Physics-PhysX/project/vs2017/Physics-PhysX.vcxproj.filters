@@ -723,6 +723,9 @@
     <ClInclude Include="..\..\src\PhysXPhysicsComponent.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\PxMathExt.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\PhysXPhysics.cpp">

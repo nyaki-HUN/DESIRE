@@ -155,8 +155,11 @@
     <ClInclude Include="..\..\src\ContactListener.h" />
     <ClInclude Include="..\..\src\DestructorListener.h" />
     <ClInclude Include="..\..\src\Joints\AnchoredJoint2D.h" />
+    <ClInclude Include="..\..\src\Joints\HingeJoint2D.h" />
     <ClInclude Include="..\..\src\Joints\Joint2D.h" />
+    <ClInclude Include="..\..\src\Joints\SliderJoint2D.h" />
     <ClInclude Include="..\..\src\Joints\SpringJoint2D.h" />
+    <ClInclude Include="..\..\src\Joints\TargetJoint2D.h" />
     <ClInclude Include="..\..\src\RaycastCallbacks.h" />
     <ClInclude Include="..\..\src\b2MathExt.h" />
   </ItemGroup>
@@ -212,8 +215,11 @@
     <ClCompile Include="..\..\src\ContactListener.cpp" />
     <ClCompile Include="..\..\src\DestructorListener.cpp" />
     <ClCompile Include="..\..\src\Joints\AnchoredJoint2D.cpp" />
+    <ClCompile Include="..\..\src\Joints\HingeJoint2D.cpp" />
     <ClCompile Include="..\..\src\Joints\Joint2D.cpp" />
+    <ClCompile Include="..\..\src\Joints\SliderJoint2D.cpp" />
     <ClCompile Include="..\..\src\Joints\SpringJoint2D.cpp" />
+    <ClCompile Include="..\..\src\Joints\TargetJoint2D.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

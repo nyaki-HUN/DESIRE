@@ -198,10 +198,19 @@
     <ClInclude Include="..\..\src\Joints\AnchoredJoint2D.h">
       <Filter>src\Joints</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Joints\HingeJoint2D.h">
+      <Filter>src\Joints</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Joints\Joint2D.h">
       <Filter>src\Joints</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Joints\SliderJoint2D.h">
+      <Filter>src\Joints</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Joints\SpringJoint2D.h">
+      <Filter>src\Joints</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Joints\TargetJoint2D.h">
       <Filter>src\Joints</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\RaycastCallbacks.h">
@@ -365,10 +374,19 @@
     <ClCompile Include="..\..\src\Joints\AnchoredJoint2D.cpp">
       <Filter>src\Joints</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Joints\HingeJoint2D.cpp">
+      <Filter>src\Joints</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Joints\Joint2D.cpp">
       <Filter>src\Joints</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Joints\SliderJoint2D.cpp">
+      <Filter>src\Joints</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Joints\SpringJoint2D.cpp">
+      <Filter>src\Joints</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Joints\TargetJoint2D.cpp">
       <Filter>src\Joints</Filter>
     </ClCompile>
   </ItemGroup>

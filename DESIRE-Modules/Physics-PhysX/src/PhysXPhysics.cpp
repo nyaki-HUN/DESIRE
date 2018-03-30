@@ -103,7 +103,7 @@ void PhysXPhysics::SetGravity(const Vector3& gravity)
 
 Vector3 PhysXPhysics::GetGravity() const
 {
-	return Vector3(0.0f);
+	return Vector3::Zero();
 }
 
 Collision PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)

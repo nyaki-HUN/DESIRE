@@ -138,6 +138,50 @@ std::vector<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingCompone
 	return collisions;
 }
 
+PhysicsComponent::EBodyType BulletPhysicsComponent::GetBodyType() const
+{
+	if(body->isStaticObject())
+	{
+		return PhysicsComponent::EBodyType::STATIC;
+	}
+
+	if(body->isKinematicObject())
+	{
+		return PhysicsComponent::EBodyType::KINEMATIC;
+	}
+
+	return PhysicsComponent::EBodyType::DYNAMIC;
+}
+
+void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
+{
+	int flags = body->getCollisionFlags();
+
+	// Remove flags
+	flags &= ~btCollisionObject::CF_KINEMATIC_OBJECT;
+	flags &= ~btCollisionObject::CF_STATIC_OBJECT;
+
+	switch(bodyType)
+	{
+		case EBodyType::STATIC:		flags |= btCollisionObject::CF_STATIC_OBJECT; break;
+		case EBodyType::DYNAMIC:	break;
+		case EBodyType::KINEMATIC:	flags |= btCollisionObject::CF_KINEMATIC_OBJECT; break;
+	}
+
+	body->setCollisionFlags(flags);
+}
+
+void BulletPhysicsComponent::SetTrigger(bool value)
+{
+	// TODO
+}
+
+bool BulletPhysicsComponent::IsTrigger() const
+{
+	// TODO
+	return false;
+}
+
 void BulletPhysicsComponent::SetMass(float mass)
 {
 	if(body->isStaticOrKinematicObject() == false)
@@ -159,17 +203,6 @@ Vector3 BulletPhysicsComponent::GetCenterOfMass() const
 	return GetVector3(body->getCenterOfMassPosition());
 }
 
-void BulletPhysicsComponent::SetTrigger(bool value)
-{
-	// TODO
-}
-
-bool BulletPhysicsComponent::IsTrigger() const
-{
-	// TODO
-	return false;
-}
-
 void BulletPhysicsComponent::SetLinearDamping(float value)
 {
 	body->setDamping(value, body->getAngularDamping());
@@ -188,4 +221,24 @@ void BulletPhysicsComponent::SetAngularDamping(float value)
 float BulletPhysicsComponent::GetAngularDamping() const
 {
 	return body->getAngularDamping();
+}
+
+void BulletPhysicsComponent::SetLinearVelocity(const Vector3& linearVelocity)
+{
+	body->setLinearVelocity(GetBtVector3(linearVelocity));
+}
+
+Vector3 BulletPhysicsComponent::GetLinearVelocity() const
+{
+	return GetVector3(body->getLinearVelocity());
+}
+
+void BulletPhysicsComponent::SetAngularVelocity(const Vector3& angularVelocity)
+{
+	body->setAngularVelocity(GetBtVector3(angularVelocity));
+}
+
+Vector3 BulletPhysicsComponent::GetAngularVelocity() const
+{
+	return GetVector3(body->getAngularVelocity());
 }

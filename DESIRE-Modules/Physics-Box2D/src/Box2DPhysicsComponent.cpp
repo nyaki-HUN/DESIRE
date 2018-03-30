@@ -68,6 +68,46 @@ std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponen
 	return collisions;
 }
 
+PhysicsComponent::EBodyType Box2DPhysicsComponent::GetBodyType() const
+{
+	switch(body->GetType())
+	{
+		case b2BodyType::b2_staticBody:		return EBodyType::STATIC;
+		case b2BodyType::b2_kinematicBody:	return EBodyType::KINEMATIC;
+		case b2BodyType::b2_dynamicBody:	return EBodyType::DYNAMIC;
+	}
+
+	return EBodyType::STATIC;
+}
+
+void Box2DPhysicsComponent::SetBodyType(EBodyType bodyType)
+{
+	switch(bodyType)
+	{
+		case EBodyType::STATIC:		body->SetType(b2BodyType::b2_staticBody); break;
+		case EBodyType::DYNAMIC:	body->SetType(b2BodyType::b2_dynamicBody); break;
+		case EBodyType::KINEMATIC:	body->SetType(b2BodyType::b2_kinematicBody); break;
+	}
+}
+
+void Box2DPhysicsComponent::SetTrigger(bool value)
+{
+	isTrigger = value;
+
+	for(b2Fixture *fixture : fixtures)
+	{
+		fixture->SetSensor(isTrigger);
+	}
+
+	// Need to refresh density when isTrigger is changed
+	SetDensity(density);
+}
+
+bool Box2DPhysicsComponent::IsTrigger() const
+{
+	return isTrigger;
+}
+
 void Box2DPhysicsComponent::SetMass(float mass)
 {
 
@@ -104,24 +144,6 @@ float Box2DPhysicsComponent::GetDensity() const
 	return (isTrigger ? 0.0f : density);
 }
 
-void Box2DPhysicsComponent::SetTrigger(bool value)
-{
-	isTrigger = value;
-
-	for(b2Fixture *fixture : fixtures)
-	{
-		fixture->SetSensor(isTrigger);
-	}
-
-	// Need to refresh density when isTrigger is changed
-	SetDensity(density);
-}
-
-bool Box2DPhysicsComponent::IsTrigger() const
-{
-	return isTrigger;
-}
-
 void Box2DPhysicsComponent::SetLinearDamping(float value)
 {
 	body->SetLinearDamping(value);
@@ -142,25 +164,26 @@ float Box2DPhysicsComponent::GetAngularDamping() const
 	return body->GetAngularDamping();
 }
 
-Vector2 Box2DPhysicsComponent::GetLinearVelocity()
+void Box2DPhysicsComponent::SetLinearVelocity(const Vector3& linearVelocity)
+{
+	body->SetLinearVelocity(b2Vec2(linearVelocity.GetX(), linearVelocity.GetY()));
+}
+
+Vector3 Box2DPhysicsComponent::GetLinearVelocity() const
 {
 	const b2Vec2& v = body->GetLinearVelocity();
-	return GetVector2(v);
+	return Vector3(v.x, v.y, 0.0f);
 }
 
-void Box2DPhysicsComponent::SetLinearVelocity(const Vector2& velocity)
+void Box2DPhysicsComponent::SetAngularVelocity(const Vector3& angularVelocity)
 {
-	body->SetLinearVelocity(GetB2Vec2(velocity));
+	body->SetAngularVelocity(angularVelocity.GetZ());
 }
 
-float Box2DPhysicsComponent::GetAngularVelocity() const
+Vector3 Box2DPhysicsComponent::GetAngularVelocity() const
 {
-	return body->GetAngularVelocity();
-}
-
-void Box2DPhysicsComponent::SetAngularVelocity(float value)
-{
-	body->SetAngularVelocity(value);
+	const float angularVelocity = body->GetAngularVelocity();
+	return Vector3(0.0f, 0.0f, angularVelocity);
 }
 
 bool Box2DPhysicsComponent::IsAwake() const

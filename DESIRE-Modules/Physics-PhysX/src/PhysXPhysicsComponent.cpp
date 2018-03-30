@@ -1,4 +1,5 @@
 #include "PhysXPhysicsComponent.h"
+#include "PxMathExt.h"
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/Modules.h"
@@ -34,20 +35,30 @@ std::vector<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponen
 	return collisions;
 }
 
-void PhysXPhysicsComponent::SetMass(float mass)
+PhysicsComponent::EBodyType PhysXPhysicsComponent::GetBodyType() const
 {
-	return body->setMass(mass);
+	const physx::PxRigidBodyFlags flags = body->getRigidBodyFlags();
+	if(flags.isSet(physx::PxRigidBodyFlag::eKINEMATIC))
+	{
+		return PhysicsComponent::EBodyType::KINEMATIC;
+	}
+
+	if(dynamicBody == nullptr)
+	{
+		PhysicsComponent::EBodyType::STATIC;
+	}
+
+	return PhysicsComponent::EBodyType::DYNAMIC;
 }
 
-float PhysXPhysicsComponent::GetMass() const
+void PhysXPhysicsComponent::SetBodyType(EBodyType bodyType)
 {
-	return body->getMass();
-}
-
-Vector3 PhysXPhysicsComponent::GetCenterOfMass() const
-{
-	ASSERT(false && "TODO");
-	return Vector3(0.0f);
+	switch(bodyType)
+	{
+		case EBodyType::STATIC:		ASSERT(false && "TODO");  break;
+		case EBodyType::DYNAMIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false); break;
+		case EBodyType::KINEMATIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true); break;
+	}
 }
 
 void PhysXPhysicsComponent::SetTrigger(bool value)
@@ -61,22 +72,65 @@ bool PhysXPhysicsComponent::IsTrigger() const
 	return false;
 }
 
+void PhysXPhysicsComponent::SetMass(float mass)
+{
+	return body->setMass(mass);
+}
+
+float PhysXPhysicsComponent::GetMass() const
+{
+	return body->getMass();
+}
+
+Vector3 PhysXPhysicsComponent::GetCenterOfMass() const
+{
+	body->getCMassLocalPose();
+	ASSERT(false && "TODO");
+	return Vector3::Zero();
+}
+
 void PhysXPhysicsComponent::SetLinearDamping(float value)
 {
-	body->setLinearDamping(value);
+	if(dynamicBody != nullptr)
+	{
+		dynamicBody->setLinearDamping(value);
+	}
 }
 
 float PhysXPhysicsComponent::GetLinearDamping() const
 {
-	return body->getLinearDamping();
+	return (dynamicBody != nullptr) ? dynamicBody->getLinearDamping() : 0.0f;
 }
 
 void PhysXPhysicsComponent::SetAngularDamping(float value)
 {
-	body->setAngularDamping(value);
+	if(dynamicBody != nullptr)
+	{
+		dynamicBody->setAngularDamping(value);
+	}
 }
 
 float PhysXPhysicsComponent::GetAngularDamping() const
 {
-	return body->getAngularDamping();
+	return (dynamicBody != nullptr) ? dynamicBody->getAngularDamping() : 0.0f;
+}
+
+void PhysXPhysicsComponent::SetLinearVelocity(const Vector3& linearVelocity)
+{
+	body->setLinearVelocity(GetPxVec3(linearVelocity));
+}
+
+Vector3 PhysXPhysicsComponent::GetLinearVelocity() const
+{
+	return GetVector3(body->getLinearVelocity());
+}
+
+void PhysXPhysicsComponent::SetAngularVelocity(const Vector3& angularVelocity)
+{
+	body->setAngularVelocity(GetPxVec3(angularVelocity));
+}
+
+Vector3 PhysXPhysicsComponent::GetAngularVelocity() const
+{
+	return GetVector3(body->getAngularVelocity());
 }

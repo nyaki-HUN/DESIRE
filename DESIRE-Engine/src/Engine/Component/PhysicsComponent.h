@@ -18,6 +18,13 @@ protected:
 	PhysicsComponent(Object& object);
 
 public:
+	enum EBodyType
+	{
+		STATIC,
+		DYNAMIC,
+		KINEMATIC
+	};
+
 	~PhysicsComponent() override;
 
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
@@ -27,18 +34,28 @@ public:
 
 	virtual std::vector<PhysicsComponent*> GetActiveCollidingComponents() const = 0;
 
-	virtual void SetMass(float mass) = 0;
-	virtual float GetMass() const = 0;
-
-	virtual Vector3 GetCenterOfMass() const = 0;
+	virtual EBodyType GetBodyType() const = 0;
+	virtual void SetBodyType(EBodyType value) = 0;
 
 	virtual void SetTrigger(bool value) = 0;
 	virtual bool IsTrigger() const = 0;
 
+	// Mass
+	virtual void SetMass(float mass) = 0;
+	virtual float GetMass() const = 0;
+	virtual Vector3 GetCenterOfMass() const = 0;
+
+	// Damping
 	virtual void SetLinearDamping(float value) = 0;
 	virtual float GetLinearDamping() const = 0;
 	virtual void SetAngularDamping(float value) = 0;
 	virtual float GetAngularDamping() const = 0;
+
+	// Velocity
+	virtual void SetLinearVelocity(const Vector3& linearVelocity) = 0;
+	virtual Vector3 GetLinearVelocity() const = 0;
+	virtual void SetAngularVelocity(const Vector3& angularVelocity) = 0;
+	virtual Vector3 GetAngularVelocity() const = 0;
 
 protected:
 	EPhysicsCollisionLayer collisionLayer;

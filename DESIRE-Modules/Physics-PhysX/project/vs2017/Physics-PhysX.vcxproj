@@ -314,6 +314,7 @@
     <ClInclude Include="..\..\Externals\PxShared\include\task\PxTaskManager.h" />
     <ClInclude Include="..\..\src\PhysXPhysics.h" />
     <ClInclude Include="..\..\src\PhysXPhysicsComponent.h" />
+    <ClInclude Include="..\..\src\PxMathExt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\PhysXPhysics.cpp" />

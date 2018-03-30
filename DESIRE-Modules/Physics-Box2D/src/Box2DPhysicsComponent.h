@@ -19,27 +19,31 @@ public:
 
 	std::vector<PhysicsComponent*> GetActiveCollidingComponents() const override;
 
+	EBodyType GetBodyType() const;
+	void SetBodyType(EBodyType bodyType);
+
+	void SetTrigger(bool value) override;
+	bool IsTrigger() const override;
+
+	// Mass
 	void SetMass(float mass) override;
 	float GetMass() const override;
-
 	Vector3 GetCenterOfMass() const override;
 
 	void SetDensity(float density);
 	float GetDensity() const;
 
-	void SetTrigger(bool value) override;
-	bool IsTrigger() const override;
-
+	// Damping
 	void SetLinearDamping(float value) override;
 	float GetLinearDamping() const override;
 	void SetAngularDamping(float value) override;
 	float GetAngularDamping() const override;
 
-	Vector2 GetLinearVelocity();
-	void SetLinearVelocity(const Vector2& velocity);
-
-	float GetAngularVelocity() const;
-	void SetAngularVelocity(float value);
+	// Velocity
+	void SetLinearVelocity(const Vector3& linearVelocity) override;
+	Vector3 GetLinearVelocity() const override;
+	void SetAngularVelocity(const Vector3& angularVelocity) override;
+	Vector3 GetAngularVelocity() const override;
 
 	bool IsAwake() const;
 	bool IsSleeping() const;
