@@ -46,6 +46,16 @@ void Box2DPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 	}
 }
 
+void Box2DPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode mode)
+{
+	body->SetBullet(mode == ECollisionDetectionMode::CONTINUOUS);
+}
+
+PhysicsComponent::ECollisionDetectionMode Box2DPhysicsComponent::GetCollisionDetectionMode() const
+{
+	return body->IsBullet() ? ECollisionDetectionMode::CONTINUOUS : ECollisionDetectionMode::DISCRETE;
+}
+
 std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponents() const
 {
 	std::vector<PhysicsComponent*> collisions;
@@ -70,6 +80,16 @@ std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponen
 	return collisions;
 }
 
+void Box2DPhysicsComponent::SetBodyType(EBodyType bodyType)
+{
+	switch(bodyType)
+	{
+		case EBodyType::STATIC:		body->SetType(b2BodyType::b2_staticBody); break;
+		case EBodyType::DYNAMIC:	body->SetType(b2BodyType::b2_dynamicBody); break;
+		case EBodyType::KINEMATIC:	body->SetType(b2BodyType::b2_kinematicBody); break;
+	}
+}
+
 PhysicsComponent::EBodyType Box2DPhysicsComponent::GetBodyType() const
 {
 	switch(body->GetType())
@@ -80,16 +100,6 @@ PhysicsComponent::EBodyType Box2DPhysicsComponent::GetBodyType() const
 	}
 
 	return EBodyType::STATIC;
-}
-
-void Box2DPhysicsComponent::SetBodyType(EBodyType bodyType)
-{
-	switch(bodyType)
-	{
-		case EBodyType::STATIC:		body->SetType(b2BodyType::b2_staticBody); break;
-		case EBodyType::DYNAMIC:	body->SetType(b2BodyType::b2_dynamicBody); break;
-		case EBodyType::KINEMATIC:	body->SetType(b2BodyType::b2_kinematicBody); break;
-	}
 }
 
 void Box2DPhysicsComponent::SetTrigger(bool value)

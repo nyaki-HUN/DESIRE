@@ -133,26 +133,33 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisio
 	handle->m_collisionFilterMask = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
+void BulletPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode mode)
+{
+	switch(mode)
+	{
+		case ECollisionDetectionMode::DISCRETE:
+			body->setCcdMotionThreshold(0.0f);
+			body->setCcdSweptSphereRadius(0.0f);
+			break;
+
+		case ECollisionDetectionMode::CONTINUOUS:
+			// Enable CCD if the object moves more than 0.01 meter in one simulation frame
+			body->setCcdMotionThreshold(0.01);
+			body->setCcdSweptSphereRadius(0.5f);
+			break;
+	}
+}
+
+PhysicsComponent::ECollisionDetectionMode BulletPhysicsComponent::GetCollisionDetectionMode() const
+{
+	return (body->getCcdMotionThreshold() > 0.0f) ? ECollisionDetectionMode::CONTINUOUS : ECollisionDetectionMode::DISCRETE;
+}
+
 std::vector<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
 {
 	std::vector<PhysicsComponent*> collisions;
 	DESIRE_TODO("Implement GetActiveCollidingComponents()");
 	return collisions;
-}
-
-PhysicsComponent::EBodyType BulletPhysicsComponent::GetBodyType() const
-{
-	if(body->isStaticObject())
-	{
-		return PhysicsComponent::EBodyType::STATIC;
-	}
-
-	if(body->isKinematicObject())
-	{
-		return PhysicsComponent::EBodyType::KINEMATIC;
-	}
-
-	return PhysicsComponent::EBodyType::DYNAMIC;
 }
 
 void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
@@ -171,6 +178,21 @@ void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
 	}
 
 	body->setCollisionFlags(flags);
+}
+
+PhysicsComponent::EBodyType BulletPhysicsComponent::GetBodyType() const
+{
+	if(body->isStaticObject())
+	{
+		return PhysicsComponent::EBodyType::STATIC;
+	}
+
+	if(body->isKinematicObject())
+	{
+		return PhysicsComponent::EBodyType::KINEMATIC;
+	}
+
+	return PhysicsComponent::EBodyType::DYNAMIC;
 }
 
 void BulletPhysicsComponent::SetTrigger(bool value)

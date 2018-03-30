@@ -55,6 +55,7 @@ PhysXPhysics::PhysXPhysics()
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_ACTIVE_ACTORS;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_CCD;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_STABILIZATION;
 	sceneDesc.flags |= physx::PxSceneFlag::eEXCLUDE_KINEMATICS_FROM_ACTIVE_ACTORS;

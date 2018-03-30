@@ -31,11 +31,31 @@ void PhysXPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 	filterData.word1 = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
+void PhysXPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode mode)
+{
+	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, (mode == ECollisionDetectionMode::CONTINUOUS));
+}
+
+PhysicsComponent::ECollisionDetectionMode PhysXPhysicsComponent::GetCollisionDetectionMode() const
+{
+	return (body->getRigidBodyFlags() & physx::PxRigidBodyFlag::eENABLE_CCD) ? ECollisionDetectionMode::CONTINUOUS : ECollisionDetectionMode::DISCRETE;
+}
+
 std::vector<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponents() const
 {
 	std::vector<PhysicsComponent*> collisions;
 	ASSERT(false && "TODO");
 	return collisions;
+}
+
+void PhysXPhysicsComponent::SetBodyType(EBodyType bodyType)
+{
+	switch(bodyType)
+	{
+		case EBodyType::STATIC:		ASSERT(false && "TODO");  break;
+		case EBodyType::DYNAMIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false); break;
+		case EBodyType::KINEMATIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true); break;
+	}
 }
 
 PhysicsComponent::EBodyType PhysXPhysicsComponent::GetBodyType() const
@@ -52,16 +72,6 @@ PhysicsComponent::EBodyType PhysXPhysicsComponent::GetBodyType() const
 	}
 
 	return PhysicsComponent::EBodyType::DYNAMIC;
-}
-
-void PhysXPhysicsComponent::SetBodyType(EBodyType bodyType)
-{
-	switch(bodyType)
-	{
-		case EBodyType::STATIC:		ASSERT(false && "TODO");  break;
-		case EBodyType::DYNAMIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false); break;
-		case EBodyType::KINEMATIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true); break;
-	}
 }
 
 void PhysXPhysicsComponent::SetTrigger(bool value)

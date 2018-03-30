@@ -25,6 +25,12 @@ public:
 		KINEMATIC
 	};
 
+	enum class ECollisionDetectionMode
+	{
+		DISCRETE,
+		CONTINUOUS
+	};
+
 	enum class EForceMode
 	{
 		FORCE,
@@ -36,6 +42,9 @@ public:
 	// Collision
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
 	EPhysicsCollisionLayer GetCollisionLayer() const;
+
+	virtual ECollisionDetectionMode GetCollisionDetectionMode() const = 0;
+	virtual void SetCollisionDetectionMode(ECollisionDetectionMode mode) = 0;
 
 	const PhysicsMaterial& GetPhysicsMaterial() const;
 

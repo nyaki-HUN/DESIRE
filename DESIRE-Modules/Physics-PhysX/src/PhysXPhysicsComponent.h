@@ -17,10 +17,13 @@ public:
 	// Collision
 	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
 
+	void SetCollisionDetectionMode(ECollisionDetectionMode mode) override;
+	ECollisionDetectionMode GetCollisionDetectionMode() const override;
+
 	std::vector<PhysicsComponent*> GetActiveCollidingComponents() const override;
 
-	EBodyType GetBodyType() const;
 	void SetBodyType(EBodyType bodyType);
+	EBodyType GetBodyType() const;
 
 	void SetTrigger(bool value) override;
 	bool IsTrigger() const override;
