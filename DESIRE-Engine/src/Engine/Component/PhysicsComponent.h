@@ -69,6 +69,8 @@ public:
 	virtual void AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode) = 0;
 	virtual void AddTorque(const Vector3& torque, EForceMode mode) = 0;
 
+	virtual bool IsSleeping() const = 0;
+
 protected:
 	EPhysicsCollisionLayer collisionLayer;
 	PhysicsMaterial physicsMaterial;

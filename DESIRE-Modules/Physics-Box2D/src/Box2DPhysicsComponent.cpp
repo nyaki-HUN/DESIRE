@@ -215,14 +215,9 @@ void Box2DPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 	}
 }
 
-bool Box2DPhysicsComponent::IsAwake() const
-{
-	return body->IsAwake();
-}
-
 bool Box2DPhysicsComponent::IsSleeping() const
 {
-	return body->IsAwake() == false;
+	return (body->IsAwake() == false);
 }
 
 void Box2DPhysicsComponent::SetEnabled(bool value)

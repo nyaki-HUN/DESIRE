@@ -269,3 +269,19 @@ void BulletPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 		case EForceMode::IMPULSE:	body->applyTorqueImpulse(GetBtVector3(torque)); break;
 	}
 }
+
+bool BulletPhysicsComponent::IsSleeping() const
+{
+	return (body->getActivationState() == ISLAND_SLEEPING);
+}
+
+void BulletPhysicsComponent::SetEnabled(bool value)
+{
+	if(IsEnabled() == value)
+	{
+		return;
+	}
+
+	PhysicsComponent::SetEnabled(value);
+	body->forceActivationState(value ? ISLAND_SLEEPING : DISABLE_SIMULATION);
+}

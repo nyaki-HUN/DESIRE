@@ -51,8 +51,7 @@ public:
 	void AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode) override;
 	void AddTorque(const Vector3& torque, EForceMode mode) override;
 
-	bool IsAwake() const;
-	bool IsSleeping() const;
+	bool IsSleeping() const override;
 
 	void SetEnabled(bool value) override;
 

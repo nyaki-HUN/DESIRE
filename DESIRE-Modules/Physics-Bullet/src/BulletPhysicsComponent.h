@@ -46,6 +46,10 @@ public:
 	void AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode) override;
 	void AddTorque(const Vector3& torque, EForceMode mode) override;
 
+	bool IsSleeping() const override;
+
+	void SetEnabled(bool value) override;
+
 private:
 	btRigidBody *body = nullptr;
 	btCollisionShape *shape = nullptr;

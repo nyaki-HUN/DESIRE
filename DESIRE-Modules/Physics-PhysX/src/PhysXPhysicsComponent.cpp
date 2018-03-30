@@ -162,3 +162,19 @@ void PhysXPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 		case EForceMode::IMPULSE:	body->addTorque(GetPxVec3(torque), physx::PxForceMode::eIMPULSE); break;
 	}
 }
+
+bool PhysXPhysicsComponent::IsSleeping() const
+{
+	return (dynamicBody != nullptr) ? dynamicBody->isSleeping() : true;
+}
+
+void PhysXPhysicsComponent::SetEnabled(bool value)
+{
+	if(IsEnabled() == value)
+	{
+		return;
+	}
+
+	PhysicsComponent::SetEnabled(value);
+	body->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, value);
+}
