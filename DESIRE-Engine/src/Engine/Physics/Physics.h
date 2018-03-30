@@ -56,4 +56,5 @@ protected:
 
 	std::vector<PhysicsComponent*> components;
 	int collisionMasks[(size_t)EPhysicsCollisionLayer::NUM];
+	float fixedStepTime = 1.0f / 60.0f;
 };

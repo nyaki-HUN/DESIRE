@@ -39,4 +39,6 @@ private:
 
 	std::unique_ptr<physx::PxAllocatorCallback> allocator;
 	std::unique_ptr<physx::PxErrorCallback> errorCallback;
+
+	float fixedUpdateTimeAccumulator = 0.0f;
 };

@@ -70,13 +70,10 @@ void Physics::UpdateComponents()
 {
 	for(PhysicsComponent *component : components)
 	{
-		if(component->GetBodyType() == PhysicsComponent::EBodyType::DYNAMIC)
+		switch(component->GetBodyType())
 		{
-			component->UpdateGameObjectTransform();
-		}
-		else
-		{
-			component->SetTransformFromGameObject();
+			case PhysicsComponent::EBodyType::DYNAMIC:		component->UpdateGameObjectTransform(); break;
+			case PhysicsComponent::EBodyType::KINEMATIC:	component->SetTransformFromGameObject(); break;
 		}
 	}
 }

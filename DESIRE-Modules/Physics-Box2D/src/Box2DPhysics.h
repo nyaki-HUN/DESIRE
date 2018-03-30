@@ -41,4 +41,6 @@ private:
 	b2ContactListener *contactListener = nullptr;
 	b2DestructionListener *destructorListener = nullptr;
 	b2Body *worldBody = nullptr;
+
+	float fixedUpdateTimeAccumulator = 0.0f;
 };

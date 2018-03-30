@@ -53,8 +53,10 @@ PhysXPhysics::PhysXPhysics()
 	physx::PxSceneDesc sceneDesc(physics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_PCM;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_STABILIZATION;
+	sceneDesc.flags |= physx::PxSceneFlag::eEXCLUDE_KINEMATICS_FROM_ACTIVE_ACTORS;
 	sceneDesc.flags |= physx::PxSceneFlag::eSUPPRESS_EAGER_SCENE_QUERY_REFIT;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_GPU_DYNAMICS;
 	sceneDesc.broadPhaseType = physx::PxBroadPhaseType::eGPU;
@@ -92,7 +94,32 @@ PhysXPhysics::~PhysXPhysics()
 
 void PhysXPhysics::Update(float deltaTime)
 {
-	UpdateComponents();
+	fixedUpdateTimeAccumulator += deltaTime;
+	while(fixedUpdateTimeAccumulator >= fixedStepTime)
+	{
+		fixedUpdateTimeAccumulator -= fixedStepTime;
+
+		scene->simulate(fixedStepTime);
+		scene->fetchResults(true);
+
+		// Instead of calling the UpdateComponents() function we update only the dynamic bodies that moved
+		physx::PxU32 numActiveActors = 0;
+		physx::PxActor **activeActors = scene->getActiveActors(numActiveActors);
+		for(physx::PxU32 i = 0; i < numActiveActors; ++i)
+		{
+			PhysXPhysicsComponent *component = static_cast<PhysXPhysicsComponent*>(activeActors[i]->userData);
+			component->SetTransformFromGameObject();
+		}
+	}
+
+	// We still need to update all kinematic bodies
+	for(PhysicsComponent *component : components)
+	{
+		if(component->GetBodyType() == PhysicsComponent::EBodyType::KINEMATIC)
+		{
+			component->SetTransformFromGameObject();
+		}
+	}
 }
 
 PhysicsComponent& PhysXPhysics::CreatePhysicsComponentOnObject(Object& object)
