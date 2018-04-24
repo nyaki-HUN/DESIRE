@@ -164,12 +164,14 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btEmptyShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMaterial.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMiniSDF.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMinkowskiSumShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMultiSphereShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btOptimizedBvh.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btPolyhedralConvexShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btSdfCollisionShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btShapeHull.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btSphereShape.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btStaticPlaneShape.h" />
@@ -238,6 +240,7 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Character\btCharacterControllerInterface.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Character\btKinematicCharacterController.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btBatchedConstraints.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btConeTwistConstraint.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btConstraintSolver.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btContactConstraint.h" />
@@ -253,6 +256,7 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btNNCGConstraintSolver.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolverMt.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSliderConstraint.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSolverBody.h" />
@@ -305,6 +309,7 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletSoftBody\btSoftRigidDynamicsWorld.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletSoftBody\btSoftSoftCollisionAlgorithm.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletSoftBody\btSparseSDF.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\LinearMath\TaskScheduler\btThreadSupportInterface.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\LinearMath\btAabbUtil2.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\LinearMath\btAlignedAllocator.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\LinearMath\btAlignedObjectArray.h" />
@@ -398,12 +403,14 @@
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btCylinderShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btEmptyShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMiniSDF.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMinkowskiSumShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMultiSphereShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btOptimizedBvh.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btPolyhedralConvexShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btSdfCollisionShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btShapeHull.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btSphereShape.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\CollisionShapes\btStaticPlaneShape.cpp" />
@@ -440,6 +447,7 @@
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Character\btKinematicCharacterController.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btBatchedConstraints.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btConeTwistConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btContactConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btFixedConstraint.cpp" />
@@ -452,6 +460,7 @@
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btNNCGConstraintSolver.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolverMt.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSliderConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\ConstraintSolver\btTypedConstraint.cpp" />
@@ -485,6 +494,9 @@
     <ClCompile Include="..\..\Externals\Bullet\src\BulletSoftBody\btSoftRigidCollisionAlgorithm.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletSoftBody\btSoftRigidDynamicsWorld.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletSoftBody\btSoftSoftCollisionAlgorithm.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\LinearMath\TaskScheduler\btTaskScheduler.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\LinearMath\TaskScheduler\btThreadSupportPosix.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\LinearMath\TaskScheduler\btThreadSupportWin32.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\LinearMath\btAlignedAllocator.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\LinearMath\btConvexHull.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\LinearMath\btConvexHullComputer.cpp" />
