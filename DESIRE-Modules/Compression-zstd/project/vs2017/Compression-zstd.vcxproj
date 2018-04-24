@@ -115,9 +115,6 @@
     <ClInclude Include="..\..\Externals\zstd\src\common\xxhash.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_errors.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_internal.h" />
-    <ClInclude Include="..\..\Externals\zstd\src\compress\huf_compress_impl.h" />
-    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress.h" />
-    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_impl.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_internal.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_double_fast.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_fast.h" />
@@ -125,7 +122,6 @@
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_ldm.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_opt.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstdmt_compress.h" />
-    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_decompress_impl.h" />
     <ClInclude Include="..\..\src\ZstdCompression.h" />
   </ItemGroup>
   <ItemGroup>

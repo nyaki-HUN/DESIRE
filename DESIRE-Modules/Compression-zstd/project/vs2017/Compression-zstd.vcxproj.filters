@@ -66,15 +66,6 @@
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_internal.h">
       <Filter>Externals\zstd\src\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Externals\zstd\src\compress\huf_compress_impl.h">
-      <Filter>Externals\zstd\src\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress.h">
-      <Filter>Externals\zstd\src\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_impl.h">
-      <Filter>Externals\zstd\src\compress</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_internal.h">
       <Filter>Externals\zstd\src\compress</Filter>
     </ClInclude>
@@ -95,9 +86,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstdmt_compress.h">
       <Filter>Externals\zstd\src\compress</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_decompress_impl.h">
-      <Filter>Externals\zstd\src\decompress</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ZstdCompression.h">
       <Filter>src</Filter>
