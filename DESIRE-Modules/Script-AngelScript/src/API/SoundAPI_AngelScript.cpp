@@ -5,7 +5,15 @@
 
 void RegisterSoundAPI_AngelScript(asIScriptEngine *engine)
 {
+	SoundSystem *soundSystem = Modules::SoundSystem.get();
+	if(soundSystem == nullptr)
+	{
+		return;
+	}
+
+	int result = asSUCCESS;
+
 	// SoundSystem
-	engine->RegisterObjectType("ISoundSystem", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterGlobalProperty("ISoundSystem SoundSystem", Modules::SoundSystem.get());
+	result = engine->RegisterObjectType("ISoundSystem", 0, asOBJ_REF | asOBJ_NOHANDLE);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalProperty("ISoundSystem SoundSystem", soundSystem);					ASSERT(result >= asSUCCESS);
 }

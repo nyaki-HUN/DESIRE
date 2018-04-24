@@ -5,7 +5,15 @@
 
 void RegisterInputAPI_AngelScript(asIScriptEngine *engine)
 {
+	Input *input = Modules::Input.get();
+	if(input == nullptr)
+	{
+		return;
+	}
+
+	int result = asSUCCESS;
+
 	// Input
-	engine->RegisterObjectType("IInput", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterGlobalProperty("IInput Input", Modules::Input.get());
+	result = engine->RegisterObjectType("IInput", 0, asOBJ_REF | asOBJ_NOHANDLE);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalProperty("IInput Input", input);									ASSERT(result >= asSUCCESS);
 }

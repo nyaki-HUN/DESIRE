@@ -12,7 +12,7 @@ String OpAddString(T a, U b)
 
 void RegisterString_AngelScript(asIScriptEngine *engine, asIStringFactory *stringFactory)
 {
-	int result = 0;
+	int result = asSUCCESS;
 
 	result = engine->RegisterObjectType("String", sizeof(String), asOBJ_VALUE | asGetTypeTraits<String>());																								ASSERT(result >= asSUCCESS);
 	result = engine->RegisterStringFactory("String", stringFactory);																																	ASSERT(result >= asSUCCESS);

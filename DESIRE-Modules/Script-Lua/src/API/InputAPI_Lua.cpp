@@ -5,10 +5,16 @@
 
 void RegisterInputAPI_Lua(lua_State *L)
 {
+	Input *input = Modules::Input.get();
+	if(input == nullptr)
+	{
+		return;
+	}
+
 	// Input
 	luabridge::getGlobalNamespace(L).beginClass<Input>("IInput")
 		.addFunction("GetOsMouseCursorPos", &Input::GetOsMouseCursorPos)
 		.endClass();
 
-	luabridge::setGlobal(L, Modules::Input.get(), "Input");
+	luabridge::setGlobal(L, input, "Input");
 }

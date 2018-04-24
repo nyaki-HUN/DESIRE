@@ -6,10 +6,16 @@
 
 void RegisterPhysicsAPI_Lua(lua_State *L)
 {
+	Physics *physics = Modules::Physics.get();
+	if(physics == nullptr)
+	{
+		return;
+	}
+
 	// Physics
 	luabridge::getGlobalNamespace(L).beginClass<Physics>("IPhysics")
 		.addFunction("RaycastAny", &Physics::RaycastAny)
 		.endClass();
 
-	luabridge::setGlobal(L, Modules::Physics.get(), "Physics");
+	luabridge::setGlobal(L, physics, "Physics");
 }

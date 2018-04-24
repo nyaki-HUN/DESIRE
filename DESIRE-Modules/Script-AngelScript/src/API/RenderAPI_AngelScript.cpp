@@ -5,7 +5,15 @@
 
 void RegisterRenderAPI_AngelScript(asIScriptEngine *engine)
 {
+	Render *render = Modules::Render.get();
+	if(render == nullptr)
+	{
+		return;
+	}
+
+	int result = asSUCCESS;
+
 	// Render
-	engine->RegisterObjectType("IRender", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterGlobalProperty("IRender Render", Modules::Render.get());
+	result = engine->RegisterObjectType("IRender", 0, asOBJ_REF | asOBJ_NOHANDLE);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalProperty("IRender Render", render);								ASSERT(result >= asSUCCESS);
 }

@@ -5,9 +5,15 @@
 
 void RegisterRenderAPI_Lua(lua_State *L)
 {
+	Render *render = Modules::Render.get();
+	if(render == nullptr)
+	{
+		return;
+	}
+
 	// Render
 	luabridge::getGlobalNamespace(L).beginClass<Render>("IRender")
 		.endClass();
 
-	luabridge::setGlobal(L, Modules::Render.get(), "Render");
+	luabridge::setGlobal(L, render, "Render");
 }
