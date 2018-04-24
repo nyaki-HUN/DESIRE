@@ -142,6 +142,7 @@
     <ClInclude Include="..\..\Externals\AngelScript\src\as_variablescope.h" />
     <ClInclude Include="..\..\src\API\AngelScriptAPI.h" />
     <ClInclude Include="..\..\src\AngelScriptComponent.h" />
+    <ClInclude Include="..\..\src\AngelScriptStringFactory.h" />
     <ClInclude Include="..\..\src\AngelScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -192,6 +193,7 @@
     <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\String_AngelScript.cpp" />
     <ClCompile Include="..\..\src\AngelScriptComponent.cpp" />
+    <ClCompile Include="..\..\src\AngelScriptStringFactory.cpp" />
     <ClCompile Include="..\..\src\AngelScriptSystem.cpp" />
   </ItemGroup>
   <ItemGroup>

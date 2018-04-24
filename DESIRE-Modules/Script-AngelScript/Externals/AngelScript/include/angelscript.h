@@ -1,6 +1,6 @@
 /*
    AngelCode Scripting Library
-   Copyright (c) 2003-2017 Andreas Jonsson
+   Copyright (c) 2003-2018 Andreas Jonsson
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any
@@ -58,8 +58,8 @@ BEGIN_AS_NAMESPACE
 
 // AngelScript version
 
-#define ANGELSCRIPT_VERSION        23200
-#define ANGELSCRIPT_VERSION_STRING "2.32.0 WIP"
+#define ANGELSCRIPT_VERSION        23300
+#define ANGELSCRIPT_VERSION_STRING "2.33.0 WIP"
 
 // Data types
 
@@ -74,9 +74,7 @@ class asIBinaryStream;
 class asIJITCompiler;
 class asIThreadManager;
 class asILockableSharedBool;
-#ifdef AS_NEWSTRING
 class asIStringFactory;
-#endif
 
 // Enumerations and constants
 
@@ -144,6 +142,7 @@ enum asEEngineProp
 	asEP_ALLOW_UNICODE_IDENTIFIERS          = 25,
 	asEP_HEREDOC_TRIM_MODE                  = 26,
 	asEP_MAX_NESTED_CALLS                   = 27,
+	asEP_GENERIC_CALL_MODE                  = 28,
 
 	asEP_LAST_PROPERTY
 };
@@ -354,6 +353,8 @@ enum asEFuncType
 // asQWORD = 64 bits
 // asPWORD = size of pointer
 //
+typedef signed char    asINT8;
+typedef signed short   asINT16;
 typedef unsigned char  asBYTE;
 typedef unsigned short asWORD;
 typedef unsigned int   asUINT;
@@ -686,11 +687,7 @@ public:
 	virtual asITypeInfo   *GetObjectTypeByIndex(asUINT index) const = 0;
 
 	// String factory
-#ifdef AS_NEWSTRING
 	virtual int RegisterStringFactory(const char *datatype, asIStringFactory *factory) = 0;
-#else
-	virtual int RegisterStringFactory(const char *datatype, const asSFuncPtr &factoryFunc, asDWORD callConv, void *auxiliary = 0) = 0;
-#endif
 	virtual int GetStringFactoryReturnTypeId(asDWORD *flags = 0) const = 0;
 
 	// Default array type
@@ -775,19 +772,23 @@ public:
 	virtual void  SetTypeInfoUserDataCleanupCallback(asCLEANTYPEINFOFUNC_t callback, asPWORD type = 0) = 0;
 	virtual void  SetScriptObjectUserDataCleanupCallback(asCLEANSCRIPTOBJECTFUNC_t callback, asPWORD type = 0) = 0;
 
+	// Exception handling
+	virtual int SetTranslateAppExceptionCallback(asSFuncPtr callback, void *param, int callConv) = 0;
+
 protected:
 	virtual ~asIScriptEngine() {}
 };
 
-#ifdef AS_NEWSTRING
 class asIStringFactory
 {
 public:
 	virtual const void *GetStringConstant(const char *data, asUINT length) = 0;
 	virtual int         ReleaseStringConstant(const void *str) = 0;
 	virtual int         GetRawStringData(const void *str, char *data, asUINT *length) const = 0;
+
+protected:
+	virtual ~asIStringFactory() {}
 };
-#endif
 
 class asIThreadManager
 {
@@ -1059,7 +1060,7 @@ public:
 
 	// Properties
 	virtual asUINT      GetPropertyCount() const = 0;
-	virtual int         GetProperty(asUINT index, const char **name, int *typeId = 0, bool *isPrivate = 0, bool *isProtected = 0, int *offset = 0, bool *isReference = 0, asDWORD *accessMask = 0, int *compositeOffset = 0, bool *isCompositeIndirect = false) const = 0;
+	virtual int         GetProperty(asUINT index, const char **name, int *typeId = 0, bool *isPrivate = 0, bool *isProtected = 0, int *offset = 0, bool *isReference = 0, asDWORD *accessMask = 0, int *compositeOffset = 0, bool *isCompositeIndirect = 0) const = 0;
 	virtual const char *GetPropertyDeclaration(asUINT index, bool includeNamespace = false) const = 0;
 
 	// Behaviours

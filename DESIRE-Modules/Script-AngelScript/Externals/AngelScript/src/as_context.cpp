@@ -1,6 +1,6 @@
 /*
    AngelCode Scripting Library
-   Copyright (c) 2003-2017 Andreas Jonsson
+   Copyright (c) 2003-2018 Andreas Jonsson
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any
@@ -374,7 +374,7 @@ int asCContext::Prepare(asIScriptFunction *func)
 	if( func == 0 )
 	{
 		asCString str;
-		str.Format(TXT_FAILED_IN_FUNC_s_WITH_s_d, "Prepare", "null", asNO_FUNCTION);
+		str.Format(TXT_FAILED_IN_FUNC_s_WITH_s_s_d, "Prepare", "null", errorNames[-asNO_FUNCTION], asNO_FUNCTION);
 		m_engine->WriteMessage("", 0, 0, asMSGTYPE_ERROR, str.AddressOf());
 		return asNO_FUNCTION;
 	}
@@ -382,7 +382,7 @@ int asCContext::Prepare(asIScriptFunction *func)
 	if( m_status == asEXECUTION_ACTIVE || m_status == asEXECUTION_SUSPENDED )
 	{
 		asCString str;
-		str.Format(TXT_FAILED_IN_FUNC_s_WITH_s_d, "Prepare", func->GetDeclaration(true, true), asCONTEXT_ACTIVE);
+		str.Format(TXT_FAILED_IN_FUNC_s_WITH_s_s_d, "Prepare", func->GetDeclaration(true, true), errorNames[-asCONTEXT_ACTIVE], asCONTEXT_ACTIVE);
 		m_engine->WriteMessage("", 0, 0, asMSGTYPE_ERROR, str.AddressOf());
 		return asCONTEXT_ACTIVE;
 	}
@@ -424,7 +424,7 @@ int asCContext::Prepare(asIScriptFunction *func)
 		if( m_engine != func->GetEngine() )
 		{
 			asCString str;
-			str.Format(TXT_FAILED_IN_FUNC_s_WITH_s_d, "Prepare", func->GetDeclaration(true, true), asINVALID_ARG);
+			str.Format(TXT_FAILED_IN_FUNC_s_WITH_s_s_d, "Prepare", func->GetDeclaration(true, true), errorNames[-asINVALID_ARG], asINVALID_ARG);
 			m_engine->WriteMessage("", 0, 0, asMSGTYPE_ERROR, str.AddressOf());
 			return asINVALID_ARG;
 		}
@@ -1200,7 +1200,7 @@ int asCContext::Execute()
 	if( m_status != asEXECUTION_SUSPENDED && m_status != asEXECUTION_PREPARED )
 	{
 		asCString str;
-		str.Format(TXT_FAILED_IN_FUNC_s_d, "Execute", asCONTEXT_NOT_PREPARED);
+		str.Format(TXT_FAILED_IN_FUNC_s_s_d, "Execute", errorNames[-asCONTEXT_NOT_PREPARED], asCONTEXT_NOT_PREPARED);
 		m_engine->WriteMessage("", 0, 0, asMSGTYPE_ERROR, str.AddressOf());
 		return asCONTEXT_NOT_PREPARED;
 	}
@@ -2506,22 +2506,9 @@ void asCContext::ExecuteNext()
 		break;
 
 	case asBC_STR:
-		{
-#ifdef AS_NEWSTRING
-			SetInternalException("Illegal instruction STR");
-#else
-			// Get the string id from the argument
-			asWORD w = asBC_WORDARG0(l_bc);
-			// Push the string pointer on the stack
-			const asCString &b = m_engine->GetConstantString(w);
-			l_sp -= AS_PTR_SIZE;
-			*(asPWORD*)l_sp = (asPWORD)b.AddressOf();
-			// Push the string length on the stack
-			--l_sp;
-			*l_sp = (asDWORD)b.GetLength();
-#endif
-			l_bc++;
-		}
+		// TODO: NEWSTRING: Deprecate this instruction
+		asASSERT(false);
+		l_bc++;
 		break;
 
 	case asBC_CALLSYS:
@@ -5127,6 +5114,26 @@ void asCContext::CallExceptionCallback()
 		m_engine->CallObjectMethod(m_exceptionCallbackObj, this, &m_exceptionCallbackFunc, 0);
 }
 
+#ifndef AS_NO_EXCEPTIONS
+// internal
+void asCContext::HandleAppException()
+{
+	// This method is called from within a catch(...) block
+	if (m_engine->translateExceptionCallback)
+	{
+		// Allow the application to translate the application exception to a proper exception string
+		if (m_engine->translateExceptionCallbackFunc.callConv < ICC_THISCALL)
+			m_engine->CallGlobalFunction(this, m_engine->translateExceptionCallbackObj, &m_engine->translateExceptionCallbackFunc, 0);
+		else
+			m_engine->CallObjectMethod(m_engine->translateExceptionCallbackObj, this, &m_engine->translateExceptionCallbackFunc, 0);
+	}
+
+	// Make sure an exception is set even if the application decides not to do any specific translation
+	if( m_status != asEXECUTION_EXCEPTION )
+		SetException(TXT_EXCEPTION_CAUGHT);
+}
+#endif
+
 // interface
 void asCContext::ClearLineCallback()
 {
@@ -5192,7 +5199,7 @@ int asCContext::CallGeneric(asCScriptFunction *descr)
 	{
 		// Convert the exception to a script exception so the VM can 
 		// properly report the error to the application and then clean up
-		SetException(TXT_EXCEPTION_CAUGHT);
+		HandleAppException();
 	}
 #endif
 	m_callingSystemFunction = 0;
@@ -5200,6 +5207,14 @@ int asCContext::CallGeneric(asCScriptFunction *descr)
 	m_regs.valueRegister = gen.returnVal;
 	m_regs.objectRegister = gen.objectRegister;
 	m_regs.objectType = descr->returnType.GetTypeInfo();
+
+	// Increase the returned handle if the function has been declared with autohandles
+	// and the engine is not set to use the old mode for the generic calling convention
+	if (sysFunc->returnAutoHandle && m_engine->ep.genericCallMode == 1 && m_regs.objectRegister)
+	{
+		asASSERT(!(descr->returnType.GetTypeInfo()->flags & asOBJ_NOCOUNT));
+		m_engine->CallObjectMethod(m_regs.objectRegister, CastToObjectType(descr->returnType.GetTypeInfo())->beh.addref);
+	}
 
 	// Clean up arguments
 	const asUINT cleanCount = sysFunc->cleanArgs.GetLength();

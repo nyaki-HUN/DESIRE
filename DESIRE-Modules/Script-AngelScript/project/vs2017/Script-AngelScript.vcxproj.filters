@@ -141,6 +141,9 @@
     <ClInclude Include="..\..\src\AngelScriptComponent.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\AngelScriptStringFactory.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\AngelScriptSystem.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -285,6 +288,9 @@
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\AngelScriptComponent.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\AngelScriptStringFactory.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\AngelScriptSystem.cpp">

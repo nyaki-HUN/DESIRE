@@ -1,6 +1,6 @@
 /*
    AngelCode Scripting Library
-   Copyright (c) 2003-2017 Andreas Jonsson
+   Copyright (c) 2003-2018 Andreas Jonsson
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any
@@ -109,11 +109,7 @@ public:
 	virtual asITypeInfo   *GetObjectTypeByIndex(asUINT index) const;
 
 	// String factory
-#ifdef AS_NEWSTRING
 	virtual int RegisterStringFactory(const char *datatype, asIStringFactory *factory);
-#else
-	virtual int RegisterStringFactory(const char *datatype, const asSFuncPtr &factoryFunc, asDWORD callConv, void *auxiliary = 0);
-#endif
 	virtual int GetStringFactoryReturnTypeId(asDWORD *flags) const;
 
 	// Default array type
@@ -198,6 +194,9 @@ public:
 	virtual void  SetFunctionUserDataCleanupCallback(asCLEANFUNCTIONFUNC_t callback, asPWORD type);
 	virtual void  SetTypeInfoUserDataCleanupCallback(asCLEANTYPEINFOFUNC_t callback, asPWORD type);
 	virtual void  SetScriptObjectUserDataCleanupCallback(asCLEANSCRIPTOBJECTFUNC_t callback, asPWORD type);
+
+	// Exception handling
+	virtual int SetTranslateAppExceptionCallback(asSFuncPtr callback, void *param, int callConv);
 
 //===========================================================
 // internal methods
@@ -303,13 +302,6 @@ public:
 
 	asCFuncdefType    *FindMatchingFuncdef(asCScriptFunction *func, asCModule *mod);
 
-#ifndef AS_NEWSTRING
-	// String constants
-	// TODO: Must free unused string constants, thus the ref count for each must be tracked
-	int              AddConstantString(const char *str, size_t length);
-	const asCString &GetConstantString(int id);
-#endif
-
 	// Global property management
 	asCGlobalProperty *AllocateGlobalProperty();
 	void RemoveGlobalProperty(asCGlobalProperty *prop);
@@ -341,12 +333,8 @@ public:
 	asCSymbolTable<asCScriptFunction> registeredGlobalFuncs;
 	asCArray<asCFuncdefType *>        registeredFuncDefs;      // doesn't increase ref count
 	asCArray<asCObjectType *>         registeredTemplateTypes; // doesn't increase ref count
-#ifdef AS_NEWSTRING
 	asIStringFactory                 *stringFactory;
 	asCDataType                       stringType;
-#else
-	asCScriptFunction                *stringFactory;
-#endif
 	bool configFailed;
 
 	// Stores all registered types
@@ -453,14 +441,6 @@ public:
 	// only deleted once the engine is destroyed
 	asCArray<asSNameSpace*> nameSpaces;
 
-#ifndef AS_NEWSTRING
-	// String constants
-	// These are shared between all scripts and are
-	// only deleted once the engine is destroyed
-	asCArray<asCString*>          stringConstants;
-	asCMap<asCStringPointer, int> stringToIdMap;
-#endif
-
 	// Callbacks for context pooling
 	asREQUESTCONTEXTFUNC_t  requestCtxFunc;
 	asRETURNCONTEXTFUNC_t   returnCtxFunc;
@@ -517,7 +497,15 @@ public:
 		bool   allowUnicodeIdentifiers;
 		int    heredocTrimMode;
 		asUINT maxNestedCalls;
+		asUINT genericCallMode;
 	} ep;
+
+	// Callbacks
+#ifndef AS_NO_EXCEPTIONS
+	bool                       translateExceptionCallback;
+	asSSystemFunctionInterface translateExceptionCallbackFunc;
+	void *                     translateExceptionCallbackObj;
+#endif
 
 	// This flag is to allow a quicker shutdown when releasing the engine
 	bool shuttingDown;

@@ -2,6 +2,7 @@
 
 #include "Engine/Script/ScriptSystem.h"
 
+class AngelScriptStringFactory;
 class String;
 class asIScriptEngine;
 class asIScriptModule;
@@ -33,4 +34,5 @@ private:
 
 	asIScriptEngine *engine = nullptr;
 	std::vector<asIScriptContext*> contextPool;
+	std::unique_ptr<AngelScriptStringFactory> stringFactory;
 };

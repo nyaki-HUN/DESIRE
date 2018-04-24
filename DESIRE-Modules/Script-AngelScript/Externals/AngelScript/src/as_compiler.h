@@ -1,6 +1,6 @@
 /*
    AngelCode Scripting Library
-   Copyright (c) 2003-2017 Andreas Jonsson
+   Copyright (c) 2003-2018 Andreas Jonsson
 
    This software is provided 'as-is', without any express or implied 
    warranty. In no event will the authors be held liable for any 
@@ -100,7 +100,7 @@ struct asCExprValue
 	bool  isVariable : 1;
 	bool  isExplicitHandle : 1;
 	bool  isRefToLocal : 1; // The reference may be to a local variable
-	bool  isHandleSafe : 1; // the life-time of the handle is guaranteed for the duration of the access
+	bool  isRefSafe : 1; // the life-time of the ref is guaranteed for the duration of the access
 	short dummy : 9;
 	short stackOffset;
 
@@ -262,7 +262,7 @@ protected:
 
 	void CompileInitList(asCExprValue *var, asCScriptNode *node, asCByteCode *bc, int isVarGlobOrMem);
 	int  CompileInitListElement(asSListPatternNode *&patternNode, asCScriptNode *&valueNode, int bufferTypeId, short bufferVar, asUINT &bufferSize, asCByteCode &byteCode, int &elementsInSubList);
-	int  CompilerAnonymousInitList(asCScriptNode *listNode, asCExprContext *ctx, const asCDataType &dt);
+	int  CompileAnonymousInitList(asCScriptNode *listNode, asCExprContext *ctx, const asCDataType &dt);
 
 	int  CallDefaultConstructor(const asCDataType &type, int offset, bool isObjectOnHeap, asCByteCode *bc, asCScriptNode *node, int isVarGlobOrMem = 0, bool derefDest = false);
 	int  CallCopyConstructor(asCDataType &type, int offset, bool isObjectOnHeap, asCByteCode *bc, asCExprContext *arg, asCScriptNode *node, bool isGlobalVar = false, bool derefDestination = false);
@@ -393,11 +393,9 @@ protected:
 	// This array holds the indices of variables that must not be used in an allocation
 	asCArray<int>         reservedVariables;
 
-#ifdef AS_NEWSTRING
 	// This array holds the string constants that were allocated during the compilation, 
 	// so they can be released upon completion, whether the compilation was successful or not.
 	asCArray<void*>       usedStringConstants;
-#endif
 
 	bool isCompilingDefaultArg;
 	bool isProcessingDeferredParams;

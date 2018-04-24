@@ -1,5 +1,6 @@
 #include "AngelScriptSystem.h"
 #include "AngelScriptComponent.h"
+#include "AngelScriptStringFactory.h"
 #include "API/AngelScriptAPI.h"
 
 #include "Engine/Core/Log.h"
@@ -34,6 +35,9 @@ AngelScriptSystem::AngelScriptSystem()
 	engine->RegisterInterface("Component");
 	engine->RegisterEnum("EComponentTypeID");
 
+	stringFactory = std::make_unique<AngelScriptStringFactory>();
+	RegisterString_AngelScript(engine, stringFactory.get());
+
 	RegisterCoreAPI_AngelScript(engine);
 	RegisterComponentAPI_AngelScript(engine);
 	RegisterInputAPI_AngelScript(engine);
@@ -61,6 +65,7 @@ AngelScriptSystem::~AngelScriptSystem()
 	contextPool.clear();
 
 	engine->ShutDownAndRelease();
+	engine = nullptr;
 }
 
 void AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)

@@ -273,7 +273,6 @@ void RegisterMathFunctions_AngelScript(asIScriptEngine *engine)
 
 void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
 {
-	RegisterString_AngelScript(engine);
 	RegisterVectormathFunctions_AngelScript(engine);
 	RegisterMathFunctions_AngelScript(engine);
 

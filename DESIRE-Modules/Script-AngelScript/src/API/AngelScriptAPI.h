@@ -8,6 +8,8 @@ DESIRE_DISABLE_WARNINGS
 #include "angelscript.h"
 DESIRE_ENABLE_WARNINGS
 
+#include <new>
+
 // Engine API register functions
 void RegisterComponentAPI_AngelScript(asIScriptEngine *engine);
 void RegisterCoreAPI_AngelScript(asIScriptEngine *engine);
@@ -16,7 +18,7 @@ void RegisterNetworkAPI_AngelScript(asIScriptEngine *engine);
 void RegisterPhysicsAPI_AngelScript(asIScriptEngine *engine);
 void RegisterRenderAPI_AngelScript(asIScriptEngine *engine);
 void RegisterSoundAPI_AngelScript(asIScriptEngine *engine);
-void RegisterString_AngelScript(asIScriptEngine *engine);
+void RegisterString_AngelScript(asIScriptEngine *engine, asIStringFactory *stringFactory);
 
 template<class T>
 class AngelScriptAPI
