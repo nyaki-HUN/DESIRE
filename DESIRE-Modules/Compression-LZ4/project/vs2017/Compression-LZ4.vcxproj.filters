@@ -15,9 +15,6 @@
     <ClInclude Include="..\..\Externals\LZ4\include\lz4hc.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Externals\LZ4\src\lz4opt.h">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\LZ4\src\lz4.c">

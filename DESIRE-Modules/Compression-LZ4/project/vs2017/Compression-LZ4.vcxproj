@@ -104,7 +104,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\Externals\LZ4\include\lz4.h" />
     <ClInclude Include="..\..\Externals\LZ4\include\lz4hc.h" />
-    <ClInclude Include="..\..\Externals\LZ4\src\lz4opt.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\LZ4\src\lz4.c" />
