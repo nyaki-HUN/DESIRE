@@ -116,8 +116,11 @@
     <ClInclude Include="..\..\Externals\zlib-ng\match.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\memcopy.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\trees.h" />
+    <ClInclude Include="..\..\Externals\zlib-ng\zbuild.h" />
+    <ClInclude Include="..\..\Externals\zlib-ng\zlib-ng.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zlib.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zutil.h" />
+    <ClInclude Include="..\..\include\zconf-ng.h" />
     <ClInclude Include="..\..\include\zconf.h" />
     <ClInclude Include="..\..\src\GZipCompression.h" />
     <ClInclude Include="..\..\src\RawDeflateCompression.h" />

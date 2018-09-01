@@ -63,11 +63,20 @@
     <ClInclude Include="..\..\Externals\zlib-ng\trees.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib-ng\zbuild.h">
+      <Filter>Externals\zlib-ng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib-ng\zlib-ng.h">
+      <Filter>Externals\zlib-ng</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\zlib.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\zutil.h">
       <Filter>Externals\zlib-ng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\zconf-ng.h">
+      <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\zconf.h">
       <Filter>include</Filter>
