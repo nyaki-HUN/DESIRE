@@ -102,7 +102,7 @@ public:
 	// Render state setup
 	virtual void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) = 0;
 	virtual void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
-	virtual void SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled) = 0;
+	virtual void SetColorWriteEnabled(bool r, bool g, bool b, bool a) = 0;
 	virtual void SetDepthWriteEnabled(bool enabled) = 0;
 	virtual void SetDepthTest(EDepthTest deptTest) = 0;
 	virtual void SetCullMode(ECullMode cullMode) = 0;

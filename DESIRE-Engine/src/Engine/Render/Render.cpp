@@ -68,7 +68,7 @@ void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
 
 void Render::SetDefaultRenderStates()
 {
-	SetColorWriteEnabled(true, true);
+	SetColorWriteEnabled(true, true, true, true);
 	SetDepthWriteEnabled(true);
 	SetDepthTest(EDepthTest::LESS);
 	SetCullMode(ECullMode::CCW);

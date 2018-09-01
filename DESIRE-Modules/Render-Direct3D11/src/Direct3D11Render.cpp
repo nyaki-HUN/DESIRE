@@ -346,20 +346,38 @@ void Direct3D11Render::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	clearColor[3] = a / 255.0f;
 }
 
-void Direct3D11Render::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
+void Direct3D11Render::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
 {
 	ASSERT(!blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
 
-	if(rgbWriteEnabled)
+	if(r)
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED;
 	}
 	else
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~(D3D11_COLOR_WRITE_ENABLE_RED | D3D11_COLOR_WRITE_ENABLE_GREEN | D3D11_COLOR_WRITE_ENABLE_BLUE);
+		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D11_COLOR_WRITE_ENABLE_RED;
 	}
 
-	if(alphaWriteEnabled)
+	if(g)
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_GREEN;
+	}
+	else
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D11_COLOR_WRITE_ENABLE_GREEN;
+	}
+
+	if(b)
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_BLUE;
+	}
+	else
+	{
+		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D11_COLOR_WRITE_ENABLE_BLUE;
+	}
+
+	if(a)
 	{
 		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
 	}
