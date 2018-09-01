@@ -57,7 +57,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;Z_SOLO;X86_SSE2_FILL_WINDOW;X86_CPUID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;Z_SOLO;ZLIB_COMPAT;X86_64;X86_NOCHECK_SSE2;UNALIGNED_OK;UNROLL_LESS;X86_SSE2_FILL_WINDOW;X86_CPUID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib-ng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -79,7 +79,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;Z_SOLO;X86_SSE2_FILL_WINDOW;X86_CPUID;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;Z_SOLO;ZLIB_COMPAT;X86_64;X86_NOCHECK_SSE2;UNALIGNED_OK;UNROLL_LESS;X86_SSE2_FILL_WINDOW;X86_CPUID;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib-ng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>

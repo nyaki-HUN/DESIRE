@@ -5,6 +5,11 @@ project "Compression-zlib-ng"
 	defines
 	{
 		"Z_SOLO",
+		"ZLIB_COMPAT",
+		"X86_64",
+		"X86_NOCHECK_SSE2",
+		"UNALIGNED_OK",
+		"UNROLL_LESS",
 		"X86_SSE2_FILL_WINDOW",
 		"X86_CPUID",
 	}

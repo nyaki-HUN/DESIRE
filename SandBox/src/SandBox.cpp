@@ -39,8 +39,7 @@ void SandBox::Init()
 	UI = std::make_unique<ImGuiImpl>();
 	UI->Init();
 
-	FileSystem::Get()->AddZipFileSource("data/zip.zip");
-//	FileSystem::Get()->AddZipFileSource("data/zip.zip", FileSystem::FLAG_IGNORE_CASE | FileSystem::FLAG_IGNORE_PATH);
+	FileSystem::Get()->AddZipFileSource("data/zip.zip", FileSystem::FILESOURCE_IGNORE_PATH | FileSystem::FILESOURCE_IGNORE_CASE);
 
 	ReadFilePtr file = FileSystem::Get()->Open("asd.txt");
 	ReadFilePtr file2 = FileSystem::Get()->Open("qwe.txt");
