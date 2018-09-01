@@ -131,6 +131,7 @@
     <ClInclude Include="..\..\Externals\bgfx\src\charset.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\config.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\debug_renderdoc.h" />
+    <ClInclude Include="..\..\Externals\bgfx\src\dxgi.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\fs_clear0.bin.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\fs_clear1.bin.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\fs_clear2.bin.h" />
@@ -146,9 +147,6 @@
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_nsgl.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_wgl.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\glimports.h" />
-    <ClInclude Include="..\..\Externals\bgfx\src\hmd.h" />
-    <ClInclude Include="..\..\Externals\bgfx\src\hmd_openvr.h" />
-    <ClInclude Include="..\..\Externals\bgfx\src\hmd_ovr.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\nvapi.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\renderer.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\renderer_d3d.h" />
@@ -229,12 +227,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\Externals\bgfx\src\bgfx.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\debug_renderdoc.cpp" />
+    <ClCompile Include="..\..\Externals\bgfx\src\dxgi.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_egl.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_glx.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_wgl.cpp" />
-    <ClCompile Include="..\..\Externals\bgfx\src\hmd.cpp" />
-    <ClCompile Include="..\..\Externals\bgfx\src\hmd_openvr.cpp" />
-    <ClCompile Include="..\..\Externals\bgfx\src\hmd_ovr.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\nvapi.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_d3d11.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_d3d12.cpp" />

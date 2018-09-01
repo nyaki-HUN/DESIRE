@@ -51,7 +51,11 @@ void BgfxRender::Init(IWindow *mainWindow)
 	pd.nwh = mainWindow->GetHandle();
 	bgfx::setPlatformData(pd);
 
-	initialized = bgfx::init(bgfx::RendererType::Count, BGFX_PCI_ID_NONE);
+	bgfx::Init initParams;
+	initParams.resolution.format = bgfx::TextureFormat::RGBA8;
+	initParams.resolution.width = mainWindow->GetWidth();
+	initParams.resolution.height = mainWindow->GetHeight();
+	initialized = bgfx::init(initParams);
 	activeViewId = 0;
 
 	for(bgfx::ViewId viewId = 0; viewId < BGFX_CONFIG_MAX_VIEWS; ++viewId)
@@ -190,24 +194,42 @@ void BgfxRender::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	clearColor = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
-void BgfxRender::SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled)
+void BgfxRender::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
 {
-	if(rgbWriteEnabled)
+	if(r)
 	{
-		renderState |= BGFX_STATE_RGB_WRITE;
+		renderState |= BGFX_STATE_WRITE_R;
 	}
 	else
 	{
-		renderState &= ~BGFX_STATE_RGB_WRITE;
+		renderState &= ~BGFX_STATE_WRITE_R;
 	}
 
-	if(alphaWriteEnabled)
+	if(g)
 	{
-		renderState |= BGFX_STATE_ALPHA_WRITE;
+		renderState |= BGFX_STATE_WRITE_G;
 	}
 	else
 	{
-		renderState &= ~BGFX_STATE_ALPHA_WRITE;
+		renderState &= ~BGFX_STATE_WRITE_G;
+	}
+
+	if(b)
+	{
+		renderState |= BGFX_STATE_WRITE_B;
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_WRITE_B;
+	}
+
+	if(a)
+	{
+		renderState |= BGFX_STATE_WRITE_A;
+	}
+	else
+	{
+		renderState &= ~BGFX_STATE_WRITE_A;
 	}
 }
 
@@ -215,11 +237,11 @@ void BgfxRender::SetDepthWriteEnabled(bool enabled)
 {
 	if(enabled)
 	{
-		renderState |= BGFX_STATE_DEPTH_WRITE;
+		renderState |= BGFX_STATE_WRITE_Z;
 	}
 	else
 	{
-		renderState &= ~BGFX_STATE_DEPTH_WRITE;
+		renderState &= ~BGFX_STATE_WRITE_Z;
 	}
 }
 
@@ -613,13 +635,13 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh *mesh)
 
 	if(mesh->isIndexDataUpdateRequired)
 	{
-		bgfx::updateDynamicIndexBuffer(renderData->dynamicIndexBuffer, 0, bgfx::copy(mesh->indices.get(), mesh->GetSizeOfIndices()));
+		bgfx::update(renderData->dynamicIndexBuffer, 0, bgfx::copy(mesh->indices.get(), mesh->GetSizeOfIndices()));
 		mesh->isIndexDataUpdateRequired = false;
 	}
 
 	if(mesh->isVertexDataUpdateRequired)
 	{
-		bgfx::updateDynamicVertexBuffer(renderData->dynamicVertexBuffer, 0, bgfx::copy(mesh->vertices.get(), mesh->GetSizeOfVertices()));
+		bgfx::update(renderData->dynamicVertexBuffer, 0, bgfx::copy(mesh->vertices.get(), mesh->GetSizeOfVertices()));
 		mesh->isVertexDataUpdateRequired = false;
 	}
 }
@@ -698,18 +720,18 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 	uint32_t flags = BGFX_TEXTURE_NONE;
 	switch(filterMode)
 	{
-		case EFilterMode::POINT:		flags |= BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT | BGFX_TEXTURE_MIP_POINT; break;
-		case EFilterMode::BILINEAR:		flags |= BGFX_TEXTURE_MIP_POINT; break;
+		case EFilterMode::POINT:		flags |= BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_MIP_POINT; break;
+		case EFilterMode::BILINEAR:		flags |= BGFX_SAMPLER_MIP_POINT; break;
 		case EFilterMode::TRILINEAR:	break;
-		case EFilterMode::ANISOTROPIC:	flags |= BGFX_TEXTURE_MIN_ANISOTROPIC | BGFX_TEXTURE_MAG_ANISOTROPIC; break;
+		case EFilterMode::ANISOTROPIC:	flags |= BGFX_SAMPLER_MIN_ANISOTROPIC | BGFX_SAMPLER_MAG_ANISOTROPIC; break;
 	}
 	switch(addressMode)
 	{
 		case EAddressMode::REPEAT:			break;
-		case EAddressMode::CLAMP:			flags |= BGFX_TEXTURE_U_CLAMP | BGFX_TEXTURE_V_CLAMP | BGFX_TEXTURE_W_CLAMP; break;
-		case EAddressMode::MIRRORED_REPEAT:	flags |= BGFX_TEXTURE_U_MIRROR | BGFX_TEXTURE_V_MIRROR | BGFX_TEXTURE_W_MIRROR; break;
-		case EAddressMode::MIRROR_ONCE:		flags |= BGFX_TEXTURE_U_MIRROR | BGFX_TEXTURE_V_MIRROR | BGFX_TEXTURE_W_MIRROR; break;
-		case EAddressMode::BORDER:			flags |= BGFX_TEXTURE_U_BORDER | BGFX_TEXTURE_V_BORDER | BGFX_TEXTURE_W_BORDER; break;
+		case EAddressMode::CLAMP:			flags |= BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_SAMPLER_W_CLAMP; break;
+		case EAddressMode::MIRRORED_REPEAT:	flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
+		case EAddressMode::MIRROR_ONCE:		flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
+		case EAddressMode::BORDER:			flags |= BGFX_SAMPLER_U_BORDER | BGFX_SAMPLER_V_BORDER | BGFX_SAMPLER_W_BORDER; break;
 	}
 
 	const TextureRenderDataBgfx *renderData = static_cast<const TextureRenderDataBgfx*>(texture->renderData);

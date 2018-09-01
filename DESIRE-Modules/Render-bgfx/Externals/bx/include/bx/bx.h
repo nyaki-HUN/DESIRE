@@ -15,7 +15,6 @@
 #include "platform.h"
 #include "config.h"
 #include "macros.h"
-#include "debug.h"
 
 ///
 #define BX_COUNTOF(_x) sizeof(bx::COUNTOF_REQUIRES_ARRAY_ARGUMENT(_x) )
@@ -34,6 +33,10 @@ namespace bx
 	/// Template for avoiding MSVC: C4127: conditional expression is constant
 	template<bool>
 	constexpr bool isEnabled();
+
+	///
+	template<class Ty>
+	constexpr bool isTriviallyCopyable();
 
 	/// Exchange two values.
 	template<typename Ty>

@@ -3,6 +3,9 @@
  * License: https://github.com/bkaradzic/bimg#license-bsd-2-clause
  */
 
+#ifndef BIMG_P_H_HEADER_GUARD
+#define BIMG_P_H_HEADER_GUARD
+
 #include <bimg/bimg.h>
 #include <bx/allocator.h>
 #include <bx/readerwriter.h>
@@ -15,6 +18,10 @@
 #define BIMG_CHUNK_MAGIC_GNF BX_MAKEFOURCC('G', 'N', 'F', ' ')
 
 BX_ERROR_RESULT(BIMG_ERROR, BX_MAKEFOURCC('b', 'i', 'm', 'g') );
+
+#ifndef BIMG_CONFIG_ASTC_DECODE
+#	define BIMG_CONFIG_ASTC_DECODE 0
+#endif // BIMG_CONFIG_ASTC_DECODE
 
 namespace bimg
 {
@@ -40,7 +47,7 @@ namespace bimg
 	{
 		if (_hasMips)
 		{
-			const uint32_t max = bx::uint32_max(bx::uint32_max(_width, _height), _depth);
+			const uint32_t max = bx::max(_width, _height, _depth);
 			const uint32_t num = 1 + uint32_t(bx::log2(float(max) ) );
 
 			return uint8_t(num);
@@ -80,3 +87,5 @@ namespace bimg
 		);
 
 } // namespace bimg
+
+#endif // BIMG_P_H_HEADER_GUARD

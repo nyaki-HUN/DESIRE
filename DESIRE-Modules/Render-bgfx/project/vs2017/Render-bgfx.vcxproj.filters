@@ -195,6 +195,9 @@
     <ClInclude Include="..\..\Externals\bgfx\src\debug_renderdoc.h">
       <Filter>Externals\bgfx\src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\src\dxgi.h">
+      <Filter>Externals\bgfx\src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\src\fs_clear0.bin.h">
       <Filter>Externals\bgfx\src</Filter>
     </ClInclude>
@@ -238,15 +241,6 @@
       <Filter>Externals\bgfx\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\src\glimports.h">
-      <Filter>Externals\bgfx\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\bgfx\src\hmd.h">
-      <Filter>Externals\bgfx\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\bgfx\src\hmd_openvr.h">
-      <Filter>Externals\bgfx\src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\bgfx\src\hmd_ovr.h">
       <Filter>Externals\bgfx\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\src\nvapi.h">
@@ -485,6 +479,9 @@
     <ClCompile Include="..\..\Externals\bgfx\src\debug_renderdoc.cpp">
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\bgfx\src\dxgi.cpp">
+      <Filter>Externals\bgfx\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_egl.cpp">
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
@@ -492,15 +489,6 @@
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_wgl.cpp">
-      <Filter>Externals\bgfx\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Externals\bgfx\src\hmd.cpp">
-      <Filter>Externals\bgfx\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Externals\bgfx\src\hmd_openvr.cpp">
-      <Filter>Externals\bgfx\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Externals\bgfx\src\hmd_ovr.cpp">
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bgfx\src\nvapi.cpp">

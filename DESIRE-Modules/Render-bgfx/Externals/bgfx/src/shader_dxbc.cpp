@@ -147,7 +147,7 @@ namespace bgfx
 		{ 5, 0 }, // GATHER4_C
 		{ 5, 0 }, // GATHER4_PO
 		{ 0, 0 }, // GATHER4_PO_C
-		{ 0, 0 }, // RCP
+		{ 2, 0 }, // RCP
 		{ 0, 0 }, // F32TOF16
 		{ 0, 0 }, // F16TOF32
 		{ 0, 0 }, // UADDC
@@ -2030,9 +2030,12 @@ namespace bgfx
 
 			_fn(instruction, _userData);
 
-			total += write(&writer, instruction, _err);
+			bx::SizerWriter sw;
+			uint32_t length = instruction.length;
+			instruction.length = uint32_t(write(&sw, instruction, _err)/4);
 
-			token += instruction.length;
+			total += write(&writer, instruction, _err);
+			token += length;
 		}
 
 		uint8_t* data = (uint8_t*)mb.more();

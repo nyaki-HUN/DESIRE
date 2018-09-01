@@ -29,7 +29,7 @@ public:
 
 	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
 	void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
-	void SetColorWriteEnabled(bool rgbWriteEnabled, bool alphaWriteEnabled) override;
+	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
 	void SetDepthWriteEnabled(bool enabled) override;
 	void SetDepthTest(EDepthTest depthTest) override;
 	void SetCullMode(ECullMode cullMode) override;

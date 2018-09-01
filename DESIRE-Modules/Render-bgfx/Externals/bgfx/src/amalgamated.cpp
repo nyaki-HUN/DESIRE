@@ -5,12 +5,10 @@
 
 #include "bgfx.cpp"
 #include "debug_renderdoc.cpp"
+#include "dxgi.cpp"
 #include "glcontext_egl.cpp"
 #include "glcontext_glx.cpp"
 #include "glcontext_wgl.cpp"
-#include "hmd.cpp"
-#include "hmd_ovr.cpp"
-#include "hmd_openvr.cpp"
 #include "nvapi.cpp"
 #include "renderer_d3d9.cpp"
 #include "renderer_d3d11.cpp"
