@@ -121,7 +121,6 @@
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_platform.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\wgl\wglext.h" />
-    <ClInclude Include="..\..\Externals\bgfx\3rdparty\openvr\openvr_capi.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\renderdoc\renderdoc_app.h" />
     <ClInclude Include="..\..\Externals\bgfx\include\bgfx\bgfx.h" />
     <ClInclude Include="..\..\Externals\bgfx\include\bgfx\defines.h" />

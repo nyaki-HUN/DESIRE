@@ -43,9 +43,6 @@
     <Filter Include="Externals\bgfx\3rdparty\khronos\wgl">
       <UniqueIdentifier>{C577193F-3131-84E9-BA90-9EC326493A59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Externals\bgfx\3rdparty\openvr">
-      <UniqueIdentifier>{E236E281-CE5C-ACE8-B7A2-31B4A367D1B4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Externals\bgfx\3rdparty\renderdoc">
       <UniqueIdentifier>{FE34A2BF-6AA3-F73E-B38C-B23E1F3AEDDA}</UniqueIdentifier>
     </Filter>
@@ -164,9 +161,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\wgl\wglext.h">
       <Filter>Externals\bgfx\3rdparty\khronos\wgl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\bgfx\3rdparty\openvr\openvr_capi.h">
-      <Filter>Externals\bgfx\3rdparty\openvr</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\renderdoc\renderdoc_app.h">
       <Filter>Externals\bgfx\3rdparty\renderdoc</Filter>
