@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lua.hpp"
+#include <vector>
 #include "LuaBridge/LuaBridge.h"
 
 // Engine API register functions
