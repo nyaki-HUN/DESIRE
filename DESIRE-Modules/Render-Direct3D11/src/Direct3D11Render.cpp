@@ -9,6 +9,7 @@
 #include "Engine/Core/Log.h"
 #include "Engine/Core/IWindow.h"
 #include "Engine/Core/String.h"
+#include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Render/Material.h"
 #include "Engine/Render/RenderTarget.h"
@@ -616,7 +617,17 @@ void Direct3D11Render::Bind(Shader *shader)
 	}
 
 	ID3DBlob *errorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader->data.data, shader->data.size, shader->name.c_str(), defines, nullptr, "main", isVertexShader ? "vs_5_0" : "ps_5_0", 0, 0, &renderData->shaderCode, &errorBlob);
+	HRESULT hr = D3DCompile(shader->data.data														// pSrcData
+		, shader->data.size																			// SrcDataSize
+		, (FileSystem::Get()->GetAppDirectory() + GetShaderFilenameWithPath(shader->name)).c_str()	// pSourceName
+		, defines																					// pDefines
+		, D3D_COMPILE_STANDARD_FILE_INCLUDE															// pInclude
+		, "main"																					// pEntrypoint
+		, isVertexShader ? "vs_5_0" : "ps_5_0"														// pTarget
+		, 0																							// Flags1
+		, 0																							// Flags2
+		, &renderData->shaderCode																	// ppCode
+		, &errorBlob);																				// ppErrorMsgs
 	if(FAILED(hr))
 	{
 		if(errorBlob != nullptr)
