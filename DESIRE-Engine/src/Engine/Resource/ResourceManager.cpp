@@ -171,8 +171,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 {
-	const String filenameWithPath = Modules::Render->GetShaderFilenameWithPath(filename.c_str());
-
+	const String filenameWithPath = Modules::Render->GetShaderFilenameWithPath(filename);
 	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath);
 	if(file)
 	{

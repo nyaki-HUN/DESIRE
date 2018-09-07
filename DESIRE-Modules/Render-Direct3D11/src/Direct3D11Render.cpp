@@ -246,9 +246,12 @@ void Direct3D11Render::Kill()
 	DX_RELEASE(backBufferRenderTargetView);
 }
 
-String Direct3D11Render::GetShaderFilenameWithPath(const char *shaderFilename) const
+String Direct3D11Render::GetShaderFilenameWithPath(const String& shaderFilename) const
 {
-	return String::CreateFormattedString("data/shaders/hlsl/%s.hlsl", shaderFilename);
+	String filenameWithPath = "data/shaders/hlsl/";
+	filenameWithPath += shaderFilename;
+	filenameWithPath += ".hlsl";
+	return filenameWithPath;
 }
 
 void Direct3D11Render::BeginFrame(IWindow *window)

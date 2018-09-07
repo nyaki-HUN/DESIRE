@@ -110,23 +110,26 @@ void BgfxRender::Kill()
 	initialized = false;
 }
 
-String BgfxRender::GetShaderFilenameWithPath(const char *shaderFilename) const
+String BgfxRender::GetShaderFilenameWithPath(const String& shaderFilename) const
 {
-	const char *shaderLanguage = "";
+	String filenameWithPath = "data/shaders/bgfx/";
+
 	switch(bgfx::getRendererType())
 	{
-		case bgfx::RendererType::Direct3D9:		shaderLanguage = "dx9"; break;
-		case bgfx::RendererType::Direct3D11:	shaderLanguage = "dx11"; break;
-		case bgfx::RendererType::Direct3D12:	shaderLanguage = "dx11"; break;
-		case bgfx::RendererType::Gnm:			shaderLanguage = "pssl"; break;
-		case bgfx::RendererType::Metal:			shaderLanguage = "metal"; break;
-		case bgfx::RendererType::OpenGLES:		shaderLanguage = "essl"; break;
-		case bgfx::RendererType::OpenGL:		shaderLanguage = "glsl"; break;
-		case bgfx::RendererType::Vulkan:		shaderLanguage = "spirv"; break;
+		case bgfx::RendererType::Direct3D9:		filenameWithPath += "dx9/"; break;
+		case bgfx::RendererType::Direct3D11:	filenameWithPath += "dx11/"; break;
+		case bgfx::RendererType::Direct3D12:	filenameWithPath += "dx11/"; break;
+		case bgfx::RendererType::Gnm:			filenameWithPath += "pssl/"; break;
+		case bgfx::RendererType::Metal:			filenameWithPath += "metal/"; break;
+		case bgfx::RendererType::OpenGLES:		filenameWithPath += "essl/"; break;
+		case bgfx::RendererType::OpenGL:		filenameWithPath += "glsl/"; break;
+		case bgfx::RendererType::Vulkan:		filenameWithPath += "spirv/"; break;
 		default:								ASSERT(false && "Not supported renderer type"); break;
 	}
 
-	return String::CreateFormattedString("data/shaders/bgfx/%s/%s.bin", shaderLanguage, shaderFilename);
+	filenameWithPath += shaderFilename;
+	filenameWithPath += ".bin";
+	return filenameWithPath;
 }
 
 void BgfxRender::BeginFrame(IWindow *window)
