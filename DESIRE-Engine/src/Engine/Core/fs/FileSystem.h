@@ -52,7 +52,7 @@ public:
 	bool AddDirectoryFileSource(const String& dir, int fileSourceFlags = 0);
 	bool AddZipFileSource(const String& zipFilename, int fileSourceFlags = 0);
 
-	const String& GetAppDirectory();
+	const String& GetAppDirectory() const;
 
 private:
 	ReadFilePtr OpenNative(const String& filename);

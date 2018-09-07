@@ -72,7 +72,7 @@ bool FileSystem::AddZipFileSource(const String& zipFilename, int fileSourceFlags
 	return false;
 }
 
-const String& FileSystem::GetAppDirectory()
+const String& FileSystem::GetAppDirectory() const
 {
 	return appDir;
 }
