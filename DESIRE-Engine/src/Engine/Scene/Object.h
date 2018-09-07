@@ -23,6 +23,9 @@ public:
 	void SetActive(bool active);
 	void SetVisible(bool visible);
 
+	void SetParent(Object *newParent);
+	Object* CreateChildObject(const char *name);
+
 	template<class T, class... Args>
 	T& AddComponent(Args&&... args)
 	{
@@ -48,15 +51,6 @@ public:
 	// Get all script components
 	std::vector<ScriptComponent*> GetScriptComponents() const;
 
-	// Remove from scene hierarchy
-	void Remove();
-
-	// Add the child to this object (if the child already has a parent, it is removed first)
-	void AddChild(Object *child);
-
-	// Remove the child from this object
-	void RemoveChild(Object *child);
-
 	Transform& GetTransform() const;
 	const AABB& GetAABB() const;
 	Object* GetParent() const;
@@ -68,9 +62,9 @@ public:
 
 private:
 	Component& AddComponent_Internal(std::unique_ptr<Component>&& component);
+	void AddChild_Internal(Object *child);
 	void RemoveChild_Internal(Object *child);
-	void SetNewParent(Object *newParent);
-	
+
 	static void RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount);
 
 	std::vector<std::unique_ptr<Component>> components;

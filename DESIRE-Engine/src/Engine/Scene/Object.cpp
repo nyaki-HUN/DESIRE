@@ -31,10 +31,10 @@ Object::Object(const char *name)
 
 Object::~Object()
 {
-	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and no need to call Remove()
+	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and no need to call SetParent()
 	if(transform->owner != nullptr)
 	{
-		Remove();
+		SetParent(nullptr);
 		numTransforms -= numTransformsInHierarchy;
 	}
 
@@ -82,6 +82,77 @@ void Object::SetVisible(bool visible)
 
 }
 
+void Object::SetParent(Object *newParent)
+{
+	if(parent == newParent)
+	{
+		return;
+	}
+
+	if(parent != nullptr)
+	{
+		parent->RemoveChild_Internal(this);
+	}
+
+	Transform *oldTransform = transform;
+	if(newParent != nullptr)
+	{
+		transform = newParent->transform + newParent->numTransformsInHierarchy;
+
+		// If the parent transform will be moved, we need to apply correction
+		if(newParent->transform > oldTransform)
+		{
+			transform -= numTransformsInHierarchy;
+		}
+
+		newParent->AddChild_Internal(this);
+	}
+	else
+	{
+		transform = &preallocatedTransforms[numTransforms];
+	}
+
+	ptrdiff_t numToMove = oldTransform - transform;
+	if(numToMove != 0)
+	{
+		Transform *savedTransforms = &preallocatedTransforms[numTransforms];
+		ASSERT(numTransformsInHierarchy <= DESIRE_ASIZEOF(preallocatedTransforms) - numTransforms);
+		memcpy(savedTransforms, oldTransform, numTransformsInHierarchy * sizeof(Transform));
+
+		Transform *movedTransformDst = nullptr;
+		Transform *movedTransformSrc = nullptr;
+		if(numToMove < 0)
+		{
+			numToMove = std::abs(numToMove);
+			// Move data to the left in the array (our transforms will be placed after it)
+			movedTransformDst = oldTransform;
+			movedTransformSrc = oldTransform + numTransformsInHierarchy;
+		}
+		else
+		{
+			// Move data to the right in the array (our transforms will be placed before it)
+			movedTransformDst = transform + numTransformsInHierarchy;
+			movedTransformSrc = transform;
+		}
+
+		memmove(movedTransformDst, movedTransformSrc, numToMove * sizeof(Transform));
+		RefreshParentPointerInTransforms(movedTransformDst, numToMove);
+
+		memcpy(transform, savedTransforms, numTransformsInHierarchy * sizeof(Transform));
+		RefreshParentPointerInTransforms(transform, numTransformsInHierarchy);
+	}
+
+	transform->flags |= Transform::WORLD_MATRIX_DIRTY;
+	parent = newParent;
+}
+
+Object* Object::CreateChildObject(const char *name)
+{
+	Object *obj = new Object(name);
+	obj->SetParent(this);
+	return obj;
+}
+
 void Object::RemoveComponent(const Component *component)
 {
 	for(auto it = components.begin(); it != components.end(); ++it)
@@ -121,55 +192,6 @@ std::vector<ScriptComponent*> Object::GetScriptComponents() const
 	}
 
 	return scriptComponents;
-}
-
-void Object::Remove()
-{
-	if(parent != nullptr)
-	{
-		parent->RemoveChild(this);
-	}
-}
-
-void Object::AddChild(Object *child)
-{
-	ASSERT(child != nullptr);
-
-	if(child->parent == this)
-	{
-		// Already added
-		return;
-	}
-
-	if(child->parent != nullptr)
-	{
-		child->parent->RemoveChild_Internal(child);
-	}
-
-	child->SetNewParent(this);
-
-	Object *obj = this;
-	do
-	{
-		obj->numTransformsInHierarchy += child->numTransformsInHierarchy;
-		obj = obj->parent;
-	} while(obj != nullptr);
-
-	children.push_back(child);
-}
-
-void Object::RemoveChild(Object *child)
-{
-	ASSERT(child != nullptr);
-
-	if(child->parent != this)
-	{
-		return;
-	}
-
-	RemoveChild_Internal(child);
-
-	child->SetNewParent(nullptr);
 }
 
 Transform& Object::GetTransform() const
@@ -228,6 +250,20 @@ Component& Object::AddComponent_Internal(std::unique_ptr<Component>&& component)
 	return *(it->get());
 }
 
+void Object::AddChild_Internal(Object *child)
+{
+	Object *obj = this;
+	do
+	{
+		obj->numTransformsInHierarchy += child->numTransformsInHierarchy;
+		obj = obj->parent;
+	} while(obj != nullptr);
+
+	children.push_back(child);
+
+	child->transform->parent = transform;
+}
+
 void Object::RemoveChild_Internal(Object *child)
 {
 	Object *obj = this;
@@ -243,60 +279,8 @@ void Object::RemoveChild_Internal(Object *child)
 	{
 		children.erase(it);
 	}
-}
 
-void Object::SetNewParent(Object *newParent)
-{
-	Transform *oldTransform = transform;
-	if(newParent != nullptr)
-	{
-		transform = newParent->transform + newParent->numTransformsInHierarchy;
-
-		// If the parent transform will be moved, we need to apply correction
-		if(newParent->transform > oldTransform)
-		{
-			transform -= numTransformsInHierarchy;
-		}
-	}
-	else
-	{
-		transform = &preallocatedTransforms[numTransforms];
-	}
-
-	ptrdiff_t numToMove = oldTransform - transform;
-	if(numToMove != 0)
-	{
-		Transform *savedTransforms = &preallocatedTransforms[numTransforms];
-		ASSERT(numTransformsInHierarchy <= DESIRE_ASIZEOF(preallocatedTransforms) - numTransforms);
-		memcpy(savedTransforms, oldTransform, numTransformsInHierarchy * sizeof(Transform));
-
-		Transform *movedTransformDst = nullptr;
-		Transform *movedTransformSrc = nullptr;
-		if(numToMove < 0)
-		{
-			numToMove = std::abs(numToMove);
-			// Move data to the left in the array (our transforms will be placed after it)
-			movedTransformDst = oldTransform;
-			movedTransformSrc = oldTransform + numTransformsInHierarchy;
-		}
-		else
-		{
-			// Move data to the right in the array (our transforms will be placed before it)
-			movedTransformDst = transform + numTransformsInHierarchy;
-			movedTransformSrc = transform;
-		}
-
-		memmove(movedTransformDst, movedTransformSrc, numToMove * sizeof(Transform));
-		RefreshParentPointerInTransforms(movedTransformDst, numToMove);
-
-		memcpy(transform, savedTransforms, numTransformsInHierarchy * sizeof(Transform));
-		RefreshParentPointerInTransforms(transform, numTransformsInHierarchy);
-	}
-
-	transform->parent = (newParent != nullptr) ? newParent->transform : nullptr;
-	transform->flags |= Transform::WORLD_MATRIX_DIRTY;
-
-	parent = newParent;
+	child->transform->parent = nullptr;
 }
 
 void Object::RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount)

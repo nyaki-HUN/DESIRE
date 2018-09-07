@@ -17,29 +17,23 @@ TEST_CASE("Object", "[Scene]")
 	|   |
 	X   Y
 */
-	Object *child1 = new Object("1");
-	Object *child2 = new Object("2");
-	Object *child3 = new Object("3");
-	rootObj->AddChild(child1);
-	rootObj->AddChild(child2);
-	rootObj->AddChild(child3);
+	Object *child1 = rootObj->CreateChildObject("1");
+	Object *child2 = rootObj->CreateChildObject("2");
+	Object *child3 = rootObj->CreateChildObject("3");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &child2->GetTransform());
 	REQUIRE((preallocatedTransforms + 3) == &child3->GetTransform());
 
-	Object *childA = new Object("A");
-	child1->AddChild(childA);
+	Object *childA = child1->CreateChildObject("A");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
 	REQUIRE((preallocatedTransforms + 3) == &child2->GetTransform());
 	REQUIRE((preallocatedTransforms + 4) == &child3->GetTransform());
 
-	Object *childB = new Object("B");
-	Object *childC = new Object("C");
-	child3->AddChild(childB);
-	child3->AddChild(childC);
+	Object *childB = child3->CreateChildObject("B");
+	Object *childC = child3->CreateChildObject("C");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -48,10 +42,8 @@ TEST_CASE("Object", "[Scene]")
 	REQUIRE((preallocatedTransforms + 5) == &childB->GetTransform());
 	REQUIRE((preallocatedTransforms + 6) == &childC->GetTransform());
 
-	Object *childX = new Object("X");
-	Object *childY = new Object("Y");
-	childA->AddChild(childX);
-	childB->AddChild(childY);
+	Object *childX = childA->CreateChildObject("X");
+	Object *childY = childB->CreateChildObject("Y");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -65,7 +57,7 @@ TEST_CASE("Object", "[Scene]")
 	// Move 2 nodes by 1
 	{
 		// Move 'A' under '2' (2 nodes)
-		child2->AddChild(childA);
+		childA->SetParent(child2);
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &child2->GetTransform());
@@ -77,7 +69,7 @@ TEST_CASE("Object", "[Scene]")
 		REQUIRE((preallocatedTransforms + 8) == &childC->GetTransform());
 
 		// Move 'A' back
-		child1->AddChild(childA);
+		childA->SetParent(child1);
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -92,7 +84,7 @@ TEST_CASE("Object", "[Scene]")
 	// Move 2 nodes by 4
 	{
 		// Move 'A' under 'Y' (2 nodes)
-		childY->AddChild(childA);
+		childA->SetParent(childY);
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &child2->GetTransform());
@@ -104,7 +96,7 @@ TEST_CASE("Object", "[Scene]")
 		REQUIRE((preallocatedTransforms + 8) == &childC->GetTransform());
 
 		// Move 'A' back
-		child1->AddChild(childA);
+		childA->SetParent(child1);
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -118,7 +110,7 @@ TEST_CASE("Object", "[Scene]")
 
 	{
 		// Move 'B' under root (2 nodes)
-		rootObj->AddChild(childB);
+		childB->SetParent(rootObj);
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -130,7 +122,7 @@ TEST_CASE("Object", "[Scene]")
 		REQUIRE((preallocatedTransforms + 8) == &childY->GetTransform());
 
 		// Move 'C' under root (1 node)
-		rootObj->AddChild(childC);
+		childC->SetParent(rootObj);
 		// The transform order goes back to the original one (dipite that it is a different hierarchy)
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
@@ -143,7 +135,7 @@ TEST_CASE("Object", "[Scene]")
 		REQUIRE((preallocatedTransforms + 8) == &childC->GetTransform());
 
 		// Move 'B' back
-		child3->AddChild(childB);
+		childB->SetParent(child3);
 		// The transform order should stay the same
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
@@ -156,7 +148,7 @@ TEST_CASE("Object", "[Scene]")
 		REQUIRE((preallocatedTransforms + 8) == &childC->GetTransform());
 
 		// Move 'C' back
-		child3->AddChild(childC);
+		childC->SetParent(child3);
 		// The transform order should stay the same
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
@@ -172,7 +164,7 @@ TEST_CASE("Object", "[Scene]")
 	// Move 4 nodes then remove 6 nodes
 	{
 		// Move '3' under 'A'
-		childA->AddChild(child3);
+		child3->SetParent(childA);
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -184,7 +176,7 @@ TEST_CASE("Object", "[Scene]")
 		REQUIRE((preallocatedTransforms + 8) == &child2->GetTransform());
 
 		// Remove 'A'
-		childA->Remove();
+		childA->SetParent(nullptr);
 		REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 		REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 		REQUIRE((preallocatedTransforms + 2) == &child2->GetTransform());
