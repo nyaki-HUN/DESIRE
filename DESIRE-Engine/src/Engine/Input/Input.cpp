@@ -127,3 +127,33 @@ const Vector2& Input::GetOsMouseCursorPos() const
 {
 	return mouseCursorPos;
 }
+
+Keyboard& Input::GetKeyboardByHandle(void *handle)
+{
+	for(Keyboard& keyboard : keyboards)
+	{
+		if(keyboard.handle == handle)
+		{
+			return keyboard;
+		}
+	}
+
+	// New keyboard found
+	keyboards.push_back(Keyboard(handle));
+	return keyboards.back();
+}
+
+Mouse& Input::GetMouseByHandle(void *handle)
+{
+	for(Mouse& mouse : mouses)
+	{
+		if(mouse.handle == handle)
+		{
+			return mouse;
+		}
+	}
+
+	// New mouse found
+	mouses.push_back(Mouse(handle));
+	return mouses.back();
+}

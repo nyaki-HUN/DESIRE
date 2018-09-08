@@ -1,6 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/IOS/IOSInput.h"
 #include "Engine/Input/Input.h"
+#include "Engine/Core/Modules.h"
 
 CMMotionManager *InputImpl::motionManager = nil;
 CMAttitude *InputImpl::referenceAttitude = nil;
@@ -28,9 +29,9 @@ void Input::Kill()
 	referenceAttitude = nil;
 
 	// Reset input devices
-	Input::Get()->keyboards.clear();
-	Input::Get()->mouses.clear();
-	Input::Get()->gameControllers.clear();
+	Modules::Input->keyboards.clear();
+	Modules::Input->mouses.clear();
+	Modules::Input->gameControllers.clear();
 }
 
 void InputImpl::Update()

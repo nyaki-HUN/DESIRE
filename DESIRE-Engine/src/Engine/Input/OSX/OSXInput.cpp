@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/OSX/OSXInput.h"
 #include "Engine/Input/Input.h"
-#include "Engine/Input/Keyboard.h"
-#include "Engine/Input/Mouse.h"
+#include "Engine/Core/Modules.h"
 
 EventHandlerRef InputImpl::keyboardEventRef = nullptr;
 EventHandlerRef InputImpl::mouseEventRef = nullptr;
@@ -44,14 +43,8 @@ void Input::Init(IWindow *window)
 	ASSERT(status == noErr);
 
 	// Add a default keyboard and mouse
-	if(Input::Get()->keyboards.empty())
-	{
-		Input::Get()->keyboards.push_back(Keyboard(nullptr));
-	}
-	if(Input::Get()->mouses.empty())
-	{
-		Input::Get()->mouses.push_back(Mouse(nullptr));
-	}
+	Modules::Input->GetKeyboardByHandle(nullptr);
+	Modules::Input->GetMouseByHandle(nullptr);
 
 	// Virtual Key to EKeyCode mapping
 	InputImpl::keyConversionTable[53] = KEY_ESCAPE;
@@ -179,15 +172,14 @@ void Input::Kill()
 	InputImpl::mouseUPP = nullptr;
 
 	// Reset input devices
-	Input::Get()->keyboards.clear();
-	Input::Get()->mouses.clear();
-	Input::Get()->gameControllers.clear();
+	Modules::Input->keyboards.clear();
+	Modules::Input->mouses.clear();
+	Modules::Input->gameControllers.clear();
 }
 
 OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
 {
-	ASSERT(!Input::Get()->keyboards.empty());
-	Keyboard& keyboard = Input::Get()->keyboards.back();
+	Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
 
 	uint32 eventKind = GetEventKind(event);
 	switch(eventKind)
@@ -237,8 +229,7 @@ OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, Eve
 
 OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
 {
-	ASSERT(!Input::Get()->mouses.empty());
-	Mouse& mouse = Input::Get()->mouses.back();
+	Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 
 	UInt32 eventKind = GetEventKind(event);
 	switch(eventKind)
@@ -297,7 +288,7 @@ OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventR
 
 			HIPoint location = { 0.0f, 0.0f };
 			GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &location);
-			Input::Get()->mouseCursorPos = Vector2(location.x, location.y);
+			Modules::Input->mouseCursorPos = Vector2(location.x, location.y);
 			break;
 		}
 

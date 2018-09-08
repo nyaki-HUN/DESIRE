@@ -1,6 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/ANDROID/ANDROIDInput.h"
 #include "Engine/Input/Input.h"
+#include "Engine/Core/Modules.h"
 
 void Input::Init(IWindow *window)
 {
@@ -76,9 +77,9 @@ void Input::Kill()
 	sensorEventQueue = nullptr;
 
 	// Reset input devices
-	Input::Get()->keyboards.clear();
-	Input::Get()->mouses.clear();
-	Input::Get()->gameControllers.clear();
+	Modules::Input->keyboards.clear();
+	Modules::Input->mouses.clear();
+	Modules::Input->gameControllers.clear();
 }
 
 void InputImpl::Update()

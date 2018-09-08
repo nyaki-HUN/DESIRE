@@ -51,6 +51,9 @@ public:
 	const Vector2& GetOsMouseCursorPos() const;
 
 private:
+	Keyboard& GetKeyboardByHandle(void *handle);
+	Mouse& GetMouseByHandle(void *handle);
+
 	struct Hotkey
 	{
 		EKeyCode keyCode;

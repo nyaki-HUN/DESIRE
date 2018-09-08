@@ -1,8 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/WINDOWS/WINDOWSInput.h"
 #include "Engine/Input/Input.h"
-#include "Engine/Input/Keyboard.h"
-#include "Engine/Input/Mouse.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/WINDOWS/WINDOWSWindow.h"
 
@@ -49,11 +47,11 @@ void Input::Init(IWindow *window)
 		const RAWINPUTDEVICELIST& device = deviceList[i];
 		if(device.dwType == RIM_TYPEKEYBOARD)
 		{
-			InputImpl::GetKeyboardByHandle(device.hDevice);
+			Modules::Input->GetKeyboardByHandle(device.hDevice);
 		}
 		else if(device.dwType == RIM_TYPEMOUSE)
 		{
-			InputImpl::GetMouseByHandle(device.hDevice);
+			Modules::Input->GetMouseByHandle(device.hDevice);
 		}
 	}
 }
@@ -89,7 +87,7 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 
 		if(rawData.header.dwType == RIM_TYPEMOUSE)
 		{
-			Mouse& mouse = GetMouseByHandle(rawData.header.hDevice);
+			Mouse& mouse = Modules::Input->GetMouseByHandle(rawData.header.hDevice);
 
 			if(rawData.data.mouse.usFlags == MOUSE_MOVE_RELATIVE)
 			{
@@ -176,7 +174,7 @@ void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
 		}
 		else if(rawData.header.dwType == RIM_TYPEKEYBOARD)
 		{
-			Keyboard& keyboard = GetKeyboardByHandle(rawData.header.hDevice);
+			Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(rawData.header.hDevice);
 			if(rawData.data.keyboard.Flags & RI_KEY_E1 || rawData.data.keyboard.VKey == 255)
 			{
 				// Discard "fake keys" which are part of an escaped sequence
@@ -219,36 +217,4 @@ void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)
 		typingCharacters[len] = ch;
 		typingCharacters[len + 1] = '\0';
 	}
-}
-
-Keyboard& InputImpl::GetKeyboardByHandle(HANDLE handle)
-{
-	std::vector<Keyboard>& keyboards = Modules::Input->keyboards;
-	for(Keyboard& keyboard : keyboards)
-	{
-		if(keyboard.handle == handle)
-		{
-			return keyboard;
-		}
-	}
-
-	// New keyboard found
-	keyboards.push_back(Keyboard(handle));
-	return keyboards.back();
-}
-
-Mouse& InputImpl::GetMouseByHandle(HANDLE handle)
-{
-	std::vector<Mouse>& mouses = Modules::Input->mouses;
-	for(Mouse& mouse : mouses)
-	{
-		if(mouse.handle == handle)
-		{
-			return mouse;
-		}
-	}
-
-	// New mouse found
-	mouses.push_back(Mouse(handle));
-	return mouses.back();
 }

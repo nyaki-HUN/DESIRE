@@ -1,9 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/LINUX/LINUXInput.h"
 #include "Engine/Input/Input.h"
-#include "Engine/Input/Keyboard.h"
-#include "Engine/Input/Mouse.h"
-#include "Engine/Core/IWindow.h"
+#include "Engine/Core/Modules.h"
+#include "Engine/Core/LINUX/LINUXWindow.h"
 
 Display *InputImpl::display = nullptr;
 EKeyCode InputImpl::keyConversionTable[InputImpl::LAST_MAPPED_KEY_CODE - InputImpl::FIRST_MAPPED_KEY_CODE + 1] = { (EKeyCode)0 };
@@ -30,14 +29,8 @@ void Input::Init(IWindow *window)
 	XSelectInput(InputImpl::display, (Window)window->GetHandle(), KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 
 	// Add a default keyboard and mouse
-	if(Input::Get()->keyboards.empty())
-	{
-		Input::Get()->keyboards.push_back(Keyboard(nullptr));
-	}
-	if(Input::Get()->mouses.empty())
-	{
-		Input::Get()->mouses.push_back(Mouse(nullptr));
-	}
+	Modules::Input->GetKeyboardByHandle(nullptr);
+	Modules::Input->GetMouseByHandle(nullptr);
 
 	// Escaped scan code to EKeyCode mapping
 	InputImpl::keyConversionTable[96 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_NUMPADENTER;
@@ -68,15 +61,14 @@ void Input::Kill()
 	}
 
 	// Reset input devices
-	Input::Get()->keyboards.clear();
-	Input::Get()->mouses.clear();
-	Input::Get()->gameControllers.clear();
+	Modules::Input->keyboards.clear();
+	Modules::Input->mouses.clear();
+	Modules::Input->gameControllers.clear();
 }
 
 void InputImpl::Handle_KeyPress_KeyRelease(const XEvent& event)
 {
-	ASSERT(!Input::Get()->keyboards.empty());
-	Keyboard& keyboard = Input::Get()->keyboards.back();
+	Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
 
 	EKeyCode keyCode = (EKeyCode)0;
 	if(event.xkey.keycode < FIRST_MAPPED_KEY_CODE)
@@ -100,7 +92,7 @@ void InputImpl::Handle_KeyPress_KeyRelease(const XEvent& event)
 		char buffer[5] = {};
 		XLookupString(&event.xkey, buffer, DESIRE_ASIZEOF(buffer), nullptr, nullptr);
 
-		char *typingCharacters = Input::Get()->typingCharacters;
+		char *typingCharacters = Modules::Input->typingCharacters;
 		const size_t len = strlen(typingCharacters);
 		const size_t bufferLen = strlen(buffer);
 		if(len + bufferLen + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
@@ -117,8 +109,7 @@ void InputImpl::Handle_KeyPress_KeyRelease(const XEvent& event)
 
 void InputImpl::Handle_ButtonPress_ButtonRelease(const XEvent& event)
 {
-	ASSERT(!Input::Get()->mouses.empty());
-	Mouse& mouse = Input::Get()->mouses.back();
+	Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 
 	const bool isDown = (event.type == ButtonPress)
 	switch(event.xbutton.button)
@@ -145,11 +136,10 @@ void InputImpl::Handle_ButtonPress_ButtonRelease(const XEvent& event)
 
 void InputImpl::Handle_MotionNotify(const XEvent& event)
 {
-	ASSERT(!Input::Get()->mouses.empty());
-	Mouse& mouse = Input::Get()->mouses.back();
+	Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 
 	mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)event.xmotion.x);
 	mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)event.xmotion.y);
 
-	Input::Get()->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
+	Modules::Input->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
 }
