@@ -21,13 +21,13 @@
     <ClInclude Include="..\..\Externals\imgui\imgui_internal.h">
       <Filter>Externals\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Externals\imgui\stb_rect_pack.h">
+    <ClInclude Include="..\..\Externals\imgui\imstb_rectpack.h">
       <Filter>Externals\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Externals\imgui\stb_textedit.h">
+    <ClInclude Include="..\..\Externals\imgui\imstb_textedit.h">
       <Filter>Externals\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Externals\imgui\stb_truetype.h">
+    <ClInclude Include="..\..\Externals\imgui\imstb_truetype.h">
       <Filter>Externals\imgui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ImGuiImpl.h">
@@ -42,6 +42,9 @@
       <Filter>Externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\imgui\imgui_draw.cpp">
+      <Filter>Externals\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\imgui\imgui_widgets.cpp">
       <Filter>Externals\imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ImGuiImpl.cpp">

@@ -105,15 +105,16 @@
     <ClInclude Include="..\..\Externals\imgui\imconfig.h" />
     <ClInclude Include="..\..\Externals\imgui\imgui.h" />
     <ClInclude Include="..\..\Externals\imgui\imgui_internal.h" />
-    <ClInclude Include="..\..\Externals\imgui\stb_rect_pack.h" />
-    <ClInclude Include="..\..\Externals\imgui\stb_textedit.h" />
-    <ClInclude Include="..\..\Externals\imgui\stb_truetype.h" />
+    <ClInclude Include="..\..\Externals\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\Externals\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\..\Externals\imgui\imstb_truetype.h" />
     <ClInclude Include="..\..\src\ImGuiImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\imgui\imgui.cpp" />
     <ClCompile Include="..\..\Externals\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\Externals\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\Externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\src\ImGuiImpl.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
