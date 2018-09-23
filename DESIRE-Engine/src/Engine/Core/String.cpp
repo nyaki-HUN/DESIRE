@@ -392,29 +392,16 @@ int String::CompareIgnoreCase(const char *str) const
 	return StrUtils::Stricmp(data, str);
 }
 
-bool String::StartsWith(const String& prefix) const
+bool String::StartsWith(const char *prefix, size_t numChars) const
 {
-	ASSERT(prefix.size != 0);
-	return (strncmp(data, prefix.c_str(), prefix.size) == 0);
-}
-
-bool String::StartsWith(const char *prefix) const
-{
-	ASSERT(prefix != nullptr && strlen(prefix) != 0);
+	ASSERT(prefix != nullptr && numChars != 0);
 	return (strncmp(data, prefix, strlen(prefix)) == 0);
 }
 
-bool String::EndsWith(const String& suffix) const
+bool String::EndsWith(const char *suffix, size_t numChars) const
 {
-	ASSERT(suffix.size != 0);
-	return (size < suffix.size) ? false : (strcmp(&data[size - suffix.size], suffix.c_str()) == 0);
-}
-
-bool String::EndsWith(const char *suffix) const
-{
-	ASSERT(suffix != nullptr && suffix[0] != '\0');
-	const size_t suffixLen = strlen(suffix);
-	return (size < suffixLen) ? false : (strcmp(&data[size - suffixLen], suffix) == 0);
+	ASSERT(suffix != nullptr && numChars != 0);
+	return (size < numChars) ? false : (strcmp(&data[size - numChars], suffix) == 0);
 }
 
 bool String::EndsWith(char suffix) const

@@ -28,6 +28,8 @@ public:
 	void Trim();
 
 	// Insert characters
+	void Insert(size_t startIndex, const char *str, size_t numChars);
+
 	inline void Insert(size_t startIndex, const String& string)
 	{
 		Insert(startIndex, string.c_str(), string.size);
@@ -38,8 +40,6 @@ public:
 	{
 		Insert(startIndex, str, SIZE - 1);
 	}
-
-	void Insert(size_t startIndex, const char *str, size_t numChars);
 
 	// Remove characters
 	void RemoveFrom(size_t startIndex, size_t numChars = SIZE_MAX);
@@ -79,6 +79,9 @@ public:
 	String& operator =(const String& string);
 	String& operator =(String&& string);
 
+	// Append characters
+	void Append(const char *str, size_t numChars);
+
 	inline String operator +(const String& string) const
 	{
 		String newString(*this);
@@ -93,9 +96,6 @@ public:
 		newString.Append(str, SIZE - 1);
 		return newString;
 	}
-
-	// Append characters
-	void Append(const char *str, size_t numChars);
 
 	inline String& operator +=(const String& string)
 	{
@@ -146,12 +146,36 @@ public:
 		return (CompareIgnoreCase(str) == 0);
 	}
 
-	bool StartsWith(const String& prefix) const;
-	bool StartsWith(const char *prefix) const;
-	bool EndsWith(const String& suffix) const;
-	bool EndsWith(const char *suffix) const;
+	// Check if the string begins with the given prefix
+	bool StartsWith(const char *prefix, size_t numChars) const;
+
+	inline bool StartsWith(const String& prefix) const
+	{
+		return StartsWith(prefix.c_str(), prefix.size);
+	}
+
+	template<size_t SIZE>
+	bool StartsWith(const char(&prefix)[SIZE]) const
+	{
+		return StartsWith(prefix, SIZE - 1);
+	}
+
+	// Check if the string ends with the given suffix
+	bool EndsWith(const char *suffix, size_t numChars) const;
 	bool EndsWith(char suffix) const;
 
+	inline bool EndsWith(const String& prefix) const
+	{
+		return EndsWith(prefix.c_str(), prefix.size);
+	}
+
+	template<size_t SIZE>
+	bool EndsWith(const char(&prefix)[SIZE]) const
+	{
+		return EndsWith(prefix, SIZE - 1);
+	}
+
+	// Create string with format
 	static String CreateFormattedString(const char *format, ...);
 	static String CreateFromInt(int num);
 
