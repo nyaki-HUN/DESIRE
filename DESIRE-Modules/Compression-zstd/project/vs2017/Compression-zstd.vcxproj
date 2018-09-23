@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\Externals\zstd\src\common\bitstream.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\compiler.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\cpu.h" />
+    <ClInclude Include="..\..\Externals\zstd\src\common\debug.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\error_private.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\fse.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\huf.h" />
@@ -115,6 +116,7 @@
     <ClInclude Include="..\..\Externals\zstd\src\common\xxhash.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_errors.h" />
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_internal.h" />
+    <ClInclude Include="..\..\Externals\zstd\src\compress\hist.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_internal.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_double_fast.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_fast.h" />
@@ -125,6 +127,7 @@
     <ClInclude Include="..\..\src\ZstdCompression.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Externals\zstd\src\common\debug.c" />
     <ClCompile Include="..\..\Externals\zstd\src\common\entropy_common.c" />
     <ClCompile Include="..\..\Externals\zstd\src\common\error_private.c" />
     <ClCompile Include="..\..\Externals\zstd\src\common\fse_decompress.c" />
@@ -133,6 +136,7 @@
     <ClCompile Include="..\..\Externals\zstd\src\common\xxhash.c" />
     <ClCompile Include="..\..\Externals\zstd\src\common\zstd_common.c" />
     <ClCompile Include="..\..\Externals\zstd\src\compress\fse_compress.c" />
+    <ClCompile Include="..\..\Externals\zstd\src\compress\hist.c" />
     <ClCompile Include="..\..\Externals\zstd\src\compress\huf_compress.c" />
     <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_compress.c" />
     <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_double_fast.c" />

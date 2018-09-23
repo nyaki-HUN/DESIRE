@@ -39,6 +39,9 @@
     <ClInclude Include="..\..\Externals\zstd\src\common\cpu.h">
       <Filter>Externals\zstd\src\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\common\debug.h">
+      <Filter>Externals\zstd\src\common</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\zstd\src\common\error_private.h">
       <Filter>Externals\zstd\src\common</Filter>
     </ClInclude>
@@ -66,6 +69,9 @@
     <ClInclude Include="..\..\Externals\zstd\src\common\zstd_internal.h">
       <Filter>Externals\zstd\src\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\compress\hist.h">
+      <Filter>Externals\zstd\src\compress</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_compress_internal.h">
       <Filter>Externals\zstd\src\compress</Filter>
     </ClInclude>
@@ -92,6 +98,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Externals\zstd\src\common\debug.c">
+      <Filter>Externals\zstd\src\common</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\zstd\src\common\entropy_common.c">
       <Filter>Externals\zstd\src\common</Filter>
     </ClCompile>
@@ -114,6 +123,9 @@
       <Filter>Externals\zstd\src\common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zstd\src\compress\fse_compress.c">
+      <Filter>Externals\zstd\src\compress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\compress\hist.c">
       <Filter>Externals\zstd\src\compress</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zstd\src\compress\huf_compress.c">
