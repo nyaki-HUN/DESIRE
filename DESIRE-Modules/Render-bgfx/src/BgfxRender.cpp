@@ -789,18 +789,19 @@ void BgfxRender::DoRender()
 
 bgfx::TextureFormat::Enum BgfxRender::ConvertTextureFormat(Texture::EFormat textureFormat)
 {
-	switch(textureFormat)
+	const bgfx::TextureFormat::Enum conversionTable[] =
 	{
-		case Texture::EFormat::UNKNOWN:		return bgfx::TextureFormat::Unknown;
-		case Texture::EFormat::R8:			return bgfx::TextureFormat::R8;
-		case Texture::EFormat::RG8:			return bgfx::TextureFormat::RG8;
-		case Texture::EFormat::RGB8:		return bgfx::TextureFormat::RGB8;
-		case Texture::EFormat::RGBA8:		return bgfx::TextureFormat::RGBA8;
-		case Texture::EFormat::RGBA32F:		return bgfx::TextureFormat::RGBA32F;
-		case Texture::EFormat::D24S8:		return bgfx::TextureFormat::D24S8;
-	}
+		bgfx::TextureFormat::Unknown,		// Texture::EFormat::UNKNOWN
+		bgfx::TextureFormat::R8,			// Texture::EFormat::R8
+		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8
+		bgfx::TextureFormat::RGB8,			// Texture::EFormat::RGB8
+		bgfx::TextureFormat::RGBA8,			// Texture::EFormat::RGBA8
+		bgfx::TextureFormat::RGBA32F,		// Texture::EFormat::RGBA32F
+		bgfx::TextureFormat::D24S8,			// Texture::EFormat::D24S8
+	};
+	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D24S8 + 1);
 
-	return bgfx::TextureFormat::Unknown;
+	return conversionTable[textureFormat];
 }
 
 void BgfxRender::BindEmbeddedShader(Shader *shader, const char *name)

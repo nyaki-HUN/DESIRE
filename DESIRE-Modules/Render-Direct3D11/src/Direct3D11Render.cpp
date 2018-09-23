@@ -427,6 +427,8 @@ void Direct3D11Render::SetCullMode(ECullMode cullMode)
 
 void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
 {
+	ASSERT(!blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
+
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
 	static const D3D11_BLEND blendConversionTable[] =
@@ -1214,7 +1216,7 @@ void Direct3D11Render::UpdateD3D11Resource(ID3D11Resource *resource, const void 
 	HRESULT hr = deviceCtx->Map(resource, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if(FAILED(hr))
 	{
-		LOG_WARNING("Failed to map index buffer");
+		LOG_WARNING("Failed to map D3D11 resource");
 		return;
 	}
 
@@ -1342,9 +1344,9 @@ void Direct3D11Render::SetInputLayout()
 		for(size_t i = 0; i < activeMesh->vertexDecl.size(); ++i)
 		{
 			const Mesh::VertexDecl& decl = activeMesh->vertexDecl[i];
-			layoutKey |= (uint64_t)decl.attrib << (i * 7 + 0);	// 4 bits
-			layoutKey |= (uint64_t)decl.type << (i * 7 + 4);	// 1 bit
-			layoutKey |= (uint64_t)(decl.count - 1) << (i * 7 + 5);	// 2 bits [0, 3]
+			layoutKey |= (uint64_t)decl.attrib		<< (i * 7 + 0);	// 4 bits
+			layoutKey |= (uint64_t)decl.type		<< (i * 7 + 4);	// 1 bit
+			layoutKey |= (uint64_t)(decl.count - 1)	<< (i * 7 + 5);	// 2 bits [0, 3]
 		}
 
 		const std::pair<uint64_t, uint64_t> key = std::make_pair(layoutKey, (uint64_t)activeVertexShader->renderData);
@@ -1382,7 +1384,7 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 	key |= (uint64_t)samplerDesc.AddressW		<< 15;	// 3 bits
 //	key |= (uint64_t)samplerDesc.MipLODBias		<< // Constant
 	key |= (uint64_t)samplerDesc.MaxAnisotropy	<< 18;	// 5 bits [1, 16]
-	key |= (uint64_t)samplerDesc.ComparisonFunc << 23;	// 4 bits
+	key |= (uint64_t)samplerDesc.ComparisonFunc	<< 23;	// 4 bits
 //	key |= (uint64_t)samplerDesc.BorderColor	<< // Constant
 //	key |= (uint64_t)samplerDesc.MinLOD			<< // Constant
 //	key |= (uint64_t)samplerDesc.MaxLOD			<< // Constant
@@ -1409,16 +1411,17 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 
 DXGI_FORMAT Direct3D11Render::ConvertTextureFormat(Texture::EFormat textureFormat)
 {
-	switch(textureFormat)
+	const DXGI_FORMAT conversionTable[] =
 	{
-		case Texture::EFormat::UNKNOWN:		return DXGI_FORMAT_UNKNOWN;
-		case Texture::EFormat::R8:			return DXGI_FORMAT_R8_UNORM;
-		case Texture::EFormat::RG8:			return DXGI_FORMAT_R8G8_UNORM;
-		case Texture::EFormat::RGB8:		return DXGI_FORMAT_UNKNOWN;
-		case Texture::EFormat::RGBA8:		return DXGI_FORMAT_R8G8B8A8_UNORM;
-		case Texture::EFormat::RGBA32F:		return DXGI_FORMAT_R32G32B32A32_FLOAT;
-		case Texture::EFormat::D24S8:		return DXGI_FORMAT_D24_UNORM_S8_UINT;
-	}
+		DXGI_FORMAT_UNKNOWN,					// Texture::EFormat::UNKNOWN
+		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
+		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
+		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
+		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
+		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
+		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
+	};
+	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D24S8 + 1);
 
-	return DXGI_FORMAT_UNKNOWN;
+	return conversionTable[textureFormat];
 }
