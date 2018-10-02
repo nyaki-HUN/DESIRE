@@ -56,6 +56,6 @@ void ContactListener::FillCollisionFromContact(Collision& collision, const b2Con
 	for(int i = 0; i < collision.pointCount; ++i)
 	{
 		collision.contactPoints[i] = Vector3(worldManifold.points[i].x, worldManifold.points[i].y, 0.0f);
-		collision.contactNormals[i] = Vector3::Zero();
+		collision.contactNormals[i] = Vector3(worldManifold.normal.x, worldManifold.normal.y, 0.0f);
 	}
 }

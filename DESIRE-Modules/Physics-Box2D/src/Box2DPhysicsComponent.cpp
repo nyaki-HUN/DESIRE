@@ -227,6 +227,16 @@ void Box2DPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 	}
 }
 
+void Box2DPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool axisZ)
+{
+
+}
+
+void Box2DPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool axisZ)
+{
+	body->SetFixedRotation(axisZ);
+}
+
 bool Box2DPhysicsComponent::IsSleeping() const
 {
 	return (body->IsAwake() == false);

@@ -294,6 +294,24 @@ void BulletPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 	}
 }
 
+void BulletPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool axisZ)
+{
+	body->setLinearFactor(btVector3(
+		axisX ? 1.0f : 0.0f,
+		axisY ? 1.0f : 0.0f,
+		axisZ ? 1.0f : 0.0f
+	));
+}
+
+void BulletPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool axisZ)
+{
+	body->setAngularFactor(btVector3(
+		axisX ? 1.0f : 0.0f,
+		axisY ? 1.0f : 0.0f,
+		axisZ ? 1.0f : 0.0f
+	));
+}
+
 bool BulletPhysicsComponent::IsSleeping() const
 {
 	return (body->getActivationState() == ISLAND_SLEEPING);

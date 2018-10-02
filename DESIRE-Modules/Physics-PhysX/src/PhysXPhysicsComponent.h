@@ -50,6 +50,10 @@ public:
 	void AddForceAtPosition(const Vector3& force, const Vector3& position, EForceMode mode) override;
 	void AddTorque(const Vector3& torque, EForceMode mode) override;
 
+	// Motion lock
+	void SetLinearMotionLock(bool axisX, bool axisY, bool axisZ) override;
+	void SetAngularMotionLock(bool axisX, bool axisY, bool axisZ) override;
+
 	bool IsSleeping() const override;
 
 	void UpdateGameObjectTransform() const override;

@@ -175,6 +175,26 @@ void PhysXPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 	}
 }
 
+void PhysXPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool axisZ)
+{
+	if(dynamicBody != nullptr)
+	{
+		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, axisX);
+		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, axisY);
+		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, axisZ);
+	}
+}
+
+void PhysXPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool axisZ)
+{
+	if(dynamicBody != nullptr)
+	{
+		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, axisX);
+		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, axisY);
+		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, axisZ);
+	}
+}
+
 bool PhysXPhysicsComponent::IsSleeping() const
 {
 	return (dynamicBody != nullptr) ? dynamicBody->isSleeping() : true;
