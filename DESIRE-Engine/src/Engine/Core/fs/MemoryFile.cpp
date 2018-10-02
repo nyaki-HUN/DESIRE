@@ -36,9 +36,9 @@ bool MemoryFile::Seek(int64_t offset, ESeekOrigin origin)
 	int64_t newPos = -1;
 	switch(origin)
 	{
-		case ESeekOrigin::BEGIN:	newPos = offset; break;
-		case ESeekOrigin::CURRENT:	newPos = position + offset; break;
-		case ESeekOrigin::END:		newPos = fileSize + offset; break;
+		case ESeekOrigin::Begin:	newPos = offset; break;
+		case ESeekOrigin::Current:	newPos = position + offset; break;
+		case ESeekOrigin::End:		newPos = fileSize + offset; break;
 	}
 
 	if(newPos < 0 || newPos > fileSize)

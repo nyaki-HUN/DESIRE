@@ -19,63 +19,63 @@ class Render
 public:
 	enum class EDepthTest
 	{
-		DISABLED,
-		LESS,
-		LESS_EQUAL,
-		GREATER,
-		GREATER_EQUAL,
-		EQUAL,
-		NOT_EQUAL
+		Disabled,
+		Less,
+		LessEqual,
+		Greater,
+		GreaterEqual,
+		Equal,
+		NotEqual
 	};
 
 	enum class ECullMode
 	{
-		NONE,
+		None,
 		CCW,
 		CW
 	};
 
 	enum class EBlend
 	{
-		ZERO,				// 0, 0, 0, 0
-		ONE,				// 1, 1, 1, 1
-		SRC_COLOR,			// Rs, Gs, Bs, As
-		INV_SRC_COLOR,		// 1-Rs, 1-Gs, 1-Bs, 1-As
-		SRC_ALPHA,			// As, As, As, As
-		INV_SRC_ALPHA,		// 1-As, 1-As, 1-As, 1-As
-		DEST_ALPHA,			// Ad, Ad, Ad, Ad
-		INV_DEST_ALPHA,		// 1-Ad, 1-Ad, 1-Ad ,1-Ad
-		DEST_COLOR,			// Rd, Gd, Bd, Ad
-		INV_DEST_COLOR,		// 1-Rd, 1-Gd, 1-Bd, 1-Ad
-		SRC_ALPHA_SAT,		// f, f, f, 1; where f = min(As, 1-Ad)
-		BLEND_FACTOR,		// blendFactor
-		INV_BLEND_FACTOR	// 1-blendFactor
+		Zero,				// 0, 0, 0, 0
+		One,				// 1, 1, 1, 1
+		SrcColor,			// Rs, Gs, Bs, As
+		InvSrcColor,		// 1-Rs, 1-Gs, 1-Bs, 1-As
+		SrcAlpha,			// As, As, As, As
+		InvSrcAlpha,		// 1-As, 1-As, 1-As, 1-As
+		DestAlpha,			// Ad, Ad, Ad, Ad
+		InvDestAlpha,		// 1-Ad, 1-Ad, 1-Ad ,1-Ad
+		DestColor,			// Rd, Gd, Bd, Ad
+		InvDestColor,		// 1-Rd, 1-Gd, 1-Bd, 1-Ad
+		SrcAlphaSat,		// f, f, f, 1; where f = min(As, 1-Ad)
+		BlendFactor,		// blendFactor
+		InvBlendFactor		// 1-blendFactor
 	};
 
 	enum class EBlendOp
 	{
-		ADD,
-		SUBTRACT,
-		REV_SUBTRACT,
-		MIN,
-		MAX
+		Add,
+		Subtract,
+		RevSubtract,
+		Min,
+		Max
 	};
 
 	enum class EAddressMode
 	{
-		REPEAT,
-		CLAMP,
-		MIRRORED_REPEAT,
-		MIRROR_ONCE,
-		BORDER
+		Repeat,
+		Clamp,
+		MirroredRepeat,
+		MirrorOnce,
+		Border
 	};
 
 	enum class EFilterMode
 	{
-		POINT,			// No filtering, the texel with coordinates nearest to the desired pixel value is used (at most 1 texel being sampled)
-		BILINEAR,		// Texture samples are averaged (at most 4 samples)
-		TRILINEAR,		// Texture samples are averaged and also blended between mipmap levels (at most 8 samples)
-		ANISOTROPIC,	// Use anisotropic interpolation
+		Point,			// No filtering, the texel with coordinates nearest to the desired pixel value is used (at most 1 texel being sampled)
+		Bilinear,		// Texture samples are averaged (at most 4 samples)
+		Trilinear,		// Texture samples are averaged and also blended between mipmap levels (at most 8 samples)
+		Anisotropic,	// Use anisotropic interpolation
 	};
 
 	Render();
@@ -106,7 +106,7 @@ public:
 	virtual void SetDepthWriteEnabled(bool enabled) = 0;
 	virtual void SetDepthTest(EDepthTest deptTest) = 0;
 	virtual void SetCullMode(ECullMode cullMode) = 0;
-	void SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp = EBlendOp::ADD);
+	void SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp = EBlendOp::Add);
 	virtual void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) = 0;
 	virtual void SetBlendModeDisabled() = 0;
 
@@ -138,7 +138,7 @@ private:
 	void SetMaterial(Material *material);
 	virtual void SetVertexShader(Shader *vertexShader) = 0;
 	virtual void SetFragmentShader(Shader *fragmentShader) = 0;
-	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::REPEAT) = 0;
+	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
 	virtual void UpdateShaderParams(const Material *material) = 0;
 
 	// Submit draw command

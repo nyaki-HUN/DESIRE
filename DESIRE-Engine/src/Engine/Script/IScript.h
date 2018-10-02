@@ -17,16 +17,16 @@ public:
 	{
 		enum class EType
 		{
-			UNDEFINED,
-			INT,
-			FLOAT,
-			DOUBLE,
-			BOOL,
-			VOID_PTR,
-			STRING
+			Undefined,
+			Int,
+			Float,
+			Double,
+			Bool,
+			VoidPtr,
+			String
 		};
 
-		EType type = EType::UNDEFINED;
+		EType type = EType::Undefined;
 
 		union
 		{

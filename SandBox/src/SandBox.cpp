@@ -52,7 +52,7 @@ void SandBox::Init()
 	ScriptComponent *scriptComp = scriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
 	{
-		scriptComp->CallByType(ScriptComponent::EBuiltinFuncType::INIT);
+		scriptComp->CallByType(ScriptComponent::EBuiltinFuncType::Init);
 
 		scriptComp->Call("Function1");
 		scriptComp->Call("Function2", 12.3f, 100);
@@ -99,9 +99,9 @@ void SandBox::Init()
 		const char *strAction = "";
 		switch(action)
 		{
-			case FileSystemWatcher::EAction::ADDED:		strAction = "added";  break;
-			case FileSystemWatcher::EAction::DELETED:	strAction = "deleted"; break;
-			case FileSystemWatcher::EAction::MODIFIED:	strAction = "modified"; break;
+			case FileSystemWatcher::EAction::Added:		strAction = "added";  break;
+			case FileSystemWatcher::EAction::Deleted:	strAction = "deleted"; break;
+			case FileSystemWatcher::EAction::Modified:	strAction = "modified"; break;
 		}
 		LOG_MESSAGE("%s %s", filename.c_str(), strAction);
 	});

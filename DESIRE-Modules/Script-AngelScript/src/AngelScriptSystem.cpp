@@ -153,7 +153,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 		"Init",
 		"Kill",
 	};
-	DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType::NUM);
+	DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType::Num);
 
 	for(auto i : Enumerator<ScriptComponent::EBuiltinFuncType>())
 	{

@@ -12,9 +12,9 @@ protected:
 public:
 	enum class EAction
 	{
-		ADDED,
-		DELETED,
-		MODIFIED
+		Added,
+		Deleted,
+		Modified
 	};
 
 	~FileSystemWatcher()

@@ -14,10 +14,10 @@ protected:
 public:
 	enum class EBuiltinFuncType
 	{
-		UPDATE,
-		INIT,
-		KILL,
-		NUM
+		Update,
+		Init,
+		Kill,
+		Num
 	};
 
 	~ScriptComponent() override;

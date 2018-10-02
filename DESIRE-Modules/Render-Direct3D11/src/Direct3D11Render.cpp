@@ -400,16 +400,16 @@ void Direct3D11Render::SetDepthTest(EDepthTest depthTest)
 {
 	switch(depthTest)
 	{
-		case EDepthTest::DISABLED:
+		case EDepthTest::Disabled:
 			depthStencilDesc.DepthEnable = FALSE;
 			return;
 
-		case EDepthTest::LESS:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS; break;
-		case EDepthTest::LESS_EQUAL:	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; break;
-		case EDepthTest::GREATER:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER; break;
-		case EDepthTest::GREATER_EQUAL:	depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; break;
-		case EDepthTest::EQUAL:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_EQUAL; break;
-		case EDepthTest::NOT_EQUAL:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_NOT_EQUAL; break;
+		case EDepthTest::Less:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS; break;
+		case EDepthTest::LessEqual:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; break;
+		case EDepthTest::Greater:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER; break;
+		case EDepthTest::GreaterEqual:	depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; break;
+		case EDepthTest::Equal:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_EQUAL; break;
+		case EDepthTest::NotEqual:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_NOT_EQUAL; break;
 	}
 
 	depthStencilDesc.DepthEnable = TRUE;
@@ -419,7 +419,7 @@ void Direct3D11Render::SetCullMode(ECullMode cullMode)
 {
 	switch(cullMode)
 	{
-		case ECullMode::NONE:	rasterizerDesc.CullMode = D3D11_CULL_NONE; break;
+		case ECullMode::None:	rasterizerDesc.CullMode = D3D11_CULL_NONE; break;
 		case ECullMode::CCW:	rasterizerDesc.CullMode = D3D11_CULL_BACK; break;
 		case ECullMode::CW:		rasterizerDesc.CullMode = D3D11_CULL_FRONT; break;
 	}
@@ -433,21 +433,21 @@ void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 
 	static const D3D11_BLEND blendConversionTable[] =
 	{
-		D3D11_BLEND_ZERO,				// EBlend::ZERO
-		D3D11_BLEND_ONE,				// EBlend::ONE
-		D3D11_BLEND_SRC_COLOR,			// EBlend::SRC_COLOR
-		D3D11_BLEND_INV_SRC_COLOR,		// EBlend::INV_SRC_COLOR
-		D3D11_BLEND_SRC_ALPHA,			// EBlend::SRC_ALPHA
-		D3D11_BLEND_INV_SRC_ALPHA,		// EBlend::INV_SRC_ALPHA
-		D3D11_BLEND_DEST_ALPHA,			// EBlend::DEST_ALPHA
-		D3D11_BLEND_INV_DEST_ALPHA,		// EBlend::INV_DEST_ALPHA
-		D3D11_BLEND_DEST_COLOR,			// EBlend::DEST_COLOR
-		D3D11_BLEND_INV_DEST_COLOR,		// EBlend::INV_DEST_COLOR
-		D3D11_BLEND_SRC_ALPHA_SAT,		// EBlend::SRC_ALPHA_SAT
-		D3D11_BLEND_BLEND_FACTOR,		// EBlend::BLEND_FACTOR
-		D3D11_BLEND_INV_BLEND_FACTOR	// EBlend::INV_BLEND_FACTOR
+		D3D11_BLEND_ZERO,				// EBlend::Zero
+		D3D11_BLEND_ONE,				// EBlend::One
+		D3D11_BLEND_SRC_COLOR,			// EBlend::SrcColor
+		D3D11_BLEND_INV_SRC_COLOR,		// EBlend::InvSrcColor
+		D3D11_BLEND_SRC_ALPHA,			// EBlend::SrcAlpha
+		D3D11_BLEND_INV_SRC_ALPHA,		// EBlend::InvSrcAlpha
+		D3D11_BLEND_DEST_ALPHA,			// EBlend::DestAlpha
+		D3D11_BLEND_INV_DEST_ALPHA,		// EBlend::InvDestAlpha
+		D3D11_BLEND_DEST_COLOR,			// EBlend::DestColor
+		D3D11_BLEND_INV_DEST_COLOR,		// EBlend::InvDestColor
+		D3D11_BLEND_SRC_ALPHA_SAT,		// EBlend::SrcAlphaSat
+		D3D11_BLEND_BLEND_FACTOR,		// EBlend::BlendFactor
+		D3D11_BLEND_INV_BLEND_FACTOR	// EBlend::InvBlendFactor
 	};
-	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::INV_BLEND_FACTOR + 1);
+	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::InvBlendFactor + 1);
 
 	blendDesc.RenderTarget[0].SrcBlend = blendConversionTable[(size_t)srcBlendRGB];
 	blendDesc.RenderTarget[0].DestBlend = blendConversionTable[(size_t)destBlendRGB];
@@ -456,13 +456,13 @@ void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 
 	static const D3D11_BLEND_OP equationConversionTable[] =
 	{
-		D3D11_BLEND_OP_ADD,				// EBlendOp::ADD
-		D3D11_BLEND_OP_SUBTRACT,		// EBlendOp::SUBTRACT
-		D3D11_BLEND_OP_REV_SUBTRACT,	// EBlendOp::REV_SUBTRACT
-		D3D11_BLEND_OP_MIN,				// EBlendOp::MIN
-		D3D11_BLEND_OP_MAX				// EBlendOp::MAX
+		D3D11_BLEND_OP_ADD,				// EBlendOp::Add
+		D3D11_BLEND_OP_SUBTRACT,		// EBlendOp::Subtract
+		D3D11_BLEND_OP_REV_SUBTRACT,	// EBlendOp::RevSubtract
+		D3D11_BLEND_OP_MIN,				// EBlendOp::Min
+		D3D11_BLEND_OP_MAX				// EBlendOp::Max
 	};
-	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::MAX + 1);
+	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::Max + 1);
 
 	blendDesc.RenderTarget[0].BlendOp = equationConversionTable[(size_t)blendOpRGB];
 	blendDesc.RenderTarget[0].BlendOpAlpha = equationConversionTable[(size_t)blendOpAlpha];
@@ -487,19 +487,19 @@ void Direct3D11Render::Bind(Mesh *mesh)
 
 	static const D3D11_INPUT_ELEMENT_DESC attribConversionTable[] =
 	{
-		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::POSITION
-		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::NORMAL
-		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::COLOR
-		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD0
-		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD1
-		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD2
-		{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD3
-		{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD4
-		{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD5
-		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD6
-		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::TEXCOORD7
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
+		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
+		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
+		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
+		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
+		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
+		{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
+		{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
+		{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
+		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
+		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib::NUM);
+	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib::Num);
 
 	static const DXGI_FORMAT attribTypeConversionTable[][4] =
 	{
@@ -518,7 +518,7 @@ void Direct3D11Render::Bind(Mesh *mesh)
 			DXGI_FORMAT_R8G8B8A8_UNORM,
 		},
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::NUM);
+	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::Num);
 
 	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexDecl.size());
 	for(size_t i = 0; i < mesh->vertexDecl.size(); ++i)
@@ -539,7 +539,7 @@ void Direct3D11Render::Bind(Mesh *mesh)
 	D3D11_BUFFER_DESC bufferDesc = {};
 	switch(mesh->type)
 	{
-		case Mesh::EType::STATIC:
+		case Mesh::EType::Static:
 		{
 			bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 			bufferDesc.CPUAccessFlags = 0;
@@ -564,7 +564,7 @@ void Direct3D11Render::Bind(Mesh *mesh)
 			break;
 		}
 
-		case Mesh::EType::DYNAMIC:
+		case Mesh::EType::Dynamic:
 		{
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -983,7 +983,7 @@ void Direct3D11Render::SetMesh(Mesh *mesh)
 
 	switch(mesh->type)
 	{
-		case Mesh::EType::STATIC:
+		case Mesh::EType::Static:
 		{
 			if(activeMesh == mesh)
 			{
@@ -993,7 +993,7 @@ void Direct3D11Render::SetMesh(Mesh *mesh)
 			break;
 		}
 
-		case Mesh::EType::DYNAMIC:
+		case Mesh::EType::Dynamic:
 		{
 			const DynamicMesh *dynamicMesh = static_cast<const DynamicMesh*>(mesh);
 			indexByteOffset += dynamicMesh->indexOffset * sizeof(uint16_t);
@@ -1069,20 +1069,20 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterM
 
 	static const D3D11_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
 	{
-		D3D11_TEXTURE_ADDRESS_WRAP,			// ETextureWrapMode::REPEAT
-		D3D11_TEXTURE_ADDRESS_CLAMP,		// ETextureWrapMode::CLAMP
-		D3D11_TEXTURE_ADDRESS_MIRROR,		// ETextureWrapMode::MIRRORED_REPEAT
-		D3D11_TEXTURE_ADDRESS_MIRROR_ONCE,	// ETextureWrapMode::MIRROR_ONCE
-		D3D11_TEXTURE_ADDRESS_BORDER,		// ETextureWrapMode::BORDER
+		D3D11_TEXTURE_ADDRESS_WRAP,			// ETextureWrapMode::Repeat
+		D3D11_TEXTURE_ADDRESS_CLAMP,		// ETextureWrapMode::Clamp
+		D3D11_TEXTURE_ADDRESS_MIRROR,		// ETextureWrapMode::MirroredRepeat
+		D3D11_TEXTURE_ADDRESS_MIRROR_ONCE,	// ETextureWrapMode::MirrorOnce
+		D3D11_TEXTURE_ADDRESS_BORDER,		// ETextureWrapMode::Border
 	};
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	switch(filterMode)
 	{
-		case EFilterMode::POINT:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::BILINEAR:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::TRILINEAR:	samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::ANISOTROPIC:	samplerDesc.Filter = D3D11_ENCODE_ANISOTROPIC_FILTER(D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		case EFilterMode::Point:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		case EFilterMode::Bilinear:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		case EFilterMode::Trilinear:	samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		case EFilterMode::Anisotropic:	samplerDesc.Filter = D3D11_ENCODE_ANISOTROPIC_FILTER(D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
 	};
 	samplerDesc.AddressU = addressModeConversionTable[(size_t)addressMode];
 	samplerDesc.AddressV = addressModeConversionTable[(size_t)addressMode];

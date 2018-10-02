@@ -10,9 +10,9 @@ class IReadFile
 public:
 	enum class ESeekOrigin
 	{
-		BEGIN,
-		CURRENT,
-		END,
+		Begin,
+		Current,
+		End
 	};
 
 	IReadFile(int64_t fileSize, const String& filename = String::emptyString);
@@ -20,7 +20,7 @@ public:
 
 	const String& GetFilename() const;
 
-	virtual bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) = 0;
+	virtual bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::Current) = 0;
 
 	inline int64_t GetSize() const		{ return fileSize; }
 	inline int64_t Tell() const			{ return position; }

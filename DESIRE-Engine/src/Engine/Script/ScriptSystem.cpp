@@ -53,6 +53,6 @@ void ScriptSystem::Update()
 {
 	for(ScriptComponent *scriptComponent : scriptComponents)
 	{
-		scriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::UPDATE);
+		scriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::Update);
 	}
 }

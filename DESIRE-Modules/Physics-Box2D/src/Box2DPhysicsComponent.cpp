@@ -48,12 +48,12 @@ void Box2DPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 
 void Box2DPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode mode)
 {
-	body->SetBullet(mode == ECollisionDetectionMode::CONTINUOUS);
+	body->SetBullet(mode == ECollisionDetectionMode::Continuous);
 }
 
 PhysicsComponent::ECollisionDetectionMode Box2DPhysicsComponent::GetCollisionDetectionMode() const
 {
-	return body->IsBullet() ? ECollisionDetectionMode::CONTINUOUS : ECollisionDetectionMode::DISCRETE;
+	return body->IsBullet() ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
 std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponents() const
@@ -84,9 +84,9 @@ void Box2DPhysicsComponent::SetBodyType(EBodyType bodyType)
 {
 	switch(bodyType)
 	{
-		case EBodyType::STATIC:		body->SetType(b2BodyType::b2_staticBody); break;
-		case EBodyType::DYNAMIC:	body->SetType(b2BodyType::b2_dynamicBody); break;
-		case EBodyType::KINEMATIC:	body->SetType(b2BodyType::b2_kinematicBody); break;
+		case EBodyType::Static:		body->SetType(b2BodyType::b2_staticBody); break;
+		case EBodyType::Dynamic:	body->SetType(b2BodyType::b2_dynamicBody); break;
+		case EBodyType::Kinematic:	body->SetType(b2BodyType::b2_kinematicBody); break;
 	}
 }
 
@@ -94,12 +94,12 @@ PhysicsComponent::EBodyType Box2DPhysicsComponent::GetBodyType() const
 {
 	switch(body->GetType())
 	{
-		case b2BodyType::b2_staticBody:		return EBodyType::STATIC;
-		case b2BodyType::b2_kinematicBody:	return EBodyType::KINEMATIC;
-		case b2BodyType::b2_dynamicBody:	return EBodyType::DYNAMIC;
+		case b2BodyType::b2_staticBody:		return EBodyType::Static;
+		case b2BodyType::b2_kinematicBody:	return EBodyType::Kinematic;
+		case b2BodyType::b2_dynamicBody:	return EBodyType::Dynamic;
 	}
 
-	return EBodyType::STATIC;
+	return EBodyType::Static;
 }
 
 void Box2DPhysicsComponent::SetTrigger(bool value)
@@ -202,8 +202,8 @@ void Box2DPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
 	const b2Vec2 f = GetB2Vec2(force);
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->ApplyForceToCenter(f, true); break;
-		case EForceMode::IMPULSE:	body->ApplyLinearImpulseToCenter(f, true); break;
+		case EForceMode::Force:		body->ApplyForceToCenter(f, true); break;
+		case EForceMode::Impulse:	body->ApplyLinearImpulseToCenter(f, true); break;
 	}
 }
 
@@ -213,8 +213,8 @@ void Box2DPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vecto
 	const b2Vec2 pos = GetB2Vec2(position);
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->ApplyForce(f, pos, true); break;
-		case EForceMode::IMPULSE:	body->ApplyLinearImpulse(f, pos, true); break;
+		case EForceMode::Force:		body->ApplyForce(f, pos, true); break;
+		case EForceMode::Impulse:	body->ApplyLinearImpulse(f, pos, true); break;
 	}
 }
 
@@ -222,8 +222,8 @@ void Box2DPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->ApplyTorque(torque.GetZ(), true); break;
-		case EForceMode::IMPULSE:	body->ApplyAngularImpulse(torque.GetZ(), true); break;
+		case EForceMode::Force:		body->ApplyTorque(torque.GetZ(), true); break;
+		case EForceMode::Impulse:	body->ApplyAngularImpulse(torque.GetZ(), true); break;
 	}
 }
 

@@ -60,9 +60,9 @@ void ImGuiImpl::Init()
 	// Dynamic mesh for the draw list
 	mesh = std::make_unique<DynamicMesh>();
 	mesh->vertexDecl.reserve(3);
-	mesh->vertexDecl.emplace_back(Mesh::EAttrib::POSITION, 2, Mesh::EAttribType::FLOAT);
-	mesh->vertexDecl.emplace_back(Mesh::EAttrib::TEXCOORD0, 2, Mesh::EAttribType::FLOAT);
-	mesh->vertexDecl.emplace_back(Mesh::EAttrib::COLOR, 4, Mesh::EAttribType::UINT8);
+	mesh->vertexDecl.emplace_back(Mesh::EAttrib::Position, 2, Mesh::EAttribType::Float);
+	mesh->vertexDecl.emplace_back(Mesh::EAttrib::Texcoord0, 2, Mesh::EAttribType::Float);
+	mesh->vertexDecl.emplace_back(Mesh::EAttrib::Color, 4, Mesh::EAttribType::Uint8);
 	mesh->CalculateStrideFromVertexDecl();
 	mesh->maxNumOfIndices = 30000;
 	mesh->maxNumOfVertices = 20000;
@@ -146,7 +146,7 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	}
 	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
-		io.MouseWheel += mouse.GetAxisDelta(Mouse::WHEEL);
+		io.MouseWheel += mouse.GetAxisDelta(Mouse::Wheel);
 		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 		{
 			io.MouseDown[i] |= mouse.IsDown(i);
@@ -182,8 +182,8 @@ void ImGuiImpl::EndFrame()
 void ImGuiImpl::DoRender(ImDrawData *drawData)
 {
 	Modules::Render->SetDepthWriteEnabled(false);
-	Modules::Render->SetCullMode(Render::ECullMode::NONE);
-	Modules::Render->SetBlendMode(Render::EBlend::SRC_ALPHA, Render::EBlend::INV_SRC_ALPHA, Render::EBlendOp::ADD);
+	Modules::Render->SetCullMode(Render::ECullMode::None);
+	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
 	ASSERT((uint32_t)drawData->TotalIdxCount <= mesh->maxNumOfIndices);

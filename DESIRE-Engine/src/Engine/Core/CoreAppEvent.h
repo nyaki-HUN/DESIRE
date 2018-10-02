@@ -26,7 +26,7 @@ public:
 	};
 
 	NotificationEvent(ENotificationType notifType, const char *message)
-		: CoreAppEvent(EAppEventType::NOTIFICATION)
+		: CoreAppEvent(EAppEventType::Notification)
 		, notifType(notifType)
 		, message(message)
 	{
@@ -43,7 +43,7 @@ class KeyboardWillShowEvent : public CoreAppEvent
 {
 public:
 	KeyboardWillShowEvent(float width, float height)
-		: CoreAppEvent(EAppEventType::KEYBOARD_WILL_SHOW)
+		: CoreAppEvent(EAppEventType::KeyboardWillShow)
 		, width(width)
 		, height(height)
 	{

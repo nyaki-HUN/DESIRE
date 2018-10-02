@@ -284,7 +284,7 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 	for(QuadTreeLeaf *ltmp : visibleLeafList)
 	{
 		EState state = IsAabbVisible(ltmp->aabbPoints, nNormal, normals, pointDotNormal, aabbNPVertex);
-		if(state == EState::OUTSIDE)
+		if(state == EState::Outside)
 		{
 			SetLeafsVisible_recursive(ltmp, false);
 		}
@@ -299,7 +299,7 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 		obj->GetAABB().GetPoints2D(points);
 
 		EState state = IsAabbVisible(points, nNormal, normals, pointDotNormal, aabbNPVertex);
-		if(state == EState::OUTSIDE)
+		if(state == EState::Outside)
 		{
 			obj->SetVisible(false);
 
@@ -325,12 +325,12 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 	for(;;)
 	{
 		EState state = IsAabbVisible(ltmp->aabbPoints, nNormal, normals, pointDotNormal, aabbNPVertex);
-		if(state == EState::INSIDE)
+		if(state == EState::Inside)
 		{
 			visibleLeafList.push_back(ltmp);
 			SetLeafsVisible_recursive(ltmp, true);
 		}
-		else if(state == EState::INTERSECT)
+		else if(state == EState::Intersect)
 		{
 			visibleLeafList.push_back(ltmp);
 
@@ -355,18 +355,18 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			Vector3 color;
 			switch(state)
 			{
-				case EState::INSIDE:
+				case EState::Inside:
 					color = Vector3(0.0f, 1.0f, 0.0f);
 					break;
 
-				case EState::OUTSIDE:
+				case EState::Outside:
 					color = Vector3(0.4f, 0.4f, 0.4f);
 					// Draw a big X as well
 					debugDraw->AddLine(ltmp->aabbPoints[0], ltmp->aabbPoints[3], color);
 					debugDraw->AddLine(ltmp->aabbPoints[1], ltmp->aabbPoints[2], color);
 					break;
 
-				case EState::INTERSECT:
+				case EState::Intersect:
 					color = Vector3(1.0f, 0.0f, 0.0f);
 					break;
 			}
@@ -376,7 +376,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			debugDraw->AddLine(ltmp->aabbPoints[0], ltmp->aabbPoints[2], color);
 			debugDraw->AddLine(ltmp->aabbPoints[1], ltmp->aabbPoints[3], color);
 
-			if(state != EState::OUTSIDE)
+			if(state != EState::Outside)
 			{
 				const Vector3 objectColor(0.0f, 0.5f, 1.0f);
 				for(const Object *obj : ltmp->objects)
@@ -402,7 +402,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 		obj->GetAABB().GetPoints2D(points);
 
 		EState state = IsAabbVisible(points, nNormal, normals, pointDotNormal, aabbNPVertex);
-		if(state == EState::INSIDE || state == EState::INTERSECT)
+		if(state == EState::Inside || state == EState::Intersect)
 		{
 			obj->SetVisible(true);
 
@@ -438,19 +438,19 @@ void QuadTreeSceneManager::SetLeafsVisible_recursive(QuadTreeLeaf *leaf, bool vi
 
 QuadTreeSceneManager::EState QuadTreeSceneManager::IsAabbVisible(const Vector3 *points, uint8_t nNormal, const Vector3 *normals, const float *pointDotNormal, const uint8_t (&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
 {
-	EState rv = EState::INSIDE;
+	EState rv = EState::Inside;
 	for(uint8_t i = 0; i < nNormal; i++)
 	{
 		float dot = normals[i].Dot(points[aabbNPVertex[i][0]]);
 		if((dot - pointDotNormal[i]) < 0.0f)
 		{
-			return EState::OUTSIDE;
+			return EState::Outside;
 		}
 
 		float dot2 = normals[i].Dot(points[aabbNPVertex[i][1]]);
 		if((dot2 - pointDotNormal[i]) < 0.0f)
 		{
-			rv = EState::INTERSECT;
+			rv = EState::Intersect;
 		}
 	}
 	return rv;

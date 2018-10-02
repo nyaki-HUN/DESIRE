@@ -161,7 +161,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 				return std::shared_ptr<Mesh>(mesh);
 			}
 
-			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+			file->Seek(0, IReadFile::ESeekOrigin::Begin);
 		}
 	}
 
@@ -183,7 +183,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 				return std::shared_ptr<Shader>(shader);
 			}
 
-			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+			file->Seek(0, IReadFile::ESeekOrigin::Begin);
 		}
 	}
 
@@ -204,7 +204,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 				return std::shared_ptr<Texture>(texture);
 			}
 
-			file->Seek(0, IReadFile::ESeekOrigin::BEGIN);
+			file->Seek(0, IReadFile::ESeekOrigin::Begin);
 		}
 	}
 

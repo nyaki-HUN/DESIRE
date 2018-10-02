@@ -35,9 +35,9 @@ ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 	String filenameWithPath;
 	switch(location)
 	{
-		case ELocation::APP_DIR:	filenameWithPath = appDir + filename; break;
-		case ELocation::DATA_DIR:	filenameWithPath = dataDir + filename; break;
-		case ELocation::CACHE_DIR:	filenameWithPath = cacheDir + filename; break;
+		case ELocation::AppDir:		filenameWithPath = appDir + filename; break;
+		case ELocation::DataDir:	filenameWithPath = dataDir + filename; break;
+		case ELocation::CacheDir:	filenameWithPath = cacheDir + filename; break;
 	}
 
 	return OpenNative(filenameWithPath);

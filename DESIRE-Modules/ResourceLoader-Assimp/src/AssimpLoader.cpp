@@ -37,9 +37,9 @@ public:
 	{
 		const IReadFile::ESeekOrigin mapping[] =
 		{
-			IReadFile::ESeekOrigin::BEGIN,		// aiOrigin::aiOrigin_SET
-			IReadFile::ESeekOrigin::CURRENT,	// aiOrigin::aiOrigin_CUR
-			IReadFile::ESeekOrigin::END,		// aiOrigin::aiOrigin_END
+			IReadFile::ESeekOrigin::Begin,		// aiOrigin::aiOrigin_SET
+			IReadFile::ESeekOrigin::Current,	// aiOrigin::aiOrigin_CUR
+			IReadFile::ESeekOrigin::End,		// aiOrigin::aiOrigin_END
 		};
 
 		const bool result = file->Seek((int64_t)pOffset, mapping[pOrigin]);

@@ -5,7 +5,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Helper class for enumerating and using enum class values in range based for loops without the need of static_cast
-//	In order to work the enum class is required to have the NUM value
+//	In order to work the enum class is required to have the 'Num' value
 //	Usage:
 //		for(auto i : Enumerator<EMyEnum>())
 // --------------------------------------------------------------------------------------------------------------------
@@ -77,6 +77,6 @@ public:
 
 	inline Iterator end() const
 	{
-		return Iterator(ENUM::NUM);
+		return Iterator(ENUM::Num);
 	}
 };

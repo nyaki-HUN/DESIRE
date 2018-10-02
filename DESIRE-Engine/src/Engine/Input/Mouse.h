@@ -27,7 +27,7 @@ public:
 	{
 		MOUSE_X,
 		MOUSE_Y,
-		WHEEL,
+		Wheel,
 		WHEEL_HORIZONTAL,
 		NUM_AXES
 	};

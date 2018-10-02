@@ -34,7 +34,7 @@ public:
 	Material();
 	~Material();
 
-	void AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode = Render::EFilterMode::TRILINEAR, Render::EAddressMode addressMode = Render::EAddressMode::REPEAT);
+	void AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode = Render::EFilterMode::Trilinear, Render::EAddressMode addressMode = Render::EAddressMode::Repeat);
 	void ChangeTexture(uint8_t idx,  const std::shared_ptr<Texture>& texture);
 	const std::vector<TextureInfo>& GetTextures() const;
 

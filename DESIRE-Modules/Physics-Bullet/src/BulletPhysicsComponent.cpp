@@ -86,12 +86,12 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 	if(dynamic)
 	{
-		SetCollisionLayer(EPhysicsCollisionLayer::DYNAMIC);
+		SetCollisionLayer(EPhysicsCollisionLayer::Dynamic);
 		body->setActivationState(ISLAND_SLEEPING);
 	}
 	else
 	{
-		SetCollisionLayer(EPhysicsCollisionLayer::DEFAULT);
+		SetCollisionLayer(EPhysicsCollisionLayer::Default);
 		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 	}
 }
@@ -119,7 +119,7 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisio
 {
 	collisionLayer = i_collisionLayer;
 
-	if(collisionLayer == EPhysicsCollisionLayer::NO_COLLISION)
+	if(collisionLayer == EPhysicsCollisionLayer::NoCollision)
 	{
 		body->forceActivationState(DISABLE_SIMULATION);
 	}
@@ -137,12 +137,12 @@ void BulletPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode m
 {
 	switch(mode)
 	{
-		case ECollisionDetectionMode::DISCRETE:
+		case ECollisionDetectionMode::Discrete:
 			body->setCcdMotionThreshold(0.0f);
 			body->setCcdSweptSphereRadius(0.0f);
 			break;
 
-		case ECollisionDetectionMode::CONTINUOUS:
+		case ECollisionDetectionMode::Continuous:
 			// Enable CCD if the object moves more than 0.01 meter in one simulation frame
 			body->setCcdMotionThreshold(0.01);
 			body->setCcdSweptSphereRadius(0.5f);
@@ -152,7 +152,7 @@ void BulletPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode m
 
 PhysicsComponent::ECollisionDetectionMode BulletPhysicsComponent::GetCollisionDetectionMode() const
 {
-	return (body->getCcdMotionThreshold() > 0.0f) ? ECollisionDetectionMode::CONTINUOUS : ECollisionDetectionMode::DISCRETE;
+	return (body->getCcdMotionThreshold() > 0.0f) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
 std::vector<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
@@ -172,9 +172,9 @@ void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
 
 	switch(bodyType)
 	{
-		case EBodyType::STATIC:		flags |= btCollisionObject::CF_STATIC_OBJECT; break;
-		case EBodyType::DYNAMIC:	break;
-		case EBodyType::KINEMATIC:	flags |= btCollisionObject::CF_KINEMATIC_OBJECT; break;
+		case EBodyType::Static:		flags |= btCollisionObject::CF_STATIC_OBJECT; break;
+		case EBodyType::Dynamic:	break;
+		case EBodyType::Kinematic:	flags |= btCollisionObject::CF_KINEMATIC_OBJECT; break;
 	}
 
 	body->setCollisionFlags(flags);
@@ -184,15 +184,15 @@ PhysicsComponent::EBodyType BulletPhysicsComponent::GetBodyType() const
 {
 	if(body->isStaticObject())
 	{
-		return PhysicsComponent::EBodyType::STATIC;
+		return PhysicsComponent::EBodyType::Static;
 	}
 
 	if(body->isKinematicObject())
 	{
-		return PhysicsComponent::EBodyType::KINEMATIC;
+		return PhysicsComponent::EBodyType::Kinematic;
 	}
 
-	return PhysicsComponent::EBodyType::DYNAMIC;
+	return PhysicsComponent::EBodyType::Dynamic;
 }
 
 void BulletPhysicsComponent::SetTrigger(bool value)
@@ -271,8 +271,8 @@ void BulletPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->applyCentralForce(GetBtVector3(force)); break;
-		case EForceMode::IMPULSE:	body->applyCentralImpulse(GetBtVector3(force)); break;
+		case EForceMode::Force:		body->applyCentralForce(GetBtVector3(force)); break;
+		case EForceMode::Impulse:	body->applyCentralImpulse(GetBtVector3(force)); break;
 	}
 }
 
@@ -280,8 +280,8 @@ void BulletPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vect
 {
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->applyForce(GetBtVector3(force), GetBtVector3(position));
-		case EForceMode::IMPULSE:	body->applyImpulse(GetBtVector3(force), GetBtVector3(position));
+		case EForceMode::Force:		body->applyForce(GetBtVector3(force), GetBtVector3(position));
+		case EForceMode::Impulse:	body->applyImpulse(GetBtVector3(force), GetBtVector3(position));
 	}
 }
 
@@ -289,8 +289,8 @@ void BulletPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->applyTorque(GetBtVector3(torque)); break;
-		case EForceMode::IMPULSE:	body->applyTorqueImpulse(GetBtVector3(torque)); break;
+		case EForceMode::Force:		body->applyTorque(GetBtVector3(torque)); break;
+		case EForceMode::Impulse:	body->applyTorqueImpulse(GetBtVector3(torque)); break;
 	}
 }
 

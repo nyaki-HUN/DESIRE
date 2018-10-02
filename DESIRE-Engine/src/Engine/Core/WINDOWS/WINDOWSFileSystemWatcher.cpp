@@ -43,16 +43,16 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 			{
 				case FILE_ACTION_ADDED:
 				case FILE_ACTION_RENAMED_NEW_NAME:
-					watcher->actionCallback(FileSystemWatcher::EAction::ADDED, filename);
+					watcher->actionCallback(FileSystemWatcher::EAction::Added, filename);
 					break;
 
 				case FILE_ACTION_REMOVED:
 				case FILE_ACTION_RENAMED_OLD_NAME:
-					watcher->actionCallback(FileSystemWatcher::EAction::DELETED, filename);
+					watcher->actionCallback(FileSystemWatcher::EAction::Deleted, filename);
 					break;
 
 				case FILE_ACTION_MODIFIED:
-					watcher->actionCallback(FileSystemWatcher::EAction::MODIFIED, filename);
+					watcher->actionCallback(FileSystemWatcher::EAction::Modified, filename);
 					break;
 			}
 

@@ -9,10 +9,10 @@ Physics::Physics()
 	{
 		collisionMasks[i] = MASK_ALL;
 
-		SetCollisionEnabled((EPhysicsCollisionLayer)i, EPhysicsCollisionLayer::WHEEL, false);
-		SetCollisionEnabled((EPhysicsCollisionLayer)i, EPhysicsCollisionLayer::NO_COLLISION, false);
+		SetCollisionEnabled((EPhysicsCollisionLayer)i, EPhysicsCollisionLayer::Wheel, false);
+		SetCollisionEnabled((EPhysicsCollisionLayer)i, EPhysicsCollisionLayer::NoCollision, false);
 	}
-	SetCollisionEnabled(EPhysicsCollisionLayer::DEFAULT, EPhysicsCollisionLayer::WHEEL, true);
+	SetCollisionEnabled(EPhysicsCollisionLayer::Default, EPhysicsCollisionLayer::Wheel, true);
 }
 
 Physics::~Physics()
@@ -46,8 +46,8 @@ float Physics::GetFixedStepTime() const
 
 void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled)
 {
-	ASSERT(a < EPhysicsCollisionLayer::NUM);
-	ASSERT(b < EPhysicsCollisionLayer::NUM);
+	ASSERT(a < EPhysicsCollisionLayer::Num);
+	ASSERT(b < EPhysicsCollisionLayer::Num);
 
 	const int layerA = (int)a;
 	const int layerB = (int)b;
@@ -72,7 +72,7 @@ void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLay
 
 int Physics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
 {
-	ASSERT(layer < EPhysicsCollisionLayer::NUM);
+	ASSERT(layer < EPhysicsCollisionLayer::Num);
 	return collisionMasks[(size_t)layer];
 }
 
@@ -82,8 +82,8 @@ void Physics::UpdateComponents()
 	{
 		switch(component->GetBodyType())
 		{
-			case PhysicsComponent::EBodyType::DYNAMIC:		component->UpdateGameObjectTransform(); break;
-			case PhysicsComponent::EBodyType::KINEMATIC:	component->SetTransformFromGameObject(); break;
+			case PhysicsComponent::EBodyType::Dynamic:		component->UpdateGameObjectTransform(); break;
+			case PhysicsComponent::EBodyType::Kinematic:	component->SetTransformFromGameObject(); break;
 		}
 	}
 }

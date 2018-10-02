@@ -8,8 +8,8 @@ Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
 	, type(type)
 	, count((uint8_t)count)
 {
-	ASSERT(attrib != EAttrib::NUM);
-	ASSERT(type != EAttribType::NUM);
+	ASSERT(attrib != EAttrib::Num);
+	ASSERT(type != EAttribType::Num);
 	ASSERT(0 < count && count <= 4);
 }
 
@@ -20,7 +20,7 @@ uint32_t Mesh::VertexDecl::GetSizeInBytes() const
 		sizeof(float),
 		sizeof(uint8_t),
 	};
-	DESIRE_CHECK_ARRAY_SIZE(sizePerAttribType, EAttribType::NUM);
+	DESIRE_CHECK_ARRAY_SIZE(sizePerAttribType, EAttribType::Num);
 
 	return count * sizePerAttribType[(size_t)type];
 }

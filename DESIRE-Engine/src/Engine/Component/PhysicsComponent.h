@@ -20,21 +20,21 @@ protected:
 public:
 	enum class EBodyType
 	{
-		STATIC,
-		DYNAMIC,
-		KINEMATIC
+		Static,
+		Dynamic,
+		Kinematic
 	};
 
 	enum class ECollisionDetectionMode
 	{
-		DISCRETE,
-		CONTINUOUS
+		Discrete,
+		Continuous
 	};
 
 	enum class EForceMode
 	{
-		FORCE,
-		IMPULSE
+		Force,
+		Impulse
 	};
 
 	~PhysicsComponent() override;

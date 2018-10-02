@@ -10,12 +10,12 @@ class Vector3;
 
 enum class EPhysicsCollisionLayer
 {
-	DEFAULT,
-	DYNAMIC,
-	WHEEL,
-	NO_COLLISION,
+	Default,
+	Dynamic,
+	Wheel,
+	NoCollision,
 
-	NUM = 16
+	Num = 16
 };
 
 class Physics
@@ -24,10 +24,10 @@ public:
 	enum EPhysicsCollisionLayerMask
 	{
 		MASK_NONE				= 0,
-		MASK_DEFAULT			= 1 << (int)EPhysicsCollisionLayer::DEFAULT,
-		MASK_DYNAMIC			= 1 << (int)EPhysicsCollisionLayer::DYNAMIC,
-		MASK_WHEEL				= 1 << (int)EPhysicsCollisionLayer::WHEEL,
-		MASK_NO_COLLISION		= 1 << (int)EPhysicsCollisionLayer::NO_COLLISION,
+		MASK_DEFAULT			= 1 << (int)EPhysicsCollisionLayer::Default,
+		MASK_DYNAMIC			= 1 << (int)EPhysicsCollisionLayer::Dynamic,
+		MASK_WHEEL				= 1 << (int)EPhysicsCollisionLayer::Wheel,
+		MASK_NO_COLLISION		= 1 << (int)EPhysicsCollisionLayer::NoCollision,
 		MASK_ALL				= 0xFFFFFFFF
 	};
 
@@ -58,6 +58,6 @@ protected:
 	void UpdateComponents();
 
 	std::vector<PhysicsComponent*> components;
-	int collisionMasks[(size_t)EPhysicsCollisionLayer::NUM];
+	int collisionMasks[(size_t)EPhysicsCollisionLayer::Num];
 	float fixedStepTime = 1.0f / 60.0f;
 };

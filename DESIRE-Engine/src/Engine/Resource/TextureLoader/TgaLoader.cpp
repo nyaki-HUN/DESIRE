@@ -11,13 +11,13 @@ struct TgaHeader
 {
 	enum class EImageType : uint8_t
 	{
-		COLOR_MAPPED = 1,
-		TRUE_COLOR = 2,
-		GRAYSCALE = 3,
+		ColorMapped = 1,
+		TrueColor = 2,
+		Grayscale = 3,
 		// RLE packed types
-		RLE_COLOR_MAPPED = 9,
-		RLE_TRUE_COLOR = 10,
-		RLE_GRAYSCALE = 11,
+		RLE_ColorMapped = 9,
+		RLE_TrueColor = 10,
+		RLE_Grayscale = 11,
 	};
 
 	enum EDescriptorFlag
@@ -55,7 +55,7 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 
 	if(bytesRead != sizeof(header) ||
 		header.colorMapType != 0 ||
-		(header.imageType != TgaHeader::EImageType::TRUE_COLOR && header.imageType != TgaHeader::EImageType::RLE_TRUE_COLOR) ||
+		(header.imageType != TgaHeader::EImageType::TrueColor && header.imageType != TgaHeader::EImageType::RLE_TrueColor) ||
 		(header.bitsPerPixel != 24 && header.bitsPerPixel != 32))
 	{
 		// Not supported
@@ -68,14 +68,14 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 	uint8_t *data = (uint8_t*)malloc(dataSize);
 	switch(header.imageType)
 	{
-		case TgaHeader::EImageType::TRUE_COLOR:
+		case TgaHeader::EImageType::TrueColor:
 		{
 			bytesRead = file->ReadBuffer(data, dataSize);
 			ASSERT(bytesRead == dataSize);
 			break;
 		}
 
-		case TgaHeader::EImageType::RLE_TRUE_COLOR:
+		case TgaHeader::EImageType::RLE_TrueColor:
 		{
 			uint8_t rlePacket[5];
 			uint8_t *dataPtr = data;
@@ -115,10 +115,10 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 			break;
 		}
 
-		case TgaHeader::EImageType::COLOR_MAPPED:
-		case TgaHeader::EImageType::GRAYSCALE:
-		case TgaHeader::EImageType::RLE_COLOR_MAPPED:
-		case TgaHeader::EImageType::RLE_GRAYSCALE:
+		case TgaHeader::EImageType::ColorMapped:
+		case TgaHeader::EImageType::Grayscale:
+		case TgaHeader::EImageType::RLE_ColorMapped:
+		case TgaHeader::EImageType::RLE_Grayscale:
 			ASSERT(false && "Not supported");
 			break;
 	}

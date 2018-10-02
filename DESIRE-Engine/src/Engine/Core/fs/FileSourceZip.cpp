@@ -114,7 +114,7 @@ bool FileSourceZip::Load()
 	}
 
 	// Load central directory record
-	zipFile->Seek(-(int64_t)sizeof(ZipEndOfCentralDirectoryRecord), IReadFile::ESeekOrigin::END);
+	zipFile->Seek(-(int64_t)sizeof(ZipEndOfCentralDirectoryRecord), IReadFile::ESeekOrigin::End);
 	ZipEndOfCentralDirectoryRecord record;
 	zipFile->ReadBuffer(&record, sizeof(ZipEndOfCentralDirectoryRecord));
 	if(record.signature != kZipSignatureEndOfCentralDirectory)
@@ -123,7 +123,7 @@ bool FileSourceZip::Load()
 		return false;
 	}
 
-	zipFile->Seek(record.offsetOfcentralDirectoryStart, IReadFile::ESeekOrigin::BEGIN);
+	zipFile->Seek(record.offsetOfcentralDirectoryStart, IReadFile::ESeekOrigin::Begin);
 
 	for(int16_t i = 0; i < record.numCentralDirectories; ++i)
 	{
@@ -134,9 +134,9 @@ bool FileSourceZip::Load()
 		if(centralDirHeader.signature == kZipSignatureCentralDirectoryFileHeader)
 		{
 			const int64_t currPos = zipFile->Tell();
-			zipFile->Seek(centralDirHeader.offsetOfLocalHeader, IReadFile::ESeekOrigin::BEGIN);
+			zipFile->Seek(centralDirHeader.offsetOfLocalHeader, IReadFile::ESeekOrigin::Begin);
 			ProcessLocalHeaders();
-			zipFile->Seek(currPos + centralDirHeader.filenameLength + centralDirHeader.extraFieldLength + centralDirHeader.commentLength, IReadFile::ESeekOrigin::BEGIN);
+			zipFile->Seek(currPos + centralDirHeader.filenameLength + centralDirHeader.extraFieldLength + centralDirHeader.commentLength, IReadFile::ESeekOrigin::Begin);
 		}
 	}
 
@@ -182,7 +182,7 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 		{
 			ASSERT(entry.compressedSize == entry.uncompressedSize);
 
-			zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::BEGIN);
+			zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
 			return std::make_unique<MemoryFile>(zipFile, entry.uncompressedSize);
 		}
 
@@ -200,7 +200,7 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 					return nullptr;
 				}
 
-				zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::BEGIN);
+				zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
 				zipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
 
 				const size_t decompressedSize = zlibRawDeflate->DecompressBuffer(decompressedData, entry.uncompressedSize, compressedData.get(), entry.compressedSize);

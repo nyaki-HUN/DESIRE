@@ -6,7 +6,7 @@
 
 PhysicsComponent::PhysicsComponent(Object& object)
 	: Component(object)
-	, collisionLayer(EPhysicsCollisionLayer::DEFAULT)
+	, collisionLayer(EPhysicsCollisionLayer::Default)
 {
 	Modules::Physics->OnPhysicsComponentCreated(this);
 }

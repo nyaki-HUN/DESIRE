@@ -35,8 +35,8 @@ void Application::SendEvent(const CoreAppEvent& event)
 
 void Application::SendEvent(EAppEventType eventType)
 {
-	ASSERT(eventType != EAppEventType::NOTIFICATION && "Use NotificationEvent class");
-	ASSERT(eventType != EAppEventType::KEYBOARD_WILL_SHOW && "Use KeyboardWillShowEvent class");
+	ASSERT(eventType != EAppEventType::Notification && "Use NotificationEvent class");
+	ASSERT(eventType != EAppEventType::KeyboardWillShow && "Use KeyboardWillShowEvent class");
 
 	SendEvent(CoreAppEvent(eventType));
 }

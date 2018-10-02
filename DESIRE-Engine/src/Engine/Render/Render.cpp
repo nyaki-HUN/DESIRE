@@ -30,7 +30,7 @@ void Render::RenderMesh(Mesh *mesh, Material *material)
 	{
 		Bind(mesh);
 	}
-	else if(mesh->type == Mesh::EType::DYNAMIC)
+	else if(mesh->type == Mesh::EType::Dynamic)
 	{
 		UpdateDynamicMesh(static_cast<DynamicMesh*>(mesh));
 	}
@@ -70,7 +70,7 @@ void Render::SetDefaultRenderStates()
 {
 	SetColorWriteEnabled(true, true, true, true);
 	SetDepthWriteEnabled(true);
-	SetDepthTest(EDepthTest::LESS);
+	SetDepthTest(EDepthTest::Less);
 	SetCullMode(ECullMode::CCW);
 }
 

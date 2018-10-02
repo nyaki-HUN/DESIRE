@@ -254,13 +254,13 @@ void BgfxRender::SetDepthTest(EDepthTest depthTest)
 
 	switch(depthTest)
 	{
-		case EDepthTest::DISABLED:		break;
-		case EDepthTest::LESS:			renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
-		case EDepthTest::LESS_EQUAL:	renderState |= BGFX_STATE_DEPTH_TEST_LEQUAL; break;
-		case EDepthTest::GREATER:		renderState |= BGFX_STATE_DEPTH_TEST_GREATER; break;
-		case EDepthTest::GREATER_EQUAL:	renderState |= BGFX_STATE_DEPTH_TEST_GEQUAL; break;
-		case EDepthTest::EQUAL:			renderState |= BGFX_STATE_DEPTH_TEST_EQUAL; break;
-		case EDepthTest::NOT_EQUAL:		renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
+		case EDepthTest::Disabled:		break;
+		case EDepthTest::Less:			renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
+		case EDepthTest::LessEqual:		renderState |= BGFX_STATE_DEPTH_TEST_LEQUAL; break;
+		case EDepthTest::Greater:		renderState |= BGFX_STATE_DEPTH_TEST_GREATER; break;
+		case EDepthTest::GreaterEqual:	renderState |= BGFX_STATE_DEPTH_TEST_GEQUAL; break;
+		case EDepthTest::Equal:			renderState |= BGFX_STATE_DEPTH_TEST_EQUAL; break;
+		case EDepthTest::NotEqual:		renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
 	}
 }
 
@@ -270,7 +270,7 @@ void BgfxRender::SetCullMode(ECullMode cullMode)
 
 	switch(cullMode)
 	{
-		case ECullMode::NONE:	break;
+		case ECullMode::None:	break;
 		case ECullMode::CCW:	renderState |= BGFX_STATE_CULL_CCW; break;
 		case ECullMode::CW:		renderState |= BGFX_STATE_CULL_CW; break;
 	}
@@ -282,21 +282,21 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 
 	static const uint64_t blendConversionTable[] =
 	{
-		BGFX_STATE_BLEND_ZERO,				// EBlend::ZERO
-		BGFX_STATE_BLEND_ONE,				// EBlend::ONE
-		BGFX_STATE_BLEND_SRC_COLOR,			// EBlend::SRC_COLOR
-		BGFX_STATE_BLEND_INV_SRC_COLOR,		// EBlend::INV_SRC_COLOR
-		BGFX_STATE_BLEND_SRC_ALPHA,			// EBlend::SRC_ALPHA
-		BGFX_STATE_BLEND_INV_SRC_ALPHA,		// EBlend::INV_SRC_ALPHA
-		BGFX_STATE_BLEND_DST_ALPHA,			// EBlend::DEST_ALPHA
-		BGFX_STATE_BLEND_INV_DST_ALPHA,		// EBlend::INV_DEST_ALPHA
-		BGFX_STATE_BLEND_DST_COLOR,			// EBlend::DEST_COLOR
-		BGFX_STATE_BLEND_INV_DST_COLOR,		// EBlend::INV_DEST_COLOR
-		BGFX_STATE_BLEND_SRC_ALPHA_SAT,		// EBlend::SRC_ALPHA_SAT
-		BGFX_STATE_BLEND_FACTOR,			// EBlend::BLEND_FACTOR
-		BGFX_STATE_BLEND_INV_FACTOR			// EBlend::INV_BLEND_FACTOR
+		BGFX_STATE_BLEND_ZERO,				// EBlend::Zero
+		BGFX_STATE_BLEND_ONE,				// EBlend::One
+		BGFX_STATE_BLEND_SRC_COLOR,			// EBlend::SrcColor
+		BGFX_STATE_BLEND_INV_SRC_COLOR,		// EBlend::InvSrcColor
+		BGFX_STATE_BLEND_SRC_ALPHA,			// EBlend::SrcAlpha
+		BGFX_STATE_BLEND_INV_SRC_ALPHA,		// EBlend::InvSrcAlpha
+		BGFX_STATE_BLEND_DST_ALPHA,			// EBlend::DestAlpha
+		BGFX_STATE_BLEND_INV_DST_ALPHA,		// EBlend::InvDestAlpha
+		BGFX_STATE_BLEND_DST_COLOR,			// EBlend::DestColor
+		BGFX_STATE_BLEND_INV_DST_COLOR,		// EBlend::InvDestColor
+		BGFX_STATE_BLEND_SRC_ALPHA_SAT,		// EBlend::SrcAlphaSat
+		BGFX_STATE_BLEND_FACTOR,			// EBlend::BlendFactor
+		BGFX_STATE_BLEND_INV_FACTOR			// EBlend::InvBlendFactor
 	};
-	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::INV_BLEND_FACTOR + 1);
+	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::InvBlendFactor + 1);
 
 	const uint64_t srcRGB = blendConversionTable[(size_t)srcBlendRGB];
 	const uint64_t destRGB = blendConversionTable[(size_t)destBlendRGB];
@@ -306,13 +306,13 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 
 	static const uint64_t equationConversionTable[] =
 	{
-		BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::ADD
-		BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::SUBTRACT
-		BGFX_STATE_BLEND_EQUATION_REVSUB,	// EBlendOp::REV_SUBTRACT
-		BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::MIN
-		BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::MAX
+		BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::Add
+		BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::Subtract
+		BGFX_STATE_BLEND_EQUATION_REVSUB,	// EBlendOp::RevSubtract
+		BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::Min
+		BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::Max
 	};
-	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::MAX + 1);
+	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::Max + 1);
 
 	const uint64_t equationRGB = equationConversionTable[(size_t)blendOpRGB];
 	const uint64_t equationAlpha = equationConversionTable[(size_t)blendOpAlpha];
@@ -338,38 +338,38 @@ void BgfxRender::Bind(Mesh *mesh)
 
 	static const bgfx::Attrib::Enum attribConversionTable[] =
 	{
-		bgfx::Attrib::Position,		// Mesh::EAttrib::POSITION
-		bgfx::Attrib::Normal,		// Mesh::EAttrib::NORMAL
-		bgfx::Attrib::Color0,		// Mesh::EAttrib::COLOR
-		bgfx::Attrib::TexCoord0,	// Mesh::EAttrib::TEXCOORD0
-		bgfx::Attrib::TexCoord1,	// Mesh::EAttrib::TEXCOORD1
-		bgfx::Attrib::TexCoord2,	// Mesh::EAttrib::TEXCOORD2
-		bgfx::Attrib::TexCoord3,	// Mesh::EAttrib::TEXCOORD3
-		bgfx::Attrib::TexCoord4,	// Mesh::EAttrib::TEXCOORD4
-		bgfx::Attrib::TexCoord5,	// Mesh::EAttrib::TEXCOORD5
-		bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::TEXCOORD6
-		bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::TEXCOORD7
+		bgfx::Attrib::Position,		// Mesh::EAttrib::Position
+		bgfx::Attrib::Normal,		// Mesh::EAttrib::Normal
+		bgfx::Attrib::Color0,		// Mesh::EAttrib::Color
+		bgfx::Attrib::TexCoord0,	// Mesh::EAttrib::Texcoord0
+		bgfx::Attrib::TexCoord1,	// Mesh::EAttrib::Texcoord1
+		bgfx::Attrib::TexCoord2,	// Mesh::EAttrib::Texcoord2
+		bgfx::Attrib::TexCoord3,	// Mesh::EAttrib::Texcoord3
+		bgfx::Attrib::TexCoord4,	// Mesh::EAttrib::Texcoord4
+		bgfx::Attrib::TexCoord5,	// Mesh::EAttrib::Texcoord5
+		bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::Texcoord6
+		bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::Texcoord7
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib::NUM);
+	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib::Num);
 
 	static const bgfx::AttribType::Enum attribTypeConversionTable[] =
 	{
-		bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::FLOAT
-		bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::UINT8
+		bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::Float
+		bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::Uint8
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::NUM);
+	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::Num);
 
 	renderData->vertexDecl.begin();
 	for(Mesh::VertexDecl& decl : mesh->vertexDecl)
 	{
-		const bool isNormalized = (decl.type == Mesh::EAttribType::UINT8);
+		const bool isNormalized = (decl.type == Mesh::EAttribType::Uint8);
 		renderData->vertexDecl.add(attribConversionTable[(size_t)decl.attrib], decl.count, attribTypeConversionTable[(size_t)decl.type], isNormalized);
 	}
 	renderData->vertexDecl.end();
 
 	switch(mesh->type)
 	{
-		case Mesh::EType::STATIC:
+		case Mesh::EType::Static:
 		{
 			if(mesh->numIndices != 0)
 			{
@@ -385,7 +385,7 @@ void BgfxRender::Bind(Mesh *mesh)
 			break;
 		}
 
-		case Mesh::EType::DYNAMIC:
+		case Mesh::EType::Dynamic:
 		{
 			DynamicMesh *dynamicMesh = static_cast<DynamicMesh*>(mesh);
 
@@ -548,12 +548,12 @@ void BgfxRender::Unbind(Mesh *mesh)
 
 	switch(mesh->type)
 	{
-		case Mesh::EType::STATIC:
+		case Mesh::EType::Static:
 			bgfx::destroy(renderData->indexBuffer);
 			bgfx::destroy(renderData->vertexBuffer);
 			break;
 
-		case Mesh::EType::DYNAMIC:
+		case Mesh::EType::Dynamic:
 			bgfx::destroy(renderData->dynamicIndexBuffer);
 			bgfx::destroy(renderData->dynamicVertexBuffer);
 			break;
@@ -660,14 +660,14 @@ void BgfxRender::SetMesh(Mesh *mesh)
 
 	switch(mesh->type)
 	{
-		case Mesh::EType::STATIC:
+		case Mesh::EType::Static:
 		{
 			bgfx::setIndexBuffer(renderData->indexBuffer, renderData->indexOffset, mesh->numIndices);
 			bgfx::setVertexBuffer(0, renderData->vertexBuffer, renderData->vertexOffset, mesh->numVertices);
 			break;
 		}
 
-		case Mesh::EType::DYNAMIC:
+		case Mesh::EType::Dynamic:
 		{
 			const DynamicMesh *dynamicMesh = static_cast<const DynamicMesh*>(mesh);
 			bgfx::setIndexBuffer(renderData->dynamicIndexBuffer, dynamicMesh->indexOffset + renderData->indexOffset, mesh->numIndices);
@@ -723,18 +723,18 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode fi
 	uint32_t flags = BGFX_TEXTURE_NONE;
 	switch(filterMode)
 	{
-		case EFilterMode::POINT:		flags |= BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_MIP_POINT; break;
-		case EFilterMode::BILINEAR:		flags |= BGFX_SAMPLER_MIP_POINT; break;
-		case EFilterMode::TRILINEAR:	break;
-		case EFilterMode::ANISOTROPIC:	flags |= BGFX_SAMPLER_MIN_ANISOTROPIC | BGFX_SAMPLER_MAG_ANISOTROPIC; break;
+		case EFilterMode::Point:		flags |= BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_MIP_POINT; break;
+		case EFilterMode::Bilinear:		flags |= BGFX_SAMPLER_MIP_POINT; break;
+		case EFilterMode::Trilinear:	break;
+		case EFilterMode::Anisotropic:	flags |= BGFX_SAMPLER_MIN_ANISOTROPIC | BGFX_SAMPLER_MAG_ANISOTROPIC; break;
 	}
 	switch(addressMode)
 	{
-		case EAddressMode::REPEAT:			break;
-		case EAddressMode::CLAMP:			flags |= BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_SAMPLER_W_CLAMP; break;
-		case EAddressMode::MIRRORED_REPEAT:	flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
-		case EAddressMode::MIRROR_ONCE:		flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
-		case EAddressMode::BORDER:			flags |= BGFX_SAMPLER_U_BORDER | BGFX_SAMPLER_V_BORDER | BGFX_SAMPLER_W_BORDER; break;
+		case EAddressMode::Repeat:			break;
+		case EAddressMode::Clamp:			flags |= BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_SAMPLER_W_CLAMP; break;
+		case EAddressMode::MirroredRepeat:	flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
+		case EAddressMode::MirrorOnce:		flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
+		case EAddressMode::Border:			flags |= BGFX_SAMPLER_U_BORDER | BGFX_SAMPLER_V_BORDER | BGFX_SAMPLER_W_BORDER; break;
 	}
 
 	const TextureRenderDataBgfx *renderData = static_cast<const TextureRenderDataBgfx*>(texture->renderData);

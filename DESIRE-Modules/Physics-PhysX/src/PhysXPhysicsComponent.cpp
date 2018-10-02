@@ -33,12 +33,12 @@ void PhysXPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 
 void PhysXPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode mode)
 {
-	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, (mode == ECollisionDetectionMode::CONTINUOUS));
+	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, (mode == ECollisionDetectionMode::Continuous));
 }
 
 PhysicsComponent::ECollisionDetectionMode PhysXPhysicsComponent::GetCollisionDetectionMode() const
 {
-	return (body->getRigidBodyFlags() & physx::PxRigidBodyFlag::eENABLE_CCD) ? ECollisionDetectionMode::CONTINUOUS : ECollisionDetectionMode::DISCRETE;
+	return (body->getRigidBodyFlags() & physx::PxRigidBodyFlag::eENABLE_CCD) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
 std::vector<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponents() const
@@ -52,9 +52,9 @@ void PhysXPhysicsComponent::SetBodyType(EBodyType bodyType)
 {
 	switch(bodyType)
 	{
-		case EBodyType::STATIC:		ASSERT(false && "TODO");  break;
-		case EBodyType::DYNAMIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false); break;
-		case EBodyType::KINEMATIC:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true); break;
+		case EBodyType::Static:		ASSERT(false && "TODO");  break;
+		case EBodyType::Dynamic:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false); break;
+		case EBodyType::Kinematic:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true); break;
 	}
 }
 
@@ -63,15 +63,15 @@ PhysicsComponent::EBodyType PhysXPhysicsComponent::GetBodyType() const
 	const physx::PxRigidBodyFlags flags = body->getRigidBodyFlags();
 	if(flags.isSet(physx::PxRigidBodyFlag::eKINEMATIC))
 	{
-		return PhysicsComponent::EBodyType::KINEMATIC;
+		return PhysicsComponent::EBodyType::Kinematic;
 	}
 
 	if(dynamicBody == nullptr)
 	{
-		PhysicsComponent::EBodyType::STATIC;
+		PhysicsComponent::EBodyType::Static;
 	}
 
-	return PhysicsComponent::EBodyType::DYNAMIC;
+	return PhysicsComponent::EBodyType::Dynamic;
 }
 
 void PhysXPhysicsComponent::SetTrigger(bool value)
@@ -152,8 +152,8 @@ void PhysXPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->addForce(GetPxVec3(force), physx::PxForceMode::eFORCE); break;
-		case EForceMode::IMPULSE:	body->addForce(GetPxVec3(force), physx::PxForceMode::eIMPULSE); break;
+		case EForceMode::Force:		body->addForce(GetPxVec3(force), physx::PxForceMode::eFORCE); break;
+		case EForceMode::Impulse:	body->addForce(GetPxVec3(force), physx::PxForceMode::eIMPULSE); break;
 	}
 }
 
@@ -161,8 +161,8 @@ void PhysXPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vecto
 {
 	switch(mode)
 	{
-		case EForceMode::FORCE:		physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eFORCE);
-		case EForceMode::IMPULSE:	physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eIMPULSE);
+		case EForceMode::Force:		physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eFORCE);
+		case EForceMode::Impulse:	physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eIMPULSE);
 	}
 }
 
@@ -170,8 +170,8 @@ void PhysXPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::FORCE:		body->addTorque(GetPxVec3(torque), physx::PxForceMode::eFORCE); break;
-		case EForceMode::IMPULSE:	body->addTorque(GetPxVec3(torque), physx::PxForceMode::eIMPULSE); break;
+		case EForceMode::Force:		body->addTorque(GetPxVec3(torque), physx::PxForceMode::eFORCE); break;
+		case EForceMode::Impulse:	body->addTorque(GetPxVec3(torque), physx::PxForceMode::eIMPULSE); break;
 	}
 }
 

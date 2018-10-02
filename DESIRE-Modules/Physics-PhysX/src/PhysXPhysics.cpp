@@ -117,7 +117,7 @@ void PhysXPhysics::Update(float deltaTime)
 	// We still need to update all kinematic bodies
 	for(PhysicsComponent *component : components)
 	{
-		if(component->GetBodyType() == PhysicsComponent::EBodyType::KINEMATIC)
+		if(component->GetBodyType() == PhysicsComponent::EBodyType::Kinematic)
 		{
 			component->SetTransformFromGameObject();
 		}

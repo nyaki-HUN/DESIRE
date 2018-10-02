@@ -27,9 +27,9 @@ public:
 private:
 	enum class EState : uint8_t
 	{
-		INSIDE,
-		OUTSIDE,
-		INTERSECT
+		Inside,
+		Outside,
+		Intersect
 	};
 
 	void CalcFrustumNormalsFromCamera(Camera *camera, Vector3 *normals, uint8_t& nNormal, float (&pointDotNormal)[MAX_FURSTUM_NORMAL], uint8_t (&aabbNPVertex)[MAX_FURSTUM_NORMAL][2]);

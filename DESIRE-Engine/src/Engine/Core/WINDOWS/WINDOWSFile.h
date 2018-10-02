@@ -11,7 +11,7 @@ public:
 	~WINDOWSFile() override;
 
 	// IReadFile
-	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::CURRENT) override;
+	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::Current) override;
 
 	void ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback) override;
 	size_t ReadBuffer(void *buffer, size_t size) override;

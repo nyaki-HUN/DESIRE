@@ -243,12 +243,12 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 			if(wParam == WA_INACTIVE)
 			{
 				window->isActive = false;
-				Modules::Application->SendEvent(EAppEventType::ENTER_BACKGROUND);
+				Modules::Application->SendEvent(EAppEventType::EnterBackground);
 			}
 			else if(wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE)
 			{
 				window->isActive = true;
-				Modules::Application->SendEvent(EAppEventType::ENTER_FOREGROUND);
+				Modules::Application->SendEvent(EAppEventType::EnterForeground);
 			}
 			break;
 

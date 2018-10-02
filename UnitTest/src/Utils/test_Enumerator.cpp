@@ -5,10 +5,10 @@ TEST_CASE("Enumerator", "[Utils]")
 {
 	enum class EMyEnum
 	{
-		VALUE_0,
-		VALUE_1,
-		VALUE_2,
-		NUM
+		Value0,
+		Value1,
+		Value2,
+		Num
 	};
 
 	std::vector<size_t> enumeratedIntValues;

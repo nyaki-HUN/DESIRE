@@ -7,44 +7,44 @@ class Mesh
 public:
 	enum class EType
 	{
-		STATIC,			// Never updated
-		DYNAMIC			// Sometimes updated (but can be used across multiple frames)
+		Static,			// Never updated
+		Dynamic			// Sometimes updated (but can be used across multiple frames)
 	};
 
 	enum class EAttrib
 	{
-		POSITION,
-		NORMAL,
-		COLOR,
-		TEXCOORD0,
-		TEXCOORD1,
-		TEXCOORD2,
-		TEXCOORD3,
-		TEXCOORD4,
-		TEXCOORD5,
-		TEXCOORD6,
-		TEXCOORD7,
-		NUM
+		Position,
+		Normal,
+		Color,
+		Texcoord0,
+		Texcoord1,
+		Texcoord2,
+		Texcoord3,
+		Texcoord4,
+		Texcoord5,
+		Texcoord6,
+		Texcoord7,
+		Num
 	};
 
 	enum class EAttribType
 	{
-		FLOAT,
-		UINT8,
-		NUM
+		Float,
+		Uint8,
+		Num
 	};
 
 	struct VertexDecl
 	{
-		EAttrib attrib = EAttrib::NUM;
-		EAttribType type = EAttribType::NUM;
+		EAttrib attrib = EAttrib::Num;
+		EAttribType type = EAttribType::Num;
 		uint8_t count = 0;
 
 		VertexDecl(EAttrib attrib, int count, EAttribType type);
 		uint32_t GetSizeInBytes() const;
 	};
 
-	Mesh(EType meshType = EType::STATIC);
+	Mesh(EType meshType = EType::Static);
 	~Mesh();
 
 	uint32_t GetSizeOfIndices() const;
@@ -72,7 +72,7 @@ class DynamicMesh : public Mesh
 {
 public:
 	DynamicMesh()
-		: Mesh(Mesh::EType::DYNAMIC)
+		: Mesh(Mesh::EType::Dynamic)
 		, maxNumOfIndices(0)
 		, maxNumOfVertices(0)
 		, indexOffset(0)
