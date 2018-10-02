@@ -26,6 +26,11 @@ public:
 	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 	std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 
+	void SetVelocityIterations(int iterations);
+	int GetVelocityIterations() const;
+	void SetPositionIterations(int iterations);
+	int GetPositionIterations() const;
+
 	b2World* GetWorld() const;
 	b2Body* GetWorldBody() const;
 
@@ -43,4 +48,6 @@ private:
 	b2Body *worldBody = nullptr;
 
 	float fixedUpdateTimeAccumulator = 0.0f;
+	int velocityIterations = 8;
+	int positionIterations = 3;
 };

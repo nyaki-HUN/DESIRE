@@ -70,8 +70,6 @@ void Box2DPhysics::Update(float deltaTime)
 		contactsBegin.clear();
 		contactsEnd.clear();
 
-		const int32 velocityIterations = 8;
-		const int32 positionIterations = 3;
 		world->Step(fixedStepTime, velocityIterations, positionIterations);
 
 		HandleCollisionEnds();
@@ -126,6 +124,26 @@ std::vector<Collision> Box2DPhysics::RaycastAll(const Vector3& p1, const Vector3
 	world->RayCast(&callback, ray.first, ray.second);
 
 	return callback.collisions;
+}
+
+void Box2DPhysics::SetVelocityIterations(int iterations)
+{
+	velocityIterations = iterations;
+}
+
+int Box2DPhysics::GetVelocityIterations() const
+{
+	return velocityIterations;
+}
+
+void Box2DPhysics::SetPositionIterations(int iterations)
+{
+	positionIterations = iterations;
+}
+
+int Box2DPhysics::GetPositionIterations() const
+{
+	return positionIterations;
 }
 
 b2World* Box2DPhysics::GetWorld() const
