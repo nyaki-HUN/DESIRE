@@ -79,5 +79,6 @@ void Joint2D::DestroyJoint()
 	{
 		b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 		world->DestroyJoint(joint);
+		joint = nullptr;
 	}
 }
