@@ -14,6 +14,8 @@ public:
 	PhysXPhysicsComponent(Object& object);
 	~PhysXPhysicsComponent();
 
+	void SetEnabled(bool value) override;
+
 	// Collision
 	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
 
@@ -28,7 +30,7 @@ public:
 	void SetTrigger(bool value) override;
 	bool IsTrigger() const override;
 
-	// Mass manipulation
+	// Mass
 	void SetMass(float mass) override;
 	float GetMass() const override;
 	Vector3 GetCenterOfMass() const override;
@@ -58,8 +60,6 @@ public:
 
 	void UpdateGameObjectTransform() const override;
 	void SetTransformFromGameObject() override;
-
-	void SetEnabled(bool value) override;
 
 private:
 	physx::PxRigidBody *body = nullptr;

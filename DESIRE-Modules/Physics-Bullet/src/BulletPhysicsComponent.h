@@ -13,6 +13,8 @@ public:
 	BulletPhysicsComponent(Object& object, bool dynamic);
 	~BulletPhysicsComponent();
 
+	void SetEnabled(bool value) override;
+
 	// Collision
 	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
 
@@ -58,11 +60,8 @@ public:
 	void UpdateGameObjectTransform() const override;
 	void SetTransformFromGameObject() override;
 
-	void SetEnabled(bool value) override;
-
 private:
 	btRigidBody *body = nullptr;
-	btCollisionShape *shape = nullptr;
 	btDefaultMotionState *motionState = nullptr;
 	btTriangleIndexVertexArray *triangleIndexVertexArrays = nullptr;
 

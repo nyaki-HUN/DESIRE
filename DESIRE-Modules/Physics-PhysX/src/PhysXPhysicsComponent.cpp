@@ -22,6 +22,17 @@ PhysXPhysicsComponent::~PhysXPhysicsComponent()
 
 }
 
+void PhysXPhysicsComponent::SetEnabled(bool value)
+{
+	if(IsEnabled() == value)
+	{
+		return;
+	}
+
+	PhysicsComponent::SetEnabled(value);
+	body->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, value);
+}
+
 void PhysXPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
 	collisionLayer = i_collisionLayer;
@@ -66,12 +77,12 @@ PhysicsComponent::EBodyType PhysXPhysicsComponent::GetBodyType() const
 		return PhysicsComponent::EBodyType::Kinematic;
 	}
 
-	if(dynamicBody == nullptr)
+	if(dynamicBody != nullptr)
 	{
-		PhysicsComponent::EBodyType::Static;
+		PhysicsComponent::EBodyType::Dynamic;
 	}
 
-	return PhysicsComponent::EBodyType::Dynamic;
+	return PhysicsComponent::EBodyType::Static;
 }
 
 void PhysXPhysicsComponent::SetTrigger(bool value)
@@ -215,15 +226,4 @@ void PhysXPhysicsComponent::SetTransformFromGameObject()
 	pxTransform.p = GetPxVec3(transform.GetPosition());
 	pxTransform.q = GetPxQuat(transform.GetRotation());
 	body->setGlobalPose(pxTransform);
-}
-
-void PhysXPhysicsComponent::SetEnabled(bool value)
-{
-	if(IsEnabled() == value)
-	{
-		return;
-	}
-
-	PhysicsComponent::SetEnabled(value);
-	body->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, value);
 }

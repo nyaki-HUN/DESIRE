@@ -22,6 +22,7 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 	int stride = 3;
 
+	btCollisionShape *collisionShape = nullptr;
 	btVector3 localInertia(0.0f, 0.0f, 0.0f);
 
 	if(dynamic)
@@ -34,7 +35,7 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 		if(false)
 		{
-			shape = new btBoxShape(GetBtVector3(aabb.GetSize() * 0.5f));
+			collisionShape = new btBoxShape(GetBtVector3(aabb.GetSize() * 0.5f));
 		}
 		else
 		{
@@ -49,10 +50,10 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 			}
 			convexHullShape->recalcLocalAabb();
 
-			shape = convexHullShape;
+			collisionShape = convexHullShape;
 		}
 
-		shape->calculateLocalInertia(10.0f, localInertia);
+		collisionShape->calculateLocalInertia(10.0f, localInertia);
 	}
 	else
 	{
@@ -71,11 +72,11 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 		btTriangleInfoMap *triangleInfoMap = new btTriangleInfoMap();
 		btGenerateInternalEdgeInfo(trimeshShape, triangleInfoMap);
 
-		shape = trimeshShape;
+		collisionShape = trimeshShape;
 	}
 
 	motionState = new btDefaultMotionState();
-	btRigidBody::btRigidBodyConstructionInfo cInfo(0.0f, motionState, shape, localInertia);
+	btRigidBody::btRigidBodyConstructionInfo cInfo(0.0f, motionState, collisionShape, localInertia);
 	cInfo.m_friction = physicsMaterial.friction;
 	cInfo.m_restitution = physicsMaterial.bounciness;
 	body = new btRigidBody(cInfo);
@@ -98,21 +99,34 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 BulletPhysicsComponent::~BulletPhysicsComponent()
 {
+	btCollisionShape *collisionShape = body->getCollisionShape();
+
 	btDynamicsWorld *world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
 	world->removeRigidBody(body);
 	delete body;
 
 	if(!dynamic)
 	{
-		btBvhTriangleMeshShape *trimeshShape = static_cast<btBvhTriangleMeshShape*>(shape);
+		btBvhTriangleMeshShape *trimeshShape = static_cast<btBvhTriangleMeshShape*>(collisionShape);
 		btTriangleInfoMap *triangleInfoMap = trimeshShape->getTriangleInfoMap();
 		delete triangleInfoMap;
 		trimeshShape->setTriangleInfoMap(nullptr);
 	}
 	
-	delete shape;
+	delete collisionShape;
 	delete motionState;
 	delete triangleIndexVertexArrays;
+}
+
+void BulletPhysicsComponent::SetEnabled(bool value)
+{
+	if(IsEnabled() == value)
+	{
+		return;
+	}
+
+	PhysicsComponent::SetEnabled(value);
+	body->forceActivationState(value ? ISLAND_SLEEPING : DISABLE_SIMULATION);
 }
 
 void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
@@ -332,15 +346,4 @@ void BulletPhysicsComponent::SetTransformFromGameObject()
 	btTransform& btTransform = body->getWorldTransform();
 	btTransform.setOrigin(GetBtVector3(transform.GetPosition()));
 	btTransform.setRotation(GetBtQuat(transform.GetRotation()));
-}
-
-void BulletPhysicsComponent::SetEnabled(bool value)
-{
-	if(IsEnabled() == value)
-	{
-		return;
-	}
-
-	PhysicsComponent::SetEnabled(value);
-	body->forceActivationState(value ? ISLAND_SLEEPING : DISABLE_SIMULATION);
 }
