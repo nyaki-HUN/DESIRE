@@ -33,6 +33,7 @@ void RegisterString_AngelScript(asIScriptEngine *engine, asIStringFactory *strin
 	result = engine->RegisterObjectMethod("String", "String SubString(uint64, uint64 numChars = -1) const", asMETHODPR(String, SubString, (size_t, size_t) const, String), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "uint64 Length() const", asMETHODPR(String, Length, () const, size_t), asCALL_THISCALL);															ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "uint64 LengthUTF8() const", asMETHODPR(String, LengthUTF8, () const, size_t), asCALL_THISCALL);													ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("String", "bool IsEmpty() const", asMETHODPR(String, IsEmpty, () const, bool), asCALL_THISCALL);																ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "int IntValue() const", asMETHODPR(String, IntValue, () const, int), asCALL_THISCALL);																ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "float FloatValue() const", asMETHODPR(String, FloatValue, () const, float), asCALL_THISCALL);														ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "String& opAssign(const String &in)", asMETHODPR(String, operator =, (const String&), String&), asCALL_THISCALL);									ASSERT(result >= asSUCCESS);
