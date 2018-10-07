@@ -44,6 +44,27 @@ void Input::Update()
 	memset(typingCharacters, 0, MAX_NUM_TYPING_CHARACTERS);
 }
 
+void Input::Reset()
+{
+	// Keyboard
+	for(Keyboard& keyboard : keyboards)
+	{
+		keyboard.Reset();
+	}
+
+	// Mouse
+	for(Mouse& mouse : mouses)
+	{
+		mouse.Reset();
+	}
+	
+	// Game Controller
+	for(GameController& gamepad : gameControllers)
+	{
+		gamepad.Reset();
+	}
+}
+
 bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void *userData)
 {
 	ASSERT(callback != nullptr);

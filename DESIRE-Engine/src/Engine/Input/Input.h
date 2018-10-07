@@ -35,6 +35,7 @@ public:
 	static void Kill();
 
 	void Update();
+	void Reset();
 
 	bool RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void *userData = nullptr);
 	void UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers);

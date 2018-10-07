@@ -25,11 +25,12 @@ public:
 protected:
 	struct AxisState
 	{
-		float delta;
-		float pos;
+		float delta = 0.0f;
+		float pos = 0.0f;
 	};
 	
 	void Update();
+	void Reset();
 
 	void HandleButton(int buttonId, bool isDown);
 	void HandleAxis(int axisId, float delta);

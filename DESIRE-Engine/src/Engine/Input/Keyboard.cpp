@@ -5,7 +5,7 @@
 Keyboard::Keyboard(void *handle)
 	: InputDevice(handle, offsetof(Keyboard, keyStates), (uint16_t)DESIRE_ASIZEOF(keyStates))
 {
-	memset(keyStates, 0, sizeof(keyStates));
+
 }
 
 uint8_t Keyboard::GetModifierMask() const

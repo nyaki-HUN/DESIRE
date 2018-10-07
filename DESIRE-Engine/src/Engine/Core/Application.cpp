@@ -30,7 +30,10 @@ const Timer* Application::GetTimer() const
 
 void Application::SendEvent(const CoreAppEvent& event)
 {
-	DESIRE_UNUSED(event);
+	if(event.eventType == EAppEventType::EnterBackground)
+	{
+		Modules::Input->Reset();
+	}
 }
 
 void Application::SendEvent(EAppEventType eventType)

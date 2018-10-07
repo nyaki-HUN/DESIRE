@@ -8,7 +8,7 @@ InputDevice::InputDevice(void *handle, size_t offsetOfButtonStates, uint16_t num
 	, offsetOfAxisStatesInDerivedClass((uint16_t)offsetOfAxisStates)
 	, numAxisStates(numAxisStates)
 {
-
+	Reset();
 }
 
 bool InputDevice::IsDown(int buttonId) const
@@ -79,6 +79,12 @@ void InputDevice::Update()
 		AxisState& axis = reinterpret_cast<AxisState*>(reinterpret_cast<uint8_t*>(this) + offsetOfAxisStatesInDerivedClass)[i];
 		axis.delta = 0.0f;
 	}
+}
+
+void InputDevice::Reset()
+{
+	uint8_t *buttonStates = (uint8_t*)this + offsetOfButtonStatesInDerivedClass;
+	memset(buttonStates, 0, numButtonStates * sizeof(uint8_t));
 }
 
 void InputDevice::HandleButton(int buttonId, bool isDown)
