@@ -72,6 +72,12 @@ public:
 	// Returns the number of UTF8 characters
 	size_t LengthUTF8() const;
 
+	// Returns whether the string is empty
+	inline bool IsEmpty() const
+	{
+		return (Length() == 0);
+	}
+
 	// Convert string to numeric value
 	int IntValue() const;
 	float FloatValue() const;
