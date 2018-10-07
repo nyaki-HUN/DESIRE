@@ -44,7 +44,7 @@ LuaScriptSystem::~LuaScriptSystem()
 	lua_close(L);
 }
 
-void LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -52,12 +52,13 @@ void LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, con
 	if(newL == nullptr)
 	{
 		LOG_ERROR("Failed to create new script thread");
-		return;
+		return nullptr;
 	}
 
 	CompileScript(scriptName, newL);
 
 	LuaScriptComponent& scriptComponent = object.AddComponent<LuaScriptComponent>(newL);
+	return &scriptComponent;
 }
 
 void LuaScriptSystem::CompileScript(const char *scriptName, lua_State *L)

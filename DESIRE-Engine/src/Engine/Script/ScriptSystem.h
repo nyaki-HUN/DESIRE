@@ -18,13 +18,13 @@ public:
 	void Update();
 
 	void RegisterScript(HashedString scriptName, Factory<IScript>::Func_t factory);
-	void CreateScriptComponentOnObject(Object& object, const char *scriptName);
+	ScriptComponent* CreateScriptComponentOnObject(Object& object, const char *scriptName);
 
 	void OnScriptComponentCreated(ScriptComponent *component);
 	void OnScriptComponentDestroyed(ScriptComponent *component);
 
 private:
-	virtual void CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) = 0;
+	virtual ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) = 0;
 
 	std::vector<ScriptComponent*> scriptComponents;
 	HashedStringMap<Factory<IScript>::Func_t> scriptFactories;

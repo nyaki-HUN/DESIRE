@@ -48,7 +48,7 @@ SquirrelScriptSystem::~SquirrelScriptSystem()
 	sq_close(vm);
 }
 
-void SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -65,7 +65,7 @@ void SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object
 		if(SQ_FAILED(result))
 		{
 			sq_pop(vm, 1);	// pop root table
-			return;
+			return nullptr;
 		}
 	}
 
@@ -110,6 +110,8 @@ void SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object
 	}
 
 	sq_pop(vm, 2);	// pop class and root table
+
+	return &scriptComponent;
 }
 
 void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)

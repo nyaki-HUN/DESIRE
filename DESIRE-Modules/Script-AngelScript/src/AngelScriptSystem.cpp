@@ -68,7 +68,7 @@ AngelScriptSystem::~AngelScriptSystem()
 	engine = nullptr;
 }
 
-void AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -78,7 +78,7 @@ void AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, c
 		module = CompileScript(scriptName, engine);
 		if(module == nullptr)
 		{
-			return;
+			return nullptr;
 		}
 	}
 
@@ -86,7 +86,7 @@ void AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, c
 	asIScriptFunction *factoryFunc = (asIScriptFunction*)module->GetUserData();
 	if(factoryFunc == nullptr)
 	{
-		return;
+		return nullptr;
 	}
 
 	AngelScriptComponent& scriptComponent = object.AddComponent<AngelScriptComponent>();
@@ -108,6 +108,8 @@ void AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, c
 	}
 
 	engine->ReturnContext(ctx);
+
+	return &scriptComponent;
 }
 
 asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScriptEngine *engine)

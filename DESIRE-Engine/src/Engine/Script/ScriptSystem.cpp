@@ -20,19 +20,19 @@ void ScriptSystem::RegisterScript(HashedString scriptName, Factory<IScript>::Fun
 	scriptFactories.Insert(scriptName, factory);
 }
 
-void ScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scriptName)
+ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scriptName)
 {
 	// Try to create as a native script 
 	HashedString scriptNameHash = HashedString::CreateFromDynamicString(scriptName);
 	Factory<IScript>::Func_t *scriptFactory = scriptFactories.Find(scriptNameHash);
 	if(scriptFactory != nullptr)
 	{
-		object.AddComponent<NativeScriptComponent>((*scriptFactory)());
-		return;
+		NativeScriptComponent& scriptComponent = object.AddComponent<NativeScriptComponent>((*scriptFactory)());
+		return &scriptComponent;
 	}
 
 	// Try to create from file
-	CreateScriptComponentOnObject_Internal(object, scriptName);
+	return CreateScriptComponentOnObject_Internal(object, scriptName);
 }
 
 void ScriptSystem::OnScriptComponentCreated(ScriptComponent *component)
