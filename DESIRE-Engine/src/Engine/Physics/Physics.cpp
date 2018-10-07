@@ -82,6 +82,7 @@ void Physics::UpdateComponents()
 	{
 		switch(component->GetBodyType())
 		{
+			case PhysicsComponent::EBodyType::Static:		break;
 			case PhysicsComponent::EBodyType::Dynamic:		component->UpdateGameObjectTransform(); break;
 			case PhysicsComponent::EBodyType::Kinematic:	component->SetTransformFromGameObject(); break;
 		}
