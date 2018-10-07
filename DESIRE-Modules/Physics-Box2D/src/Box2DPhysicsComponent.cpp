@@ -33,6 +33,24 @@ Box2DPhysicsComponent::~Box2DPhysicsComponent()
 	body = nullptr;
 }
 
+void Box2DPhysicsComponent::SetEnabled(bool value)
+{
+	if(IsEnabled() == value)
+	{
+		return;
+	}
+
+	PhysicsComponent::SetEnabled(value);
+	body->SetActive(value);
+}
+
+void Box2DPhysicsComponent::CloneTo(Object& otherObject) const
+{
+	PhysicsComponent::CloneTo(otherObject);
+	Box2DPhysicsComponent *otherComponent = otherObject.GetComponent<Box2DPhysicsComponent>();
+	otherComponent->SetDensity(density);
+}
+
 void Box2DPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
 	collisionLayer = i_collisionLayer;
@@ -257,12 +275,6 @@ void Box2DPhysicsComponent::SetTransformFromGameObject()
 	const Vector3 pos = transform.GetPosition();
 	const float rotAngle = transform.GetRotation().EulerAngles().GetZ();
 	body->SetTransform(GetB2Vec2(pos), rotAngle);
-}
-
-void Box2DPhysicsComponent::SetEnabled(bool value)
-{
-	PhysicsComponent::SetEnabled(value);
-	body->SetActive(value);
 }
 
 b2Body* Box2DPhysicsComponent::GetBody() const

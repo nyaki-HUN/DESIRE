@@ -15,6 +15,9 @@ public:
 	Box2DPhysicsComponent(Object& object);
 	~Box2DPhysicsComponent();
 
+	void SetEnabled(bool value) override;
+	void CloneTo(Object& otherObject) const override;
+
 	// Collision
 	void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer) override;
 
@@ -62,8 +65,6 @@ public:
 
 	void UpdateGameObjectTransform() const override;
 	void SetTransformFromGameObject() override;
-
-	void SetEnabled(bool value) override;
 
 	b2Body* GetBody() const;
 

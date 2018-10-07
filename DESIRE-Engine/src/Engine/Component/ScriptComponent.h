@@ -22,6 +22,8 @@ public:
 
 	~ScriptComponent() override;
 
+	virtual void CloneTo(Object& otherObject) const override;
+
 	// Call a built-in function (this is usually faster as the function pointer is cached)
 	virtual void CallByType(EBuiltinFuncType funcType) = 0;
 

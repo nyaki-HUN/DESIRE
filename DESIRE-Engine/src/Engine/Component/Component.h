@@ -26,6 +26,7 @@ public:
 	virtual void SetEnabled(bool value);
 	bool IsEnabled() const;
 
+	virtual void CloneTo(Object& otherObject) const = 0;
 	virtual int GetTypeID() const = 0;
 
 	inline Object& GetObject() const

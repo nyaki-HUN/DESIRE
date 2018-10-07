@@ -13,3 +13,8 @@ ScriptComponent::~ScriptComponent()
 {
 	Modules::ScriptSystem->OnScriptComponentDestroyed(this);
 }
+
+void ScriptComponent::CloneTo(Object& otherObject) const
+{
+//	Modules::ScriptSystem->CreateScriptComponentOnObject(otherObject, );
+}

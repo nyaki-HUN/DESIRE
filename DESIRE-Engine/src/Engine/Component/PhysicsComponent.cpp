@@ -16,6 +16,19 @@ PhysicsComponent::~PhysicsComponent()
 	Modules::Physics->OnPhysicsComponentDestroyed(this);
 }
 
+void PhysicsComponent::CloneTo(Object& otherObject) const
+{
+	PhysicsComponent& otherComponent = Modules::Physics->CreatePhysicsComponentOnObject(otherObject);
+	otherComponent.SetCollisionLayer(GetCollisionLayer());
+	otherComponent.SetCollisionDetectionMode(GetCollisionDetectionMode());
+	otherComponent.physicsMaterial = GetPhysicsMaterial();
+	otherComponent.SetBodyType(GetBodyType());
+	otherComponent.SetTrigger(IsTrigger());
+	otherComponent.SetMass(GetMass());
+	otherComponent.SetLinearDamping(GetLinearDamping());
+	otherComponent.SetAngularDamping(GetAngularDamping());
+}
+
 void PhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
 {
 	collisionLayer = i_collisionLayer;

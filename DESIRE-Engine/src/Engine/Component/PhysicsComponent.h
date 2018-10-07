@@ -39,19 +39,21 @@ public:
 
 	~PhysicsComponent() override;
 
+	virtual void CloneTo(Object& otherObject) const override;
+
 	// Collision
 	virtual void SetCollisionLayer(EPhysicsCollisionLayer collisionLayer);
 	EPhysicsCollisionLayer GetCollisionLayer() const;
 
-	virtual ECollisionDetectionMode GetCollisionDetectionMode() const = 0;
 	virtual void SetCollisionDetectionMode(ECollisionDetectionMode mode) = 0;
+	virtual ECollisionDetectionMode GetCollisionDetectionMode() const = 0;
 
 	const PhysicsMaterial& GetPhysicsMaterial() const;
 
 	virtual std::vector<PhysicsComponent*> GetActiveCollidingComponents() const = 0;
 
+	virtual void SetBodyType(EBodyType bodyType) = 0;
 	virtual EBodyType GetBodyType() const = 0;
-	virtual void SetBodyType(EBodyType value) = 0;
 
 	virtual void SetTrigger(bool value) = 0;
 	virtual bool IsTrigger() const = 0;
