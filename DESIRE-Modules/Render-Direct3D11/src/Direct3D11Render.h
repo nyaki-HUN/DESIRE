@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/Render/Render.h"
-#include "Engine/Resource/Texture.h"
 #include "Engine/Core/STL_utils.h"
 
 #include <d3d11.h>
@@ -72,7 +71,7 @@ private:
 	void SetInputLayout();
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 
-	static DXGI_FORMAT ConvertTextureFormat(Texture::EFormat textureFormat);
+	static DXGI_FORMAT GetTextureFormat(const Texture *texture);
 
 	ID3D11Device *d3dDevice = nullptr;
 	ID3D11DeviceContext *deviceCtx = nullptr;

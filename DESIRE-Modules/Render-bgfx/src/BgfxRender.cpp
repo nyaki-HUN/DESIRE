@@ -14,6 +14,7 @@
 #include "Engine/Render/View.h"
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Resource/Shader.h"
+#include "Engine/Resource/Texture.h"
 
 #include "bgfx/platform.h"
 #include "bgfx/embedded_shader.h"
@@ -495,11 +496,11 @@ void BgfxRender::Bind(Texture *texture)
 
 	if(isRenderTarget)
 	{
-		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_RT);
+		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_RT);
 	}
 	else
 	{
-		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, ConvertTextureFormat(texture->format), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
 	}
 
 	texture->renderData = renderData;
@@ -787,21 +788,23 @@ void BgfxRender::DoRender()
 	bgfx::submit(activeViewId, shaderProgram);
 }
 
-bgfx::TextureFormat::Enum BgfxRender::ConvertTextureFormat(Texture::EFormat textureFormat)
+bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture *texture)
 {
 	const bgfx::TextureFormat::Enum conversionTable[] =
 	{
-		bgfx::TextureFormat::Unknown,		// Texture::EFormat::UNKNOWN
+		bgfx::TextureFormat::Unknown,		// Texture::EFormat::Unknown
 		bgfx::TextureFormat::R8,			// Texture::EFormat::R8
 		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8
 		bgfx::TextureFormat::RGB8,			// Texture::EFormat::RGB8
 		bgfx::TextureFormat::RGBA8,			// Texture::EFormat::RGBA8
 		bgfx::TextureFormat::RGBA32F,		// Texture::EFormat::RGBA32F
-		bgfx::TextureFormat::D24S8,			// Texture::EFormat::D24S8
+		bgfx::TextureFormat::D16,			// Texture::EFormat::D16
+		bgfx::TextureFormat::D24S8,			// Texture::EFormat::D24_S8
+		bgfx::TextureFormat::D32,			// Texture::EFormat::D32
 	};
-	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D24S8 + 1);
+	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[textureFormat];
+	return conversionTable[(size_t)texture->format];
 }
 
 void BgfxRender::BindEmbeddedShader(Shader *shader, const char *name)

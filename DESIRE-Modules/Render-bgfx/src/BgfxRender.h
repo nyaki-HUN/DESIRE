@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/Render/Render.h"
-#include "Engine/Resource/Texture.h"
 #include "Engine/Core/STL_utils.h"
 
 #include "../Externals/bgfx/include/bgfx/bgfx.h"
@@ -60,7 +59,7 @@ private:
 
 	void DoRender() override;
 
-	static bgfx::TextureFormat::Enum ConvertTextureFormat(Texture::EFormat textureFormat);
+	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture *texture);
 	static void BindEmbeddedShader(Shader *shader, const char *name);
 
 	bgfx::UniformHandle samplerUniforms[8];

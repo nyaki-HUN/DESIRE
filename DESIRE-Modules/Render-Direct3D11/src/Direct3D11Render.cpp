@@ -16,6 +16,7 @@
 #include "Engine/Render/View.h"
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Resource/Shader.h"
+#include "Engine/Resource/Texture.h"
 
 #include <d3dcompiler.h>
 
@@ -742,7 +743,7 @@ void Direct3D11Render::Bind(Texture *texture)
 	textureDesc.Height = texture->height;
 	textureDesc.MipLevels = texture->numMipMaps + 1;
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = ConvertTextureFormat(texture->format);
+	textureDesc.Format = GetTextureFormat(texture);
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	if(texture->IsDepthFormat())
@@ -833,7 +834,7 @@ void Direct3D11Render::Bind(RenderTarget *renderTarget)
 		else
 		{
 			D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
-			renderTargetViewDesc.Format = ConvertTextureFormat(texture->format);
+			renderTargetViewDesc.Format = GetTextureFormat(texture.get());
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
 			ID3D11RenderTargetView *renderTargetView = nullptr;
@@ -1409,19 +1410,21 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 	}
 }
 
-DXGI_FORMAT Direct3D11Render::ConvertTextureFormat(Texture::EFormat textureFormat)
+DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture *texture)
 {
 	const DXGI_FORMAT conversionTable[] =
 	{
-		DXGI_FORMAT_UNKNOWN,					// Texture::EFormat::UNKNOWN
+		DXGI_FORMAT_UNKNOWN,					// Texture::EFormat::Unknown
 		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
 		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
 		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
+		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
 		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
+		DXGI_FORMAT_D32_FLOAT,					// Texture::EFormat::D32
 	};
-	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D24S8 + 1);
+	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[textureFormat];
+	return conversionTable[(size_t)texture->format];
 }

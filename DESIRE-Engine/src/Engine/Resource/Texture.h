@@ -5,9 +5,9 @@
 class Texture
 {
 public:
-	enum EFormat
+	enum class EFormat
 	{
-		UNKNOWN,
+		Unknown,
 
 		R8,
 		RG8,
@@ -17,7 +17,9 @@ public:
 		RGBA32F,
 
 		// Depth buffer formats
-		D24S8
+		D16,
+		D24_S8,
+		D32
 	};
 
 	Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMipMaps = 0);

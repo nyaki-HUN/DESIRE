@@ -9,7 +9,7 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMip
 	, format(format)
 	, numMipMaps(numMipMaps)
 {
-	ASSERT(format != EFormat::UNKNOWN);
+	ASSERT(format != EFormat::Unknown);
 }
 
 Texture::~Texture()
@@ -22,5 +22,7 @@ Texture::~Texture()
 
 bool Texture::IsDepthFormat() const
 {
-	return (format == Texture::EFormat::D24S8);
+	return (format == Texture::EFormat::D16
+		||	format == Texture::EFormat::D24_S8
+		||	format == Texture::EFormat::D32);
 }
