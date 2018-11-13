@@ -3,15 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandBox", "SandBox\project\vs2017\SandBox.vcxproj", "{97C50FE7-F697-4ABD-8212-7195BB4F410F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DESIRE", "DESIRE-Engine\project\vs2017\DESIRE.vcxproj", "{74923478-6D8D-4892-A013-C2B759A870EC}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\project\vs2017\UnitTest.vcxproj", "{157414AA-AF20-4A4C-BA53-CD8CC77C4775}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-LZ4", "DESIRE-Modules\Compression-LZ4\project\vs2017\Compression-LZ4.vcxproj", "{83295281-AF7D-4CBD-B089-92DFE9016E28}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-zlib-ng", "DESIRE-Modules\Compression-zlib-ng\project\vs2017\Compression-zlib-ng.vcxproj", "{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-zstd", "DESIRE-Modules\Compression-zstd\project\vs2017\Compression-zstd.vcxproj", "{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DESIRE", "DESIRE-Engine\project\vs2017\DESIRE.vcxproj", "{74923478-6D8D-4892-A013-C2B759A870EC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Box2D", "DESIRE-Modules\Physics-Box2D\project\vs2017\Physics-Box2D.vcxproj", "{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}"
 EndProject
@@ -19,9 +17,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Bullet", "DESIRE-Mo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-PhysX", "DESIRE-Modules\Physics-PhysX\project\vs2017\Physics-PhysX.vcxproj", "{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-bgfx", "DESIRE-Modules\Render-bgfx\project\vs2017\Render-bgfx.vcxproj", "{39620121-0C61-49D9-9BF4-B67638336D45}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-Direct3D11", "DESIRE-Modules\Render-Direct3D11\project\vs2017\Render-Direct3D11.vcxproj", "{E43F8824-C03E-469C-8C0D-64F609E14E0D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-bgfx", "DESIRE-Modules\Render-bgfx\project\vs2017\Render-bgfx.vcxproj", "{39620121-0C61-49D9-9BF4-B67638336D45}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourceLoader-Assimp", "DESIRE-Modules\ResourceLoader-Assimp\project\vs2017\ResourceLoader-Assimp.vcxproj", "{19E05838-5A9C-421F-9102-F3F5A1ED488A}"
 EndProject
@@ -33,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Script-Squirrel", "DESIRE-M
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UI-imgui", "DESIRE-Modules\UI-imgui\project\vs2017\UI-imgui.vcxproj", "{9791305E-BF1B-486C-8405-CFF7B54C98FE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\project\vs2017\UnitTest.vcxproj", "{157414AA-AF20-4A4C-BA53-CD8CC77C4775}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -43,14 +43,6 @@ Global
 		{97C50FE7-F697-4ABD-8212-7195BB4F410F}.Debug|x64.Build.0 = Debug|x64
 		{97C50FE7-F697-4ABD-8212-7195BB4F410F}.Release|x64.ActiveCfg = Release|x64
 		{97C50FE7-F697-4ABD-8212-7195BB4F410F}.Release|x64.Build.0 = Release|x64
-		{74923478-6D8D-4892-A013-C2B759A870EC}.Debug|x64.ActiveCfg = Debug|x64
-		{74923478-6D8D-4892-A013-C2B759A870EC}.Debug|x64.Build.0 = Debug|x64
-		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.ActiveCfg = Release|x64
-		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.Build.0 = Release|x64
-		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Debug|x64.ActiveCfg = Debug|x64
-		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Debug|x64.Build.0 = Debug|x64
-		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Release|x64.ActiveCfg = Release|x64
-		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Release|x64.Build.0 = Release|x64
 		{83295281-AF7D-4CBD-B089-92DFE9016E28}.Debug|x64.ActiveCfg = Debug|x64
 		{83295281-AF7D-4CBD-B089-92DFE9016E28}.Debug|x64.Build.0 = Debug|x64
 		{83295281-AF7D-4CBD-B089-92DFE9016E28}.Release|x64.ActiveCfg = Release|x64
@@ -63,6 +55,10 @@ Global
 		{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}.Debug|x64.Build.0 = Debug|x64
 		{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}.Release|x64.ActiveCfg = Release|x64
 		{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}.Release|x64.Build.0 = Release|x64
+		{74923478-6D8D-4892-A013-C2B759A870EC}.Debug|x64.ActiveCfg = Debug|x64
+		{74923478-6D8D-4892-A013-C2B759A870EC}.Debug|x64.Build.0 = Debug|x64
+		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.ActiveCfg = Release|x64
+		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.Build.0 = Release|x64
 		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Debug|x64.ActiveCfg = Debug|x64
 		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Debug|x64.Build.0 = Debug|x64
 		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Release|x64.ActiveCfg = Release|x64
@@ -75,14 +71,14 @@ Global
 		{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}.Debug|x64.Build.0 = Debug|x64
 		{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}.Release|x64.ActiveCfg = Release|x64
 		{A7BB4030-6C2C-45AB-9C46-F1C3A6ACFB0F}.Release|x64.Build.0 = Release|x64
-		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.ActiveCfg = Debug|x64
-		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.Build.0 = Debug|x64
-		{39620121-0C61-49D9-9BF4-B67638336D45}.Release|x64.ActiveCfg = Release|x64
-		{39620121-0C61-49D9-9BF4-B67638336D45}.Release|x64.Build.0 = Release|x64
 		{E43F8824-C03E-469C-8C0D-64F609E14E0D}.Debug|x64.ActiveCfg = Debug|x64
 		{E43F8824-C03E-469C-8C0D-64F609E14E0D}.Debug|x64.Build.0 = Debug|x64
 		{E43F8824-C03E-469C-8C0D-64F609E14E0D}.Release|x64.ActiveCfg = Release|x64
 		{E43F8824-C03E-469C-8C0D-64F609E14E0D}.Release|x64.Build.0 = Release|x64
+		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.ActiveCfg = Debug|x64
+		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.Build.0 = Debug|x64
+		{39620121-0C61-49D9-9BF4-B67638336D45}.Release|x64.ActiveCfg = Release|x64
+		{39620121-0C61-49D9-9BF4-B67638336D45}.Release|x64.Build.0 = Release|x64
 		{19E05838-5A9C-421F-9102-F3F5A1ED488A}.Debug|x64.ActiveCfg = Debug|x64
 		{19E05838-5A9C-421F-9102-F3F5A1ED488A}.Debug|x64.Build.0 = Debug|x64
 		{19E05838-5A9C-421F-9102-F3F5A1ED488A}.Release|x64.ActiveCfg = Release|x64
@@ -103,6 +99,10 @@ Global
 		{9791305E-BF1B-486C-8405-CFF7B54C98FE}.Debug|x64.Build.0 = Debug|x64
 		{9791305E-BF1B-486C-8405-CFF7B54C98FE}.Release|x64.ActiveCfg = Release|x64
 		{9791305E-BF1B-486C-8405-CFF7B54C98FE}.Release|x64.Build.0 = Release|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Debug|x64.ActiveCfg = Debug|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Debug|x64.Build.0 = Debug|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Release|x64.ActiveCfg = Release|x64
+		{157414AA-AF20-4A4C-BA53-CD8CC77C4775}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

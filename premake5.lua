@@ -1,11 +1,12 @@
 configurations { "Debug", "Release" }
 architecture "x86_64"
 language "C++"
-cppdialect "C++14"
+cppdialect "C++17"
 characterset "MBCS"
 floatingpoint "Fast"
 rtti "Off"
 editandcontinue "Off"
+staticruntime "On"
 
 buildoptions
 {
@@ -15,7 +16,6 @@ buildoptions
 
 flags
 {
-	"StaticRuntime",
 	"MultiProcessorCompile",
 }
 
