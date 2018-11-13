@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Physics/Physics.h"
-#include "Engine/Component/PhysicsComponent.h"
+#include "Engine/Physics/PhysicsComponent.h"
 
 Physics::Physics()
 {

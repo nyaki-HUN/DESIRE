@@ -4,8 +4,8 @@
 #include "BulletVectormathExt.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Component/ScriptComponent.h"
 #include "Engine/Scene/Object.h"
+#include "Engine/Script/ScriptComponent.h"
 
 #include "btBulletDynamicsCommon.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"

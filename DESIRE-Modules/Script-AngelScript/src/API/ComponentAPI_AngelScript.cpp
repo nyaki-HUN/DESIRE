@@ -1,8 +1,8 @@
 #include "API/AngelScriptAPI.h"
 #include "AngelScriptComponent.h"
 
-#include "Engine/Component/PhysicsComponent.h"
-#include "Engine/Component/RenderComponent.h"
+#include "Engine/Physics/PhysicsComponent.h"
+#include "Engine/Render/RenderComponent.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
 

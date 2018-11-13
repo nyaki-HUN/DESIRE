@@ -141,13 +141,10 @@
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\stringbuffer.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\writer.h" />
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h" />
-    <ClInclude Include="..\..\src\Engine\Component\Component.h" />
-    <ClInclude Include="..\..\src\Engine\Component\PhysicsComponent.h" />
-    <ClInclude Include="..\..\src\Engine\Component\RenderComponent.h" />
-    <ClInclude Include="..\..\src\Engine\Component\ScriptComponent.h" />
     <ClInclude Include="..\..\src\Engine\Compression\Compression.h" />
     <ClInclude Include="..\..\src\Engine\Compression\CompressionManager.h" />
     <ClInclude Include="..\..\src\Engine\Core\Application.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Component.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h" />
@@ -211,11 +208,13 @@
     <ClInclude Include="..\..\src\Engine\Physics\ColliderShape.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Collision.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Physics.h" />
+    <ClInclude Include="..\..\src\Engine\Physics\PhysicsComponent.h" />
     <ClInclude Include="..\..\src\Engine\Physics\PhysicsMaterial.h" />
     <ClInclude Include="..\..\src\Engine\Render\Camera.h" />
     <ClInclude Include="..\..\src\Engine\Render\DebugDraw.h" />
     <ClInclude Include="..\..\src\Engine\Render\Material.h" />
     <ClInclude Include="..\..\src\Engine\Render\Render.h" />
+    <ClInclude Include="..\..\src\Engine\Render\RenderComponent.h" />
     <ClInclude Include="..\..\src\Engine\Render\RenderTarget.h" />
     <ClInclude Include="..\..\src\Engine\Render\View.h" />
     <ClInclude Include="..\..\src\Engine\Resource\Mesh.h" />
@@ -233,6 +232,7 @@
     <ClInclude Include="..\..\src\Engine\Scene\Transform.h" />
     <ClInclude Include="..\..\src\Engine\Script\IScript.h" />
     <ClInclude Include="..\..\src\Engine\Script\NativeScriptComponent.h" />
+    <ClInclude Include="..\..\src\Engine\Script\ScriptComponent.h" />
     <ClInclude Include="..\..\src\Engine\Script\ScriptSystem.h" />
     <ClInclude Include="..\..\src\Engine\Sound\SoundSystem.h" />
     <ClInclude Include="..\..\src\Engine\Utils\Enumerator.h" />
@@ -242,13 +242,10 @@
     <ClInclude Include="..\..\src\Engine\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\Engine\Component\Component.cpp" />
-    <ClCompile Include="..\..\src\Engine\Component\PhysicsComponent.cpp" />
-    <ClCompile Include="..\..\src\Engine\Component\RenderComponent.cpp" />
-    <ClCompile Include="..\..\src\Engine\Component\ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\Compression.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\CompressionManager.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Application.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Component.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp" />
@@ -284,10 +281,12 @@
     <ClCompile Include="..\..\src\Engine\Input\Mouse.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\WINDOWS\WINDOWSInput.cpp" />
     <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp" />
+    <ClCompile Include="..\..\src\Engine\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\Camera.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\DebugDraw.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\Material.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\Render.cpp" />
+    <ClCompile Include="..\..\src\Engine\Render\RenderComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\RenderTarget.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\View.cpp" />
     <ClCompile Include="..\..\src\Engine\Resource\Mesh.cpp" />
@@ -302,6 +301,7 @@
     <ClCompile Include="..\..\src\Engine\Scene\QuadTreeSceneManager.cpp" />
     <ClCompile Include="..\..\src\Engine\Scene\Transform.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\NativeScriptComponent.cpp" />
+    <ClCompile Include="..\..\src\Engine\Script\ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Sound\SoundSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp" />

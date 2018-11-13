@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Component/Component.h"
+#include "Engine/Core/Component.h"
 #include "Engine/Scene/Object.h"
 
 Component::Component(Object& object)

@@ -31,9 +31,6 @@
     <Filter Include="src\Engine">
       <UniqueIdentifier>{12A1320E-FE58-745B-6760-4DB753370F4C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Engine\Component">
-      <UniqueIdentifier>{F4772622-E006-B0EB-8925-C4E67593C091}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Engine\Compression">
       <UniqueIdentifier>{73829418-5F7C-BD6A-48E9-537B348223D7}</UniqueIdentifier>
     </Filter>
@@ -204,18 +201,6 @@
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h">
       <Filter>3rdparty\stb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Component\Component.h">
-      <Filter>src\Engine\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Component\PhysicsComponent.h">
-      <Filter>src\Engine\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Component\RenderComponent.h">
-      <Filter>src\Engine\Component</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Component\ScriptComponent.h">
-      <Filter>src\Engine\Component</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Compression\Compression.h">
       <Filter>src\Engine\Compression</Filter>
     </ClInclude>
@@ -223,6 +208,9 @@
       <Filter>src\Engine\Compression</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Application.h">
+      <Filter>src\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Component.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.h">
@@ -414,6 +402,9 @@
     <ClInclude Include="..\..\src\Engine\Physics\Physics.h">
       <Filter>src\Engine\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Physics\PhysicsComponent.h">
+      <Filter>src\Engine\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Physics\PhysicsMaterial.h">
       <Filter>src\Engine\Physics</Filter>
     </ClInclude>
@@ -427,6 +418,9 @@
       <Filter>src\Engine\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Render\Render.h">
+      <Filter>src\Engine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Render\RenderComponent.h">
       <Filter>src\Engine\Render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Render\RenderTarget.h">
@@ -480,6 +474,9 @@
     <ClInclude Include="..\..\src\Engine\Script\NativeScriptComponent.h">
       <Filter>src\Engine\Script</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Script\ScriptComponent.h">
+      <Filter>src\Engine\Script</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Script\ScriptSystem.h">
       <Filter>src\Engine\Script</Filter>
     </ClInclude>
@@ -503,18 +500,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\Engine\Component\Component.cpp">
-      <Filter>src\Engine\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Component\PhysicsComponent.cpp">
-      <Filter>src\Engine\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Component\RenderComponent.cpp">
-      <Filter>src\Engine\Component</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Component\ScriptComponent.cpp">
-      <Filter>src\Engine\Component</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Compression\Compression.cpp">
       <Filter>src\Engine\Compression</Filter>
     </ClCompile>
@@ -522,6 +507,9 @@
       <Filter>src\Engine\Compression</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Application.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Component.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.cpp">
@@ -629,6 +617,9 @@
     <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp">
       <Filter>src\Engine\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Physics\PhysicsComponent.cpp">
+      <Filter>src\Engine\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Render\Camera.cpp">
       <Filter>src\Engine\Render</Filter>
     </ClCompile>
@@ -639,6 +630,9 @@
       <Filter>src\Engine\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Render\Render.cpp">
+      <Filter>src\Engine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Render\RenderComponent.cpp">
       <Filter>src\Engine\Render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Render\RenderTarget.cpp">
@@ -681,6 +675,9 @@
       <Filter>src\Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Script\NativeScriptComponent.cpp">
+      <Filter>src\Engine\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Script\ScriptComponent.cpp">
       <Filter>src\Engine\Script</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp">

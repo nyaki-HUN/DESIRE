@@ -11,7 +11,7 @@
 #include "Engine/Resource/ResourceManager.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Script/ScriptSystem.h"
-#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Script/ScriptComponent.h"
 
 #include "UI-imgui/src/ImGuiImpl.h"
 #include "UI-imgui/Externals/imgui/imgui.h"

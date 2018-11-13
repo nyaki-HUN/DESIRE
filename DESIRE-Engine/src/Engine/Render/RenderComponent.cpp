@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Component/RenderComponent.h"
+#include "Engine/Render/RenderComponent.h"
 
 RenderComponent::RenderComponent(Object& object)
 	: Component(object)

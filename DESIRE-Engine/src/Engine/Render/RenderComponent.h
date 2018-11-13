@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Component/Component.h"
+#include "Engine/Core/Component.h"
 
 class Mesh;
 class Material;

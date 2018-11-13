@@ -5,9 +5,9 @@
 #include "RaycastCallbacks.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Component/PhysicsComponent.h"
-#include "Engine/Component/ScriptComponent.h"
+#include "Engine/Physics/PhysicsComponent.h"
 #include "Engine/Scene/Object.h"
+#include "Engine/Script/ScriptComponent.h"
 
 #include "Box2D/Dynamics/b2World.h"
 #include "Box2D/Dynamics/Contacts/b2Contact.h"

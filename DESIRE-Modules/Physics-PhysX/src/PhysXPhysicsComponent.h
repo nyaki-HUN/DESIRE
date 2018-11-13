@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Component/PhysicsComponent.h"
+#include "Engine/Physics/PhysicsComponent.h"
 
 namespace physx
 {

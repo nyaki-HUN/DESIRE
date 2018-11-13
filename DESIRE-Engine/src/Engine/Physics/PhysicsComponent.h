@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Component/Component.h"
+#include "Engine/Core/Component.h"
 #include "Engine/Core/math/Vector3.h"
 #include "Engine/Physics/PhysicsMaterial.h"
 
