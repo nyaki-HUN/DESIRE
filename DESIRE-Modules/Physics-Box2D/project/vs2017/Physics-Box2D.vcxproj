@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Dynamics\b2WorldCallbacks.h" />
     <ClInclude Include="..\..\Externals\Box2D\Box2D\Rope\b2Rope.h" />
     <ClInclude Include="..\..\src\Box2DColliderShape.h" />
+    <ClInclude Include="..\..\src\Box2DGlobalSettings.h" />
     <ClInclude Include="..\..\src\Box2DPhysics.h" />
     <ClInclude Include="..\..\src\Box2DPhysicsComponent.h" />
     <ClInclude Include="..\..\src\ContactListener.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="..\..\Externals\Box2D\Box2D\Dynamics\b2World.cpp" />
     <ClCompile Include="..\..\Externals\Box2D\Box2D\Dynamics\b2WorldCallbacks.cpp" />
     <ClCompile Include="..\..\Externals\Box2D\Box2D\Rope\b2Rope.cpp" />
+    <ClCompile Include="..\..\src\Box2DGlobalSettings.cpp" />
     <ClCompile Include="..\..\src\Box2DPhysics.cpp" />
     <ClCompile Include="..\..\src\Box2DPhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\ContactListener.cpp" />

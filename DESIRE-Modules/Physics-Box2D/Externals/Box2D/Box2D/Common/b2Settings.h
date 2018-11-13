@@ -69,11 +69,11 @@ typedef double float64;
 
 /// A small length used as a collision and constraint tolerance. Usually it is
 /// chosen to be numerically significant, but visually insignificant.
-#define b2_linearSlop			0.005f
+extern float b2_linearSlop;
 
 /// A small angle used as a collision and constraint tolerance. Usually it is
 /// chosen to be numerically significant, but visually insignificant.
-#define b2_angularSlop			(2.0f / 180.0f * b2_pi)
+extern float b2_angularSlop;
 
 /// The radius of the polygon/edge shape skin. This should not be modified. Making
 /// this smaller means polygons will have an insufficient buffer for continuous collision.
@@ -91,15 +91,15 @@ typedef double float64;
 
 /// A velocity threshold for elastic collisions. Any collision with a relative linear
 /// velocity below this threshold will be treated as inelastic.
-#define b2_velocityThreshold		1.0f
+extern float b2_velocityThreshold;
 
 /// The maximum linear position correction used when solving constraints. This helps to
 /// prevent overshoot.
-#define b2_maxLinearCorrection		0.2f
+extern float b2_maxLinearCorrection;
 
 /// The maximum angular position correction used when solving constraints. This helps to
 /// prevent overshoot.
-#define b2_maxAngularCorrection		(8.0f / 180.0f * b2_pi)
+extern float b2_maxAngularCorrection;
 
 /// The maximum linear velocity of a body. This limit is very large and is used
 /// to prevent numerical problems. You shouldn't need to adjust this.
@@ -114,20 +114,20 @@ typedef double float64;
 /// This scale factor controls how fast overlap is resolved. Ideally this would be 1 so
 /// that overlap is removed in one time step. However using values close to 1 often lead
 /// to overshoot.
-#define b2_baumgarte				0.2f
-#define b2_toiBaugarte				0.75f
+extern float b2_baumgarte;
+extern float b2_toiBaugarte;
 
 
 // Sleep
 
 /// The time that a body must be still before it will go to sleep.
-#define b2_timeToSleep				0.5f
+extern float b2_timeToSleep;
 
 /// A body cannot sleep if its linear velocity is above this tolerance.
-#define b2_linearSleepTolerance		0.01f
+extern float b2_linearSleepTolerance;
 
 /// A body cannot sleep if its angular velocity is above this tolerance.
-#define b2_angularSleepTolerance	(2.0f / 180.0f * b2_pi)
+extern float b2_angularSleepTolerance;
 
 // Memory Allocation
 

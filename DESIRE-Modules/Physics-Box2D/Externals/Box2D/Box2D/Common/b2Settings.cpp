@@ -21,6 +21,20 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+// Collision
+float b2_linearSlop				= 0.005f;
+float b2_angularSlop			= (2.0f / 180.0f * b2_pi);
+// Dynamics
+float b2_velocityThreshold		= 1.0f;
+float b2_maxLinearCorrection	= 0.2f;
+float b2_maxAngularCorrection	= (8.0f / 180.0f * b2_pi);
+float b2_baumgarte				= 0.2f;
+float b2_toiBaugarte			= 0.75f;
+// Sleep
+float b2_timeToSleep			= 0.5f;
+float b2_linearSleepTolerance	= 0.01f;
+float b2_angularSleepTolerance	= (2.0f / 180.0f * b2_pi);
+
 b2Version b2_version = {2, 3, 2};
 
 // Memory allocators. Modify these to use your own allocator.

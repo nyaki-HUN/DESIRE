@@ -183,6 +183,9 @@
     <ClInclude Include="..\..\src\Box2DColliderShape.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Box2DGlobalSettings.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Box2DPhysics.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -358,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Externals\Box2D\Box2D\Rope\b2Rope.cpp">
       <Filter>Externals\Box2D\Box2D\Rope</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Box2DGlobalSettings.cpp">
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Box2DPhysics.cpp">
       <Filter>src</Filter>
