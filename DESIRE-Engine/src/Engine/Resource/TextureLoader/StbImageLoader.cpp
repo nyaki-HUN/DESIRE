@@ -30,7 +30,7 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 	};
 
 	void *data = nullptr;
-	Texture::EFormat format = Texture::EFormat::UNKNOWN;
+	Texture::EFormat format = Texture::EFormat::Unknown;
 
 	int width = 0;
 	int height = 0;
@@ -55,7 +55,7 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 		}
 	}
 
-	if(format == Texture::EFormat::UNKNOWN ||
+	if(format == Texture::EFormat::Unknown ||
 		width <= 0 || width > UINT16_MAX ||
 		height <= 0 || height > UINT16_MAX)
 	{
