@@ -35,10 +35,10 @@ public:
 	// Removes and destroys a component
 	void RemoveComponent(const Component *component);
 
-	// Get the first component with the given typeID
+	// Get the component with the given typeID
 	Component* GetComponentByTypeID(int typeID) const;
 
-	// Get the first component with the given template type
+	// Get the component with the given template type
 	template<class T>
 	T* GetComponent() const
 	{
