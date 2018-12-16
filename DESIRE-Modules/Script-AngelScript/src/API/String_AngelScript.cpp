@@ -44,11 +44,12 @@ void RegisterString_AngelScript(asIScriptEngine *engine, asIStringFactory *strin
 	result = engine->RegisterObjectMethod("String", "String& opAddAssign(int64)", asMETHODPR(String, operator +=, (int64_t), String&), asCALL_THISCALL);												ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "String& opAddAssign(uint64)", asMETHODPR(String, operator +=, (uint64_t), String&), asCALL_THISCALL);												ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "String& opAddAssign(float)", asMETHODPR(String, operator +=, (float), String&), asCALL_THISCALL);													ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("String", "int opCmp(const String &in) const", asMETHODPR(String, Compare, (const String&) const, int), asCALL_THISCALL);										ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "int Compare(const String &in) const", asMETHODPR(String, Compare, (const String&) const, int), asCALL_THISCALL);									ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "int CompareIgnoreCase(const String &in) const", asMETHODPR(String, CompareIgnoreCase, (const String&) const, int), asCALL_THISCALL);				ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "bool Equals(const String &in) const", asMETHODPR(String, Equals, (const String&) const, bool), asCALL_THISCALL);									ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "bool EqualsIgnoreCase(const String &in) const", asMETHODPR(String, EqualsIgnoreCase, (const String&) const, bool), asCALL_THISCALL);				ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("String", "bool opEquals(const String &in) const", asMETHODPR(String, operator ==, (const String&) const, bool), asCALL_THISCALL);							ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("String", "int opCmp(const String &in) const", asMETHODPR(String, Compare, (const String&) const, int), asCALL_THISCALL);										ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "bool StartsWith(const String &in) const", asMETHODPR(String, StartsWith, (const String&) const, bool), asCALL_THISCALL);							ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("String", "bool EndsWith(const String &in) const", asMETHODPR(String, EndsWith, (const String&) const, bool), asCALL_THISCALL);								ASSERT(result >= asSUCCESS);
 

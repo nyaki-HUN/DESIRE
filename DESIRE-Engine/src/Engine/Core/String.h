@@ -129,14 +129,9 @@ public:
 	int CompareIgnoreCase(const String& string) const;
 	int CompareIgnoreCase(const char *str) const;
 
-	inline bool operator <(const String& string) const
-	{
-		return Compare(string) < 0;
-	}
-
 	inline bool Equals(const String& string) const
 	{
-		return (Compare(string.data) == 0);
+		return (Compare(string) == 0);
 	}
 	inline bool Equals(const char *str) const
 	{
@@ -145,11 +140,26 @@ public:
 
 	inline bool EqualsIgnoreCase(const String& string) const
 	{
-		return (CompareIgnoreCase(string.data) == 0);
+		return (CompareIgnoreCase(string) == 0);
 	}
 	inline bool EqualsIgnoreCase(const char *str) const
 	{
 		return (CompareIgnoreCase(str) == 0);
+	}
+
+	inline bool operator ==(const String &string) const
+	{
+		return (Compare(string) == 0);
+	}
+
+	inline bool operator !=(const String &string) const
+	{
+		return (Compare(string) != 0);
+	}
+
+	inline bool operator <(const String& string) const
+	{
+		return Compare(string) < 0;
 	}
 
 	// Check if the string begins with the given prefix

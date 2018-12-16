@@ -135,7 +135,7 @@ void ResourceManager::ReloadShader(const String& filename)
 	for(auto& pair : loadedShaders)
 	{
 		std::shared_ptr<Shader> shader = pair.second.lock();
-		if(shader != nullptr && shader->name.Equals(filename))
+		if(shader != nullptr && shader->name == filename)
 		{
 			std::shared_ptr<Shader> newShader = LoadShader(filename);
 			if(newShader != nullptr)
