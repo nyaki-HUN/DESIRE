@@ -1,4 +1,5 @@
-#include "Core/IOS/IOSLoggerPolicies.h"
+#include "stdafx.h"
+#include "Engine/Core/IOS/IOSLoggerPolicies.h"
 
 #import <Foundation/Foundation.h>
 

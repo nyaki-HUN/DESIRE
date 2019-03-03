@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "Core/ANDROID/ANDROIDWindow.h"
-#include "Core/IApp.h"
-#include "Core/EAppEventType.h"
+#include "Engine/Core/ANDROID/ANDROIDWindow.h"
+#include "Engine/Core/IApp.h"
+#include "Engine/Core/EAppEventType.h"
 
 #include <android_native_app_glue.h>
 

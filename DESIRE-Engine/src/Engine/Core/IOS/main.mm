@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #import <UIKit/UIKit.h>
 
 #if defined(DESIRE_DISTRIBUTION)

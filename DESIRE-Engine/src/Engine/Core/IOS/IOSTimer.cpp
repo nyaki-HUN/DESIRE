@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Core/Timer.h"
 
 #include <mach/mach_time.h>

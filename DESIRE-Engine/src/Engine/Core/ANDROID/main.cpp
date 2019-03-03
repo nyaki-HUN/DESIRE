@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "Core/Application.h"
-#include "Core/ANDROID/ANDROIDWindow.h"
+#include "Engine/Core/Application.h"
+#include "Engine/Core/ANDROID/ANDROIDWindow.h"
 
 #include <android_native_app_glue.h>
 

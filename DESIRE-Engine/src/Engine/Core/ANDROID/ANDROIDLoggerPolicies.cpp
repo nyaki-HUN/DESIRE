@@ -1,4 +1,5 @@
-#include "Core/ANDROID/ANDROIDLoggerPolicies.h"
+#include "stdafx.h"
+#include "Engine/Core/ANDROID/ANDROIDLoggerPolicies.h"
 
 #include <android/log.h>
 
