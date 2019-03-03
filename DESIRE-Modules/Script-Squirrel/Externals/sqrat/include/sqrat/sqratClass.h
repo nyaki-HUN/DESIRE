@@ -94,7 +94,7 @@ public:
 				sq_push(v, -2);
 				sq_rawset(v, -4);
 			}
-			sq_pushstring(v, className.c_str(), -1);
+			sq_pushstring(v, className.Str(), -1);
 			ClassData<C>** ud = reinterpret_cast<ClassData<C>**>(sq_newuserdata(v, sizeof(ClassData<C>*)));
 			*ud = new ClassData<C>;
 			sq_setreleasehook(v, -1, &cleanup_hook);
@@ -445,7 +445,7 @@ protected:
 
 	static SQInteger ClassTypeof(HSQUIRRELVM vm)
 	{
-		sq_pushstring(vm, ClassType<C>::ClassName().c_str(), -1);
+		sq_pushstring(vm, ClassType<C>::ClassName().Str(), -1);
 		return 1;
 	}
 
@@ -559,7 +559,7 @@ protected:
 		if(name == 0)
 			name = _SC("constructor");
 		else alternative_global = true;
-		String overloadName = SqOverloadName::Get(name, nParams);
+		DynamicString overloadName = SqOverloadName::Get(name, nParams);
 
 		if(!alternative_global)
 		{
@@ -579,7 +579,7 @@ protected:
 		sq_newslot(vm, -3, false);
 
 		// Bind overloaded allocator function
-		sq_pushstring(vm, overloadName.c_str(), -1);
+		sq_pushstring(vm, overloadName.Str(), -1);
 		sq_newclosure(vm, method, 0);
 		sq_setparamscheck(vm, nParams + 1, NULL);
 		sq_newslot(vm, -3, false);

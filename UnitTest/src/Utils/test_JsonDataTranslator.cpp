@@ -6,11 +6,11 @@ struct TestData
 	int testInt;
 	float testFloat;
 	bool testBool;
-	String testString;
+	DynamicString testString;
 
 	std::vector<int> testIntArray;
 	std::vector<float> testFloatArray;
-	std::vector<String> testStringArray;
+	std::vector<DynamicString> testStringArray;
 };
 
 TEST_CASE("JsonDataTranslator", "[Utils]")

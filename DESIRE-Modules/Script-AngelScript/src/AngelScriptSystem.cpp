@@ -6,7 +6,8 @@
 #include "Engine/Core/Log.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/IReadFile.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
+#include "Engine/Core/StackString.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Utils/Enumerator.h"
 
@@ -114,17 +115,17 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 
 asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScriptEngine *engine)
 {
-	char filename[DESIRE_MAX_PATH_LEN];
-	snprintf(filename, sizeof(filename), "data/scripts/%s.as", scriptName);
+	StackString< DESIRE_MAX_PATH_LEN> filename;
+	filename.Format("data/scripts/%s.as", scriptName);
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{
-		LOG_ERROR("Could not load script: %s", filename);
+		LOG_ERROR("Could not load script: %s", filename.Str());
 		return nullptr;
 	}
 
 	MemoryBuffer content = file->ReadFileContent();
-	String scriptSrc = String::CreateFormattedString(
+	DynamicString scriptSrc = DynamicString::CreateFormattedString(
 		"class %s"
 		"{"
 		"	ScriptComponent @self;"
@@ -134,18 +135,18 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 	scriptSrc += "}";
 
 	asIScriptModule *module = engine->GetModule(scriptName, asGM_ALWAYS_CREATE);
-	module->AddScriptSection(scriptName, scriptSrc.c_str(), scriptSrc.Length());
+	module->AddScriptSection(scriptName, scriptSrc.Str(), scriptSrc.Length());
 	int result = module->Build();
 	if(result != asSUCCESS)
 	{
-		LOG_ERROR("Could not compile script: %s", filename);
+		LOG_ERROR("Could not compile script: %s", filename.Str());
 		return module;
 	}
 
 	asITypeInfo *typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName));
 	
 	// Cache factory in the script module
-	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(String::CreateFormattedString("%s@ %s(ScriptComponent @)", scriptName, scriptName).c_str());
+	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(String::CreateFormattedString("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
 	module->SetUserData(factoryFunc);
 	
 	// Cache built-in functions in the object type
@@ -191,7 +192,7 @@ bool AngelScriptSystem::IsBreakpoint(const char *scriptSection, int line, asIScr
 
 void AngelScriptSystem::PrintCallback(const String& message)
 {
-	LOG_MESSAGE("%s", message.c_str());
+	LOG_MESSAGE("%s", message.Str());
 }
 
 void AngelScriptSystem::MessageCallback(const asSMessageInfo *msg, void *thisPtr)

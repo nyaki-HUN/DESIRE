@@ -13,7 +13,7 @@ void ConsoleOutputPolicy::Process(const Log::LogData& logData)
 
 FileOutputPolicy::FileOutputPolicy()
 {
-	logFile = FileSystem::Get()->CreateWriteFile(String("log.txt"));
+	logFile = FileSystem::Get()->CreateWriteFile("log.txt");
 	ASSERT(logFile != nullptr);
 }
 

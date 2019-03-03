@@ -297,7 +297,7 @@ public:
 	static SQInteger New(HSQUIRRELVM vm)
 	{
 #if !defined(SCRAT_NO_ERROR_CHECKING)
-		return sq_throwerror(vm, (ClassType<C>::ClassName() + " constructing is not allowed").c_str());
+		return sq_throwerror(vm, (ClassType<C>::ClassName() + " constructing is not allowed").Str());
 #else
 		DESIRE_UNUSED(vm);
 		return 0;
@@ -316,7 +316,7 @@ public:
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	static SQInteger Copy(HSQUIRRELVM vm, SQInteger /*idx*/, const void* /*value*/)
 	{
-		return sq_throwerror(vm, (ClassType<C>::ClassName() + " cloning is not allowed").c_str());
+		return sq_throwerror(vm, (ClassType<C>::ClassName() + " cloning is not allowed").Str());
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -50,7 +50,7 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric *gen)
 		return;
 	}
 
-	if(scriptComp->PrepareFunctionCall(functionName->c_str()))
+	if(scriptComp->PrepareFunctionCall(functionName->Str()))
 	{
 		// Set the args
 		for(asUINT i = 1; i < (asUINT)gen->GetArgCount(); ++i)
@@ -103,7 +103,7 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric *gen)
 
 			if(result != asSUCCESS)
 			{
-				LOG_ERROR("Failed to set arg%u for function: %s", scriptComp->numFunctionCallArgs, functionName->c_str());
+				LOG_ERROR("Failed to set arg%u for function: %s", scriptComp->numFunctionCallArgs, functionName->Str());
 			}
 
 			scriptComp->numFunctionCallArgs++;

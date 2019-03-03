@@ -34,7 +34,7 @@
 
 #include "squirrel.h"
 
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include <string.h>
 
@@ -104,16 +104,16 @@ public:
 		sq_pushstring(vm, "__error", -1);
 		if(SQ_SUCCEEDED(sq_rawget(vm, -2)))
 		{
-			static String errorMessage;
+			static DynamicString errorMessage;
 
-			String **ud = nullptr;
+			DynamicString **ud = nullptr;
 			sq_getuserdata(vm, -1, (SQUserPointer*)&ud, nullptr);
 			sq_pop(vm, 1);
 			errorMessage = **ud;
 			sq_pushstring(vm, "__error", -1);
 			sq_rawdeleteslot(vm, -2, false);
 			sq_pop(vm, 1);
-			return errorMessage.c_str();
+			return errorMessage.Str();
 		}
 		sq_pushstring(vm, "__error", -1);
 		sq_rawdeleteslot(vm, -2, false);
@@ -154,7 +154,7 @@ public:
 	/// \param err A nice error message
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void Throw(HSQUIRRELVM vm, const String& err)
+	static void Throw(HSQUIRRELVM vm, const DynamicString& err)
 	{
 #if !defined(SCRAT_NO_ERROR_CHECKING)
 		sq_pushregistrytable(vm);
@@ -162,8 +162,8 @@ public:
 		if(SQ_FAILED(sq_rawget(vm, -2)))
 		{
 			sq_pushstring(vm, "__error", -1);
-			String** ud = reinterpret_cast<String**>(sq_newuserdata(vm, sizeof(String*)));
-			*ud = new String(err);
+			DynamicString** ud = reinterpret_cast<DynamicString**>(sq_newuserdata(vm, sizeof(DynamicString*)));
+			*ud = new DynamicString(err);
 			sq_setreleasehook(vm, -1, &error_cleanup_hook);
 			sq_rawset(vm, -3);
 			sq_pop(vm, 1);
@@ -194,9 +194,9 @@ private:
 /// \return String containing a nice type error message
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline String FormatTypeError(HSQUIRRELVM vm, SQInteger idx, const String& expectedType)
+inline DynamicString FormatTypeError(HSQUIRRELVM vm, SQInteger idx, const DynamicString& expectedType)
 {
-	String err;
+	DynamicString err;
 #if !defined(SCRAT_NO_ERROR_CHECKING)
 	const SQChar *actualType = "unknown";
 	if(SQ_SUCCEEDED(sq_typeof(vm, idx)))
@@ -205,7 +205,7 @@ inline String FormatTypeError(HSQUIRRELVM vm, SQInteger idx, const String& expec
 		sq_getstring(vm, -1, &actualType);
 		sq_pop(vm, 2);
 	}
-	err = String::CreateFormattedString("wrong type (%s expected, got %s)", expectedType.c_str(), actualType);
+	err = DynamicString::CreateFormattedString("wrong type (%s expected, got %s)", expectedType.Str(), actualType);
 #endif
 	return err;
 }
@@ -218,19 +218,19 @@ inline String FormatTypeError(HSQUIRRELVM vm, SQInteger idx, const String& expec
 /// \return String containing a nice error message
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline String LastErrorString(HSQUIRRELVM vm)
+inline DynamicString LastErrorString(HSQUIRRELVM vm)
 {
 	const SQChar* sqErr;
 	sq_getlasterror(vm);
 	if(sq_gettype(vm, -1) == OT_NULL)
 	{
 		sq_pop(vm, 1);
-		return String();
+		return DynamicString();
 	}
 	sq_tostring(vm, -1);
 	sq_getstring(vm, -1, &sqErr);
 	sq_pop(vm, 2);
-	return String(sqErr, strlen(sqErr));
+	return DynamicString(sqErr, strlen(sqErr));
 }
 
 }

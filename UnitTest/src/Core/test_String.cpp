@@ -14,36 +14,36 @@ TEST_CASE("String", "[Core]")
 	SECTION("Constructors | Equals()")
 	{
 		String stringEmpty;
-		CHECK(strcmp(stringEmpty.c_str(), "") == 0);
+		CHECK(strcmp(stringEmpty.Str(), "") == 0);
 		CHECK(stringEmpty.Equals(""));
 
 		// From char sequence
-		CHECK(strcmp(string.c_str(), charSeq) == 0);
-		CHECK(strcmp(bigString.c_str(), charSeq2) == 0);
+		CHECK(strcmp(string.Str(), charSeq) == 0);
+		CHECK(strcmp(bigString.Str(), charSeq2) == 0);
 		CHECK(string.Equals(charSeq));
 		CHECK(bigString.Equals(charSeq2));
 
 		// From char sequence with size
 		String s(charSeq, 3);
 		String s2(charSeq2, 34);
-		CHECK(strcmp(s.c_str(), "Str") == 0);
-		CHECK(strcmp(s2.c_str(), "String1234567890 QWE1234567890 asd") == 0);
+		CHECK(strcmp(s.Str(), "Str") == 0);
+		CHECK(strcmp(s2.Str(), "String1234567890 QWE1234567890 asd") == 0);
 		CHECK(s.Equals("Str"));
 		CHECK(s2.Equals("String1234567890 QWE1234567890 asd"));
 
 		// Copy constructor
 		String stringCopyConstructed = string;
 		String bigStringCopyConstructed = bigString;
-		CHECK(strcmp(stringCopyConstructed.c_str(), charSeq) == 0);
-		CHECK(strcmp(bigStringCopyConstructed.c_str(), charSeq2) == 0);
+		CHECK(strcmp(stringCopyConstructed.Str(), charSeq) == 0);
+		CHECK(strcmp(bigStringCopyConstructed.Str(), charSeq2) == 0);
 		CHECK(stringCopyConstructed.Equals(charSeq));
 		CHECK(bigStringCopyConstructed.Equals(charSeq2));
 
 		// Move constructor
 		String stringMoveConstructed = std::move(string);
 		String bigStringMoveConstructed = std::move(bigString);
-		CHECK(strcmp(stringMoveConstructed.c_str(), charSeq) == 0);
-		CHECK(strcmp(bigStringMoveConstructed.c_str(), charSeq2) == 0);
+		CHECK(strcmp(stringMoveConstructed.Str(), charSeq) == 0);
+		CHECK(strcmp(bigStringMoveConstructed.Str(), charSeq2) == 0);
 		CHECK(stringMoveConstructed.Equals(charSeq));
 		CHECK(bigStringMoveConstructed.Equals(charSeq2));
 	}
@@ -97,7 +97,7 @@ TEST_CASE("String", "[Core]")
 		String trimString = "  A SD ";
 		trimString.Trim();
 		trimString += "123";
-		CHECK(strcmp(trimString.c_str(), "A SD123") == 0);
+		CHECK(strcmp(trimString.Str(), "A SD123") == 0);
 
 		trimString = " \r\n \t ASD\t \r\n \t";
 		trimString.Trim();
@@ -173,11 +173,11 @@ TEST_CASE("String", "[Core]")
 	SECTION("RemoveFromEnd()")
 	{
 		string.RemoveFromEnd(4);
-		CHECK(strcmp(string.c_str(), "String") == 0);
+		CHECK(strcmp(string.Str(), "String") == 0);
 
 		string = charSeq;
 		string.RemoveFromEnd(100);
-		CHECK(strcmp(string.c_str(), "") == 0);
+		CHECK(strcmp(string.Str(), "") == 0);
 	}
 
 	SECTION("Find()")
@@ -278,11 +278,11 @@ TEST_CASE("String", "[Core]")
 	{
 		String s("XXX");
 
-		CHECK(strcmp(string.c_str(), bigString.c_str()) == string.Compare(bigString));
-		CHECK(strcmp(bigString.c_str(), s.c_str()) == bigString.Compare(s));
+		CHECK(strcmp(string.Str(), bigString.Str()) == string.Compare(bigString));
+		CHECK(strcmp(bigString.Str(), s.Str()) == bigString.Compare(s));
 
-		CHECK(strcmp(s.c_str(), "XXX") == s.Compare("XXX"));
-		CHECK(strcmp(bigString.c_str(), "XXX") == bigString.Compare("XXX"));
+		CHECK(strcmp(s.Str(), "XXX") == s.Compare("XXX"));
+		CHECK(strcmp(bigString.Str(), "XXX") == bigString.Compare("XXX"));
 
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase(String("xXx")));
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase("xXx"));
@@ -313,13 +313,5 @@ TEST_CASE("String", "[Core]")
 		CHECK(string.Equals(charSeq2));
 		string = String::CreateFormattedString("no args");
 		CHECK(string.Equals("no args"));
-	}
-
-	SECTION("CreateFromInt()")
-	{
-		string = String::CreateFromInt(123);
-		CHECK(string.Equals("123"));
-		string = String::CreateFromInt(-2001);
-		CHECK(string.Equals("-2001"));
 	}
 }

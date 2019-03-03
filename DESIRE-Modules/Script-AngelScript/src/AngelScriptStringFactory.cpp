@@ -63,7 +63,7 @@ int AngelScriptStringFactory::GetRawStringData(const void *str, char *data, asUI
 
 	if(data != nullptr)
 	{
-		memcpy(data, string.c_str(), string.Length());
+		memcpy(data, string.Str(), string.Length());
 	}
 
 	if(length != nullptr)

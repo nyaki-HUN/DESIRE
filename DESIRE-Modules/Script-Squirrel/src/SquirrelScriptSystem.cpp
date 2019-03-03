@@ -5,7 +5,8 @@
 #include "Engine/Core/Log.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/IReadFile.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
+#include "Engine/Core/StackString.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Utils/Enumerator.h"
 
@@ -116,17 +117,17 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 
 void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
 {
-	char filename[DESIRE_MAX_PATH_LEN];
-	snprintf(filename, sizeof(filename), "data/scripts/%s.nut", scriptName);
+	StackString< DESIRE_MAX_PATH_LEN> filename;
+	filename.Format("data/scripts/%s.nut", scriptName);
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{
-		LOG_ERROR("Could not load script: %s", filename);
+		LOG_ERROR("Could not load script: %s", filename.Str());
 		return;
 	}
 
 	MemoryBuffer content = file->ReadFileContent();
-	String scriptSrc = String::CreateFormattedString(
+	DynamicString scriptSrc = DynamicString::CreateFormattedString(
 		"class %s"
 		"{"
 		"	self = null;"
@@ -135,10 +136,10 @@ void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
 	scriptSrc.Append(content.data, content.size);
 	scriptSrc += "}";
 
-	SQRESULT result = sq_compilebuffer(vm, scriptSrc.c_str(), (SQInteger)scriptSrc.Length(), scriptName, SQTrue);
+	SQRESULT result = sq_compilebuffer(vm, scriptSrc.Str(), (SQInteger)scriptSrc.Length(), scriptName, SQTrue);
 	if(SQ_FAILED(result))
 	{
-		LOG_ERROR("Could not compile script: %s", filename);
+		LOG_ERROR("Could not compile script: %s", filename.Str());
 		return;
 	}
 

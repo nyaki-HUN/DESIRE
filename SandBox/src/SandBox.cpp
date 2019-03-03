@@ -56,8 +56,7 @@ void SandBox::Init()
 
 		scriptComp->Call("Function1");
 		scriptComp->Call("Function2", 12.3f, 100);
-		String stringValue = "TEST";
-		scriptComp->Call("Function3", stringValue);
+		scriptComp->Call("Function3", String("TEST"));
 	}
 
 	//////////
@@ -103,7 +102,7 @@ void SandBox::Init()
 			case FileSystemWatcher::EAction::Deleted:	strAction = "deleted"; break;
 			case FileSystemWatcher::EAction::Modified:	strAction = "modified"; break;
 		}
-		LOG_MESSAGE("%s %s", filename.c_str(), strAction);
+		LOG_MESSAGE("%s %s", filename.Str(), strAction);
 	});
 
 	//////////

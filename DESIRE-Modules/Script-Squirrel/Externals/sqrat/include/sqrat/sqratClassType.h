@@ -51,7 +51,7 @@ struct AbstractStaticClassData {
     virtual ~AbstractStaticClassData() {}
     virtual SQUserPointer Cast(SQUserPointer ptr, SQUserPointer classType) = 0;
     AbstractStaticClassData* baseClass;
-    String                   className;
+    DynamicString            className;
     COPYFUNC                 copyFunc;
 };
 
@@ -90,7 +90,7 @@ public:
 #else
         sq_rawget(vm, -2);
 #endif
-        sq_pushstring(vm, ClassName().c_str(), -1);
+        sq_pushstring(vm, ClassName().Str(), -1);
 #ifndef NDEBUG
         r = sq_rawget(vm, -2);
         assert(SQ_SUCCEEDED(r)); // fails if getClassData is called when the data does not exist for the given VM yet (bind the class)
@@ -113,7 +113,7 @@ public:
             sq_pushregistrytable(vm);
             sq_pushstring(vm, "__classes", -1);
             if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
-                sq_pushstring(vm, ClassName().c_str(), -1);
+                sq_pushstring(vm, ClassName().Str(), -1);
                 if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
                     sq_pop(vm, 3);
                     return true;

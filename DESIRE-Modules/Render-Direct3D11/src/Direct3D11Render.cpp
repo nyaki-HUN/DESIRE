@@ -248,9 +248,9 @@ void Direct3D11Render::Kill()
 	DX_RELEASE(backBufferRenderTargetView);
 }
 
-String Direct3D11Render::GetShaderFilenameWithPath(const String& shaderFilename) const
+DynamicString Direct3D11Render::GetShaderFilenameWithPath(const String& shaderFilename) const
 {
-	String filenameWithPath = "data/shaders/hlsl/";
+	DynamicString filenameWithPath = "data/shaders/hlsl/";
 	filenameWithPath += shaderFilename;
 	filenameWithPath += ".hlsl";
 	return filenameWithPath;
@@ -614,7 +614,7 @@ void Direct3D11Render::Bind(Shader *shader)
 	D3D_SHADER_MACRO *definePtr = &defines[0];
 	for(const String& define : shader->defines)
 	{
-		definePtr->Name = define.c_str();
+		definePtr->Name = define.Str();
 		definePtr->Definition = "1";
 		definePtr++;
 	}
@@ -622,7 +622,7 @@ void Direct3D11Render::Bind(Shader *shader)
 	ID3DBlob *errorBlob = nullptr;
 	HRESULT hr = D3DCompile(shader->data.data														// pSrcData
 		, shader->data.size																			// SrcDataSize
-		, (FileSystem::Get()->GetAppDirectory() + GetShaderFilenameWithPath(shader->name)).c_str()	// pSourceName
+		, (FileSystem::Get()->GetAppDirectory() + GetShaderFilenameWithPath(shader->name)).Str()	// pSourceName
 		, defines																					// pDefines
 		, D3D_COMPILE_STANDARD_FILE_INCLUDE															// pInclude
 		, "main"																					// pEntrypoint
@@ -654,7 +654,7 @@ void Direct3D11Render::Bind(Shader *shader)
 	}
 	ASSERT(SUCCEEDED(hr));
 
-	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)shader->name.Length(), shader->name.c_str());
+	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)shader->name.Length(), shader->name.Str());
 
 	ID3D11ShaderReflection *reflection = nullptr;
 	hr = D3DReflect(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize() , IID_ID3D11ShaderReflection, (void**)&reflection);

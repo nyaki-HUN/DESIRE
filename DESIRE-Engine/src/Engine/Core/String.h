@@ -9,7 +9,7 @@ public:
 	static const String emptyString;
 
 	template<size_t SIZE>
-	explicit String(const char(&str)[SIZE])
+	String(const char(&str)[SIZE])
 	{
 		data = const_cast<char*>(str);
 		size = SIZE - 1;

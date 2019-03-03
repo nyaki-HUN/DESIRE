@@ -19,7 +19,7 @@ public:
 	void UpdateRenderWindow(IWindow *window) override;
 	void Kill() override;
 
-	String GetShaderFilenameWithPath(const String& shaderFilename) const override;
+	DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const override;
 
 	void BeginFrame(IWindow *window) override;
 	void EndFrame() override;

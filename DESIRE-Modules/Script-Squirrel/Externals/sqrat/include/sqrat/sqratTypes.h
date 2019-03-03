@@ -783,9 +783,9 @@ public:
 /// Used to get and push strings to and from the stack (string is usually std::string)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<String>
+struct Var<DynamicString>
 {
-	String value; ///< The actual value of get operations
+	DynamicString value; ///< The actual value of get operations
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Attempts to get the value off the stack at idx as a string
@@ -799,7 +799,7 @@ struct Var<String>
 		const SQChar* ret;
 		sq_tostring(vm, idx);
 		sq_getstring(vm, -1, &ret);
-		value = String(ret, (size_t)sq_getsize(vm, -1));
+		value = DynamicString(ret, (size_t)sq_getsize(vm, -1));
 		sq_pop(vm, 1);
 	}
 
@@ -812,7 +812,7 @@ struct Var<String>
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	static void push(HSQUIRRELVM vm, const String& value)
 	{
-		sq_pushstring(vm, value.c_str(), (SQInteger)value.Length());
+		sq_pushstring(vm, value.Str(), (SQInteger)value.Length());
 	}
 };
 
@@ -820,9 +820,9 @@ struct Var<String>
 /// Used to get and push const string references to and from the stack as copies (strings are always copied)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<const String&>
+struct Var<const DynamicString&>
 {
-	String value; ///< The actual value of get operations
+	DynamicString value; ///< The actual value of get operations
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// Attempts to get the value off the stack at idx as a string
@@ -836,7 +836,7 @@ struct Var<const String&>
 		const SQChar* ret;
 		sq_tostring(vm, idx);
 		sq_getstring(vm, -1, &ret);
-		value = String(ret, (size_t)sq_getsize(vm, -1));
+		value = DynamicString(ret, (size_t)sq_getsize(vm, -1));
 		sq_pop(vm, 1);
 	}
 
@@ -849,7 +849,7 @@ struct Var<const String&>
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	static void push(HSQUIRRELVM vm, const String& value)
 	{
-		sq_pushstring(vm, value.c_str(), (SQInteger)value.Length());
+		sq_pushstring(vm, value.Str(), (SQInteger)value.Length());
 	}
 };
 

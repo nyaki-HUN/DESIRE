@@ -343,7 +343,7 @@ protected:
 	// Bind a function and it's associated Squirrel closure to the object
 	inline void BindOverload(const SQChar* name, void* method, size_t methodSize, SQFUNCTION func, SQFUNCTION overload, int argCount, bool staticVar = false)
 	{
-		String overloadName = SqOverloadName::Get(name, argCount);
+		DynamicString overloadName = SqOverloadName::Get(name, argCount);
 
 		sq_pushobject(vm, GetObject());
 
@@ -354,7 +354,7 @@ protected:
 		sq_newslot(vm, -3, (SQBool)staticVar);
 
 		// Bind overloaded function
-		sq_pushstring(vm, overloadName.c_str(), -1);
+		sq_pushstring(vm, overloadName.Str(), -1);
 		SQUserPointer methodPtr = sq_newuserdata(vm, static_cast<SQUnsignedInteger>(methodSize));
 		memcpy(methodPtr, method, methodSize);
 		sq_newclosure(vm, func, 1);

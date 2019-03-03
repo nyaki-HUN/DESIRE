@@ -47,9 +47,9 @@ namespace Sqrat {
 class SqOverloadName
 {
 public:
-	static String Get(const SQChar* name, SQInteger args)
+	static DynamicString Get(const SQChar* name, SQInteger args)
 	{
-		return String::CreateFormattedString("__overload_%s%d", name, (int)args);
+		return DynamicString::CreateFormattedString("__overload_%s%d", name, (int)args);
 	}
 };
 
@@ -70,9 +70,9 @@ public:
         const SQChar* funcName;
         sq_getstring(vm, -1, &funcName); // get the function name (free variable)
 
-        String overloadName = SqOverloadName::Get(funcName, argCount);
+        DynamicString overloadName = SqOverloadName::Get(funcName, argCount);
 
-        sq_pushstring(vm, overloadName.c_str(), -1);
+        sq_pushstring(vm, overloadName.Str(), -1);
 
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if (SQ_FAILED(sq_get(vm, 1))) { // Lookup the proper overload
@@ -90,7 +90,7 @@ public:
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         SQRESULT result = sq_call(vm, argCount + 1, true, true);
         if (SQ_FAILED(result)) {
-            return sq_throwerror(vm, LastErrorString(vm).c_str());
+            return sq_throwerror(vm, LastErrorString(vm).Str());
         }
 #else
         sq_call(vm, argCount + 1, true, true);
@@ -116,9 +116,9 @@ public:
         const SQChar* funcName;
         sq_getstring(vm, -1, &funcName); // get the function name (free variable)
 
-        String overloadName = SqOverloadName::Get(funcName, argCount);
+        DynamicString overloadName = SqOverloadName::Get(funcName, argCount);
 
-        sq_pushstring(vm, overloadName.c_str(), -1);
+        sq_pushstring(vm, overloadName.Str(), -1);
 
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         if (SQ_FAILED(sq_get(vm, 1))) { // Lookup the proper overload
@@ -136,7 +136,7 @@ public:
 #if !defined (SCRAT_NO_ERROR_CHECKING)
         SQRESULT result = sq_call(vm, argCount + 1, false, true);
         if (SQ_FAILED(result)) {
-            return sq_throwerror(vm, LastErrorString(vm).c_str());
+            return sq_throwerror(vm, LastErrorString(vm).Str());
         }
 #else
         sq_call(vm, argCount + 1, false, true);

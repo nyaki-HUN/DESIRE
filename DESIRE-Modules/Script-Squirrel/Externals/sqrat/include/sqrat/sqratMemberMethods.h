@@ -2130,7 +2130,7 @@ inline SQInteger sqVarGet(HSQUIRRELVM vm)
 	SQRESULT result = sq_call(vm, 1, true, true);
 	if(SQ_FAILED(result))
 	{
-		return sq_throwerror(vm, LastErrorString(vm).c_str());
+		return sq_throwerror(vm, LastErrorString(vm).Str());
 	}
 #else
 	sq_call(vm, 1, true, true);
@@ -2226,7 +2226,7 @@ inline SQInteger sqVarSet(HSQUIRRELVM vm)
 	SQRESULT result = sq_call(vm, 2, false, true);
 	if(SQ_FAILED(result))
 	{
-		return sq_throwerror(vm, LastErrorString(vm).c_str());
+		return sq_throwerror(vm, LastErrorString(vm).Str());
 	}
 #else
 	sq_call(vm, 2, false, true);

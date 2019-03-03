@@ -7,7 +7,7 @@
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/IWindow.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/StackString.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Render/Material.h"
 #include "Engine/Render/RenderTarget.h"
@@ -67,7 +67,7 @@ void BgfxRender::Init(IWindow *mainWindow)
 	samplerUniforms[0] = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
 	for(uint8_t i = 1; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
 	{
-		samplerUniforms[i] = bgfx::createUniform(String::CreateFormattedString("s_tex%u", i).c_str(), bgfx::UniformType::Int1);
+		samplerUniforms[i] = bgfx::createUniform(StackString<7>::CreateFormattedString("s_tex%u", i).Str(), bgfx::UniformType::Int1);
 	}
 
 	renderState = BGFX_STATE_MSAA;
@@ -111,9 +111,9 @@ void BgfxRender::Kill()
 	initialized = false;
 }
 
-String BgfxRender::GetShaderFilenameWithPath(const String& shaderFilename) const
+DynamicString BgfxRender::GetShaderFilenameWithPath(const String& shaderFilename) const
 {
-	String filenameWithPath = "data/shaders/bgfx/";
+	DynamicString filenameWithPath = "data/shaders/bgfx/";
 
 	switch(bgfx::getRendererType())
 	{
@@ -439,7 +439,7 @@ void BgfxRender::Bind(Shader *shader)
 		{
 			memcpy(ptr, "#define ", 8);
 			ptr += 8;
-			memcpy(ptr, define.c_str(), define.Length());
+			memcpy(ptr, define.Str(), define.Length());
 			ptr += define.Length();
 			memcpy(ptr, " 1\n", 3);
 			ptr += 3;
@@ -449,7 +449,7 @@ void BgfxRender::Bind(Shader *shader)
 
 	renderData->shaderHandle = bgfx::createShader(shaderData);
 	ASSERT(bgfx::isValid(renderData->shaderHandle));
-	bgfx::setName(renderData->shaderHandle, shader->name.c_str());
+	bgfx::setName(renderData->shaderHandle, shader->name.Str());
 
 	const uint16_t uniformCount = bgfx::getShaderUniforms(renderData->shaderHandle, nullptr, 0);
 	bgfx::UniformHandle *uniforms = (bgfx::UniformHandle*)alloca(uniformCount * sizeof(bgfx::UniformHandle));
