@@ -22,7 +22,7 @@ std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& direc
 		}
 	}
 
-	int wd = inotify_add_watch(inotifyFD, directory.c_str(), IN_CLOSE_WRITE | IN_MOVED_FROM | IN_MOVED_TO | IN_CREATE | IN_DELETE);
+	int wd = inotify_add_watch(inotifyFD, directory.Str(), IN_CLOSE_WRITE | IN_MOVED_FROM | IN_MOVED_TO | IN_CREATE | IN_DELETE);
 	if(wd < 0)
 	{
 		LOG_ERROR("FileSystemWatcher error: %s", strerror(errno));
@@ -30,7 +30,6 @@ std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& direc
 	}
 
 	LINUXFileSystemWatcher *watcher = new LINUXFileSystemWatcher();
-	watcher->dirName = directory;
 	watcher->actionCallback = actionCallback;
 	watcher->wd = wd;
 

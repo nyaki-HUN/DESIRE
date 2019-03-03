@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/MemoryBuffer.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include <set>
 
@@ -15,6 +15,6 @@ public:
 	void *renderData = nullptr;
 
 	MemoryBuffer data;
-	std::set<String> defines;
-	const String name;
+	std::set<DynamicString> defines;
+	const DynamicString name;
 };

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Engine/Core/String.h"
-
 #include <functional>
+
+class String;
 
 class FileSystemWatcher
 {
@@ -29,6 +29,5 @@ public:
 protected:
 	void OnDestroy();
 
-	String dirName;
 	std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback;
 };

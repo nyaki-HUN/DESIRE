@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/WINDOWS/WINDOWSFileSystemWatcher.h"
+#include "Engine/Core/StackString.h"
 
 void WINDOWSFileSystemWatcher::RefreshWatch()
 {
@@ -27,7 +28,7 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 
 	if(dwErrorCode == ERROR_SUCCESS)
 	{
-		char str[MAX_PATH];
+		char str[DESIRE_MAX_PATH_LEN];
 		FILE_NOTIFY_INFORMATION *notify = nullptr;
 		size_t offset = 0;
 		do
@@ -35,8 +36,8 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 			notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(watcher->buffer + offset);
 
 			// Convert filename to UTF-8
-			const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, MAX_PATH - 1, nullptr, nullptr);
-			String filename(str, count);
+			const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
+			StackString<DESIRE_MAX_PATH_LEN> filename(str, count);
 			filename.ReplaceAllChar('\\', '/');
 
 			switch(notify->Action)
@@ -73,7 +74,7 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
 {
 	HANDLE dirHandle = CreateFileA(
-		directory.c_str(),
+		directory.Str(),
 		FILE_LIST_DIRECTORY,
 		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 		nullptr,
@@ -83,12 +84,11 @@ std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& direc
 
 	if(dirHandle == INVALID_HANDLE_VALUE)
 	{
-		LOG_ERROR("FileSystemWatcher error: directory not found (%s)", directory.c_str());
+		LOG_ERROR("FileSystemWatcher error: directory not found (%s)", directory.Str());
 		return std::unique_ptr<FileSystemWatcher>(nullptr);
 	}
 
 	WINDOWSFileSystemWatcher *watcher = new WINDOWSFileSystemWatcher();
-	watcher->dirName = directory;
 	watcher->actionCallback = actionCallback;
 	watcher->dirHandle = dirHandle;
 	watcher->overlapped.hEvent = watcher;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it

@@ -101,7 +101,7 @@ bool NativeScriptComponent::AddFunctionCallArg(const String& arg)
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 
 	functionArgs[numFunctionCallArgs].type = IScript::Arg::EType::String;
-	functionArgs[numFunctionCallArgs].stringVal = arg.c_str();
+	functionArgs[numFunctionCallArgs].stringVal = arg.Str();
 	numFunctionCallArgs++;
 	return true;
 }

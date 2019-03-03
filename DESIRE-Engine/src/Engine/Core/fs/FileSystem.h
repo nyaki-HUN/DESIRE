@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 #include "Engine/Core/fs/FilePtr_fwd.h"
 
 #include <vector>
@@ -60,7 +60,7 @@ private:
 
 	std::vector<IFileSource*> fileSources;
 
-	String appDir;
-	String dataDir;
-	String cacheDir;
+	DynamicString appDir;
+	DynamicString dataDir;
+	DynamicString cacheDir;
 };

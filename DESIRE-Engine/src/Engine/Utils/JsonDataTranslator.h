@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/HashedStringMap.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include "rapidjson/include/rapidjson/document.h"
 #include <vector>
@@ -18,12 +18,12 @@ class JsonDataTranslator
 	typedef int T::* IntMember_t;
 	typedef float T::* FloatMember_t;
 	typedef bool T::* BoolMember_t;
-	typedef String T::* StringMember_t;
+	typedef DynamicString T::* StringMember_t;
 	// Array member types
 	typedef std::vector<int> T::* IntArrayMember_t;
 	typedef std::vector<float> T::* FloatArrayMember_t;
 	typedef std::vector<bool> T::* BoolArrayMember_t;
-	typedef std::vector<String> T::* StringArrayMember_t;
+	typedef std::vector<DynamicString> T::* StringArrayMember_t;
 
 public:
 	JsonDataTranslator()
@@ -190,7 +190,7 @@ public:
 					if(memberPtr != nullptr)
 					{
 						StringMember_t member = *memberPtr;
-						data->*member = String(it->value.GetString(), it->value.GetStringLength());
+						data->*member = DynamicString(it->value.GetString(), it->value.GetStringLength());
 					}
 					break;
 				}

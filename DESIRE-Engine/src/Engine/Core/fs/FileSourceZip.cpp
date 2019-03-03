@@ -196,7 +196,7 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 				if(compressedData == nullptr || decompressedData == nullptr)
 				{
 					free(decompressedData);
-					LOG_ERROR("Not enough memory to decompress file: %s", it->first.c_str());
+					LOG_ERROR("Not enough memory to decompress file: %s", it->first.Str());
 					return nullptr;
 				}
 
@@ -213,7 +213,7 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 		}
 
 		default:
-			LOG_ERROR("File has unsupported compression method.", it->first.c_str());
+			LOG_ERROR("File has unsupported compression method.", it->first.Str());
 			break;
 	}
 

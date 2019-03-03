@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include <memory>
 
@@ -85,7 +85,7 @@ public:
 	virtual void UpdateRenderWindow(IWindow *window) = 0;
 	virtual void Kill() = 0;
 
-	virtual String GetShaderFilenameWithPath(const String& shaderFilename) const = 0;
+	virtual DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const = 0;
 
 	virtual void BeginFrame(IWindow *window) = 0;
 	virtual void EndFrame() = 0;

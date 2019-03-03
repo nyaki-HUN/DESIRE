@@ -81,17 +81,17 @@ size_t WINDOWSFile::WriteBuffer(const void *buffer, size_t size)
 
 ReadFilePtr FileSystem::OpenNative(const String& filename)
 {
-	HANDLE hFile = CreateFileA(filename.c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile = CreateFileA(filename.Str(), GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
-		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename.c_str());
+		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename.Str());
 		return nullptr;
 	}
 
 	FILE_STANDARD_INFO finfo = {};
 	if(GetFileInformationByHandleEx(hFile, FileStandardInfo, &finfo, sizeof(finfo)) == 0)
 	{
-		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to get file size of %s", filename.c_str());
+		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to get file size of %s", filename.Str());
 		CloseHandle(hFile);
 		return nullptr;
 	}
@@ -101,10 +101,10 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 
 WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
 {
-	HANDLE hFile = CreateFileA(filename.c_str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hFile = CreateFileA(filename.Str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
-		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename.c_str());
+		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to open file %s", filename.Str());
 		return nullptr;
 	}
 
@@ -130,7 +130,7 @@ void FileSystem::SetupDirectories()
 		exePath[0] = '\0';
 	}
 
-	appDir = String(exePath, strlen(exePath));
+	appDir = DynamicString(exePath, strlen(exePath));
 
 	DESIRE_TODO("Set dataDir and cacheDir properly");
 	dataDir = appDir;

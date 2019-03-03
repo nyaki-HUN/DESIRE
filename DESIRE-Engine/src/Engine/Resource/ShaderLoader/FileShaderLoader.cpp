@@ -8,10 +8,10 @@ Shader* FileShaderLoader::Load(const ReadFilePtr& file)
 	// Remove path
 	const String& filename = file->GetFilename();
 	size_t pos = filename.FindLast('/');
-	String name = (pos != String::INVALID_POS) ? filename.SubString(pos + 1) : filename;
+	String name = (pos != String::kInvalidPos) ? filename.SubString(pos + 1) : filename;
 	// Remove extension
 	pos = name.FindLast('.');
-	if(pos != String::INVALID_POS)
+	if(pos != String::kInvalidPos)
 	{
 		name.RemoveFrom(pos);
 	}

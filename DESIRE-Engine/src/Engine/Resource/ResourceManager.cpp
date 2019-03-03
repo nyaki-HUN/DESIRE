@@ -165,7 +165,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 		}
 	}
 
-	LOG_ERROR("Failed to load mesh from: %s", filename.c_str());
+	LOG_ERROR("Failed to load mesh from: %s", filename.Str());
 	return std::make_shared<Mesh>();
 }
 
@@ -187,7 +187,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 		}
 	}
 
-	LOG_ERROR("Failed to load shader from: %s", filenameWithPath.c_str());
+	LOG_ERROR("Failed to load shader from: %s", filenameWithPath.Str());
 	return std::make_shared<Shader>(filename);
 }
 
@@ -208,7 +208,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 		}
 	}
 
-	LOG_ERROR("Failed to load texture from: %s", filename.c_str());
+	LOG_ERROR("Failed to load texture from: %s", filename.Str());
 	return errorTexture;
 }
 

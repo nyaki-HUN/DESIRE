@@ -2,6 +2,7 @@
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/IReadFile.h"
 #include "Engine/Core/fs/FileSourceZip.h"
+#include "Engine/Core/StackString.h"
 
 FileSystem::FileSystem()
 {
@@ -32,13 +33,14 @@ ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 		}
 	}
 
-	String filenameWithPath;
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath;
 	switch(location)
 	{
-		case ELocation::AppDir:		filenameWithPath = appDir + filename; break;
-		case ELocation::DataDir:	filenameWithPath = dataDir + filename; break;
-		case ELocation::CacheDir:	filenameWithPath = cacheDir + filename; break;
+		case ELocation::AppDir:		filenameWithPath = appDir; break;
+		case ELocation::DataDir:	filenameWithPath = dataDir; break;
+		case ELocation::CacheDir:	filenameWithPath = cacheDir; break;
 	}
+	filenameWithPath += filename;
 
 	return OpenNative(filenameWithPath);
 }

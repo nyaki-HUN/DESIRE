@@ -149,7 +149,7 @@ bool WINDOWSWindow::SetClipboardString(const String& string)
 		return false;
 	}
 
-	memcpy(ptr, string.c_str(), size);
+	memcpy(ptr, string.Str(), size);
 	GlobalUnlock(stringHandle);
 
 	if(!OpenClipboard(hWnd))
