@@ -225,6 +225,9 @@
     <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\DynamicString.h">
+      <Filter>src\Engine\Core</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -258,6 +261,9 @@
     <ClInclude Include="..\..\src\Engine\Core\STL_utils.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\StackString.h">
+      <Filter>src\Engine\Core</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\StrUtils.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -281,6 +287,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h">
       <Filter>src\Engine\Core\WINDOWS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\WritableString.h">
+      <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\assert.h">
       <Filter>src\Engine\Core</Filter>
@@ -521,6 +530,9 @@
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp">
       <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\DynamicString.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
@@ -559,6 +571,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\main.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\WritableString.cpp">
+      <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\fs\FileSourceZip.cpp">
       <Filter>src\Engine\Core\fs</Filter>

@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h" />
     <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h" />
+    <ClInclude Include="..\..\src\Engine\Core\DynamicString.h" />
     <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h" />
     <ClInclude Include="..\..\src\Engine\Core\Factory.h" />
     <ClInclude Include="..\..\src\Engine\Core\HashedString.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\Modules.h" />
     <ClInclude Include="..\..\src\Engine\Core\STL_utils.h" />
+    <ClInclude Include="..\..\src\Engine\Core\StackString.h" />
     <ClInclude Include="..\..\src\Engine\Core\StrUtils.h" />
     <ClInclude Include="..\..\src\Engine\Core\String.h" />
     <ClInclude Include="..\..\src\Engine\Core\Timer.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.h" />
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSWindow.h" />
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h" />
+    <ClInclude Include="..\..\src\Engine\Core\WritableString.h" />
     <ClInclude Include="..\..\src\Engine\Core\assert.h" />
     <ClInclude Include="..\..\src\Engine\Core\fs\FilePtr_fwd.h" />
     <ClInclude Include="..\..\src\Engine\Core\fs\FileSourceZip.h" />
@@ -249,6 +252,7 @@
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\DynamicString.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Log.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp" />
@@ -262,6 +266,7 @@
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSTimer.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSWindow.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\main.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\WritableString.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\fs\FileSourceZip.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\fs\FileSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\fs\IReadFile.cpp" />
