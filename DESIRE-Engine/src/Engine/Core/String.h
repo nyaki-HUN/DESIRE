@@ -19,10 +19,8 @@ public:
 
 	// Find character(s) in string
 	size_t Find(const String& search, size_t startIndex = 0) const;
-	size_t Find(const char *search, size_t startIndex = 0) const;
 	size_t Find(char search, size_t startIndex = 0) const;
 	size_t FindLast(const String& search) const;
-	size_t FindLast(const char *search) const;
 	size_t FindLast(char search) const;
 
 	// Returns the data (C string equivalent)

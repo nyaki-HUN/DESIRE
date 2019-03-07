@@ -80,12 +80,12 @@ void WritableString::RemoveFromEnd(size_t numChars)
 
 void WritableString::Replace(const String& search, const String& replaceTo)
 {
-	Replace_Internal(search.Str(), search.Length(), replaceTo.Str(), replaceTo.Length(), false);
+	Replace_Internal(search, replaceTo, false);
 }
 
 void WritableString::ReplaceAll(const String& search, const String& replaceTo)
 {
-	Replace_Internal(search.Str(), search.Length(), replaceTo.Str(), replaceTo.Length(), true);
+	Replace_Internal(search, replaceTo, true);
 }
 
 void WritableString::ReplaceAllChar(char search, char replaceTo)
@@ -193,7 +193,7 @@ bool WritableString::Format_Internal(const char *format, std::va_list args)
 	return (formattedSize >= 0 && (size_t)formattedSize < size);
 }
 
-void WritableString::Replace_Internal(const char *search, size_t searchLen, const char *replaceTo, size_t replaceToLen, bool all)
+void WritableString::Replace_Internal(const String& search, const String& replaceTo, bool all)
 {
 	size_t pos = 0;
 	for(;;)
@@ -204,9 +204,9 @@ void WritableString::Replace_Internal(const char *search, size_t searchLen, cons
 			break;
 		}
 
-		RemoveFrom(pos, searchLen);
-		Insert(pos, replaceTo, replaceToLen);
-		pos += replaceToLen;
+		RemoveFrom(pos, search.Length());
+		Insert(pos, replaceTo);
+		pos += replaceTo.Length();
 
 		if(!all)
 		{

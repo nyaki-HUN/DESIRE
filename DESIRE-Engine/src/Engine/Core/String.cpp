@@ -6,20 +6,14 @@ const String String::emptyString = "";
 
 size_t String::Find(const String& search, size_t startIndex) const
 {
-	return Find(search.data, startIndex);
-}
-
-size_t String::Find(const char *search, size_t startIndex) const
-{
-	ASSERT(search != nullptr);
-	ASSERT(search[0] != '\0');
+	ASSERT(search.data[0] != '\0');
 
 	if(startIndex >= size)
 	{
 		return kInvalidPos;
 	}
 
-	const char *foundPtr = strstr(data + startIndex, search);
+	const char *foundPtr = strstr(data + startIndex, search.Str());
 	return (foundPtr != nullptr) ? foundPtr - data : kInvalidPos;
 }
 
@@ -38,18 +32,10 @@ size_t String::Find(char search, size_t startIndex) const
 
 size_t String::FindLast(const String& search) const
 {
-	return FindLast(search.data);
-}
-
-size_t String::FindLast(const char *search) const
-{
-	ASSERT(search != nullptr);
-
-	const size_t searchLen = strlen(search);
-	const char *s = data + size - searchLen;
+	const char *s = data + size - search.Length();
 	while(s >= data)
 	{
-		if(strncmp(s, search, searchLen) == 0)
+		if(strncmp(s, search.Str(), search.Length()) == 0)
 		{
 			return (size_t)(s - data);
 		}
@@ -62,8 +48,18 @@ size_t String::FindLast(const char *search) const
 
 size_t String::FindLast(char search) const
 {
-	const char *foundPtr = strrchr(data, search);
-	return (foundPtr != nullptr) ? foundPtr - data : kInvalidPos;
+	const char *s = data + size - 1;
+	while(s >= data)
+	{
+		if(*s == search)
+		{
+			return (size_t)(s - data);
+		}
+
+		s--;
+	}
+
+	return kInvalidPos;
 }
 
 const char* String::Str() const
