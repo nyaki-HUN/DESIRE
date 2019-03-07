@@ -5,6 +5,7 @@
 #include "Engine/Core/Log.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/StackString.h"
 #include "Engine/Scene/Object.h"
 
 #include "lua.hpp"
@@ -63,12 +64,13 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object&
 
 void LuaScriptSystem::CompileScript(const char *scriptName, lua_State *L)
 {
-	char filename[DESIRE_MAX_PATH_LEN];
-	snprintf(filename, sizeof(filename), "data/scripts/%s.lua", scriptName);
+	StackString<DESIRE_MAX_PATH_LEN> filename;
+	filename.Format("data/scripts/%s.lua", scriptName);
+
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{
-		LOG_ERROR("Could not load script: %s", filename);
+		LOG_ERROR("Could not load script: %s", filename.Str());
 		return;
 	}
 

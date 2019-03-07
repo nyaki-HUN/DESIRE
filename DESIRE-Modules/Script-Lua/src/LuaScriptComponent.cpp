@@ -129,7 +129,7 @@ bool LuaScriptComponent::AddFunctionCallArg(void *arg)
 
 bool LuaScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	lua_pushlstring(L, arg.c_str(), arg.Length());
+	lua_pushlstring(L, arg.Str(), arg.Length());
 	numFunctionCallArgs++;
 	return true;
 }

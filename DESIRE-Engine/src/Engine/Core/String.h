@@ -15,7 +15,7 @@ public:
 		size = SIZE - 1;
 	}
 
-	virtual ~String();
+	virtual ~String() = default;
 
 	// Find character(s) in string
 	size_t Find(const String& search, size_t startIndex = 0) const;
@@ -110,13 +110,14 @@ public:
 	}
 
 protected:
-	String();
+	String() = default;
 
+	char *data = "";
+	size_t size = 0;
+
+private:
 	String(const String& string) = delete;
 	String(String&& string) = delete;
 	String& operator =(const String& string) = delete;
 	String& operator =(String&& string) = delete;
-
-	char *data = "";
-	size_t size = 0;
 };

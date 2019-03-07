@@ -15,7 +15,7 @@ AngelScriptStringFactory::~AngelScriptStringFactory()
 
 const void* AngelScriptStringFactory::GetStringConstant(const char *data, asUINT length)
 {
-	String str(data, length);
+	DynamicString str(data, length);
 
 	auto it = stringCache.find(str);
 	if(it != stringCache.end())
@@ -37,7 +37,7 @@ int AngelScriptStringFactory::ReleaseStringConstant(const void *str)
 		return asERROR;
 	}
 
-	auto it = stringCache.find(*reinterpret_cast<const String*>(str));
+	auto it = stringCache.find(*reinterpret_cast<const DynamicString*>(str));
 	if(it == stringCache.end())
 	{
 		return asERROR;

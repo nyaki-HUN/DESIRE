@@ -160,7 +160,7 @@ bool SquirrelScriptComponent::AddFunctionCallArg(void *arg)
 
 bool SquirrelScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	sq_pushstring(vm, arg.c_str(), (SQInteger)arg.Length());
+	sq_pushstring(vm, arg.Str(), (SQInteger)arg.Length());
 	numFunctionCallArgs++;
 	return true;
 }

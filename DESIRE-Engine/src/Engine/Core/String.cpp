@@ -4,16 +4,6 @@
 
 const String String::emptyString;
 
-String::String()
-{
-
-}
-
-String::~String()
-{
-
-}
-
 size_t String::Find(const String& search, size_t startIndex) const
 {
 	return Find(search.data, startIndex);
@@ -63,8 +53,10 @@ size_t String::FindLast(const char *search) const
 		{
 			return (size_t)(s - data);
 		}
+
 		s--;
 	}
+
 	return kInvalidPos;
 }
 

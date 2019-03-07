@@ -3,6 +3,7 @@
 
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Modules.h"
+#include "Engine/Core/StackString.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/FileSystemWatcher.h"
 #include "Engine/Core/fs/IReadFile.h"
@@ -93,7 +94,10 @@ void SandBox::Init()
 
 	//////////
 
-	dataDirWatcher = FileSystemWatcher::Create(FileSystem::Get()->GetAppDirectory() + "data", [](FileSystemWatcher::EAction action, const String& filename)
+	StackString<DESIRE_MAX_PATH_LEN> dataDirPath = FileSystem::Get()->GetAppDirectory();
+	dataDirPath += "data";
+
+	dataDirWatcher = FileSystemWatcher::Create(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)
 	{
 		const char *strAction = "";
 		switch(action)

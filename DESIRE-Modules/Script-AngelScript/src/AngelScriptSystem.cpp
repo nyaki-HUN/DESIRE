@@ -115,8 +115,9 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 
 asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScriptEngine *engine)
 {
-	StackString< DESIRE_MAX_PATH_LEN> filename;
+	StackString<DESIRE_MAX_PATH_LEN> filename;
 	filename.Format("data/scripts/%s.as", scriptName);
+
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{
@@ -146,7 +147,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 	asITypeInfo *typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName));
 	
 	// Cache factory in the script module
-	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(String::CreateFormattedString("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
+	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(DynamicString::CreateFormattedString("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
 	module->SetUserData(factoryFunc);
 	
 	// Cache built-in functions in the object type

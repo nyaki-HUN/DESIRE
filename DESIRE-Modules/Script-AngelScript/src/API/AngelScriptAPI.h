@@ -2,7 +2,7 @@
 
 #include "Engine/Core/platform.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 DESIRE_DISABLE_WARNINGS
 #include "angelscript.h"
@@ -131,7 +131,7 @@ public:
 		ASSERT(gen->GetArgCount() == 0);
 		const T *self = static_cast<const T*>(gen->GetObject());
 		const char *rv = (self->*func)();
-		new (gen->GetAddressOfReturnLocation()) String(rv, strlen(rv));
+		new (gen->GetAddressOfReturnLocation()) DynamicString(rv, strlen(rv));
 	}
 
 	template<T(*func)()>

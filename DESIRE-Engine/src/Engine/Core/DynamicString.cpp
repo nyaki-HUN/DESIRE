@@ -101,18 +101,19 @@ DynamicString DynamicString::CreateFormattedString(const char *format, ...)
 
 bool DynamicString::Reserve(size_t numChars)
 {
-	if(preallocatedSize < numChars)
+	const size_t requiredSize = numChars + 1;
+	if(preallocatedSize < requiredSize)
 	{
 		if(preallocatedSize == 0)
 		{
-			data = (char*)malloc(numChars + 1);
+			data = (char*)malloc(requiredSize);
 		}
 		else
 		{
-			data = (char*)realloc(data, numChars + 1);
+			data = (char*)realloc(data, requiredSize);
 		}
 
-		preallocatedSize = numChars;
+		preallocatedSize = requiredSize;
 	}
 
 	return true;

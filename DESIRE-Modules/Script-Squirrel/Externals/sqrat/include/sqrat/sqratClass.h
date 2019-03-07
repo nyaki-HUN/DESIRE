@@ -694,7 +694,7 @@ public:
 	///
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	DerivedClass(HSQUIRRELVM v, const String& className)
-		: Class<C, A>(v, String(), false)
+		: Class<C, A>(v, DynamicString(), false)
 	{
 		if(!ClassType<C>::hasClassData(v))
 		{
@@ -707,7 +707,7 @@ public:
 				sq_push(v, -2);
 				sq_rawset(v, -4);
 			}
-			sq_pushstring(v, className.c_str(), -1);
+			sq_pushstring(v, className.Str(), -1);
 			ClassData<C>** ud = reinterpret_cast<ClassData<C>**>(sq_newuserdata(v, sizeof(ClassData<C>*)));
 			*ud = new ClassData<C>;
 			sq_setreleasehook(v, -1, &cleanup_hook);

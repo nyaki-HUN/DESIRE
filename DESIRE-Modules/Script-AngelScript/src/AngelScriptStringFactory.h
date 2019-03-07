@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/platform.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include <map>
 
@@ -21,5 +21,5 @@ public:
 	int GetRawStringData(const void *str, char *data, asUINT *length) const override;
 
 private:
-	std::map<String, int> stringCache;
+	std::map<DynamicString, int> stringCache;
 };

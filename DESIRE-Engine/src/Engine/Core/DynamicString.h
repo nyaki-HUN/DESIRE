@@ -22,8 +22,8 @@ public:
 	DynamicString& operator =(const DynamicString& string);
 	DynamicString& operator =(DynamicString&& string);
 
-	// Create substring
-	DynamicString SubString(size_t startIndex, size_t numChars) const;
+	// Create a new string which is initialized to a copy a substring of this string
+	DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 
 	// Create string with format
 	static DynamicString CreateFormattedString(const char *format, ...);
