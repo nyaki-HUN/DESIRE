@@ -48,13 +48,6 @@ public:
 		return *this;
 	}
 
-	template<size_t SIZE>
-	WritableString& operator +=(const char(&str)[SIZE])
-	{
-		Append(str, SIZE - 1);
-		return *this;
-	}
-
 	// Append numbers
 	WritableString& operator +=(int32_t number);
 	WritableString& operator +=(uint32_t number);

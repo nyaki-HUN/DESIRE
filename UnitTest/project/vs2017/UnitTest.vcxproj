@@ -117,6 +117,7 @@
     <ClCompile Include="..\..\src\Core\memory\test_PoolAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\memory\test_StackAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\memory\test_StdFrameAllocatorWrapper.cpp" />
+    <ClCompile Include="..\..\src\Core\test_DynamicString.cpp" />
     <ClCompile Include="..\..\src\Core\test_HashedStringMap.cpp" />
     <ClCompile Include="..\..\src\Core\test_LockFreeRingBuffer.cpp" />
     <ClCompile Include="..\..\src\Core\test_String.cpp" />

@@ -2,7 +2,7 @@
 #include "Engine/Core/String.h"
 #include "Engine/Core/StrUtils.h"
 
-const String String::emptyString;
+const String String::emptyString = "";
 
 size_t String::Find(const String& search, size_t startIndex) const
 {

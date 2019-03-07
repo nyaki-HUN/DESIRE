@@ -114,8 +114,9 @@ void WritableString::Append(const char *str, size_t numChars)
 	ASSERT(hasEnoughSize);
 	if(hasEnoughSize)
 	{
-		memcpy(data + size, str, numChars + 1);
+		memcpy(data + size, str, numChars);
 		size += numChars;
+		data[size] = '\0';
 	}
 }
 
@@ -194,30 +195,24 @@ bool WritableString::Format_Internal(const char *format, std::va_list args)
 
 void WritableString::Replace_Internal(const char *search, size_t searchLen, const char *replaceTo, size_t replaceToLen, bool all)
 {
-	String newString;
-	char *dataTmp = data;
+	size_t pos = 0;
 	for(;;)
 	{
-		char *foundPtr = strstr(dataTmp, search);
-		if(foundPtr == nullptr)
+		pos = Find(search, pos);
+		if(pos == kInvalidPos)
 		{
 			break;
 		}
 
-		*foundPtr = '\0';
-		newString.Append(dataTmp, static_cast<size_t>(foundPtr - dataTmp));
-		newString.Append(replaceTo, replaceToLen);
-		dataTmp = foundPtr + searchLen;
+		RemoveFrom(pos, searchLen);
+		Insert(pos, replaceTo, replaceToLen);
+		pos += replaceToLen;
+
 		if(!all)
 		{
 			break;
 		}
 	}
-	// Add remaining part
-	newString.Append(dataTmp, strlen(dataTmp));
-
-	// Move back the content from newString
-	*this = std::move(newString);
 }
 
 void WritableString::InitWithData(const char *newData, size_t newSize)
@@ -228,7 +223,8 @@ void WritableString::InitWithData(const char *newData, size_t newSize)
 	ASSERT(hasEnoughSize);
 	if(hasEnoughSize)
 	{
-		memcpy(data, newData, newSize + 1);
+		memcpy(data, newData, newSize);
 		size = newSize;
+		data[size] = '\0';
 	}
 }

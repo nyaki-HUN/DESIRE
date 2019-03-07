@@ -6,6 +6,7 @@
 DynamicString::DynamicString(size_t numReservedChars)
 {
 	Reserve(numReservedChars);
+	memset(data, 0, preallocatedSize * sizeof(char));
 }
 
 DynamicString::DynamicString(const char *str, size_t size)
@@ -29,17 +30,14 @@ DynamicString::DynamicString(DynamicString&& string)
 	size = string.size;
 	preallocatedSize = string.preallocatedSize;
 
-	string.data = "";
+	string.data = nullptr;
 	string.size = 0;
 	string.preallocatedSize = 0;
 }
 
 DynamicString::~DynamicString()
 {
-	if(preallocatedSize != 0)
-	{
-		free(data);
-	}
+	free(data);
 }
 
 DynamicString& DynamicString::operator =(const String& string)
@@ -60,10 +58,7 @@ DynamicString& DynamicString::operator =(DynamicString&& string)
 {
 	ASSERT(this != &string);	// It's not allowed to copy from ourself
 
-	if(preallocatedSize != 0)
-	{
-		free(data);
-	}
+	free(data);
 
 	data = string.data;
 	size = string.size;
@@ -101,19 +96,10 @@ DynamicString DynamicString::CreateFormattedString(const char *format, ...)
 
 bool DynamicString::Reserve(size_t numChars)
 {
-	const size_t requiredSize = numChars + 1;
-	if(preallocatedSize < requiredSize)
+	if(preallocatedSize < numChars + 1)
 	{
-		if(preallocatedSize == 0)
-		{
-			data = (char*)malloc(requiredSize);
-		}
-		else
-		{
-			data = (char*)realloc(data, requiredSize);
-		}
-
-		preallocatedSize = requiredSize;
+		preallocatedSize = numChars + 1;
+		data = (char*)realloc(data, preallocatedSize * sizeof(char));
 	}
 
 	return true;

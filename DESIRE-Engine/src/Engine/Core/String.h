@@ -112,7 +112,7 @@ public:
 protected:
 	String() = default;
 
-	char *data = "";
+	char *data = nullptr;
 	size_t size = 0;
 
 private:
