@@ -2,6 +2,7 @@
 #include "Engine/Core/fs/FileSourceZip.h"
 #include "Engine/Core/fs/MemoryFile.h"
 #include "Engine/Core/fs/FileSystem.h"		// for EFileSourceFlags
+#include "Engine/Core/StackString.h"
 #include "Engine/Compression/CompressionManager.h"
 
 constexpr int kZipSignatureCentralDirectoryFileHeader	= 0x02014b50;	//'PK12'
@@ -145,7 +146,10 @@ bool FileSourceZip::Load()
 
 ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 {
-	const auto it = fileList.find(ConvertFilename(filename));
+	StackString<DESIRE_MAX_PATH_LEN> filenameToFind = filename;
+	ConvertFilename(filenameToFind);
+
+	const auto it = fileList.find(filenameToFind);
 	if(it == fileList.end())
 	{
 		return nullptr;
@@ -224,20 +228,19 @@ void FileSourceZip::ProcessLocalHeaders()
 {
 	ZipLocalFileHeader header;
 	zipFile->ReadBuffer(&header, sizeof(header));
-	if(header.signature != kZipSignatureLocalFileHeader || header.filenameLength == 0)
+	if(header.signature != kZipSignatureLocalFileHeader ||
+		header.filenameLength == 0 ||
+		header.filenameLength >= DESIRE_MAX_PATH_LEN)
 	{
 		return;
 	}
 
 	// Read filename
-	char str[DESIRE_MAX_PATH_LEN];
-	ASSERT(header.filenameLength < sizeof(str));
-	zipFile->ReadBuffer(str, header.filenameLength);
-	str[header.filenameLength] = '\0';
+	StackString<DESIRE_MAX_PATH_LEN> filename;
+	zipFile->ReadBuffer(filename.GetCharBufferForSize(header.filenameLength), header.filenameLength);
 
 	// Skip if directory
-	const bool isDirectory = (str[header.filenameLength - 1] == '/');
-	if(isDirectory)
+	if(filename.EndsWith('/'))
 	{
 		return;
 	}
@@ -260,35 +263,24 @@ void FileSourceZip::ProcessLocalHeaders()
 	entry.uncompressedSize = header.dataDescriptor.uncompressedSize;
 	entry.compressionMethod = header.compressionMethod;
 
-	String filename = ConvertFilename(String(str, header.filenameLength));
-	fileList.insert_or_assign(std::move(filename), std::move(entry));
+	ConvertFilename(filename);
+	fileList.insert_or_assign(std::move(DynamicString(filename)), std::move(entry));
 }
 
-String FileSourceZip::ConvertFilename(const String& filename)
+void FileSourceZip::ConvertFilename(WritableString& filename)
 {
-	String strFilename;
-
 	if(flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_PATH)
 	{
+		// Remove path
 		const size_t pos = filename.FindLast('/');
-		if(pos != String::INVALID_POS)
+		if(pos != String::kInvalidPos)
 		{
-			strFilename = filename.SubString(pos + 1);
+			filename.RemoveFrom(0, pos);
 		}
-		else
-		{
-			strFilename = filename;
-		}
-	}
-	else
-	{
-		strFilename = filename;
 	}
 
 	if(flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_CASE)
 	{
-		strFilename.ToLower();
+		filename.ToLower();
 	}
-
-	return strFilename;
 }

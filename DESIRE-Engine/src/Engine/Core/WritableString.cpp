@@ -49,13 +49,13 @@ void WritableString::Insert(size_t startIndex, const char *str, size_t numChars)
 		return;
 	}
 
-	const size_t oldSize = size;
 	const bool hasEnoughSize = Reserve(size + numChars);
 	ASSERT(hasEnoughSize);
 	if(hasEnoughSize)
 	{
-		memmove(data + startIndex + numChars, data + startIndex, oldSize - startIndex + 1);
+		memmove(data + startIndex + numChars, data + startIndex, size - startIndex + 1);
 		memcpy(data + startIndex, str, numChars);
+		size += numChars;
 	}
 }
 
@@ -110,13 +110,12 @@ void WritableString::Append(const char *str, size_t numChars)
 {
 	ASSERT(str != nullptr);
 
-	const size_t oldSize = size;
 	const bool hasEnoughSize = Reserve(size + numChars);
 	ASSERT(hasEnoughSize);
 	if(hasEnoughSize)
 	{
-		memcpy(data + oldSize, str, numChars);
-		data[size] = '\0';
+		memcpy(data + size, str, numChars + 1);
+		size += numChars;
 	}
 }
 
@@ -229,8 +228,7 @@ void WritableString::InitWithData(const char *newData, size_t newSize)
 	ASSERT(hasEnoughSize);
 	if(hasEnoughSize)
 	{
+		memcpy(data, newData, newSize + 1);
 		size = newSize;
-		memcpy(data, newData, size);
-		data[size] = '\0';
 	}
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/MemoryBuffer.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include <functional>
 
@@ -42,5 +42,5 @@ public:
 protected:
 	int64_t fileSize;
 	int64_t position;
-	String filename;
+	DynamicString filename;
 };

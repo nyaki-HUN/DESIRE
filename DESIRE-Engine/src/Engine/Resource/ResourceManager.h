@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 #include "Engine/Core/fs/FilePtr_fwd.h"
 
 #include <memory>
@@ -36,9 +36,9 @@ private:
 
 	void CreateErrorTexture();
 
-	std::map<String, std::weak_ptr<Mesh>> loadedMeshes;
-	std::map<String, std::weak_ptr<Shader>> loadedShaders;
-	std::map<String, std::weak_ptr<Texture>> loadedTextures;
+	std::map<DynamicString, std::weak_ptr<Mesh>> loadedMeshes;
+	std::map<DynamicString, std::weak_ptr<Shader>> loadedShaders;
+	std::map<DynamicString, std::weak_ptr<Texture>> loadedTextures;
 
 	std::shared_ptr<Texture> errorTexture;
 

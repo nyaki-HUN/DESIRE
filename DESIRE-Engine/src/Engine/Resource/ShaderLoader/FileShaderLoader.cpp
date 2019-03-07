@@ -2,18 +2,24 @@
 #include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
 #include "Engine/Resource/Shader.h"
 #include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/StackString.h"
 
 Shader* FileShaderLoader::Load(const ReadFilePtr& file)
 {
-	// Remove path
-	const String& filename = file->GetFilename();
-	size_t pos = filename.FindLast('/');
-	String name = (pos != String::kInvalidPos) ? filename.SubString(pos + 1) : filename;
+	StackString<DESIRE_MAX_PATH_LEN> name = file->GetFilename();
+
 	// Remove extension
-	pos = name.FindLast('.');
+	size_t pos = name.FindLast('.');
 	if(pos != String::kInvalidPos)
 	{
 		name.RemoveFrom(pos);
+	}
+
+	// Remove path
+	pos = name.FindLast('/');
+	if(pos != String::kInvalidPos)
+	{
+		name.RemoveFrom(0, pos);
 	}
 
 	Shader *shader = new Shader(name);

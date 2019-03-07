@@ -103,8 +103,16 @@ bool DynamicString::Reserve(size_t numChars)
 {
 	if(preallocatedSize < numChars)
 	{
+		if(preallocatedSize == 0)
+		{
+			data = (char*)malloc(numChars + 1);
+		}
+		else
+		{
+			data = (char*)realloc(data, numChars + 1);
+		}
+
 		preallocatedSize = numChars;
-		data = (char*)realloc(data, preallocatedSize + 1);
 	}
 
 	return true;

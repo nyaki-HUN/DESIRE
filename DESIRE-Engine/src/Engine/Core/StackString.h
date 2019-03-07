@@ -26,6 +26,7 @@ public:
 	StackString<STACK_SIZE>& operator =(const String& string)
 	{
 		InitWithData(string.Str(), string.Length());
+		return *this;
 	}
 
 	static StackString<STACK_SIZE> CreateFormattedString(const char *format, ...)
@@ -38,6 +39,17 @@ public:
 		va_end(args);
 
 		return string;
+	}
+
+	char* GetCharBufferForSize(size_t newSize)
+	{
+		if(newSize < STACK_SIZE)
+		{
+			size = newSize;
+			return charBuffer;
+		}
+
+		return nullptr;
 	}
 
 private:

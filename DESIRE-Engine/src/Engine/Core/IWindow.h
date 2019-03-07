@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include <memory>
 
@@ -60,7 +60,7 @@ public:
 
 	// Clipboard
 	virtual bool SetClipboardString(const String& string) = 0;
-	virtual String GetClipboardString() = 0;
+	virtual DynamicString GetClipboardString() = 0;
 
 	// Create a new IWindow
 	static std::unique_ptr<IWindow> Create(const CreationParams& creationParams);

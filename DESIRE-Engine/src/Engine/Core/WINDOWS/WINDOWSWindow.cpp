@@ -163,9 +163,9 @@ bool WINDOWSWindow::SetClipboardString(const String& string)
 	return true;
 }
 
-String WINDOWSWindow::GetClipboardString()
+DynamicString WINDOWSWindow::GetClipboardString()
 {
-	String str;
+	DynamicString str;
 
 	if(IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(hWnd))
 	{
@@ -175,7 +175,7 @@ String WINDOWSWindow::GetClipboardString()
 			char *ptr = (char*)GlobalLock(stringHandle);
 			if(ptr != nullptr)
 			{
-				str = String(ptr, strlen(ptr));
+				str = DynamicString(ptr, strlen(ptr));
 				GlobalUnlock(stringHandle);
 			}
 		}

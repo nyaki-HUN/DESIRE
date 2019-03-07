@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Engine/Core/fs/IFileSource.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/DynamicString.h"
 
 #include <map>
+
+class WritableString;
 
 class FileSourceZip : public IFileSource
 {
@@ -25,9 +27,9 @@ private:
 	};
 
 	void ProcessLocalHeaders();
-	String ConvertFilename(const String& filename);
+	void ConvertFilename(WritableString& filename);
 
-	std::map<String, ZipFileEntry> fileList;
+	std::map<DynamicString, ZipFileEntry> fileList;
 	ReadFilePtr zipFile;
 	int flags;
 };

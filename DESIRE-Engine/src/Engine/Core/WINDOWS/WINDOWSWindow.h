@@ -21,7 +21,7 @@ public:
 	void SetCursor(ECursor cursor) override;
 
 	bool SetClipboardString(const String& string) override;
-	String GetClipboardString() override;
+	DynamicString GetClipboardString() override;
 
 	void RegisterMessageHandler(UINT msgType, MessageHandler_t messageHandler);
 

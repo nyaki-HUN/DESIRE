@@ -42,7 +42,11 @@ std::shared_ptr<Mesh> ResourceManager::GetMesh(const String& filename)
 
 std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const String& defines)
 {
-	const String shaderNameWithDefines = filename + "|" + defines;
+	DynamicString shaderNameWithDefines(filename.Length() + 1 + defines.Length());
+	shaderNameWithDefines += filename;
+	shaderNameWithDefines += "|";
+	shaderNameWithDefines += defines;
+
 	auto it = loadedShaders.find(shaderNameWithDefines);
 	if(it != loadedShaders.end() && !it->second.expired())
 	{
@@ -57,7 +61,7 @@ std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const
 	}
 	else
 	{
-		loadedShaders.emplace(shaderNameWithDefines, shader);
+		loadedShaders.emplace(std::move(shaderNameWithDefines), shader);
 	}
 
 	return shader;
@@ -171,7 +175,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 {
-	const String filenameWithPath = Modules::Render->GetShaderFilenameWithPath(filename);
+	const DynamicString filenameWithPath = Modules::Render->GetShaderFilenameWithPath(filename);
 	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath);
 	if(file)
 	{
