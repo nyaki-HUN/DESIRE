@@ -62,6 +62,6 @@ protected:
 	virtual bool Reserve(size_t newSize) = 0;
 
 	bool Format_Internal(const char *format, std::va_list argList);
-	void Replace_Internal(const char *search, size_t searchLen, const char *replaceTo, size_t replaceToLen, bool all);
+	void Replace_Internal(const String& search, const String& replaceTo, bool all);
 	void InitWithData(const char *data, size_t size);
 };
