@@ -32,119 +32,94 @@
 //  distribution.
 //
 
-#include "squirrel.h"
+#ifdef SQUNICODE
+#include <cstdlib>
+#include <cstring>
+#endif
+
+#include <squirrel.h>
+#include <string>
+
 #include "sqratClassType.h"
 #include "sqratUtil.h"
 
 namespace Sqrat {
 
+/// @cond DEV
+
 template <typename T, bool b>
 struct popAsInt
 {
-	T value;
-	popAsInt(HSQUIRRELVM vm, SQInteger idx)
-	{
-		SQObjectType value_type = sq_gettype(vm, idx);
-		switch(value_type)
-		{
-			case OT_BOOL:
-				SQBool sqValueb;
-				sq_getbool(vm, idx, &sqValueb);
-				value = static_cast<T>(sqValueb);
-				break;
-			case OT_INTEGER:
-				SQInteger sqValue;
-				sq_getinteger(vm, idx, &sqValue);
-				value = static_cast<T>(sqValue);
-				break;
-			case OT_FLOAT:
-				SQFloat sqValuef;
-				sq_getfloat(vm, idx, &sqValuef);
-				value = static_cast<T>(static_cast<int>(sqValuef));
-				break;
-
-			case OT_NULL:
-			case OT_STRING:
-			case OT_TABLE:
-			case OT_ARRAY:
-			case OT_USERDATA:
-			case OT_CLOSURE:
-			case OT_NATIVECLOSURE:
-			case OT_GENERATOR:
-			case OT_USERPOINTER:
-			case OT_THREAD:
-			case OT_FUNCPROTO:
-			case OT_CLASS:
-			case OT_INSTANCE:
-			case OT_WEAKREF:
-			case OT_OUTER:
-			default:
-				Error::Throw(vm, FormatTypeError(vm, idx, "integer"));
-				value = static_cast<T>(0);
-				break;
-		}
-	}
+    T value;
+    popAsInt(HSQUIRRELVM vm, SQInteger idx)
+    {
+        SQObjectType value_type = sq_gettype(vm, idx);
+        switch(value_type) {
+        case OT_BOOL:
+            SQBool sqValueb;
+            sq_getbool(vm, idx, &sqValueb);
+            value = static_cast<T>(sqValueb);
+            break;
+        case OT_INTEGER:
+            SQInteger sqValue;
+            sq_getinteger(vm, idx, &sqValue);
+            value = static_cast<T>(sqValue);
+            break;
+        case OT_FLOAT:
+            SQFloat sqValuef;
+            sq_getfloat(vm, idx, &sqValuef);
+			value = static_cast<T>(static_cast<int>(sqValuef));
+            break;
+        default:
+            SQTHROW(vm, FormatTypeError(vm, idx, _SC("integer")));
+            value = static_cast<T>(0);
+            break;
+        }
+    }
 };
 
 template <typename T>
 struct popAsInt<T, false>
 {
-	T value;  // cannot be initialized because unknown constructor parameters
-	popAsInt(HSQUIRRELVM /*vm*/, SQInteger /*idx*/)
-	{
-		// keep the current error message already set previously, do not touch that here
-	}
+    T value;  // cannot be initialized because unknown constructor parameters
+    popAsInt(HSQUIRRELVM /*vm*/, SQInteger /*idx*/)
+    {
+        // keep the current error message already set previously, do not touch that here
+    }
 };
 
 template <typename T>
 struct popAsFloat
 {
-	T value;
-	popAsFloat(HSQUIRRELVM vm, SQInteger idx)
-	{
-		SQObjectType value_type = sq_gettype(vm, idx);
-		switch(value_type)
-		{
-			case OT_BOOL:
-				SQBool sqValueb;
-				sq_getbool(vm, idx, &sqValueb);
-				value = static_cast<T>(sqValueb);
-				break;
-
-			case OT_INTEGER:
-				SQInteger sqValue;
-				sq_getinteger(vm, idx, &sqValue);
-				value = static_cast<T>(sqValue);
-				break;
-
-			case OT_FLOAT:
-				SQFloat sqValuef;
-				sq_getfloat(vm, idx, &sqValuef);
-				value = static_cast<T>(sqValuef);
-				break;
-
-			case OT_NULL:
-			case OT_STRING:
-			case OT_TABLE:
-			case OT_ARRAY:
-			case OT_USERDATA:
-			case OT_CLOSURE:
-			case OT_NATIVECLOSURE:
-			case OT_GENERATOR:
-			case OT_USERPOINTER:
-			case OT_THREAD:
-			case OT_FUNCPROTO:
-			case OT_CLASS:
-			case OT_INSTANCE:
-			case OT_WEAKREF:
-			case OT_OUTER:
-			default:
-				Error::Throw(vm, FormatTypeError(vm, idx, "float"));
-				value = 0;
-				break;
-		}
-	}
+    T value;
+    popAsFloat(HSQUIRRELVM vm, SQInteger idx)
+    {
+        SQObjectType value_type = sq_gettype(vm, idx);
+        switch(value_type) {
+        case OT_BOOL:
+            SQBool sqValueb;
+            sq_getbool(vm, idx, &sqValueb);
+            value = static_cast<T>(sqValueb);
+            break;
+        case OT_INTEGER:
+            SQInteger sqValue; \
+            sq_getinteger(vm, idx, &sqValue);
+            value = static_cast<T>(sqValue);
+            break;
+        case OT_FLOAT:
+            SQFloat sqValuef;
+            sq_getfloat(vm, idx, &sqValuef);
+            value = static_cast<T>(sqValuef);
+            break;
+        default:
+            SQTHROW(vm, FormatTypeError(vm, idx, _SC("float")));
+            value = 0;
+            break;
+        }
+    }
 };
+
+/// @endcond
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Used to get and push class instances to and from the stack as copies
@@ -156,75 +131,76 @@ struct popAsFloat
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-struct Var
-{
-	T value; ///< The actual value of get operations
+struct Var {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		T* ptr = ClassType<T>::GetInstance(vm, idx);
-		if(ptr != NULL)
-		{
-			value = *ptr;
+    T value; ///< The actual value of get operations
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        SQTRY()
+        T* ptr = ClassType<T>::GetInstance(vm, idx);
+        if (ptr != NULL) {
+            value = *ptr;
 #if !defined (SCRAT_NO_ERROR_CHECKING)
-		}
-		else if(std::is_convertible<T, SQInteger>::value)
-		{ /* value is likely of integral type like enums */
-			Error::Clear(vm); // clear the previous error
-			value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
+        } else if (std::is_convertible<T, SQInteger>::value) { /* value is likely of integral type like enums */
+            SQCLEAR(vm); // clear the previous error
+            value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
 #endif
-		}
-		else
-		{
-			// initialize value to avoid warnings
-			value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
-		}
-	}
+        } else {
+            // initialize value to avoid warnings
+            value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
+        }
+        SQCATCH(vm) {
+#if defined (SCRAT_USE_EXCEPTIONS)
+            SQUNUSED(e); // avoid "unreferenced local variable" warning
+#endif
+            if (std::is_convertible<T, SQInteger>::value) { /* value is likely of integral type like enums */
+                value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
+            } else {
+                SQRETHROW(vm);
+            }
+        }
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const T& value)
-	{
-		if(ClassType<T>::hasClassData(vm))
-			ClassType<T>::PushInstanceCopy(vm, value);
-		else /* try integral type */
-			pushAsInt<T, std::is_convertible<T, SQInteger>::value>().push(vm, value);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const T& value) {
+        if (ClassType<T>::hasClassData(vm))
+            ClassType<T>::PushInstanceCopy(vm, value);
+        else /* try integral type */
+            pushAsInt<T, std::is_convertible<T, SQInteger>::value>().push(vm, value);
+    }
 
 private:
-	template <class T2, bool b>
-	struct pushAsInt
-	{
-		void push(HSQUIRRELVM vm, const T2& /*value*/)
-		{
-			assert(false); // fails because called before a Sqrat::Class for T exists and T is not convertible to SQInteger
-			sq_pushnull(vm);
-		}
-	};
 
-	template <class T2>
-	struct pushAsInt<T2, true>
-	{
-		void push(HSQUIRRELVM vm, const T2& value)
-		{
-			sq_pushinteger(vm, static_cast<SQInteger>(value));
-		}
-	};
+    template <class T2, bool b>
+    struct pushAsInt {
+        void push(HSQUIRRELVM vm, const T2& /*value*/) {
+            assert(false); // fails because called before a Sqrat::Class for T exists and T is not convertible to SQInteger
+            sq_pushnull(vm);
+        }
+    };
+
+    template <class T2>
+    struct pushAsInt<T2, true> {
+        void push(HSQUIRRELVM vm, const T2& value) {
+            sq_pushinteger(vm, static_cast<SQInteger>(value));
+        }
+    };
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,60 +210,53 @@ private:
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-struct Var<T&>
-{
-	T& value; ///< The actual value of get operations
+struct Var<T&> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-		: value(*ClassType<T>::GetInstance(vm, idx))
-	{
+    T& value; ///< The actual value of get operations
 
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) : value(*ClassType<T>::GetInstance(vm, idx)) {
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVarR to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, T& value)
-	{
-		if(ClassType<T>::hasClassData(vm))
-			ClassType<T>::PushInstance(vm, &value);
-		else /* try integral type */
-			pushAsInt<T, std::is_convertible<T, SQInteger>::value>().push(vm, value);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVarR to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, T& value) {
+        if (ClassType<T>::hasClassData(vm))
+            ClassType<T>::PushInstance(vm, &value);
+        else /* try integral type */
+            pushAsInt<T, std::is_convertible<T, SQInteger>::value>().push(vm, value);
+    }
 
 private:
-	template <class T2, bool b>
-	struct pushAsInt
-	{
-		void push(HSQUIRRELVM vm, const T2& /*value*/)
-		{
-			assert(false); // fails because called before a Sqrat::Class for T exists and T is not convertible to SQInteger
-			sq_pushnull(vm);
-		}
-	};
 
-	template <class T2>
-	struct pushAsInt<T2, true>
-	{
-		void push(HSQUIRRELVM vm, const T2& value)
-		{
-			sq_pushinteger(vm, static_cast<SQInteger>(value));
-		}
-	};
+    template <class T2, bool b>
+    struct pushAsInt {
+        void push(HSQUIRRELVM vm, const T2& /*value*/) {
+            assert(false); // fails because called before a Sqrat::Class for T exists and T is not convertible to SQInteger
+            sq_pushnull(vm);
+        }
+    };
+
+    template <class T2>
+    struct pushAsInt<T2, true> {
+        void push(HSQUIRRELVM vm, const T2& value) {
+            sq_pushinteger(vm, static_cast<SQInteger>(value));
+        }
+    };
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,37 +266,33 @@ private:
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-struct Var<T*>
-{
-	T *value; ///< The actual value of get operations
+struct Var<T*> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-		: value(ClassType<T>::GetInstance(vm, idx, true))
-	{
+    T* value; ///< The actual value of get operations
 
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) : value(ClassType<T>::GetInstance(vm, idx, true)) {
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, T* value)
-	{
-		ClassType<T>::PushInstance(vm, value);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, T* value) {
+        ClassType<T>::PushInstance(vm, value);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -337,37 +302,33 @@ struct Var<T*>
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-struct Var<T* const>
-{
-	T* const value; ///< The actual value of get operations
+struct Var<T* const> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-		: value(ClassType<T>::GetInstance(vm, idx, true))
-	{
+    T* const value; ///< The actual value of get operations
 
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) : value(ClassType<T>::GetInstance(vm, idx, true)) {
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, T* const value)
-	{
-		ClassType<T>::PushInstance(vm, value);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, T* const value) {
+        ClassType<T>::PushInstance(vm, value);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -381,33 +342,29 @@ struct Var<const T&> {
 
     const T& value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-		: value(*ClassType<T>::GetInstance(vm, idx))
-	{
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) : value(*ClassType<T>::GetInstance(vm, idx)) {
+    }
 
-	}
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const T& value)
-	{
-		ClassType<T>::PushInstanceCopy(vm, value);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const T& value) {
+        ClassType<T>::PushInstanceCopy(vm, value);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -417,37 +374,33 @@ struct Var<const T&> {
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-struct Var<const T*>
-{
-	const T* value; ///< The actual value of get operations
+struct Var<const T*> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-		: value(ClassType<T>::GetInstance(vm, idx, true))
-	{
+    const T* value; ///< The actual value of get operations
 
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) : value(ClassType<T>::GetInstance(vm, idx, true)) {
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const T* value)
-	{
-		ClassType<T>::PushInstance(vm, const_cast<T*>(value));
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const T* value) {
+        ClassType<T>::PushInstance(vm, const_cast<T*>(value));
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -457,37 +410,33 @@ struct Var<const T*>
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-struct Var<const T* const>
-{
-	const T* const value; ///< The actual value of get operations
+struct Var<const T* const> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-		: value(ClassType<T>::GetInstance(vm, idx, true))
-	{
+    const T* const value; ///< The actual value of get operations
 
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) : value(ClassType<T>::GetInstance(vm, idx, true)) {
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const T* const value)
-	{
-		ClassType<T>::PushInstance(vm, const_cast<T*>(value));
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const T* const value) {
+        ClassType<T>::PushInstance(vm, const_cast<T*>(value));
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -497,70 +446,66 @@ struct Var<const T* const>
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T> void PushVarR(HSQUIRRELVM vm, T& value);
-
 template<class T>
-struct Var<std::shared_ptr<T>>
-{
+struct Var<std::shared_ptr<T> > {
+
 	std::shared_ptr<T> value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as the given type
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/// \remarks
-	/// This function MUST have its Error handled if it occurred.
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		if(sq_gettype(vm, idx) != OT_NULL)
-		{
-			Var<T> instance(vm, idx);
-			if(Error::Occurred(vm))
-			{
-				return;
-			}
-			value.Init(new T(instance.value));
-		}
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as the given type
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /// \remarks
+    /// This function MUST have its Error handled if it occurred.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        if (sq_gettype(vm, idx) != OT_NULL) {
+            Var<T> instance(vm, idx);
+            SQCATCH_NOEXCEPT(vm) {
+                return;
+            }
+            value.Init(new T(instance.value));
+        }
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a class object on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const std::shared_ptr<T>& value)
-	{
-		PushVarR(vm, *value);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a class object on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const std::shared_ptr<T>& value) {
+        PushVarR(vm, *value);
+    }
 };
 
 // Integer types
-#define SCRAT_INTEGER(type)										\
-	template<>													\
-	struct Var<type> {											\
-		type value;												\
-		Var(HSQUIRRELVM vm, SQInteger idx) {					\
-			value = popAsInt<type, true>(vm, idx).value;		\
-		}														\
-		static void push(HSQUIRRELVM vm, const type& value) {	\
-			sq_pushinteger(vm, static_cast<SQInteger>(value));	\
-		}														\
-	};															\
-	template<>													\
-	struct Var<const type&> {									\
-		type value;												\
-		Var(HSQUIRRELVM vm, SQInteger idx) {					\
-			value = popAsInt<type, true>(vm, idx).value;		\
-		}														\
-		static void push(HSQUIRRELVM vm, const type& value) {	\
-			sq_pushinteger(vm, static_cast<SQInteger>(value));	\
-		}														\
-	};
+#define SCRAT_INTEGER( type ) \
+ template<> \
+ struct Var<type> { \
+     type value; \
+     Var(HSQUIRRELVM vm, SQInteger idx) { \
+         value = popAsInt<type, true>(vm, idx).value; \
+     } \
+     static void push(HSQUIRRELVM vm, const type& value) { \
+         sq_pushinteger(vm, static_cast<SQInteger>(value)); \
+     } \
+ };\
+ \
+ template<> \
+ struct Var<const type&> { \
+     type value; \
+     Var(HSQUIRRELVM vm, SQInteger idx) { \
+         value = popAsInt<type, true>(vm, idx).value; \
+     } \
+     static void push(HSQUIRRELVM vm, const type& value) { \
+         sq_pushinteger(vm, static_cast<SQInteger>(value)); \
+     } \
+ };
 
 SCRAT_INTEGER(uint32_t)
 SCRAT_INTEGER(int32_t)
@@ -572,27 +517,28 @@ SCRAT_INTEGER(uint64_t)
 SCRAT_INTEGER(int64_t)
 
 // Float types
-#define SCRAT_FLOAT(type)										\
-	template<>													\
-	struct Var<type> {											\
-		type value;												\
-		Var(HSQUIRRELVM vm, SQInteger idx) {					\
-			value = popAsFloat<type>(vm, idx).value;			\
-		}														\
-		static void push(HSQUIRRELVM vm, const type& value) {	\
-			sq_pushfloat(vm, static_cast<SQFloat>(value));		\
-		}														\
-	};															\
-	template<>													\
-	struct Var<const type&> {									\
-		type value;												\
-		Var(HSQUIRRELVM vm, SQInteger idx) {					\
-			value = popAsFloat<type>(vm, idx).value;			\
-		}														\
-		static void push(HSQUIRRELVM vm, const type& value) {	\
-			sq_pushfloat(vm, static_cast<SQFloat>(value));		\
-		}														\
-	};
+#define SCRAT_FLOAT( type ) \
+ template<> \
+ struct Var<type> { \
+     type value; \
+     Var(HSQUIRRELVM vm, SQInteger idx) { \
+         value = popAsFloat<type>(vm, idx).value; \
+     } \
+     static void push(HSQUIRRELVM vm, const type& value) { \
+         sq_pushfloat(vm, static_cast<SQFloat>(value)); \
+     } \
+ }; \
+ \
+ template<> \
+ struct Var<const type&> { \
+     type value; \
+     Var(HSQUIRRELVM vm, SQInteger idx) { \
+         value = popAsFloat<type>(vm, idx).value; \
+     } \
+     static void push(HSQUIRRELVM vm, const type& value) { \
+         sq_pushfloat(vm, static_cast<SQFloat>(value)); \
+     } \
+ };
 
 SCRAT_FLOAT(float)
 SCRAT_FLOAT(double)
@@ -601,257 +547,438 @@ SCRAT_FLOAT(double)
 /// Used to get and push bools to and from the stack
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<bool>
-{
-	bool value; ///< The actual value of get operations
+struct Var<bool> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as a bool
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		SQBool sqValue;
-		sq_tobool(vm, idx, &sqValue);
-		value = (sqValue != 0);
-	}
+    bool value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a bool on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const bool& value)
-	{
-		sq_pushbool(vm, static_cast<SQBool>(value));
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a bool
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        SQBool sqValue;
+        sq_tobool(vm, idx, &sqValue);
+        value = (sqValue != 0);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a bool on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const bool& value) {
+        sq_pushbool(vm, static_cast<SQBool>(value));
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Used to get and push const bool references to and from the stack
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<const bool&>
-{
-	bool value; ///< The actual value of get operations
+struct Var<const bool&> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as a bool
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		SQBool sqValue;
-		sq_tobool(vm, idx, &sqValue);
-		value = (sqValue != 0);
-	}
+    bool value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a bool on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const bool& value)
-	{
-		sq_pushbool(vm, static_cast<SQBool>(value));
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a bool
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        SQBool sqValue;
+        sq_tobool(vm, idx, &sqValue);
+        value = (sqValue != 0);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a bool on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const bool& value) {
+        sq_pushbool(vm, static_cast<SQBool>(value));
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Used to get and push SQChar arrays to and from the stack (usually is a char array)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<SQChar*>
-{
+struct Var<SQChar*> {
 private:
-	HSQOBJECT obj; /* hold a reference to the object holding value during the Var struct lifetime*/
-	HSQUIRRELVM v;
+
+    HSQOBJECT obj; /* hold a reference to the object holding value during the Var struct lifetime*/
+    HSQUIRRELVM v;
 
 public:
-	SQChar* value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as a character array
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		sq_tostring(vm, idx);
-		sq_getstackobj(vm, -1, &obj);
-		sq_getstring(vm, -1, (const SQChar**)&value);
-		sq_addref(vm, &obj);
-		sq_pop(vm, 1);
-		v = vm;
-	}
+    SQChar* value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Destructor
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	~Var()
-	{
-		if(v && !sq_isnull(obj))
-		{
-			sq_release(v, &obj);
-		}
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a character array
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        sq_tostring(vm, idx);
+        sq_getstackobj(vm, -1, &obj);
+        sq_getstring(vm, -1, (const SQChar**)&value);
+        sq_addref(vm, &obj);
+        sq_pop(vm,1);
+        v = vm;
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a character array on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	/// \param len   Length of the string (defaults to finding the length by searching for a terminating null-character)
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const SQChar* value, SQInteger len = -1)
-	{
-		sq_pushstring(vm, value, len);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Destructor
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ~Var()
+    {
+        if(v && !sq_isnull(obj)) {
+            sq_release(v, &obj);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a character array on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    /// \param len   Length of the string (defaults to finding the length by searching for a terminating null-character)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const SQChar* value, SQInteger len = -1) {
+        sq_pushstring(vm, value, len);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Used to get and push const SQChar arrays to and from the stack (usually is a const char array)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<const SQChar*>
-{
+struct Var<const SQChar*> {
 private:
-	HSQOBJECT obj; /* hold a reference to the object holding value during the Var struct lifetime*/
-	HSQUIRRELVM v;
+
+    HSQOBJECT obj; /* hold a reference to the object holding value during the Var struct lifetime*/
+    HSQUIRRELVM v;
 
 public:
-	const SQChar* value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as a character array
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		sq_tostring(vm, idx);
-		sq_getstackobj(vm, -1, &obj);
-		sq_getstring(vm, -1, &value);
-		sq_addref(vm, &obj);
-		sq_pop(vm, 1);
-		v = vm;
-	}
+    const SQChar* value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Destructor
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	~Var()
-	{
-		if(v && !sq_isnull(obj))
-		{
-			sq_release(v, &obj);
-		}
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a character array
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        sq_tostring(vm, idx);
+        sq_getstackobj(vm, -1, &obj);
+        sq_getstring(vm, -1, &value);
+        sq_addref(vm, &obj);
+        sq_pop(vm,1);
+        v = vm;
+    }
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a character array on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	/// \param len   Length of the string (defaults to finding the length by searching for a terminating null-character)
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const SQChar* value, SQInteger len = -1)
-	{
-		sq_pushstring(vm, value, len);
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Destructor
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ~Var()
+    {
+        if(v && !sq_isnull(obj)) {
+            sq_release(v, &obj);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a character array on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    /// \param len   Length of the string (defaults to finding the length by searching for a terminating null-character)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const SQChar* value, SQInteger len = -1) {
+        sq_pushstring(vm, value, len);
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Used to get and push strings to and from the stack (string is usually std::string)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<DynamicString>
-{
-	DynamicString value; ///< The actual value of get operations
+struct Var<string> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as a string
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		const SQChar* ret;
-		sq_tostring(vm, idx);
-		sq_getstring(vm, -1, &ret);
-		value = DynamicString(ret, (size_t)sq_getsize(vm, -1));
-		sq_pop(vm, 1);
-	}
+    string value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a string on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const String& value)
-	{
-		sq_pushstring(vm, value.Str(), (SQInteger)value.Length());
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a string
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        const SQChar* ret;
+        sq_tostring(vm, idx);
+        sq_getstring(vm, -1, &ret);
+        value = string(ret, sq_getsize(vm, -1));
+        sq_pop(vm,1);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a string on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const string& value) {
+        sq_pushstring(vm, value.c_str(), value.size());
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Used to get and push const string references to and from the stack as copies (strings are always copied)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<>
-struct Var<const DynamicString&>
-{
-	DynamicString value; ///< The actual value of get operations
+struct Var<const string&> {
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Attempts to get the value off the stack at idx as a string
-	///
-	/// \param vm  Target VM
-	/// \param idx Index trying to be read
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Var(HSQUIRRELVM vm, SQInteger idx)
-	{
-		const SQChar* ret;
-		sq_tostring(vm, idx);
-		sq_getstring(vm, -1, &ret);
-		value = DynamicString(ret, (size_t)sq_getsize(vm, -1));
-		sq_pop(vm, 1);
-	}
+    string value; ///< The actual value of get operations
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	/// Called by Sqrat::PushVar to put a string on the stack
-	///
-	/// \param vm    Target VM
-	/// \param value Value to push on to the VM's stack
-	///
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static void push(HSQUIRRELVM vm, const String& value)
-	{
-		sq_pushstring(vm, value.Str(), (SQInteger)value.Length());
-	}
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a string
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        const SQChar* ret;
+        sq_tostring(vm, idx);
+        sq_getstring(vm, -1, &ret);
+        value = string(ret, sq_getsize(vm, -1));
+        sq_pop(vm,1);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a string on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const string& value) {
+        sq_pushstring(vm, value.c_str(), value.size());
+    }
 };
+
+#ifdef SQUNICODE
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Used to get and push std::string to and from the stack when SQChar is not char (must define SQUNICODE)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template<>
+struct Var<std::string> {
+
+    std::string value; ///< The actual value of get operations
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a string
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        const SQChar* ret;
+        sq_tostring(vm, idx);
+        sq_getstring(vm, -1, &ret);
+        value = wstring_to_string(string(ret, sq_getsize(vm, -1)));
+        sq_pop(vm,1);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a string on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const std::string& value) {
+        std::wstring s = string_to_wstring(value);
+        sq_pushstring(vm, s.c_str(), s.size());
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Used to get and push const std::string references to and from the stack when SQChar is not char (must define SQUNICODE)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template<>
+struct Var<const std::string&> {
+
+    std::string value; ///< The actual value of get operations
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a string
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        const SQChar* ret;
+        sq_tostring(vm, idx);
+        sq_getstring(vm, -1, &ret);
+        value = wstring_to_string(string(ret, sq_getsize(vm, -1)));
+        sq_pop(vm,1);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a string on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const std::string& value) {
+        std::wstring s = string_to_wstring(value);
+        sq_pushstring(vm, s.c_str(), s.size());
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Used to get and push SQChar arrays to and from the stack when SQChar is not char (must define SQUNICODE)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template<>
+struct Var<char*> {
+private:
+
+    HSQOBJECT obj;/* hold a reference to the object holding value during the Var struct lifetime*/
+    HSQUIRRELVM v;
+
+public:
+
+    char* value; ///< The actual value of get operations
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a character array
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        std::string holder;
+        const SQChar *sv;
+        sq_tostring(vm, idx);
+        sq_getstackobj(vm, -1, &obj);
+        sq_getstring(vm, -1, &sv);
+        sq_addref(vm, &obj);
+        sq_pop(vm,1);
+        v = vm;
+        holder = wstring_to_string(string(sv));
+        value = strdup(holder.c_str());
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Destructor
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ~Var()
+    {
+        if(v && !sq_isnull(obj)) {
+            sq_release(v, &obj);
+            free(value);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a character array on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    /// \param len   Length of the string (defaults to finding the length by searching for a terminating null-character)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const char* value, SQInteger len = -1) {
+        sq_pushstring(vm, string_to_wstring(std::string(value)).c_str(), len);
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Used to get and push const SQChar arrays to and from the stack when SQChar is not char (must define SQUNICODE)
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template<>
+struct Var<const char*> {
+private:
+
+    HSQOBJECT obj; /* hold a reference to the object holding value during the Var struct lifetime*/
+    HSQUIRRELVM v;
+
+public:
+
+    char* value; ///< The actual value of get operations
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Attempts to get the value off the stack at idx as a character array
+    ///
+    /// \param vm  Target VM
+    /// \param idx Index trying to be read
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    Var(HSQUIRRELVM vm, SQInteger idx) {
+        std::string holder;
+        const SQChar *sv;
+        sq_tostring(vm, idx);
+        sq_getstackobj(vm, -1, &obj);
+        sq_getstring(vm, -1, &sv);
+        sq_addref(vm, &obj);
+        sq_pop(vm,1);
+        v = vm;
+        holder = wstring_to_string(string(sv));
+        value = strdup(holder.c_str());
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Destructor
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ~Var()
+    {
+        if(v && !sq_isnull(obj)) {
+            sq_release(v, &obj);
+            free(value);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Called by Sqrat::PushVar to put a character array on the stack
+    ///
+    /// \param vm    Target VM
+    /// \param value Value to push on to the VM's stack
+    /// \param len   Length of the string (defaults to finding the length by searching for a terminating null-character)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static void push(HSQUIRRELVM vm, const char* value, SQInteger len = -1) {
+        sq_pushstring(vm, string_to_wstring(std::string(value)).c_str(), len);
+    }
+};
+#endif
+
 
 // Non-referencable type definitions
 template<class T> struct is_referencable {static const bool value = true;};
@@ -870,7 +997,12 @@ SCRAT_MAKE_NONREFERENCABLE(int64_t)
 SCRAT_MAKE_NONREFERENCABLE(float)
 SCRAT_MAKE_NONREFERENCABLE(double)
 SCRAT_MAKE_NONREFERENCABLE(bool)
-SCRAT_MAKE_NONREFERENCABLE(String)
+SCRAT_MAKE_NONREFERENCABLE(string)
+
+#ifdef SQUNICODE
+SCRAT_MAKE_NONREFERENCABLE(std::string)
+#endif
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Pushes a value on to a given VM's stack
@@ -887,10 +1019,10 @@ SCRAT_MAKE_NONREFERENCABLE(String)
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void PushVar(HSQUIRRELVM vm, T* value)
-{
-	Var<T*>::push(vm, value);
+inline void PushVar(HSQUIRRELVM vm, T* value) {
+    Var<T*>::push(vm, value);
 }
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Pushes a value on to a given VM's stack
@@ -907,27 +1039,26 @@ inline void PushVar(HSQUIRRELVM vm, T* value)
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void PushVar(HSQUIRRELVM vm, const T& value)
-{
-	Var<T>::push(vm, value);
+inline void PushVar(HSQUIRRELVM vm, const T& value) {
+    Var<T>::push(vm, value);
 }
 
+
+/// @cond DEV
 template<class T, bool b>
-struct PushVarR_helper
-{
-	inline static void push(HSQUIRRELVM vm, T value)
-	{
-		PushVar<T>(vm, value);
-	}
+struct PushVarR_helper {
+    inline static void push(HSQUIRRELVM vm, T value) {
+        PushVar<T>(vm, value);
+    }
 };
 template<class T>
-struct PushVarR_helper<T, false>
-{
-	inline static void push(HSQUIRRELVM vm, const T& value)
-	{
-		PushVar<const T&>(vm, value);
-	}
+struct PushVarR_helper<T, false> {
+    inline static void push(HSQUIRRELVM vm, const T& value) {
+        PushVar<const T&>(vm, value);
+    }
 };
+/// @endcond
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Pushes a reference on to a given VM's stack (some types cannot be referenced and will be copied instead)
@@ -944,18 +1075,12 @@ struct PushVarR_helper<T, false>
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
-inline void PushVarR(HSQUIRRELVM vm, T& value)
-{
-	if(!std::is_pointer<T>::value)
-	{
-		if(is_referencable<typename std::remove_cv<T>::type>::value)
-		{
-			Var<T&>::push(vm, value);
-			return;
-		}
-	}
-
-	PushVarR_helper<T, std::is_pointer<T>::value>::push(vm, value);
+inline void PushVarR(HSQUIRRELVM vm, T& value) {
+    if (!std::is_pointer<T>::value && is_referencable<typename std::remove_cv<T>::type>::value) {
+        Var<T&>::push(vm, value);
+    } else {
+        PushVarR_helper<T, std::is_pointer<T>::value>::push(vm, value);
+    }
 }
 
 }

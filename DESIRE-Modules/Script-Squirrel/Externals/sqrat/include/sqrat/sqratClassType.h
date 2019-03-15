@@ -32,15 +32,14 @@
 //    distribution.
 //
 
-#include "squirrel.h"
-#include "sqratUtil.h"
+#include <squirrel.h>
 
-#include <assert.h>
-#include <memory>
-#include <unordered_map>
+#include "sqratUtil.h"
 
 namespace Sqrat
 {
+
+/// @cond DEV
 
 // The copy function for a class
 typedef SQInteger (*COPYFUNC)(HSQUIRRELVM, SQInteger, const void*);
@@ -51,14 +50,14 @@ struct AbstractStaticClassData {
     virtual ~AbstractStaticClassData() {}
     virtual SQUserPointer Cast(SQUserPointer ptr, SQUserPointer classType) = 0;
     AbstractStaticClassData* baseClass;
-    DynamicString            className;
+    string                   className;
     COPYFUNC                 copyFunc;
 };
 
 // StaticClassData keeps track of the nearest base class B and the class associated with itself C in order to cast C++ pointers to the right base class
 template<class C, class B>
 struct StaticClassData : public AbstractStaticClassData {
-    virtual SQUserPointer Cast(SQUserPointer ptr, SQUserPointer classType) override {
+    virtual SQUserPointer Cast(SQUserPointer ptr, SQUserPointer classType) {
         if (classType != this) {
             ptr = baseClass->Cast(static_cast<B*>(static_cast<C*>(ptr)), classType);
         }
@@ -73,7 +72,7 @@ struct ClassData {
     HSQOBJECT getTable;
     HSQOBJECT setTable;
     std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> instances;
-    std::shared_ptr<AbstractStaticClassData> staticData;
+	std::shared_ptr<AbstractStaticClassData> staticData;
 };
 
 // Internal helper class for managing classes
@@ -90,7 +89,7 @@ public:
 #else
         sq_rawget(vm, -2);
 #endif
-        sq_pushstring(vm, ClassName().Str(), -1);
+        sq_pushstring(vm, ClassName().c_str(), -1);
 #ifndef NDEBUG
         r = sq_rawget(vm, -2);
         assert(SQ_SUCCEEDED(r)); // fails if getClassData is called when the data does not exist for the given VM yet (bind the class)
@@ -98,14 +97,14 @@ public:
         sq_rawget(vm, -2);
 #endif
         ClassData<C>** ud;
-        sq_getuserdata(vm, -1, (SQUserPointer*)&ud, nullptr);
+        sq_getuserdata(vm, -1, (SQUserPointer*)&ud, NULL);
         sq_pop(vm, 3);
         return *ud;
     }
 
     static std::weak_ptr<AbstractStaticClassData>& getStaticClassData() {
-		static std::weak_ptr<AbstractStaticClassData> data;
-		return data;
+        static std::weak_ptr<AbstractStaticClassData> data;
+        return data;
     }
 
     static inline bool hasClassData(HSQUIRRELVM vm) {
@@ -113,7 +112,7 @@ public:
             sq_pushregistrytable(vm);
             sq_pushstring(vm, "__classes", -1);
             if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
-                sq_pushstring(vm, ClassName().Str(), -1);
+                sq_pushstring(vm, ClassName().c_str(), -1);
                 if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
                     sq_pop(vm, 3);
                     return true;
@@ -126,11 +125,11 @@ public:
     }
 
     static inline AbstractStaticClassData*& BaseClass() {
-        assert(getStaticClassData().Expired() == false); // fails because called before a Sqrat::Class for this type exists
-        return getStaticClassData().Lock()->baseClass;
+        assert(getStaticClassData().expired() == false); // fails because called before a Sqrat::Class for this type exists
+        return getStaticClassData().lock()->baseClass;
     }
 
-    static inline const String& ClassName() {
+    static inline string& ClassName() {
         assert(getStaticClassData().expired() == false); // fails because called before a Sqrat::Class for this type exists
         return getStaticClassData().lock()->className;
     }
@@ -140,8 +139,9 @@ public:
         return getStaticClassData().lock()->copyFunc;
     }
 
-    static SQInteger DeleteInstance(SQUserPointer ptr, SQInteger /*size*/) {
-        auto *instance = reinterpret_cast<std::pair< C*, std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> >*>(ptr);
+    static SQInteger DeleteInstance(SQUserPointer ptr, SQInteger size) {
+        SQUNUSED(size);
+        std::pair<C*, std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> >* instance = reinterpret_cast<std::pair<C*, std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> >*>(ptr);
         instance->second->erase(instance->first);
         delete instance;
         return 0;
@@ -153,9 +153,9 @@ public:
             return;
         }
 
-        ClassData<C> *cd = getClassData(vm);
+        ClassData<C>* cd = getClassData(vm);
 
-        auto it = cd->instances->find(ptr);
+        std::unordered_map<C*, HSQOBJECT>::iterator it = cd->instances->find(ptr);
         if (it != cd->instances->end()) {
             sq_pushobject(vm, it->second);
             return;
@@ -164,7 +164,7 @@ public:
         sq_pushobject(vm, cd->classObj);
         sq_createinstance(vm, -1);
         sq_remove(vm, -2);
-        sq_setinstanceup(vm, -1, new std::pair< C*, std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> >(ptr, cd->instances));
+        sq_setinstanceup(vm, -1, new std::pair<C*, std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> >(ptr, cd->instances));
         sq_setreleasehook(vm, -1, &DeleteInstance);
         sq_getstackobj(vm, -1, &((*cd->instances)[ptr]));
     }
@@ -182,25 +182,25 @@ public:
     }
 
     static C* GetInstance(HSQUIRRELVM vm, SQInteger idx, bool nullAllowed = false) {
-        AbstractStaticClassData* classType = nullptr;
-        std::pair< C*, std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> > *instance = nullptr;
+        AbstractStaticClassData* classType = NULL;
+        std::pair<C*, std::shared_ptr<std::unordered_map<C*, HSQOBJECT>> >* instance = NULL;
         if (hasClassData(vm)) /* type checking only done if the value has type data else it may be enum */
         {
             if (nullAllowed && sq_gettype(vm, idx) == OT_NULL) {
-                return nullptr;
+                return NULL;
             }
 
             classType = getStaticClassData().lock().get();
 
 #if !defined (SCRAT_NO_ERROR_CHECKING)
             if (SQ_FAILED(sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, classType))) {
-				Error::Throw(vm, FormatTypeError(vm, idx, ClassName()));
-                return nullptr;
+                SQTHROW(vm, FormatTypeError(vm, idx, ClassName()));
+                return NULL;
             }
 
-            if (instance == nullptr) {
-				Error::Throw(vm, "got unconstructed native class (call base.constructor in the constructor of Squirrel classes that extend native classes)");
-                return nullptr;
+            if (instance == NULL) {
+                SQTHROW(vm, _SC("got unconstructed native class (call base.constructor in the constructor of Squirrel classes that extend native classes)"));
+                return NULL;
             }
 #else
             sq_getinstanceup(vm, idx, (SQUserPointer*)&instance, 0);
@@ -208,15 +208,15 @@ public:
         }
         else /* value is likely of integral type like enums, cannot return a pointer */
         {
-			Error::Throw(vm, FormatTypeError(vm, idx, "unknown"));
-            return nullptr;
+            SQTHROW(vm, FormatTypeError(vm, idx, _SC("unknown")));
+            return NULL;
         }
         AbstractStaticClassData* actualType;
         sq_gettypetag(vm, idx, (SQUserPointer*)&actualType);
-        if (actualType == nullptr) {
+        if (actualType == NULL) {
             SQInteger top = sq_gettop(vm);
             sq_getclass(vm, idx);
-            while (actualType == nullptr) {
+            while (actualType == NULL) {
                 sq_getbase(vm, -1);
                 sq_gettypetag(vm, -1, (SQUserPointer*)&actualType);
             }
@@ -228,5 +228,7 @@ public:
         return static_cast<C*>(instance->first);
     }
 };
+
+/// @endcond
 
 }
