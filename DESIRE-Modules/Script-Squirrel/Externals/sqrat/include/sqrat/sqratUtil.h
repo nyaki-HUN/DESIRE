@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a modified version of sqrat
-//	The changes include some cleanup, switching to C++11 and removing features
+//	The changes include switching to C++11 and removing features
 // --------------------------------------------------------------------------------------------------------------------
 
 //
@@ -31,6 +31,9 @@
 //  3. This notice may not be removed or altered from any source
 //  distribution.
 //
+
+#if !defined(_SCRAT_UTIL_H_)
+#define _SCRAT_UTIL_H_
 
 #include <cassert>
 #include <squirrel.h>
@@ -447,8 +450,8 @@ inline string LastErrorString(HSQUIRRELVM vm) {
     sq_pop(vm, 2);
     return string(sqErr);
 }
-
-
 /// @endcond
 
 }
+
+#endif

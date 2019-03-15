@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a modified version of sqrat
-//	The changes include some cleanup, switching to C++11 and removing features
+//	The changes include switching to C++11 and removing features
 // --------------------------------------------------------------------------------------------------------------------
 
 //
@@ -31,6 +31,9 @@
 //    3. This notice may not be removed or altered from any source
 //    distribution.
 //
+
+#if !defined(_SCRAT_CLASS_H_)
+#define _SCRAT_CLASS_H_
 
 #include <squirrel.h>
 #include <string.h>
@@ -354,6 +357,28 @@ public:
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Binds a read-only class property (using a global function instead of a member function)
+    ///
+    /// \param name      Name of the variable as it will appear in Squirrel
+    /// \param getMethod Getter for the variable
+    ///
+    /// \tparam F Type of get function (usually doesnt need to be defined explicitly)
+    ///
+    /// \return The Class itself so the call can be chained
+    ///
+    /// \remarks
+    /// This method binds a getter function in C++ to Squirrel as if it is a class variable.
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<class F>
+    Class& GlobalProp(const SQChar* name, F getMethod) {
+        // Add the getter
+        BindAccessor(name, &getMethod, sizeof(getMethod), SqMemberGlobalOverloadedFunc(getMethod), ClassType<C>::getClassData(vm)->getTable);
+
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Binds a class function
     ///
     /// \param name   Name of the function as it will appear in Squirrel
@@ -392,6 +417,23 @@ public:
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Binds a global function as a class function
+    ///
+    /// \param name   Name of the function as it will appear in Squirrel
+    /// \param method Function to bind
+    ///
+    /// \tparam F Type of function (usually doesnt need to be defined explicitly)
+    ///
+    /// \return The Class itself so the call can be chained
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<class F>
+    Class& GlobalFunc(const SQChar* name, F method) {
+        BindFunc(name, &method, sizeof(method), SqMemberGlobalFunc(method));
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Binds a static class function
     ///
     /// \param name   Name of the function as it will appear in Squirrel
@@ -405,6 +447,27 @@ public:
     template<class F>
     Class& StaticFunc(const SQChar* name, F method) {
         BindFunc(name, &method, sizeof(method), SqGlobalFunc(method));
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Binds a global function as a class function with overloading enabled
+    ///
+    /// \param name   Name of the function as it will appear in Squirrel
+    /// \param method Function to bind
+    ///
+    /// \tparam F Type of function (usually doesnt need to be defined explicitly)
+    ///
+    /// \return The Class itself so the call can be chained
+    ///
+    /// \remarks
+    /// Overloading in this context means to allow the function name to be used with functions
+    /// of a different number of arguments. This definition differs from others (e.g. C++'s).
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<class F>
+    Class& GlobalOverload(const SQChar* name, F method) {
+        BindOverload(name, &method, sizeof(method), SqMemberGlobalOverloadedFunc(method), SqOverloadFunc(method), SqGetArgCount(method) - 1);
         return *this;
     }
 
@@ -861,7 +924,6 @@ public:
             ClassData<C>* cd = *ud;
 
             if (ClassType<C>::getStaticClassData().expired()) {
-
                 cd->staticData = std::make_shared<StaticClassData<C, B>>();
                 cd->staticData->copyFunc  = &A::Copy;
                 cd->staticData->className = string(className);
@@ -960,3 +1022,5 @@ protected:
 };
 
 }
+
+#endif

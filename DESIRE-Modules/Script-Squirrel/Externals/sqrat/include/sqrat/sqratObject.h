@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a modified version of sqrat
-//	The changes include some cleanup, switching to C++11 and removing features
+//	The changes include switching to C++11 and removing features
 // --------------------------------------------------------------------------------------------------------------------
 
 //
@@ -31,6 +31,9 @@
 //  3. This notice may not be removed or altered from any source
 //  distribution.
 //
+
+#if !defined(_SCRAT_OBJECT_H_)
+#define _SCRAT_OBJECT_H_
 
 #include <squirrel.h>
 #include <string.h>
@@ -328,6 +331,85 @@ public:
         return ret;
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Iterator for going over the slots in the object using Object::Next
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    struct iterator
+    {
+        /// @cond DEV
+        friend class Object;
+        /// @endcond
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Default constructor (null)
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        iterator()
+        {
+            Index = 0;
+            sq_resetobject(&Key);
+            sq_resetobject(&Value);
+            Key._type = OT_NULL;
+            Value._type = OT_NULL;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Returns the string value of the key the iterator is on if possible
+        ///
+        /// \return String or NULL
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        const SQChar* getName() { return sq_objtostring(&Key); }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Gets the Squirrel object for the key the iterator is on
+        ///
+        /// \return HSQOBJECT representing a key
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        HSQOBJECT getKey() { return Key; }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// Gets the Squirrel object for the value the iterator is on
+        ///
+        /// \return HSQOBJECT representing a value
+        ///
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        HSQOBJECT getValue() { return Value; }
+    private:
+
+        HSQOBJECT Key;
+        HSQOBJECT Value;
+        SQInteger Index;
+    };
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Used to go through all the slots in an Object (same limitations as sq_next)
+    ///
+    /// \param iter An iterator being used for going through the slots
+    ///
+    /// \return Whether there is a next slot
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool Next(iterator& iter) const
+    {
+        sq_pushobject(vm,obj);
+        sq_pushinteger(vm,iter.Index);
+        if(SQ_SUCCEEDED(sq_next(vm,-2)))
+        {
+            sq_getstackobj(vm,-1,&iter.Value);
+            sq_getstackobj(vm,-2,&iter.Key);
+            sq_getinteger(vm,-3,&iter.Index);
+            sq_pop(vm,4);
+            return true;
+        }
+        else
+        {
+            sq_pop(vm,2);
+            return false;
+        }
+    }
+
 protected:
 /// @cond DEV
 
@@ -478,3 +560,5 @@ template<>
 struct Var<const Object&> : Var<Object> {Var(HSQUIRRELVM vm, SQInteger idx) : Var<Object>(vm, idx) {}};
 
 }
+
+#endif

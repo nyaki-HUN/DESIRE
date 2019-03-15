@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a modified version of sqrat
-//	The changes include some cleanup, switching to C++11 and removing features
+//	The changes include switching to C++11 and removing features
 // --------------------------------------------------------------------------------------------------------------------
 
 //
@@ -31,6 +31,9 @@
 //  3. This notice may not be removed or altered from any source
 //  distribution.
 //
+
+#if !defined(_SCRAT_TYPES_H_)
+#define _SCRAT_TYPES_H_
 
 #ifdef SQUNICODE
 #include <cstdlib>
@@ -449,7 +452,7 @@ template<class T> void PushVarR(HSQUIRRELVM vm, T& value);
 template<class T>
 struct Var<std::shared_ptr<T> > {
 
-	std::shared_ptr<T> value; ///< The actual value of get operations
+    std::shared_ptr<T> value; ///< The actual value of get operations
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attempts to get the value off the stack at idx as the given type
@@ -1084,3 +1087,5 @@ inline void PushVarR(HSQUIRRELVM vm, T& value) {
 }
 
 }
+
+#endif

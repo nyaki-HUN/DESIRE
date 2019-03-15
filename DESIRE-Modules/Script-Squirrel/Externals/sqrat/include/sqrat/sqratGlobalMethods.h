@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a modified version of sqrat
-//	The changes include some cleanup, switching to C++11 and removing features
+//	The changes include switching to C++11 and removing features
 // --------------------------------------------------------------------------------------------------------------------
 
 //
@@ -32,6 +32,9 @@
 //  3. This notice may not be removed or altered from any source
 //  distribution.
 //
+
+#if !defined(_SCRAT_GLOBAL_METHODS_H_)
+#define _SCRAT_GLOBAL_METHODS_H_
 
 #include <squirrel.h>
 #include "sqratTypes.h"
@@ -894,7 +897,8 @@ SQFUNCTION SqGlobalFunc(R& (* /*method*/)(A1, A2, A3, A4, A5, A6)) {
     return &SqGlobal<R&>::template Func6<A1, A2, A3, A4, A5, A6, 2, false>;
 }
 
-
 /// @endcond
 
 }
+
+#endif

@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a modified version of sqrat
-//	The changes include some cleanup, switching to C++11 and removing features
+//	The changes include switching to C++11 and removing features
 // --------------------------------------------------------------------------------------------------------------------
 
 //
@@ -31,6 +31,9 @@
 //  3. This notice may not be removed or altered from any source
 //  distribution.
 //
+
+#if !defined(_SCRAT_ALLOCATOR_H_)
+#define _SCRAT_ALLOCATOR_H_
 
 #include <squirrel.h>
 #include <string.h>
@@ -497,7 +500,7 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static SQInteger New(HSQUIRRELVM vm) {
-        SetInstance(vm, 1, NewC<C, is_default_constructible<C>::value >().p);
+        SetInstance(vm, 1, NewC<C, std::is_default_constructible<C>::value >().p);
         return 0;
     }
 
@@ -755,3 +758,5 @@ public:
 };
 
 }
+
+#endif

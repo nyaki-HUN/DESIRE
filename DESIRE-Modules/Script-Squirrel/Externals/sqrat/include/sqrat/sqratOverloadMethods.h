@@ -2,7 +2,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a modified version of sqrat
-//	The changes include some cleanup, switching to C++11 and removing features
+//	The changes include switching to C++11 and removing features
 // --------------------------------------------------------------------------------------------------------------------
 
 //
@@ -31,6 +31,9 @@
 //  3. This notice may not be removed or altered from any source
 //  distribution.
 //
+
+#if !defined(_SQRAT_OVERLOAD_METHODS_H_)
+#define _SQRAT_OVERLOAD_METHODS_H_
 
 #include <squirrel.h>
 #include <sqstdaux.h>
@@ -233,6 +236,75 @@ SQFUNCTION SqGlobalOverloadedFunc(R& (* /*method*/)(A1, A2, A3, A4, A5, A6)) {
     return &SqGlobal<R&>::template Func6<A1, A2, A3, A4, A5, A6, 2, true>;
 }
 
+//
+// Member Global Overloaded Function Resolvers
+//
+
+// Arg Count 1
+template <class R, class A1>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R (* /*method*/)(A1)) {
+    return &SqGlobal<R>::template Func1<A1, 1, true>;
+}
+
+template <class R, class A1>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R& (* /*method*/)(A1)) {
+    return &SqGlobal<R&>::template Func1<A1, 1, true>;
+}
+
+// Arg Count 2
+template <class R, class A1, class A2>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R (* /*method*/)(A1, A2)) {
+    return &SqGlobal<R>::template Func2<A1, A2, 1, true>;
+}
+
+template <class R, class A1, class A2>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R& (* /*method*/)(A1, A2)) {
+    return &SqGlobal<R&>::template Func2<A1, A2, 1, true>;
+}
+
+// Arg Count 3
+template <class R, class A1, class A2, class A3>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R (* /*method*/)(A1, A2, A3)) {
+    return &SqGlobal<R>::template Func3<A1, A2, A3, 1, true>;
+}
+
+template <class R, class A1, class A2, class A3>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R& (* /*method*/)(A1, A2, A3)) {
+    return &SqGlobal<R&>::template Func3<A1, A2, A3, 1, true>;
+}
+
+// Arg Count 4
+template <class R, class A1, class A2, class A3, class A4>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R (* /*method*/)(A1, A2, A3, A4)) {
+    return &SqGlobal<R>::template Func4<A1, A2, A3, A4, 1, true>;
+}
+
+template <class R, class A1, class A2, class A3, class A4>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R& (* /*method*/)(A1, A2, A3, A4)) {
+    return &SqGlobal<R&>::template Func4<A1, A2, A3, A4, 1, true>;
+}
+
+// Arg Count 5
+template <class R, class A1, class A2, class A3, class A4, class A5>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R (* /*method*/)(A1, A2, A3, A4, A5)) {
+    return &SqGlobal<R>::template Func5<A1, A2, A3, A4, A5, 1, true>;
+}
+
+template <class R, class A1, class A2, class A3, class A4, class A5>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R& (* /*method*/)(A1, A2, A3, A4, A5)) {
+    return &SqGlobal<R&>::template Func5<A1, A2, A3, A4, A5, 1, true>;
+}
+
+// Arg Count 6
+template <class R, class A1, class A2, class A3, class A4, class A5, class A6>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R (* /*method*/)(A1, A2, A3, A4, A5, A6)) {
+    return &SqGlobal<R>::template Func6<A1, A2, A3, A4, A5, A6, 1, true>;
+}
+
+template <class R, class A1, class A2, class A3, class A4, class A5, class A6>
+SQFUNCTION SqMemberGlobalOverloadedFunc(R& (* /*method*/)(A1, A2, A3, A4, A5, A6)) {
+    return &SqGlobal<R&>::template Func6<A1, A2, A3, A4, A5, A6, 1, true>;
+}
 
 //
 // Member Overloaded Function Resolvers
@@ -383,7 +455,6 @@ inline SQFUNCTION SqMemberOverloadedFunc(R& (C::* /*method*/)(A1, A2, A3, A4, A5
     return &SqMember<C, R&>::template Func6C<A1, A2, A3, A4, A5, A6, true>;
 }
 
-
 //
 // Overload handler resolver
 //
@@ -403,7 +474,6 @@ inline SQFUNCTION SqOverloadFunc(R (C::* /*method*/)(Args...) const ) {
     return &SqOverload<R>::Func;
 }
 
-
 //
 // Query argument count
 //
@@ -413,7 +483,6 @@ inline int SqGetArgCount(R (* /*method*/)(Args...)) {
 	return sizeof...(Args);
 }
 
-
 //
 // Query member function argument count
 //
@@ -422,7 +491,6 @@ template <class C, class R, class... Args>
 inline int SqGetArgCount(R (C::* /*method*/)(Args...)) {
 	return sizeof...(Args);
 }
-
 
 //
 // Query const member function argument count
@@ -436,3 +504,5 @@ inline int SqGetArgCount(R (C::* /*method*/)(Args...) const) {
 /// @endcond
 
 }
+
+#endif
