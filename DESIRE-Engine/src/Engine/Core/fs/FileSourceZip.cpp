@@ -275,7 +275,7 @@ void FileSourceZip::ConvertFilename(WritableString& filename)
 		const size_t pos = filename.FindLast('/');
 		if(pos != String::kInvalidPos)
 		{
-			filename.RemoveFrom(0, pos);
+			filename.RemoveFrom(0, pos + 1);
 		}
 	}
 
