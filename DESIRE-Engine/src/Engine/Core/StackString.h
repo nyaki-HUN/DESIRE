@@ -2,6 +2,9 @@
 
 #include "Engine/Core/WritableString.h"
 
+#include <cstdio>		// For vsnprintf
+#include <cstdarg>		// For va_list, va_start, va_end
+
 template<size_t STACK_SIZE>
 class StackString : public WritableString
 {
@@ -23,25 +26,19 @@ public:
 		InitWithData(string.Str(), string.Length());
 	}
 
+	StackString(const StackString<STACK_SIZE>& string)
+	{
+		data = charBuffer;
+		InitWithData(string.Str(), string.Length());
+	}
+
 	StackString<STACK_SIZE>& operator =(const String& string)
 	{
 		InitWithData(string.Str(), string.Length());
 		return *this;
 	}
 
-	static StackString<STACK_SIZE> CreateFormattedString(const char *format, ...)
-	{
-		StackString<STACK_SIZE> string;
-
-		std::va_list args;
-		va_start(args, format);
-		const bool result = string.Format_Internal(format, args);
-		va_end(args);
-
-		return string;
-	}
-
-	char* GetCharBufferForSize(size_t newSize)
+	char* GetCharBufferWithSize(size_t newSize)
 	{
 		if(newSize < STACK_SIZE)
 		{
@@ -50,6 +47,24 @@ public:
 		}
 
 		return nullptr;
+	}
+
+	// Create formatted string from variable argument list
+	static StackString<STACK_SIZE> Format(const char *format, ...)
+	{
+		StackString<STACK_SIZE> string;
+
+		va_list args;
+		va_start(args, format);
+		const int formattedSize = vsnprintf(string.data, STACK_SIZE, format, args);
+		va_end(args);
+
+		if(formattedSize >= 0)
+		{
+			string.size = (size_t)formattedSize;
+		}
+
+		return string;
 	}
 
 private:

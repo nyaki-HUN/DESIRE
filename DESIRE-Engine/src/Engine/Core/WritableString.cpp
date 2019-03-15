@@ -7,11 +7,6 @@ WritableString::WritableString()
 
 }
 
-WritableString::WritableString(const WritableString& string)
-{
-	InitWithData(string.Str(), string.Length());
-}
-
 void WritableString::ToLower()
 {
 	StrUtils::ToLower(data);
@@ -173,24 +168,6 @@ WritableString& WritableString::operator +=(float number)
 		Append(str, len);
 	}
 	return *this;
-}
-
-bool WritableString::Format(const char *format, ...)
-{
-	std::va_list args;
-	va_start(args, format);
-	const bool result = Format_Internal(format, args);
-	va_end(args);
-
-	return result;
-}
-
-bool WritableString::Format_Internal(const char *format, std::va_list args)
-{
-	ASSERT(format != nullptr);
-
-	const int formattedSize = vsnprintf(data, size, format, args);
-	return (formattedSize >= 0 && (size_t)formattedSize < size);
 }
 
 void WritableString::Replace_Internal(const String& search, const String& replaceTo, bool all)

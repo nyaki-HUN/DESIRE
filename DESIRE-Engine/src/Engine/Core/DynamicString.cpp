@@ -1,8 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/DynamicString.h"
 
-#include <stdarg.h>
-
 DynamicString::DynamicString(size_t numReservedChars)
 {
 	Reserve(numReservedChars);
@@ -81,17 +79,16 @@ DynamicString DynamicString::SubString(size_t startIndex, size_t numChars) const
 	return DynamicString(&data[startIndex], std::min(numChars, size - startIndex));
 }
 
-DynamicString DynamicString::CreateFormattedString(const char *format, ...)
+DynamicString DynamicString::Format(const char *format, ...)
 {
 	char str[1024];
 
 	va_list args;
 	va_start(args, format);
-	const int size = vsnprintf(str, sizeof(str), format, args);
-	ASSERT(size < sizeof(str));
+	const int formattedSize = vsnprintf(str, sizeof(str), format, args);
 	va_end(args);
 
-	return DynamicString(str, (size_t)size);
+	return (formattedSize >= 0) ? DynamicString(str, (size_t)formattedSize) : DynamicString();
 }
 
 bool DynamicString::Reserve(size_t numChars)

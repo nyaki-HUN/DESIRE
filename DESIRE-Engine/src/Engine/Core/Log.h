@@ -3,14 +3,14 @@
 class Log
 {
 public:
-	static const size_t MAX_MESSAGE_LENGTH = 2048;
+	static const size_t kMaxMessageLength = 2048;
 
 	struct LogData
 	{
 		const char *file;
 		int line;
 		const char *logType;
-		char message[MAX_MESSAGE_LENGTH];
+		char message[kMaxMessageLength];
 	};
 
 	typedef void(*LogFunction_t)(const Log::LogData& logData);

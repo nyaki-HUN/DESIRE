@@ -10,8 +10,6 @@
 	#include "Engine/Core/ANDROID/ANDROIDLoggerPolicies.h"
 #endif
 
-#include <stdarg.h>
-
 Log::LogFunction_t Log::userDefinedLogFunction = nullptr;
 
 void Log::LogWithData(const Log::LogData& logData)

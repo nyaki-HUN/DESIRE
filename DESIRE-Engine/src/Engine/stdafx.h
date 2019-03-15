@@ -10,10 +10,10 @@
 #include <stdint.h>
 #include <cstdlib>
 #include <cstdio>
+#include <cstdarg>
 #include <string.h>
 #include <cfloat>
 #include <cmath>
-#include <cctype>
 #include <algorithm>
 #include <functional>
 #include <utility>

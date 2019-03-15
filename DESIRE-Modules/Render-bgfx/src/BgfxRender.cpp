@@ -67,7 +67,7 @@ void BgfxRender::Init(IWindow *mainWindow)
 	samplerUniforms[0] = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
 	for(uint8_t i = 1; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
 	{
-		samplerUniforms[i] = bgfx::createUniform(StackString<7>::CreateFormattedString("s_tex%u", i).Str(), bgfx::UniformType::Int1);
+		samplerUniforms[i] = bgfx::createUniform(StackString<7>::Format("s_tex%u", i).Str(), bgfx::UniformType::Int1);
 	}
 
 	renderState = BGFX_STATE_MSAA;

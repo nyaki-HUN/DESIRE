@@ -2,13 +2,10 @@
 
 #include "Engine/Core/String.h"
 
-#include <cstdarg>		// For std::va_list
-
 class WritableString : public String
 {
 public:
 	WritableString();
-	WritableString(const WritableString& string);
 
 	void ToLower();
 	void ToUpper();
@@ -55,13 +52,9 @@ public:
 	WritableString& operator +=(uint64_t number);
 	WritableString& operator +=(float number);
 
-	// Set formatted string from variable argument list
-	bool Format(const char *format, ...);
-
 protected:
 	virtual bool Reserve(size_t newSize) = 0;
 
-	bool Format_Internal(const char *format, std::va_list argList);
 	void Replace_Internal(const String& search, const String& replaceTo, bool all);
 	void InitWithData(const char *data, size_t size);
 };

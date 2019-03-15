@@ -46,11 +46,11 @@ void WIN32ConsoleOutputPolicy::Process(const Log::LogData& logData)
 		default:	hasToRestoreColor = false;
 	}
 
-	char logLine[Log::MAX_MESSAGE_LENGTH];
-	int len = snprintf(logLine, Log::MAX_MESSAGE_LENGTH, "[%s] %s\n", logData.logType, logData.message);
+	char logLine[Log::kMaxMessageLength];
+	int len = snprintf(logLine, Log::kMaxMessageLength, "[%s] %s\n", logData.logType, logData.message);
 	if(len > 0)
 	{
-		const size_t numCharsToWrite = std::min((size_t)len, Log::MAX_MESSAGE_LENGTH);
+		const size_t numCharsToWrite = std::min((size_t)len, Log::kMaxMessageLength);
 		WriteConsoleA(GetStdHandle(STD_OUTPUT_HANDLE), logLine, (DWORD)numCharsToWrite, nullptr, nullptr);
 	}
 
@@ -63,11 +63,11 @@ void WIN32ConsoleOutputPolicy::Process(const Log::LogData& logData)
 void VisualStudioOutputPolicy::Process(const Log::LogData& logData)
 {
 	// VisualStudio is using the "file(line): message" format for clickable messages
-	wchar_t logLine[Log::MAX_MESSAGE_LENGTH];
-	swprintf(logLine, Log::MAX_MESSAGE_LENGTH, L"%S(%d): [%S] ", logData.file, logData.line, logData.logType);
+	wchar_t logLine[Log::kMaxMessageLength];
+	swprintf(logLine, Log::kMaxMessageLength, L"%S(%d): [%S] ", logData.file, logData.line, logData.logType);
 	size_t len = wcslen(logLine);
-	ASSERT(len + 2 < Log::MAX_MESSAGE_LENGTH);
-	len += MultiByteToWideChar(CP_UTF8, 0, logData.message, -1, &logLine[len], (int)(Log::MAX_MESSAGE_LENGTH - (len + 2)));
+	ASSERT(len + 2 < Log::kMaxMessageLength);
+	len += MultiByteToWideChar(CP_UTF8, 0, logData.message, -1, &logLine[len], (int)(Log::kMaxMessageLength - (len + 2)));
 	logLine[len - 1] = L'\n';
 	logLine[len] = L'\0';
 

@@ -32,11 +32,11 @@ void FileOutputPolicy::Process(const Log::LogData& logData)
 	strftime(strTime, sizeof(strTime), "%T", localtime(&now));
 #endif
 
-	char logLine[Log::MAX_MESSAGE_LENGTH];
-	int len = snprintf(logLine, Log::MAX_MESSAGE_LENGTH, "%s [%s] % s\n", strTime, logData.logType, logData.message);
+	char logLine[Log::kMaxMessageLength];
+	int len = snprintf(logLine, Log::kMaxMessageLength, "%s [%s] % s\n", strTime, logData.logType, logData.message);
 	if(len > 0)
 	{
-		const size_t numCharsToWrite = std::min((size_t)len, Log::MAX_MESSAGE_LENGTH);
+		const size_t numCharsToWrite = std::min((size_t)len, Log::kMaxMessageLength);
 		logFile->WriteBuffer(logLine, numCharsToWrite);
 	}
 }
