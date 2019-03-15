@@ -12,16 +12,6 @@ DynamicString::DynamicString(const char *str, size_t size)
 	InitWithData(str, size);
 }
 
-DynamicString::DynamicString(const String& string)
-{
-	InitWithData(string.Str(), string.Length());
-}
-
-DynamicString::DynamicString(const DynamicString& string)
-{
-	InitWithData(string.Str(), string.Length());
-}
-
 DynamicString::DynamicString(DynamicString&& string)
 {
 	data = string.data;

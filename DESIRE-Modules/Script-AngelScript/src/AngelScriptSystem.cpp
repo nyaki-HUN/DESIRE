@@ -126,7 +126,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 	}
 
 	MemoryBuffer content = file->ReadFileContent();
-	DynamicString scriptSrc = DynamicString::CreateFormattedString(
+	DynamicString scriptSrc = DynamicString::Format(
 		"class %s"
 		"{"
 		"	ScriptComponent @self;"
@@ -147,7 +147,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 	asITypeInfo *typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName));
 	
 	// Cache factory in the script module
-	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(DynamicString::CreateFormattedString("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
+	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(DynamicString::Format("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
 	module->SetUserData(factoryFunc);
 	
 	// Cache built-in functions in the object type

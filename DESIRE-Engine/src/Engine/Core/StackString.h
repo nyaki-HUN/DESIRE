@@ -20,17 +20,8 @@ public:
 		InitWithData(str, size);
 	}
 
-	StackString(const String& string)
-	{
-		data = charBuffer;
-		InitWithData(string.Str(), string.Length());
-	}
-
-	StackString(const StackString<STACK_SIZE>& string)
-	{
-		data = charBuffer;
-		InitWithData(string.Str(), string.Length());
-	}
+	StackString(const String& string)						: StackString(string.Str(), string.Length()) {}
+	StackString(const StackString<STACK_SIZE>& string)		: StackString(string.Str(), string.Length()) {}
 
 	StackString<STACK_SIZE>& operator =(const String& string)
 	{

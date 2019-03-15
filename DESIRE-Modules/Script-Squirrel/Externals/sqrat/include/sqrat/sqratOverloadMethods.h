@@ -49,7 +49,7 @@ class SqOverloadName
 public:
 	static DynamicString Get(const SQChar* name, SQInteger args)
 	{
-		return DynamicString::CreateFormattedString("__overload_%s%d", name, (int)args);
+		return DynamicString::Format("__overload_%s%d", name, (int)args);
 	}
 };
 

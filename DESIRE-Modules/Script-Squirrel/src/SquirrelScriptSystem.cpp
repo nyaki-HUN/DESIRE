@@ -128,7 +128,7 @@ void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
 	}
 
 	MemoryBuffer content = file->ReadFileContent();
-	DynamicString scriptSrc = DynamicString::CreateFormattedString(
+	DynamicString scriptSrc = DynamicString::Format(
 		"class %s"
 		"{"
 		"	self = null;"

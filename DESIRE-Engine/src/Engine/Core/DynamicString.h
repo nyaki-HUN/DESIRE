@@ -7,8 +7,8 @@ class DynamicString : public WritableString
 public:
 	DynamicString(size_t numReservedChars = 0);
 	DynamicString(const char *str, size_t size);
-	DynamicString(const String& string);
-	DynamicString(const DynamicString& string);
+	DynamicString(const String& string)				: DynamicString(string.Str(), string.Length()) {}
+	DynamicString(const DynamicString& string)		: DynamicString(string.Str(), string.Length()) {}
 	DynamicString(DynamicString&& string);
 	~DynamicString() override;
 

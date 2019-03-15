@@ -205,7 +205,7 @@ inline DynamicString FormatTypeError(HSQUIRRELVM vm, SQInteger idx, const Dynami
 		sq_getstring(vm, -1, &actualType);
 		sq_pop(vm, 2);
 	}
-	err = DynamicString::CreateFormattedString("wrong type (%s expected, got %s)", expectedType.Str(), actualType);
+	err = DynamicString::Format("wrong type (%s expected, got %s)", expectedType.Str(), actualType);
 #endif
 	return err;
 }
