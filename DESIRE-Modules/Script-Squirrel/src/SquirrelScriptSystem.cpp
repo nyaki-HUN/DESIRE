@@ -117,9 +117,7 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 
 void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
 {
-	StackString<DESIRE_MAX_PATH_LEN> filename;
-	filename.Format("data/scripts/%s.nut", scriptName);
-
+	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.nut", scriptName);
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{

@@ -14,7 +14,7 @@ void RegisterComponentAPI_Lua(lua_State *L)
 		.addProperty("localRotation", &Transform::GetLocalRotation, &Transform::SetLocalRotation)
 		.addProperty("localScale", &Transform::GetLocalScale, &Transform::SetLocalScale)
 		.addProperty("position", &Transform::GetPosition, &Transform::SetPosition)
-		.addProperty("rotation", &Transform::GetPosition, &Transform::SetPosition)
+		.addProperty("rotation", &Transform::GetRotation, &Transform::SetRotation)
 		.addProperty("scale", &Transform::GetScale, &Transform::SetScale)
 		.endClass();
 
