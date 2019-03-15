@@ -54,7 +54,7 @@
     <ClInclude Include="..\..\Externals\zlib-ng\inftrees.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Externals\zlib-ng\match.h">
+    <ClInclude Include="..\..\Externals\zlib-ng\match_p.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\memcopy.h">
@@ -101,9 +101,6 @@
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.c">
       <Filter>Externals\zlib-ng\arch\x86</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\crc_pclmulqdq.c">
-      <Filter>Externals\zlib-ng\arch\x86</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\deflate_quick.c">
       <Filter>Externals\zlib-ng\arch\x86</Filter>
     </ClCompile>
@@ -147,9 +144,6 @@
       <Filter>Externals\zlib-ng</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\inftrees.c">
-      <Filter>Externals\zlib-ng</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Externals\zlib-ng\match.c">
       <Filter>Externals\zlib-ng</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\trees.c">

@@ -113,7 +113,7 @@
     <ClInclude Include="..\..\Externals\zlib-ng\inffixed.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\inflate.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\inftrees.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\match.h" />
+    <ClInclude Include="..\..\Externals\zlib-ng\match_p.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\memcopy.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\trees.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zbuild.h" />
@@ -130,7 +130,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\Externals\zlib-ng\adler32.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\crc_pclmulqdq.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\deflate_quick.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\fill_window_sse.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\insert_string_sse.c" />
@@ -146,7 +145,6 @@
     <ClCompile Include="..\..\Externals\zlib-ng\inffast.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\inflate.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\inftrees.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\match.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\trees.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\uncompr.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\zutil.c" />
