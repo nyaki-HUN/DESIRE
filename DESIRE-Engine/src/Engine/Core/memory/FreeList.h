@@ -1,8 +1,8 @@
 #pragma once
 
 // --------------------------------------------------------------------------------------------------------------------
-//	FreeList is a data structure used in PoolAllocator for dynamic memory allocation.
-//	It operates by connecting free slots of memory together in a linked list inside the pre-allocated memory pool.
+//	FreeList is a data structure used in PoolAllocator for memory handling.
+//	It operates by connecting unallocated regions of memory together in a linked list, using the first few bytes of each unallocated region as a pointer to the next.
 //	https://en.wikipedia.org/wiki/Free_list
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -15,5 +15,10 @@ public:
 	void ReturnElement(void *element);
 
 private:
-	FreeList *next;
+	struct ListElement
+	{
+		ListElement *next;
+	};
+
+	ListElement *head = nullptr;
 };

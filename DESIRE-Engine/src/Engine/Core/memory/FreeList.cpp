@@ -4,26 +4,31 @@
 FreeList::FreeList(void *memoryStart, size_t memorySize, size_t elementSize)
 {
 	ASSERT(elementSize >= sizeof(void*));
-	char *ptr = (char*)memoryStart;
+	ASSERT(memorySize >= elementSize);
 
+	char *ptr = static_cast<char*>(memoryStart);
 	const size_t numElements = memorySize / elementSize;
-	FreeList *tmp = this;
-	for(size_t i = 0; i < numElements; ++i)
+
+	head = reinterpret_cast<ListElement*>(ptr);
+	ptr += elementSize;
+
+	ListElement *etmp = head;
+	for(size_t i = 1; i < numElements; ++i)
 	{
-		tmp->next = (FreeList*)ptr;
+		etmp->next = reinterpret_cast<ListElement*>(ptr);
 		ptr += elementSize;
-		tmp = tmp->next;
+		etmp = etmp->next;
 	}
 
-	tmp->next = nullptr;
+	etmp->next = nullptr;
 }
 
 void* FreeList::ObtainElement()
 {
-	FreeList *element = next;
-	if(next != nullptr)
+	ListElement *element = head;
+	if(head != nullptr)
 	{
-		next = next->next;
+		head = head->next;
 	}
 
 	return element;
@@ -34,7 +39,7 @@ void FreeList::ReturnElement(void *element)
 	ASSERT(element != nullptr);
 
 	// Put the element at the head of the list
-	FreeList *ptr = static_cast<FreeList*>(element);
-	ptr->next = next;
-	next = ptr;
+	ListElement *etmp = static_cast<ListElement*>(element);
+	etmp->next = head;
+	head = etmp;
 }
