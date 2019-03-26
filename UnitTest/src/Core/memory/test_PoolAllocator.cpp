@@ -15,21 +15,19 @@ public:
 
 TEST_CASE("PoolAllocator", "[Core][memory]")
 {
-	PoolAllocator<TestClass, 10> *a = new PoolAllocator<TestClass, 10>();
+	PoolAllocator<TestClass, 10> a;
 
-	TestClass *tmp[10] = { 0 };
+	TestClass *tmp[10];
 	for(int i = 0; i < 10; ++i)
 	{
-		tmp[i] = a->Allocate();
+		tmp[i] = a.Allocate();
 		REQUIRE(tmp[i] != nullptr);
 		CHECK(tmp[i]->value == 123);
 	}
 
 	for(int i = 0; i < 10; ++i)
 	{
-		a->Deallocate(tmp[i]);
+		a.Deallocate(tmp[i]);
 		tmp[i] = nullptr;
 	}
-
-	delete a;
 }

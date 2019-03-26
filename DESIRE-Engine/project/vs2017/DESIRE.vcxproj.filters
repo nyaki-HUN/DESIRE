@@ -542,6 +542,9 @@
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Modules.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>

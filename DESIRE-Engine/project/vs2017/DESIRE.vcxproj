@@ -255,6 +255,7 @@
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Log.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Modules.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\StrUtils.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\String\DynamicString.cpp" />
