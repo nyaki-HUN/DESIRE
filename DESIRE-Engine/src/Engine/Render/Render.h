@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/DynamicString.h"
+#include "Engine/Core/String/DynamicString.h"
 
 #include <memory>
 

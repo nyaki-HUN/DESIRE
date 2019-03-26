@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/String.h"
+#include "Engine/Core/String/String.h"
 #include "Engine/Core/StrUtils.h"
 
 const String String::emptyString = "";

@@ -7,8 +7,8 @@
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/IWindow.h"
-#include "Engine/Core/StackString.h"
 #include "Engine/Core/math/Matrix4.h"
+#include "Engine/Core/String/StackString.h"
 #include "Engine/Render/Material.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/View.h"

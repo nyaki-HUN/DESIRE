@@ -2,7 +2,7 @@
 #include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
 #include "Engine/Resource/Shader.h"
 #include "Engine/Core/fs/IReadFile.h"
-#include "Engine/Core/StackString.h"
+#include "Engine/Core/String/StackString.h"
 
 Shader* FileShaderLoader::Load(const ReadFilePtr& file)
 {

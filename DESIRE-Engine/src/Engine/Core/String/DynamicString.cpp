@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/DynamicString.h"
+#include "Engine/Core/String/DynamicString.h"
 
 DynamicString::DynamicString(size_t numReservedChars)
 {
@@ -76,6 +76,7 @@ DynamicString DynamicString::Format(const char *format, ...)
 	va_list args;
 	va_start(args, format);
 	const int formattedSize = vsnprintf(str, sizeof(str), format, args);
+	ASSERT(formattedSize < sizeof(str));
 	va_end(args);
 
 	return (formattedSize >= 0) ? DynamicString(str, (size_t)formattedSize) : DynamicString();

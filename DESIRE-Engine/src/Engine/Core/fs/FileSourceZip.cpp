@@ -2,7 +2,7 @@
 #include "Engine/Core/fs/FileSourceZip.h"
 #include "Engine/Core/fs/MemoryFile.h"
 #include "Engine/Core/fs/FileSystem.h"		// for EFileSourceFlags
-#include "Engine/Core/StackString.h"
+#include "Engine/Core/String/StackString.h"
 #include "Engine/Compression/CompressionManager.h"
 
 constexpr int kZipSignatureCentralDirectoryFileHeader	= 0x02014b50;	//'PK12'

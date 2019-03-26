@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/String.h"
+#include "Engine/Core/String/String.h"
 
 class WritableString : public String
 {

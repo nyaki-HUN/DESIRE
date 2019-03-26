@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Engine/Core/DynamicString.h"
+#include "Engine/Core/String/DynamicString.h"
 
 TEST_CASE("DynamicString", "[Core]")
 {

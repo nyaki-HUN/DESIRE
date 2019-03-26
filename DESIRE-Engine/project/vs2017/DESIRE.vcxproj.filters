@@ -40,6 +40,9 @@
     <Filter Include="src\Engine\Core\ConfigValue">
       <UniqueIdentifier>{CCFCDC25-380A-0B0C-C1F0-06F72DFDD6C2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core\String">
+      <UniqueIdentifier>{F05BC5E8-DC55-EE3A-C5C2-844BB15B54A7}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Core\WINDOWS">
       <UniqueIdentifier>{24B86BCE-90EF-B365-99F9-178905B0DA5E}</UniqueIdentifier>
     </Filter>
@@ -225,9 +228,6 @@
     <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\DynamicString.h">
-      <Filter>src\Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -261,14 +261,20 @@
     <ClInclude Include="..\..\src\Engine\Core\STL_utils.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\StackString.h">
-      <Filter>src\Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\StrUtils.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\String.h">
-      <Filter>src\Engine\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h">
+      <Filter>src\Engine\Core\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\String\StackString.h">
+      <Filter>src\Engine\Core\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\String\String.h">
+      <Filter>src\Engine\Core\String</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\String\WritableString.h">
+      <Filter>src\Engine\Core\String</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Timer.h">
       <Filter>src\Engine\Core</Filter>
@@ -287,9 +293,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h">
       <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\WritableString.h">
-      <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\assert.h">
       <Filter>src\Engine\Core</Filter>
@@ -530,9 +533,6 @@
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp">
       <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\DynamicString.cpp">
-      <Filter>src\Engine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
@@ -548,8 +548,14 @@
     <ClCompile Include="..\..\src\Engine\Core\StrUtils.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\String.cpp">
-      <Filter>src\Engine\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\String\DynamicString.cpp">
+      <Filter>src\Engine\Core\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\String\String.cpp">
+      <Filter>src\Engine\Core\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\String\WritableString.cpp">
+      <Filter>src\Engine\Core\String</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp">
       <Filter>src\Engine\Core</Filter>
@@ -571,9 +577,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\main.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\WritableString.cpp">
-      <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\fs\FileSourceZip.cpp">
       <Filter>src\Engine\Core\fs</Filter>

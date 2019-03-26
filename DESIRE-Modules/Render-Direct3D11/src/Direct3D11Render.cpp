@@ -8,7 +8,6 @@
 #include "Engine/Core/assert.h"
 #include "Engine/Core/Log.h"
 #include "Engine/Core/IWindow.h"
-#include "Engine/Core/String.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Render/Material.h"

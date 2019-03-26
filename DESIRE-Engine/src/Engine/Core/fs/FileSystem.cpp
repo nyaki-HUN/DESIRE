@@ -2,7 +2,7 @@
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/fs/IReadFile.h"
 #include "Engine/Core/fs/FileSourceZip.h"
-#include "Engine/Core/StackString.h"
+#include "Engine/Core/String/StackString.h"
 
 FileSystem::FileSystem()
 {

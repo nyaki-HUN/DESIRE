@@ -2,7 +2,7 @@
 
 #include "Engine/Core/platform.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/DynamicString.h"
+#include "Engine/Core/String/DynamicString.h"
 
 DESIRE_DISABLE_WARNINGS
 #include "angelscript.h"

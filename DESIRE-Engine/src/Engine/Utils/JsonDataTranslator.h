@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/HashedStringMap.h"
-#include "Engine/Core/DynamicString.h"
+#include "Engine/Core/String/DynamicString.h"
 
 #include "rapidjson/include/rapidjson/document.h"
 #include <vector>

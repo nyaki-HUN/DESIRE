@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Core/DynamicString.h"
 #include "Engine/Core/fs/FilePtr_fwd.h"
+#include "Engine/Core/String/DynamicString.h"
 
 #include <vector>
 
