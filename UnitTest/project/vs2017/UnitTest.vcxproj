@@ -110,6 +110,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Core\ConfigValue\test_IConfigValue.cpp" />
+    <ClCompile Include="..\..\src\Core\String\test_DynamicString.cpp" />
+    <ClCompile Include="..\..\src\Core\String\test_String.cpp" />
     <ClCompile Include="..\..\src\Core\math\test_Matrix4.cpp" />
     <ClCompile Include="..\..\src\Core\math\test_Vector3.cpp" />
     <ClCompile Include="..\..\src\Core\math\test_Vector4.cpp" />
@@ -117,10 +119,8 @@
     <ClCompile Include="..\..\src\Core\memory\test_PoolAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\memory\test_StackAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\memory\test_StdFrameAllocatorWrapper.cpp" />
-    <ClCompile Include="..\..\src\Core\test_DynamicString.cpp" />
     <ClCompile Include="..\..\src\Core\test_HashedStringMap.cpp" />
     <ClCompile Include="..\..\src\Core\test_LockFreeRingBuffer.cpp" />
-    <ClCompile Include="..\..\src\Core\test_String.cpp" />
     <ClCompile Include="..\..\src\Scene\test_Object.cpp" />
     <ClCompile Include="..\..\src\Script\test_ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\UnitTest.cpp">

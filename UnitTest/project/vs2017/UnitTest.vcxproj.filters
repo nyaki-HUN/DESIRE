@@ -7,6 +7,9 @@
     <Filter Include="Core\ConfigValue">
       <UniqueIdentifier>{50D630CC-3CCF-4F1E-6501-35A351592F2A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\String">
+      <UniqueIdentifier>{F432A694-60E8-1E8A-E9DC-18615591158E}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Core\math">
       <UniqueIdentifier>{E771D115-53DC-858C-9C1A-373208C463E1}</UniqueIdentifier>
     </Filter>
@@ -30,6 +33,12 @@
     <ClCompile Include="..\..\src\Core\ConfigValue\test_IConfigValue.cpp">
       <Filter>Core\ConfigValue</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Core\String\test_DynamicString.cpp">
+      <Filter>Core\String</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\String\test_String.cpp">
+      <Filter>Core\String</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Core\math\test_Matrix4.cpp">
       <Filter>Core\math</Filter>
     </ClCompile>
@@ -51,16 +60,10 @@
     <ClCompile Include="..\..\src\Core\memory\test_StdFrameAllocatorWrapper.cpp">
       <Filter>Core\memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\test_DynamicString.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Core\test_HashedStringMap.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\test_LockFreeRingBuffer.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\test_String.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Scene\test_Object.cpp">
