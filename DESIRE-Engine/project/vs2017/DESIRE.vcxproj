@@ -148,6 +148,7 @@
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Container\FreeList.h" />
     <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h" />
     <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h" />
     <ClInclude Include="..\..\src\Engine\Core\Factory.h" />
@@ -158,7 +159,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Log.h" />
     <ClInclude Include="..\..\src\Engine\Core\Logger.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\Allocator.h" />
-    <ClInclude Include="..\..\src\Engine\Core\Memory\FreeList.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\LinearAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\MallocAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\PoolAllocator.h" />
@@ -252,11 +252,11 @@
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Container\FreeList.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Log.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\Allocator.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\Memory\FreeList.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\LinearAllocator.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\MallocAllocator.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp" />

@@ -40,6 +40,9 @@
     <Filter Include="src\Engine\Core\ConfigValue">
       <UniqueIdentifier>{CCFCDC25-380A-0B0C-C1F0-06F72DFDD6C2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core\Container">
+      <UniqueIdentifier>{FC64D620-6827-0AAB-B1D7-98371DD9E288}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Core\Memory">
       <UniqueIdentifier>{D254B4D9-BE4E-DD2B-A7BB-733C93544398}</UniqueIdentifier>
     </Filter>
@@ -225,6 +228,9 @@
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h">
       <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Container\FreeList.h">
+      <Filter>src\Engine\Core\Container</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -253,9 +259,6 @@
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Memory\Allocator.h">
-      <Filter>src\Engine\Core\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\Memory\FreeList.h">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Memory\LinearAllocator.h">
@@ -533,6 +536,9 @@
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp">
       <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Container\FreeList.cpp">
+      <Filter>src\Engine\Core\Container</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
@@ -543,9 +549,6 @@
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Memory\Allocator.cpp">
-      <Filter>src\Engine\Core\Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\Memory\FreeList.cpp">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Memory\LinearAllocator.cpp">
