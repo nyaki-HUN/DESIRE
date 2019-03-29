@@ -40,6 +40,9 @@
     <Filter Include="src\Engine\Core\ConfigValue">
       <UniqueIdentifier>{CCFCDC25-380A-0B0C-C1F0-06F72DFDD6C2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core\Memory">
+      <UniqueIdentifier>{D254B4D9-BE4E-DD2B-A7BB-733C93544398}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Core\String">
       <UniqueIdentifier>{F05BC5E8-DC55-EE3A-C5C2-844BB15B54A7}</UniqueIdentifier>
     </Filter>
@@ -54,9 +57,6 @@
     </Filter>
     <Filter Include="src\Engine\Core\math\vectormath">
       <UniqueIdentifier>{8FAC2369-FB8F-32A9-0493-60E570F5F8F9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Engine\Core\memory">
-      <UniqueIdentifier>{F2685924-DE62-8276-C7CF-1887B368E8E2}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Engine\Input">
       <UniqueIdentifier>{915689A8-7D4F-A8FA-A681-8D7F92D98706}</UniqueIdentifier>
@@ -252,6 +252,27 @@
     <ClInclude Include="..\..\src\Engine\Core\Logger.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\Allocator.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\FreeList.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\LinearAllocator.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\MallocAllocator.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\PoolAllocator.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\StackAllocator.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -356,27 +377,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_scalar.h">
       <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\memory\Allocator.h">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\memory\FreeList.h">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\memory\LinearAllocator.h">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\memory\MallocAllocator.h">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\memory\PoolAllocator.h">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\memory\StackAllocator.h">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\memory\StdAllocatorWrapper.h">
-      <Filter>src\Engine\Core\memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\platform.h">
       <Filter>src\Engine\Core</Filter>
@@ -542,6 +542,18 @@
     <ClCompile Include="..\..\src\Engine\Core\Logger.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Memory\Allocator.cpp">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Memory\FreeList.cpp">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Memory\LinearAllocator.cpp">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Memory\MallocAllocator.cpp">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
@@ -601,18 +613,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\math\math.cpp">
       <Filter>src\Engine\Core\math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\memory\Allocator.cpp">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\memory\FreeList.cpp">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\memory\LinearAllocator.cpp">
-      <Filter>src\Engine\Core\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\memory\MallocAllocator.cpp">
-      <Filter>src\Engine\Core\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Input\GameController.cpp">
       <Filter>src\Engine\Input</Filter>

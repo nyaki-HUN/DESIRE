@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/memory/Allocator.h"
+#include "Engine/Core/Memory/Allocator.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	An allocator wrapper for malloc/free

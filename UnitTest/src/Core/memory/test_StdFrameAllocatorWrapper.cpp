@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Engine/Core/memory/StdAllocatorWrapper.h"
+#include "Engine/Core/Memory/StdAllocatorWrapper.h"
 
 TEST_CASE("StdAllocatorWrapper", "[Core][memory]")
 {

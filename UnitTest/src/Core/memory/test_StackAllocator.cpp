@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Engine/Core/memory/StackAllocator.h"
+#include "Engine/Core/Memory/StackAllocator.h"
 
 TEST_CASE("StackAllocator", "[Core][memory]")
 {

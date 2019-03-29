@@ -1,7 +1,7 @@
 #include "ZstdCompression.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Core/memory/Allocator.h"
+#include "Engine/Core/Memory/Allocator.h"
 
 #define ZSTD_STATIC_LINKING_ONLY
 #include "zstd.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/memory/Allocator.h"
+#include "Engine/Core/Memory/Allocator.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	A non-growing linear memory allocator
