@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/WINDOWS/WINDOWSFileSystemWatcher.h"
-#include "Engine/Core/StackString.h"
+#include "Engine/Core/String/StackString.h"
 
 void WINDOWSFileSystemWatcher::RefreshWatch()
 {

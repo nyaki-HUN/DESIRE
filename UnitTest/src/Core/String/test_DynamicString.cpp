@@ -6,7 +6,7 @@ TEST_CASE("DynamicString", "[Core]")
 	const char charSeq[] = "String ASD";
 	DynamicString string = charSeq;
 
-	SECTION("Constructors")
+	SECTION("Constructor | Equals()")
 	{
 		DynamicString stringEmpty;
 		CHECK(stringEmpty.Equals(""));
@@ -15,6 +15,7 @@ TEST_CASE("DynamicString", "[Core]")
 		CHECK(stringWithReservedSize.Equals(""));
 
 		// From char sequence
+		CHECK(strcmp(string.Str(), charSeq) == 0);
 		CHECK(string.Equals(charSeq));
 
 		// From char sequence with size
