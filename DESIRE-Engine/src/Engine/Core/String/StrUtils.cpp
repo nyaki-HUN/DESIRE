@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/StrUtils.h"
+#include "Engine/Core/String/StrUtils.h"
 
 #include <errno.h>
 #include <cctype>	// for std::tolower() and std::toupper()

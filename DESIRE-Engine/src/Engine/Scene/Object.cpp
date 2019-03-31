@@ -3,9 +3,9 @@
 #include "Engine/Scene/Transform.h"
 #include "Engine/Script/ScriptComponent.h"
 #include "Engine/Core/Component.h"
-#include "Engine/Core/math/AABB.h"
 #include "Engine/Core/STL_utils.h"
-#include "Engine/Core/StrUtils.h"
+#include "Engine/Core/math/AABB.h"
+#include "Engine/Core/String/StrUtils.h"
 
 #define MAX_TRANSFORMS	10000
 static Transform preallocatedTransforms[MAX_TRANSFORMS];

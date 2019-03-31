@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/String.h"
-#include "Engine/Core/StrUtils.h"
+#include "Engine/Core/String/StrUtils.h"
 
 const String String::emptyString = "";
 

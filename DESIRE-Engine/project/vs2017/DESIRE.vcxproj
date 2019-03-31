@@ -167,9 +167,9 @@
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\Modules.h" />
     <ClInclude Include="..\..\src\Engine\Core\STL_utils.h" />
-    <ClInclude Include="..\..\src\Engine\Core\StrUtils.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\StackString.h" />
+    <ClInclude Include="..\..\src\Engine\Core\String\StrUtils.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\String.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\WritableString.h" />
     <ClInclude Include="..\..\src\Engine\Core\Timer.h" />
@@ -261,8 +261,8 @@
     <ClCompile Include="..\..\src\Engine\Core\Memory\MallocAllocator.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Modules.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\StrUtils.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\String\DynamicString.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\String\StrUtils.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\String\String.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\String\WritableString.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp" />
