@@ -41,7 +41,8 @@ Modules
 ### Render
 
  * [bgfx](https://bkaradzic.github.io/bgfx)
- * [Direct3D11](https://msdn.microsoft.com/en-us/library/windows/desktop/ff476080(v=vs.85).aspx)
+ * [Direct3D11](https://docs.microsoft.com/en-us/windows/desktop/direct3d11/atoc-dx-graphics-direct3d-11)
+ * [Direct3D12](https://docs.microsoft.com/en-us/windows/desktop/direct3d12/direct3d-12-graphics)
 
 ### Resource loader
 

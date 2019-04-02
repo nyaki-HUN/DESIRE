@@ -133,6 +133,7 @@ solution "DESIRE"
 	-- Render modules
 	include "DESIRE-Modules/Render-bgfx/project/premake5.lua"
 	include "DESIRE-Modules/Render-Direct3D11/project/premake5.lua"
+	include "DESIRE-Modules/Render-Direct3D12/project/premake5.lua"
 
 	-- ResourceLoader modules
 	include "DESIRE-Modules/ResourceLoader-Assimp/project/premake5.lua"

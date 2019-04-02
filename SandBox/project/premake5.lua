@@ -20,6 +20,7 @@ project "SandBox"
 		"Physics-Bullet",
 		"Render-bgfx",
 		"Render-Direct3D11",
+		"Render-Direct3D12",
 		"ResourceLoader-Assimp",
 		"Script-AngelScript",
 		"Script-Lua",
@@ -27,6 +28,7 @@ project "SandBox"
 		"UI-imgui",
 
 		"d3d11",
+		"d3d12",
 		"d3dcompiler",
 		"dxgi",
 		"dxguid",
