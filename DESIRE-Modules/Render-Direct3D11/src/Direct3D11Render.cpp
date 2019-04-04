@@ -126,7 +126,7 @@ void Direct3D11Render::Init(IWindow *mainWindow)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(
-		nullptr,					// might fail with two adapters in machine
+		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
 #if defined(_DEBUG)
@@ -144,6 +144,10 @@ void Direct3D11Render::Init(IWindow *mainWindow)
 		&deviceCtx);
 
 	initialized = SUCCEEDED(hr);
+	if(!initialized)
+	{
+		return;
+	}
 
 	// Set the default topology when there is no active mesh
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
