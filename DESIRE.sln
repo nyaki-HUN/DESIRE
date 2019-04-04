@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-PhysX", "DESIRE-Mod
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-Direct3D11", "DESIRE-Modules\Render-Direct3D11\project\vs2017\Render-Direct3D11.vcxproj", "{E43F8824-C03E-469C-8C0D-64F609E14E0D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-Direct3D12", "DESIRE-Modules\Render-Direct3D12\project\vs2017\Render-Direct3D12.vcxproj", "{9DE832C6-678D-472D-926A-31560F89AE85}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Render-bgfx", "DESIRE-Modules\Render-bgfx\project\vs2017\Render-bgfx.vcxproj", "{39620121-0C61-49D9-9BF4-B67638336D45}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourceLoader-Assimp", "DESIRE-Modules\ResourceLoader-Assimp\project\vs2017\ResourceLoader-Assimp.vcxproj", "{19E05838-5A9C-421F-9102-F3F5A1ED488A}"
@@ -75,6 +77,10 @@ Global
 		{E43F8824-C03E-469C-8C0D-64F609E14E0D}.Debug|x64.Build.0 = Debug|x64
 		{E43F8824-C03E-469C-8C0D-64F609E14E0D}.Release|x64.ActiveCfg = Release|x64
 		{E43F8824-C03E-469C-8C0D-64F609E14E0D}.Release|x64.Build.0 = Release|x64
+		{9DE832C6-678D-472D-926A-31560F89AE85}.Debug|x64.ActiveCfg = Debug|x64
+		{9DE832C6-678D-472D-926A-31560F89AE85}.Debug|x64.Build.0 = Debug|x64
+		{9DE832C6-678D-472D-926A-31560F89AE85}.Release|x64.ActiveCfg = Release|x64
+		{9DE832C6-678D-472D-926A-31560F89AE85}.Release|x64.Build.0 = Release|x64
 		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.ActiveCfg = Debug|x64
 		{39620121-0C61-49D9-9BF4-B67638336D45}.Debug|x64.Build.0 = Debug|x64
 		{39620121-0C61-49D9-9BF4-B67638336D45}.Release|x64.ActiveCfg = Release|x64
