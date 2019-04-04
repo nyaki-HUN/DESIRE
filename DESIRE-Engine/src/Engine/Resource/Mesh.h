@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
+
 #include <memory>
 
 class Mesh
@@ -63,7 +65,7 @@ public:
 	std::unique_ptr<float[]> vertices;
 	uint32_t numVertices;
 	uint32_t stride;
-	std::vector<VertexDecl> vertexDecl;
+	Array<VertexDecl> vertexDecl;
 
 	const EType type;
 };

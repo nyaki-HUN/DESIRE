@@ -175,14 +175,14 @@ Component* Object::GetComponentByTypeID(int typeID) const
 	return (it != components.end() && !(typeID < (*it)->GetTypeID())) ? it->get() : nullptr;
 }
 
-const std::vector<std::unique_ptr<Component>>& Object::GetComponents() const
+const Array<std::unique_ptr<Component>>& Object::GetComponents() const
 {
 	return components;
 }
 
-std::vector<ScriptComponent*> Object::GetScriptComponents() const
+Array<ScriptComponent*> Object::GetScriptComponents() const
 {
-	std::vector<ScriptComponent*> scriptComponents;
+	Array<ScriptComponent*> scriptComponents;
 	for(const std::unique_ptr<Component>& component : components)
 	{
 		if(component->GetTypeID() == ScriptComponent::TYPE_ID)
@@ -209,7 +209,7 @@ Object* Object::GetParent() const
 	return parent;
 }
 
-const std::vector<Object*>& Object::GetChildren() const
+const Array<Object*>& Object::GetChildren() const
 {
 	return children;
 }

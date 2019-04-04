@@ -50,20 +50,20 @@ const Factory<Render>::Func_t Application::renderFactory =
 #include "Engine/Resource/ResourceManager.h"
 
 #include "ResourceLoader-Assimp/src/AssimpLoader.h"
-const std::vector<ResourceManager::MeshLoaderFunc_t> ResourceManager::meshLoaders =
+const Array<ResourceManager::MeshLoaderFunc_t> ResourceManager::meshLoaders =
 {
 	&AssimpLoader::Load,
 };
 
 #include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
-const std::vector<ResourceManager::ShaderLoaderFunc_t> ResourceManager::shaderLoaders =
+const Array<ResourceManager::ShaderLoaderFunc_t> ResourceManager::shaderLoaders =
 {
 	&FileShaderLoader::Load,
 };
 
 #include "Engine/Resource/TextureLoader/TgaLoader.h"
 #include "Engine/Resource/TextureLoader/StbImageLoader.h"
-const std::vector<ResourceManager::TextureLoaderFunc_t> ResourceManager::textureLoaders =
+const Array<ResourceManager::TextureLoaderFunc_t> ResourceManager::textureLoaders =
 {
 	&TgaLoader::Load,
 	&StbImageLoader::Load,

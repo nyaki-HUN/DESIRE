@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Engine/Core/fs/FilePtr_fwd.h"
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/String/DynamicString.h"
-
-#include <vector>
 
 class IFileSource;
 
@@ -58,7 +57,7 @@ private:
 	ReadFilePtr OpenNative(const String& filename);
 	void SetupDirectories();
 
-	std::vector<IFileSource*> fileSources;
+	Array<IFileSource*> fileSources;
 
 	DynamicString appDir;
 	DynamicString dataDir;

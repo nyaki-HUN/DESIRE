@@ -169,9 +169,9 @@ PhysicsComponent::ECollisionDetectionMode BulletPhysicsComponent::GetCollisionDe
 	return (body->getCcdMotionThreshold() > 0.0f) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
-std::vector<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
+Array<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
 {
-	std::vector<PhysicsComponent*> collisions;
+	Array<PhysicsComponent*> collisions;
 	DESIRE_TODO("Implement GetActiveCollidingComponents()");
 	return collisions;
 }

@@ -19,16 +19,16 @@ ContactListener::~ContactListener()
 
 void ContactListener::BeginContact(b2Contact *contact)
 {
-	std::vector<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsBegin;
-	contacts.emplace_back();
-	FillCollisionFromContact(contacts.back(), contact);
+	Array<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsBegin;
+	Collision& collision = contacts.EmplaceAdd();
+	FillCollisionFromContact(collision, contact);
 }
 
 void ContactListener::EndContact(b2Contact *contact)
 {
-	std::vector<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsEnd;
-	contacts.emplace_back();
-	FillCollisionFromContact(contacts.back(), contact);
+	Array<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsEnd;
+	Collision& collision = contacts.EmplaceAdd();
+	FillCollisionFromContact(collision, contact);
 }
 
 void ContactListener::PreSolve(b2Contact *contact, const b2Manifold *oldManifold)

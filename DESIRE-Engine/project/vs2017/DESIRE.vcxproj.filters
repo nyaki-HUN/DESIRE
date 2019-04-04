@@ -228,6 +228,9 @@
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h">
       <Filter>src\Engine\Core\ConfigValue</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Container\Array.h">
+      <Filter>src\Engine\Core\Container</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Container\FreeList.h">
       <Filter>src\Engine\Core\Container</Filter>
     </ClInclude>

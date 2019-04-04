@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector>
+#include "Engine/Core/Container/Array.h"
+
 #include <memory>
 
 class Component;
@@ -46,15 +47,15 @@ public:
 	}
 
 	// Get all components
-	const std::vector<std::unique_ptr<Component>>& GetComponents() const;
+	const Array<std::unique_ptr<Component>>& GetComponents() const;
 
 	// Get all script components
-	std::vector<ScriptComponent*> GetScriptComponents() const;
+	Array<ScriptComponent*> GetScriptComponents() const;
 
 	Transform& GetTransform() const;
 	const AABB& GetAABB() const;
 	Object* GetParent() const;
-	const std::vector<Object*>& GetChildren() const;
+	const Array<Object*>& GetChildren() const;
 
 	bool HasObjectInParentHierarchy(const Object *obj) const;
 
@@ -67,13 +68,13 @@ private:
 
 	static void RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount);
 
-	std::vector<std::unique_ptr<Component>> components;
+	Array<std::unique_ptr<Component>> components;
 	Transform *transform = nullptr;
 	std::unique_ptr<AABB> aabb;
 	size_t numTransformsInHierarchy = 1;
 
 	Object *parent = nullptr;
-	std::vector<Object*> children;
+	Array<Object*> children;
 
 	uint32_t objectID = 0;
 	char *objectName = nullptr;

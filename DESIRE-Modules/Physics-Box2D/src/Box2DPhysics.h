@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Engine/Physics/Physics.h"
-
-#include <vector>
+#include "Engine/Core/Container/Array.h"
 
 class b2World;
 class b2ContactListener;
@@ -24,7 +23,7 @@ public:
 
 	Collision RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
-	std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
+	Array<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 
 	void SetVelocityIterations(int iterations);
 	int GetVelocityIterations() const;
@@ -35,8 +34,8 @@ public:
 	b2Body* GetWorldBody() const;
 
 	// Modified by ContactListener
-	std::vector<Collision> contactsBegin;
-	std::vector<Collision> contactsEnd;
+	Array<Collision> contactsBegin;
+	Array<Collision> contactsEnd;
 
 private:
 	void HandleCollisionBegins();

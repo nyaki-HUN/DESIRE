@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Engine/Core/Component.h"
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/math/Vector3.h"
 #include "Engine/Physics/PhysicsMaterial.h"
 
 #include <memory>
-#include <vector>
 
 enum class EPhysicsCollisionLayer;
 class ColliderShape;
@@ -50,7 +50,7 @@ public:
 
 	const PhysicsMaterial& GetPhysicsMaterial() const;
 
-	virtual std::vector<PhysicsComponent*> GetActiveCollidingComponents() const = 0;
+	virtual Array<PhysicsComponent*> GetActiveCollidingComponents() const = 0;
 
 	virtual void SetBodyType(EBodyType bodyType) = 0;
 	virtual EBodyType GetBodyType() const = 0;

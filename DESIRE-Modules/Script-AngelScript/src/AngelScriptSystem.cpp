@@ -50,10 +50,10 @@ AngelScriptSystem::AngelScriptSystem()
 	engine->RegisterGlobalFunction("void print(const String& in)", asFUNCTION(AngelScriptSystem::PrintCallback), asCALL_CDECL);
 
 	// Init context pool
-	contextPool.reserve(CONTEXT_POOL_DEFAULT_SIZE);
+	contextPool.Reserve(CONTEXT_POOL_DEFAULT_SIZE);
 	for(int i = 0; i < CONTEXT_POOL_DEFAULT_SIZE; i++)
 	{
-		contextPool.push_back(CreateScriptContext());
+		contextPool.Add(CreateScriptContext());
 	}
 }
 
@@ -63,7 +63,7 @@ AngelScriptSystem::~AngelScriptSystem()
 	{
 		ctx->Release();
 	}
-	contextPool.clear();
+	contextPool.Clear();
 
 	engine->ShutDownAndRelease();
 	engine = nullptr;
@@ -219,14 +219,14 @@ asIScriptContext* AngelScriptSystem::RequestContextCallback(asIScriptEngine *eng
 	AngelScriptSystem *scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
 
 	asIScriptContext *ctx = nullptr;
-	if(scriptSystem->contextPool.empty())
+	if(scriptSystem->contextPool.IsEmpty())
 	{
 		ctx = scriptSystem->CreateScriptContext();
 	}
 	else
 	{
-		ctx = scriptSystem->contextPool.back();
-		scriptSystem->contextPool.pop_back();
+		ctx = scriptSystem->contextPool.GetLast();
+		scriptSystem->contextPool.RemoveLast();
 	}
 
 	return ctx;
@@ -239,7 +239,7 @@ void AngelScriptSystem::ReturnContextCallback(asIScriptEngine *engine, asIScript
 	ctx->Unprepare();
 
 	AngelScriptSystem *scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
-	scriptSystem->contextPool.push_back(ctx);
+	scriptSystem->contextPool.Add(ctx);
 }
 
 void AngelScriptSystem::ExceptionCallback(asIScriptContext *ctx)

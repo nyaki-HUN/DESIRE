@@ -1,8 +1,7 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/math/AABB.h"
-
-#include <vector>
 
 class Object;
 
@@ -18,7 +17,7 @@ public:
 	void Init();
 
 	QuadTreeLeaf *leafs[4];
-	std::vector<Object*> objects;
+	Array<Object*> objects;
 	uint8_t level;
 
 	AABB aabb;

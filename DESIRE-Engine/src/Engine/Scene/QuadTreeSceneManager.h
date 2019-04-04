@@ -1,8 +1,7 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Scene/ISceneManager.h"
-
-#include <vector>
 
 #define MAX_FURSTUM_NORMAL	4
 
@@ -50,8 +49,8 @@ private:
 	uint32_t numAllocatedVisibleDynamicObjects;
 	uint32_t numAllocatedInvisibleDynamicObjects;
 
-	std::vector<QuadTreeLeaf*> visibleLeafList;
-	std::vector<QuadTreeLeaf*> tmpLeafList;
+	Array<QuadTreeLeaf*> visibleLeafList;
+	Array<QuadTreeLeaf*> tmpLeafList;
 
 	DebugDraw *debugDraw;
 

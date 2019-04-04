@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/HashedString.h"
 #include "Engine/Render/Render.h"
 
 #include <memory>
-#include <vector>
 #include <functional>
 
 class Shader;
@@ -36,15 +36,15 @@ public:
 
 	void AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode = Render::EFilterMode::Trilinear, Render::EAddressMode addressMode = Render::EAddressMode::Repeat);
 	void ChangeTexture(uint8_t idx,  const std::shared_ptr<Texture>& texture);
-	const std::vector<TextureInfo>& GetTextures() const;
+	const Array<TextureInfo>& GetTextures() const;
 
 	void AddShaderParam(HashedString name, std::function<void(void*)>&& func);
-	const std::vector<ShaderParam>& Material::GetShaderParams() const;
+	const Array<ShaderParam>& Material::GetShaderParams() const;
 
 	std::shared_ptr<Shader> vertexShader;
 	std::shared_ptr<Shader> fragmentShader;
 
 private:
-	std::vector<TextureInfo> textures;
-	std::vector<ShaderParam> shaderParams;
+	Array<TextureInfo> textures;
+	Array<ShaderParam> shaderParams;
 };

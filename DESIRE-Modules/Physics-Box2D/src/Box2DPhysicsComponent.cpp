@@ -74,9 +74,9 @@ PhysicsComponent::ECollisionDetectionMode Box2DPhysicsComponent::GetCollisionDet
 	return body->IsBullet() ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
-std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponents() const
+Array<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponents() const
 {
-	std::vector<PhysicsComponent*> collisions;
+	Array<PhysicsComponent*> collisions;
 
 	int count = 0;
 	b2ContactEdge *contactEdge = body->GetContactList();
@@ -89,7 +89,7 @@ std::vector<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponen
 			const b2Fixture *fixtureB = contact->GetFixtureB();
 			Box2DPhysicsComponent *componentA = static_cast<Box2DPhysicsComponent*>(fixtureA->GetUserData());
 			Box2DPhysicsComponent *componentB = static_cast<Box2DPhysicsComponent*>(fixtureB->GetUserData());
-			collisions.push_back((this == componentA) ? componentB : componentA);
+			collisions.Add((this == componentA) ? componentB : componentA);
 		}
 
 		contactEdge = contactEdge->next;
@@ -304,7 +304,7 @@ void Box2DPhysicsComponent::CreateFixtures()
 		fixtureDef.filter = filterData;
 
 		b2Fixture *fixture = body->CreateFixture(&fixtureDef);
-		fixtures.push_back(fixture);
+		fixtures.Add(fixture);
 	}
 }
 
@@ -315,5 +315,5 @@ void Box2DPhysicsComponent::ReleaseFixtures()
 		body->DestroyFixture(fixture);
 	}
 
-	fixtures.clear();
+	fixtures.Clear();
 }

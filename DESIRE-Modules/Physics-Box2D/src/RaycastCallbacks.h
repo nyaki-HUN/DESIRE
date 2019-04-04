@@ -1,11 +1,10 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Physics/Collision.h"
 
 #include "Box2D/Dynamics/b2WorldCallbacks.h"
 #include "Box2D/Dynamics/b2Fixture.h"
-
-#include <vector>
 
 class PhysicsComponent;
 
@@ -90,9 +89,9 @@ public:
 		}
 
 		PhysicsComponent *component = static_cast<PhysicsComponent*>(fixture->GetUserData());
-		collisions.emplace_back(component, Vector3(point.x, point.y, 0.0f), Vector3(normal.x, normal.y, 0.0f));
+		collisions.EmplaceAdd(component, Vector3(point.x, point.y, 0.0f), Vector3(normal.x, normal.y, 0.0f));
 		return 1.0f;		// The raycast should continue as if no hit occurred
 	}
 
-	std::vector<Collision> collisions;
+	Array<Collision> collisions;
 };

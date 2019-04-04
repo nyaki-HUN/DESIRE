@@ -1,11 +1,10 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/math/Vector2.h"
 #include "Engine/Input/Keyboard.h"
 #include "Engine/Input/Mouse.h"
 #include "Engine/Input/GameController.h"
-
-#include <vector>
 
 class IWindow;
 
@@ -40,9 +39,9 @@ public:
 	bool RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void *userData = nullptr);
 	void UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers);
 
-	const std::vector<Keyboard>& GetKeyboards() const;
-	const std::vector<Mouse>& GetMouses() const;
-	const std::vector<GameController>& GetControllers() const;
+	const Array<Keyboard>& GetKeyboards() const;
+	const Array<Mouse>& GetMouses() const;
+	const Array<GameController>& GetControllers() const;
 
 	const InputDevice* GetInputDeviceByHandle(const void *handle) const;
 
@@ -63,11 +62,11 @@ private:
 		void *userData;
 	};
 
-	std::vector<Hotkey> hotkeys;
+	Array<Hotkey> hotkeys;
 
-	std::vector<Keyboard> keyboards;
-	std::vector<Mouse> mouses;
-	std::vector<GameController> gameControllers;
+	Array<Keyboard> keyboards;
+	Array<Mouse> mouses;
+	Array<GameController> gameControllers;
 
 	char typingCharacters[MAX_NUM_TYPING_CHARACTERS];
 

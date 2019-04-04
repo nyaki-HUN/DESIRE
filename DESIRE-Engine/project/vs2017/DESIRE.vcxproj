@@ -148,6 +148,7 @@
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Container\Array.h" />
     <ClInclude Include="..\..\src\Engine\Core\Container\FreeList.h" />
     <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h" />
     <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h" />

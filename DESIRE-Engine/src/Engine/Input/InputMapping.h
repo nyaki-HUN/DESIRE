@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Engine/Core/Container/Array.h"
 
 class InputDevice;
 
@@ -39,8 +39,8 @@ private:
 	struct UserAction
 	{
 		int id;
-		std::vector<MappedInput> mappedButtons;
-		std::vector<MappedAxis> mappedAxes;
+		Array<MappedInput> mappedButtons;
+		Array<MappedAxis> mappedAxes;
 
 		UserAction(int userActionId)
 			: id(userActionId)
@@ -49,5 +49,5 @@ private:
 		}
 	};
 
-	std::vector<UserAction> userActions;
+	Array<UserAction> userActions;
 };

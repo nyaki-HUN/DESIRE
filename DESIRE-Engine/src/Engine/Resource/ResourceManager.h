@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Engine/Core/fs/FilePtr_fwd.h"
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/String/DynamicString.h"
 
 #include <memory>
-#include <vector>
 #include <map>
 
 class Mesh;
@@ -43,7 +43,7 @@ private:
 	std::shared_ptr<Texture> errorTexture;
 
 	// The loaders should be initialized in modules.cpp
-	static const std::vector<MeshLoaderFunc_t> meshLoaders;
-	static const std::vector<ShaderLoaderFunc_t> shaderLoaders;
-	static const std::vector<TextureLoaderFunc_t> textureLoaders;
+	static const Array<MeshLoaderFunc_t> meshLoaders;
+	static const Array<ShaderLoaderFunc_t> shaderLoaders;
+	static const Array<TextureLoaderFunc_t> textureLoaders;
 };

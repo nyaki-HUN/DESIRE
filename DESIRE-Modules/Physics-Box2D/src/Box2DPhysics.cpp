@@ -28,8 +28,8 @@ static std::pair<b2Vec2, b2Vec2> GetValidRay(const Vector3& p1, const Vector3& p
 
 Box2DPhysics::Box2DPhysics()
 {
-	contactsBegin.reserve(32);
-	contactsEnd.reserve(32);
+	contactsBegin.Reserve(32);
+	contactsEnd.Reserve(32);
 
 	contactListener = new ContactListener();
 	destructorListener = new DestructorListener();
@@ -67,8 +67,8 @@ void Box2DPhysics::Update(float deltaTime)
 	{
 		fixedUpdateTimeAccumulator -= fixedStepTime;
 
-		contactsBegin.clear();
-		contactsEnd.clear();
+		contactsBegin.Clear();
+		contactsEnd.Clear();
 
 		world->Step(fixedStepTime, velocityIterations, positionIterations);
 
@@ -116,7 +116,7 @@ bool Box2DPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMas
 	return callback.hasHit;
 }
 
-std::vector<Collision> Box2DPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
+Array<Collision> Box2DPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
 {
 	const std::pair<b2Vec2, b2Vec2> ray = GetValidRay(p1, p2);
 

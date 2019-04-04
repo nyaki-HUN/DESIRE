@@ -47,7 +47,7 @@ ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 
 void FileSystem::AddFileSource(IFileSource *fileSource)
 {
-	fileSources.push_back(fileSource);
+	fileSources.Add(fileSource);
 }
 
 bool FileSystem::AddDirectoryFileSource(const String& dir, int fileSourceFlags)

@@ -33,6 +33,6 @@ private:
 	void LineCallback(asIScriptContext *ctx);		// The line callback function is called by the VM for each statement that is executed
 
 	asIScriptEngine *engine = nullptr;
-	std::vector<asIScriptContext*> contextPool;
+	Array<asIScriptContext*> contextPool;
 	std::unique_ptr<AngelScriptStringFactory> stringFactory;
 };

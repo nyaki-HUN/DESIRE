@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Engine/Physics/PhysicsComponent.h"
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/math/Vector2.h"
 
 #include "Box2D/Dynamics/b2Fixture.h"
-
-#include <vector>
 
 class Shape;
 
@@ -24,7 +23,7 @@ public:
 	void SetCollisionDetectionMode(ECollisionDetectionMode mode) override;
 	ECollisionDetectionMode GetCollisionDetectionMode() const override;
 
-	std::vector<PhysicsComponent*> GetActiveCollidingComponents() const override;
+	Array<PhysicsComponent*> GetActiveCollidingComponents() const override;
 
 	void SetBodyType(EBodyType bodyType);
 	EBodyType GetBodyType() const;
@@ -73,7 +72,7 @@ private:
 	void ReleaseFixtures();
 
 	b2Body *body = nullptr;
-	std::vector<b2Fixture*> fixtures;
+	Array<b2Fixture*> fixtures;
 	b2Filter filterData;
 	float density = 1.0f;
 	bool isTrigger = false;

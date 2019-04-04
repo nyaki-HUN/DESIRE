@@ -82,7 +82,7 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 	hotkey.modifiers = modifiers;
 	hotkey.callback = callback;
 	hotkey.userData = userData;
-	hotkeys.push_back(hotkey);
+	hotkeys.Add(hotkey);
 
 	return true;
 }
@@ -95,17 +95,17 @@ void Input::UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers)
 	}), hotkeys.end());
 }
 
-const std::vector<Keyboard>& Input::GetKeyboards() const
+const Array<Keyboard>& Input::GetKeyboards() const
 {
 	return keyboards;
 }
 
-const std::vector<Mouse>& Input::GetMouses() const
+const Array<Mouse>& Input::GetMouses() const
 {
 	return mouses;
 }
 
-const std::vector<GameController>& Input::GetControllers() const
+const Array<GameController>& Input::GetControllers() const
 {
 	return gameControllers;
 }
@@ -160,8 +160,8 @@ Keyboard& Input::GetKeyboardByHandle(void *handle)
 	}
 
 	// New keyboard found
-	keyboards.push_back(Keyboard(handle));
-	return keyboards.back();
+	keyboards.Add(Keyboard(handle));
+	return keyboards.GetLast();
 }
 
 Mouse& Input::GetMouseByHandle(void *handle)
@@ -175,6 +175,6 @@ Mouse& Input::GetMouseByHandle(void *handle)
 	}
 
 	// New mouse found
-	mouses.push_back(Mouse(handle));
-	return mouses.back();
+	mouses.Add(Mouse(handle));
+	return mouses.GetLast();
 }

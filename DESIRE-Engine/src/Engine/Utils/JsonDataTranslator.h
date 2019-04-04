@@ -1,10 +1,10 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/HashedStringMap.h"
 #include "Engine/Core/String/DynamicString.h"
 
 #include "rapidjson/include/rapidjson/document.h"
-#include <vector>
 
 // --------------------------------------------------------------------------------------------------------------------
 //	JsonDataTranslator is a utility class template that can fill a data structure from a JSON object.
@@ -20,10 +20,10 @@ class JsonDataTranslator
 	typedef bool T::* BoolMember_t;
 	typedef DynamicString T::* StringMember_t;
 	// Array member types
-	typedef std::vector<int> T::* IntArrayMember_t;
-	typedef std::vector<float> T::* FloatArrayMember_t;
-	typedef std::vector<bool> T::* BoolArrayMember_t;
-	typedef std::vector<DynamicString> T::* StringArrayMember_t;
+	typedef Array<int> T::* IntArrayMember_t;
+	typedef Array<float> T::* FloatArrayMember_t;
+	typedef Array<bool> T::* BoolArrayMember_t;
+	typedef Array<DynamicString> T::* StringArrayMember_t;
 
 public:
 	JsonDataTranslator()

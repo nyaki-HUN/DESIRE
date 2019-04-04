@@ -1,6 +1,7 @@
 #pragma once
 
-#include <vector>
+#include "Engine/Core/Container/Array.h"
+
 #include <memory>
 
 class Texture;
@@ -21,5 +22,5 @@ public:
 	void *renderData = nullptr;
 
 private:
-	std::vector<std::shared_ptr<Texture>> textures;
+	Array<std::shared_ptr<Texture>> textures;
 };

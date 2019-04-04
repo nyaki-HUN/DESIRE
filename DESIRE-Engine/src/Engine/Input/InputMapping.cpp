@@ -11,8 +11,8 @@ InputMapping::InputMapping()
 
 void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
 {
-	auto it = stl_utils::binary_find_or_insert_by_id(userActions, userActionId);
-	for(MappedInput& mappedInput : it->mappedButtons)
+	UserAction& userAction = userActions.BinaryFindOrInsert(userActionId);
+	for(const MappedInput& mappedInput : userAction.mappedButtons)
 	{
 		if(mappedInput.id == buttonId && mappedInput.inputDeviceHandle == inputDevice.handle)
 		{
@@ -24,13 +24,13 @@ void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, i
 	MappedInput button;
 	button.id = buttonId;
 	button.inputDeviceHandle = inputDevice.handle;
-	it->mappedButtons.push_back(button);
+	userAction.mappedButtons.Add(button);
 }
 
 void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int axisId)
 {
-	auto it = stl_utils::binary_find_or_insert_by_id(userActions, userActionId);
-	for(MappedInput& mappedInput : it->mappedAxes)
+	UserAction& userAction = userActions.BinaryFindOrInsert(userActionId);
+	for(const MappedInput& mappedInput : userAction.mappedAxes)
 	{
 		if(mappedInput.id == axisId && mappedInput.inputDeviceHandle == inputDevice.handle)
 		{
@@ -43,7 +43,7 @@ void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int
 	axis.id = axisId;
 	axis.inputDeviceHandle = inputDevice.handle;
 	axis.deadZone = 0;
-	it->mappedAxes.push_back(axis);
+	userAction.mappedAxes.Add(axis);
 }
 
 bool InputMapping::IsMapped(int userActionId) const

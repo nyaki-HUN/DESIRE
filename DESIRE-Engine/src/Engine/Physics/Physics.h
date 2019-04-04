@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Engine/Physics/Collision.h"
-
-#include <vector>
+#include "Engine/Core/Container/Array.h"
 
 class Object;
 class PhysicsComponent;
@@ -52,12 +51,12 @@ public:
 
 	virtual Collision RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
 	virtual bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
-	virtual std::vector<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
+	virtual Array<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) = 0;
 
 protected:
 	void UpdateComponents();
 
-	std::vector<PhysicsComponent*> components;
+	Array<PhysicsComponent*> components;
 	int collisionMasks[(size_t)EPhysicsCollisionLayer::Num];
 	float fixedStepTime = 1.0f / 60.0f;
 };

@@ -91,7 +91,7 @@ void QuadTreeLeaf::Init()
 	}
 
 	// Try to insert objects into child leafs
-	std::vector<Object*> objectsToAdd;
+	Array<Object*> objectsToAdd;
 	objectsToAdd.swap(objects);
 	for(Object *comp : objectsToAdd)
 	{

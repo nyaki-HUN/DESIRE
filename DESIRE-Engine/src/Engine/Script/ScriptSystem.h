@@ -1,9 +1,8 @@
 #pragma once
 
 #include "Engine/Core/Factory.h"
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/HashedStringMap.h"
-
-#include <vector>
 
 class IScript;
 class ScriptComponent;
@@ -26,7 +25,7 @@ public:
 private:
 	virtual ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) = 0;
 
-	std::vector<ScriptComponent*> scriptComponents;
+	Array<ScriptComponent*> scriptComponents;
 	HashedStringMap<Factory<IScript>::Func_t> scriptFactories;
 };
 

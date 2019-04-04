@@ -3,6 +3,7 @@
 #include "Engine/Core/assert.h"
 #include "Engine/Core/HashedString.h"
 #include "Engine/Core/STL_utils.h"
+#include "Engine/Core/Container/Array.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	HashedStringMap is a sorted associative container that contains key-value pairs with unique HashedString keys.
@@ -20,7 +21,7 @@ public:
 
 	HashedStringMap(HashedStringMap&& otherMap)
 	{
-		elements.swap(otherMap.elements);
+		elements.Swap(otherMap.elements);
 	}
 
 	HashedStringMap(std::initializer_list<std::pair<HashedString, T>> initList)
@@ -33,14 +34,14 @@ public:
 
 	HashedStringMap& operator =(HashedStringMap&& otherMap)
 	{
-		elements.swap(otherMap.elements);
+		elements.Swap(otherMap.elements);
 		return *this;
 	}
 
 	void Insert(HashedString key, const T& value)
 	{
-		auto it = stl_utils::binary_find_or_insert(elements, KeyValuePair(key, value));
-		ASSERT(memcmp(&it->value, &value, sizeof(T)) == 0 && "An other value is already added with this key");
+		KeyValuePair& pair = elements.BinaryFindOrInsert(KeyValuePair(key, value));
+		ASSERT(memcmp(&pair.value, &value, sizeof(T)) == 0 && "An other value is already added with this key");
 	}
 
 	T* Find(HashedString key)
@@ -58,7 +59,7 @@ public:
 	// Remove all elements from the map
 	void Clear()
 	{
-		elements.clear();
+		elements.Clear();
 	}
 
 private:
@@ -80,5 +81,5 @@ private:
 		}
 	};
 
-	std::vector<KeyValuePair> elements;
+	Array<KeyValuePair> elements;
 };

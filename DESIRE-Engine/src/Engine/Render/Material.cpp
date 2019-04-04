@@ -45,7 +45,7 @@ void Material::ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& textur
 	textures[idx].texture = texture;
 }
 
-const std::vector<Material::TextureInfo>& Material::GetTextures() const
+const Array<Material::TextureInfo>& Material::GetTextures() const
 {
 	return textures;
 }
@@ -55,7 +55,7 @@ void Material::AddShaderParam(HashedString name, std::function<void(void*)>&& fu
 	shaderParams.emplace_back(name, std::move(func));
 }
 
-const std::vector<Material::ShaderParam>& Material::GetShaderParams() const
+const Array<Material::ShaderParam>& Material::GetShaderParams() const
 {
 	return shaderParams;
 }
