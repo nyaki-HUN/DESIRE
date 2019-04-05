@@ -2,7 +2,6 @@
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/HashedString.h"
-#include "Engine/Core/STL_utils.h"
 #include "Engine/Core/Container/Array.h"
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -46,14 +45,22 @@ public:
 
 	T* Find(HashedString key)
 	{
-		auto it = stl_utils::binary_find_by_id(elements, key);
-		return (it != elements.end()) ? &it->value : nullptr;
+		// Binary find
+		auto it = std::lower_bound(elements.begin(), elements.end(), key, [](const KeyValuePair& pair, HashedString key)
+		{
+			return (pair.key < key);
+		});
+		return (it != elements.end() && !(key < it->key)) ? &it->value : nullptr;
 	}
 
 	const T* Find(HashedString key) const
 	{
-		auto it = stl_utils::binary_find_by_id(elements, key);
-		return (it != elements.end()) ? &it->value : nullptr;
+		// Binary find
+		auto it = std::lower_bound(elements.begin(), elements.end(), key, [](const KeyValuePair& pair, HashedString key)
+		{
+			return (pair.key < key);
+		});
+		return (it != elements.end() && !(key < it->key)) ? &it->value : nullptr;
 	}
 
 	// Remove all elements from the map
@@ -75,9 +82,9 @@ private:
 
 		}
 
-		inline bool operator <(const KeyValuePair& other) const
+		bool operator <(const KeyValuePair& other) const
 		{
-			return key < other.key;
+			return (key < other.key);
 		}
 	};
 

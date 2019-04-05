@@ -151,8 +151,8 @@ bool PhysXPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMas
 	return false;
 }
 
-std::vector<Collision> PhysXPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
+Array<Collision> PhysXPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
 {
-	std::vector<Collision> collisions;
+	Array<Collision> collisions;
 	return collisions;
 }

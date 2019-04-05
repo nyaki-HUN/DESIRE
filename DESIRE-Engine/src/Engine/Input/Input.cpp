@@ -89,10 +89,15 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 
 void Input::UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers)
 {
-	hotkeys.erase(std::remove_if(hotkeys.begin(), hotkeys.end(), [keyCode, modifiers](const Hotkey& hotkey)
+	for(size_t i = 0; i < hotkeys.Size(); ++i)
 	{
-		return (hotkey.keyCode == keyCode && hotkey.modifiers == modifiers);
-	}), hotkeys.end());
+		const Hotkey& hotkey = hotkeys[i];
+		if(hotkey.keyCode == keyCode && hotkey.modifiers == modifiers)
+		{
+			hotkeys.Remove(i);
+			return;
+		}
+	}
 }
 
 const Array<Keyboard>& Input::GetKeyboards() const

@@ -3,7 +3,6 @@
 #include "Engine/Scene/Transform.h"
 #include "Engine/Script/ScriptComponent.h"
 #include "Engine/Core/Component.h"
-#include "Engine/Core/STL_utils.h"
 #include "Engine/Core/math/AABB.h"
 #include "Engine/Core/String/StrUtils.h"
 
@@ -155,11 +154,11 @@ Object* Object::CreateChildObject(const char *name)
 
 void Object::RemoveComponent(const Component *component)
 {
-	for(auto it = components.begin(); it != components.end(); ++it)
+	for(size_t i = 0; i < components.Size(); ++i)
 	{
-		if(it->get() == component)
+		if(components[i].get() == component)
 		{
-			components.erase(it);
+			components.Remove(i);
 			return;
 		}
 	}
@@ -167,10 +166,10 @@ void Object::RemoveComponent(const Component *component)
 
 Component* Object::GetComponentByTypeID(int typeID) const
 {
-	// Specialized variant of stl_utils::binary_find_by_id()
+	// Binary find
 	auto it = std::lower_bound(components.begin(), components.end(), typeID, [](const std::unique_ptr<Component>& component, int id)
 	{
-		return component->GetTypeID() < id;
+		return (component->GetTypeID() < id);
 	});
 	return (it != components.end() && !(typeID < (*it)->GetTypeID())) ? it->get() : nullptr;
 }
@@ -187,7 +186,7 @@ Array<ScriptComponent*> Object::GetScriptComponents() const
 	{
 		if(component->GetTypeID() == ScriptComponent::TYPE_ID)
 		{
-			scriptComponents.push_back(static_cast<ScriptComponent*>(component.get()));
+			scriptComponents.Add(static_cast<ScriptComponent*>(component.get()));
 		}
 	}
 
@@ -242,12 +241,11 @@ void Object::UpdateAllTransformsInHierarchy()
 
 Component& Object::AddComponent_Internal(std::unique_ptr<Component>&& component)
 {
-	// Note: It was necessary to explicitly define function template parameters here to avoid a compile error
-	auto it = stl_utils::binary_find_or_insert<decltype(components)::value_type, decltype(components)::allocator_type>(components, std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
+	std::unique_ptr<Component>& addedComponent = components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
 	{
 		return (a->GetTypeID() < b->GetTypeID());
 	});
-	return *(it->get());
+	return *(addedComponent.get());
 }
 
 void Object::AddChild_Internal(Object *child)
@@ -259,7 +257,7 @@ void Object::AddChild_Internal(Object *child)
 		obj = obj->parent;
 	} while(obj != nullptr);
 
-	children.push_back(child);
+	children.Add(child);
 
 	child->transform->parent = transform;
 }
@@ -274,12 +272,7 @@ void Object::RemoveChild_Internal(Object *child)
 		obj = obj->parent;
 	} while(obj != nullptr);
 
-	auto it = std::find(children.begin(), children.end(), child);
-	if(it != children.end())
-	{
-		children.erase(it);
-	}
-
+	children.Remove(child);
 	child->transform->parent = nullptr;
 }
 

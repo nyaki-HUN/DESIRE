@@ -8,9 +8,9 @@ struct TestData
 	bool testBool;
 	DynamicString testString;
 
-	std::vector<int> testIntArray;
-	std::vector<float> testFloatArray;
-	std::vector<DynamicString> testStringArray;
+	Array<int> testIntArray;
+	Array<float> testFloatArray;
+	Array<DynamicString> testStringArray;
 };
 
 TEST_CASE("JsonDataTranslator", "[Utils]")
@@ -51,13 +51,13 @@ TEST_CASE("JsonDataTranslator", "[Utils]")
 
 		CHECK(data.testInt == 123);
 		CHECK(data.testString == "ASD");
-		REQUIRE(data.testIntArray.size() == 1);
+		REQUIRE(data.testIntArray.Size() == 1);
 		CHECK(data.testIntArray[0] == 123);
-		REQUIRE(data.testFloatArray.size() == 3);
+		REQUIRE(data.testFloatArray.Size() == 3);
 		CHECK(data.testFloatArray[0] == Approx(123.0f));
 		CHECK(data.testFloatArray[1] == Approx(9999.0f));
 		CHECK(data.testFloatArray[2] == Approx(0.0f));
-		REQUIRE(data.testStringArray.size() == 2);
+		REQUIRE(data.testStringArray.Size() == 2);
 		CHECK(data.testStringArray[0] == "element0");
 		CHECK(data.testStringArray[1] == "element1");
 	}
@@ -79,6 +79,6 @@ TEST_CASE("JsonDataTranslator", "[Utils]")
 		CHECK(data.testFloat == FLT_MAX);
 		CHECK(data.testBool == true);
 		CHECK(data.testString == "ASD");
-		CHECK(data.testStringArray.size() == 0);
+		CHECK(data.testStringArray.Size() == 0);
 	}
 }

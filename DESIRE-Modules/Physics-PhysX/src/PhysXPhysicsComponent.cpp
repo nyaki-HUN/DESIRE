@@ -52,9 +52,9 @@ PhysicsComponent::ECollisionDetectionMode PhysXPhysicsComponent::GetCollisionDet
 	return (body->getRigidBodyFlags() & physx::PxRigidBodyFlag::eENABLE_CCD) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
-std::vector<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponents() const
+Array<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponents() const
 {
-	std::vector<PhysicsComponent*> collisions;
+	Array<PhysicsComponent*> collisions;
 	ASSERT(false && "TODO");
 	return collisions;
 }

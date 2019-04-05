@@ -22,16 +22,12 @@ Physics::~Physics()
 
 void Physics::OnPhysicsComponentCreated(PhysicsComponent *component)
 {
-	components.push_back(component);
+	components.Add(component);
 }
 
 void Physics::OnPhysicsComponentDestroyed(PhysicsComponent *component)
 {
-	auto it = std::find(components.begin(), components.end(), component);
-	if(it != components.end())
-	{
-		components.erase(it);
-	}
+	components.Remove(component);
 }
 
 void Physics::SetFixedStepTime(float stepTime)

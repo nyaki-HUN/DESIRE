@@ -49,5 +49,7 @@ private:
 		}
 	};
 
+	UserAction& GetOrAddUserActionById(int userActionId);
+
 	Array<UserAction> userActions;
 };

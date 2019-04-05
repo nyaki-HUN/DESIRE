@@ -6,8 +6,8 @@
 
 RenderTarget::RenderTarget(uint16_t width, uint16_t height)
 {
-	textures.emplace_back(std::make_shared<Texture>(width, height, Texture::EFormat::RGBA8));
-	textures.emplace_back(std::make_shared<Texture>(width, height, Texture::EFormat::D24_S8));
+	textures.EmplaceAdd(std::make_shared<Texture>(width, height, Texture::EFormat::RGBA8));
+	textures.EmplaceAdd(std::make_shared<Texture>(width, height, Texture::EFormat::D24_S8));
 }
 
 RenderTarget::~RenderTarget()
@@ -30,11 +30,11 @@ uint16_t RenderTarget::GetHeight() const
 
 uint8_t RenderTarget::GetTextureCount() const
 {
-	return (uint8_t)textures.size();
+	return (uint8_t)textures.Size();
 }
 
 const std::shared_ptr<Texture>& RenderTarget::GetTexture(uint8_t idx) const
 {
-	ASSERT(idx < textures.size());
+	ASSERT(idx < textures.Size());
 	return textures[idx];
 }

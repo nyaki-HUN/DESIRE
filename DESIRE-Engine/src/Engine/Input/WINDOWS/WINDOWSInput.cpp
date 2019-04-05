@@ -72,9 +72,9 @@ void Input::Kill()
 	RegisterRawInputDevices(rawInputDevices, 2, sizeof(RAWINPUTDEVICE));
 
 	// Reset input devices
-	Modules::Input->keyboards.clear();
-	Modules::Input->mouses.clear();
-	Modules::Input->gameControllers.clear();
+	Modules::Input->keyboards.Clear();
+	Modules::Input->mouses.Clear();
+	Modules::Input->gameControllers.Clear();
 }
 
 void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)

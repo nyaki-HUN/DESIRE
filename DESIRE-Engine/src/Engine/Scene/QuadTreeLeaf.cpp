@@ -26,15 +26,13 @@ QuadTreeLeaf::~QuadTreeLeaf()
 void QuadTreeLeaf::AddObject(Object *obj)
 {
 	aabb.AddAABB(obj->GetAABB());
-	objects.push_back(obj);
+	objects.Add(obj);
 }
 
 bool QuadTreeLeaf::RemoveObject(Object *obj)
 {
-	auto it = std::find(objects.begin(), objects.end(), obj);
-	if(it != objects.end())
+	if(objects.Remove(obj))
 	{
-		objects.erase(it);
 		return true;
 	}
 
@@ -58,7 +56,7 @@ void QuadTreeLeaf::Init()
 	maxSizeX = size.GetX() * kMaxResizeFactor;
 	maxSizeZ = size.GetZ() * kMaxResizeFactor;
 
-	if(objects.size() <= QUAD_TREE_MIN_OBJECT_PER_LEAF)
+	if(objects.Size() <= QUAD_TREE_MIN_OBJECT_PER_LEAF)
 	{
 		return;
 	}
@@ -92,7 +90,7 @@ void QuadTreeLeaf::Init()
 
 	// Try to insert objects into child leafs
 	Array<Object*> objectsToAdd;
-	objectsToAdd.swap(objects);
+	objectsToAdd.Swap(objects);
 	for(Object *comp : objectsToAdd)
 	{
 		bool addedToChild = false;
@@ -108,7 +106,7 @@ void QuadTreeLeaf::Init()
 		if(!addedToChild)
 		{
 			// Add back to the current leaf
-			objects.push_back(comp);
+			objects.Add(comp);
 		}
 	}
 
@@ -118,7 +116,7 @@ void QuadTreeLeaf::Init()
 	// Init child leafs
 	for(int i = 0; i < 4; i++)
 	{
-		if(leafs[i]->objects.empty())
+		if(leafs[i]->objects.IsEmpty())
 		{
 			delete leafs[i];
 			leafs[i] = nullptr;
@@ -154,6 +152,6 @@ bool QuadTreeLeaf::TryToInsertObject(Object *obj)
 		aabb = newAABB;
 	}
 
-	objects.push_back(obj);
+	objects.Add(obj);
 	return true;
 }

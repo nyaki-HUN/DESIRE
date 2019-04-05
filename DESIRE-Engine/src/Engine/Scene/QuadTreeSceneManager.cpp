@@ -20,8 +20,8 @@ QuadTreeSceneManager::QuadTreeSceneManager()
 	, doInvisibleLeafTest(false)
 	, needToPlaceObjectsInsideQuadTree(false)
 {
-	visibleLeafList.reserve(256);
-	tmpLeafList.reserve(256);
+	visibleLeafList.Reserve(256);
+	tmpLeafList.Reserve(256);
 
 	visibleDynamicObjects = (Object**)malloc(numAllocatedVisibleDynamicObjects * sizeof(Object*));
 	invisibleDynamicObjects = (Object**)malloc(numAllocatedInvisibleDynamicObjects * sizeof(Object*));
@@ -104,7 +104,7 @@ void QuadTreeSceneManager::SetActiveCamera(Camera *camera)
 	// Set all leafs visible
 	SetLeafsVisible_recursive(rootLeaf, true);
 
-	visibleLeafList.clear();
+	visibleLeafList.Clear();
 	doInvisibleLeafTest = true;
 }
 
@@ -147,7 +147,7 @@ void QuadTreeSceneManager::Reset()
 	numVisibleDynamicObjects = 0;
 	numInvisibleDynamicObjects = 0;
 
-	visibleLeafList.clear();
+	visibleLeafList.Clear();
 
 	doInvisibleLeafTest = true;
 }
@@ -289,7 +289,7 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 			SetLeafsVisible_recursive(ltmp, false);
 		}
 	}
-	visibleLeafList.clear();
+	visibleLeafList.Clear();
 
 	for(int j = 0; j < (int)numVisibleDynamicObjects; j++)
 	{
@@ -319,20 +319,20 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 
 void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *normals, const float *pointDotNormal, const uint8_t (&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
 {
-	ASSERT(visibleLeafList.empty());
-	ASSERT(tmpLeafList.empty());
+	ASSERT(visibleLeafList.IsEmpty());
+	ASSERT(tmpLeafList.IsEmpty());
 	QuadTreeLeaf *ltmp = rootLeaf;
 	for(;;)
 	{
 		EState state = IsAabbVisible(ltmp->aabbPoints, nNormal, normals, pointDotNormal, aabbNPVertex);
 		if(state == EState::Inside)
 		{
-			visibleLeafList.push_back(ltmp);
+			visibleLeafList.Add(ltmp);
 			SetLeafsVisible_recursive(ltmp, true);
 		}
 		else if(state == EState::Intersect)
 		{
-			visibleLeafList.push_back(ltmp);
+			visibleLeafList.Add(ltmp);
 
 			// Set objects visible
 			for(Object *obj : ltmp->objects)
@@ -345,7 +345,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			{
 				if(ltmp->leafs[i] != nullptr)
 				{
-					tmpLeafList.push_back(ltmp->leafs[i]);
+					tmpLeafList.Add(ltmp->leafs[i]);
 				}
 			}
 		}
@@ -386,13 +386,13 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			}
 		}
 
-		if(tmpLeafList.empty())
+		if(tmpLeafList.IsEmpty())
 		{
 			break;
 		}
 
-		ltmp = tmpLeafList.back();
-		tmpLeafList.pop_back();
+		ltmp = tmpLeafList.GetLast();
+		tmpLeafList.RemoveLast();
 	}
 
 	for(int j = 0; j < (int)numInvisibleDynamicObjects; j++)

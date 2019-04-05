@@ -117,12 +117,12 @@ public:
 							if(memberPtr != nullptr)
 							{
 								BoolArrayMember_t member = *memberPtr;
-								(data->*member).reserve(it->value.Size());
+								(data->*member).Reserve(it->value.Size());
 								for(rapidjson::Value::ConstValueIterator valueIt = it->value.Begin(); valueIt != it->value.End(); ++valueIt)
 								{
 									if(valueIt->IsBool())
 									{
-										(data->*member).push_back(valueIt->GetBool());
+										(data->*member).Add(valueIt->GetBool());
 									}
 								}
 								break;
@@ -134,12 +134,12 @@ public:
 							if(memberPtr != nullptr)
 							{
 								StringArrayMember_t member = *memberPtr;
-								(data->*member).reserve(it->value.Size());
+								(data->*member).Reserve(it->value.Size());
 								for(rapidjson::Value::ConstValueIterator valueIt = it->value.Begin(); valueIt != it->value.End(); ++valueIt)
 								{
 									if(valueIt->IsString())
 									{
-										(data->*member).emplace_back(valueIt->GetString(), valueIt->GetStringLength());
+										(data->*member).EmplaceAdd(valueIt->GetString(), valueIt->GetStringLength());
 									}
 								}
 								break;
@@ -153,12 +153,12 @@ public:
 								if(memberPtr != nullptr)
 								{
 									IntArrayMember_t member = *memberPtr;
-									(data->*member).reserve(it->value.Size());
+									(data->*member).Reserve(it->value.Size());
 									for(rapidjson::Value::ConstValueIterator valueIt = it->value.Begin(); valueIt != it->value.End(); ++valueIt)
 									{
 										if(valueIt->IsInt())
 										{
-											(data->*member).push_back(valueIt->GetInt());
+											(data->*member).Add(valueIt->GetInt());
 										}
 									}
 								}
@@ -169,12 +169,12 @@ public:
 								if(memberPtr != nullptr)
 								{
 									FloatArrayMember_t member = *memberPtr;
-									(data->*member).reserve(it->value.Size());
+									(data->*member).Reserve(it->value.Size());
 									for(rapidjson::Value::ConstValueIterator valueIt = it->value.Begin(); valueIt != it->value.End(); ++valueIt)
 									{
 										if(valueIt->IsNumber())
 										{
-											(data->*member).push_back((float)valueIt->GetDouble());
+											(data->*member).Add((float)valueIt->GetDouble());
 										}
 									}
 									break;

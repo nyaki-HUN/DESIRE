@@ -22,7 +22,7 @@ public:
 	void SetCollisionDetectionMode(ECollisionDetectionMode mode) override;
 	ECollisionDetectionMode GetCollisionDetectionMode() const override;
 
-	std::vector<PhysicsComponent*> GetActiveCollidingComponents() const override;
+	Array<PhysicsComponent*> GetActiveCollidingComponents() const override;
 
 	void SetBodyType(EBodyType bodyType);
 	EBodyType GetBodyType() const;

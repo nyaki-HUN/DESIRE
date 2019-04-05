@@ -32,12 +32,12 @@ Material::~Material()
 
 void Material::AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode, Render::EAddressMode addressMode)
 {
-	textures.push_back({ texture, filterMode, addressMode });
+	textures.Add({ texture, filterMode, addressMode });
 }
 
 void Material::ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& texture)
 {
-	if(idx >= textures.size())
+	if(idx >= textures.Size())
 	{
 		return;
 	}
@@ -52,7 +52,7 @@ const Array<Material::TextureInfo>& Material::GetTextures() const
 
 void Material::AddShaderParam(HashedString name, std::function<void(void*)>&& func)
 {
-	shaderParams.emplace_back(name, std::move(func));
+	shaderParams.EmplaceAdd(name, std::move(func));
 }
 
 const Array<Material::ShaderParam>& Material::GetShaderParams() const

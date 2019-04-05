@@ -524,8 +524,8 @@ void Direct3D11Render::Bind(Mesh *mesh)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::Num);
 
-	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexDecl.size());
-	for(size_t i = 0; i < mesh->vertexDecl.size(); ++i)
+	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexDecl.Size());
+	for(size_t i = 0; i < mesh->vertexDecl.Size(); ++i)
 	{
 		const Mesh::VertexDecl& decl = mesh->vertexDecl[i];
 
@@ -1344,8 +1344,8 @@ void Direct3D11Render::SetInputLayout()
 	if(activeMesh != nullptr)
 	{
 		uint64_t layoutKey = 0;
-		ASSERT(activeMesh->vertexDecl.size() <= 9 && "It is possible to encode maximum of 9 vertex declarations into 64-bit");
-		for(size_t i = 0; i < activeMesh->vertexDecl.size(); ++i)
+		ASSERT(activeMesh->vertexDecl.Size() <= 9 && "It is possible to encode maximum of 9 vertex declarations into 64-bit");
+		for(size_t i = 0; i < activeMesh->vertexDecl.Size(); ++i)
 		{
 			const Mesh::VertexDecl& decl = activeMesh->vertexDecl[i];
 			layoutKey |= (uint64_t)decl.attrib		<< (i * 7 + 0);	// 4 bits
@@ -1364,7 +1364,7 @@ void Direct3D11Render::SetInputLayout()
 		{
 			const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
 			const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
-			HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), (UINT)activeMesh->vertexDecl.size(), vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &inputLayout);
+			HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), (UINT)activeMesh->vertexDecl.Size(), vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &inputLayout);
 			ASSERT(SUCCEEDED(hr));
 			inputLayoutCache.insert(std::make_pair(key, inputLayout));
 		}

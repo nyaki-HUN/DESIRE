@@ -110,7 +110,7 @@ bool BulletPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMa
 	return false;
 }
 
-std::vector<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
+Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
 {
 	const btVector3 from = GetBtVector3(p1);
 	const btVector3 to = GetBtVector3(p2);
@@ -121,16 +121,16 @@ std::vector<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector
 
 	dynamicsWorld->rayTest(from, to, rayCallback);
 
-	std::vector<Collision> collisions;
+	Array<Collision> collisions;
 	if(rayCallback.hasHit())
 	{
 		const int count = rayCallback.m_collisionObjects.size();
-		collisions.reserve(count);
+		collisions.Reserve(count);
 		for(int i = 0; i < count; ++i)
 		{
 			const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
 			PhysicsComponent *component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
-			collisions.emplace_back(component, GetVector3(rayCallback.m_hitPointWorld[i]), GetVector3(rayCallback.m_hitNormalWorld[i]));
+			collisions.EmplaceAdd(component, GetVector3(rayCallback.m_hitPointWorld[i]), GetVector3(rayCallback.m_hitNormalWorld[i]));
 		}
 	}
 

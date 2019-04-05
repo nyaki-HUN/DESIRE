@@ -131,6 +131,31 @@ public:
 
 	}
 
+	size_t Find(const T& value) const
+	{
+		for(size_t i = 0; i < size; ++i)
+		{
+			if(data[i] == value)
+			{
+				return i;
+			}
+		}
+
+		return SIZE_MAX;
+	}
+
+	bool Remove(const T& value)
+	{
+		const size_t idx = Find(value);
+		if(idx != SIZE_MAX)
+		{
+			Remove(idx);
+			return true;
+		}
+
+		return false;
+	}
+
 	void Remove(size_t idx)
 	{
 		ASSERT(idx < size);
@@ -185,8 +210,8 @@ public:
 	Array(Array&& otherArray)						: vector(std::move(otherArray.vector)) {}
 	Array(std::initializer_list<T> initList)		: vector(initList) {}
 
-	Array& operator =(const Array& otherArray)		{ vector = otherArray.vector; }
-	Array& operator =(Array&& otherArray)			{ vector = std::move(otherArray.vector); }
+	Array& operator =(const Array& otherArray)		{ vector = otherArray.vector; return *this; }
+	Array& operator =(Array&& otherArray)			{ vector = std::move(otherArray.vector); return *this; }
 
 	T& operator [](size_t idx)						{ return vector[idx]; }
 	const T& operator [](size_t idx) const			{ return vector[idx]; }
@@ -219,27 +244,52 @@ public:
 	void Insert(size_t pos, const T& value)			{ vector.insert(value); }
 	void Insert(size_t pos, T&& value)				{ vector.insert(std::move(value)); }
 
+	size_t Find(const T& value) const
+	{
+		for(size_t i = 0; i < vector.size(); ++i)
+		{
+			if(vector[i] == value)
+			{
+				return i;
+			}
+		}
+
+		return SIZE_MAX;
+	}
+
 	// Do a binary search to find the index of a given element
 	size_t BinaryFind(const T& value) const
 	{
 		auto it = std::lower_bound(vector.begin(), vector.end(), value);
-		return (it != vector.end() && !(value < *it)) ? it : vector.end();
+		return (it != vector.end() && !(value < *it)) ? (it - vector.begin()) : SIZE_MAX;
 	}
 
 	// Do a binary search to find an element by value or insert it into a sorted array 
 	T& BinaryFindOrInsert(T&& value)
 	{
 		auto it = std::lower_bound(vector.begin(), vector.end(), value);
-		return (it != vector.end() && !(value < *it)) ? it : vector.insert(it, std::move(value));
+		return (it != vector.end() && !(value < *it)) ? *it : *vector.insert(it, std::move(value));
 	}
 
 	T& BinaryFindOrInsert(T&& value, bool(*compareFunc)(const T&, const T&))
 	{
 		auto it = std::lower_bound(vector.begin(), vector.end(), value, compareFunc);
-		return (it != vector.end() && !compareFunc(value, *it)) ? it : vector.Insert(it, std::move(value));
+		return (it != vector.end() && !compareFunc(value, *it)) ? *it : *vector.insert(it, std::move(value));
 	}
 
-	void Remove(size_t idx)							{ vector.erase() }
+	bool Remove(const T& value)
+	{
+		const size_t idx = Find(value);
+		if(idx != SIZE_MAX)
+		{
+			Remove(idx);
+			return true;
+		}
+
+		return false;
+	}
+
+	void Remove(size_t idx)							{ vector.erase(vector.begin() + idx); }
 	void RemoveLast()								{ vector.pop_back(); }
 
 	void Swap(Array& other)							{ vector.swap(other.vector); }

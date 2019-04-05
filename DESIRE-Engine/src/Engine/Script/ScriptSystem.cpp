@@ -37,16 +37,12 @@ ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, con
 
 void ScriptSystem::OnScriptComponentCreated(ScriptComponent *component)
 {
-	scriptComponents.push_back(component);
+	scriptComponents.Add(component);
 }
 
 void ScriptSystem::OnScriptComponentDestroyed(ScriptComponent *component)
 {
-	auto it = std::find(scriptComponents.begin(), scriptComponents.end(), component);
-	if(it != scriptComponents.end())
-	{
-		scriptComponents.erase(it);
-	}
+	scriptComponents.Remove(component);
 }
 
 void ScriptSystem::Update()
