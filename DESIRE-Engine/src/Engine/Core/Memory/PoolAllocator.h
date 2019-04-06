@@ -14,13 +14,13 @@ public:
 
 	}
 
-	inline T* PoolAllocator::Allocate()
+	T* PoolAllocator::Allocate()
 	{
 		T *ptr = new (list.ObtainElement()) T();
 		return ptr;
 	}
 
-	inline void PoolAllocator::Deallocate(T *ptr)
+	void PoolAllocator::Deallocate(T *ptr)
 	{
 		ptr->~T();
 		list.ReturnElement(ptr);
