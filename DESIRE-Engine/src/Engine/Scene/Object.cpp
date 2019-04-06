@@ -154,13 +154,14 @@ Object* Object::CreateChildObject(const char *name)
 
 void Object::RemoveComponent(const Component *component)
 {
-	for(size_t i = 0; i < components.Size(); ++i)
+	const size_t idx = components.SpecializedFind([component](const std::unique_ptr<Component>& comp)
 	{
-		if(components[i].get() == component)
-		{
-			components.Remove(i);
-			return;
-		}
+		return (comp.get() == component);
+	});
+
+	if(idx != SIZE_MAX)
+	{
+		components.Remove(idx);
 	}
 }
 

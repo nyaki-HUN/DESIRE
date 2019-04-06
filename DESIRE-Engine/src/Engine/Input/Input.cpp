@@ -89,14 +89,14 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 
 void Input::UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers)
 {
-	for(size_t i = 0; i < hotkeys.Size(); ++i)
+	const size_t idx = hotkeys.SpecializedFind([keyCode, modifiers](const Hotkey& hotkey)
 	{
-		const Hotkey& hotkey = hotkeys[i];
-		if(hotkey.keyCode == keyCode && hotkey.modifiers == modifiers)
-		{
-			hotkeys.Remove(i);
-			return;
-		}
+		return (hotkey.keyCode == keyCode && hotkey.modifiers == modifiers);
+	});
+
+	if(idx != SIZE_MAX)
+	{
+		hotkeys.Remove(idx);
 	}
 }
 

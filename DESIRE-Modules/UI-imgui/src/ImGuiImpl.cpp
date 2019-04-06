@@ -59,10 +59,10 @@ void ImGuiImpl::Init()
 
 	// Dynamic mesh for the draw list
 	mesh = std::make_unique<DynamicMesh>();
-	mesh->vertexDecl.reserve(3);
-	mesh->vertexDecl.emplace_back(Mesh::EAttrib::Position, 2, Mesh::EAttribType::Float);
-	mesh->vertexDecl.emplace_back(Mesh::EAttrib::Texcoord0, 2, Mesh::EAttribType::Float);
-	mesh->vertexDecl.emplace_back(Mesh::EAttrib::Color, 4, Mesh::EAttribType::Uint8);
+	mesh->vertexDecl.Reserve(3);
+	mesh->vertexDecl.EmplaceAdd(Mesh::EAttrib::Position, 2, Mesh::EAttribType::Float);
+	mesh->vertexDecl.EmplaceAdd(Mesh::EAttrib::Texcoord0, 2, Mesh::EAttribType::Float);
+	mesh->vertexDecl.EmplaceAdd(Mesh::EAttrib::Color, 4, Mesh::EAttribType::Uint8);
 	mesh->CalculateStrideFromVertexDecl();
 	mesh->maxNumOfIndices = 30000;
 	mesh->maxNumOfVertices = 20000;
@@ -114,10 +114,10 @@ void ImGuiImpl::NewFrame(IWindow *window)
 	io.ImeWindowHandle = window->GetHandle();
 
 	// Keyboard
-	const std::vector<Keyboard>& keyboards = Modules::Input->GetKeyboards();
-	if(!keyboards.empty())
+	const Array<Keyboard>& keyboards = Modules::Input->GetKeyboards();
+	if(!keyboards.IsEmpty())
 	{
-		const Keyboard& keyboard = keyboards.back();
+		const Keyboard& keyboard = keyboards.GetLast();
 		io.KeyCtrl = keyboard.IsDown(KEY_LCONTROL) || keyboard.IsDown(KEY_RCONTROL);
 		io.KeyShift = keyboard.IsDown(KEY_LSHIFT) || keyboard.IsDown(KEY_RSHIFT);
 		io.KeyAlt = keyboard.IsDown(KEY_LALT) || keyboard.IsDown(KEY_RALT);

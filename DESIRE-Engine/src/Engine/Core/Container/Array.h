@@ -2,6 +2,8 @@
 
 #include "Engine/Core/assert.h"
 
+#include <functional>
+
 #if defined(NEW_ARRAY)
 
 template<typename T>
@@ -144,6 +146,19 @@ public:
 		return SIZE_MAX;
 	}
 
+	size_t SpecializedFind(std::function<bool(const T&)> compareFunc) const
+	{
+		for(size_t i = 0; i < size; ++i)
+		{
+			if(compareFunc(data[i]))
+			{
+				return i;
+			}
+		}
+
+		return SIZE_MAX;
+	}
+
 	bool Remove(const T& value)
 	{
 		const size_t idx = Find(value);
@@ -249,6 +264,19 @@ public:
 		for(size_t i = 0; i < vector.size(); ++i)
 		{
 			if(vector[i] == value)
+			{
+				return i;
+			}
+		}
+
+		return SIZE_MAX;
+	}
+
+	size_t SpecializedFind(std::function<bool(const T&)> compareFunc) const
+	{
+		for(size_t i = 0; i < vector.size(); ++i)
+		{
+			if(compareFunc(vector[i]))
 			{
 				return i;
 			}
