@@ -16,18 +16,48 @@ public:
 	}
 
 	Array(const Array& otherArray)
+		: size(otherArray.size)
+		, reservedSize(otherArray.reservedSize)
 	{
-
+		ASSERT(false);
+		memcpy(data, otherArray.data, otherArray.size * sizeof(T));
 	}
 
 	Array(Array&& otherArray)
+		: data(otherArray.data)
+		, size(other.size)
+		, reservedSize(other.reservedSize)
 	{
-
+		otherArray.data = nullptr;
+		otherArray.size = 0;
+		otherArray.reservedSize = 0;
 	}
 
 	Array(std::initializer_list<T> initList)
 	{
 
+	}
+
+	Array& operator =(const Array& otherArray)
+	{
+		ASSERT(false);
+		size = otherArray.size;
+		reservedSize = otherArray.reservedSize;
+		memcpy(data, otherArray.data, otherArray.size * sizeof(T));
+		return *this;
+	}
+
+	Array& operator =(Array&& otherArray)
+	{
+		data = otherArray.data;
+		size = otherArray.size;
+		reservedSize = otherArray.reservedSize;
+
+		otherArray.data = nullptr;
+		otherArray.size = 0;
+		otherArray.reservedSize = 0;
+
+		return *this;
 	}
 
 	T& operator [](size_t idx)
@@ -164,25 +194,38 @@ public:
 		const size_t idx = Find(value);
 		if(idx != SIZE_MAX)
 		{
-			Remove(idx);
+			RemoveAt(idx);
 			return true;
 		}
 
 		return false;
 	}
 
-	void Remove(size_t idx)
+	void RemoveAt(size_t idx)
 	{
 		ASSERT(idx < size);
-		memmove(&data[idx], data + idx + 1, size - idx);
+
+		DestructElements(data + idx, 1);
+		memmove(data + idx, data + idx + 1, size - idx);
 	}
 
 	// Removes an element by replacing it with the last element in the array and calling RemoveLast()
 	// Note: This function does not preserve the order of elements
-	void RemoveFast(size_t idx)
+	bool RemoveFast(const T& value)
 	{
-		ASSERT(idx < size);
-		std::swap(data[idx], data + idx + 1, size - idx);
+		const size_t idx = Find(value);
+		if(idx != SIZE_MAX)
+		{
+			RemoveFastAt(idx);
+			return true;
+		}
+
+		return false;
+	}
+
+	void RemoveFastAt(size_t idx)
+	{
+		std::swap(GetAt(idx), GetLast());
 		RemoveLast();
 	}
 
@@ -197,25 +240,25 @@ public:
 		size--;
 	}
 
-	void Swap(Array& other)
+	void Swap(Array& otherArray)
 	{
 		const T *tmpData = data;
-		data = other.data;
-		other.data = tmpData;
+		data = otherArray.data;
+		otherArray.data = tmpData;
 
 		const size_t tmpSize = size;
-		size = other.size;
-		other.size = tmpSize;
+		size = otherArray.size;
+		otherArray.size = tmpSize;
 
 		const size_t tmpReservedSize = reservedSize;
-		reservedSize = other.reservedSize;
-		other.reservedSize = tmpReservedSize;
+		reservedSize = otherArray.reservedSize;
+		otherArray.reservedSize = tmpReservedSize;
 	}
 
 private:
 	T *data = nullptr;
 	size_t size = 0;
-	size_t numPreallocatedElements = 0;
+	size_t reservedSize = 0;
 };
 
 #else

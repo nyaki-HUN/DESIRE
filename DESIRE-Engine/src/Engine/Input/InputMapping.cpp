@@ -64,7 +64,7 @@ void InputMapping::Unmap(int userActionId)
 
 	if(idx != SIZE_MAX)
 	{
-		userActions.Remove(idx);
+		userActions.RemoveFastAt(idx);
 	}
 }
 

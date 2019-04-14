@@ -31,7 +31,7 @@ void QuadTreeLeaf::AddObject(Object *obj)
 
 bool QuadTreeLeaf::RemoveObject(Object *obj)
 {
-	if(objects.Remove(obj))
+	if(objects.RemoveFast(obj))
 	{
 		return true;
 	}

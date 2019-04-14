@@ -27,7 +27,7 @@ void Physics::OnPhysicsComponentCreated(PhysicsComponent *component)
 
 void Physics::OnPhysicsComponentDestroyed(PhysicsComponent *component)
 {
-	components.Remove(component);
+	components.RemoveFast(component);
 }
 
 void Physics::SetFixedStepTime(float stepTime)

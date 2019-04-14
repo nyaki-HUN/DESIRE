@@ -96,7 +96,7 @@ void Input::UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers)
 
 	if(idx != SIZE_MAX)
 	{
-		hotkeys.Remove(idx);
+		hotkeys.RemoveFastAt(idx);
 	}
 }
 

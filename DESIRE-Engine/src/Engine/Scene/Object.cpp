@@ -161,7 +161,7 @@ void Object::RemoveComponent(const Component *component)
 
 	if(idx != SIZE_MAX)
 	{
-		components.Remove(idx);
+		components.RemoveAt(idx);
 	}
 }
 

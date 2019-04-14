@@ -12,28 +12,29 @@ public:
 	Array(const Array& otherArray)
 		: vector(otherArray.vector)
 	{
-
 	}
 
 	Array(Array&& otherArray)
 		: vector(std::move(otherArray.vector))
 	{
-
 	}
 
 	Array(std::initializer_list<T> initList)
 		: vector(initList)
 	{
-
 	}
 
 	Array& operator =(const Array& otherArray)
 	{
-		vector = otherArray.vector; return *this;
+		vector = otherArray.vector;
+		return *this;
 	}
+
 	Array& operator =(Array&& otherArray)
 	{
 		vector = std::move(otherArray.vector); return *this;
+
+		return *this;
 	}
 
 	T& operator [](size_t idx)
@@ -181,16 +182,36 @@ public:
 		const size_t idx = Find(value);
 		if(idx != SIZE_MAX)
 		{
-			Remove(idx);
+			RemoveAt(idx);
 			return true;
 		}
 
 		return false;
 	}
 
-	void Remove(size_t idx)
+	void RemoveAt(size_t idx)
 	{
 		vector.erase(vector.begin() + idx);
+	}
+
+	// Removes an element by replacing it with the last element in the array and calling RemoveLast()
+	// Note: This function does not preserve the order of elements
+	bool RemoveFast(const T& value)
+	{
+		const size_t idx = Find(value);
+		if(idx != SIZE_MAX)
+		{
+			RemoveFastAt(idx);
+			return true;
+		}
+
+		return false;
+	}
+
+	void RemoveFastAt(size_t idx)
+	{
+		std::swap(GetAt(idx), GetLast());
+		RemoveLast();
 	}
 
 	void RemoveLast()
@@ -198,9 +219,9 @@ public:
 		vector.pop_back();
 	}
 
-	void Swap(Array& other)
+	void Swap(Array& otherArray)
 	{
-		vector.swap(other.vector);
+		vector.swap(otherArray.vector);
 	}
 
 private:

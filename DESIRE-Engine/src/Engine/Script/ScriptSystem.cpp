@@ -42,7 +42,7 @@ void ScriptSystem::OnScriptComponentCreated(ScriptComponent *component)
 
 void ScriptSystem::OnScriptComponentDestroyed(ScriptComponent *component)
 {
-	scriptComponents.Remove(component);
+	scriptComponents.RemoveFast(component);
 }
 
 void ScriptSystem::Update()
