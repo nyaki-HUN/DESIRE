@@ -17,6 +17,8 @@ TEST_CASE("PoolAllocator", "[Core][memory]")
 {
 	PoolAllocator<TestClass, 10> a;
 
+	const size_t numAllocBegin = globalMemoryAllocationCount;
+
 	TestClass *tmp[10];
 	for(int i = 0; i < 10; ++i)
 	{
@@ -24,6 +26,13 @@ TEST_CASE("PoolAllocator", "[Core][memory]")
 		REQUIRE(tmp[i] != nullptr);
 		CHECK(tmp[i]->value == 123);
 	}
+
+	CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
+
+	TestClass *elementAllocatedWhenPoolIsEmpty = a.Allocate();
+
+	a.Deallocate(elementAllocatedWhenPoolIsEmpty);
+	elementAllocatedWhenPoolIsEmpty = nullptr;
 
 	for(int i = 0; i < 10; ++i)
 	{

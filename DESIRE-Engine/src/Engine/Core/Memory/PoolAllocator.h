@@ -9,24 +9,37 @@ class PoolAllocator
 {
 public:
 	PoolAllocator()
-		: list(data, sizeof(data), std::max(sizeof(T), sizeof(void*)))
 	{
-
+		char *ptr = static_cast<char*>(data);
+		for(size_t i = 0; i < NUM_ELEMENTS; ++i)
+		{
+			list.Push(ptr);
+			ptr += kElementSize;
+		}
 	}
 
 	T* PoolAllocator::Allocate()
 	{
-		T *ptr = new (list.ObtainElement()) T();
-		return ptr;
+		void *memory = list.Pop();
+		return (memory != nullptr) ? new (memory) T() : new T();
 	}
 
 	void PoolAllocator::Deallocate(T *ptr)
 	{
-		ptr->~T();
-		list.ReturnElement(ptr);
+		if(data <= reinterpret_cast<char*>(ptr) && reinterpret_cast<char*>(ptr) <= data + (NUM_ELEMENTS - 1) * kElementSize)
+		{
+			ptr->~T();
+			list.Push(ptr);
+		}
+		else
+		{
+			delete ptr;
+		}
 	}
 
 private:
+	static constexpr size_t kElementSize = std::max(sizeof(T), sizeof(void*));
+
 	FreeList list;
-	char data[NUM_ELEMENTS * std::max(sizeof(T), sizeof(void*))];
+	char data[NUM_ELEMENTS * kElementSize] = {};
 };
