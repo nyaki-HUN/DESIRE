@@ -15,6 +15,10 @@ TEST_CASE("String", "[Core]")
 		// Default empty string
 		CHECK(strcmp(String::emptyString.Str(), "") == 0);
 		CHECK(String::emptyString.Equals(""));
+
+		// From string literal (the pointer has to be the same)
+		String str("stringLiteral");
+		CHECK(str.Str() == (const char*)"stringLiteral");
 	}
 
 	SECTION("Find()")
