@@ -285,9 +285,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Modules.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\STL_utils.h">
-      <Filter>src\Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h">
       <Filter>src\Engine\Core\String</Filter>
     </ClInclude>
@@ -511,6 +508,9 @@
       <Filter>src\Engine\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h">
+      <Filter>src\Engine\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Utils\stl_utils.h">
       <Filter>src\Engine\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\stdafx.h">

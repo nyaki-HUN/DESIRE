@@ -168,7 +168,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h" />
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\Modules.h" />
-    <ClInclude Include="..\..\src\Engine\Core\STL_utils.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\StackString.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\StrUtils.h" />
@@ -244,6 +243,7 @@
     <ClInclude Include="..\..\src\Engine\Utils\GuardedCallbackFactory.h" />
     <ClInclude Include="..\..\src\Engine\Utils\JsonDataTranslator.h" />
     <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h" />
+    <ClInclude Include="..\..\src\Engine\Utils\stl_utils.h" />
     <ClInclude Include="..\..\src\Engine\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
