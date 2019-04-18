@@ -130,10 +130,11 @@ public:
 		reservedSize = numElements;
 	}
 
-	// Erases all elements from the Array, but doesn't free any memory
+	// Erases all elements from the Array, but doesn't free its memory
 	void Clear()
 	{
-
+		DestructElements(0, size);
+		size = 0;
 	}
 
 	void Add(const T& value)
@@ -205,7 +206,8 @@ public:
 	{
 		ASSERT(idx < size);
 
-		DestructElements(data + idx, 1);
+		DestructElements(idx, 1);
+		size--;
 		memmove(data + idx, data + idx + 1, size - idx);
 	}
 
@@ -236,7 +238,7 @@ public:
 			return;
 		}
 
-		DestructElements(data + size - 1, 1);
+		DestructElements(size - 1, 1);
 		size--;
 	}
 
@@ -256,6 +258,15 @@ public:
 	}
 
 private:
+	void DestructElements(size_t fromIdx, size_t count)
+	{
+		T *elements = data + fromIdx;
+		for(size_t i = 0; i < count; ++i)
+		{
+			elements[i].~T();
+		}
+	}
+
 	T *data = nullptr;
 	size_t size = 0;
 	size_t reservedSize = 0;
