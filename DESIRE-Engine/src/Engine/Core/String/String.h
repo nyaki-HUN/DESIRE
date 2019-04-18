@@ -5,8 +5,8 @@
 class String
 {
 public:
-	static const size_t kInvalidPos = (size_t)-1;
-	static const String emptyString;
+	static constexpr size_t kInvalidPos = (size_t)-1;
+	static const String kEmptyString;
 
 	template<size_t SIZE>
 	String(const char(&str)[SIZE])

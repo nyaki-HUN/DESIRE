@@ -43,7 +43,7 @@ public:
 	template<class T>
 	T* GetComponent() const
 	{
-		return static_cast<T*>(GetComponentByTypeID(T::TYPE_ID));
+		return static_cast<T*>(GetComponentByTypeID(T::kTypeID));
 	}
 
 	// Get all components

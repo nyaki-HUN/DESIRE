@@ -185,7 +185,7 @@ Array<ScriptComponent*> Object::GetScriptComponents() const
 	Array<ScriptComponent*> scriptComponents;
 	for(const std::unique_ptr<Component>& component : components)
 	{
-		if(component->GetTypeID() == ScriptComponent::TYPE_ID)
+		if(component->GetTypeID() == ScriptComponent::kTypeID)
 		{
 			scriptComponents.Add(static_cast<ScriptComponent*>(component.get()));
 		}

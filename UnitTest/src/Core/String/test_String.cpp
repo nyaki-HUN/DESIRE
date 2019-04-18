@@ -13,8 +13,8 @@ TEST_CASE("String", "[Core]")
 		CHECK(string.Equals(charSeq));
 
 		// Default empty string
-		CHECK(strcmp(String::emptyString.Str(), "") == 0);
-		CHECK(String::emptyString.Equals(""));
+		CHECK(strcmp(String::kEmptyString.Str(), "") == 0);
+		CHECK(String::kEmptyString.Equals(""));
 
 		// From string literal (the pointer has to be the same)
 		String str("stringLiteral");

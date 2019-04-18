@@ -15,7 +15,7 @@ public:
 		End
 	};
 
-	IReadFile(int64_t fileSize, const String& filename = String::emptyString);
+	IReadFile(int64_t fileSize, const String& filename = String::kEmptyString);
 	virtual ~IReadFile();
 
 	const String& GetFilename() const;

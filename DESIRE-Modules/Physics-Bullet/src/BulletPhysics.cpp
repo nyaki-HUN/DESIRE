@@ -156,7 +156,7 @@ void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeSte
 		const btPersistentManifold *manifold = physics->dispatcher->getManifoldByIndexInternal(manifoldIdx);
 		const btRigidBody *body0 = static_cast<const btRigidBody*>(manifold->getBody0());
 		const btRigidBody *body1 = static_cast<const btRigidBody*>(manifold->getBody1());
-		collision.pointCount = std::min(manifold->getNumContacts(), Collision::k_MaxContactPoints);
+		collision.pointCount = std::min(manifold->getNumContacts(), Collision::kMaxContactPoints);
 		for(int i = 0; i < collision.pointCount; ++i)
 		{
 			const btManifoldPoint& pt = manifold->getContactPoint(i);

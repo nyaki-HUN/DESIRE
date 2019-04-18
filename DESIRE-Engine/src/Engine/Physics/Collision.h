@@ -7,7 +7,7 @@ class PhysicsComponent;
 class Collision
 {
 public:
-	static const int k_MaxContactPoints = 4;
+	static const int kMaxContactPoints = 4;
 
 	Collision()
 	{
@@ -26,7 +26,7 @@ public:
 	PhysicsComponent *component = nullptr;
 	PhysicsComponent *incomingComponent = nullptr;
 
-	Vector3 contactPoints[k_MaxContactPoints];
-	Vector3 contactNormals[k_MaxContactPoints];
+	Vector3 contactPoints[kMaxContactPoints];
+	Vector3 contactNormals[kMaxContactPoints];
 	int pointCount = 0;
 };

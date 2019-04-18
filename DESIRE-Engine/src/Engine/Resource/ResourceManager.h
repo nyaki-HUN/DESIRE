@@ -18,7 +18,7 @@ public:
 	~ResourceManager();
 
 	std::shared_ptr<Mesh> GetMesh(const String& filename);
-	std::shared_ptr<Shader> GetShader(const String& filename, const String& defines = String::emptyString);
+	std::shared_ptr<Shader> GetShader(const String& filename, const String& defines = String::kEmptyString);
 	std::shared_ptr<Texture> GetTexture(const String& filename);
 
 	void ReloadMesh(const String& filename);

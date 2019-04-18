@@ -8,8 +8,8 @@ constexpr int MakeFourCC(const char(&c)[5])
 
 #define DECLARE_COMPONENT_FURCC_TYPE_ID(STR_ID)						\
 public:																\
-	static const int TYPE_ID = MakeFourCC(STR_ID);					\
-	inline int GetTypeID() const override final { return TYPE_ID; }
+	static constexpr int kTypeID = MakeFourCC(STR_ID);				\
+	int GetTypeID() const override final { return kTypeID; }
 
 class Object;
 
