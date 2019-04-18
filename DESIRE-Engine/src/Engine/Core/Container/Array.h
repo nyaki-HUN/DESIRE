@@ -125,9 +125,9 @@ public:
 		return size;
 	}
 
-	void Reserve(size_t numElements)
+	void Reserve(size_t newReservedSize)
 	{
-		reservedSize = numElements;
+		reservedSize = newReservedSize;
 	}
 
 	// Erases all elements from the Array, but doesn't free its memory
@@ -139,19 +139,25 @@ public:
 
 	void Add(const T& value)
 	{
-		
+		GrowIfNecessary();
+		new (data + size) T(value);
+		size++;
 	}
 
 	void Add(T&& value)
 	{
-
+		GrowIfNecessary();
+		new (data + size) T(std::move(value));
+		size++;
 	}
 
 	template<class... Args>
 	T& EmplaceAdd(Args&&... args)
 	{
-//		new (&data[size]) T(std::forward<Args>(args)...);
-//		return data[size++];
+		GrowIfNecessary();
+		new (data + size) T(std::forward<Args>(args)...);
+		size++;
+		return data[size - 1];
 	}
 
 	void Insert(size_t pos, const T& value)
@@ -211,6 +217,16 @@ public:
 		memmove(data + idx, data + idx + 1, size - idx);
 	}
 
+	void RemoveRangeAt(size_t idx, size_t count)
+	{
+		ASSERT(idx < size);
+
+		count = std::min(count, size - idx);
+		DestructElements(idx, count);
+		memmove(data + idx, data + idx + count, size - idx - count);
+		size -= count;
+	}
+
 	// Removes an element by replacing it with the last element in the array and calling RemoveLast()
 	// Note: This function does not preserve the order of elements
 	bool RemoveFast(const T& value)
@@ -258,6 +274,16 @@ public:
 	}
 
 private:
+	static constexpr size_t kMaxReservedSizeIncrement = 1024;
+
+	void GrowIfNecessary()
+	{
+		if(size == reservedSize)
+		{
+			Reserve(reservedSize < kMaxReservedSizeIncrement) ? (reservedSize << 1) : reservedSize + kMaxReservedSizeIncrement);
+		}
+	}
+
 	void DestructElements(size_t fromIdx, size_t count)
 	{
 		T *elements = data + fromIdx;

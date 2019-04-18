@@ -94,9 +94,9 @@ public:
 		return vector.size();
 	}
 
-	void Reserve(size_t numElements)
+	void Reserve(size_t newReservedSize)
 	{
-		vector.reserve(numElements);
+		vector.reserve(newReservedSize);
 	}
 
 	// Erases all elements from the Array, but doesn't free any memory
@@ -194,6 +194,14 @@ public:
 		vector.erase(vector.begin() + idx);
 	}
 
+	void RemoveRangeAt(size_t idx, size_t count)
+	{
+		ASSERT(idx < vector.size());
+
+		count = std::min(count, vector.size() - idx);
+		vector.erase(vector.begin() + idx, vector.begin() + idx + count);
+	}
+
 	// Removes an element by replacing it with the last element in the array and calling RemoveLast()
 	// Note: This function does not preserve the order of elements
 	bool RemoveFast(const T& value)
@@ -216,6 +224,11 @@ public:
 
 	void RemoveLast()
 	{
+		if(vector.size() == 0)
+		{
+			return;
+		}
+
 		vector.pop_back();
 	}
 
