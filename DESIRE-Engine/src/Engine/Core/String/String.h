@@ -41,42 +41,14 @@ public:
 
 	// Compare strings
 	int Compare(const String& string) const;
-	int Compare(const char *str) const;
 	int CompareIgnoreCase(const String& string) const;
-	int CompareIgnoreCase(const char *str) const;
 
-	bool Equals(const String& string) const
-	{
-		return (Compare(string) == 0);
-	}
-	bool Equals(const char *str) const
-	{
-		return (Compare(str) == 0);
-	}
+	bool Equals(const String& string) const				{ return (Compare(string) == 0); }
+	bool EqualsIgnoreCase(const String& string) const	{ return (CompareIgnoreCase(string) == 0); }
 
-	bool EqualsIgnoreCase(const String& string) const
-	{
-		return (CompareIgnoreCase(string) == 0);
-	}
-	bool EqualsIgnoreCase(const char *str) const
-	{
-		return (CompareIgnoreCase(str) == 0);
-	}
-
-	bool operator ==(const String &string) const
-	{
-		return (Compare(string) == 0);
-	}
-
-	bool operator !=(const String &string) const
-	{
-		return (Compare(string) != 0);
-	}
-
-	bool operator <(const String& string) const
-	{
-		return Compare(string) < 0;
-	}
+	bool operator ==(const String& string) const		{ return (Compare(string) == 0); }
+	bool operator !=(const String& string) const		{ return (Compare(string) != 0); }
+	bool operator <(const String& string) const			{ return (Compare(string) < 0); }
 
 	// Check if the string begins with the given prefix
 	bool StartsWith(const char *prefix, size_t numChars) const;
@@ -86,12 +58,6 @@ public:
 		return StartsWith(prefix.data, prefix.size);
 	}
 
-	template<size_t SIZE>
-	bool StartsWith(const char(&prefix)[SIZE]) const
-	{
-		return StartsWith(prefix, SIZE - 1);
-	}
-
 	// Check if the string ends with the given suffix
 	bool EndsWith(const char *suffix, size_t numChars) const;
 	bool EndsWith(char suffix) const;
@@ -99,12 +65,6 @@ public:
 	bool EndsWith(const String& prefix) const
 	{
 		return EndsWith(prefix.data, prefix.size);
-	}
-
-	template<size_t SIZE>
-	bool EndsWith(const char(&prefix)[SIZE]) const
-	{
-		return EndsWith(prefix, SIZE - 1);
 	}
 
 protected:

@@ -83,26 +83,27 @@ TEST_CASE("String", "[Core]")
 	{
 		String s("XXX");
 
-		CHECK(strcmp(s.Str(), "XXX") == s.Compare("XXX"));
-		CHECK(strcmp(string.Str(), s.Str()) == string.Compare(s));
+		CHECK(s.Compare("XXX") == 0);
+		CHECK(string.Compare(s) < 0);
+		CHECK(string < s);
 
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase(String("xXx")));
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase("xXx"));
-
-		CHECK((string < s) == (string.Compare(s) < 0));
 	}
 
 	SECTION("StartsWith()")
 	{
 		CHECK(string.StartsWith(String("Str")));
-		CHECK(string.StartsWith("Str"));
+		CHECK(string.StartsWith("Str!!!", 3));
 		CHECK(string.StartsWith(charSeq));
+		CHECK_FALSE(string.StartsWith(String::kEmptyString));
 	}
 
 	SECTION("EndsWith()")
 	{
 		CHECK(string.EndsWith(String(" ASD")));
-		CHECK(string.EndsWith(" ASD"));
+		CHECK(string.EndsWith(" ASD!!!", 4));
 		CHECK(string.EndsWith(charSeq));
+		CHECK_FALSE(string.EndsWith(String::kEmptyString));
 	}
 }
