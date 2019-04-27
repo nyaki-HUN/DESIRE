@@ -172,6 +172,8 @@ WritableString& WritableString::operator +=(float number)
 
 void WritableString::Replace_Internal(const String& search, const String& replaceTo, bool all)
 {
+	const int64_t numCharsToMove = replaceTo.Length() - search.Length();
+
 	size_t pos = 0;
 	for(;;)
 	{
@@ -181,8 +183,20 @@ void WritableString::Replace_Internal(const String& search, const String& replac
 			break;
 		}
 
-		RemoveFrom(pos, search.Length());
-		Insert(pos, replaceTo);
+		if(numCharsToMove > 0)
+		{
+			const bool hasEnoughSize = Reserve(size + numCharsToMove);
+			ASSERT(hasEnoughSize);
+			if(!hasEnoughSize)
+			{
+				break;
+			}
+		}
+
+		memmove(data + pos + replaceTo.Length(), data + pos + search.Length(), size - pos - search.Length() + 1);
+		size += numCharsToMove;
+
+		memcpy(data + pos, replaceTo.Str(), replaceTo.Length());
 		pos += replaceTo.Length();
 
 		if(!all)

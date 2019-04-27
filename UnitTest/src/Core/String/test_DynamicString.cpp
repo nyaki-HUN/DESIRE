@@ -155,6 +155,15 @@ TEST_CASE("WritableString", "[Core]")
 		DynamicString replaceStr = "aabbc";
 		replaceStr.Replace("b", "XX");
 		CHECK(replaceStr.Equals("aaXXbc"));
+		CHECK(replaceStr.Length() == 6);
+
+		replaceStr.Replace("XX", "Y");
+		CHECK(replaceStr.Equals("aaYbc"));
+		CHECK(replaceStr.Length() == 5);
+
+		replaceStr.Replace("Ybc", "Z");
+		CHECK(replaceStr.Equals("aaZ"));
+		CHECK(replaceStr.Length() == 3);
 
 		string.ReplaceAll("S", "XX");
 		CHECK(string.Equals("XXtring AXXD"));
