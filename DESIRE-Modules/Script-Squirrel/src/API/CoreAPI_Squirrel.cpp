@@ -5,6 +5,7 @@
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
+#include "Engine/Core/math/Rand.h"
 
 void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 {
@@ -199,13 +200,21 @@ void RegisterMathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 
 	// Math
 	rootTable.Bind("Math", Sqrat::RootTable(vm)
-		.Func("RandFloat", &Math::RandFloat)
-		.Func("RandInt", &Math::RandInt)
 		.Func("Round32", &Math::Round32)
 		.Func("RoundUp", &Math::RoundUp)
 		.Func("Clamp", &Math::Clamp)
 		.Func("Clamp01", &Math::Clamp01)
 	);
+
+	// Rand
+	rootTable.Bind("Rand", Sqrat::Class<Rand, Sqrat::DefaultAllocator<Rand>>(vm, "Rand")
+		.Func("GetInt", &Rand::GetInt)
+		.Func("GetUint", &Rand::GetUint)
+		.Func("GetFloat", &Rand::GetFloat)
+		.Func("GetDouble", &Rand::GetDouble)
+		.Func("GetBool", &Rand::GetBool)
+	);
+	rootTable.SetInstance("globalRand", &Rand::globalRand);
 }
 
 void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)

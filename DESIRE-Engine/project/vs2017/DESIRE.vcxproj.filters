@@ -357,6 +357,9 @@
     <ClInclude Include="..\..\src\Engine\Core\math\Quat.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\Rand.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\Vector2.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
@@ -615,6 +618,9 @@
       <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\math\Rand.cpp">
       <Filter>src\Engine\Core\math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\math\math.cpp">

@@ -3,8 +3,9 @@
 #include "Engine/Core/Application.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
-#include "Engine/Core/math/MAtrix4.h"
+#include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
+#include "Engine/Core/math/Rand.h"
 
 void RegisterVectormathFunctions_Lua(lua_State *L)
 {
@@ -190,13 +191,22 @@ void RegisterMathFunctions_Lua(lua_State *L)
 
 	// Math
 	luabridge::getGlobalNamespace(L).beginNamespace("Math")
-		.addFunction("RandFloat", &Math::RandFloat)
-		.addFunction("RandInt", &Math::RandInt)
 		.addFunction("Round32", &Math::Round32)
 		.addFunction("RoundUp", &Math::RoundUp)
 		.addFunction("Clamp", &Math::Clamp)
 		.addFunction("Clamp01", &Math::Clamp01)
 		.endNamespace();
+
+	// Rand
+	luabridge::getGlobalNamespace(L).beginClass<Rand>("Rand")
+		.addFunction("GetInt", &Rand::GetInt)
+		.addFunction("GetUint", &Rand::GetUint)
+		.addFunction("GetFloat", &Rand::GetFloat)
+		.addFunction("GetDouble", &Rand::GetDouble)
+		.addFunction("GetBool", &Rand::GetBool)
+		.endClass();
+
+	luabridge::setGlobal(L, &Rand::globalRand, "globalRand");
 }
 
 void RegisterCoreAPI_Lua(lua_State *L)
