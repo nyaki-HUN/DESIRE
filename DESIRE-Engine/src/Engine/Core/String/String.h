@@ -51,21 +51,13 @@ public:
 	bool operator <(const String& string) const			{ return (Compare(string) < 0); }
 
 	// Check if the string begins with the given prefix
+	bool StartsWith(const String& prefix) const;
 	bool StartsWith(const char *prefix, size_t numChars) const;
 
-	bool StartsWith(const String& prefix) const
-	{
-		return StartsWith(prefix.data, prefix.size);
-	}
-
 	// Check if the string ends with the given suffix
+	bool EndsWith(const String& prefix) const;
 	bool EndsWith(const char *suffix, size_t numChars) const;
 	bool EndsWith(char suffix) const;
-
-	bool EndsWith(const String& prefix) const
-	{
-		return EndsWith(prefix.data, prefix.size);
-	}
 
 protected:
 	String() = default;

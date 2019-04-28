@@ -123,10 +123,20 @@ int String::CompareIgnoreCase(const String& string) const
 	return StrUtils::Stricmp(data, string.data);
 }
 
+bool String::StartsWith(const String& prefix) const
+{
+	return StartsWith(prefix.data, prefix.size);
+}
+
 bool String::StartsWith(const char *prefix, size_t numChars) const
 {
 	ASSERT(prefix != nullptr);
 	return (numChars == 0) ? false : (strncmp(data, prefix, numChars) == 0);
+}
+
+bool String::EndsWith(const String& prefix) const
+{
+	return EndsWith(prefix.data, prefix.size);
 }
 
 bool String::EndsWith(const char *suffix, size_t numChars) const
