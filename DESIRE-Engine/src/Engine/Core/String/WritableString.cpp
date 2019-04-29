@@ -44,14 +44,15 @@ void WritableString::Insert(size_t startIndex, const char *str, size_t numChars)
 		return;
 	}
 
-	const bool hasEnoughSize = Reserve(size + numChars);
-	ASSERT(hasEnoughSize);
-	if(hasEnoughSize)
+	if(!Reserve(size + numChars))
 	{
-		memmove(data + startIndex + numChars, data + startIndex, size - startIndex + 1);
-		memcpy(data + startIndex, str, numChars);
-		size += numChars;
+		ASSERT(false);
+		return;
 	}
+
+	memmove(data + startIndex + numChars, data + startIndex, size - startIndex + 1);
+	memcpy(data + startIndex, str, numChars);
+	size += numChars;
 }
 
 void WritableString::RemoveFrom(size_t startIndex, size_t numChars)
@@ -84,10 +85,9 @@ void WritableString::Replace(const String& search, const String& replaceTo)
 	const int64_t numCharsToMove = replaceTo.Length() - search.Length();
 	if(numCharsToMove > 0)
 	{
-		const bool hasEnoughSize = Reserve(size + numCharsToMove);
-		ASSERT(hasEnoughSize);
-		if(!hasEnoughSize)
+		if(!Reserve(size + numCharsToMove))
 		{
+			ASSERT(false);
 			return;
 		}
 	}
@@ -114,10 +114,9 @@ void WritableString::ReplaceAll(const String& search, const String& replaceTo)
 			pos = Find(search, pos + search.Length());
 		} while(pos != kInvalidPos);
 
-		const bool hasEnoughSize = Reserve(size + count * numCharsToMove);
-		ASSERT(hasEnoughSize);
-		if(!hasEnoughSize)
+		if(!Reserve(size + count * numCharsToMove))
 		{
+			ASSERT(false);
 			return;
 		}
 	}
@@ -152,14 +151,15 @@ void WritableString::Append(const char *str, size_t numChars)
 {
 	ASSERT(str != nullptr);
 
-	const bool hasEnoughSize = Reserve(size + numChars);
-	ASSERT(hasEnoughSize);
-	if(hasEnoughSize)
+	if(!Reserve(size + numChars))
 	{
-		memcpy(data + size, str, numChars);
-		size += numChars;
-		data[size] = '\0';
+		ASSERT(false);
+		return;
 	}
+
+	memcpy(data + size, str, numChars);
+	size += numChars;
+	data[size] = '\0';
 }
 
 WritableString& WritableString::operator +=(int32_t number)
@@ -229,12 +229,13 @@ void WritableString::InitWithData(const char *newData, size_t newSize)
 {
 	ASSERT(newData != nullptr);
 
-	const bool hasEnoughSize = Reserve(newSize);
-	ASSERT(hasEnoughSize);
-	if(hasEnoughSize)
+	if(!Reserve(newSize))
 	{
-		memcpy(data, newData, newSize);
-		size = newSize;
-		data[size] = '\0';
+		ASSERT(false);
+		return;
 	}
+
+	memcpy(data, newData, newSize);
+	size = newSize;
+	data[size] = '\0';
 }
