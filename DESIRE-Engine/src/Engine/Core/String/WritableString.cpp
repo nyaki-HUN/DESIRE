@@ -217,10 +217,10 @@ WritableString& WritableString::operator +=(float number)
 	return *this;
 }
 
-void WritableString::Replace_Internal(size_t pos, size_t searchLen, const String& replaceTo)
+void WritableString::Replace_Internal(size_t pos, size_t numChars, const String& replaceTo)
 {
-	memmove(data + pos + replaceTo.Length(), data + pos + searchLen, size - pos - searchLen + 1);
-	size += replaceTo.Length() - searchLen;
+	memmove(data + pos + replaceTo.Length(), data + pos + numChars, size - pos - numChars + 1);
+	size += replaceTo.Length() - numChars;
 
 	memcpy(data + pos, replaceTo.Str(), replaceTo.Length());
 }
