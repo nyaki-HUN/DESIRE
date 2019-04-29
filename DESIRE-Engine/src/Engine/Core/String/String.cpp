@@ -6,7 +6,7 @@ const String String::kEmptyString = "";
 
 size_t String::Find(const String& search, size_t startIndex) const
 {
-	ASSERT(search.data[0] != '\0');
+	ASSERT(!search.IsEmpty());
 
 	if(startIndex >= size)
 	{
@@ -125,7 +125,7 @@ int String::CompareIgnoreCase(const String& string) const
 
 bool String::StartsWith(const String& prefix) const
 {
-	return StartsWith(prefix.data, prefix.size);
+	return StartsWith(prefix.Str(), prefix.Length());
 }
 
 bool String::StartsWith(const char *prefix, size_t numChars) const
@@ -136,7 +136,7 @@ bool String::StartsWith(const char *prefix, size_t numChars) const
 
 bool String::EndsWith(const String& prefix) const
 {
-	return EndsWith(prefix.data, prefix.size);
+	return EndsWith(prefix.Str(), prefix.Length());
 }
 
 bool String::EndsWith(const char *suffix, size_t numChars) const
