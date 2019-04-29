@@ -75,12 +75,59 @@ void WritableString::RemoveFromEnd(size_t numChars)
 
 void WritableString::Replace(const String& search, const String& replaceTo)
 {
-	Replace_Internal(search, replaceTo, false);
+	const size_t firstPos = Find(search);
+	if(firstPos == kInvalidPos)
+	{
+		return;
+	}
+
+	const int64_t numCharsToMove = replaceTo.Length() - search.Length();
+	if(numCharsToMove > 0)
+	{
+		const bool hasEnoughSize = Reserve(size + numCharsToMove);
+		ASSERT(hasEnoughSize);
+		if(!hasEnoughSize)
+		{
+			return;
+		}
+	}
+
+	Replace_Internal(firstPos, search.Length(), replaceTo);
 }
 
 void WritableString::ReplaceAll(const String& search, const String& replaceTo)
 {
-	Replace_Internal(search, replaceTo, true);
+	const size_t firstPos = Find(search);
+	if(firstPos == kInvalidPos)
+	{
+		return;
+	}
+
+	const int64_t numCharsToMove = replaceTo.Length() - search.Length();
+	if(numCharsToMove > 0)
+	{
+		size_t count = 0;
+		size_t pos = firstPos;
+		do
+		{
+			count++;
+			pos = Find(search, pos + search.Length());
+		} while(pos != kInvalidPos);
+
+		const bool hasEnoughSize = Reserve(size + count * numCharsToMove);
+		ASSERT(hasEnoughSize);
+		if(!hasEnoughSize)
+		{
+			return;
+		}
+	}
+
+	size_t pos = firstPos;
+	do
+	{
+		Replace_Internal(pos, search.Length(), replaceTo);
+		pos = Find(search, pos + replaceTo.Length());
+	} while(pos != kInvalidPos);
 }
 
 void WritableString::ReplaceAllChar(char search, char replaceTo)
@@ -170,40 +217,12 @@ WritableString& WritableString::operator +=(float number)
 	return *this;
 }
 
-void WritableString::Replace_Internal(const String& search, const String& replaceTo, bool all)
+void WritableString::Replace_Internal(size_t pos, size_t searchLen, const String& replaceTo)
 {
-	const int64_t numCharsToMove = replaceTo.Length() - search.Length();
+	memmove(data + pos + replaceTo.Length(), data + pos + searchLen, size - pos - searchLen + 1);
+	size += replaceTo.Length() - searchLen;
 
-	size_t pos = 0;
-	for(;;)
-	{
-		pos = Find(search, pos);
-		if(pos == kInvalidPos)
-		{
-			break;
-		}
-
-		if(numCharsToMove > 0)
-		{
-			const bool hasEnoughSize = Reserve(size + numCharsToMove);
-			ASSERT(hasEnoughSize);
-			if(!hasEnoughSize)
-			{
-				break;
-			}
-		}
-
-		memmove(data + pos + replaceTo.Length(), data + pos + search.Length(), size - pos - search.Length() + 1);
-		size += numCharsToMove;
-
-		memcpy(data + pos, replaceTo.Str(), replaceTo.Length());
-		pos += replaceTo.Length();
-
-		if(!all)
-		{
-			break;
-		}
-	}
+	memcpy(data + pos, replaceTo.Str(), replaceTo.Length());
 }
 
 void WritableString::InitWithData(const char *newData, size_t newSize)

@@ -55,6 +55,6 @@ public:
 protected:
 	virtual bool Reserve(size_t newSize) = 0;
 
-	void Replace_Internal(const String& search, const String& replaceTo, bool all);
+	void Replace_Internal(size_t pos, size_t searchLen, const String& replaceTo);
 	void InitWithData(const char *data, size_t size);
 };
