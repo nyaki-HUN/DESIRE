@@ -245,6 +245,24 @@ public:
 	}
 
 	// Comparison operators
+	static inline bool OpCmpGT(const vec_float3_t& a, const vec_float3_t& b)
+	{
+		return (
+			a.x > b.x &&
+			a.y > b.y &&
+			a.z > b.z
+		);
+	}
+
+	static inline bool OpCmpLT(const vec_float3_t& a, const vec_float3_t& b)
+	{
+		return (
+			a.x < b.x &&
+			a.y < b.y &&
+			a.z < b.z
+		);
+	}
+
 	static inline bool OpCmpGE(const vec_float3_t& a, const vec_float3_t& b)
 	{
 		return (

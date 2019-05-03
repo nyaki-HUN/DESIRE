@@ -84,15 +84,10 @@ public:
 	inline Vector3& operator /=(const Vector3& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector3& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
-	inline bool operator >=(const Vector3& vec) const
-	{
-		return SIMD::OpCmpGE(mVec128, vec);
-	}
-
-	inline bool operator <=(const Vector3& vec) const
-	{
-		return SIMD::OpCmpLE(mVec128, vec);
-	}
+	inline bool operator >(const Vector3& vec) const		{ return SIMD::OpCmpGT(mVec128, vec); }
+	inline bool operator <(const Vector3& vec) const		{ return SIMD::OpCmpLT(mVec128, vec); }
+	inline bool operator >=(const Vector3& vec) const		{ return SIMD::OpCmpGE(mVec128, vec); }
+	inline bool operator <=(const Vector3& vec) const		{ return SIMD::OpCmpLE(mVec128, vec); }
 
 	// Maximum element of a 3-D vector
 	inline float GetMaxElem() const

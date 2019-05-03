@@ -147,6 +147,16 @@ public:
 	}
 
 	// Comparison operators
+	static inline bool OpCmpGT(__m128 a, __m128 b)
+	{
+		return (_mm_movemask_ps(_mm_cmpgt_ps(a, b)) & 0x7) == 0x7;
+	}
+
+	static inline bool OpCmpLT(__m128 a, __m128 b)
+	{
+		return (_mm_movemask_ps(_mm_cmplt_ps(a, b)) & 0x7) == 0x7;
+	}
+
 	static inline bool OpCmpGE(__m128 a, __m128 b)
 	{
 		return (_mm_movemask_ps(_mm_cmpge_ps(a, b)) & 0x7) == 0x7;

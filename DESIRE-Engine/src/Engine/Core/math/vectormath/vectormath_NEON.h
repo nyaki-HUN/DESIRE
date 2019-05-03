@@ -105,6 +105,26 @@ public:
 	}
 
 	// Comparison operators
+	static inline bool OpCmpGT(float32x4_t a, float32x4_t b)
+	{
+//		uint32x4_t result = vcgtq_f32(a, b);
+		return (
+			a.GetX() > b.GetX() &&
+			a.GetY() > b.GetY() &&
+			a.GetZ() > b.GetZ()
+		);
+	}
+
+	static inline bool OpCmpLT(float32x4_t a, float32x4_t b)
+	{
+//		uint32x4_t result = vcltq_f32(a, b);
+		return (
+			a.GetX() < b.GetX() &&
+			a.GetY() < b.GetY() &&
+			a.GetZ() < b.GetZ()
+		);
+	}
+
 	static inline bool OpCmpGE(float32x4_t a, float32x4_t b)
 	{
 //		uint32x4_t result = vcgeq_f32(a, b);
