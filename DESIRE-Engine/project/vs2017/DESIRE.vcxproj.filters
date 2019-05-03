@@ -64,9 +64,6 @@
     <Filter Include="src\Engine\Input">
       <UniqueIdentifier>{915689A8-7D4F-A8FA-A681-8D7F92D98706}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Engine\Input\WINDOWS">
-      <UniqueIdentifier>{0BC50E23-F7E9-5DA3-2035-43330CB95CC1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Engine\Physics">
       <UniqueIdentifier>{8496B3FD-707A-7453-D9DA-6EA6C5DD5ED5}</UniqueIdentifier>
     </Filter>
@@ -405,9 +402,6 @@
     <ClInclude Include="..\..\src\Engine\Input\Mouse.h">
       <Filter>src\Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Input\WINDOWS\WINDOWSInput.h">
-      <Filter>src\Engine\Input\WINDOWS</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Input\keyCodes.h">
       <Filter>src\Engine\Input</Filter>
     </ClInclude>
@@ -638,14 +632,23 @@
     <ClCompile Include="..\..\src\Engine\Input\InputMapping.cpp">
       <Filter>src\Engine\Input</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Input\Input_android.cpp">
+      <Filter>src\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Input\Input_linux.cpp">
+      <Filter>src\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Input\Input_osx.cpp">
+      <Filter>src\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Input\Input_windows.cpp">
+      <Filter>src\Engine\Input</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Input\Keyboard.cpp">
       <Filter>src\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Input\Mouse.cpp">
       <Filter>src\Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Input\WINDOWS\WINDOWSInput.cpp">
-      <Filter>src\Engine\Input\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp">
       <Filter>src\Engine\Physics</Filter>
