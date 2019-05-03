@@ -23,7 +23,7 @@ function Update()
 
 	local pos = Vector3(1, 2, 3);
 	local pos2 = pos;
---	pos2.x = 4;
+	pos2.x = 4;
 	pos = pos2 * 4;
 	pos = pos + pos2;
 	pos = -pos;
