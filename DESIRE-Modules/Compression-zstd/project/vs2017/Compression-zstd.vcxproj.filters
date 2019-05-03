@@ -93,6 +93,15 @@
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstdmt_compress.h">
       <Filter>Externals\zstd\src\compress</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_ddict.h">
+      <Filter>Externals\zstd\src\decompress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_decompress_block.h">
+      <Filter>Externals\zstd\src\decompress</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_decompress_internal.h">
+      <Filter>Externals\zstd\src\decompress</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\ZstdCompression.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -155,7 +164,13 @@
     <ClCompile Include="..\..\Externals\zstd\src\decompress\huf_decompress.c">
       <Filter>Externals\zstd\src\decompress</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\decompress\zstd_ddict.c">
+      <Filter>Externals\zstd\src\decompress</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\zstd\src\decompress\zstd_decompress.c">
+      <Filter>Externals\zstd\src\decompress</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zstd\src\decompress\zstd_decompress_block.c">
       <Filter>Externals\zstd\src\decompress</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ZstdCompression.cpp">

@@ -125,6 +125,9 @@
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_ldm.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstd_opt.h" />
     <ClInclude Include="..\..\Externals\zstd\src\compress\zstdmt_compress.h" />
+    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_ddict.h" />
+    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_decompress_block.h" />
+    <ClInclude Include="..\..\Externals\zstd\src\decompress\zstd_decompress_internal.h" />
     <ClInclude Include="..\..\src\ZstdCompression.h" />
   </ItemGroup>
   <ItemGroup>
@@ -147,7 +150,9 @@
     <ClCompile Include="..\..\Externals\zstd\src\compress\zstd_opt.c" />
     <ClCompile Include="..\..\Externals\zstd\src\compress\zstdmt_compress.c" />
     <ClCompile Include="..\..\Externals\zstd\src\decompress\huf_decompress.c" />
+    <ClCompile Include="..\..\Externals\zstd\src\decompress\zstd_ddict.c" />
     <ClCompile Include="..\..\Externals\zstd\src\decompress\zstd_decompress.c" />
+    <ClCompile Include="..\..\Externals\zstd\src\decompress\zstd_decompress_block.c" />
     <ClCompile Include="..\..\src\ZstdCompression.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
