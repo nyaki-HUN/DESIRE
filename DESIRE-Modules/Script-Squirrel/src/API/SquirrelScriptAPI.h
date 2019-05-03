@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/String/String.h"
+
 #include "sqrat/sqratTable.h"
 #include "sqrat/sqratClass.h"
 
@@ -16,6 +18,21 @@ template<class T>
 class SquirrelScriptAPI
 {
 public:
+	template<const String& (T::*func)() const>
+	static SQInteger MakeStringRvFromMemberFunc(HSQUIRRELVM vm)
+	{
+		if(sq_gettop(vm) != 1)
+		{
+			// Only 1 argument is supported
+			return 0;
+		}
+
+		Sqrat::Var<const T&> thisVar(vm, 1);
+		const String& rv = (thisVar.value.*func)();
+		sq_pushstring(vm, rv.Str(), (SQInteger)rv.Length());
+		return 1;
+	}
+
 	// Native squirrel function to support multiplication operator overrides with different types
 	template<typename... TypeList>
 	static SQInteger OpMulOverrides(HSQUIRRELVM vm)

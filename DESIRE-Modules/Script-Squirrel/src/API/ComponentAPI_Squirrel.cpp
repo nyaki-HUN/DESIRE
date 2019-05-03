@@ -22,7 +22,7 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 
 	// Object
 	rootTable.Bind("Object", Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object")
-		.Func("GetObjectName", &Object::GetObjectName)
+		.SquirrelFunc("GetObjectName", &SquirrelScriptAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)
 		.Func("GetID", &Object::GetID)
 		.Func("SetActive", &Object::SetActive)
 		.Func("RemoveComponent", &Object::RemoveComponent)
