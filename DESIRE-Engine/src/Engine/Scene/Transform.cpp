@@ -17,16 +17,9 @@ void Transform::ResetToIdentity()
 	localPosition = Vector3::Zero();
 	localRotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
 	localScale = Vector3(1.0f);
+	flags = IS_IDENTITY;
 
-	if(owner != nullptr)
-	{
-		flags = IS_IDENTITY | POSITION_CHANGED | ROTATION_CHANGED | SCALE_CHANGED;
-	}
-	else
-	{
-		worldMatrix = Matrix4::Identity();
-		flags = IS_IDENTITY;
-	}
+	UpdateWorldMatrix();
 }
 
 void Transform::SetLocalPosition(const Vector3& position)
@@ -59,19 +52,24 @@ Matrix4 Transform::ConstructLocalMatrix() const
 
 const Matrix4& Transform::GetWorldMatrix() const
 {
+	if(flags & WORLD_MATRIX_DIRTY)
+	{
+		UpdateWorldMatrix();
+	}
+
 	return worldMatrix;
 }
 
 Vector3 Transform::GetPosition() const
 {
-	return worldMatrix.GetTranslation();
+	return GetWorldMatrix().GetTranslation();
 }
 
 void Transform::SetPosition(const Vector3& position)
 {
 	if(parent != nullptr)
 	{
-		Matrix4 mat = parent->worldMatrix;
+		Matrix4 mat = parent->GetWorldMatrix();
 		mat.Invert();
 		mat *= Matrix4::CreateTranslation(position);
 		SetLocalPosition(mat.GetTranslation());
@@ -84,7 +82,7 @@ void Transform::SetPosition(const Vector3& position)
 
 Quat Transform::GetRotation() const
 {
-	Matrix3 mat = worldMatrix.GetUpper3x3();
+	Matrix3 mat = GetWorldMatrix().GetUpper3x3();
 	mat.col0.Normalize();
 	mat.col1.Normalize();
 	mat.col2.Normalize();
@@ -106,7 +104,7 @@ void Transform::SetRotation(const Quat& rotation)
 
 Vector3 Transform::GetScale() const
 {
-	const Matrix3 mat = worldMatrix.GetUpper3x3();
+	const Matrix3 mat = GetWorldMatrix().GetUpper3x3();
 	return Vector3(mat.col0.Length(), mat.col1.Length(), mat.col2.Length());
 }
 
@@ -128,13 +126,13 @@ uint8_t Transform::GetFlags() const
 	return flags;
 }
 
-void Transform::UpdateWorldMatrix()
+void Transform::UpdateWorldMatrix() const
 {
 	if(flags & IS_IDENTITY)
 	{
 		if(parent != nullptr)
 		{
-			worldMatrix = parent->worldMatrix;
+			worldMatrix = parent->GetWorldMatrix();
 		}
 		else
 		{
@@ -147,7 +145,7 @@ void Transform::UpdateWorldMatrix()
 
 		if(parent != nullptr)
 		{
-			worldMatrix = parent->worldMatrix * worldMatrix;
+			worldMatrix = parent->GetWorldMatrix() * worldMatrix;
 		}
 	}
 

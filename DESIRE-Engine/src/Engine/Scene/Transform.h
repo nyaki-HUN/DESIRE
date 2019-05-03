@@ -52,19 +52,19 @@ public:
 	// Returns a combination of flags from EFlags
 	uint8_t GetFlags() const;
 
-	// Returns the absolute transformation matrix from the last UpdateWorldMatrix() call
+	// Returns the absolute transformation matrix
 	const Matrix4& GetWorldMatrix() const;
 
-	void UpdateWorldMatrix();
-
 private:
+	void UpdateWorldMatrix() const;
+
 	Vector3 localPosition = Vector3::Zero();
 	Quat localRotation = Quat::Identity();
 	Vector3 localScale = Vector3(1.0f);
 
-	Matrix4 worldMatrix = Matrix4::Identity();
+	mutable Matrix4 worldMatrix = Matrix4::Identity();
+	mutable uint8_t flags = IS_IDENTITY;
 
-	const Transform *parent = nullptr;
+	Transform *parent = nullptr;
 	Object *owner = nullptr;
-	uint8_t flags = IS_IDENTITY;
 };
