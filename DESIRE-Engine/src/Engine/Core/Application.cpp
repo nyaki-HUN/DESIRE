@@ -62,12 +62,15 @@ int Application::Start(int argc, const char * const *argv)
 	{
 		CreationParams params = Modules::Application->GetCreationParams(argc, argv);
 		Modules::Application->mainWindow = IWindow::Create(params.windowParams);
-
-		Modules::Render->Init(Modules::Application->mainWindow.get());
-		Input::Init(Modules::Application->mainWindow.get());
 	}
 
+	Modules::Render->Init(Modules::Application->mainWindow.get());
+	Modules::Input->Init(Modules::Application->mainWindow.get());
+
 	Modules::Application->Run();
+
+	Modules::Input->Kill();
+	Modules::Render->Kill();
 
 	Modules::Application = nullptr;
 	DestroyModules();
@@ -108,9 +111,6 @@ void Application::Run()
 	}
 
 	Kill();
-
-	Input::Kill();
-	Modules::Render->Kill();
 }
 
 Application::CreationParams Application::GetCreationParams(int argc, const char * const *argv)

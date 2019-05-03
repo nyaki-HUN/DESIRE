@@ -11,8 +11,25 @@ Input::~Input()
 
 }
 
+void Input::Init(IWindow *window)
+{
+	Init_internal(window);
+}
+
+void Input::Kill()
+{
+	Kill_internal();
+
+	// Reset input devices
+	keyboards.Clear();
+	mouses.Clear();
+	gameControllers.Clear();
+}
+
 void Input::Update()
 {
+	Update_internal();
+
 	// Keyboard
 	for(Keyboard& keyboard : keyboards)
 	{

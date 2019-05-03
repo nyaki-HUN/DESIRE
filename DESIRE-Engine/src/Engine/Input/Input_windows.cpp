@@ -1,5 +1,7 @@
 #include "Engine/stdafx.h"
-#include "Engine/Input/WINDOWS/WINDOWSInput.h"
+
+#if defined(DESIRE_PLATFORM_WINDOWS)
+
 #include "Engine/Input/Input.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/WINDOWS/WINDOWSWindow.h"
@@ -12,7 +14,15 @@
 #define HID_USAGE_GENERIC_MOUSE		0x02
 #define HID_USAGE_GENERIC_KEYBOARD	0x06
 
-void Input::Init(IWindow *window)
+class InputImpl
+{
+public:
+	static void Handle_WM_INPUT(WPARAM wParam, LPARAM lParam);
+	static void Handle_WM_MOUSEMOVE(WPARAM wParam, LPARAM lParam);
+	static void Handle_WM_CHAR(WPARAM wParam, LPARAM lParam);
+};
+
+void Input::Init_internal(IWindow *window)
 {
 	WINDOWSWindow *win = static_cast<WINDOWSWindow*>(window);
 	win->RegisterMessageHandler(WM_INPUT, InputImpl::Handle_WM_INPUT);
@@ -47,16 +57,16 @@ void Input::Init(IWindow *window)
 		const RAWINPUTDEVICELIST& device = deviceList[i];
 		if(device.dwType == RIM_TYPEKEYBOARD)
 		{
-			Modules::Input->GetKeyboardByHandle(device.hDevice);
+			GetKeyboardByHandle(device.hDevice);
 		}
 		else if(device.dwType == RIM_TYPEMOUSE)
 		{
-			Modules::Input->GetMouseByHandle(device.hDevice);
+			GetMouseByHandle(device.hDevice);
 		}
 	}
 }
 
-void Input::Kill()
+void Input::Kill_internal()
 {
 	RAWINPUTDEVICE rawInputDevices[2];
 	// Mouse
@@ -70,11 +80,11 @@ void Input::Kill()
 	rawInputDevices[1].dwFlags = RIDEV_REMOVE;
 	rawInputDevices[1].hwndTarget = nullptr;
 	RegisterRawInputDevices(rawInputDevices, 2, sizeof(RAWINPUTDEVICE));
+}
 
-	// Reset input devices
-	Modules::Input->keyboards.Clear();
-	Modules::Input->mouses.Clear();
-	Modules::Input->gameControllers.Clear();
+void Input::Update_internal()
+{
+
 }
 
 void InputImpl::Handle_WM_INPUT(WPARAM wParam, LPARAM lParam)
@@ -218,3 +228,5 @@ void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)
 		typingCharacters[len + 1] = '\0';
 	}
 }
+
+#endif	// #if defined(DESIRE_PLATFORM_WINDOWS)

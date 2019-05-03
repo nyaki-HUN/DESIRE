@@ -1,19 +1,34 @@
 #include "Engine/stdafx.h"
-#include "Engine/Input/LINUX/LINUXInput.h"
+
+#if defined(DESIRE_PLATFORM_LINUX)
+
 #include "Engine/Input/Input.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/LINUX/LINUXWindow.h"
 
-Display *InputImpl::display = nullptr;
-EKeyCode InputImpl::keyConversionTable[InputImpl::LAST_MAPPED_KEY_CODE - InputImpl::FIRST_MAPPED_KEY_CODE + 1] = { (EKeyCode)0 };
+#include <X11/Xlib.h>
 
-void Input::Init(IWindow *window)
+constexpr int kFirstMappedKeyCode = 96;
+constexpr int kLastMappedKeyCode = 126;
+
+static Display *s_display = nullptr;
+static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 1] = { (EKeyCode)0 };
+
+class InputImpl
 {
-	ASSERT(InputImpl::display == nullptr && "Input is already initialized");
+public:
+	static void Handle_KeyPress_KeyRelease(const XEvent& event);
+	static void Handle_ButtonPress_ButtonRelease(const XEvent& event);
+	static void Handle_MotionNotify(const XEvent& event);
+};
+
+void Input::Init_internal(IWindow *window)
+{
+	ASSERT(s_display == nullptr && "Input is already initialized");
 
 	// Create local X Display connection
-	InputImpl::display = XOpenDisplay(nullptr);
-	if(InputImpl::display == nullptr)
+	s_display = XOpenDisplay(nullptr);
+	if(s_display == nullptr)
 	{
 		LOG_ERROR("Unable to open a connection to the X server");
 		return;
@@ -26,44 +41,44 @@ void Input::Init(IWindow *window)
 	win->RegisterMessageHandler(ButtonRelease, InputImpl::Handle_ButtonPress_ButtonRelease);
 	win->RegisterMessageHandler(MotionNotify, InputImpl::Handle_MotionNotify);
 
-	XSelectInput(InputImpl::display, (Window)window->GetHandle(), KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
+	XSelectInput(s_display, (Window)window->GetHandle(), KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 
 	// Add a default keyboard and mouse
-	Modules::Input->GetKeyboardByHandle(nullptr);
-	Modules::Input->GetMouseByHandle(nullptr);
+	GetKeyboardByHandle(nullptr);
+	GetMouseByHandle(nullptr);
 
 	// Escaped scan code to EKeyCode mapping
-	InputImpl::keyConversionTable[96 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_NUMPADENTER;
-	InputImpl::keyConversionTable[97 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_RCONTROL;
-	InputImpl::keyConversionTable[98 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_NUMPADSLASH;
-	InputImpl::keyConversionTable[100 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_RALT;
-	InputImpl::keyConversionTable[102 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_HOME;
-	InputImpl::keyConversionTable[103 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_UP;
-	InputImpl::keyConversionTable[104 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_PGUP;
-	InputImpl::keyConversionTable[105 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_LEFT;
-	InputImpl::keyConversionTable[106 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_RIGHT;
-	InputImpl::keyConversionTable[107 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_END;
-	InputImpl::keyConversionTable[108 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_DOWN;
-	InputImpl::keyConversionTable[109 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_PGDOWN;
-	InputImpl::keyConversionTable[110 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_INSERT;
-	InputImpl::keyConversionTable[111 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_DELETE;
-	InputImpl::keyConversionTable[125 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_LWIN;
-	InputImpl::keyConversionTable[126 - InputImpl::FIRST_MAPPED_KEY_CODE] = KEY_RWIN;
-//	InputImpl::keyConversionTable[] = KEY_APPS;
+	s_keyConversionTable[96 - kFirstMappedKeyCode] = KEY_NUMPADENTER;
+	s_keyConversionTable[97 - kFirstMappedKeyCode] = KEY_RCONTROL;
+	s_keyConversionTable[98 - kFirstMappedKeyCode] = KEY_NUMPADSLASH;
+	s_keyConversionTable[100 - kFirstMappedKeyCode] = KEY_RALT;
+	s_keyConversionTable[102 - kFirstMappedKeyCode] = KEY_HOME;
+	s_keyConversionTable[103 - kFirstMappedKeyCode] = KEY_UP;
+	s_keyConversionTable[104 - kFirstMappedKeyCode] = KEY_PGUP;
+	s_keyConversionTable[105 - kFirstMappedKeyCode] = KEY_LEFT;
+	s_keyConversionTable[106 - kFirstMappedKeyCode] = KEY_RIGHT;
+	s_keyConversionTable[107 - kFirstMappedKeyCode] = KEY_END;
+	s_keyConversionTable[108 - kFirstMappedKeyCode] = KEY_DOWN;
+	s_keyConversionTable[109 - kFirstMappedKeyCode] = KEY_PGDOWN;
+	s_keyConversionTable[110 - kFirstMappedKeyCode] = KEY_INSERT;
+	s_keyConversionTable[111 - kFirstMappedKeyCode] = KEY_DELETE;
+	s_keyConversionTable[125 - kFirstMappedKeyCode] = KEY_LWIN;
+	s_keyConversionTable[126 - kFirstMappedKeyCode] = KEY_RWIN;
+//	s_keyConversionTable[] = KEY_APPS;
 }
 
-void Input::Kill()
+void Input::Kill_internal)
 {
-	if(InputImpl::display != nullptr)
+	if(s_display != nullptr)
 	{
-		XCloseDisplay(InputImpl::display);
-		InputImpl::display = nullptr;
+		XCloseDisplay(s_display);
+		s_display = nullptr;
 	}
+}
 
-	// Reset input devices
-	Modules::Input->keyboards.clear();
-	Modules::Input->mouses.clear();
-	Modules::Input->gameControllers.clear();
+void Input::Update_internal()
+{
+
 }
 
 void InputImpl::Handle_KeyPress_KeyRelease(const XEvent& event)
@@ -71,13 +86,13 @@ void InputImpl::Handle_KeyPress_KeyRelease(const XEvent& event)
 	Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
 
 	EKeyCode keyCode = (EKeyCode)0;
-	if(event.xkey.keycode < FIRST_MAPPED_KEY_CODE)
+	if(event.xkey.keycode < kFirstMappedKeyCode)
 	{
 		keyCode = (EKeyCode)event.xkey.keycode;
 	}
 	else
 	{
-		int index = event.xkey.keycode - FIRST_MAPPED_KEY_CODE;
+		int index = event.xkey.keycode - kFirstMappedKeyCode;
 		if(index < DESIRE_ASIZEOF(keyConversionTable))
 		{
 			keyCode = keyConversionTable[index];
@@ -143,3 +158,5 @@ void InputImpl::Handle_MotionNotify(const XEvent& event)
 
 	Modules::Input->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
 }
+
+#endif	// #if defined(DESIRE_PLATFORM_LINUX)

@@ -30,9 +30,8 @@ public:
 	Input();
 	~Input();
 
-	static void Init(IWindow *window);
-	static void Kill();
-
+	void Init(IWindow *window);
+	void Kill();
 	void Update();
 	void Reset();
 
@@ -53,6 +52,10 @@ public:
 private:
 	Keyboard& GetKeyboardByHandle(void *handle);
 	Mouse& GetMouseByHandle(void *handle);
+
+	void Init_internal(IWindow *window);
+	void Kill_internal();
+	void Update_internal();
 
 	struct Hotkey
 	{
