@@ -27,7 +27,7 @@ public:
 		}
 
 		Sqrat::Var<const T&> thisVar(vm, 1);
-		if(OpMul_Recursive<TypeList...>(vm, thisVar) == false)
+		if(OpMul_recursive<TypeList...>(vm, thisVar) == false)
 		{
 			// If failed, just push back the original variable unchanged
 			Sqrat::PushVar(vm, thisVar);
@@ -47,7 +47,7 @@ public:
 		}
 
 		Sqrat::Var<const T&> thisVar(vm, 1);
-		if(OpDiv_Recursive<TypeList...>(vm, thisVar) == false)
+		if(OpDiv_recursive<TypeList...>(vm, thisVar) == false)
 		{
 			// If failed, just push back the original variable unchanged
 			Sqrat::PushVar(vm, thisVar);
@@ -63,19 +63,19 @@ private:
 
 	// Recursive variant to iterate over the types provided by the variadic template
 	template<typename FirstType, typename SecondType, typename... TypeList>
-	static bool OpMul_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	static bool OpMul_recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
 	{
-		if(OpMul_Recursive<FirstType>(vm, thisVar))
+		if(OpMul_recursive<FirstType>(vm, thisVar))
 		{
 			return true;
 		}
 
 		// Try with the next type
-		return OpMul_Recursive<SecondType, TypeList...>(vm, thisVar);
+		return OpMul_recursive<SecondType, TypeList...>(vm, thisVar);
 	}
 
 	template<typename FirstType>
-	static bool OpMul_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	static bool OpMul_recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
 	{
 		Sqrat::Var<FirstType> otherVar(vm, 2);
 		if(Sqrat::Error::Occurred(vm))
@@ -94,19 +94,19 @@ private:
 
 	// Recursive variant to iterate over the types provided by the variadic template
 	template<typename FirstType, typename SecondType, typename... TypeList>
-	static bool OpDiv_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	static bool OpDiv_recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
 	{
-		if(OpDiv_Recursive<FirstType>(vm, thisVar))
+		if(OpDiv_recursive<FirstType>(vm, thisVar))
 		{
 			return true;
 		}
 
 		// Try with the next type
-		return OpDiv_Recursive<SecondType, TypeList...>(vm, thisVar);
+		return OpDiv_recursive<SecondType, TypeList...>(vm, thisVar);
 	}
 
 	template<typename FirstType>
-	static bool OpDiv_Recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
+	static bool OpDiv_recursive(HSQUIRRELVM vm, Sqrat::Var<const T&> thisVar)
 	{
 		Sqrat::Var<FirstType> otherVar(vm, 2);
 		if(Sqrat::Error::Occurred(vm))
