@@ -28,18 +28,3 @@ int Compression::GetMaxCompressionLevel() const
 {
 	return 0;
 }
-
-void Compression::InitStreamForCompression()
-{
-	ASSERT(false && "Unimplemented");
-}
-
-void Compression::InitStreamForDecompression()
-{
-	ASSERT(false && "Unimplemented");
-}
-
-void Compression::ProcessStream()
-{
-	ASSERT(false && "Unimplemented");
-}

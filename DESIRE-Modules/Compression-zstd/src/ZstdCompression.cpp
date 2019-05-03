@@ -11,21 +11,6 @@ ZstdCompression::ZstdCompression()
 	compressionLevel = 19;
 }
 
-ZstdCompression::~ZstdCompression()
-{
-	if(cstream != nullptr)
-	{
-		ZSTD_freeCStream(cstream);
-		cstream = nullptr;
-	}
-
-	if(dstream != nullptr)
-	{
-		ZSTD_freeDStream(dstream);
-		dstream = nullptr;
-	}
-}
-
 size_t ZstdCompression::GetMaxCompressionDataBufferSize(size_t dataSize) const
 {
 	return ZSTD_compressBound(dataSize);
@@ -54,60 +39,6 @@ int ZstdCompression::GetMinCompressionLevel() const
 int ZstdCompression::GetMaxCompressionLevel() const
 {
 	return ZSTD_maxCLevel();
-}
-
-void ZstdCompression::InitStreamForCompression()
-{
-	if(cstream != nullptr || dstream != nullptr)
-	{
-		ASSERT(false && "Already initialized");
-		return;
-	}
-
-#if defined(ZSTD_STATIC_LINKING_ONLY)
-	ZSTD_customMem customMem = {};
-	customMem.customAlloc = &ZstdCompression::CustomAlloc;
-	customMem.customFree = &ZstdCompression::CustomFree;
-	customMem.opaque = &Allocator::GetDefaultAllocator();
-
-	cstream = ZSTD_createCStream_advanced(customMem);
-#else
-	cstream = ZSTD_createCStream();
-#endif
-
-	const size_t result = ZSTD_initCStream(cstream, compressionLevel);
-	if(ZSTD_isError(result))
-	{
-		ZSTD_freeCStream(cstream);
-		cstream = nullptr;
-	}
-}
-
-void ZstdCompression::InitStreamForDecompression()
-{
-	if(cstream != nullptr || dstream != nullptr)
-	{
-		ASSERT(false && "Already initialized");
-		return;
-	}
-
-#if defined(ZSTD_STATIC_LINKING_ONLY)
-	ZSTD_customMem customMem = {};
-	customMem.customAlloc = &ZstdCompression::CustomAlloc;
-	customMem.customFree = &ZstdCompression::CustomFree;
-	customMem.opaque = &Allocator::GetDefaultAllocator();
-
-	dstream = ZSTD_createDStream_advanced(customMem);
-#else
-	dstream = ZSTD_createDStream();
-#endif
-
-	const size_t result = ZSTD_initDStream(dstream);
-	if(ZSTD_isError(result))
-	{
-		ZSTD_freeDStream(dstream);
-		dstream = nullptr;
-	}
 }
 
 void* ZstdCompression::CustomAlloc(void *opaque, size_t size)

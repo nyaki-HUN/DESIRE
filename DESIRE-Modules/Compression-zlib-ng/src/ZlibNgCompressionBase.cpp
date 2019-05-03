@@ -12,23 +12,6 @@ ZlibNgCompressionBase::ZlibNgCompressionBase(int windowBits)
 	compressionLevel = Z_DEFAULT_COMPRESSION;
 }
 
-ZlibNgCompressionBase::~ZlibNgCompressionBase()
-{
-	if(deflateStream != nullptr)
-	{
-		deflateEnd(deflateStream);
-		delete deflateStream;
-		deflateStream = nullptr;
-	}
-
-	if(inflateStream != nullptr)
-	{
-		inflateEnd(inflateStream);
-		delete inflateStream;
-		inflateStream = nullptr;
-	}
-}
-
 size_t ZlibNgCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) const
 {
 	if(dataSize > UINT32_MAX)
@@ -135,44 +118,6 @@ int ZlibNgCompressionBase::GetMinCompressionLevel() const
 int ZlibNgCompressionBase::GetMaxCompressionLevel() const
 {
 	return Z_BEST_COMPRESSION;
-}
-
-void ZlibNgCompressionBase::InitStreamForCompression()
-{
-	if(inflateStream != nullptr || deflateStream != nullptr)
-	{
-		ASSERT(false && "Already initialized");
-		return;
-	}
-
-	deflateStream = new z_stream();
-	StreamInit(*deflateStream);
-
-	int result = deflateInit2(deflateStream, compressionLevel, Z_DEFLATED, windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
-	if(result != Z_OK)
-	{
-		delete deflateStream;
-		deflateStream = nullptr;
-	}
-}
-
-void ZlibNgCompressionBase::InitStreamForDecompression()
-{
-	if(inflateStream != nullptr || deflateStream != nullptr)
-	{
-		ASSERT(false && "Already initialized");
-		return;
-	}
-
-	inflateStream = new z_stream();
-	StreamInit(*inflateStream);
-
-	int result = inflateInit2(inflateStream, windowBits);
-	if(result != Z_OK)
-	{
-		delete inflateStream;
-		inflateStream = nullptr;
-	}
 }
 
 void* ZlibNgCompressionBase::CustomAlloc(void *opaque, uint32_t items, uint32_t size)
