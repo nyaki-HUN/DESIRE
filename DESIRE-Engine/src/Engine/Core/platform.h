@@ -74,9 +74,6 @@
 // For unused variables
 #define DESIRE_UNUSED(X)					((void)X)
 
-// C++ offers automatic string concatenation of string literals (compilation fails if something other than a literal is passed to this macro)
-#define DESIRE_SAFE_LITERAL(STR)			"" STR
-
 // Array sizeof which returns the number of elements in a static array
 template<typename T, size_t N>
 constexpr size_t DesireArraySizeHelper(T(&)[N])
