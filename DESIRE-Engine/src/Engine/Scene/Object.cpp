@@ -4,25 +4,15 @@
 #include "Engine/Script/ScriptComponent.h"
 #include "Engine/Core/Component.h"
 #include "Engine/Core/math/AABB.h"
-#include "Engine/Core/String/StrUtils.h"
 
 #define MAX_TRANSFORMS	10000
 static Transform preallocatedTransforms[MAX_TRANSFORMS];
 static size_t numTransforms = 0;
 
-Object::Object(const char *name)
+Object::Object(const String& name)
+	: aabb(std::make_unique<AABB>())
+	, objectName(name)
 {
-	aabb = std::make_unique<AABB>();
-
-	if(name == nullptr)
-	{
-		objectName = StrUtils::Duplicate("Object");
-	}
-	else
-	{
-		objectName = StrUtils::Duplicate(name);
-	}
-
 	ASSERT(numTransforms < MAX_TRANSFORMS);
 	transform = &preallocatedTransforms[numTransforms++];
 	transform->owner = this;
@@ -46,17 +36,14 @@ Object::~Object()
 	transform->parent = nullptr;
 	transform->owner = nullptr;
 	transform->ResetToIdentity();
-
-	free(objectName);
 }
 
-void Object::SetObjectName(const char *name)
+void Object::SetObjectName(const String& name)
 {
-	free(objectName);
-	objectName = StrUtils::Duplicate(name);
+	objectName = name;
 }
 
-const char* Object::GetObjectName() const
+const String& Object::GetObjectName() const
 {
 	return objectName;
 }
@@ -145,7 +132,7 @@ void Object::SetParent(Object *newParent)
 	parent = newParent;
 }
 
-Object* Object::CreateChildObject(const char *name)
+Object* Object::CreateChildObject(const String& name)
 {
 	Object *obj = new Object(name);
 	obj->SetParent(this);

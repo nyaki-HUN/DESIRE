@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Container/Array.h"
+#include "Engine/Core/String/DynamicString.h"
 
 #include <memory>
 
@@ -12,11 +13,11 @@ class AABB;
 class Object
 {
 public:
-	Object(const char *name = nullptr);
+	Object(const String& name = "Object");
 	~Object();
 
-	const char* GetObjectName() const;
-	void SetObjectName(const char *name);
+	const String& GetObjectName() const;
+	void SetObjectName(const String& name);
 
 	uint32_t GetID() const;
 	void SetID(uint32_t id);
@@ -25,7 +26,7 @@ public:
 	void SetVisible(bool visible);
 
 	void SetParent(Object *newParent);
-	Object* CreateChildObject(const char *name);
+	Object* CreateChildObject(const String& name);
 
 	template<class T, class... Args>
 	T& AddComponent(Args&&... args)
@@ -77,5 +78,5 @@ private:
 	Array<Object*> children;
 
 	uint32_t objectID = 0;
-	char *objectName = nullptr;
+	DynamicString objectName;
 };
