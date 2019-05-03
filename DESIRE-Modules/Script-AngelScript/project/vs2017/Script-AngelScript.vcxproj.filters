@@ -13,6 +13,12 @@
     <Filter Include="Externals\AngelScript\src">
       <UniqueIdentifier>{FDA22333-6965-57BD-B215-E6491E17309B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Externals\AngelScript\src\add_on">
+      <UniqueIdentifier>{F15B081F-DDAC-F360-0611-E222F2C086CA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\AngelScript\src\add_on\scriptstdstring">
+      <UniqueIdentifier>{D7E0D683-C389-3EB3-EC1F-5A32D82759F4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -23,6 +29,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\Externals\AngelScript\include\angelscript.h">
       <Filter>Externals\AngelScript\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\AngelScript\src\add_on\scriptstdstring\scriptstdstring.h">
+      <Filter>Externals\AngelScript\src\add_on\scriptstdstring</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\AngelScript\src\as_array.h">
       <Filter>Externals\AngelScript\src</Filter>
@@ -141,14 +150,14 @@
     <ClInclude Include="..\..\src\AngelScriptComponent.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\AngelScriptStringFactory.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\AngelScriptSystem.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Externals\AngelScript\src\add_on\scriptstdstring\scriptstdstring.cpp">
+      <Filter>Externals\AngelScript\src\add_on\scriptstdstring</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\AngelScript\src\as_atomic.cpp">
       <Filter>Externals\AngelScript\src</Filter>
     </ClCompile>
@@ -284,13 +293,7 @@
     <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\String_AngelScript.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\AngelScriptComponent.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\AngelScriptStringFactory.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\AngelScriptSystem.cpp">

@@ -104,6 +104,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Externals\AngelScript\include\angelscript.h" />
+    <ClInclude Include="..\..\Externals\AngelScript\src\add_on\scriptstdstring\scriptstdstring.h" />
     <ClInclude Include="..\..\Externals\AngelScript\src\as_array.h" />
     <ClInclude Include="..\..\Externals\AngelScript\src\as_atomic.h" />
     <ClInclude Include="..\..\Externals\AngelScript\src\as_builder.h" />
@@ -143,10 +144,10 @@
     <ClInclude Include="..\..\Externals\AngelScript\src\as_variablescope.h" />
     <ClInclude Include="..\..\src\API\AngelScriptAPI.h" />
     <ClInclude Include="..\..\src\AngelScriptComponent.h" />
-    <ClInclude Include="..\..\src\AngelScriptStringFactory.h" />
     <ClInclude Include="..\..\src\AngelScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Externals\AngelScript\src\add_on\scriptstdstring\scriptstdstring.cpp" />
     <ClCompile Include="..\..\Externals\AngelScript\src\as_atomic.cpp" />
     <ClCompile Include="..\..\Externals\AngelScript\src\as_builder.cpp" />
     <ClCompile Include="..\..\Externals\AngelScript\src\as_bytecode.cpp" />
@@ -192,16 +193,15 @@
     <ClCompile Include="..\..\src\API\PhysicsAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\RenderAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp" />
-    <ClCompile Include="..\..\src\API\String_AngelScript.cpp" />
     <ClCompile Include="..\..\src\AngelScriptComponent.cpp" />
-    <ClCompile Include="..\..\src\AngelScriptStringFactory.cpp" />
     <ClCompile Include="..\..\src\AngelScriptSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\Externals\AngelScript\src\as_callfunc_x64_msvc_asm.asm">
       <FileType>Document</FileType>
       <Command>ml64.exe /c  /nologo /Fo$(IntDir)/%(Filename).obj /W3 /Zi /Ta %(Identity)</Command>
-      <Outputs>$(IntDir)/%(Filename).obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">obj/Debug/as_callfunc_x64_msvc_asm.obj;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">obj/Release/as_callfunc_x64_msvc_asm.obj;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

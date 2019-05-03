@@ -7,11 +7,11 @@
 #include "Engine/Scene/Transform.h"
 
 // Template function for registering a class derived from Component
-#define SCRIPT_API_REGISTER_COMPONENT(CLASS)																												\
-	engine->RegisterEnumValue("EComponentTypeID", #CLASS, CLASS::kTypeID);																					\
-	engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																						\
-	engine->RegisterObjectMethod(#CLASS, "Object& get_object()", asMETHODPR(Component, GetObject, () const, Object&), asCALL_THISCALL);						\
-	engine->RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);			\
+#define SCRIPT_API_REGISTER_COMPONENT(CLASS)																											\
+	engine->RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeID);																					\
+	engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																					\
+	engine->RegisterObjectMethod(#CLASS, "Object& get_object()", asMETHODPR(Component, GetObject, () const, Object&), asCALL_THISCALL);					\
+	engine->RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);		\
 	engine->RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST)
 
 static Vector3* Transform_GetPosition(const Transform& transform)	{ return new Vector3(transform.GetPosition()); }
@@ -20,6 +20,9 @@ static Vector3* Transform_GetScale(const Transform& transform)		{ return new Vec
 
 void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 {
+	engine->RegisterInterface("Component");
+	engine->RegisterEnum("EComponent");
+
 	// Transform
 	engine->RegisterObjectType("Transform", 0, asOBJ_REF | asOBJ_NOHANDLE);
 	engine->RegisterObjectMethod("Transform", "const Vector3& get_localPosition() const", asMETHODPR(Transform, GetLocalPosition, () const, const Vector3&), asCALL_THISCALL);
@@ -37,11 +40,11 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 
 	// Object
 	engine->RegisterObjectType("Object", 0, asOBJ_REF | asOBJ_NOCOUNT);
-	engine->RegisterObjectMethod("Object", "String GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);
+	engine->RegisterObjectMethod("Object", "string GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);
 	engine->RegisterObjectMethod("Object", "uint32 GetID() const", asMETHODPR(Object, GetID, () const, uint32_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "void RemoveComponent(Component@)", asMETHODPR(Object, RemoveComponent, (const Component*), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponentTypeID typeID) const", asMETHODPR(Object, GetComponentByTypeID, (int) const, Component*), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponent) const", asMETHODPR(Object, GetComponentByTypeID, (int) const, Component*), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Transform& get_transform() const", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHODPR(Object, GetParent, () const, Object*), asCALL_THISCALL);
 
@@ -60,10 +63,10 @@ void RegisterComponentAPI_AngelScript(asIScriptEngine *engine)
 
 	// ScriptComponent
 	SCRIPT_API_REGISTER_COMPONENT(ScriptComponent);
-	engine->RegisterObjectMethod("ScriptComponent", "void Call(const String& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
-	engine->RegisterObjectMethod("ScriptComponent", "void Call(const String& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
-	engine->RegisterObjectMethod("ScriptComponent", "void Call(const String& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
-	engine->RegisterObjectMethod("ScriptComponent", "void Call(const String& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
-	engine->RegisterObjectMethod("ScriptComponent", "void Call(const String& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
-	engine->RegisterObjectMethod("ScriptComponent", "void Call(const String& in, ?& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
+	engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
+	engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
+	engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
+	engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
+	engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
+	engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);
 }

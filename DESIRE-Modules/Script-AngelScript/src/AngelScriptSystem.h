@@ -2,12 +2,11 @@
 
 #include "Engine/Script/ScriptSystem.h"
 
-class AngelScriptStringFactory;
-class String;
 class asIScriptEngine;
 class asIScriptModule;
 class asIScriptContext;
 class asIScriptFunction;
+class asIScriptGeneric;
 struct asSMessageInfo;
 
 class AngelScriptSystem : public ScriptSystem
@@ -25,7 +24,7 @@ private:
 	bool IsBreakpoint(const char *scriptSection, int line, asIScriptFunction *function) const;
 
 	// Callbacks
-	static void PrintCallback(const String& message);
+	static void PrintCallback(asIScriptGeneric *gen);
 	static void MessageCallback(const asSMessageInfo *msg, void *thisPtr);
 	static asIScriptContext* RequestContextCallback(asIScriptEngine *engine, void *thisPtr);
 	static void ReturnContextCallback(asIScriptEngine *engine, asIScriptContext *ctx, void *thisPtr);
@@ -34,5 +33,4 @@ private:
 
 	asIScriptEngine *engine = nullptr;
 	Array<asIScriptContext*> contextPool;
-	std::unique_ptr<AngelScriptStringFactory> stringFactory;
 };

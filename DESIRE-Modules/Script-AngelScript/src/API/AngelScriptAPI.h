@@ -2,7 +2,7 @@
 
 #include "Engine/Core/platform.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/String/DynamicString.h"
+#include "Engine/Core/String/String.h"
 
 DESIRE_DISABLE_WARNINGS
 #include "angelscript.h"
@@ -10,7 +10,8 @@ DESIRE_ENABLE_WARNINGS
 
 #include <new>
 
-// Engine API register functions
+// API register functions
+void RegisterStdString(asIScriptEngine *engine);
 void RegisterComponentAPI_AngelScript(asIScriptEngine *engine);
 void RegisterCoreAPI_AngelScript(asIScriptEngine *engine);
 void RegisterInputAPI_AngelScript(asIScriptEngine *engine);
@@ -18,7 +19,6 @@ void RegisterNetworkAPI_AngelScript(asIScriptEngine *engine);
 void RegisterPhysicsAPI_AngelScript(asIScriptEngine *engine);
 void RegisterRenderAPI_AngelScript(asIScriptEngine *engine);
 void RegisterSoundAPI_AngelScript(asIScriptEngine *engine);
-void RegisterString_AngelScript(asIScriptEngine *engine, asIStringFactory *stringFactory);
 
 template<class T>
 class AngelScriptAPI
@@ -125,13 +125,13 @@ template<class T>
 class AngelScriptGenericAPI
 {
 public:
-	template<const char* (T::*func)() const>
+	template<const String& (T::*func)() const>
 	static void MakeStringRvFromMemberFunc(asIScriptGeneric *gen)
 	{
 		ASSERT(gen->GetArgCount() == 0);
 		const T *self = static_cast<const T*>(gen->GetObject());
-		const char *rv = (self->*func)();
-		new (gen->GetAddressOfReturnLocation()) DynamicString(rv, strlen(rv));
+		const String& rv = (self->*func)();
+		new (gen->GetAddressOfReturnLocation()) std::string(rv.Str(), rv.Length());
 	}
 
 	template<T(*func)()>

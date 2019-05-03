@@ -1,6 +1,5 @@
 #include "AngelScriptSystem.h"
 #include "AngelScriptComponent.h"
-#include "AngelScriptStringFactory.h"
 #include "API/AngelScriptAPI.h"
 
 #include "Engine/Core/Log.h"
@@ -33,12 +32,7 @@ AngelScriptSystem::AngelScriptSystem()
 #endif
 
 	// Register Script API
-	engine->RegisterInterface("Component");
-	engine->RegisterEnum("EComponentTypeID");
-
-	stringFactory = std::make_unique<AngelScriptStringFactory>();
-	RegisterString_AngelScript(engine, stringFactory.get());
-
+	RegisterStdString(engine);
 	RegisterCoreAPI_AngelScript(engine);
 	RegisterComponentAPI_AngelScript(engine);
 	RegisterInputAPI_AngelScript(engine);
@@ -47,7 +41,7 @@ AngelScriptSystem::AngelScriptSystem()
 	RegisterRenderAPI_AngelScript(engine);
 	RegisterSoundAPI_AngelScript(engine);
 
-	engine->RegisterGlobalFunction("void print(const String& in)", asFUNCTION(AngelScriptSystem::PrintCallback), asCALL_CDECL);
+	engine->RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptSystem::PrintCallback), asCALL_GENERIC);
 
 	// Init context pool
 	contextPool.Reserve(CONTEXT_POOL_DEFAULT_SIZE);
@@ -189,9 +183,10 @@ bool AngelScriptSystem::IsBreakpoint(const char *scriptSection, int line, asIScr
 	return false;
 }
 
-void AngelScriptSystem::PrintCallback(const String& message)
+void AngelScriptSystem::PrintCallback(asIScriptGeneric *gen)
 {
-	LOG_MESSAGE("%s", message.Str());
+	const std::string *message = static_cast<const std::string*>(gen->GetArgObject(0));
+	LOG_DEBUG("%s", message->c_str());
 }
 
 void AngelScriptSystem::MessageCallback(const asSMessageInfo *msg, void *thisPtr)
