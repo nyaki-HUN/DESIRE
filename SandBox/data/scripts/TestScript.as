@@ -1,4 +1,4 @@
-ScriptComponent @otherScript;
+ScriptComponent@ otherScript;
 float timeToCallOtherScript;
 
 void Init()
@@ -33,7 +33,7 @@ void Update()
 	pos += pos2;
 	pos = -pos;
 
-	RenderComponent @renderComp = self.object.GetComponent(RenderComponent);
+	RenderComponent@ renderComp = self.object.GetComponent(kRenderComponent);
 	if(@renderComp != null)
 	{
 		
@@ -46,7 +46,7 @@ void Update()
 	Matrix4 mat = Matrix4::CreateTranslation(Vector3(100.0, 2.0, 0.0));
 }
 
-void TestCallFromOtherScript(ScriptComponent @caller)
+void TestCallFromOtherScript(ScriptComponent@ caller)
 {
 	print("TestCallFromOtherScript called by " + caller.object.GetObjectName());
 }
@@ -66,7 +66,7 @@ void Function2(float a1, uint32 a2)
 	print("FunctionTest called with: " + a1 + ", " + a2);
 }
 
-void Function3(const String &in str)
+void Function3(const string& in str)
 {
 	print("Function3 called with: " + str);
 }
