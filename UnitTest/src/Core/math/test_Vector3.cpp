@@ -94,6 +94,40 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(result.GetZ() == Approx(vec0.GetZ() / 123.0f));
 	}
 
+	SECTION("operator >()")
+	{
+		auto func = [](const Vector3& vec0, const Vector3& vec1) -> bool
+		{
+			return (
+				vec0.GetX() > vec1.GetX() &&
+				vec0.GetY() > vec1.GetY() &&
+				vec0.GetZ() > vec1.GetZ());
+		};
+
+		CHECK((vec0 > vec0) == func(vec0, vec0));
+		CHECK((vec0 > vec1) == func(vec0, vec1));
+		CHECK((vec0 > Vector3(2.0f)) == func(vec0, Vector3(2.0f)));
+		CHECK((vec0 > Vector3(-10.0f)) == func(vec0, Vector3(-10.0f)));
+		CHECK((vec0 > Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
+	}
+
+	SECTION("operator <()")
+	{
+		auto func = [](const Vector3& vec0, const Vector3& vec1) -> bool
+		{
+			return (
+				vec0.GetX() < vec1.GetX() &&
+				vec0.GetY() < vec1.GetY() &&
+				vec0.GetZ() < vec1.GetZ());
+		};
+
+		CHECK((vec0 < vec0) == func(vec0, vec0));
+		CHECK((vec0 < vec1) == func(vec0, vec1));
+		CHECK((vec0 < Vector3(2.0f)) == func(vec0, Vector3(2.0f)));
+		CHECK((vec0 < Vector3(-10.0f)) == func(vec0, Vector3(-10.0f)));
+		CHECK((vec0 < Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
+	}
+
 	SECTION("operator >=()")
 	{
 		auto func = [](const Vector3& vec0, const Vector3& vec1) -> bool
