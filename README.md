@@ -42,7 +42,7 @@ Modules
 
  * [bgfx](https://bkaradzic.github.io/bgfx)
  * [Direct3D11](https://docs.microsoft.com/en-us/windows/desktop/direct3d11/atoc-dx-graphics-direct3d-11)
- * [Direct3D12](https://docs.microsoft.com/en-us/windows/desktop/direct3d12/direct3d-12-graphics)
+ * [Direct3D12](https://docs.microsoft.com/en-us/windows/desktop/direct3d12/direct3d-12-graphics) *(WIP)*
 
 ### Resource loader
 
