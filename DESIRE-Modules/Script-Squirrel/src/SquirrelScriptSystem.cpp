@@ -42,6 +42,11 @@ SquirrelScriptSystem::SquirrelScriptSystem()
 	RegisterRenderAPI_Squirrel(rootTable);
 	RegisterSceneAPI_Squirrel(rootTable);
 	RegisterSoundAPI_Squirrel(rootTable);
+
+	// ScriptComponent
+	rootTable.Bind("ScriptComponent", Sqrat::DerivedClass<SquirrelScriptComponent, Component, Sqrat::NoConstructor<SquirrelScriptComponent>>(vm, "ScriptComponent")
+		.SquirrelFunc("Call", &SquirrelScriptComponent::CallFromScript)
+	);
 }
 
 SquirrelScriptSystem::~SquirrelScriptSystem()

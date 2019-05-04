@@ -31,9 +31,4 @@ void RegisterSceneAPI_Lua(lua_State *L)
 		.addProperty("transform", &Object::GetTransform)
 		.addFunction("GetParent", &Object::GetParent)
 		.endClass();
-
-	// ScriptComponent
-	luabridge::getGlobalNamespace(L).deriveClass<LuaScriptComponent, Component>("ScriptComponent")
-		.addCFunction("Call", &LuaScriptComponent::CallFromScript)
-		.endClass();
 }

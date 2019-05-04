@@ -8,6 +8,8 @@
 #include "Engine/Core/math/math.h"
 #include "Engine/Core/math/Rand.h"
 
+#include "Engine/Scene/Object.h"
+
 void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 {
 	HSQUIRRELVM vm = rootTable.GetVM();

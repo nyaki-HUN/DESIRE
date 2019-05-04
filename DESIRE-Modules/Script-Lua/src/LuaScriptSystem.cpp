@@ -38,6 +38,11 @@ LuaScriptSystem::LuaScriptSystem()
 	RegisterRenderAPI_Lua(L);
 	RegisterSceneAPI_Lua(L);
 	RegisterSoundAPI_Lua(L);
+
+	// ScriptComponent
+	luabridge::getGlobalNamespace(L).deriveClass<LuaScriptComponent, Component>("ScriptComponent")
+		.addCFunction("Call", &LuaScriptComponent::CallFromScript)
+		.endClass();
 }
 
 LuaScriptSystem::~LuaScriptSystem()

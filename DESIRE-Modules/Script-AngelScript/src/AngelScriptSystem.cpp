@@ -15,20 +15,18 @@
 AngelScriptSystem::AngelScriptSystem()
 {
 	engine = asCreateScriptEngine();
-	int result = engine->SetMessageCallback(asFUNCTION(MessageCallback), this, asCALL_CDECL);
-	ASSERT(result == asSUCCESS);
-	result = engine->SetContextCallbacks(&AngelScriptSystem::RequestContextCallback, &AngelScriptSystem::ReturnContextCallback, this);
-	ASSERT(result == asSUCCESS);
+	int result = engine->SetMessageCallback(asFUNCTION(MessageCallback), this, asCALL_CDECL);													ASSERT(result >= asSUCCESS);
+	result = engine->SetContextCallbacks(&AngelScriptSystem::RequestContextCallback, &AngelScriptSystem::ReturnContextCallback, this);			ASSERT(result >= asSUCCESS);
 
-	engine->SetEngineProperty(asEEngineProp::asEP_REQUIRE_ENUM_SCOPE, false);
-	engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_GLOBAL_VARS, true);
-	engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE, true);
-	engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_EMPTY_LIST_ELEMENTS, true);
+	result = engine->SetEngineProperty(asEEngineProp::asEP_REQUIRE_ENUM_SCOPE, false);															ASSERT(result >= asSUCCESS);
+	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_GLOBAL_VARS, true);															ASSERT(result >= asSUCCESS);
+	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE, true);											ASSERT(result >= asSUCCESS);
+	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_EMPTY_LIST_ELEMENTS, true);													ASSERT(result >= asSUCCESS);
 
 #if defined(DESIRE_DISTRIBUTION)
-	engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, true);
+	result = engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, true);														ASSERT(result >= asSUCCESS);
 #else
-	engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, false);
+	result = engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, false);														ASSERT(result >= asSUCCESS);
 #endif
 
 	// Register Script API
@@ -41,7 +39,16 @@ AngelScriptSystem::AngelScriptSystem()
 	RegisterSceneAPI_AngelScript(engine);
 	RegisterSoundAPI_AngelScript(engine);
 
-	engine->RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptSystem::PrintCallback), asCALL_GENERIC);
+	result = engine->RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptSystem::PrintCallback), asCALL_GENERIC);		ASSERT(result >= asSUCCESS);
+
+	// ScriptComponent
+	ANGELSCRIPT_API_REGISTER_COMPONENT(ScriptComponent);
+	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);										ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);								ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);							ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
 
 	// Init context pool
 	contextPool.Reserve(CONTEXT_POOL_DEFAULT_SIZE);

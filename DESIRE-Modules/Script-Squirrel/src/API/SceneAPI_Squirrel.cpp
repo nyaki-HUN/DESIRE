@@ -33,9 +33,4 @@ void RegisterSceneAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Prop("transform", &Object::GetTransform)
 		.Func("GetParent", &Object::GetParent)
 	);
-
-	// ScriptComponent
-	rootTable.Bind("ScriptComponent", Sqrat::DerivedClass<SquirrelScriptComponent, Component, Sqrat::NoConstructor<SquirrelScriptComponent>>(vm, "ScriptComponent")
-		.SquirrelFunc("Call", &SquirrelScriptComponent::CallFromScript)
-	);
 }

@@ -273,6 +273,7 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
 	RegisterMathFunctions_AngelScript(engine);
 
 	engine->RegisterEnum("EComponent");
+	engine->RegisterObjectType("Object", 0, asOBJ_REF | asOBJ_NOCOUNT);
 
 	// Component
 	engine->RegisterInterface("Component");
