@@ -6,7 +6,6 @@
 #include <memory>
 
 class Component;
-class ScriptComponent;
 class Transform;
 class AABB;
 
@@ -49,9 +48,6 @@ public:
 
 	// Get all components
 	const Array<std::unique_ptr<Component>>& GetComponents() const;
-
-	// Get all script components
-	Array<ScriptComponent*> GetScriptComponents() const;
 
 	Transform& GetTransform() const;
 	const AABB& GetAABB() const;

@@ -1,7 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
-#include "Engine/Script/ScriptComponent.h"
 #include "Engine/Core/Component.h"
 #include "Engine/Core/math/AABB.h"
 
@@ -165,20 +164,6 @@ Component* Object::GetComponentByTypeID(int typeID) const
 const Array<std::unique_ptr<Component>>& Object::GetComponents() const
 {
 	return components;
-}
-
-Array<ScriptComponent*> Object::GetScriptComponents() const
-{
-	Array<ScriptComponent*> scriptComponents;
-	for(const std::unique_ptr<Component>& component : components)
-	{
-		if(component->GetTypeID() == ScriptComponent::kTypeID)
-		{
-			scriptComponents.Add(static_cast<ScriptComponent*>(component.get()));
-		}
-	}
-
-	return scriptComponents;
 }
 
 Transform& Object::GetTransform() const

@@ -63,8 +63,8 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object&
 
 	CompileScript(scriptName, newL);
 
-	LuaScriptComponent& scriptComponent = object.AddComponent<LuaScriptComponent>(newL);
-	return &scriptComponent;
+	LuaScriptComponent *scriptComponent = &object.AddComponent<LuaScriptComponent>(newL);
+	return scriptComponent;
 }
 
 void LuaScriptSystem::CompileScript(const char *scriptName, lua_State *L)

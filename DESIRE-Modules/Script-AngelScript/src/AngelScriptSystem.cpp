@@ -91,27 +91,28 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 		return nullptr;
 	}
 
-	AngelScriptComponent& scriptComponent = object.AddComponent<AngelScriptComponent>();
+	AngelScriptComponent *scriptComponent = &object.AddComponent<AngelScriptComponent>();
 
 	// Call the constructor
 	asIScriptContext *ctx = engine->RequestContext();
 	ctx->Prepare(factoryFunc);
-	ctx->SetArgObject(0, &scriptComponent);
+	ctx->SetArgObject(0, scriptComponent);
 	int result = ctx->Execute();
 	if(result == asEXECUTION_FINISHED)
 	{
 		// Get the object that was created and increase the reference, otherwise it would be destroyed when the context is reused or destroyed
-		scriptComponent.scriptObject = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
-		scriptComponent.scriptObject->AddRef();
+		scriptComponent->scriptObject = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
+		scriptComponent->scriptObject->AddRef();
 	}
 	else
 	{
-		object.RemoveComponent(&scriptComponent);
+		object.RemoveComponent(scriptComponent);
+		scriptComponent = nullptr;
 	}
 
 	engine->ReturnContext(ctx);
 
-	return &scriptComponent;
+	return scriptComponent;
 }
 
 asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScriptEngine *engine)
