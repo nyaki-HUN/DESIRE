@@ -6,7 +6,7 @@
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
 
-void RegisterComponentAPI_Lua(lua_State *L)
+void RegisterSceneAPI_Lua(lua_State *L)
 {
 	// Transform
 	luabridge::getGlobalNamespace(L).beginClass<Transform>("Transform")
@@ -30,21 +30,6 @@ void RegisterComponentAPI_Lua(lua_State *L)
 		.addFunction<LuaScriptComponent*(Object::*)() const>("GetScriptComponent", &Object::GetComponent<LuaScriptComponent>)
 		.addProperty("transform", &Object::GetTransform)
 		.addFunction("GetParent", &Object::GetParent)
-		.endClass();
-
-	// Component
-	luabridge::getGlobalNamespace(L).beginClass<Component>("Component")
-		.addProperty("object", &Component::GetObject)
-		.endClass();
-
-	// PhysicsComponent
-	luabridge::getGlobalNamespace(L).deriveClass<PhysicsComponent, Component>("PhysicsComponent")
-		.addProperty("mass", &PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
-		.endClass();
-
-	// RenderComponent
-	luabridge::getGlobalNamespace(L).deriveClass<RenderComponent, Component>("RenderComponent")
-		.addProperty("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
 		.endClass();
 
 	// ScriptComponent

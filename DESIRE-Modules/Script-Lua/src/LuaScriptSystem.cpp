@@ -32,11 +32,11 @@ LuaScriptSystem::LuaScriptSystem()
 	}
 
 	RegisterCoreAPI_Lua(L);
-	RegisterComponentAPI_Lua(L);
 	RegisterInputAPI_Lua(L);
 	RegisterNetworkAPI_Lua(L);
 	RegisterPhysicsAPI_Lua(L);
 	RegisterRenderAPI_Lua(L);
+	RegisterSceneAPI_Lua(L);
 	RegisterSoundAPI_Lua(L);
 }
 

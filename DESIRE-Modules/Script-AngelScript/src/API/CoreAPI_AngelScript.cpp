@@ -1,15 +1,13 @@
 #include "API/AngelScriptAPI.h"
 
 #include "Engine/Core/Application.h"
+#include "Engine/Core/Component.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
 
-Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)
-{
-	return new Vector3(vec0.Cross(vec1));
-}
+static Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)	{ return new Vector3(vec0.Cross(vec1)); }
 
 void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 {
@@ -273,6 +271,12 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
 {
 	RegisterVectormathFunctions_AngelScript(engine);
 	RegisterMathFunctions_AngelScript(engine);
+
+	engine->RegisterEnum("EComponent");
+
+	// Component
+	engine->RegisterInterface("Component");
+	engine->RegisterInterfaceMethod("Component", "Object@ get_object()");
 
 	// Timer
 	engine->RegisterObjectType("ITimer", 0, asOBJ_REF | asOBJ_NOHANDLE);

@@ -1,6 +1,7 @@
 #include "API/SquirrelScriptAPI.h"
 
 #include "Engine/Core/Application.h"
+#include "Engine/Core/Component.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
@@ -223,6 +224,11 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 	RegisterMathFunctions_Squirrel(rootTable);
 
 	HSQUIRRELVM vm = rootTable.GetVM();
+
+	// Component
+	rootTable.Bind("Component", Sqrat::Class<Component, Sqrat::NoConstructor<Component>>(vm, "Component")
+		.Prop("object", &Component::GetObject)
+	);
 
 	// Timer
 	rootTable.Bind("ITimer", Sqrat::Class<Timer, Sqrat::NoConstructor<Timer>>(vm, "ITimer")

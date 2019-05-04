@@ -1,6 +1,7 @@
 #include "API/LuaScriptAPI.h"
 
 #include "Engine/Core/Application.h"
+#include "Engine/Core/Component.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
@@ -219,6 +220,11 @@ void RegisterCoreAPI_Lua(lua_State *L)
 {
 	RegisterVectormathFunctions_Lua(L);
 	RegisterMathFunctions_Lua(L);
+
+	// Component
+	luabridge::getGlobalNamespace(L).beginClass<Component>("Component")
+		.addProperty("object", &Component::GetObject)
+		.endClass();
 
 	// Timer
 	luabridge::getGlobalNamespace(L).beginClass<Timer>("ITimer")

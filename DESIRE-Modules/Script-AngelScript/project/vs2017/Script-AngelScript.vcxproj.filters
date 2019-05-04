@@ -272,9 +272,6 @@
     <ClCompile Include="..\..\Externals\AngelScript\src\as_variablescope.cpp">
       <Filter>Externals\AngelScript\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\ComponentAPI_AngelScript.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\API\CoreAPI_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
@@ -288,6 +285,9 @@
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\RenderAPI_AngelScript.cpp">
+      <Filter>src\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\API\SceneAPI_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp">

@@ -34,11 +34,11 @@ AngelScriptSystem::AngelScriptSystem()
 	// Register Script API
 	RegisterStdString(engine);
 	RegisterCoreAPI_AngelScript(engine);
-	RegisterComponentAPI_AngelScript(engine);
 	RegisterInputAPI_AngelScript(engine);
 	RegisterNetworkAPI_AngelScript(engine);
 	RegisterPhysicsAPI_AngelScript(engine);
 	RegisterRenderAPI_AngelScript(engine);
+	RegisterSceneAPI_AngelScript(engine);
 	RegisterSoundAPI_AngelScript(engine);
 
 	engine->RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptSystem::PrintCallback), asCALL_GENERIC);

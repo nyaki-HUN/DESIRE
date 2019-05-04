@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
+#include "Engine/Render/RenderComponent.h"
 
 void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
@@ -12,6 +13,11 @@ void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable)
 	}
 
 	HSQUIRRELVM vm = rootTable.GetVM();
+
+	// RenderComponent
+	rootTable.Bind("RenderComponent", Sqrat::DerivedClass<RenderComponent, Component, Sqrat::NoConstructor<RenderComponent>>(vm, "RenderComponent")
+		.Prop("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
+	);
 
 	// Render
 	rootTable.Bind("IRender", Sqrat::Class<Render, Sqrat::NoConstructor<Render>>(vm, "IRender")

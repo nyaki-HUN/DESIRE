@@ -179,12 +179,12 @@
     <ClCompile Include="..\..\Externals\lua\src\lutf8lib.c" />
     <ClCompile Include="..\..\Externals\lua\src\lvm.c" />
     <ClCompile Include="..\..\Externals\lua\src\lzio.c" />
-    <ClCompile Include="..\..\src\API\ComponentAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\CoreAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\InputAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\NetworkAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\PhysicsAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\RenderAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\SceneAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\SoundAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\LuaScriptComponent.cpp" />
     <ClCompile Include="..\..\src\LuaScriptSystem.cpp" />

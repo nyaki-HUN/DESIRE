@@ -186,12 +186,12 @@
     <ClCompile Include="..\..\Externals\AngelScript\src\as_tokenizer.cpp" />
     <ClCompile Include="..\..\Externals\AngelScript\src\as_typeinfo.cpp" />
     <ClCompile Include="..\..\Externals\AngelScript\src\as_variablescope.cpp" />
-    <ClCompile Include="..\..\src\API\ComponentAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\CoreAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\InputAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\NetworkAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\PhysicsAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\RenderAPI_AngelScript.cpp" />
+    <ClCompile Include="..\..\src\API\SceneAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\AngelScriptComponent.cpp" />
     <ClCompile Include="..\..\src\AngelScriptSystem.cpp" />

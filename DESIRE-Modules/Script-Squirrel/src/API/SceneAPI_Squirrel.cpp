@@ -6,7 +6,7 @@
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
 
-void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
+void RegisterSceneAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
 	HSQUIRRELVM vm = rootTable.GetVM();
 
@@ -32,21 +32,6 @@ void RegisterComponentAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Func<SquirrelScriptComponent*(Object::*)() const>("GetScriptComponent", &Object::GetComponent<SquirrelScriptComponent>)
 		.Prop("transform", &Object::GetTransform)
 		.Func("GetParent", &Object::GetParent)
-	);
-
-	// Component
-	rootTable.Bind("Component", Sqrat::Class<Component, Sqrat::NoConstructor<Component>>(vm, "Component")
-		.Prop("object", &Component::GetObject)
-	);
-
-	// PhysicsComponent
-	rootTable.Bind("PhysicsComponent", Sqrat::DerivedClass<PhysicsComponent, Component, Sqrat::NoConstructor<PhysicsComponent>>(vm, "PhysicsComponent")
-		.Prop("mass", &PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
-	);
-
-	// RenderComponent
-	rootTable.Bind("RenderComponent", Sqrat::DerivedClass<RenderComponent, Component, Sqrat::NoConstructor<RenderComponent>>(vm, "RenderComponent")
-		.Prop("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
 	);
 
 	// ScriptComponent

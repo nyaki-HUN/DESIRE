@@ -1,8 +1,8 @@
 #include "API/LuaScriptAPI.h"
 
 #include "Engine/Core/Modules.h"
-#include "Engine/Core/math/Vector3.h"
 #include "Engine/Physics/Physics.h"
+#include "Engine/Physics/PhysicsComponent.h"
 
 void RegisterPhysicsAPI_Lua(lua_State *L)
 {
@@ -11,6 +11,11 @@ void RegisterPhysicsAPI_Lua(lua_State *L)
 	{
 		return;
 	}
+
+	// PhysicsComponent
+	luabridge::getGlobalNamespace(L).deriveClass<PhysicsComponent, Component>("PhysicsComponent")
+		.addProperty("mass", &PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
+		.endClass();
 
 	// Physics
 	luabridge::getGlobalNamespace(L).beginClass<Physics>("IPhysics")

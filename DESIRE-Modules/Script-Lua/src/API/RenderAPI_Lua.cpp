@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
+#include "Engine/Render/RenderComponent.h"
 
 void RegisterRenderAPI_Lua(lua_State *L)
 {
@@ -10,6 +11,11 @@ void RegisterRenderAPI_Lua(lua_State *L)
 	{
 		return;
 	}
+
+	// RenderComponent
+	luabridge::getGlobalNamespace(L).deriveClass<RenderComponent, Component>("RenderComponent")
+		.addProperty("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
+		.endClass();
 
 	// Render
 	luabridge::getGlobalNamespace(L).beginClass<Render>("IRender")

@@ -10,14 +10,22 @@ DESIRE_ENABLE_WARNINGS
 
 #include <new>
 
+// Template function for registering a class derived from Component
+#define ANGELSCRIPT_API_REGISTER_COMPONENT(CLASS)																										\
+	engine->RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeID);																					\
+	engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																					\
+	engine->RegisterObjectMethod(#CLASS, "Object& get_object()", asMETHODPR(Component, GetObject, () const, Object&), asCALL_THISCALL);					\
+	engine->RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);		\
+	engine->RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST)
+
 // API register functions
 void RegisterStdString(asIScriptEngine *engine);
-void RegisterComponentAPI_AngelScript(asIScriptEngine *engine);
 void RegisterCoreAPI_AngelScript(asIScriptEngine *engine);
 void RegisterInputAPI_AngelScript(asIScriptEngine *engine);
 void RegisterNetworkAPI_AngelScript(asIScriptEngine *engine);
 void RegisterPhysicsAPI_AngelScript(asIScriptEngine *engine);
 void RegisterRenderAPI_AngelScript(asIScriptEngine *engine);
+void RegisterSceneAPI_AngelScript(asIScriptEngine *engine);
 void RegisterSoundAPI_AngelScript(asIScriptEngine *engine);
 
 template<class T>

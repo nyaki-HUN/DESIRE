@@ -164,9 +164,6 @@
     <ClCompile Include="..\..\Externals\squirrel\squirrel\sqvm.cpp">
       <Filter>Externals\squirrel\squirrel</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\ComponentAPI_Squirrel.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\API\CoreAPI_Squirrel.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
@@ -180,6 +177,9 @@
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\RenderAPI_Squirrel.cpp">
+      <Filter>src\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\API\SceneAPI_Squirrel.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\SoundAPI_Squirrel.cpp">

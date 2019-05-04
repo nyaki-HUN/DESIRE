@@ -254,9 +254,6 @@
     <ClCompile Include="..\..\Externals\lua\src\lzio.c">
       <Filter>Externals\lua\src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\ComponentAPI_Lua.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\API\CoreAPI_Lua.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
@@ -270,6 +267,9 @@
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\RenderAPI_Lua.cpp">
+      <Filter>src\API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\API\SceneAPI_Lua.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\SoundAPI_Lua.cpp">

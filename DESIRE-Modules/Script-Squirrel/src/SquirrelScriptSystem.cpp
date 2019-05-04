@@ -36,11 +36,11 @@ SquirrelScriptSystem::SquirrelScriptSystem()
 	// Register Script API
 	Sqrat::RootTable rootTable(vm);
 	RegisterCoreAPI_Squirrel(rootTable);
-	RegisterComponentAPI_Squirrel(rootTable);
 	RegisterInputAPI_Squirrel(rootTable);
 	RegisterNetworkAPI_Squirrel(rootTable);
 	RegisterPhysicsAPI_Squirrel(rootTable);
 	RegisterRenderAPI_Squirrel(rootTable);
+	RegisterSceneAPI_Squirrel(rootTable);
 	RegisterSoundAPI_Squirrel(rootTable);
 }
 

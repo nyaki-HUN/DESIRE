@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
+#include "Engine/Render/RenderComponent.h"
 
 void RegisterRenderAPI_AngelScript(asIScriptEngine *engine)
 {
@@ -12,6 +13,11 @@ void RegisterRenderAPI_AngelScript(asIScriptEngine *engine)
 	}
 
 	int result = asSUCCESS;
+
+	// RenderComponent
+	ANGELSCRIPT_API_REGISTER_COMPONENT(RenderComponent);
+	result = engine->RegisterObjectMethod("RenderComponent", "void set_layer(int)", asMETHODPR(RenderComponent, SetLayer, (int), void), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("RenderComponent", "int get_layer() const", asMETHODPR(RenderComponent, GetLayer, () const, int), asCALL_THISCALL);		ASSERT(result >= asSUCCESS);
 
 	// Render
 	result = engine->RegisterObjectType("IRender", 0, asOBJ_REF | asOBJ_NOHANDLE);					ASSERT(result >= asSUCCESS);
