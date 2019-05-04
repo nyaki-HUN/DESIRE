@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="entropy">
+      <UniqueIdentifier>{768F846B-E26E-0307-EB86-8EDD57E56968}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="xxhash">
+      <UniqueIdentifier>{F93F8028-E5E1-AAFE-CE9C-BE52BADD314F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Externals\Lizard\src\entropy\bitstream.h">
+      <Filter>entropy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Lizard\src\entropy\error_private.h">
+      <Filter>entropy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Lizard\src\entropy\error_public.h">
+      <Filter>entropy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Lizard\src\entropy\fse.h">
+      <Filter>entropy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Lizard\src\entropy\huf.h">
+      <Filter>entropy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Lizard\src\entropy\mem.h">
+      <Filter>entropy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_common.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_compress.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_compress_liz.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_compress_lz4.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_decompress.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_decompress_liz.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_decompress_lz4.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_frame.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_frame_static.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_fast.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_fastbig.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_fastsmall.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_hashchain.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_lowestprice.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_nochain.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_optimal.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\lizard_parser_pricefast.h" />
+    <ClInclude Include="..\..\Externals\Lizard\src\xxhash\xxhash.h">
+      <Filter>xxhash</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Externals\Lizard\src\entropy\entropy_common.c">
+      <Filter>entropy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Lizard\src\entropy\fse_compress.c">
+      <Filter>entropy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Lizard\src\entropy\fse_decompress.c">
+      <Filter>entropy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Lizard\src\entropy\huf_compress.c">
+      <Filter>entropy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Lizard\src\entropy\huf_decompress.c">
+      <Filter>entropy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Lizard\src\lizard_compress.c" />
+    <ClCompile Include="..\..\Externals\Lizard\src\lizard_decompress.c" />
+    <ClCompile Include="..\..\Externals\Lizard\src\lizard_frame.c" />
+    <ClCompile Include="..\..\Externals\Lizard\src\xxhash\xxhash.c">
+      <Filter>xxhash</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -14,6 +14,7 @@ project "SandBox"
 	links
 	{
 		"DESIRE",
+		"Compression-Lizard",
 		"Compression-zlib-ng",
 		"Compression-zstd",
 		"Physics-Box2D",

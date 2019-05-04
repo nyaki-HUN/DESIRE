@@ -122,6 +122,7 @@ solution "DESIRE"
 	include "UnitTest/project/premake5.lua"
 
 	-- Compression modules
+	include "DESIRE-Modules/Compression-Lizard/project/premake5.lua"
 	include "DESIRE-Modules/Compression-LZ4/project/premake5.lua"
 	include "DESIRE-Modules/Compression-zlib-ng/project/premake5.lua"
 	include "DESIRE-Modules/Compression-zstd/project/premake5.lua"

@@ -6,7 +6,7 @@ Development Experiment for a Simple and Robust Engine
 What is it?
 -----------
 This is an experimental project to create an Engine which makes game development easier.
-The main focus is on creating a simple to use and powerful framework.
+The main focus is on creating a powerful and simple to use framework.
 
 This is not a plug-and-play engine. If you think about cars, other game engines are like having the whole car, changing parts, painting and customizing it. DESIRE is more like a high-performance engine where you still need to build the car around.  
 
@@ -28,6 +28,7 @@ Modules
 
 ### Compression
 
+ * [Lizard](https://github.com/inikep/lizard) *(WIP)*
  * [LZ4](http://lz4.github.io/lz4) *(WIP)*
  * [zlib-ng](https://github.com/Dead2/zlib-ng)
  * [zstd](http://facebook.github.io/zstd)

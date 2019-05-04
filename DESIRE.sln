@@ -5,6 +5,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandBox", "SandBox\project\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-LZ4", "DESIRE-Modules\Compression-LZ4\project\vs2017\Compression-LZ4.vcxproj", "{83295281-AF7D-4CBD-B089-92DFE9016E28}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-Lizard", "DESIRE-Modules\Compression-Lizard\project\vs2017\Compression-Lizard.vcxproj", "{BC2B4D7F-87C2-4E42-9DBD-EDEAEBEC1BE0}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-zlib-ng", "DESIRE-Modules\Compression-zlib-ng\project\vs2017\Compression-zlib-ng.vcxproj", "{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-zstd", "DESIRE-Modules\Compression-zstd\project\vs2017\Compression-zstd.vcxproj", "{BB7C69B1-33CC-4FF8-8CC8-D8A46A07A3FF}"
@@ -49,6 +51,10 @@ Global
 		{83295281-AF7D-4CBD-B089-92DFE9016E28}.Debug|x64.Build.0 = Debug|x64
 		{83295281-AF7D-4CBD-B089-92DFE9016E28}.Release|x64.ActiveCfg = Release|x64
 		{83295281-AF7D-4CBD-B089-92DFE9016E28}.Release|x64.Build.0 = Release|x64
+		{BC2B4D7F-87C2-4E42-9DBD-EDEAEBEC1BE0}.Debug|x64.ActiveCfg = Debug|x64
+		{BC2B4D7F-87C2-4E42-9DBD-EDEAEBEC1BE0}.Debug|x64.Build.0 = Debug|x64
+		{BC2B4D7F-87C2-4E42-9DBD-EDEAEBEC1BE0}.Release|x64.ActiveCfg = Release|x64
+		{BC2B4D7F-87C2-4E42-9DBD-EDEAEBEC1BE0}.Release|x64.Build.0 = Release|x64
 		{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}.Debug|x64.ActiveCfg = Debug|x64
 		{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}.Debug|x64.Build.0 = Debug|x64
 		{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}.Release|x64.ActiveCfg = Release|x64
