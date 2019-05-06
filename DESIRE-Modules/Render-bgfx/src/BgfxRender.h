@@ -12,13 +12,13 @@ public:
 	BgfxRender();
 	~BgfxRender() override;
 
-	void Init(IWindow *mainWindow) override;
-	void UpdateRenderWindow(IWindow *window) override;
+	void Init(OSWindow *mainWindow) override;
+	void UpdateRenderWindow(OSWindow *window) override;
 	void Kill() override;
 
 	DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const override;
 
-	void BeginFrame(IWindow *window) override;
+	void BeginFrame(OSWindow *window) override;
 	void EndFrame() override;
 
 	void SetView(View *view) override;

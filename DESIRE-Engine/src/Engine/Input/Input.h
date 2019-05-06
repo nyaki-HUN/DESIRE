@@ -6,7 +6,7 @@
 #include "Engine/Input/Mouse.h"
 #include "Engine/Input/GameController.h"
 
-class IWindow;
+class OSWindow;
 
 class Input
 {
@@ -30,7 +30,7 @@ public:
 	Input();
 	~Input();
 
-	void Init(IWindow *window);
+	void Init(OSWindow *window);
 	void Kill();
 	void Update();
 	void Reset();
@@ -53,7 +53,7 @@ private:
 	Keyboard& GetKeyboardByHandle(void *handle);
 	Mouse& GetMouseByHandle(void *handle);
 
-	void Init_internal(IWindow *window);
+	void Init_internal(OSWindow *window);
 	void Kill_internal();
 	void Update_internal();
 

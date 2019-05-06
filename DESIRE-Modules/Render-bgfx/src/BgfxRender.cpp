@@ -5,8 +5,8 @@
 #include "TextureRenderDataBgfx.h"
 #include "Embedded_shaders/vs_screenSpaceQuad.bin.h"
 
+#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/IWindow.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/String/StackString.h"
 #include "Engine/Render/Material.h"
@@ -43,7 +43,7 @@ BgfxRender::~BgfxRender()
 
 }
 
-void BgfxRender::Init(IWindow *mainWindow)
+void BgfxRender::Init(OSWindow *mainWindow)
 {
 	bgfx::PlatformData pd = {};
 #if defined(DESIRE_PLATFORM_LINUX)
@@ -78,7 +78,7 @@ void BgfxRender::Init(IWindow *mainWindow)
 	bgfx::reset(mainWindow->GetWidth(), mainWindow->GetHeight(), BGFX_RESET_VSYNC);
 }
 
-void BgfxRender::UpdateRenderWindow(IWindow *window)
+void BgfxRender::UpdateRenderWindow(OSWindow *window)
 {
 	if(!initialized)
 	{
@@ -133,7 +133,7 @@ DynamicString BgfxRender::GetShaderFilenameWithPath(const String& shaderFilename
 	return filenameWithPath;
 }
 
-void BgfxRender::BeginFrame(IWindow *window)
+void BgfxRender::BeginFrame(OSWindow *window)
 {
 	activeViewId = 0;
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());

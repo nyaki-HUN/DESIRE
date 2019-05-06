@@ -20,7 +20,7 @@ public:
 	static OSStatus Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData);
 };
 
-void Input::Init_internal(IWindow *window)
+void Input::Init_internal(OSWindow *window)
 {
 	OSStatus status = noErr;
 	EventTargetRef eventTargetRef = GetApplicationEventTarget();

@@ -15,13 +15,13 @@ public:
 	Direct3D11Render();
 	~Direct3D11Render() override;
 
-	void Init(IWindow *mainWindow) override;
-	void UpdateRenderWindow(IWindow *window) override;
+	void Init(OSWindow *mainWindow) override;
+	void UpdateRenderWindow(OSWindow *window) override;
 	void Kill() override;
 
 	DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const override;
 
-	void BeginFrame(IWindow *window) override;
+	void BeginFrame(OSWindow *window) override;
 	void EndFrame() override;
 
 	void SetView(View *view) override;
@@ -88,7 +88,7 @@ private:
 	const ID3D11BlendState *activeBlendState = nullptr;
 	const ID3D11InputLayout *activeInputLayout = nullptr;
 	const ID3D11SamplerState *activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
-	const IWindow *activeWindow = nullptr;
+	const OSWindow *activeWindow = nullptr;
 	const View *activeView = nullptr;
 	const Mesh *activeMesh = nullptr;
 	const Shader *activeVertexShader = nullptr;

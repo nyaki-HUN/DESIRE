@@ -4,7 +4,7 @@
 
 #include <memory>
 
-class IWindow;
+class OSWindow;
 class View;
 class Mesh;
 class DynamicMesh;
@@ -81,13 +81,13 @@ public:
 	Render();
 	virtual ~Render();
 
-	virtual void Init(IWindow *mainWindow) = 0;
-	virtual void UpdateRenderWindow(IWindow *window) = 0;
+	virtual void Init(OSWindow *mainWindow) = 0;
+	virtual void UpdateRenderWindow(OSWindow *window) = 0;
 	virtual void Kill() = 0;
 
 	virtual DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const = 0;
 
-	virtual void BeginFrame(IWindow *window) = 0;
+	virtual void BeginFrame(OSWindow *window) = 0;
 	virtual void EndFrame() = 0;
 
 	void RenderMesh(Mesh *mesh, Material *material);

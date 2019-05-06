@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/Application.h"
-#include "Engine/Core/CoreAppEvent.h"
+#include "Engine/Application/Application.h"
+#include "Engine/Application/CoreAppEvent.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
@@ -61,7 +61,7 @@ int Application::Start(int argc, const char * const *argv)
 	// Create main window
 	{
 		CreationParams params = Modules::Application->GetCreationParams(argc, argv);
-		Modules::Application->mainWindow = IWindow::Create(params.windowParams);
+		Modules::Application->mainWindow = OSWindow::Create(params.windowParams);
 	}
 
 	Modules::Render->Init(Modules::Application->mainWindow.get());

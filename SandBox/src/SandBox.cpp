@@ -136,7 +136,7 @@ void SandBox::Update()
 		LOG_MESSAGE("Fire is down");
 	}
 
-	dataDirWatcher->Update();
+	FileSystemWatcher::UpdateAll();
 
 	Modules::Render->BeginFrame(mainWindow.get());
 	UI->NewFrame(mainWindow.get());

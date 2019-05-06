@@ -1,9 +1,9 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/IWindow.h"
+#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
 
-IWindow::IWindow(const CreationParams& creationParams)
+OSWindow::OSWindow(const CreationParams& creationParams)
 	: isFullscreen(creationParams.isFullscreen)
 	, isActive(false)
 {
@@ -11,32 +11,32 @@ IWindow::IWindow(const CreationParams& creationParams)
 	height = std::max(WINDOW_MIN_SIZE, creationParams.height);
 }
 
-IWindow::~IWindow()
+OSWindow::~OSWindow()
 {
 
 }
 
-uint16_t IWindow::GetWidth() const
+uint16_t OSWindow::GetWidth() const
 {
 	return width;
 }
 
-uint16_t IWindow::GetHeight() const
+uint16_t OSWindow::GetHeight() const
 {
 	return height;
 }
 
-bool IWindow::IsFullscreen() const
+bool OSWindow::IsFullscreen() const
 {
 	return isFullscreen;
 }
 
-bool IWindow::IsActive() const
+bool OSWindow::IsActive() const
 {
 	return isActive;
 }
 
-void IWindow::SetSize(uint16_t i_width, uint16_t i_height)
+void OSWindow::SetSize(uint16_t i_width, uint16_t i_height)
 {
 	if(width == i_width && height == i_height)
 	{

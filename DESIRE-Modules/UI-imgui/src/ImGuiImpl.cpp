@@ -1,8 +1,8 @@
 #include "ImGuiImpl.h"
 
+#include "Engine/Application/Application.h"
+#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/Application.h"
-#include "Engine/Core/IWindow.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
@@ -105,7 +105,7 @@ void ImGuiImpl::Kill()
 	fontTexture = nullptr;
 }
 
-void ImGuiImpl::NewFrame(IWindow *window)
+void ImGuiImpl::NewFrame(OSWindow *window)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(window->GetWidth(), window->GetHeight());
@@ -159,16 +159,16 @@ void ImGuiImpl::NewFrame(IWindow *window)
 void ImGuiImpl::EndFrame()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	IWindow *window = static_cast<IWindow*>(io.UserData);
+	OSWindow *window = static_cast<OSWindow*>(io.UserData);
 	switch(ImGui::GetMouseCursor())
 	{
-		case ImGuiMouseCursor_Arrow:		window->SetCursor(IWindow::CURSOR_ARROW); break;
-		case ImGuiMouseCursor_TextInput:	window->SetCursor(IWindow::CURSOR_IBEAM); break;
-		case ImGuiMouseCursor_ResizeAll:	window->SetCursor(IWindow::CURSOR_MOVE); break;
-		case ImGuiMouseCursor_ResizeNS:		window->SetCursor(IWindow::CURSOR_SIZE_NS); break;
-		case ImGuiMouseCursor_ResizeEW:		window->SetCursor(IWindow::CURSOR_SIZE_WE); break;
-		case ImGuiMouseCursor_ResizeNESW:	window->SetCursor(IWindow::CURSOR_SIZE_BOTTOMLEFT); break;
-		case ImGuiMouseCursor_ResizeNWSE:	window->SetCursor(IWindow::CURSOR_SIZE_BOTTOMRIGHT); break;
+		case ImGuiMouseCursor_Arrow:		window->SetCursor(OSWindow::CURSOR_ARROW); break;
+		case ImGuiMouseCursor_TextInput:	window->SetCursor(OSWindow::CURSOR_IBEAM); break;
+		case ImGuiMouseCursor_ResizeAll:	window->SetCursor(OSWindow::CURSOR_MOVE); break;
+		case ImGuiMouseCursor_ResizeNS:		window->SetCursor(OSWindow::CURSOR_SIZE_NS); break;
+		case ImGuiMouseCursor_ResizeEW:		window->SetCursor(OSWindow::CURSOR_SIZE_WE); break;
+		case ImGuiMouseCursor_ResizeNESW:	window->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMLEFT); break;
+		case ImGuiMouseCursor_ResizeNWSE:	window->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMRIGHT); break;
 	};
 
 	ImGui::Render();

@@ -22,7 +22,7 @@ public:
 	static void Handle_WM_CHAR(WPARAM wParam, LPARAM lParam);
 };
 
-void Input::Init_internal(IWindow *window)
+void Input::Init_internal(OSWindow *window)
 {
 	WINDOWSWindow *win = static_cast<WINDOWSWindow*>(window);
 	win->RegisterMessageHandler(WM_INPUT, InputImpl::Handle_WM_INPUT);

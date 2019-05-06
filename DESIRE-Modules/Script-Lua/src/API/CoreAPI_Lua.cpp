@@ -1,6 +1,6 @@
 #include "API/LuaScriptAPI.h"
 
-#include "Engine/Core/Application.h"
+#include "Engine/Application/Application.h"
 #include "Engine/Core/Component.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"

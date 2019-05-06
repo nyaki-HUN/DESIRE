@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Engine/Core/IWindow.h"
+#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/WINDOWS/os.h"
 
 #include <map>
 
-class WINDOWSWindow : public IWindow
+class WINDOWSWindow : public OSWindow
 {
 public:
 	typedef void(*MessageHandler_t)(WPARAM wParam, LPARAM lParam);
 
-	WINDOWSWindow(const IWindow::CreationParams& creationParams);
+	WINDOWSWindow(const OSWindow::CreationParams& creationParams);
 	~WINDOWSWindow() override;
 
 	void HandleWindowMessages() override;

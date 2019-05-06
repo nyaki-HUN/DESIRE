@@ -4,7 +4,7 @@
 
 #include <memory>
 
-class IWindow
+class OSWindow
 {
 public:
 	enum ECursor
@@ -42,8 +42,8 @@ public:
 		bool isFullscreen;
 	};
 
-	IWindow(const CreationParams& creationParams);
-	virtual ~IWindow();
+	OSWindow(const CreationParams& creationParams);
+	virtual ~OSWindow();
 
 	uint16_t GetWidth() const;
 	uint16_t GetHeight() const;
@@ -62,8 +62,8 @@ public:
 	virtual bool SetClipboardString(const String& string) = 0;
 	virtual DynamicString GetClipboardString() = 0;
 
-	// Create a new IWindow
-	static std::unique_ptr<IWindow> Create(const CreationParams& creationParams);
+	// Create a new window
+	static std::unique_ptr<OSWindow> Create(const CreationParams& creationParams);
 
 protected:
 	void SetSize(uint16_t width, uint16_t height);

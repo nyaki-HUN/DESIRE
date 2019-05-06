@@ -13,7 +13,7 @@ static const ASensor *s_accelerometerSensor = nullptr;
 static const ASensor *s_gyroscopeSensor = nullptr;
 static const ASensor *s_magneticSensor = nullptr;
 
-void Input::Init_internal(IWindow *window)
+void Input::Init_internal(OSWindow *window)
 {
 	ALooper *looper = ALooper_forThread();
 	if(looper == nullptr)

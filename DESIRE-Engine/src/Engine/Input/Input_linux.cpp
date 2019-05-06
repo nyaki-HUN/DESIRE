@@ -22,7 +22,7 @@ public:
 	static void Handle_MotionNotify(const XEvent& event);
 };
 
-void Input::Init_internal(IWindow *window)
+void Input::Init_internal(OSWindow *window)
 {
 	ASSERT(s_display == nullptr && "Input is already initialized");
 

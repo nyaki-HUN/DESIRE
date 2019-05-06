@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/Application.h"
+#include "Engine/Application/Application.h"
 #include "Engine/Input/InputMapping.h"
 
 #include <memory>

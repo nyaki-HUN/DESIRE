@@ -14,13 +14,13 @@ public:
 	Direct3D12Render();
 	~Direct3D12Render() override;
 
-	void Init(IWindow *mainWindow) override;
-	void UpdateRenderWindow(IWindow *window) override;
+	void Init(OSWindow *mainWindow) override;
+	void UpdateRenderWindow(OSWindow *window) override;
 	void Kill() override;
 
 	DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const override;
 
-	void BeginFrame(IWindow *window) override;
+	void BeginFrame(OSWindow *window) override;
 	void EndFrame() override;
 
 	void SetView(View *view) override;
@@ -73,7 +73,7 @@ private:
 	D3D12_RASTERIZER_DESC rasterizerDesc = {};
 	D3D12_BLEND_DESC blendDesc = {};
 
-	const IWindow *activeWindow = nullptr;
+	const OSWindow *activeWindow = nullptr;
 	const View *activeView = nullptr;
 	const Mesh *activeMesh = nullptr;
 	const Shader *activeVertexShader = nullptr;

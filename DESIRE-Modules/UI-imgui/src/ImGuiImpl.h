@@ -2,9 +2,9 @@
 
 #include <memory>
 
-class IWindow;
 class DynamicMesh;
 class Material;
+class OSWindow;
 class Texture;
 struct ImDrawData;
 
@@ -17,7 +17,7 @@ public:
 	void Init();
 	void Kill();
 
-	void NewFrame(IWindow *window);
+	void NewFrame(OSWindow *window);
 	void EndFrame();
 
 private:

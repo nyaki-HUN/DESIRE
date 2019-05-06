@@ -11,7 +11,7 @@ Input::~Input()
 
 }
 
-void Input::Init(IWindow *window)
+void Input::Init(OSWindow *window)
 {
 	Init_internal(window);
 }

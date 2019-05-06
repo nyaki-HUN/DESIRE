@@ -5,9 +5,9 @@
 #include "TextureRenderDataD3D11.h"
 #include "RenderTargetRenderDataD3D11.h"
 
+#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/assert.h"
 #include "Engine/Core/Log.h"
-#include "Engine/Core/IWindow.h"
 #include "Engine/Core/fs/FileSystem.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Render/Material.h"
@@ -108,7 +108,7 @@ Direct3D11Render::~Direct3D11Render()
 
 }
 
-void Direct3D11Render::Init(IWindow *mainWindow)
+void Direct3D11Render::Init(OSWindow *mainWindow)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = mainWindow->GetWidth();
@@ -189,7 +189,7 @@ void Direct3D11Render::Init(IWindow *mainWindow)
 	Bind(errorPixelShader.get());
 }
 
-void Direct3D11Render::UpdateRenderWindow(IWindow *window)
+void Direct3D11Render::UpdateRenderWindow(OSWindow *window)
 {
 	if(!initialized)
 	{
@@ -259,7 +259,7 @@ DynamicString Direct3D11Render::GetShaderFilenameWithPath(const String& shaderFi
 	return filenameWithPath;
 }
 
-void Direct3D11Render::BeginFrame(IWindow *window)
+void Direct3D11Render::BeginFrame(OSWindow *window)
 {
 	activeWindow = window;
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());

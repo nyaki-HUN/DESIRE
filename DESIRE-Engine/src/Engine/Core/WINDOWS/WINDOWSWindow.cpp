@@ -1,11 +1,11 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/WINDOWS/WINDOWSWindow.h"
-#include "Engine/Core/Application.h"
-#include "Engine/Core/EAppEventType.h"
+#include "Engine/Application/Application.h"
+#include "Engine/Application/EAppEventType.h"
 #include "Engine/Core/Modules.h"
 
-WINDOWSWindow::WINDOWSWindow(const IWindow::CreationParams& creationParams)
-	: IWindow(creationParams)
+WINDOWSWindow::WINDOWSWindow(const OSWindow::CreationParams& creationParams)
+	: OSWindow(creationParams)
 	, hWnd(0)
 	, isInSizeMove(false)
 {
@@ -308,10 +308,10 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-//	IWindow
+//	OSWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<OSWindow> OSWindow::Create(const OSWindow::CreationParams& creationParams)
 {
 	return std::make_unique<WINDOWSWindow>(creationParams);
 }

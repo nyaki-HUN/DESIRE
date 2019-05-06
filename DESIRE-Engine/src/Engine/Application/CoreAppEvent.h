@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/EAppEventType.h"
+#include "Engine/Application/EAppEventType.h"
 
 class CoreAppEvent
 {

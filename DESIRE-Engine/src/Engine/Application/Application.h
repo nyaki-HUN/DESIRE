@@ -1,7 +1,7 @@
 #pragma once
 
+#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/Factory.h"
-#include "Engine/Core/IWindow.h"
 
 #include <stdint.h>
 
@@ -55,13 +55,13 @@ protected:
 
 		}
 
-		IWindow::CreationParams windowParams;
+		OSWindow::CreationParams windowParams;
 		EOrientation defaultOrientation;
 		uint8_t supportedOrientations;
 	};
 
 	std::unique_ptr<Timer> timer;
-	std::unique_ptr<IWindow> mainWindow;
+	std::unique_ptr<OSWindow> mainWindow;
 
 private:
 	void Run();
