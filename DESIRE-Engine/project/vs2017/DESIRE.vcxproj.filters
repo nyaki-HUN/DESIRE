@@ -31,6 +31,9 @@
     <Filter Include="src\Engine">
       <UniqueIdentifier>{12A1320E-FE58-745B-6760-4DB753370F4C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Application">
+      <UniqueIdentifier>{D5079803-C101-C155-AA6E-5766960727C2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Compression">
       <UniqueIdentifier>{73829418-5F7C-BD6A-48E9-537B348223D7}</UniqueIdentifier>
     </Filter>
@@ -204,14 +207,23 @@
     <ClInclude Include="..\..\3rdparty\stb\stb_image.h">
       <Filter>3rdparty\stb</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Application\Application.h">
+      <Filter>src\Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Application\CoreAppEvent.h">
+      <Filter>src\Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Application\EAppEventType.h">
+      <Filter>src\Engine\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Application\OSWindow.h">
+      <Filter>src\Engine\Application</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Compression\Compression.h">
       <Filter>src\Engine\Compression</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Compression\CompressionManager.h">
       <Filter>src\Engine\Compression</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\Application.h">
-      <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Component.h">
       <Filter>src\Engine\Core</Filter>
@@ -231,11 +243,8 @@
     <ClInclude Include="..\..\src\Engine\Core\Container\FreeList.h">
       <Filter>src\Engine\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\CoreAppEvent.h">
-      <Filter>src\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\EAppEventType.h">
-      <Filter>src\Engine\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\Container\LockFreeRingBuffer.h">
+      <Filter>src\Engine\Core\Container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Factory.h">
       <Filter>src\Engine\Core</Filter>
@@ -244,12 +253,6 @@
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\HashedStringMap.h">
-      <Filter>src\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\IWindow.h">
-      <Filter>src\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\LockFreeRingBuffer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Log.h">
@@ -301,9 +304,6 @@
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.h">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFileSystemWatcher.h">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.h">
@@ -515,14 +515,23 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Engine\Application\Application.cpp">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\OSWindow.cpp">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\main_android.cpp">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\main_windows.cpp">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Compression\Compression.cpp">
       <Filter>src\Engine\Compression</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Compression\CompressionManager.cpp">
       <Filter>src\Engine\Compression</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\Application.cpp">
-      <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Component.cpp">
       <Filter>src\Engine\Core</Filter>
@@ -538,9 +547,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Container\FreeList.cpp">
       <Filter>src\Engine\Core\Container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\IWindow.cpp">
-      <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Log.cpp">
       <Filter>src\Engine\Core</Filter>
@@ -581,9 +587,6 @@
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFileSystemWatcher.cpp">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
@@ -593,13 +596,19 @@
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSWindow.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\main.cpp">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\fs\FileSourceZip.cpp">
       <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\fs\FileSystem.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystemWatcher_linux.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystemWatcher_osx.cpp">
+      <Filter>src\Engine\Core\fs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystemWatcher_windows.cpp">
       <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\fs\IReadFile.cpp">
