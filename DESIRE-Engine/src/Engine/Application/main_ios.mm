@@ -1,4 +1,6 @@
-#include "stdafx.h"
+#include "Engine/stdafx.h"
+
+#if defined(DESIRE_PLATFORM_IOS)
 
 #import <UIKit/UIKit.h>
 
@@ -47,3 +49,5 @@ int main(int argc, char *argv[])
 
 	return result;
 }
+
+#endif	// #if defined(DESIRE_PLATFORM_IOS)
