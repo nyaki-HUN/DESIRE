@@ -1,5 +1,8 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/Application.h"
+
+#if defined(DESIRE_PLATFORM_WINDOWS)
+
+#include "Engine/Application/Application.h"
 #include "Engine/Core/WINDOWS/os.h"
 
 #include <crtdbg.h>
@@ -18,3 +21,5 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
 
 	return Application::Start(__argc, __argv);
 }
+
+#endif	// #if defined(DESIRE_PLATFORM_WINDOWS)

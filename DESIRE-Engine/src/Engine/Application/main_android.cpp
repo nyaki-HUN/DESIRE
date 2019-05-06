@@ -1,5 +1,8 @@
-#include "stdafx.h"
-#include "Engine/Core/Application.h"
+#include "Engine/stdafx.h"
+
+#if defined(DESIRE_PLATFORM_ANDROID)
+
+#include "Engine/Application/Application.h"
 #include "Engine/Core/ANDROID/ANDROIDWindow.h"
 
 #include <android_native_app_glue.h>
@@ -47,3 +50,5 @@ void android_main(android_app *androidApp)
 
 	Application::Start(0, nullptr);
 }
+
+#endif	// #if defined(DESIRE_PLATFORM_ANDROID)
