@@ -4,9 +4,6 @@
 
 class Mouse : public InputDevice
 {
-	friend class Input;
-	friend class InputImpl;
-
 	Mouse(void *handle);
 
 public:
@@ -35,4 +32,7 @@ public:
 private:
 	uint8_t buttons[NUM_BUTTONS];
 	AxisState axes[NUM_AXES];
+
+	friend class Input;
+	friend class InputImpl;
 };

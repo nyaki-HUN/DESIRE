@@ -7,8 +7,6 @@ class ScriptComponent;
 
 class IScript
 {
-	friend class NativeScriptComponent;
-
 protected:
 	IScript() {}
 
@@ -49,4 +47,7 @@ public:
 
 protected:
 	ScriptComponent *self = nullptr;
+
+private:
+	friend class NativeScriptComponent;
 };

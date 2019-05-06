@@ -4,9 +4,6 @@
 
 class GameController : public InputDevice
 {
-	friend class Input;
-	friend class InputImpl;
-
 	GameController(void *handle);
 
 public:
@@ -29,8 +26,10 @@ public:
 		NUM_AXES
 	};
 
-
 private:
 	uint8_t buttons[NUM_BUTTONS];
 	AxisState axes[NUM_AXES];
+
+	friend class Input;
+	friend class InputImpl;
 };

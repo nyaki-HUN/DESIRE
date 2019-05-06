@@ -5,9 +5,6 @@
 
 class Keyboard : public InputDevice
 {
-	friend class Input;
-	friend class InputImpl;
-
 	Keyboard(void *handle);
 
 public:
@@ -16,4 +13,7 @@ public:
 
 private:
 	uint8_t keyStates[256];
+
+	friend class Input;
+	friend class InputImpl;
 };

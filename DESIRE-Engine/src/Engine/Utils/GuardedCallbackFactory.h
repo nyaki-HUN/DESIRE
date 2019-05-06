@@ -24,8 +24,6 @@ public:
 	template<class F>
 	class Functor
 	{
-		friend class GuardedCallbackFactory;
-
 		Functor(F&& func, std::weak_ptr<uint8_t> guard)
 			: func(std::move(func))
 			, guard(guard)
@@ -55,6 +53,8 @@ public:
 	private:
 		F func;
 		std::weak_ptr<uint8_t> guard;
+
+		friend class GuardedCallbackFactory;
 	};
 
 	// Creates a guarded callback

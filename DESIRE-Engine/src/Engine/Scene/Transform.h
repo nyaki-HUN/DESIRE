@@ -6,8 +6,6 @@ class Object;
 
 class Transform
 {
-	friend class Object;
-
 public:
 	enum EFlags
 	{
@@ -67,4 +65,6 @@ private:
 
 	Transform *parent = nullptr;
 	Object *owner = nullptr;
+
+	friend class Object;
 };

@@ -10,8 +10,6 @@ class OSWindow;
 
 class Input
 {
-	friend class InputImpl;
-
 public:
 	static const int MAX_NUM_TYPING_CHARACTERS = 8;
 
@@ -74,4 +72,6 @@ private:
 	char typingCharacters[MAX_NUM_TYPING_CHARACTERS];
 
 	Vector2 mouseCursorPos;
+
+	friend class InputImpl;
 };
