@@ -30,7 +30,7 @@ float Rand::GetFloat(float rangeMin, float rangeMax)
 
 double Rand::GetDouble(double rangeMin, double rangeMax)
 {
-	std::uniform_real_distribution<float> distribution(rangeMin, std::nextafter(rangeMax, DBL_MAX));
+	std::uniform_real_distribution<double> distribution(rangeMin, std::nextafter(rangeMax, DBL_MAX));
 	return distribution(randomEngine);
 }
 
