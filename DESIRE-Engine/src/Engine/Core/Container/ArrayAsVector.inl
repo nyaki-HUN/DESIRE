@@ -32,8 +32,7 @@ public:
 
 	Array& operator =(Array&& otherArray)
 	{
-		vector = std::move(otherArray.vector); return *this;
-
+		vector = std::move(otherArray.vector);
 		return *this;
 	}
 
