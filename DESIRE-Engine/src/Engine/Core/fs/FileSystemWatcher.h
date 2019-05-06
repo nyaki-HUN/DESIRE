@@ -1,13 +1,14 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
+class FileSystemWatcherImpl;
 class String;
 
 class FileSystemWatcher
 {
-protected:
-	FileSystemWatcher() {}
+	FileSystemWatcher();
 
 public:
 	enum class EAction
@@ -17,17 +18,16 @@ public:
 		Modified
 	};
 
-	~FileSystemWatcher()
-	{
-		OnDestroy();
-	}
+	~FileSystemWatcher();
 
 	static std::unique_ptr<FileSystemWatcher> Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback);
 
-	static void Update();
+	static void UpdateAll();
 
-protected:
-	void OnDestroy();
-
+private:
 	std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback;
+
+	std::unique_ptr<FileSystemWatcherImpl> impl;
+
+	friend class FileSystemWatcherImpl;
 };

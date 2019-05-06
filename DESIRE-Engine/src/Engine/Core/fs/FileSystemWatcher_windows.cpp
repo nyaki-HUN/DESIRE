@@ -1,8 +1,25 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/WINDOWS/WINDOWSFileSystemWatcher.h"
+
+#if defined(DESIRE_PLATFORM_WINDOWS)
+
+#include "Engine/Core/fs/FileSystemWatcher.h"
+#include "Engine/Core/WINDOWS/os.h"
 #include "Engine/Core/String/StackString.h"
 
-void WINDOWSFileSystemWatcher::RefreshWatch()
+class FileSystemWatcherImpl
+{
+public:
+	void RefreshWatch();
+	static void CALLBACK CompletionCallback(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped);
+
+	HANDLE dirHandle;
+	OVERLAPPED overlapped;
+
+	uint8_t buffer[8 * 1024];
+	bool isActive;
+};
+
+void FileSystemWatcherImpl::RefreshWatch()
 {
 	BOOL succeeded = ReadDirectoryChangesW(
 		dirHandle,
@@ -12,19 +29,19 @@ void WINDOWSFileSystemWatcher::RefreshWatch()
 		FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_CREATION,
 		nullptr,
 		&overlapped,
-		&WINDOWSFileSystemWatcher::CompletionCallback);
+		&FileSystemWatcherImpl::CompletionCallback);
 
 	isActive = (succeeded == TRUE);
 }
 
-void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped)
+void CALLBACK FileSystemWatcherImpl::CompletionCallback(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped)
 {
 	if(dwNumberOfBytesTransfered == 0)
 	{
 		return;
 	}
 
-	WINDOWSFileSystemWatcher *watcher = static_cast<WINDOWSFileSystemWatcher*>(lpOverlapped->hEvent);
+	FileSystemWatcher *watcher = static_cast<FileSystemWatcher*>(lpOverlapped->hEvent);
 
 	if(dwErrorCode == ERROR_SUCCESS)
 	{
@@ -33,7 +50,7 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 		size_t offset = 0;
 		do
 		{
-			notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(watcher->buffer + offset);
+			notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(watcher->impl->buffer + offset);
 
 			// Convert filename to UTF-8
 			const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
@@ -61,15 +78,32 @@ void CALLBACK WINDOWSFileSystemWatcher::CompletionCallback(DWORD dwErrorCode, DW
 		} while(notify->NextEntryOffset != 0);
 	}
 
-	if(watcher->isActive)
+	if(watcher->impl->isActive)
 	{
-		watcher->RefreshWatch();
+		watcher->impl->RefreshWatch();
 	}
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-//	FileSystemWatcher
-// --------------------------------------------------------------------------------------------------------------------
+FileSystemWatcher::FileSystemWatcher()
+	: impl(std::make_unique<FileSystemWatcherImpl>())
+{
+	
+}
+
+FileSystemWatcher::~FileSystemWatcher()
+{
+	if(impl->isActive)
+	{
+		impl->isActive = false;
+		CancelIo(impl->dirHandle);
+		if(!HasOverlappedIoCompleted(&impl->overlapped))
+		{
+			SleepEx(5, TRUE);
+		}
+	}
+
+	CloseHandle(impl->dirHandle);
+}
 
 std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
 {
@@ -88,35 +122,20 @@ std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& direc
 		return std::unique_ptr<FileSystemWatcher>(nullptr);
 	}
 
-	WINDOWSFileSystemWatcher *watcher = new WINDOWSFileSystemWatcher();
+	FileSystemWatcher *watcher = new FileSystemWatcher();
 	watcher->actionCallback = actionCallback;
-	watcher->dirHandle = dirHandle;
-	watcher->overlapped.hEvent = watcher;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
-	watcher->isActive = false;
+	watcher->impl->dirHandle = dirHandle;
+	watcher->impl->overlapped.hEvent = watcher;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
+	watcher->impl->isActive = false;
 
-	watcher->RefreshWatch();
+	watcher->impl->RefreshWatch();
 
 	return std::unique_ptr<FileSystemWatcher>(watcher);
 }
 
-void FileSystemWatcher::Update()
+void FileSystemWatcher::UpdateAll()
 {
 	MsgWaitForMultipleObjectsEx(0, NULL, 0, QS_ALLINPUT, MWMO_ALERTABLE);
 }
 
-void FileSystemWatcher::OnDestroy()
-{
-	WINDOWSFileSystemWatcher *watcher = static_cast<WINDOWSFileSystemWatcher*>(this);
-
-	if(watcher->isActive)
-	{
-		watcher->isActive = false;
-		CancelIo(watcher->dirHandle);
-		if(!HasOverlappedIoCompleted(&watcher->overlapped))
-		{
-			SleepEx(5, TRUE);
-		}
-	}
-
-	CloseHandle(watcher->dirHandle);
-}
+#endif	// #if defined(DESIRE_PLATFORM_WINDOWS)
