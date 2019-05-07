@@ -3,6 +3,7 @@
 #include "Engine/Application/Application.h"
 #include "Engine/Application/EAppEventType.h"
 #include "Engine/Core/Modules.h"
+#include "Engine/Core/String/WritableString.h"
 
 WINDOWSWindow::WINDOWSWindow(const OSWindow::CreationParams& creationParams)
 	: OSWindow(creationParams)
@@ -163,9 +164,9 @@ bool WINDOWSWindow::SetClipboardString(const String& string)
 	return true;
 }
 
-DynamicString WINDOWSWindow::GetClipboardString()
+void WINDOWSWindow::GetClipboardString(WritableString& outString)
 {
-	DynamicString str;
+	outString.Clear();
 
 	if(IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(hWnd))
 	{
@@ -175,14 +176,12 @@ DynamicString WINDOWSWindow::GetClipboardString()
 			char *ptr = (char*)GlobalLock(stringHandle);
 			if(ptr != nullptr)
 			{
-				str = DynamicString(ptr, strlen(ptr));
+				outString.Assign(ptr, strlen(ptr));
 				GlobalUnlock(stringHandle);
 			}
 		}
 		CloseClipboard();
 	}
-
-	return str;
 }
 
 void WINDOWSWindow::RegisterMessageHandler(UINT msgType, MessageHandler_t messageHandler)

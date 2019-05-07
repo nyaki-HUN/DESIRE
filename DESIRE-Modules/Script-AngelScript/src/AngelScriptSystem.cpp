@@ -130,7 +130,8 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 		"class %s"
 		"{"
 		"	ScriptComponent @self;"
-		"	TestScript(ScriptComponent @component) { @self = component; }"
+		"	%s(ScriptComponent @component) { @self = component; }"
+		, scriptName
 		, scriptName);
 	scriptSrc.Append(content.data, content.size);
 	scriptSrc += "}";
@@ -147,7 +148,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 	asITypeInfo *typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName));
 	
 	// Cache factory in the script module
-	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(DynamicString::Format("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
+	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
 	module->SetUserData(factoryFunc);
 	
 	// Cache built-in functions in the object type

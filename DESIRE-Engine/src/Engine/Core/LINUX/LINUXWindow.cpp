@@ -1,7 +1,8 @@
-#include "stdafx.h"
-#include "LINUXWindow.h"
-#include "Core/IApp.h"
-#include "Core/EAppEventType.h"
+#include "Engine/stdafx.h"
+#include "Engine/Core/LINUX/LINUXWindow.h"
+#include "Engine/Application/Application.h"
+#include "Engine/Application/EAppEventType.h"
+#include "Engine/Core/String/WritableString.h"
 
 #include <X11/cursorfont.h>
 
@@ -176,22 +177,22 @@ bool LINUXWindow::SetClipboardString(const String& string)
 	return false;
 }
 
-String LINUXWindow::GetClipboardString()
+void LINUXWindow::GetClipboardString(WritableString& outString)
 {
-	String str;
+	outString.Clear();
 
-	if(display != nullptr)
+	if(display == nullptr)
 	{
-		int size = 0;
-		char *ptr = XFetchBytes(display, &size);
-		if(ptr != nullptr)
-		{
-			str = String(ptr, size);
-			XFree(ptr);
-		}
+		return;
 	}
 
-	return str;
+	int size = 0;
+	char *ptr = XFetchBytes(display, &size);
+	if(ptr != nullptr)
+	{
+		outString.Assign(ptr, size);
+		XFree(ptr);
+	}
 }
 
 void LINUXWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHandler)

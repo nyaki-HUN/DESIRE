@@ -5,8 +5,6 @@
 
 #include <map>
 
-class WritableString;
-
 class FileSourceZip : public IFileSource
 {
 public:

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Engine/Core/String/DynamicString.h"
-
 #include <memory>
+
+class String;
+class WritableString;
 
 class OSWindow
 {
@@ -60,7 +61,7 @@ public:
 
 	// Clipboard
 	virtual bool SetClipboardString(const String& string) = 0;
-	virtual DynamicString GetClipboardString() = 0;
+	virtual void GetClipboardString(WritableString& outString) = 0;
 
 	// Create a new window
 	static std::unique_ptr<OSWindow> Create(const CreationParams& creationParams);

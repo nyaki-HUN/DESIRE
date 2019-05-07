@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Core/IWindow.h"
+#include "Engine/Application/OSWindow.h"
 
 #include <X11/Xlib.h>
 #include <map>
 
-class LINUXWindow : public IWindow
+class LINUXWindow : public OSWindow
 {
 public:
 	typedef void(*MessageHandler_t)(const XEvent& event);
 
-	LINUXWindow(const IWindow::CreationParams& creationParams);
+	LINUXWindow(const OSWindow::CreationParams& creationParams);
 	~LINUXWindow() override;
 
 	void HandleWindowMessages() override;
@@ -21,7 +21,7 @@ public:
 	void SetCursor(ECursor cursor) override;
 
 	bool SetClipboardString(const String& string) override;
-	String GetClipboardString() override;
+	void GetClipboardString(WritableString& outString) override;
 
 	void RegisterMessageHandler(int msgType, MessageHandler_t messageHandler);
 
