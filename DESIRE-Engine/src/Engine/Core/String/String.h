@@ -35,10 +35,9 @@ public:
 	// Returns whether the string is empty
 	bool IsEmpty() const;
 
-	// Convert string to an integral number. Returns INT32_MAX on error
+	// Convert string to number
 	int IntValue() const;
-
-	// Convert string to a floating point number. Returns FLT_MAX on error
+	uint32_t UIntValue() const;
 	float FloatValue() const;
 
 	// Compare strings

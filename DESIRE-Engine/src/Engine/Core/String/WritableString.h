@@ -5,14 +5,6 @@
 class WritableString : public String
 {
 public:
-	WritableString();
-
-	void ToLower();
-	void ToUpper();
-
-	// Remove whitespaces from both the beginning and end of the string
-	void Trim();
-
 	// Assign a new value to the string, replacing its current contents
 	void Assign(const char *str, size_t numChars);
 
@@ -50,6 +42,15 @@ public:
 	WritableString& operator +=(int64_t number);
 	WritableString& operator +=(uint64_t number);
 	WritableString& operator +=(float number);
+
+	// Remove whitespaces from both the beginning and end of the string
+	void Trim();
+
+	// Convert the string to lowercase
+	void ToLower();
+
+	// Convert the string to uppercase
+	void ToUpper();
 
 protected:
 	virtual bool Reserve(size_t newSize) = 0;

@@ -1,8 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/String.h"
 
-#include <errno.h>
-
 const String String::kEmptyString = "";
 
 size_t String::Find(const String& search, size_t startIndex) const
@@ -106,25 +104,33 @@ bool String::IsEmpty() const
 
 int String::IntValue() const
 {
-	errno = 0;
 	char *end = nullptr;
-	long value = strtol(data, &end, 10);
-
-	if(end == data || *end != '\0' || errno == ERANGE || value < INT32_MIN || value >= INT32_MAX)
+	const int value = strtol(data, &end, 10);
+	if(end != data + size)
 	{
 		return INT32_MAX;
 	}
 
-	return (int)value;
+	return value;
+}
+
+uint32_t String::UIntValue() const
+{
+	char *end = nullptr;
+	const uint32_t value = strtoul(data, &end, 10);
+	if(end != data + size)
+	{
+		return UINT32_MAX;
+	}
+
+	return value;
 }
 
 float String::FloatValue() const
 {
-	errno = 0;
 	char *end = nullptr;
-	float value = strtof(data, &end);
-
-	if(end == data || *end != '\0' || errno == ERANGE)
+	const float value = strtof(data, &end);
+	if(end != data + size)
 	{
 		return FLT_MAX;
 	}
@@ -139,7 +145,11 @@ int String::Compare(const String& string) const
 
 int String::CompareIgnoreCase(const String& string) const
 {
-	return StrUtils::Stricmp(data, string.data);
+#if defined(DESIRE_PLATFORM_WINDOWS)
+	return _stricmp(data, string.data);
+#else
+	return strcasecmp(data, string.data);
+#endif
 }
 
 bool String::StartsWith(const String& prefix) const

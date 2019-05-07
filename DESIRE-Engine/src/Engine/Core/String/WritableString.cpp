@@ -1,39 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/WritableString.h"
-#include "Engine/Core/String/StrUtils.h"
 
-WritableString::WritableString()
-{
-
-}
-
-void WritableString::ToLower()
-{
-	StrUtils::ToLower(data);
-}
-
-void WritableString::ToUpper()
-{
-	StrUtils::ToUpper(data);
-}
-
-void WritableString::Trim()
-{
-	// Remove from end
-	while(size > 0 && StrUtils::IsSpace(data[size - 1]))
-	{
-		size--;
-	}
-	data[size] = '\0';
-
-	// Remove from beginning
-	const char *newData = StrUtils::SkipSpaces(data);
-	if(newData != data)
-	{
-		size -= newData - data;
-		memmove(data, newData, size + 1);
-	}
-}
+#include <cctype>	// for std::tolower() and std::toupper()
 
 void WritableString::Assign(const char *str, size_t numChars)
 {
@@ -237,6 +205,54 @@ WritableString& WritableString::operator +=(float number)
 		Append(str, len);
 	}
 	return *this;
+}
+
+void WritableString::Trim()
+{
+	auto IsSpace = [](char c)
+	{
+		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+	};
+
+	// Remove from end
+	while(size > 0 && IsSpace(data[size - 1]))
+	{
+		size--;
+	}
+	data[size] = '\0';
+
+	// Remove from beginning
+	char *ch = data;
+	while(*ch != '\0' && IsSpace(*ch))
+	{
+		++ch;
+	}
+
+	if(ch != data)
+	{
+		size -= ch - data;
+		memmove(data, ch, size + 1);
+	}
+}
+
+void WritableString::ToLower()
+{
+	char *ch = data;
+	while(*ch != '\0')
+	{
+		*ch = (char)std::tolower(*ch);
+		ch++;
+	}
+}
+
+void WritableString::ToUpper()
+{
+	char *ch = data;
+	while(*ch != '\0')
+	{
+		*ch = (char)std::toupper(*ch);
+		ch++;
+	}
 }
 
 void WritableString::Replace_Internal(size_t pos, size_t numChars, const String& replaceTo)
