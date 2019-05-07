@@ -14,6 +14,10 @@ constexpr int kLastMappedKeyCode = 126;
 static Display *s_display = nullptr;
 static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 1] = { (EKeyCode)0 };
 
+// --------------------------------------------------------------------------------------------------------------------
+//	InputImpl
+// --------------------------------------------------------------------------------------------------------------------
+
 class InputImpl
 {
 public:
@@ -99,6 +103,10 @@ public:
 	}
 };
 
+// --------------------------------------------------------------------------------------------------------------------
+//	Input
+// --------------------------------------------------------------------------------------------------------------------
+
 void Input::Init_internal(OSWindow *window)
 {
 	ASSERT(s_display == nullptr && "Input is already initialized");
@@ -144,7 +152,7 @@ void Input::Init_internal(OSWindow *window)
 //	s_keyConversionTable[] = KEY_APPS;
 }
 
-void Input::Kill_internal)
+void Input::Kill_internal()
 {
 	if(s_display != nullptr)
 	{

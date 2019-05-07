@@ -13,12 +13,154 @@ static EventHandlerUPP s_keyboardUPP = nullptr;
 static EventHandlerUPP s_mouseUPP = nullptr;
 static EKeyCode s_keyConversionTable[256] = {};
 
+// --------------------------------------------------------------------------------------------------------------------
+//	InputImpl
+// --------------------------------------------------------------------------------------------------------------------
+
 class InputImpl
 {
 public:
-	static OSStatus Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData);
-	static OSStatus Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData);
+	static OSStatus Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
+	{
+		Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
+
+		uint32 eventKind = GetEventKind(event);
+		switch(eventKind)
+		{
+			case kEventRawKeyDown:
+			{
+				UInt32 virtualKey;
+				GetEventParameter(event, 'kcod', typeUInt32, nullptr, sizeof(UInt32), nullptr, &virtualKey);
+				if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
+				{
+					const EKeyCode keyCode = keyConversionTable[virtualKey];
+					keyboard.HandleButton(keyCode, true);
+				}
+				break;
+			}
+
+			case kEventRawKeyUp:
+			{
+				UInt32 virtualKey;
+				GetEventParameter(event, 'kcod', typeUInt32, nullptr, sizeof(UInt32), nullptr, &virtualKey);
+				if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
+				{
+					const EKeyCode keyCode = keyConversionTable[virtualKey];
+					keyboard.HandleButton(keyCode, false);
+				}
+				break;
+			}
+
+			case kEventRawKeyModifiersChanged:
+			{
+				UInt32 modifiers = 0;
+				GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
+
+				keyboard.HandleButton(KEY_LCONTROL,	(modifiers & controlKey));
+				keyboard.HandleButton(KEY_LSHIFT,	(modifiers & shiftKey));
+				keyboard.HandleButton(KEY_LALT,		(modifiers & optionKey));
+				keyboard.HandleButton(KEY_LWIN,		(modifiers & cmdKey));
+				keyboard.HandleButton(KEY_CAPSLOCK,	(modifiers & alphaLock));
+				keyboard.HandleButton(KEY_APPS,		(modifiers & kEventKeyModifierFnMask));
+	//			keyboard.HandleButton(KEY_,			(modifiers & kEventKeyModifierNumLockMask));
+				break;
+			}
+		}
+
+		return CallNextEventHandler(nextHandler, event);
+	}
+
+	static OSStatus Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
+	{
+		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
+
+		UInt32 eventKind = GetEventKind(event);
+		switch(eventKind)
+		{
+			case kEventMouseDown:
+			{
+				EventMouseButton button = 0;
+				UInt32 modifiers = 0;
+				GetEventParameter(event, kEventParamMouseButton, typeMouseButton, nullptr, sizeof(EventMouseButton), nullptr, &button);
+				GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
+
+				if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
+				{
+					mouse.HandleButton(Mouse::BUTTON_MIDDLE, true);
+				}
+				else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
+				{
+					mouse.HandleButton(Mouse::BUTTON_RIGHT, true);
+				}
+				else if(button == kEventMouseButtonPrimary)
+				{
+					mouse.HandleButton(Mouse::BUTTON_LEFT, true);
+				}
+				break;
+			}
+
+			case kEventMouseUp:
+			{
+				EventMouseButton button = 0;
+				UInt32 modifiers = 0;
+				GetEventParameter(event, kEventParamMouseButton, typeMouseButton, nullptr, sizeof(EventMouseButton), nullptr, &button);
+				GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
+
+				if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
+				{
+					mouse.HandleButton(Mouse::BUTTON_MIDDLE, false);
+				}
+				else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
+				{
+					mouse.HandleButton(Mouse::BUTTON_RIGHT, false);
+				}
+				else if(button == kEventMouseButtonPrimary)
+				{
+					mouse.HandleButton(Mouse::BUTTON_LEFT, false);
+				}
+				break;
+			}
+
+			case kEventMouseDragged:
+			case kEventMouseMoved:
+			{
+				HIPoint delta = { 0.0f, 0.0f };
+				GetEventParameter(event, kEventParamMouseDelta, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &delta);
+				mouse.HandleAxis(Mouse::MOUSE_X, delta.x);
+				mouse.HandleAxis(Mouse::MOUSE_Y, delta.y);
+
+				HIPoint location = { 0.0f, 0.0f };
+				GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &location);
+				Modules::Input->mouseCursorPos = Vector2(location.x, location.y);
+				break;
+			}
+
+			case kEventMouseWheelMoved:
+			{
+				EventMouseWheelAxis wheelAxis = 0;
+				GetEventParameter(event, kEventParamMouseWheelAxis, typeMouseWheelAxis, nullptr, sizeof(EventMouseWheelAxis), nullptr, &wheelAxis);
+				SInt32 wheelDelta = 0;
+				GetEventParameter(event, kEventParamMouseWheelDelta, typeSInt32, nullptr, sizeof(SInt32), nullptr, &wheelDelta);
+
+				if(wheelAxis == kEventMouseWheelAxisY)
+				{
+					mouse.HandleAxis(Mouse::WHEEL, (float)wheelDelta);
+				}
+				else if(wheelAxis == kEventMouseWheelAxisX)
+				{
+					mouse.HandleAxis(Mouse::WHEEL_HORIZONTAL, (float)wheelDelta);
+				}
+				break;
+			}
+		}
+
+		return CallNextEventHandler(nextHandler, event);
+	}
 };
+
+// --------------------------------------------------------------------------------------------------------------------
+//	Input
+// --------------------------------------------------------------------------------------------------------------------
 
 void Input::Init_internal(OSWindow *window)
 {
@@ -186,143 +328,6 @@ void Input::Kill_internal()
 void Input::Update_internal()
 {
 
-}
-
-OSStatus InputImpl::Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
-{
-	Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
-
-	uint32 eventKind = GetEventKind(event);
-	switch(eventKind)
-	{
-		case kEventRawKeyDown:
-		{
-			UInt32 virtualKey;
-			GetEventParameter(event, 'kcod', typeUInt32, nullptr, sizeof(UInt32), nullptr, &virtualKey);
-			if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
-			{
-				const EKeyCode keyCode = keyConversionTable[virtualKey];
-				keyboard.HandleButton(keyCode, true);
-			}
-			break;
-		}
-
-		case kEventRawKeyUp:
-		{
-			UInt32 virtualKey;
-			GetEventParameter(event, 'kcod', typeUInt32, nullptr, sizeof(UInt32), nullptr, &virtualKey);
-			if(virtualKey < DESIRE_ASIZEOF(keyConversionTable))
-			{
-				const EKeyCode keyCode = keyConversionTable[virtualKey];
-				keyboard.HandleButton(keyCode, false);
-			}
-			break;
-		}
-
-		case kEventRawKeyModifiersChanged:
-		{
-			UInt32 modifiers = 0;
-			GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
-
-			keyboard.HandleButton(KEY_LCONTROL,	(modifiers & controlKey));
-			keyboard.HandleButton(KEY_LSHIFT,	(modifiers & shiftKey));
-			keyboard.HandleButton(KEY_LALT,		(modifiers & optionKey));
-			keyboard.HandleButton(KEY_LWIN,		(modifiers & cmdKey));
-			keyboard.HandleButton(KEY_CAPSLOCK,	(modifiers & alphaLock));
-			keyboard.HandleButton(KEY_APPS,		(modifiers & kEventKeyModifierFnMask));
-//			keyboard.HandleButton(KEY_,			(modifiers & kEventKeyModifierNumLockMask));
-			break;
-		}
-	}
-
-	return CallNextEventHandler(nextHandler, event);
-}
-
-OSStatus InputImpl::Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
-{
-	Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
-
-	UInt32 eventKind = GetEventKind(event);
-	switch(eventKind)
-	{
-		case kEventMouseDown:
-		{
-			EventMouseButton button = 0;
-			UInt32 modifiers = 0;
-			GetEventParameter(event, kEventParamMouseButton, typeMouseButton, nullptr, sizeof(EventMouseButton), nullptr, &button);
-			GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
-
-			if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
-			{
-				mouse.HandleButton(Mouse::BUTTON_MIDDLE, true);
-			}
-			else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
-			{
-				mouse.HandleButton(Mouse::BUTTON_RIGHT, true);
-			}
-			else if(button == kEventMouseButtonPrimary)
-			{
-				mouse.HandleButton(Mouse::BUTTON_LEFT, true);
-			}
-			break;
-		}
-
-		case kEventMouseUp:
-		{
-			EventMouseButton button = 0;
-			UInt32 modifiers = 0;
-			GetEventParameter(event, kEventParamMouseButton, typeMouseButton, nullptr, sizeof(EventMouseButton), nullptr, &button);
-			GetEventParameter(event, kEventParamKeyModifiers, typeUInt32, nullptr, sizeof(UInt32), nullptr, &modifiers);
-
-			if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
-			{
-				mouse.HandleButton(Mouse::BUTTON_MIDDLE, false);
-			}
-			else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
-			{
-				mouse.HandleButton(Mouse::BUTTON_RIGHT, false);
-			}
-			else if(button == kEventMouseButtonPrimary)
-			{
-				mouse.HandleButton(Mouse::BUTTON_LEFT, false);
-			}
-			break;
-		}
-
-		case kEventMouseDragged:
-		case kEventMouseMoved:
-		{
-			HIPoint delta = { 0.0f, 0.0f };
-			GetEventParameter(event, kEventParamMouseDelta, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &delta);
-			mouse.HandleAxis(Mouse::MOUSE_X, delta.x);
-			mouse.HandleAxis(Mouse::MOUSE_Y, delta.y);
-
-			HIPoint location = { 0.0f, 0.0f };
-			GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &location);
-			Modules::Input->mouseCursorPos = Vector2(location.x, location.y);
-			break;
-		}
-
-		case kEventMouseWheelMoved:
-		{
-			EventMouseWheelAxis wheelAxis = 0;
-			GetEventParameter(event, kEventParamMouseWheelAxis, typeMouseWheelAxis, nullptr, sizeof(EventMouseWheelAxis), nullptr, &wheelAxis);
-			SInt32 wheelDelta = 0;
-			GetEventParameter(event, kEventParamMouseWheelDelta, typeSInt32, nullptr, sizeof(SInt32), nullptr, &wheelDelta);
-
-			if(wheelAxis == kEventMouseWheelAxisY)
-			{
-				mouse.HandleAxis(Mouse::WHEEL, (float)wheelDelta);
-			}
-			else if(wheelAxis == kEventMouseWheelAxisX)
-			{
-				mouse.HandleAxis(Mouse::WHEEL_HORIZONTAL, (float)wheelDelta);
-			}
-			break;
-		}
-	}
-
-	return CallNextEventHandler(nextHandler, event);
 }
 
 #endif	// #if defined(DESIRE_PLATFORM_OSX)

@@ -10,13 +10,25 @@
 static CMs_motionManager *s_motionManager = nil;
 static CMAttitude *s_referenceAttitude = nil;
 
+// --------------------------------------------------------------------------------------------------------------------
+//	InputImpl
+// --------------------------------------------------------------------------------------------------------------------
+
 class InputImpl
 {
 public:
-	static void ResetGyroscope();
+	static void InputImpl::ResetGyroscope()
+	{
+		[s_referenceAttitude release];
+		s_referenceAttitude = [s_motionManager.deviceMotion.attitude retain];
+	}
 };
 
-void Input::Init_internal(IWindow *window)
+// --------------------------------------------------------------------------------------------------------------------
+//	Input
+// --------------------------------------------------------------------------------------------------------------------
+
+void Input::Init_internal(OSWindow *window)
 {
 	s_motionManager = [[CMs_motionManager alloc] init];
 
@@ -77,12 +89,6 @@ void Input::Update_internal()
 		gamepad.HandleAxisAbsolute(SENSOR_MAGNETIC_Y, s_motionManager.deviceMotion.magneticField.field.y);
 		gamepad.HandleAxisAbsolute(SENSOR_MAGNETIC_Z, s_motionManager.deviceMotion.magneticField.field.z);
 	}
-}
-
-void InputImpl::ResetGyroscope()
-{
-	[s_referenceAttitude release];
-	s_referenceAttitude = [s_motionManager.deviceMotion.attitude retain];
 }
 
 #endif	// #if defined(DESIRE_PLATFORM_IOS)
