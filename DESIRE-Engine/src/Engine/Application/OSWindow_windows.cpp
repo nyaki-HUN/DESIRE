@@ -6,6 +6,10 @@
 #include "Engine/Core/String/WritableString.h"
 #include "Engine/Core/WINDOWS/os.h"
 
+// --------------------------------------------------------------------------------------------------------------------
+//	OSWindowImpl
+// --------------------------------------------------------------------------------------------------------------------
+
 class OSWindowImpl
 {
 public:
@@ -131,6 +135,10 @@ LRESULT CALLBACK OSWindowImpl::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARA
 
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
+
+// --------------------------------------------------------------------------------------------------------------------
+//	OSWindow
+// --------------------------------------------------------------------------------------------------------------------
 
 OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 	: width(std::max(kWindowMinSize, creationParams.width))
