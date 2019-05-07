@@ -9,7 +9,7 @@ DynamicString::DynamicString(size_t numReservedChars)
 
 DynamicString::DynamicString(const char *str, size_t size)
 {
-	InitWithData(str, size);
+	Assign(str, size);
 }
 
 DynamicString::DynamicString(DynamicString&& string)
@@ -30,15 +30,13 @@ DynamicString::~DynamicString()
 
 DynamicString& DynamicString::operator =(const String& string)
 {
-	ASSERT(this != &string);	// It's not allowed to copy from ourself
-	InitWithData(string.Str(), string.Length());
+	Assign(string.Str(), string.Length());
 	return *this;
 }
 
 DynamicString& DynamicString::operator =(const DynamicString& string)
 {
-	ASSERT(this != &string);	// It's not allowed to copy from ourself
-	InitWithData(string.Str(), string.Length());
+	Assign(string.Str(), string.Length());
 	return *this;
 }
 

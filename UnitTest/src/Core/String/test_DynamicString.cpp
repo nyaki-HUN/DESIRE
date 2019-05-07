@@ -31,7 +31,7 @@ TEST_CASE("DynamicString", "[Core]")
 		CHECK(stringMoveConstructed.Equals(charSeq));
 	}
 
-	SECTION("operator =")
+	SECTION("operator =()")
 	{
 		DynamicString s;
 
@@ -109,6 +109,12 @@ TEST_CASE("WritableString", "[Core]")
 		trimString.Trim();
 		CHECK(trimString.Equals(""));
 		CHECK(trimString.Length() == 0);
+	}
+
+	SECTION("Assign()")
+	{
+		string.Assign(charSeq, 4);
+		CHECK(string.Equals("Stri"));
 	}
 
 	SECTION("Insert()")

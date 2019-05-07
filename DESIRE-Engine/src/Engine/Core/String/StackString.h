@@ -17,7 +17,7 @@ public:
 	StackString(const char *str, size_t size)
 	{
 		data = charBuffer;
-		InitWithData(str, size);
+		Assign(str, size);
 	}
 
 	StackString(const String& string)						: StackString(string.Str(), string.Length()) {}
@@ -25,7 +25,7 @@ public:
 
 	StackString<STACK_SIZE>& operator =(const String& string)
 	{
-		InitWithData(string.Str(), string.Length());
+		Assign(string.Str(), string.Length());
 		return *this;
 	}
 

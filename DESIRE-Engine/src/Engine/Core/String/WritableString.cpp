@@ -35,6 +35,22 @@ void WritableString::Trim()
 	}
 }
 
+void WritableString::Assign(const char *str, size_t numChars)
+{
+	ASSERT(str != nullptr);
+	ASSERT(data != str);	// It's not allowed to copy from ourself
+
+	if(!Reserve(numChars))
+	{
+		ASSERT(false);
+		return;
+	}
+
+	memcpy(data, str, numChars);
+	size = numChars;
+	data[size] = '\0';
+}
+
 void WritableString::Insert(size_t startIndex, const char *str, size_t numChars)
 {
 	ASSERT(str != nullptr);
@@ -223,19 +239,4 @@ void WritableString::Replace_Internal(size_t pos, size_t numChars, const String&
 	size += replaceTo.Length() - numChars;
 
 	memcpy(data + pos, replaceTo.Str(), replaceTo.Length());
-}
-
-void WritableString::InitWithData(const char *newData, size_t newSize)
-{
-	ASSERT(newData != nullptr);
-
-	if(!Reserve(newSize))
-	{
-		ASSERT(false);
-		return;
-	}
-
-	memcpy(data, newData, newSize);
-	size = newSize;
-	data[size] = '\0';
 }

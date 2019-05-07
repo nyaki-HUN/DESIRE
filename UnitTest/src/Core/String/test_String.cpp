@@ -79,7 +79,7 @@ TEST_CASE("String", "[Core]")
 		CHECK(floatInString7.FloatValue() == FLT_MAX);
 	}
 
-	SECTION("Compare() | CompareIgnoreCase() | operator <")
+	SECTION("Compare() | CompareIgnoreCase() | operator <()")
 	{
 		String s("XXX");
 

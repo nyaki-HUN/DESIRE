@@ -13,19 +13,15 @@ public:
 	// Remove whitespaces from both the beginning and end of the string
 	void Trim();
 
+	// Assign a new value to the string, replacing its current contents
+	void Assign(const char *str, size_t numChars);
+
 	// Insert characters
 	void Insert(size_t startIndex, const char *str, size_t numChars);
-
-	void Insert(size_t startIndex, const String& string)
-	{
-		Insert(startIndex, string.Str(), string.Length());
-	}
+	void Insert(size_t startIndex, const String& string)				{ Insert(startIndex, string.Str(), string.Length()); }
 
 	template<size_t SIZE>
-	void Insert(size_t startIndex, const char(&str)[SIZE])
-	{
-		Insert(startIndex, str, SIZE - 1);
-	}
+	void Insert(size_t startIndex, const char(&str)[SIZE])				{ Insert(startIndex, str, SIZE - 1); }
 
 	// Remove characters
 	void RemoveFrom(size_t startIndex, size_t numChars = SIZE_MAX);
@@ -56,5 +52,4 @@ protected:
 	virtual bool Reserve(size_t newSize) = 0;
 
 	void Replace_Internal(size_t pos, size_t numChars, const String& replaceTo);
-	void InitWithData(const char *data, size_t size);
 };

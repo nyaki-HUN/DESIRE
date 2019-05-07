@@ -10,13 +10,11 @@ public:
 	DynamicString(const String& string)				: DynamicString(string.Str(), string.Length()) {}
 	DynamicString(const DynamicString& string)		: DynamicString(string.Str(), string.Length()) {}
 	DynamicString(DynamicString&& string);
-	~DynamicString() override;
 
 	template<size_t SIZE>
-	DynamicString(const char(&str)[SIZE])
-	{
-		InitWithData(str, SIZE - 1);
-	}
+	DynamicString(const char(&str)[SIZE])			: DynamicString(str, SIZE - 1) {}
+
+	~DynamicString() override;
 
 	DynamicString& operator =(const String& string);
 	DynamicString& operator =(const DynamicString& string);
