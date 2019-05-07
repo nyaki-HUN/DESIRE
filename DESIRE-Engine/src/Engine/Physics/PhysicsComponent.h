@@ -7,8 +7,8 @@
 
 #include <memory>
 
-enum class EPhysicsCollisionLayer;
 class ColliderShape;
+enum class EPhysicsCollisionLayer;
 
 class PhysicsComponent : public Component
 {

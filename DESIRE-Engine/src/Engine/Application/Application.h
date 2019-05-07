@@ -3,7 +3,6 @@
 #include "Engine/Application/OSWindowCreationParams.h"
 #include "Engine/Core/Factory.h"
 
-enum class EAppEventType;
 class CoreAppEvent;
 class OSWindow;
 class Physics;
@@ -11,6 +10,7 @@ class Render;
 class ScriptSystem;
 class SoundSystem;
 class Timer;
+enum class EAppEventType;
 
 class Application
 {
