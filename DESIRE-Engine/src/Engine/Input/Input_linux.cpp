@@ -3,8 +3,8 @@
 #if defined(DESIRE_PLATFORM_LINUX)
 
 #include "Engine/Input/Input.h"
+#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/Modules.h"
-#include "Engine/Core/LINUX/LINUXWindow.h"
 
 #include <X11/Xlib.h>
 
@@ -17,9 +17,86 @@ static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 
 class InputImpl
 {
 public:
-	static void Handle_KeyPress_KeyRelease(const XEvent& event);
-	static void Handle_ButtonPress_ButtonRelease(const XEvent& event);
-	static void Handle_MotionNotify(const XEvent& event);
+	static void Handle_KeyPress_KeyRelease(const void *param1, const void *)
+	{
+		const XEvent& event = *static_cast<const XEvent*>(param1);
+		Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
+
+		EKeyCode keyCode = (EKeyCode)0;
+		if(event.xkey.keycode < kFirstMappedKeyCode)
+		{
+			keyCode = (EKeyCode)event.xkey.keycode;
+		}
+		else
+		{
+			int index = event.xkey.keycode - kFirstMappedKeyCode;
+			if(index < DESIRE_ASIZEOF(keyConversionTable))
+			{
+				keyCode = keyConversionTable[index];
+			}
+		}
+
+		if(event.type == KeyPress)
+		{
+			keyboard.HandleButton(keyCode, true);
+
+			// Add typed UTF-8 character
+			char buffer[5] = {};
+			XLookupString(&event.xkey, buffer, DESIRE_ASIZEOF(buffer), nullptr, nullptr);
+
+			char *typingCharacters = Modules::Input->typingCharacters;
+			const size_t len = strlen(typingCharacters);
+			const size_t bufferLen = strlen(buffer);
+			if(len + bufferLen + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
+			{
+				memcpy(&typingCharacters[len], buffer, bufferLen);
+				typingCharacters[len + bufferLen + 1] = '\0';
+			}
+		}
+		else
+		{
+			keyboard.HandleButton(keyCode, false);
+		}
+	}
+
+	static void Handle_ButtonPress_ButtonRelease(const void *param1, const void *)
+	{
+		const XEvent& event = *static_cast<const XEvent*>(param1);
+		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
+		const bool isDown = (event.type == ButtonPress);
+
+		switch(event.xbutton.button)
+		{
+			case Button1:	mouse.HandleButton(Mouse::BUTTON_LEFT, isDown); break;
+			case Button2:	mouse.HandleButton(Mouse::BUTTON_MIDDLE, isDown); break;
+			case Button3:	mouse.HandleButton(Mouse::BUTTON_RIGHT, isDown); break;
+
+			case Button4:
+				if(isDown)
+				{
+					mouse.HandleAxis(Mouse::WHEEL, 1.0f);
+				}
+				break;
+
+			case Button5:
+				if(isDown)
+				{
+					mouse.HandleAxis(Mouse::WHEEL, -1.0f);
+				}
+				break;
+		}
+	}
+
+	static void Handle_MotionNotify(const void *param1, const void *)
+	{
+		const XEvent& event = *static_cast<const XEvent*>(param1);
+		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
+
+		mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)event.xmotion.x);
+		mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)event.xmotion.y);
+
+		Modules::Input->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
+	}
 };
 
 void Input::Init_internal(OSWindow *window)
@@ -79,84 +156,6 @@ void Input::Kill_internal)
 void Input::Update_internal()
 {
 
-}
-
-void InputImpl::Handle_KeyPress_KeyRelease(const XEvent& event)
-{
-	Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
-
-	EKeyCode keyCode = (EKeyCode)0;
-	if(event.xkey.keycode < kFirstMappedKeyCode)
-	{
-		keyCode = (EKeyCode)event.xkey.keycode;
-	}
-	else
-	{
-		int index = event.xkey.keycode - kFirstMappedKeyCode;
-		if(index < DESIRE_ASIZEOF(keyConversionTable))
-		{
-			keyCode = keyConversionTable[index];
-		}
-	}
-
-	if(event.type == KeyPress)
-	{
-		keyboard.HandleButton(keyCode, true);
-
-		// Add typed UTF-8 character
-		char buffer[5] = {};
-		XLookupString(&event.xkey, buffer, DESIRE_ASIZEOF(buffer), nullptr, nullptr);
-
-		char *typingCharacters = Modules::Input->typingCharacters;
-		const size_t len = strlen(typingCharacters);
-		const size_t bufferLen = strlen(buffer);
-		if(len + bufferLen + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
-		{
-			memcpy(&typingCharacters[len], buffer, bufferLen);
-			typingCharacters[len + bufferLen + 1] = '\0';
-		}
-	}
-	else
-	{
-		keyboard.HandleButton(keyCode, false);
-	}
-}
-
-void InputImpl::Handle_ButtonPress_ButtonRelease(const XEvent& event)
-{
-	Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
-
-	const bool isDown = (event.type == ButtonPress)
-	switch(event.xbutton.button)
-	{
-		case Button1:	mouse.HandleButton(Mouse::BUTTON_LEFT, isDown); break;
-		case Button2:	mouse.HandleButton(Mouse::BUTTON_MIDDLE, isDown); break;
-		case Button3:	mouse.HandleButton(Mouse::BUTTON_RIGHT, isDown); break;
-
-		case Button4:
-			if(isDown)
-			{
-				mouse.HandleAxis(Mouse::WHEEL, 1.0f);
-			}
-			break;
-
-		case Button5:
-			if(isDown)
-			{
-				mouse.HandleAxis(Mouse::WHEEL, -1.0f);
-			}
-			break;
-	}
-}
-
-void InputImpl::Handle_MotionNotify(const XEvent& event)
-{
-	Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
-
-	mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)event.xmotion.x);
-	mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)event.xmotion.y);
-
-	Modules::Input->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
 }
 
 #endif	// #if defined(DESIRE_PLATFORM_LINUX)

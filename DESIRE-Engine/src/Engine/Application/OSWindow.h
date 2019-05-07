@@ -1,17 +1,18 @@
 #pragma once
 
+#include <map>
 #include <memory>
 
+class OSWindowImpl;
 class String;
 class WritableString;
 struct OSWindowCreationParams;
 
 class OSWindow
 {
-protected:
-	OSWindow(const OSWindowCreationParams& creationParams);
-
 public:
+	typedef void(*MessageHandler_t)(const void *param1, const void *param2);
+
 	enum ECursor
 	{
 		CURSOR_ARROW,
@@ -26,27 +27,27 @@ public:
 		NUM_CURSORS
 	};
 
-	virtual ~OSWindow();
+	OSWindow(const OSWindowCreationParams& creationParams);
+	~OSWindow();
 
 	uint16_t GetWidth() const;
 	uint16_t GetHeight() const;
 	bool IsFullscreen() const;
 	bool IsActive() const;
 
-	virtual void HandleWindowMessages() = 0;
-	virtual void* GetHandle() const = 0;
+	void HandleWindowMessages();
+	void* GetHandle() const;
 
-	virtual void SetWindowTitle(const char *newTitle) = 0;
+	void RegisterMessageHandler(int msgType, MessageHandler_t messageHandler);
+
+	void SetWindowTitle(const char *newTitle);
 
 	// Change the OS cursor
-	virtual void SetCursor(ECursor cursor) = 0;
+	void SetCursor(ECursor cursor);
 
 	// Clipboard
-	virtual bool SetClipboardString(const String& string) = 0;
-	virtual void GetClipboardString(WritableString& outString) = 0;
-
-	// Create a new window
-	static std::unique_ptr<OSWindow> Create(const OSWindowCreationParams& creationParams);
+	bool SetClipboardString(const String& string);
+	void GetClipboardString(WritableString& outString);
 
 protected:
 	void SetSize(uint16_t width, uint16_t height);
@@ -55,6 +56,10 @@ protected:
 
 	uint16_t width;
 	uint16_t height;
-	bool isFullscreen;
-	bool isActive;
+	bool isFullscreen = false;
+	bool isActive = false;
+	std::map<int, MessageHandler_t> additionalMessageHandlers;
+	std::unique_ptr<OSWindowImpl> impl;
+
+	friend class OSWindowImpl;
 };

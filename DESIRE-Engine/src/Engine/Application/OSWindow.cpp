@@ -1,21 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Application/OSWindow.h"
-#include "Engine/Application/OSWindowCreationParams.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
-
-OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
-	: isFullscreen(creationParams.isFullscreen)
-	, isActive(false)
-{
-	width = std::max(kWindowMinSize, creationParams.width);
-	height = std::max(kWindowMinSize, creationParams.height);
-}
-
-OSWindow::~OSWindow()
-{
-
-}
 
 uint16_t OSWindow::GetWidth() const
 {
@@ -35,6 +21,12 @@ bool OSWindow::IsFullscreen() const
 bool OSWindow::IsActive() const
 {
 	return isActive;
+}
+
+void OSWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHandler)
+{
+	ASSERT(messageHandler != nullptr);
+	additionalMessageHandlers[msgType] = messageHandler;
 }
 
 void OSWindow::SetSize(uint16_t i_width, uint16_t i_height)

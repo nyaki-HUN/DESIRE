@@ -1,49 +1,24 @@
-#include "stdafx.h"
-#include "Engine/Core/ANDROID/ANDROIDWindow.h"
-#include "Engine/Core/IApp.h"
-#include "Engine/Core/EAppEventType.h"
+#include "Engine/stdafx.h"
+
+#if defined(DESIRE_PLATFORM_ANDROID)
+
+#include "Engine/Application/OSWindow.h"
+#include "Engine/Application/Application.h"
+#include "Engine/Application/EAppEventType.h"
+#include "Engine/Core/Modules.h"
+#include "Engine/Core/String/WritableString.h"
 
 #include <android_native_app_glue.h>
 
-ANDROIDWindow::ANDROIDWindow(const IWindow::CreationParams& creationParams, ANativeWindow *nativeWindow)
-	: IWindow(creationParams)
-	, nativeWindow(nativeWindow)
+class OSWindowImpl
 {
+public:
+	static void HandleOnAppCmd(android_app *androidApp, int32_t cmd);
 
-}
+	ANativeWindow *nativeWindow = nullptr;
+};
 
-ANDROIDWindow::~ANDROIDWindow()
-{
-
-}
-
-void ANDROIDWindow::HandleWindowMessages()
-{
-
-}
-
-void* ANDROIDWindow::GetHandle() const
-{
-	return nativeWindow;
-}
-
-void ANDROIDWindow::SetCursor(ECursor cursor)
-{
-
-}
-
-bool ANDROIDWindow::SetClipboardString(const String& string)
-{
-	return false;
-}
-
-String ANDROIDWindow::GetClipboardString()
-{
-	String str;
-	return str;
-}
-
-void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
+void OSWindowImpl::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 {
 	switch(cmd)
 	{
@@ -60,13 +35,16 @@ void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 				int32_t width = ANativeWindow_getWidth(androidApp->window);
 				int32_t height = ANativeWindow_getHeight(androidApp->window);
 
-				IWindow::SCreationParams params;
+				OSWindowCreationParams params;
 				params.posX = 0;
 				params.posY = 0;
 				params.width = (uint16_t)width;
 				params.height = (uint16_t)height;
 				params.isFullscreen = true;
-				androidApp->userData = new ANDROIDWindow(params, androidApp->window);
+
+				OSWindow *window = new OSWindow(params);
+				window->impl->nativeWindow = androidApp->window;
+				androidApp->userData = window;
 			}
 			break;
 
@@ -97,12 +75,12 @@ void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 
 		// Command from main thread: the app's activity window has gained input focus
 		case APP_CMD_GAINED_FOCUS:
-			IApp::Get()->SendEvent(EAppEventType::ENTER_FOREGROUND);
+			Modules::Application->SendEvent(EAppEventType::EnterForeground);
 			break;
 
 		// Command from main thread: the app's activity window has lost input focus.
 		case APP_CMD_LOST_FOCUS:
-			IApp::Get()->SendEvent(EAppEventType::ENTER_BACKGROUND);
+			Modules::Application->SendEvent(EAppEventType::EnterBackground);
 			break;
 
 		// Command from main thread: the current device configuration has changed.
@@ -111,7 +89,7 @@ void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 
 		// Command from main thread: the system is running low on memory.
 		case APP_CMD_LOW_MEMORY:
-			IApp::Get()->SendEvent(EAppEventType::LOW_MEMORY);
+			Modules::Application->SendEvent(EAppEventType::LowMemory);
 			break;
 
 		// Command from main thread: the app's activity has been started.
@@ -141,12 +119,43 @@ void ANDROIDWindow::HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 	}
 }
 
-// --------------------------------------------------------------------------------------------------------------------
-//	IWindow
-// --------------------------------------------------------------------------------------------------------------------
-
-std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
+OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
+	: width(std::max(kWindowMinSize, creationParams.width))
+	, height(std::max(kWindowMinSize, creationParams.height))
+	, isFullscreen(creationParams.isFullscreen)
+	, impl(std::make_unique<OSWindowImpl>())
 {
-	DESIRE_TODO("Return global instance");
-	return nullptr;
+
 }
+
+OSWindow::~OSWindow()
+{
+
+}
+
+void OSWindow::HandleWindowMessages()
+{
+
+}
+
+void* OSWindow::GetHandle() const
+{
+	return impl->nativeWindow;
+}
+
+void OSWindow::SetCursor(ECursor cursor)
+{
+
+}
+
+bool OSWindow::SetClipboardString(const String& string)
+{
+	return false;
+}
+
+void OSWindow::GetClipboardString(WritableString& outString)
+{
+	outString.Clear();
+}
+
+#endif	// #if defined(DESIRE_PLATFORM_ANDROID)

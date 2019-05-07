@@ -62,7 +62,7 @@ int Application::Start(int argc, const char * const *argv)
 	// Create main window
 	{
 		CreationParams params = Modules::Application->GetCreationParams(argc, argv);
-		Modules::Application->mainWindow = OSWindow::Create(params.windowParams);
+		Modules::Application->mainWindow = std::make_unique<OSWindow>(params.windowParams);
 	}
 
 	Modules::Render->Init(Modules::Application->mainWindow.get());

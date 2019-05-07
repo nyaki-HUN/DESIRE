@@ -309,9 +309,6 @@
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.h">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSWindow.h">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
@@ -524,6 +521,18 @@
     <ClCompile Include="..\..\src\Engine\Application\OSWindow.cpp">
       <Filter>src\Engine\Application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\OSWindow_android.cpp">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\OSWindow_linux.cpp">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\OSWindow_osx.mm">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\OSWindow_windows.cpp">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Application\main_android.cpp">
       <Filter>src\Engine\Application</Filter>
     </ClCompile>
@@ -594,9 +603,6 @@
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSTimer.cpp">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSWindow.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\fs\FileSourceZip.cpp">
