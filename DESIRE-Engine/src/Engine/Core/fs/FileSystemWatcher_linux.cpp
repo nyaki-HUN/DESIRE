@@ -13,28 +13,19 @@ static int s_inotifyFD = -1;		// inotify file descriptor
 class FileSystemWatcherImpl
 {
 public:
-	int wd;
+	int wd = -1;
 };
 
-FileSystemWatcher::FileSystemWatcher()
-	: impl(std::make_unique<FileSystemWatcherImpl>())
-{
-
-}
-
-FileSystemWatcher::~FileSystemWatcher()
-{
-	inotify_rm_watch(s_inotifyFD, impl->wd);
-}
-
-std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
+FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
+	: actionCallback(actionCallback)
+	, impl(std::make_unique<FileSystemWatcherImpl>())
 {
 	if(s_inotifyFD < 0)
 	{
 		s_inotifyFD = inotify_init();
 		if(s_inotifyFD < 0)
 		{
-			return std::unique_ptr<FileSystemWatcher>(nullptr);
+			return;
 		}
 	}
 
@@ -42,14 +33,18 @@ std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& direc
 	if(wd < 0)
 	{
 		LOG_ERROR("FileSystemWatcher error: %s", strerror(errno));
-		return std::unique_ptr<FileSystemWatcher>(nullptr);
+		return;
 	}
 
-	FileSystemWatcher *watcher = new FileSystemWatcher();
-	watcher->actionCallback = actionCallback;
-	watcher->impl->wd = wd;
+	impl->wd = wd;
+}
 
-	return std::unique_ptr<FileSystemWatcher>(watcher);
+FileSystemWatcher::~FileSystemWatcher()
+{
+	if(impl->wd >= 0)
+	{
+		inotify_rm_watch(s_inotifyFD, impl->wd);
+	}
 }
 
 void FileSystemWatcher::UpdateAll()

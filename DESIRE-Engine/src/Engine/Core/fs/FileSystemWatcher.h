@@ -8,8 +8,6 @@ class String;
 
 class FileSystemWatcher
 {
-	FileSystemWatcher();
-
 public:
 	enum class EAction
 	{
@@ -18,15 +16,13 @@ public:
 		Modified
 	};
 
+	FileSystemWatcher(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback);
 	~FileSystemWatcher();
-
-	static std::unique_ptr<FileSystemWatcher> Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback);
 
 	static void UpdateAll();
 
 private:
 	std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback;
-
 	std::unique_ptr<FileSystemWatcherImpl> impl;
 
 	friend class FileSystemWatcherImpl;

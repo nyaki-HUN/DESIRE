@@ -12,11 +12,11 @@ public:
 	void RefreshWatch();
 	static void CALLBACK CompletionCallback(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped);
 
-	HANDLE dirHandle;
+	HANDLE dirHandle = INVALID_HANDLE_VALUE;
 	OVERLAPPED overlapped;
 
 	uint8_t buffer[8 * 1024];
-	bool isActive;
+	bool isActive = false;
 };
 
 void FileSystemWatcherImpl::RefreshWatch()
@@ -84,10 +84,27 @@ void CALLBACK FileSystemWatcherImpl::CompletionCallback(DWORD dwErrorCode, DWORD
 	}
 }
 
-FileSystemWatcher::FileSystemWatcher()
-	: impl(std::make_unique<FileSystemWatcherImpl>())
+FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
+	: actionCallback(actionCallback)
+	, impl(std::make_unique<FileSystemWatcherImpl>())
 {
-	
+	impl->overlapped.hEvent = this;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
+	impl->dirHandle = CreateFileA(
+		directory.Str(),
+		FILE_LIST_DIRECTORY,
+		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+		nullptr,
+		OPEN_EXISTING,
+		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+		nullptr);
+
+	if(impl->dirHandle == INVALID_HANDLE_VALUE)
+	{
+		LOG_ERROR("FileSystemWatcher error: directory not found (%s)", directory.Str());
+		return;
+	}
+
+	impl->RefreshWatch();
 }
 
 FileSystemWatcher::~FileSystemWatcher()
@@ -102,35 +119,10 @@ FileSystemWatcher::~FileSystemWatcher()
 		}
 	}
 
-	CloseHandle(impl->dirHandle);
-}
-
-std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
-{
-	HANDLE dirHandle = CreateFileA(
-		directory.Str(),
-		FILE_LIST_DIRECTORY,
-		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-		nullptr,
-		OPEN_EXISTING,
-		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-		nullptr);
-
-	if(dirHandle == INVALID_HANDLE_VALUE)
+	if(impl->dirHandle != INVALID_HANDLE_VALUE)
 	{
-		LOG_ERROR("FileSystemWatcher error: directory not found (%s)", directory.Str());
-		return std::unique_ptr<FileSystemWatcher>(nullptr);
+		CloseHandle(impl->dirHandle);
 	}
-
-	FileSystemWatcher *watcher = new FileSystemWatcher();
-	watcher->actionCallback = actionCallback;
-	watcher->impl->dirHandle = dirHandle;
-	watcher->impl->overlapped.hEvent = watcher;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
-	watcher->impl->isActive = false;
-
-	watcher->impl->RefreshWatch();
-
-	return std::unique_ptr<FileSystemWatcher>(watcher);
 }
 
 void FileSystemWatcher::UpdateAll()

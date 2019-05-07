@@ -9,8 +9,9 @@ class FileSystemWatcherImpl
 public:
 };
 
-FileSystemWatcher::FileSystemWatcher()
-	: impl(std::make_unique<FileSystemWatcherImpl>())
+FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
+	: actionCallback(actionCallback)
+	, impl(std::make_unique<FileSystemWatcherImpl>())
 {
 
 }
@@ -18,11 +19,6 @@ FileSystemWatcher::FileSystemWatcher()
 FileSystemWatcher::~FileSystemWatcher()
 {
 
-}
-
-std::unique_ptr<FileSystemWatcher> FileSystemWatcher::Create(const String& directory, std::function<void(FileSystemWatcher::EAction action, const char *filename)> actionCallback)
-{
-	return std::unique_ptr<FileSystemWatcher>(nullptr);
 }
 
 void FileSystemWatcher::UpdateAll()
