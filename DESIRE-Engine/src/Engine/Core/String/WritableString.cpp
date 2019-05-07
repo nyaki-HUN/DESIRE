@@ -209,13 +209,13 @@ WritableString& WritableString::operator +=(float number)
 
 void WritableString::Trim()
 {
-	auto IsSpace = [](char c)
+	auto IsWhiteSpace = [](char c)
 	{
 		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
 	};
 
 	// Remove from end
-	while(size > 0 && IsSpace(data[size - 1]))
+	while(size > 0 && IsWhiteSpace(data[size - 1]))
 	{
 		size--;
 	}
@@ -223,7 +223,7 @@ void WritableString::Trim()
 
 	// Remove from beginning
 	char *ch = data;
-	while(*ch != '\0' && IsSpace(*ch))
+	while(*ch != '\0' && IsWhiteSpace(*ch))
 	{
 		++ch;
 	}
