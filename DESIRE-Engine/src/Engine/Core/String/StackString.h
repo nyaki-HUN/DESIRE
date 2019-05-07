@@ -47,12 +47,12 @@ public:
 
 		va_list args;
 		va_start(args, format);
-		const int formattedSize = vsnprintf(string.data, STACK_SIZE, format, args);
+		const int requiredSize = vsnprintf(string.data, STACK_SIZE, format, args);
 		va_end(args);
 
-		if(formattedSize >= 0)
+		if(requiredSize > 0)
 		{
-			string.size = (size_t)formattedSize;
+			string.size = (requiredSize < STACK_SIZE) ? requiredSize : STACK_SIZE - 1;
 		}
 
 		return string;

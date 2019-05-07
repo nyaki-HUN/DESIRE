@@ -69,15 +69,27 @@ DynamicString DynamicString::SubString(size_t startIndex, size_t numChars) const
 
 DynamicString DynamicString::Format(const char *format, ...)
 {
-	char str[1024];
-
 	va_list args;
 	va_start(args, format);
-	const int formattedSize = vsnprintf(str, sizeof(str), format, args);
-	ASSERT(formattedSize < sizeof(str));
+
+	// Determine required size
+	va_list argsCopy;
+	va_copy(argsCopy, args);
+	const int requiredSize = vsnprintf(nullptr, 0, format, argsCopy);
+	va_end(argsCopy);
+
+	if(requiredSize <= 0)
+	{
+		va_end(args);
+		return DynamicString();
+	}
+
+	DynamicString string(requiredSize);
+	string.size = requiredSize;
+	vsnprintf(string.data, string.preallocatedSize, format, args);
 	va_end(args);
 
-	return (formattedSize >= 0) ? DynamicString(str, (size_t)formattedSize) : DynamicString();
+	return string;
 }
 
 bool DynamicString::Reserve(size_t numChars)
