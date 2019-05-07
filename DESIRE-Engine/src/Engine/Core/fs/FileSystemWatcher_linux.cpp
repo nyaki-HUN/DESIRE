@@ -10,11 +10,19 @@
 
 static int s_inotifyFD = -1;		// inotify file descriptor
 
+// --------------------------------------------------------------------------------------------------------------------
+//	FileSystemWatcherImpl
+// --------------------------------------------------------------------------------------------------------------------
+
 class FileSystemWatcherImpl
 {
 public:
 	int wd = -1;
 };
+
+// --------------------------------------------------------------------------------------------------------------------
+//	FileSystemWatcher
+// --------------------------------------------------------------------------------------------------------------------
 
 FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
 	: actionCallback(actionCallback)
