@@ -222,7 +222,7 @@ void InputImpl::Handle_WM_CHAR(WPARAM wParam, LPARAM lParam)
 
 	char *typingCharacters = Modules::Input->typingCharacters;
 	size_t len = strlen(typingCharacters);
-	if(len + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
+	if(len + 1 < Input::kMaxNumTypingCharacters)
 	{
 		typingCharacters[len] = ch;
 		typingCharacters[len + 1] = '\0';

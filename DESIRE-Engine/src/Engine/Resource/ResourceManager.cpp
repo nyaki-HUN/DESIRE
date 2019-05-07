@@ -157,7 +157,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file)
 	{
-		for(MeshLoaderFunc_t loaderFunc : meshLoaders)
+		for(MeshLoaderFunc_t loaderFunc : s_meshLoaders)
 		{
 			Mesh *mesh = loaderFunc(file);
 			if(mesh != nullptr)
@@ -179,7 +179,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath);
 	if(file)
 	{
-		for(ShaderLoaderFunc_t loaderFunc : shaderLoaders)
+		for(ShaderLoaderFunc_t loaderFunc : s_shaderLoaders)
 		{
 			Shader *shader = loaderFunc(file);
 			if(shader != nullptr)
@@ -200,7 +200,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file)
 	{
-		for(TextureLoaderFunc_t loaderFunc : textureLoaders)
+		for(TextureLoaderFunc_t loaderFunc : s_textureLoaders)
 		{
 			Texture *texture = loaderFunc(file);
 			if(texture != nullptr)

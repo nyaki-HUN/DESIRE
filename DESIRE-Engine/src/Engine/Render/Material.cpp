@@ -10,14 +10,14 @@ Material::ShaderParam::ShaderParam(HashedString name, std::function<void(void*)>
 
 const void* Material::ShaderParam::GetValue() const
 {
-	static float value[16] = {};
+	static float s_value[16] = {};
 
 	if(func != nullptr)
 	{
-		func(value);
+		func(s_value);
 	}
 
-	return value;
+	return s_value;
 }
 
 Material::Material()

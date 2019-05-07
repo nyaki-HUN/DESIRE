@@ -217,7 +217,7 @@ void RegisterMathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 		.Func("GetDouble", &Rand::GetDouble)
 		.Func("GetBool", &Rand::GetBool)
 	);
-	rootTable.SetInstance("globalRand", &Rand::globalRand);
+	rootTable.SetInstance("globalRand", &Rand::s_globalRand);
 }
 
 void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)

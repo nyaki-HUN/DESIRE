@@ -1,8 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/ConfigValue/IConfigValue.h"
 
-IConfigValue *IConfigValue::listHead = nullptr;
-IConfigValue *IConfigValue::listTail = nullptr;
+IConfigValue *IConfigValue::s_listHead = nullptr;
+IConfigValue *IConfigValue::s_listTail = nullptr;
 
 IConfigValue::IConfigValue(const char *name, const char *description)
 	: next(nullptr)
@@ -11,27 +11,27 @@ IConfigValue::IConfigValue(const char *name, const char *description)
 {
 	ASSERT(name != nullptr);
 
-	if(listHead == nullptr)
+	if(s_listHead == nullptr)
 	{
-		listHead = this;
+		s_listHead = this;
 	}
 	else
 	{
-		listTail->next = this;
+		s_listTail->next = this;
 	}
 
-	listTail = this;
+	s_listTail = this;
 }
 
 IConfigValue::~IConfigValue()
 {
-	if(this == listHead)
+	if(this == s_listHead)
 	{
-		listHead = listHead->next;
+		s_listHead = s_listHead->next;
 		return;
 	}
 
-	IConfigValue *prevConfig = listHead;
+	IConfigValue *prevConfig = s_listHead;
 	while(this != prevConfig->next)
 	{
 		prevConfig = prevConfig->next;
@@ -42,7 +42,7 @@ IConfigValue::~IConfigValue()
 
 IConfigValue* IConfigValue::FindConfigValue(const char *name)
 {
-	IConfigValue *config = listHead;
+	IConfigValue *config = s_listHead;
 	while(config != nullptr && strcmp(config->name, name) != 0)
 	{
 		config = config->next;

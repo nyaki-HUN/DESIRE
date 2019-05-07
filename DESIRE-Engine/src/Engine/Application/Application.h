@@ -72,12 +72,12 @@ private:
 	static void DestroyModules();
 
 	// Module factories
-	static const Factory<Application>::Func_t applicationFactory;
-	static const Factory<Physics>::Func_t physicsFactory;
-	static const Factory<Render>::Func_t renderFactory;
-	static const Factory<ScriptSystem>::Func_t scriptSystemFactory;
-	static const Factory<SoundSystem>::Func_t soundSystemFactory;
+	static const Factory<Application>::Func_t s_applicationFactory;
+	static const Factory<Physics>::Func_t s_physicsFactory;
+	static const Factory<Render>::Func_t s_renderFactory;
+	static const Factory<ScriptSystem>::Func_t s_scriptSystemFactory;
+	static const Factory<SoundSystem>::Func_t s_soundSystemFactory;
 
-	static bool isMainLoopRunning;
-	static int returnValue;
+	static bool s_isMainLoopRunning;
+	static int s_returnValue;
 };

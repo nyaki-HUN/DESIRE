@@ -56,12 +56,12 @@ void QuadTreeLeaf::Init()
 	maxSizeX = size.GetX() * kMaxResizeFactor;
 	maxSizeZ = size.GetZ() * kMaxResizeFactor;
 
-	if(objects.Size() <= QUAD_TREE_MIN_OBJECT_PER_LEAF)
+	if(objects.Size() <= kQuadTreeMinObjectPerLeaf)
 	{
 		return;
 	}
 
-	if(level > QUAD_TREE_MAX_LEVEL)
+	if(level > kQuadTreeMaxLevel)
 	{
 		return;
 	}

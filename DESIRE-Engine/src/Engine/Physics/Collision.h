@@ -7,7 +7,7 @@ class PhysicsComponent;
 class Collision
 {
 public:
-	static const int kMaxContactPoints = 4;
+	static constexpr int kMaxContactPoints = 4;
 
 	Collision()
 	{

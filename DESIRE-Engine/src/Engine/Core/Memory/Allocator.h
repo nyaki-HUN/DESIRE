@@ -7,12 +7,12 @@
 class Allocator
 {
 public:
-	static const size_t DEFAULT_ALIGNMENT = 8;
+	static constexpr size_t kDefaultAlignment = 8;
 
 	Allocator() {}
 	virtual ~Allocator() {}
 
-	virtual void* Allocate(size_t size, size_t alignment = Allocator::DEFAULT_ALIGNMENT) = 0;
+	virtual void* Allocate(size_t size, size_t alignment = Allocator::kDefaultAlignment) = 0;
 	virtual void Deallocate(void *ptr) = 0;
 
 	// Returns the default MallocAllocator

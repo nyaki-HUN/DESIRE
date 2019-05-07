@@ -6,7 +6,7 @@
 Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
 	: attrib(attrib)
 	, type(type)
-	, count((uint8_t)count)
+	, count(static_cast<uint8_t>(count))
 {
 	ASSERT(attrib != EAttrib::Num);
 	ASSERT(type != EAttribType::Num);
@@ -15,7 +15,7 @@ Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
 
 uint32_t Mesh::VertexDecl::GetSizeInBytes() const
 {
-	static const uint32_t sizePerAttribType[] =
+	const uint32_t sizePerAttribType[] =
 	{
 		sizeof(float),
 		sizeof(uint8_t),

@@ -7,15 +7,15 @@
 
 Allocator& Allocator::GetDefaultAllocator()
 {
-	static MallocAllocator defaultAllocator;
-	return defaultAllocator;
+	static MallocAllocator s_defaultAllocator;
+	return s_defaultAllocator;
 }
 
 Allocator& Allocator::GetFrameAllocator()
 {
 	static std::unique_ptr<char[]> data = std::make_unique<char[]>(DESIRE_FRAME_ALLOCATOR_SIZE);
-	static LinearAllocator frameAllocator(data.get(), DESIRE_FRAME_ALLOCATOR_SIZE);
-	return frameAllocator;
+	static LinearAllocator s_frameAllocator(data.get(), DESIRE_FRAME_ALLOCATOR_SIZE);
+	return s_frameAllocator;
 }
 
 void Allocator::ResetFrameAllocator()

@@ -281,7 +281,7 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 {
 	renderState &= ~BGFX_STATE_BLEND_MASK;
 
-	static const uint64_t blendConversionTable[] =
+	static const uint64_t s_blendConversionTable[] =
 	{
 		BGFX_STATE_BLEND_ZERO,				// EBlend::Zero
 		BGFX_STATE_BLEND_ONE,				// EBlend::One
@@ -297,15 +297,15 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 		BGFX_STATE_BLEND_FACTOR,			// EBlend::BlendFactor
 		BGFX_STATE_BLEND_INV_FACTOR			// EBlend::InvBlendFactor
 	};
-	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::InvBlendFactor + 1);
+	DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
 
-	const uint64_t srcRGB = blendConversionTable[(size_t)srcBlendRGB];
-	const uint64_t destRGB = blendConversionTable[(size_t)destBlendRGB];
-	const uint64_t srcAlpha = blendConversionTable[(size_t)srcBlendAlpha];
-	const uint64_t destAlpha = blendConversionTable[(size_t)destBlendAlpha];
+	const uint64_t srcRGB = s_blendConversionTable[(size_t)srcBlendRGB];
+	const uint64_t destRGB = s_blendConversionTable[(size_t)destBlendRGB];
+	const uint64_t srcAlpha = s_blendConversionTable[(size_t)srcBlendAlpha];
+	const uint64_t destAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
 	renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(srcRGB, destRGB, srcAlpha, destAlpha);
 
-	static const uint64_t equationConversionTable[] =
+	static const uint64_t s_equationConversionTable[] =
 	{
 		BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::Add
 		BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::Subtract
@@ -313,10 +313,10 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 		BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::Min
 		BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::Max
 	};
-	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::Max + 1);
+	DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
 
-	const uint64_t equationRGB = equationConversionTable[(size_t)blendOpRGB];
-	const uint64_t equationAlpha = equationConversionTable[(size_t)blendOpAlpha];
+	const uint64_t equationRGB = s_equationConversionTable[(size_t)blendOpRGB];
+	const uint64_t equationAlpha = s_equationConversionTable[(size_t)blendOpAlpha];
 	renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(equationRGB, equationAlpha);
 }
 
@@ -337,7 +337,7 @@ void BgfxRender::Bind(Mesh *mesh)
 
 	MeshRenderDataBgfx *renderData = new MeshRenderDataBgfx();
 
-	static const bgfx::Attrib::Enum attribConversionTable[] =
+	static const bgfx::Attrib::Enum s_attribConversionTable[] =
 	{
 		bgfx::Attrib::Position,		// Mesh::EAttrib::Position
 		bgfx::Attrib::Normal,		// Mesh::EAttrib::Normal
@@ -351,20 +351,20 @@ void BgfxRender::Bind(Mesh *mesh)
 		bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::Texcoord6
 		bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::Texcoord7
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribConversionTable, Mesh::EAttrib::Num);
+	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
 
-	static const bgfx::AttribType::Enum attribTypeConversionTable[] =
+	static const bgfx::AttribType::Enum s_attribTypeConversionTable[] =
 	{
 		bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::Float
 		bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::Uint8
 	};
-	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::Num);
+	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
 
 	renderData->vertexDecl.begin();
 	for(Mesh::VertexDecl& decl : mesh->vertexDecl)
 	{
 		const bool isNormalized = (decl.type == Mesh::EAttribType::Uint8);
-		renderData->vertexDecl.add(attribConversionTable[(size_t)decl.attrib], decl.count, attribTypeConversionTable[(size_t)decl.type], isNormalized);
+		renderData->vertexDecl.add(s_attribConversionTable[(size_t)decl.attrib], decl.count, s_attribTypeConversionTable[(size_t)decl.type], isNormalized);
 	}
 	renderData->vertexDecl.end();
 

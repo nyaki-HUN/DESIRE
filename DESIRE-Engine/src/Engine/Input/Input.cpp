@@ -3,7 +3,7 @@
 
 Input::Input()
 {
-	memset(typingCharacters, 0, MAX_NUM_TYPING_CHARACTERS);
+
 }
 
 Input::~Input()
@@ -58,7 +58,7 @@ void Input::Update()
 		gamepad.Update();
 	}
 
-	memset(typingCharacters, 0, MAX_NUM_TYPING_CHARACTERS);
+	memset(typingCharacters, 0, kMaxNumTypingCharacters);
 }
 
 void Input::Reset()

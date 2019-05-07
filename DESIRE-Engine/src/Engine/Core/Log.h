@@ -3,7 +3,7 @@
 class Log
 {
 public:
-	static const size_t kMaxMessageLength = 2048;
+	static constexpr size_t kMaxMessageLength = 2048;
 
 	struct LogData
 	{

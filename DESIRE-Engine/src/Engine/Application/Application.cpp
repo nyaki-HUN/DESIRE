@@ -10,8 +10,8 @@
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Sound/SoundSystem.h"
 
-bool Application::isMainLoopRunning = false;
-int Application::returnValue = 0;
+bool Application::s_isMainLoopRunning = false;
+int Application::s_returnValue = 0;
 
 Application::Application()
 {
@@ -46,16 +46,16 @@ void Application::SendEvent(EAppEventType eventType)
 
 int Application::Start(int argc, const char * const *argv)
 {
-	ASSERT(!isMainLoopRunning);
+	ASSERT(!s_isMainLoopRunning);
 
-	if(applicationFactory == nullptr)
+	if(s_applicationFactory == nullptr)
 	{
 		ASSERT(false && "Application factory is not set");
 		return -1;
 	}
 
 	LOG_DEBUG("DESIRE Engine is starting up...");
-	Modules::Application = applicationFactory();
+	Modules::Application = s_applicationFactory();
 	CreateModules();
 
 	// Create main window
@@ -75,21 +75,21 @@ int Application::Start(int argc, const char * const *argv)
 	Modules::Application = nullptr;
 	DestroyModules();
 
-	return returnValue;
+	return s_returnValue;
 }
 
 void Application::Stop(int i_returnValue)
 {
-	returnValue = i_returnValue;
-	isMainLoopRunning = false;
+	s_returnValue = i_returnValue;
+	s_isMainLoopRunning = false;
 }
 
 void Application::Run()
 {
 	Init();
 
-	isMainLoopRunning = true;
-	while(isMainLoopRunning)
+	s_isMainLoopRunning = true;
+	while(s_isMainLoopRunning)
 	{
 		timer->Update();
 		Modules::Input->Update();
@@ -124,26 +124,26 @@ void Application::CreateModules()
 {
 	Modules::Input = std::make_unique<Input>();
 
-	if(physicsFactory != nullptr)
+	if(s_physicsFactory != nullptr)
 	{
-		Modules::Physics = physicsFactory();
+		Modules::Physics = s_physicsFactory();
 	}
 
-	if(renderFactory != nullptr)
+	if(s_renderFactory != nullptr)
 	{
-		Modules::Render = renderFactory();
+		Modules::Render = s_renderFactory();
 	}
 
 	Modules::ResourceManager = std::make_unique<ResourceManager>();
 
-	if(soundSystemFactory != nullptr)
+	if(s_soundSystemFactory != nullptr)
 	{
-		Modules::SoundSystem = soundSystemFactory();
+		Modules::SoundSystem = s_soundSystemFactory();
 	}
 
-	if(scriptSystemFactory != nullptr)
+	if(s_scriptSystemFactory != nullptr)
 	{
-		Modules::ScriptSystem = scriptSystemFactory();
+		Modules::ScriptSystem = s_scriptSystemFactory();
 	}
 }
 

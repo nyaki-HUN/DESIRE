@@ -11,7 +11,7 @@ class OSWindow;
 class Input
 {
 public:
-	static const int MAX_NUM_TYPING_CHARACTERS = 8;
+	static constexpr int kMaxNumTypingCharacters = 8;
 
 	typedef void(*HotkeyCallback_t)(void *userData);
 
@@ -69,9 +69,9 @@ private:
 	Array<Mouse> mouses;
 	Array<GameController> gameControllers;
 
-	char typingCharacters[MAX_NUM_TYPING_CHARACTERS];
+	char typingCharacters[kMaxNumTypingCharacters] = {};
 
-	Vector2 mouseCursorPos;
+	Vector2 mouseCursorPos = Vector2::Zero();
 
 	friend class InputImpl;
 };

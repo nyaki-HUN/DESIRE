@@ -11,6 +11,6 @@ class MallocAllocator : public Allocator
 public:
 	MallocAllocator();
 
-	void* Allocate(size_t size, size_t alignment = Allocator::DEFAULT_ALIGNMENT) override;
+	void* Allocate(size_t size, size_t alignment = Allocator::kDefaultAlignment) override;
 	void Deallocate(void *ptr) override;
 };

@@ -13,8 +13,8 @@ public:
 	const char * const name;
 	const char * const description;
 
-	static IConfigValue *listHead;
+	static IConfigValue *s_listHead;
 
 private:
-	static IConfigValue *listTail;
+	static IConfigValue *s_listTail;
 };

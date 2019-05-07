@@ -2,7 +2,7 @@
 #include "Engine/Core/math/Rand.h"
 #include "Engine/Core/math/math.h"
 
-Rand Rand::globalRand;
+Rand Rand::s_globalRand;
 
 Rand::Rand()
 {

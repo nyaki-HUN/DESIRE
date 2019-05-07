@@ -12,7 +12,7 @@ class LinearAllocator : public Allocator
 public:
 	LinearAllocator(void *memoryStart, size_t memorySize, Allocator& fallbackAllocator = Allocator::GetDefaultAllocator());
 
-	void* Allocate(size_t size, size_t alignment = Allocator::DEFAULT_ALIGNMENT) final override;
+	void* Allocate(size_t size, size_t alignment = Allocator::kDefaultAlignment) final override;
 	void Deallocate(void *ptr) final override;
 
 	// Deallocate everything in O(1)

@@ -54,8 +54,8 @@ WINDOWSWindow::WINDOWSWindow(const OSWindow::CreationParams& creationParams)
 			h = screenHeight;
 		}
 
-		posX = (creationParams.posX != CreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posX : (screenWidth - w) / 2;
-		posY = (creationParams.posY != CreationParams::POS_CENTERED_ON_SCREEN) ? creationParams.posY : (screenHeight - h) / 2;
+		posX = (creationParams.posX != CreationParams::kPosCenteredOnScreen) ? creationParams.posX : (screenWidth - w) / 2;
+		posY = (creationParams.posY != CreationParams::kPosCenteredOnScreen) ? creationParams.posY : (screenHeight - h) / 2;
 	}
 
 	HINSTANCE hInstance = GetModuleHandle(nullptr);
@@ -282,8 +282,8 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 
 		case WM_GETMINMAXINFO:		// When the size or position of the window is about to change
 			// Prevent the window from going smaller than some minimum size
-			((MINMAXINFO*)lParam)->ptMinTrackSize.x = WINDOW_MIN_SIZE;
-			((MINMAXINFO*)lParam)->ptMinTrackSize.y = WINDOW_MIN_SIZE;
+			((MINMAXINFO*)lParam)->ptMinTrackSize.x = kWindowMinSize;
+			((MINMAXINFO*)lParam)->ptMinTrackSize.y = kWindowMinSize;
 			break;
 
 		case WM_SYSCOMMAND:

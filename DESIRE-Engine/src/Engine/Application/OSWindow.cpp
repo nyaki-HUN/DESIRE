@@ -7,8 +7,8 @@ OSWindow::OSWindow(const CreationParams& creationParams)
 	: isFullscreen(creationParams.isFullscreen)
 	, isActive(false)
 {
-	width = std::max(WINDOW_MIN_SIZE, creationParams.width);
-	height = std::max(WINDOW_MIN_SIZE, creationParams.height);
+	width = std::max(kWindowMinSize, creationParams.width);
+	height = std::max(kWindowMinSize, creationParams.height);
 }
 
 OSWindow::~OSWindow()

@@ -43,7 +43,7 @@ private:
 	std::shared_ptr<Texture> errorTexture;
 
 	// The loaders should be initialized in modules.cpp
-	static const Array<MeshLoaderFunc_t> meshLoaders;
-	static const Array<ShaderLoaderFunc_t> shaderLoaders;
-	static const Array<TextureLoaderFunc_t> textureLoaders;
+	static const Array<MeshLoaderFunc_t> s_meshLoaders;
+	static const Array<ShaderLoaderFunc_t> s_shaderLoaders;
+	static const Array<TextureLoaderFunc_t> s_textureLoaders;
 };

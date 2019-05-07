@@ -12,5 +12,5 @@ public:
 	static std::unique_ptr<Compression> CreateCompression(HashedString name);
 
 private:
-	static const HashedStringMap<Factory<Compression>::Func_t> compressionFactories;
+	static const HashedStringMap<Factory<Compression>::Func_t> s_compressionFactories;
 };

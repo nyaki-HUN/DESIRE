@@ -213,7 +213,7 @@ void RegisterMathFunctions_Lua(lua_State *L)
 		.addFunction("GetBool", &Rand::GetBool)
 		.endClass();
 
-	luabridge::setGlobal(L, &Rand::globalRand, "globalRand");
+	luabridge::setGlobal(L, &Rand::s_globalRand, "globalRand");
 }
 
 void RegisterCoreAPI_Lua(lua_State *L)

@@ -24,8 +24,8 @@ public:
 	Vector3 aabbPoints[4];
 
 private:
-	static const int QUAD_TREE_MAX_LEVEL = 30;
-	static const int QUAD_TREE_MIN_OBJECT_PER_LEAF = 5;
+	static constexpr int kQuadTreeMaxLevel = 30;
+	static constexpr int kQuadTreeMinObjectPerLeaf = 5;
 
 	bool TryToInsertObject(Object *obj);
 

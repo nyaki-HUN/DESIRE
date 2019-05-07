@@ -23,23 +23,23 @@ public:
 
 	struct CreationParams
 	{
-		static const int POS_CENTERED_ON_SCREEN = INT32_MAX;
-
-		CreationParams()
-			: posX(POS_CENTERED_ON_SCREEN)
-			, posY(POS_CENTERED_ON_SCREEN)
-			, width(1366)
-			, height(768)
-			, isFullscreen(false)
-		{
-
-		}
+		static constexpr int kPosCenteredOnScreen = INT32_MAX;
 
 		int posX;
 		int posY;
 		uint16_t width;
 		uint16_t height;
 		bool isFullscreen;
+
+		CreationParams()
+			: posX(kPosCenteredOnScreen)
+			, posY(kPosCenteredOnScreen)
+			, width(1366)
+			, height(768)
+			, isFullscreen(false)
+		{
+
+		}
 	};
 
 	OSWindow(const CreationParams& creationParams);
@@ -68,7 +68,7 @@ public:
 protected:
 	void SetSize(uint16_t width, uint16_t height);
 
-	static const uint16_t WINDOW_MIN_SIZE = 100u;
+	static constexpr uint16_t kWindowMinSize = 100;
 
 	uint16_t width;
 	uint16_t height;

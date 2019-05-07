@@ -18,7 +18,7 @@ public:
 	// Bool
 	bool GetBool(double probabilityOfTrue = 0.5);
 
-	static Rand globalRand;
+	static Rand s_globalRand;
 
 private:
 	std::default_random_engine randomEngine;
