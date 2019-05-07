@@ -97,7 +97,7 @@ void SandBox::Init()
 	StackString<DESIRE_MAX_PATH_LEN> dataDirPath = FileSystem::Get()->GetAppDirectory();
 	dataDirPath += "data";
 
-	dataDirWatcher = FileSystemWatcher::Create(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)
+	dataDirWatcher = std::make_unique<FileSystemWatcher>(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)
 	{
 		const char *strAction = "";
 		switch(action)
