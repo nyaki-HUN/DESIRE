@@ -2,8 +2,6 @@
 
 #include "Engine/Core/Container/FreeList.h"
 
-#include <algorithm>	// for std::max
-
 template<typename T, size_t NUM_ELEMENTS>
 class PoolAllocator
 {
@@ -38,7 +36,7 @@ public:
 	}
 
 private:
-	static constexpr size_t kElementSize = std::max(sizeof(T), sizeof(void*));
+	static constexpr size_t kElementSize = (sizeof(T) < sizeof(void*)) ? sizeof(void*) : sizeof(T);
 
 	FreeList list;
 	char data[NUM_ELEMENTS * kElementSize] = {};
