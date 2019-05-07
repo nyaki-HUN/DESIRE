@@ -8,8 +8,8 @@ public:
 	Rand();
 
 	// Integer numbers
-	int GetInt(int rangeMin, int rangeMax);
-	uint32_t GetUint(uint32_t rangeMin, uint32_t rangeMax);
+	int GetInt(int rangeMin = INT32_MIN, int rangeMax = INT32_MAX);
+	uint32_t GetUint(uint32_t rangeMin = 0, uint32_t rangeMax = UINT32_MAX);
 
 	// Real numbers
 	float GetFloat(float rangeMin, float rangeMax);
