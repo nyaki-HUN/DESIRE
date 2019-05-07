@@ -1,6 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/String.h"
-#include "Engine/Core/String/StrUtils.h"
+
+#include <errno.h>
 
 const String String::kEmptyString = "";
 
@@ -105,12 +106,30 @@ bool String::IsEmpty() const
 
 int String::IntValue() const
 {
-	return StrUtils::ParseInt(data);
+	errno = 0;
+	char *end = nullptr;
+	long value = strtol(data, &end, 10);
+
+	if(end == data || *end != '\0' || errno == ERANGE || value < INT32_MIN || value >= INT32_MAX)
+	{
+		return INT32_MAX;
+	}
+
+	return (int)value;
 }
 
 float String::FloatValue() const
 {
-	return StrUtils::ParseFloat(data);
+	errno = 0;
+	char *end = nullptr;
+	float value = strtof(data, &end);
+
+	if(end == data || *end != '\0' || errno == ERANGE)
+	{
+		return FLT_MAX;
+	}
+
+	return value;
 }
 
 int String::Compare(const String& string) const

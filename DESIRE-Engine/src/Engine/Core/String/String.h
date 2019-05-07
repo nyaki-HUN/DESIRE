@@ -35,8 +35,10 @@ public:
 	// Returns whether the string is empty
 	bool IsEmpty() const;
 
-	// Convert string to numeric value
+	// Convert string to an integral number. Returns INT32_MAX on error
 	int IntValue() const;
+
+	// Convert string to a floating point number. Returns FLT_MAX on error
 	float FloatValue() const;
 
 	// Compare strings

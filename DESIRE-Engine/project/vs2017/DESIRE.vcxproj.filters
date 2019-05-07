@@ -291,9 +291,6 @@
     <ClInclude Include="..\..\src\Engine\Core\String\StackString.h">
       <Filter>src\Engine\Core\String</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\String\StrUtils.h">
-      <Filter>src\Engine\Core\String</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\String\String.h">
       <Filter>src\Engine\Core\String</Filter>
     </ClInclude>
@@ -504,6 +501,9 @@
     <ClInclude Include="..\..\src\Engine\Utils\JsonDataTranslator.h">
       <Filter>src\Engine\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Utils\StrUtils.h">
+      <Filter>src\Engine\Utils</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h">
       <Filter>src\Engine\Utils</Filter>
     </ClInclude>
@@ -570,9 +570,6 @@
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\String\DynamicString.cpp">
-      <Filter>src\Engine\Core\String</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\String\StrUtils.cpp">
       <Filter>src\Engine\Core\String</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\String\String.cpp">
@@ -730,6 +727,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Sound\SoundSystem.cpp">
       <Filter>src\Engine\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Utils\StrUtils.cpp">
+      <Filter>src\Engine\Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp">
       <Filter>src\Engine\Utils</Filter>

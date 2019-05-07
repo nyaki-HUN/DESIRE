@@ -1,36 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/String/StrUtils.h"
-
-#include <errno.h>
-#include <cctype>	// for std::tolower() and std::toupper()
-
-int StrUtils::ParseInt(const char *str)
-{
-	errno = 0;
-	char *end = nullptr;
-	long value = strtol(str, &end, 10);
-
-	if(end == str || *end != '\0' || errno == ERANGE || value < INT32_MIN || value >= INT32_MAX)
-	{
-		return INT32_MAX;
-	}
-
-	return (int)value;
-}
-
-float StrUtils::ParseFloat(const char *str)
-{
-	errno = 0;
-	char *end = nullptr;
-	float value = strtof(str, &end);
-
-	if(end == str || *end != '\0' || errno == ERANGE)
-	{
-		return FLT_MAX;
-	}
-
-	return value;
-}
+#include "Engine/Utils/StrUtils.h"
 
 char* StrUtils::Duplicate(const char *str)
 {
@@ -61,26 +30,6 @@ int StrUtils::Strnicmp(const char *str1, const char *str2, size_t n)
 #else
 	return strncasecmp(str1, str2, n);
 #endif
-}
-
-void StrUtils::ToLower(char *str)
-{
-	char *ch = str;
-	while(*ch != '\0')
-	{
-		*ch = (char)std::tolower(*ch);
-		ch++;
-	}
-}
-
-void StrUtils::ToUpper(char *str)
-{
-	char *ch = str;
-	while(*ch != '\0')
-	{
-		*ch = (char)std::toupper(*ch);
-		ch++;
-	}
 }
 
 void StrUtils::Tokenize(const char *str, char separator, std::function<void(const char*, size_t)> funcToCallWithTokens)
