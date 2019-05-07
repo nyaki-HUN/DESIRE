@@ -219,6 +219,9 @@
     <ClInclude Include="..\..\src\Engine\Application\OSWindow.h">
       <Filter>src\Engine\Application</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Application\OSWindowCreationParams.h">
+      <Filter>src\Engine\Application</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Compression\Compression.h">
       <Filter>src\Engine\Compression</Filter>
     </ClInclude>

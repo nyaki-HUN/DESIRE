@@ -1,17 +1,16 @@
 #pragma once
 
-#include "Engine/Application/OSWindow.h"
+#include "Engine/Application/OSWindowCreationParams.h"
 #include "Engine/Core/Factory.h"
 
-#include <stdint.h>
-
-class CoreAppEvent;
 enum class EAppEventType;
-class Timer;
+class CoreAppEvent;
+class OSWindow;
 class Physics;
 class Render;
 class ScriptSystem;
 class SoundSystem;
+class Timer;
 
 class Application
 {
@@ -55,7 +54,7 @@ protected:
 
 		}
 
-		OSWindow::CreationParams windowParams;
+		OSWindowCreationParams windowParams;
 		EOrientation defaultOrientation;
 		uint8_t supportedOrientations;
 	};

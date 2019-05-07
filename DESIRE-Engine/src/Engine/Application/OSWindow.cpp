@@ -1,9 +1,10 @@
 #include "Engine/stdafx.h"
 #include "Engine/Application/OSWindow.h"
+#include "Engine/Application/OSWindowCreationParams.h"
 #include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
 
-OSWindow::OSWindow(const CreationParams& creationParams)
+OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 	: isFullscreen(creationParams.isFullscreen)
 	, isActive(false)
 {

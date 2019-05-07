@@ -10,7 +10,7 @@ class LINUXWindow : public OSWindow
 public:
 	typedef void(*MessageHandler_t)(const XEvent& event);
 
-	LINUXWindow(const OSWindow::CreationParams& creationParams);
+	LINUXWindow(const OSWindowCreationParams& creationParams);
 	~LINUXWindow() override;
 
 	void HandleWindowMessages() override;

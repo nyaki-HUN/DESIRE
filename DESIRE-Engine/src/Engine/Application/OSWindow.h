@@ -4,9 +4,13 @@
 
 class String;
 class WritableString;
+struct OSWindowCreationParams;
 
 class OSWindow
 {
+protected:
+	OSWindow(const OSWindowCreationParams& creationParams);
+
 public:
 	enum ECursor
 	{
@@ -22,28 +26,6 @@ public:
 		NUM_CURSORS
 	};
 
-	struct CreationParams
-	{
-		static constexpr int kPosCenteredOnScreen = INT32_MAX;
-
-		int posX;
-		int posY;
-		uint16_t width;
-		uint16_t height;
-		bool isFullscreen;
-
-		CreationParams()
-			: posX(kPosCenteredOnScreen)
-			, posY(kPosCenteredOnScreen)
-			, width(1366)
-			, height(768)
-			, isFullscreen(false)
-		{
-
-		}
-	};
-
-	OSWindow(const CreationParams& creationParams);
 	virtual ~OSWindow();
 
 	uint16_t GetWidth() const;
@@ -64,7 +46,7 @@ public:
 	virtual void GetClipboardString(WritableString& outString) = 0;
 
 	// Create a new window
-	static std::unique_ptr<OSWindow> Create(const CreationParams& creationParams);
+	static std::unique_ptr<OSWindow> Create(const OSWindowCreationParams& creationParams);
 
 protected:
 	void SetSize(uint16_t width, uint16_t height);

@@ -6,7 +6,7 @@
 
 #include <X11/cursorfont.h>
 
-LINUXWindow::LINUXWindow(const IWindow::CreationParams& creationParams)
+LINUXWindow::LINUXWindow(const IWindowCreationParams& creationParams)
 	: IWindow(creationParams)
 {
 	for(int i = 0; i < NUM_CURSORS; ++i)
@@ -202,10 +202,10 @@ void LINUXWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHa
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-//	IWindow
+//	OSWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<OSWindow> OSWindow::Create(const OSWindowCreationParams& creationParams)
 {
 	return std::make_unique<LINUXWindow>(creationParams);
 }

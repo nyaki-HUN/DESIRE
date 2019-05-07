@@ -5,12 +5,13 @@
 
 #include <map>
 
+// TODO: move this to Engine/Application
 class WINDOWSWindow : public OSWindow
 {
 public:
 	typedef void(*MessageHandler_t)(WPARAM wParam, LPARAM lParam);
 
-	WINDOWSWindow(const OSWindow::CreationParams& creationParams);
+	WINDOWSWindow(const OSWindowCreationParams& creationParams);
 	~WINDOWSWindow() override;
 
 	void HandleWindowMessages() override;

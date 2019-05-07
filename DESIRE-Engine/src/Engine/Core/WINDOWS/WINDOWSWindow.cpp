@@ -5,7 +5,7 @@
 #include "Engine/Core/Modules.h"
 #include "Engine/Core/String/WritableString.h"
 
-WINDOWSWindow::WINDOWSWindow(const OSWindow::CreationParams& creationParams)
+WINDOWSWindow::WINDOWSWindow(const OSWindowCreationParams& creationParams)
 	: OSWindow(creationParams)
 	, hWnd(0)
 	, isInSizeMove(false)
@@ -55,8 +55,8 @@ WINDOWSWindow::WINDOWSWindow(const OSWindow::CreationParams& creationParams)
 			h = screenHeight;
 		}
 
-		posX = (creationParams.posX != CreationParams::kPosCenteredOnScreen) ? creationParams.posX : (screenWidth - w) / 2;
-		posY = (creationParams.posY != CreationParams::kPosCenteredOnScreen) ? creationParams.posY : (screenHeight - h) / 2;
+		posX = (creationParams.posX != OSWindowCreationParams::kPosCenteredOnScreen) ? creationParams.posX : (screenWidth - w) / 2;
+		posY = (creationParams.posY != OSWindowCreationParams::kPosCenteredOnScreen) ? creationParams.posY : (screenHeight - h) / 2;
 	}
 
 	HINSTANCE hInstance = GetModuleHandle(nullptr);
@@ -310,7 +310,7 @@ LRESULT CALLBACK WINDOWSWindow::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 //	OSWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-std::unique_ptr<OSWindow> OSWindow::Create(const OSWindow::CreationParams& creationParams)
+std::unique_ptr<OSWindow> OSWindow::Create(const OSWindowCreationParams& creationParams)
 {
 	return std::make_unique<WINDOWSWindow>(creationParams);
 }

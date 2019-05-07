@@ -146,6 +146,7 @@
     <ClInclude Include="..\..\src\Engine\Application\CoreAppEvent.h" />
     <ClInclude Include="..\..\src\Engine\Application\EAppEventType.h" />
     <ClInclude Include="..\..\src\Engine\Application\OSWindow.h" />
+    <ClInclude Include="..\..\src\Engine\Application\OSWindowCreationParams.h" />
     <ClInclude Include="..\..\src\Engine\Compression\Compression.h" />
     <ClInclude Include="..\..\src\Engine\Compression\CompressionManager.h" />
     <ClInclude Include="..\..\src\Engine\Core\Component.h" />

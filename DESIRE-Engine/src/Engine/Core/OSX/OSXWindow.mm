@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "Core/OSX/OSXWindow.h"
 
-OSXWindow::OSXWindow(const IWindow::CreationParams& creationParams)
-	: IWindow(creationParams)
+OSXWindow::OSXWindow(const OSWindowCreationParams& creationParams)
+	: OSWindow(creationParams)
 {
 	for(int i = 0; i < NUM_CURSORS; ++i)
 	{
@@ -101,10 +101,10 @@ String OSXWindow::GetClipboardString()
 }
 
 // --------------------------------------------------------------------------------------------------------------------
-//	IWindow
+//	OSWindow
 // --------------------------------------------------------------------------------------------------------------------
 
-std::unique_ptr<IWindow> IWindow::Create(const IWindow::CreationParams& creationParams)
+std::unique_ptr<OSWindow> OSWindow::Create(const OSWindowCreationParams& creationParams)
 {
 	return std::make_unique<OSXWindow>(creationParams);
 }
