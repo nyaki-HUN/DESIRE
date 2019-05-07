@@ -51,6 +51,12 @@ void WritableString::Assign(const char *str, size_t numChars)
 	data[size] = '\0';
 }
 
+void WritableString::Clear()
+{
+	size = 0;
+	data[size] = '\0';
+}
+
 void WritableString::Insert(size_t startIndex, const char *str, size_t numChars)
 {
 	ASSERT(str != nullptr);

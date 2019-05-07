@@ -16,6 +16,9 @@ public:
 	// Assign a new value to the string, replacing its current contents
 	void Assign(const char *str, size_t numChars);
 
+	// Erases the contents of the string, which becomes an empty string
+	void Clear();
+
 	// Insert characters
 	void Insert(size_t startIndex, const char *str, size_t numChars);
 	void Insert(size_t startIndex, const String& string)				{ Insert(startIndex, string.Str(), string.Length()); }

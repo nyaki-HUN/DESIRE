@@ -117,6 +117,14 @@ TEST_CASE("WritableString", "[Core]")
 		CHECK(string.Equals("Stri"));
 	}
 
+	SECTION("Clear()")
+	{
+		string.Clear();
+		CHECK(string.Length() == 0);
+		CHECK(string.Equals(""));
+		CHECK(string == String::kEmptyString);
+	}
+
 	SECTION("Insert()")
 	{
 		string.Insert(0, string);
