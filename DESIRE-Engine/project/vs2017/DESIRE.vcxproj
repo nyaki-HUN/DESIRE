@@ -249,6 +249,7 @@
     <ClCompile Include="..\..\src\Engine\Application\Application.cpp" />
     <ClCompile Include="..\..\src\Engine\Application\OSWindow.cpp" />
     <ClCompile Include="..\..\src\Engine\Application\main_android.cpp" />
+    <ClCompile Include="..\..\src\Engine\Application\main_ios.mm" />
     <ClCompile Include="..\..\src\Engine\Application\main_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\Compression.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\CompressionManager.cpp" />
@@ -288,6 +289,7 @@
     <ClCompile Include="..\..\src\Engine\Input\InputDevice.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\InputMapping.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\Input_android.cpp" />
+    <ClCompile Include="..\..\src\Engine\Input\Input_ios.mm" />
     <ClCompile Include="..\..\src\Engine\Input\Input_linux.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\Input_osx.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\Input_windows.cpp" />

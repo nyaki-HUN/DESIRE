@@ -524,6 +524,9 @@
     <ClCompile Include="..\..\src\Engine\Application\main_android.cpp">
       <Filter>src\Engine\Application</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Application\main_ios.mm">
+      <Filter>src\Engine\Application</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Application\main_windows.cpp">
       <Filter>src\Engine\Application</Filter>
     </ClCompile>
@@ -639,6 +642,9 @@
       <Filter>src\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Input\Input_android.cpp">
+      <Filter>src\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Input\Input_ios.mm">
       <Filter>src\Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Input\Input_linux.cpp">

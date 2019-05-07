@@ -79,6 +79,8 @@ function AddCommonProjectConfig()
 		"../src/**.hpp",
 		"../src/**.c",
 		"../src/**.cpp",
+		"../src/**.m",
+		"../src/**.mm",
 	}
 end
 
