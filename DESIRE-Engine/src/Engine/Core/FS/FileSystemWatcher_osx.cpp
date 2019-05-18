@@ -2,7 +2,7 @@
 
 #if defined(DESIRE_PLATFORM_OSX)
 
-#include "Engine/Core/fs/FileSystemWatcher.h"
+#include "Engine/Core/FS/FileSystemWatcher.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	FileSystemWatcherImpl

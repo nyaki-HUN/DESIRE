@@ -2,7 +2,7 @@
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
 
-#include "Engine/Core/fs/FileSystemWatcher.h"
+#include "Engine/Core/FS/FileSystemWatcher.h"
 #include "Engine/Core/WINDOWS/os.h"
 #include "Engine/Core/String/StackString.h"
 

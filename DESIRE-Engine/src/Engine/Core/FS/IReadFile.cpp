@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/FS/IReadFile.h"
 
 IReadFile::IReadFile(int64_t fileSize, const String& filename)
 	: fileSize(fileSize)

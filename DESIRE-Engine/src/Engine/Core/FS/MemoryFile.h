@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Core/fs/FilePtr_fwd.h"
-#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/FS/FilePtr_fwd.h"
+#include "Engine/Core/FS/IReadFile.h"
 
 class MemoryFile : public IReadFile
 {

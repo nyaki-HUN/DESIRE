@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/fs/IFileSource.h"
+#include "Engine/Core/FS/IFileSource.h"
 #include "Engine/Core/String/DynamicString.h"
 
 #include <map>

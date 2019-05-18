@@ -2,7 +2,7 @@
 
 #if defined(DESIRE_PLATFORM_LINUX)
 
-#include "Engine/Core/fs/FileSystemWatcher.h"
+#include "Engine/Core/FS/FileSystemWatcher.h"
 
 #include <sys/inotify.h>
 #include <unistd.h>

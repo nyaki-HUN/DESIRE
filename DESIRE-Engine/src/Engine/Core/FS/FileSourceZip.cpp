@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/fs/FileSourceZip.h"
-#include "Engine/Core/fs/MemoryFile.h"
-#include "Engine/Core/fs/FileSystem.h"		// for EFileSourceFlags
+#include "Engine/Core/FS/FileSourceZip.h"
+#include "Engine/Core/FS/MemoryFile.h"
+#include "Engine/Core/FS/FileSystem.h"		// for EFileSourceFlags
 #include "Engine/Core/String/StackString.h"
 #include "Engine/Compression/CompressionManager.h"
 

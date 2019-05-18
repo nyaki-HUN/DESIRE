@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/fs/FileSystem.h"
-#include "Engine/Core/fs/IReadFile.h"
-#include "Engine/Core/fs/FileSourceZip.h"
+#include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/FS/FileSourceZip.h"
 #include "Engine/Core/String/StackString.h"
 
 FileSystem::FileSystem()
