@@ -4,8 +4,8 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 #include "Engine/Core/Modules.h"
-#include "Engine/Core/fs/FileSystem.h"
-#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Render/Render.h"
 
 ResourceManager::ResourceManager()

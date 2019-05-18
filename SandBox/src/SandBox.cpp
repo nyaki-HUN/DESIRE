@@ -3,9 +3,9 @@
 
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Modules.h"
-#include "Engine/Core/fs/FileSystem.h"
-#include "Engine/Core/fs/FileSystemWatcher.h"
-#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/FS/FileSystemWatcher.h"
+#include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/StackString.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Render/Render.h"

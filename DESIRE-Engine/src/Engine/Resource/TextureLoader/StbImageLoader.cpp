@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Resource/TextureLoader/StbImageLoader.h"
 #include "Engine/Resource/Texture.h"
-#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/FS/IReadFile.h"
 
 DESIRE_DISABLE_WARNINGS
 #define STBI_NO_TGA					// We have our own TGA loader

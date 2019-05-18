@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/WINDOWS/WINDOWSFile.h"
-#include "Engine/Core/fs/FileSystem.h"
+#include "Engine/Core/FS/FileSystem.h"
 
 WINDOWSFile::WINDOWSFile(HANDLE hFile, int64_t fileSize, const String& filename)
 	: IReadFile(fileSize, filename)

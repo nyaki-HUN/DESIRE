@@ -1,7 +1,7 @@
 #include "AssimpLoader.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/FS/IReadFile.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"

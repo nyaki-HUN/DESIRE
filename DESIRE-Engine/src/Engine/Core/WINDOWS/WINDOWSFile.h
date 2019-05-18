@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Core/fs/IReadFile.h"
-#include "Engine/Core/fs/IWriteFile.h"
+#include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/FS/IWriteFile.h"
 #include "Engine/Core/WINDOWS/os.h"
 
 class WINDOWSFile : public IReadFile, public IWriteFile

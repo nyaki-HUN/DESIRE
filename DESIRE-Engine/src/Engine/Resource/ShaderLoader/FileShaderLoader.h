@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/fs/FilePtr_fwd.h"
+#include "Engine/Core/FS/FilePtr_fwd.h"
 
 class Shader;
 

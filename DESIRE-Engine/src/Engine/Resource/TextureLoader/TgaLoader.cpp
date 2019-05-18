@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Resource/TextureLoader/TgaLoader.h"
 #include "Engine/Resource/Texture.h"
-#include "Engine/Core/fs/IReadFile.h"
+#include "Engine/Core/FS/IReadFile.h"
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
 	#include <PshPack1.h>

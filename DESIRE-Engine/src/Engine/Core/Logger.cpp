@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Logger.h"
-#include "Engine/Core/fs/FileSystem.h"
-#include "Engine/Core/fs/IWriteFile.h"
+#include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/FS/IWriteFile.h"
 
 #include <time.h>
 
