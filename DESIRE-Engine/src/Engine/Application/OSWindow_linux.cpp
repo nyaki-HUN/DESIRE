@@ -80,7 +80,7 @@ void OSWindow::HandleWindowMessages()
 			auto it = impl->additionalMessageHandlers.find(event.type);
 			if(it != impl->additionalMessageHandlers.end())
 			{
-				it->second(event);
+				it->second(&event);
 			}
 		}
 
@@ -152,7 +152,7 @@ void OSWindow::SetWindowTitle(const char *newTitle)
 	}
 
 	XTextProperty titleTextProp;
-	XStringListToTextProperty((char**)&newTitle, 1, &titleTextProp);
+	XStringListToTextProperty(const_cast<char**>(&newTitle), 1, &titleTextProp);
 
 	XSetWMName(impl->display, impl->windowHandle, &titleTextProp);
 	XSetWMIconName(impl->display, impl->windowHandle, &titleTextProp);

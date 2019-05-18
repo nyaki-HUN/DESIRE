@@ -22,10 +22,10 @@
 class InputImpl
 {
 public:
-	static void Handle_WM_INPUT(const void *param1, const void *param2)
+	static void Handle_WM_INPUT(const void *param)
 	{
-		WPARAM wParam = *static_cast<const WPARAM*>(param1);
-		LPARAM lParam = *static_cast<const LPARAM*>(param2);
+		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->first;
+		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->second;
 
 		if(GET_RAWINPUT_CODE_WPARAM(wParam) == RIM_INPUT)
 		{
@@ -140,20 +140,16 @@ public:
 		}
 	}
 
-	static void Handle_WM_MOUSEMOVE(const void *param1, const void *param2)
+	static void Handle_WM_MOUSEMOVE(const void *param)
 	{
-		WPARAM wParam = *static_cast<const WPARAM*>(param1);
-		LPARAM lParam = *static_cast<const LPARAM*>(param2);
-		DESIRE_UNUSED(wParam);
+		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->second;
 
 		Modules::Input->mouseCursorPos = Vector2((float)GET_MOUSE_X(lParam), (float)GET_MOUSE_Y(lParam));
 	}
 
-	static void Handle_WM_CHAR(const void *param1, const void *param2)
+	static void Handle_WM_CHAR(const void *param)
 	{
-		WPARAM wParam = *static_cast<const WPARAM*>(param1);
-		LPARAM lParam = *static_cast<const LPARAM*>(param2);
-		DESIRE_UNUSED(lParam);
+		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->first;
 
 		char ch = (char)wParam;
 		if(ch >= 0 && ch < 32)

@@ -35,7 +35,8 @@ public:
 			auto it = window->additionalMessageHandlers.find(msg);
 			if(it != window->additionalMessageHandlers.end())
 			{
-				it->second(&wParam, &lParam);
+				const std::pair<WPARAM, LPARAM> paramPair = std::make_pair(wParam, lParam);
+				it->second(&paramPair);
 			}
 		}
 

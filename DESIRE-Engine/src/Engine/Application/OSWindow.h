@@ -11,7 +11,7 @@ struct OSWindowCreationParams;
 class OSWindow
 {
 public:
-	typedef void(*MessageHandler_t)(const void *param1, const void *param2);
+	typedef void(*MessageHandler_t)(const void *);
 
 	enum ECursor
 	{

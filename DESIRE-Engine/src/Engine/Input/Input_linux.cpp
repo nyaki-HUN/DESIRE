@@ -21,9 +21,9 @@ static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 
 class InputImpl
 {
 public:
-	static void Handle_KeyPress_KeyRelease(const void *param1, const void *)
+	static void Handle_KeyPress_KeyRelease(const void *param)
 	{
-		const XEvent& event = *static_cast<const XEvent*>(param1);
+		const XEvent& event = *static_cast<const XEvent*>(param);
 		Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
 
 		EKeyCode keyCode = (EKeyCode)0;
@@ -63,9 +63,9 @@ public:
 		}
 	}
 
-	static void Handle_ButtonPress_ButtonRelease(const void *param1, const void *)
+	static void Handle_ButtonPress_ButtonRelease(const void *param)
 	{
-		const XEvent& event = *static_cast<const XEvent*>(param1);
+		const XEvent& event = *static_cast<const XEvent*>(param);
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 		const bool isDown = (event.type == ButtonPress);
 
@@ -91,9 +91,9 @@ public:
 		}
 	}
 
-	static void Handle_MotionNotify(const void *param1, const void *)
+	static void Handle_MotionNotify(const void *param)
 	{
-		const XEvent& event = *static_cast<const XEvent*>(param1);
+		const XEvent& event = *static_cast<const XEvent*>(param);
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 
 		mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)event.xmotion.x);
