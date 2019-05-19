@@ -255,6 +255,29 @@ void WritableString::ToUpper()
 	}
 }
 
+void WritableString::Sprintf(const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	Sprintf_internal(format, args);
+	va_end(args);
+}
+
+void WritableString::Sprintf_internal(const char *format, va_list args)
+{
+	// Determine required size
+	va_list argsCopy;
+	va_copy(argsCopy, args);
+	const int requiredSize = vsnprintf(nullptr, 0, format, argsCopy);
+	va_end(argsCopy);
+
+	if(requiredSize > 0 && Reserve(requiredSize))
+	{
+		size = requiredSize;
+		vsnprintf(data, requiredSize + 1, format, args);
+	}
+}
+
 void WritableString::Replace_Internal(size_t pos, size_t numChars, const String& replaceTo)
 {
 	memmove(data + pos + replaceTo.Length(), data + pos + numChars, size - pos - numChars + 1);

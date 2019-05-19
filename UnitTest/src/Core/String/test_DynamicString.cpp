@@ -74,43 +74,6 @@ TEST_CASE("WritableString", "[Core]")
 	const char charSeq[] = "String ASD";
 	DynamicString string = charSeq;
 
-	SECTION("ToLower()")
-	{
-		string.ToLower();
-		CHECK(string.Equals("string asd"));
-
-		DynamicString s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		s.ToLower();
-		CHECK(s.Equals("abcdefghijklmnopqrstuvwxyz"));
-	}
-
-	SECTION("ToUpper()")
-	{
-		string.ToUpper();
-		CHECK(string.Equals("STRING ASD"));
-
-		DynamicString s = "abcdefghijklmnopqrstuvwxyz";
-		s.ToUpper();
-		CHECK(s.Equals("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
-	}
-
-	SECTION("Trim()")
-	{
-		DynamicString trimString = "  A SD ";
-		trimString.Trim();
-		trimString += "123";
-		CHECK(strcmp(trimString.Str(), "A SD123") == 0);
-
-		trimString = " \r\n \t ASD\t \r\n \t";
-		trimString.Trim();
-		CHECK(trimString.Equals("ASD"));
-
-		trimString = "   ";
-		trimString.Trim();
-		CHECK(trimString.Equals(""));
-		CHECK(trimString.Length() == 0);
-	}
-
 	SECTION("Assign()")
 	{
 		string.Assign(charSeq, 4);
@@ -210,5 +173,51 @@ TEST_CASE("WritableString", "[Core]")
 		CHECK(numberString.Equals("String ASD-1212345-123456789123456789123456789123456789"));
 		numberString += 654.321f;
 		CHECK(numberString.Equals("String ASD-1212345-123456789123456789123456789123456789654.321"));
+	}
+
+	SECTION("Trim()")
+	{
+		DynamicString trimString = "  A SD ";
+		trimString.Trim();
+		trimString += "123";
+		CHECK(strcmp(trimString.Str(), "A SD123") == 0);
+
+		trimString = " \r\n \t ASD\t \r\n \t";
+		trimString.Trim();
+		CHECK(trimString.Equals("ASD"));
+
+		trimString = "   ";
+		trimString.Trim();
+		CHECK(trimString.Equals(""));
+		CHECK(trimString.Length() == 0);
+	}
+
+	SECTION("ToLower()")
+	{
+		string.ToLower();
+		CHECK(string.Equals("string asd"));
+
+		DynamicString s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		s.ToLower();
+		CHECK(s.Equals("abcdefghijklmnopqrstuvwxyz"));
+	}
+
+	SECTION("ToUpper()")
+	{
+		string.ToUpper();
+		CHECK(string.Equals("STRING ASD"));
+
+		DynamicString s = "abcdefghijklmnopqrstuvwxyz";
+		s.ToUpper();
+		CHECK(s.Equals("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+	}
+
+	SECTION("Sprintf()")
+	{
+		DynamicString string;
+		string.Sprintf("%d %05d %.1f %c %s", 123, 123, 1.5f, 'X', "test");
+		CHECK(string.Equals("123 00123 1.5 X test"));
+		string.Sprintf("no args");
+		CHECK(string.Equals("no args"));
 	}
 }

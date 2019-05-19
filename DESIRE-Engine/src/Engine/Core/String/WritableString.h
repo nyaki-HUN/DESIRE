@@ -2,6 +2,8 @@
 
 #include "Engine/Core/String/String.h"
 
+#include <cstdarg>		// for va_list
+
 class WritableString : public String
 {
 public:
@@ -52,8 +54,12 @@ public:
 	// Convert the string to uppercase
 	void ToUpper();
 
+	// Write formatted data into the string from variable argument list
+	void Sprintf(const char *format, ...);
+
 protected:
 	virtual bool Reserve(size_t newSize) = 0;
 
+	void Sprintf_internal(const char *format, va_list args);
 	void Replace_Internal(size_t pos, size_t numChars, const String& replaceTo);
 };

@@ -2,9 +2,6 @@
 
 #include "Engine/Core/String/WritableString.h"
 
-#include <cstdio>		// For vsnprintf
-#include <cstdarg>		// For va_list, va_start, va_end
-
 template<size_t STACK_SIZE>
 class StackString : public WritableString
 {
@@ -47,13 +44,8 @@ public:
 
 		va_list args;
 		va_start(args, format);
-		const int requiredSize = vsnprintf(string.data, STACK_SIZE, format, args);
+		string.Sprintf_internal(format, args);
 		va_end(args);
-
-		if(requiredSize > 0)
-		{
-			string.size = (requiredSize < STACK_SIZE) ? requiredSize : STACK_SIZE - 1;
-		}
 
 		return string;
 	}

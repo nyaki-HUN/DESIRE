@@ -69,24 +69,11 @@ DynamicString DynamicString::SubString(size_t startIndex, size_t numChars) const
 
 DynamicString DynamicString::Format(const char *format, ...)
 {
+	DynamicString string;
+
 	va_list args;
 	va_start(args, format);
-
-	// Determine required size
-	va_list argsCopy;
-	va_copy(argsCopy, args);
-	const int requiredSize = vsnprintf(nullptr, 0, format, argsCopy);
-	va_end(argsCopy);
-
-	if(requiredSize <= 0)
-	{
-		va_end(args);
-		return DynamicString();
-	}
-
-	DynamicString string(requiredSize);
-	string.size = requiredSize;
-	vsnprintf(string.data, string.preallocatedSize, format, args);
+	string.Sprintf_internal(format, args);
 	va_end(args);
 
 	return string;
