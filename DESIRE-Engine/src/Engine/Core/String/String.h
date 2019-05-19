@@ -10,9 +10,9 @@ public:
 
 	template<size_t SIZE>
 	String(const char(&str)[SIZE])
+		: data(const_cast<char*>(str))
+		, size(SIZE - 1)
 	{
-		data = const_cast<char*>(str);
-		size = SIZE - 1;
 	}
 
 	virtual ~String() = default;
@@ -36,9 +36,12 @@ public:
 	bool IsEmpty() const;
 
 	// Convert string to number
-	int IntValue() const;
-	uint32_t UIntValue() const;
-	float FloatValue() const;
+	int32_t AsInt32() const;
+	int64_t AsInt64() const;
+	uint32_t AsUint32() const;
+	uint64_t AsUint64() const;
+	float AsFloat() const;
+	double AsDouble() const;
 
 	// Compare strings
 	int Compare(const String& string) const;

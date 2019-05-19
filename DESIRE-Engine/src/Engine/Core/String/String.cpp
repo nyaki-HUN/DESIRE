@@ -102,10 +102,10 @@ bool String::IsEmpty() const
 	return (Length() == 0);
 }
 
-int String::IntValue() const
+int32_t String::AsInt32() const
 {
 	char *end = nullptr;
-	const int value = strtol(data, &end, 10);
+	const int32_t value = strtol(data, &end, 10);
 	if(end != data + size)
 	{
 		return INT32_MAX;
@@ -114,10 +114,22 @@ int String::IntValue() const
 	return value;
 }
 
-uint32_t String::UIntValue() const
+int64_t String::AsInt64() const
 {
 	char *end = nullptr;
-	const uint32_t value = strtoul(data, &end, 10);
+	const int64_t value = strtoll(data, &end, 0);
+	if(end != data + size)
+	{
+		return INT64_MAX;
+	}
+
+	return value;
+}
+
+uint32_t String::AsUint32() const
+{
+	char *end = nullptr;
+	const uint32_t value = strtoul(data, &end, 0);
 	if(end != data + size)
 	{
 		return UINT32_MAX;
@@ -126,13 +138,37 @@ uint32_t String::UIntValue() const
 	return value;
 }
 
-float String::FloatValue() const
+uint64_t String::AsUint64() const
+{
+	char *end = nullptr;
+	const uint64_t value = strtoull(data, &end, 0);
+	if(end != data + size)
+	{
+		return UINT64_MAX;
+	}
+
+	return value;
+}
+
+float String::AsFloat() const
 {
 	char *end = nullptr;
 	const float value = strtof(data, &end);
 	if(end != data + size)
 	{
 		return FLT_MAX;
+	}
+
+	return value;
+}
+
+double String::AsDouble() const
+{
+	char *end = nullptr;
+	const double value = strtod(data, &end);
+	if(end != data + size)
+	{
+		return DBL_MAX;
 	}
 
 	return value;

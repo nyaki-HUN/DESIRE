@@ -49,34 +49,88 @@ TEST_CASE("String", "[Core]")
 		CHECK(utf8Str.LengthUTF8() == 3);
 	}
 
-	SECTION("IntValue()")
+	SECTION("AsInt32()")
 	{
-		String intInString1 = "12345";
-		CHECK(intInString1.IntValue() == 12345);
+		String intInString1 = "-12345";
+		CHECK(intInString1.AsInt32() == -12345);
 		String intInString2 = "123asd";
-		CHECK(intInString2.IntValue() == INT32_MAX);
+		CHECK(intInString2.AsInt32() == INT32_MAX);
 		String intInString3 = "asd123";
-		CHECK(intInString3.IntValue() == INT32_MAX);
+		CHECK(intInString3.AsInt32() == INT32_MAX);
 		String intInString4 = "  123  ";
-		CHECK(intInString4.IntValue() == INT32_MAX);
+		CHECK(intInString4.AsInt32() == INT32_MAX);
 	}
 
-	SECTION("FloatValue()")
+	SECTION("AsInt64()")
+	{
+		String intInString1 = "0x123456789";
+		CHECK(intInString1.AsInt64() == 0x123456789);
+		String intInString2 = "123asd";
+		CHECK(intInString2.AsInt64() == INT64_MAX);
+		String intInString3 = "asd123";
+		CHECK(intInString3.AsInt64() == INT64_MAX);
+		String intInString4 = "  123  ";
+		CHECK(intInString4.AsInt64() == INT64_MAX);
+	}
+
+	SECTION("AsInt64()")
+	{
+		String intInString1 = "-12345";
+		CHECK(intInString1.AsInt64() == -12345);
+		String intInString2 = "123asd";
+		CHECK(intInString2.AsInt64() == INT64_MAX);
+		String intInString3 = "asd123";
+		CHECK(intInString3.AsInt64() == INT64_MAX);
+		String intInString4 = "  123  ";
+		CHECK(intInString4.AsInt64() == INT64_MAX);
+	}
+
+	SECTION("AsUint64()")
+	{
+		String intInString1 = "0xffffffffffffffff";
+		CHECK(intInString1.AsUint64() == 0xffffffffffffffffu);
+		String intInString2 = "123asd";
+		CHECK(intInString2.AsUint64() == UINT64_MAX);
+		String intInString3 = "asd123";
+		CHECK(intInString3.AsUint64() == UINT64_MAX);
+		String intInString4 = "  123  ";
+		CHECK(intInString4.AsUint64() == UINT64_MAX);
+	}
+
+	SECTION("AsFloat()")
 	{
 		String floatInString1 = "123.45";
-		CHECK(floatInString1.FloatValue() == Approx(123.45f));
+		CHECK(floatInString1.AsFloat() == Approx(123.45f));
 		String floatInString2 = "123";
-		CHECK(floatInString2.FloatValue() == Approx(123.0f));
+		CHECK(floatInString2.AsFloat() == Approx(123.0f));
 		String floatInString3 = "000.1200";
-		CHECK(floatInString3.FloatValue() == Approx(0.12f));
+		CHECK(floatInString3.AsFloat() == Approx(0.12f));
 		String floatInString4 = ".5";
-		CHECK(floatInString4.FloatValue() == Approx(0.5f));
+		CHECK(floatInString4.AsFloat() == Approx(0.5f));
 		String floatInString5 = "123.0asd";
-		CHECK(floatInString5.FloatValue() == FLT_MAX);
+		CHECK(floatInString5.AsFloat() == FLT_MAX);
 		String floatInString6 = "asd123.0";
-		CHECK(floatInString6.FloatValue() == FLT_MAX);
+		CHECK(floatInString6.AsFloat() == FLT_MAX);
 		String floatInString7 = ".123.0";
-		CHECK(floatInString7.FloatValue() == FLT_MAX);
+		CHECK(floatInString7.AsFloat() == FLT_MAX);
+	}
+
+	SECTION("AsDouble()")
+	{
+		String floatInString1 = "123.45";
+		CHECK(floatInString1.AsDouble() == Approx(123.45));
+		String floatInString2 = "123";
+		CHECK(floatInString2.AsDouble() == Approx(123.0));
+		String floatInString3 = "000.1200";
+		CHECK(floatInString3.AsDouble() == Approx(0.12));
+		String floatInString4 = ".5";
+		CHECK(floatInString4.AsDouble() == Approx(0.5));
+		String floatInString5 = "123.0asd";
+		CHECK(floatInString5.AsDouble() == DBL_MAX);
+		String floatInString6 = "asd123.0";
+		CHECK(floatInString6.AsDouble() == DBL_MAX);
+		String floatInString7 = ".123.0";
+		CHECK(floatInString7.AsDouble() == DBL_MAX);
 	}
 
 	SECTION("Compare() | CompareIgnoreCase() | operator <()")
