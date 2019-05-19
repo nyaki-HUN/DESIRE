@@ -265,7 +265,8 @@ void WritableString::Sprintf(const char *format, ...)
 
 void WritableString::Sprintf_internal(const char *format, va_list args)
 {
-	// Determine required size
+	ASSERT(format != nullptr);
+
 	va_list argsCopy;
 	va_copy(argsCopy, args);
 	const int requiredSize = vsnprintf(nullptr, 0, format, argsCopy);
