@@ -46,6 +46,9 @@
     <Filter Include="src\Engine\Core\Container">
       <UniqueIdentifier>{FC64D620-6827-0AAB-B1D7-98371DD9E288}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core\FS">
+      <UniqueIdentifier>{B249CB24-9E2D-8C7A-078E-86CDF39076FC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Core\Memory">
       <UniqueIdentifier>{D254B4D9-BE4E-DD2B-A7BB-733C93544398}</UniqueIdentifier>
     </Filter>
@@ -54,9 +57,6 @@
     </Filter>
     <Filter Include="src\Engine\Core\WINDOWS">
       <UniqueIdentifier>{24B86BCE-90EF-B365-99F9-178905B0DA5E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Engine\Core\fs">
-      <UniqueIdentifier>{F24DCB24-DE31-8C7A-4792-86CD339576FC}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Engine\Core\math">
       <UniqueIdentifier>{E32BDA84-CFBA-634E-78D9-7749644774F4}</UniqueIdentifier>
@@ -249,6 +249,30 @@
     <ClInclude Include="..\..\src\Engine\Core\Container\LockFreeRingBuffer.h">
       <Filter>src\Engine\Core\Container</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\FilePtr_fwd.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\FileSourceZip.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\FileSystem.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\FileSystemWatcher.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\IFileSource.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\IReadFile.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\IWriteFile.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\FS\MemoryFile.h">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Factory.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -300,6 +324,9 @@
     <ClInclude Include="..\..\src\Engine\Core\String\WritableString.h">
       <Filter>src\Engine\Core\String</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Time.h">
+      <Filter>src\Engine\Core</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Timer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -314,30 +341,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\assert.h">
       <Filter>src\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\FilePtr_fwd.h">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\FileSourceZip.h">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\FileSystem.h">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\FileSystemWatcher.h">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\IFileSource.h">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\IReadFile.h">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\IWriteFile.h">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\fs\MemoryFile.h">
-      <Filter>src\Engine\Core\fs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\AABB.h">
       <Filter>src\Engine\Core\math</Filter>
@@ -563,6 +566,30 @@
     <ClCompile Include="..\..\src\Engine\Core\Container\FreeList.cpp">
       <Filter>src\Engine\Core\Container</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSourceZip.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_linux.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_osx.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_windows.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\IReadFile.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\IWriteFile.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\MemoryFile.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Log.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
@@ -593,6 +620,18 @@
     <ClCompile Include="..\..\src\Engine\Core\String\WritableString.cpp">
       <Filter>src\Engine\Core\String</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Time.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Time_ios.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Time_linux.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Time_windows.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
@@ -601,33 +640,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSTimer.cpp">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\FileSourceZip.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystem.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystemWatcher_linux.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystemWatcher_osx.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\FileSystemWatcher_windows.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\IReadFile.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\IWriteFile.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\fs\MemoryFile.cpp">
-      <Filter>src\Engine\Core\fs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp">
       <Filter>src\Engine\Core\math</Filter>
