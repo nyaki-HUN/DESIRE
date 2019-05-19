@@ -16,8 +16,6 @@ public:
 	uint32_t GetMilliDelta() const;
 	float GetSecDelta() const;
 
-	static uint64_t GetMicroTime();
-
 private:
 	uint64_t microSec = 0;
 	uint64_t microDelta = 0;

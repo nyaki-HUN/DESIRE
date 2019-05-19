@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Timer.h"
+#include "Engine/Core/Time.h"
 
 Timer::Timer()
 {
@@ -8,20 +9,19 @@ Timer::Timer()
 
 Timer::~Timer()
 {
-
 }
 
 void Timer::Update()
 {
 	microDelta = microSec;
-	microSec = GetMicroTime();
+	microSec = Time::GetMicroTime();
 	microDelta = microSec - microDelta;
 
-	milliSec = (uint32_t)(microSec / 1000);
-	milliDelta = (uint32_t)(microDelta / 1000);
+	milliSec = static_cast<uint32_t>(microSec / 1000);
+	milliDelta = static_cast<uint32_t>(microDelta / 1000);
 
-	sec = (float)milliSec / 1000.0f;
-	secDelta = (float)milliDelta / 1000.0f;
+	sec = static_cast<float>(milliSec) / 1000.0f;
+	secDelta = static_cast<float>(milliDelta) / 1000.0f;
 }
 
 uint64_t Timer::GetTimeMicroSec() const
