@@ -220,10 +220,10 @@ TEST_CASE("WritableString", "[Core]")
 
 	SECTION("Sprintf()")
 	{
-		DynamicString string;
-		string.Sprintf("%d %05d %.1f %c %s", 123, 123, 1.5f, 'X', "test");
-		CHECK(string.Equals("123 00123 1.5 X test"));
-		string.Sprintf("no args");
-		CHECK(string.Equals("no args"));
+		DynamicString s;
+		s.Sprintf("%d %05d %.1f %c %s", 123, 123, 1.5f, 'X', "test");
+		CHECK(s.Equals("123 00123 1.5 X test"));
+		s.Sprintf("no args");
+		CHECK(s.Equals("no args"));
 	}
 }
