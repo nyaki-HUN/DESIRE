@@ -13,6 +13,7 @@ class Object
 {
 public:
 	Object(const String& name = "Object");
+	Object(const DynamicString&& name);
 	~Object();
 
 	const String& GetObjectName() const;
@@ -26,6 +27,7 @@ public:
 
 	void SetParent(Object *newParent);
 	Object* CreateChildObject(const String& name);
+	Object* CreateChildObject(DynamicString&& name);
 
 	template<class T, class... Args>
 	T& AddComponent(Args&&... args)
@@ -62,6 +64,8 @@ private:
 	Component& AddComponent_Internal(std::unique_ptr<Component> component);
 	void AddChild_Internal(Object *child);
 	void RemoveChild_Internal(Object *child);
+
+	void SetTransform();
 
 	static void RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount);
 

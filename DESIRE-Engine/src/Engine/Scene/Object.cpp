@@ -12,9 +12,14 @@ Object::Object(const String& name)
 	: aabb(std::make_unique<AABB>())
 	, objectName(name)
 {
-	ASSERT(numTransforms < MAX_TRANSFORMS);
-	transform = &preallocatedTransforms[numTransforms++];
-	transform->owner = this;
+	SetTransform();
+}
+
+Object::Object(const DynamicString&& name)
+	: aabb(std::make_unique<AABB>())
+	, objectName(std::move(name))
+{
+	SetTransform();
 }
 
 Object::~Object()
@@ -138,6 +143,13 @@ Object* Object::CreateChildObject(const String& name)
 	return obj;
 }
 
+Object* Object::CreateChildObject(DynamicString&& name)
+{
+	Object *obj = new Object(std::move(name));
+	obj->SetParent(this);
+	return obj;
+}
+
 void Object::RemoveComponent(const Component *component)
 {
 	const size_t idx = components.SpecializedFind([component](const std::unique_ptr<Component>& comp)
@@ -247,6 +259,13 @@ void Object::RemoveChild_Internal(Object *child)
 
 	children.Remove(child);
 	child->transform->parent = nullptr;
+}
+
+void Object::SetTransform()
+{
+	ASSERT(numTransforms < MAX_TRANSFORMS);
+	transform = &preallocatedTransforms[numTransforms++];
+	transform->owner = this;
 }
 
 void Object::RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount)
