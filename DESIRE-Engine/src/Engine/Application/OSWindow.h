@@ -49,7 +49,7 @@ public:
 	bool SetClipboardString(const String& string);
 	void GetClipboardString(WritableString& outString);
 
-protected:
+private:
 	void SetSize(uint16_t width, uint16_t height);
 
 	static constexpr uint16_t kWindowMinSize = 100;
