@@ -608,9 +608,6 @@
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\Modules.cpp">
-      <Filter>src\Engine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\String\DynamicString.cpp">
       <Filter>src\Engine\Core\String</Filter>
     </ClCompile>
