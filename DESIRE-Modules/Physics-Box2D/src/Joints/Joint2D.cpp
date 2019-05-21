@@ -3,8 +3,8 @@
 #include "Box2DPhysicsComponent.h"
 #include "b2MathExt.h"
 
+#include "Engine/Modules.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/Modules.h"
 
 #include "Box2D/Dynamics/Joints/b2Joint.h"
 #include "Box2D/Dynamics/b2World.h"

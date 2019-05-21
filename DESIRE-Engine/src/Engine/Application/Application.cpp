@@ -2,7 +2,6 @@
 #include "Engine/Application/Application.h"
 #include "Engine/Application/CoreAppEvent.h"
 #include "Engine/Application/OSWindow.h"
-#include "Engine/Core/Modules.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Physics/Physics.h"
@@ -10,15 +9,6 @@
 #include "Engine/Resource/ResourceManager.h"
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Sound/SoundSystem.h"
-
-// Module definitions
-std::unique_ptr<Application> Modules::Application;
-std::unique_ptr<Input> Modules::Input;
-std::unique_ptr<Physics> Modules::Physics;
-std::unique_ptr<Render> Modules::Render;
-std::unique_ptr<ResourceManager> Modules::ResourceManager;
-std::unique_ptr<ScriptSystem> Modules::ScriptSystem;
-std::unique_ptr<SoundSystem> Modules::SoundSystem;
 
 bool Application::s_isMainLoopRunning = false;
 int Application::s_returnValue = 0;

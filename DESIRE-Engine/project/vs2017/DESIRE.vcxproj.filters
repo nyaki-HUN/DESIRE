@@ -309,9 +309,6 @@
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\Modules.h">
-      <Filter>src\Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h">
       <Filter>src\Engine\Core\String</Filter>
     </ClInclude>
@@ -404,6 +401,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Input\keyCodes.h">
       <Filter>src\Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Modules.h">
+      <Filter>src\Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Physics\ColliderShape.h">
       <Filter>src\Engine\Physics</Filter>
@@ -679,6 +679,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Input\Mouse.cpp">
       <Filter>src\Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Modules.cpp">
+      <Filter>src\Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp">
       <Filter>src\Engine\Physics</Filter>

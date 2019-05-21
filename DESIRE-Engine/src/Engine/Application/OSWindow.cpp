@@ -1,6 +1,5 @@
 #include "Engine/stdafx.h"
 #include "Engine/Application/OSWindow.h"
-#include "Engine/Core/Modules.h"
 #include "Engine/Render/Render.h"
 
 uint16_t OSWindow::GetWidth() const

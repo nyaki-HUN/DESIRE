@@ -5,7 +5,6 @@
 #include "Engine/Application/Application.h"
 #include "Engine/Application/EAppEventType.h"
 #include "Engine/Application/OSWindow.h"
-#include "Engine/Core/Modules.h"
 
 #include <android_native_app_glue.h>
 

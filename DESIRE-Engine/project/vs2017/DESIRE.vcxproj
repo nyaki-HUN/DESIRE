@@ -176,7 +176,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Memory\StackAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h" />
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
-    <ClInclude Include="..\..\src\Engine\Core\Modules.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\StackString.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\String.h" />
@@ -208,6 +207,7 @@
     <ClInclude Include="..\..\src\Engine\Input\Keyboard.h" />
     <ClInclude Include="..\..\src\Engine\Input\Mouse.h" />
     <ClInclude Include="..\..\src\Engine\Input\keyCodes.h" />
+    <ClInclude Include="..\..\src\Engine\Modules.h" />
     <ClInclude Include="..\..\src\Engine\Physics\ColliderShape.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Collision.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Physics.h" />
@@ -301,6 +301,7 @@
     <ClCompile Include="..\..\src\Engine\Input\Input_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\Mouse.cpp" />
+    <ClCompile Include="..\..\src\Engine\Modules.cpp" />
     <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp" />
     <ClCompile Include="..\..\src\Engine\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\Camera.cpp" />

@@ -3,7 +3,6 @@
 #if defined(DESIRE_PLATFORM_ANDROID)
 
 #include "Engine/Input/Input.h"
-#include "Engine/Core/Modules.h"
 
 #include <android/sensor.h>
 

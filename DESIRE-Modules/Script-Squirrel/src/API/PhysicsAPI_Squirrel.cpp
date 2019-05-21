@@ -1,6 +1,6 @@
 #include "API/SquirrelScriptAPI.h"
 
-#include "Engine/Core/Modules.h"
+#include "Engine/Modules.h"
 #include "Engine/Physics/Physics.h"
 #include "Engine/Physics/PhysicsComponent.h"
 

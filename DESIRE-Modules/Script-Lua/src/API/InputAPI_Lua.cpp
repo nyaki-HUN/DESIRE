@@ -1,6 +1,6 @@
 #include "API/LuaScriptAPI.h"
 
-#include "Engine/Core/Modules.h"
+#include "Engine/Modules.h"
 #include "Engine/Input/Input.h"
 
 void RegisterInputAPI_Lua(lua_State *L)

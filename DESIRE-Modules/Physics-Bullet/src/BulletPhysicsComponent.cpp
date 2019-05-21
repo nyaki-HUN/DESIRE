@@ -2,7 +2,7 @@
 #include "BulletPhysics.h"
 #include "BulletVectormathExt.h"
 
-#include "Engine/Core/Modules.h"
+#include "Engine/Modules.h"
 #include "Engine/Core/math/AABB.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"

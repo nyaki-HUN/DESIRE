@@ -2,8 +2,8 @@
 #include "PhysXPhysics.h"
 #include "PxMathExt.h"
 
+#include "Engine/Modules.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/Modules.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
 

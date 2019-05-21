@@ -3,7 +3,7 @@
 #include "Box2DPhysics.h"
 #include "b2MathExt.h"
 
-#include "Engine/Core/Modules.h"
+#include "Engine/Modules.h"
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
 
