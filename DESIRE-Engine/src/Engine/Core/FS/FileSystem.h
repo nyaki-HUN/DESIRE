@@ -45,11 +45,7 @@ public:
 	// Creates a file for writing
 	WriteFilePtr CreateWriteFile(const String& filename);
 
-	void AddFileSource(IFileSource *fileSource);
-
-	// Helper functions for adding built-in file sources
-	bool AddDirectoryFileSource(const String& dir, int fileSourceFlags = 0);
-	bool AddZipFileSource(const String& zipFilename, int fileSourceFlags = 0);
+	void AddFileSource(std::unique_ptr<IFileSource> fileSource);
 
 	const String& GetAppDirectory() const;
 
@@ -57,7 +53,7 @@ private:
 	ReadFilePtr OpenNative(const String& filename);
 	void SetupDirectories();
 
-	Array<IFileSource*> fileSources;
+	Array<std::unique_ptr<IFileSource>> fileSources;
 
 	DynamicString appDir;
 	DynamicString dataDir;

@@ -59,7 +59,7 @@ public:
 	void UpdateAllTransformsInHierarchy();
 
 private:
-	Component& AddComponent_Internal(std::unique_ptr<Component>&& component);
+	Component& AddComponent_Internal(std::unique_ptr<Component> component);
 	void AddChild_Internal(Object *child);
 	void RemoveChild_Internal(Object *child);
 

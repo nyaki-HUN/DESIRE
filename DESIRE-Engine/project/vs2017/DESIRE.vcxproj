@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\src\Engine\Application\OSWindowCreationParams.h" />
     <ClInclude Include="..\..\src\Engine\Compression\Compression.h" />
     <ClInclude Include="..\..\src\Engine\Compression\CompressionManager.h" />
+    <ClInclude Include="..\..\src\Engine\Compression\FileSourceZip.h" />
     <ClInclude Include="..\..\src\Engine\Core\Component.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.h" />
     <ClInclude Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.h" />
@@ -157,7 +158,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Container\FreeList.h" />
     <ClInclude Include="..\..\src\Engine\Core\Container\LockFreeRingBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\FS\FilePtr_fwd.h" />
-    <ClInclude Include="..\..\src\Engine\Core\FS\FileSourceZip.h" />
     <ClInclude Include="..\..\src\Engine\Core\FS\FileSystem.h" />
     <ClInclude Include="..\..\src\Engine\Core\FS\FileSystemWatcher.h" />
     <ClInclude Include="..\..\src\Engine\Core\FS\IFileSource.h" />
@@ -258,12 +258,12 @@
     <ClCompile Include="..\..\src\Engine\Application\main_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\Compression.cpp" />
     <ClCompile Include="..\..\src\Engine\Compression\CompressionManager.cpp" />
+    <ClCompile Include="..\..\src\Engine\Compression\FileSourceZip.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Component.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueFloat.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\ConfigValueInt.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\ConfigValue\IConfigValue.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Container\FreeList.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\FS\FileSourceZip.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_linux.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_osx.cpp" />

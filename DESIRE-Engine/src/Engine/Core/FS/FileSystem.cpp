@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/FS/IFileSource.h"
 #include "Engine/Core/FS/IReadFile.h"
-#include "Engine/Core/FS/FileSourceZip.h"
 #include "Engine/Core/String/StackString.h"
 
 FileSystem::FileSystem()
@@ -24,9 +24,9 @@ FileSystem* FileSystem::Get()
 
 ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 {
-	for(IFileSource *fileSrc : fileSources)
+	for(std::unique_ptr<IFileSource>& fileSource : fileSources)
 	{
-		ReadFilePtr file = fileSrc->OpenFile(filename);
+		ReadFilePtr file = fileSource->OpenFile(filename);
 		if(file != nullptr)
 		{
 			return file;
@@ -45,33 +45,9 @@ ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 	return OpenNative(filenameWithPath);
 }
 
-void FileSystem::AddFileSource(IFileSource *fileSource)
+void FileSystem::AddFileSource(std::unique_ptr<IFileSource> fileSource)
 {
-	fileSources.Add(fileSource);
-}
-
-bool FileSystem::AddDirectoryFileSource(const String& dir, int fileSourceFlags)
-{
-	DESIRE_TODO("implement");
-	return false;
-}
-
-bool FileSystem::AddZipFileSource(const String& zipFilename, int fileSourceFlags)
-{
-	ReadFilePtr file = Open(zipFilename);
-	if(file != nullptr)
-	{
-		FileSourceZip *fileSource = new FileSourceZip(std::move(file), fileSourceFlags);
-		bool success = fileSource->Load();
-		if(success)
-		{
-			AddFileSource(fileSource);
-			return true;
-		}
-		delete fileSource;
-	}
-
-	return false;
+	fileSources.Add(std::move(fileSource));
 }
 
 const String& FileSystem::GetAppDirectory() const

@@ -212,7 +212,7 @@ void Object::UpdateAllTransformsInHierarchy()
 	}
 }
 
-Component& Object::AddComponent_Internal(std::unique_ptr<Component>&& component)
+Component& Object::AddComponent_Internal(std::unique_ptr<Component> component)
 {
 	std::unique_ptr<Component>& addedComponent = components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
 	{

@@ -1,9 +1,9 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/FS/FileSourceZip.h"
-#include "Engine/Core/FS/MemoryFile.h"
-#include "Engine/Core/FS/FileSystem.h"		// for EFileSourceFlags
-#include "Engine/Core/String/StackString.h"
+#include "Engine/Compression/FileSourceZip.h"
 #include "Engine/Compression/CompressionManager.h"
+#include "Engine/Core/FS/FileSystem.h"		// for EFileSourceFlags
+#include "Engine/Core/FS/MemoryFile.h"
+#include "Engine/Core/String/StackString.h"
 
 constexpr int kZipSignatureCentralDirectoryFileHeader	= 0x02014b50;	//'PK12'
 constexpr int kZipSignatureLocalFileHeader				= 0x04034b50;	//'PK34'

@@ -2,6 +2,7 @@
 #include "SimpleRotateScript.h"
 
 #include "Engine/Modules.h"
+#include "Engine/Compression/FileSourceZip.h"
 #include "Engine/Core/Log.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/FileSystemWatcher.h"
@@ -40,7 +41,15 @@ void SandBox::Init()
 	UI = std::make_unique<ImGuiImpl>();
 	UI->Init();
 
-	FileSystem::Get()->AddZipFileSource("data/zip.zip", FileSystem::FILESOURCE_IGNORE_PATH | FileSystem::FILESOURCE_IGNORE_CASE);
+	ReadFilePtr zipFile = FileSystem::Get()->Open("data/zip.zip");
+	if(zipFile != nullptr)
+	{
+		std::unique_ptr<FileSourceZip> zipFileSource = std::make_unique<FileSourceZip>(std::move(zipFile), FileSystem::FILESOURCE_IGNORE_PATH | FileSystem::FILESOURCE_IGNORE_CASE);
+		if(zipFileSource->Load())
+		{
+			FileSystem::Get()->AddFileSource(std::move(zipFileSource));
+		}
+	}
 
 	ReadFilePtr file = FileSystem::Get()->Open("asd.txt");
 	ReadFilePtr file2 = FileSystem::Get()->Open("qwe.txt");

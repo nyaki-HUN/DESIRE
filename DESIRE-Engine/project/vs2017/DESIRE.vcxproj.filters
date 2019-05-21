@@ -228,6 +228,9 @@
     <ClInclude Include="..\..\src\Engine\Compression\CompressionManager.h">
       <Filter>src\Engine\Compression</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Compression\FileSourceZip.h">
+      <Filter>src\Engine\Compression</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Component.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -250,9 +253,6 @@
       <Filter>src\Engine\Core\Container</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\FS\FilePtr_fwd.h">
-      <Filter>src\Engine\Core\FS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\FS\FileSourceZip.h">
       <Filter>src\Engine\Core\FS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\FS\FileSystem.h">
@@ -551,6 +551,9 @@
     <ClCompile Include="..\..\src\Engine\Compression\CompressionManager.cpp">
       <Filter>src\Engine\Compression</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Compression\FileSourceZip.cpp">
+      <Filter>src\Engine\Compression</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Component.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
@@ -565,9 +568,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Container\FreeList.cpp">
       <Filter>src\Engine\Core\Container</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\FS\FileSourceZip.cpp">
-      <Filter>src\Engine\Core\FS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem.cpp">
       <Filter>src\Engine\Core\FS</Filter>
