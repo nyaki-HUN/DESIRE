@@ -15,10 +15,12 @@ project "SandBox"
 	{
 		"DESIRE",
 		"Compression-Lizard",
+		"Compression-LZ4",
 		"Compression-zlib-ng",
 		"Compression-zstd",
 		"Physics-Box2D",
 		"Physics-Bullet",
+		"Physics-PhysX",
 		"Render-bgfx",
 		"Render-Direct3D11",
 		"Render-Direct3D12",
