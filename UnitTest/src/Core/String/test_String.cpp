@@ -143,6 +143,11 @@ TEST_CASE("String", "[Core]")
 
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase(String("xXx")));
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase("xXx"));
+
+		// Special case when we put a null-character into the string
+		const_cast<char*>(string.Str())[3] = '\0';
+		REQUIRE(strcmp(string.Str(), "Str") == 0);
+		CHECK(string.Compare("Str") != 0);
 	}
 
 	SECTION("StartsWith()")
