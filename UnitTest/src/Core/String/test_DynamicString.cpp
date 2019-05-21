@@ -149,10 +149,16 @@ TEST_CASE("WritableString", "[Core]")
 	SECTION("ReplaceAllChar()")
 	{
 		DynamicString replaceStr = "aabbc";
+		replaceStr.ReplaceAllChar('\0', 'X');
+		CHECK(strcmp(replaceStr.Str(), "aabbc") == 0);
+		CHECK(replaceStr.Equals("aabbc"));
+
 		replaceStr.ReplaceAllChar('b', 'X');
 		CHECK(replaceStr.Equals("aaXXc"));
 
+		// When replacing to the null-character the string has to be truncated
 		string.ReplaceAllChar(' ', '\0');
+		CHECK(string.Length() == 6);
 		CHECK(string.Equals("String"));
 	}
 

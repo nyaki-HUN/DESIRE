@@ -66,8 +66,8 @@ void WritableString::RemoveFromEnd(size_t numChars)
 
 void WritableString::Replace(const String& search, const String& replaceTo)
 {
-	const size_t firstPos = Find(search);
-	if(firstPos == kInvalidPos)
+	const size_t foundPos = Find(search);
+	if(foundPos == kInvalidPos)
 	{
 		return;
 	}
@@ -82,13 +82,13 @@ void WritableString::Replace(const String& search, const String& replaceTo)
 		}
 	}
 
-	Replace_Internal(firstPos, search.Length(), replaceTo);
+	Replace_Internal(foundPos, search.Length(), replaceTo);
 }
 
 void WritableString::ReplaceAll(const String& search, const String& replaceTo)
 {
-	const size_t firstPos = Find(search);
-	if(firstPos == kInvalidPos)
+	size_t foundPos = Find(search);
+	if(foundPos == kInvalidPos)
 	{
 		return;
 	}
@@ -97,7 +97,7 @@ void WritableString::ReplaceAll(const String& search, const String& replaceTo)
 	if(numCharsToMove > 0)
 	{
 		size_t count = 0;
-		size_t pos = firstPos;
+		size_t pos = foundPos;
 		do
 		{
 			count++;
@@ -111,30 +111,36 @@ void WritableString::ReplaceAll(const String& search, const String& replaceTo)
 		}
 	}
 
-	size_t pos = firstPos;
 	do
 	{
-		Replace_Internal(pos, search.Length(), replaceTo);
-		pos = Find(search, pos + replaceTo.Length());
-	} while(pos != kInvalidPos);
+		Replace_Internal(foundPos, search.Length(), replaceTo);
+		foundPos = Find(search, foundPos + replaceTo.Length());
+	} while(foundPos != kInvalidPos);
 }
 
 void WritableString::ReplaceAllChar(char search, char replaceTo)
 {
-	ASSERT(search != '\0');
+	ASSERT(search != replaceTo);
 
-	char *dataTmp = data;
-	for(;;)
+	size_t foundPos = Find(search);
+	if(foundPos == kInvalidPos)
 	{
-		char *foundPtr = strchr(dataTmp, search);
-		if(foundPtr == nullptr)
-		{
-			break;
-		}
-
-		*foundPtr = replaceTo;
-		dataTmp = foundPtr + 1;
+		return;
 	}
+
+	// When replacing to the null-character the string has to be truncated
+	if(replaceTo == '\0')
+	{
+		data[foundPos] = replaceTo;
+		size = foundPos;
+		return;
+	}
+
+	do
+	{
+		data[foundPos] = replaceTo;
+		foundPos = Find(search, foundPos + 1);
+	} while(foundPos != kInvalidPos);
 }
 
 void WritableString::Append(const char *str, size_t numChars)

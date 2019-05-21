@@ -5,9 +5,7 @@ const String String::kEmptyString = "";
 
 size_t String::Find(const String& search, size_t startIndex) const
 {
-	ASSERT(!search.IsEmpty());
-
-	if(startIndex >= size)
+	if(startIndex >= size || search.IsEmpty())
 	{
 		return kInvalidPos;
 	}
@@ -18,9 +16,7 @@ size_t String::Find(const String& search, size_t startIndex) const
 
 size_t String::Find(char search, size_t startIndex) const
 {
-	ASSERT(search != '\0');
-
-	if(startIndex >= size)
+	if(startIndex >= size || search == '\0')
 	{
 		return kInvalidPos;
 	}
