@@ -127,6 +127,13 @@ TEST_CASE("WritableString", "[Core]")
 		CHECK(strcmp(string.Str(), "") == 0);
 	}
 
+	SECTION("TruncateAt()")
+	{
+		string.TruncateAt(6);
+		CHECK(string.Length() == 6);
+		CHECK(string.Equals("String"));
+	}
+
 	SECTION("Replace() | ReplaceAll()")
 	{
 		DynamicString replaceStr = "aabbc";

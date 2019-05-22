@@ -64,6 +64,17 @@ void WritableString::RemoveFromEnd(size_t numChars)
 	data[size] = '\0';
 }
 
+void WritableString::TruncateAt(size_t startIndex)
+{
+	if(startIndex >= size)
+	{
+		return;
+	}
+
+	data[startIndex] = '\0';
+	size = startIndex;
+}
+
 void WritableString::Replace(const String& search, const String& replaceTo)
 {
 	const size_t foundPos = Find(search);
@@ -131,8 +142,7 @@ void WritableString::ReplaceAllChar(char search, char replaceTo)
 	// When replacing to the null-character the string has to be truncated
 	if(replaceTo == '\0')
 	{
-		data[foundPos] = replaceTo;
-		size = foundPos;
+		TruncateAt(foundPos);
 		return;
 	}
 

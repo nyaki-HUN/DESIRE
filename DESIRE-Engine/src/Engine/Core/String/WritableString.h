@@ -24,6 +24,9 @@ public:
 	void RemoveFrom(size_t startIndex, size_t numChars = SIZE_MAX);
 	void RemoveFromEnd(size_t numChars);
 
+	// Truncate the string at a given position and readjust the length
+	void TruncateAt(size_t startIndex);
+
 	// Replace characters in string
 	void Replace(const String& search, const String& replaceTo);
 	void ReplaceAll(const String& search, const String& replaceTo);
@@ -48,10 +51,10 @@ public:
 	// Remove whitespaces from both the beginning and end of the string
 	void Trim();
 
-	// Convert the string to lowercase
+	// Convert the string to lowercase (in place)
 	void ToLower();
 
-	// Convert the string to uppercase
+	// Convert the string to uppercase (in place)
 	void ToUpper();
 
 	// Write formatted data into the string from variable argument list
