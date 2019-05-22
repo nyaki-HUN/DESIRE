@@ -17,14 +17,10 @@ public:
 		Assign(str, size);
 	}
 
-	StackString(const String& string)						: StackString(string.Str(), string.Length()) {}
-	StackString(const StackString<STACK_SIZE>& string)		: StackString(string.Str(), string.Length()) {}
+	StackString(const String& string)					: StackString(string.Str(), string.Length()) {}
+	StackString(const StackString<STACK_SIZE>& string)	: StackString(string.Str(), string.Length()) {}
 
-	StackString<STACK_SIZE>& operator =(const String& string)
-	{
-		Assign(string.Str(), string.Length());
-		return *this;
-	}
+	StackString<STACK_SIZE>& operator =(const String& string)	{ Assign(string.Str(), string.Length()); return *this; }
 
 	char* GetCharBufferWithSize(size_t newSize)
 	{

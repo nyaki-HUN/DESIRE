@@ -28,18 +28,6 @@ DynamicString::~DynamicString()
 	free(data);
 }
 
-DynamicString& DynamicString::operator =(const String& string)
-{
-	Assign(string.Str(), string.Length());
-	return *this;
-}
-
-DynamicString& DynamicString::operator =(const DynamicString& string)
-{
-	Assign(string.Str(), string.Length());
-	return *this;
-}
-
 DynamicString& DynamicString::operator =(DynamicString&& string)
 {
 	ASSERT(this != &string);	// It's not allowed to copy from ourself

@@ -185,6 +185,26 @@ int String::CompareIgnoreCase(const String& string) const
 #endif
 }
 
+bool String::Equals(const String& string) const
+{
+	if(Length() != string.Length())
+	{
+		return false;
+	}
+
+	return memcmp(data, string.data, size) == 0;
+}
+
+bool String::EqualsIgnoreCase(const String& string) const
+{
+	if(Length() != string.Length())
+	{
+		return false;
+	}
+
+	return (CompareIgnoreCase(string) == 0);
+}
+
 bool String::StartsWith(const String& prefix) const
 {
 	return StartsWith(prefix.Str(), prefix.Length());

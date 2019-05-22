@@ -16,8 +16,8 @@ public:
 
 	~DynamicString() override;
 
-	DynamicString& operator =(const String& string);
-	DynamicString& operator =(const DynamicString& string);
+	DynamicString& operator =(const String& string)				{ Assign(string.Str(), string.Length()); return *this; }
+	DynamicString& operator =(const DynamicString& string)		{ Assign(string.Str(), string.Length()); return *this; }
 	DynamicString& operator =(DynamicString&& string);
 
 	// Create a new string which is initialized to a copy a substring of this string

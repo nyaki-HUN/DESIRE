@@ -47,11 +47,11 @@ public:
 	int Compare(const String& string) const;
 	int CompareIgnoreCase(const String& string) const;
 
-	bool Equals(const String& string) const				{ return (Compare(string) == 0); }
-	bool EqualsIgnoreCase(const String& string) const	{ return (CompareIgnoreCase(string) == 0); }
+	bool Equals(const String& string) const;
+	bool EqualsIgnoreCase(const String& string) const;
 
-	bool operator ==(const String& string) const		{ return (Compare(string) == 0); }
-	bool operator !=(const String& string) const		{ return (Compare(string) != 0); }
+	bool operator ==(const String& string) const		{ return Equals(string); }
+	bool operator !=(const String& string) const		{ return !Equals(string); }
 	bool operator <(const String& string) const			{ return (Compare(string) < 0); }
 
 	// Check if the string begins with the given prefix
