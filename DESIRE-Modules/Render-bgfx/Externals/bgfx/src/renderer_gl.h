@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -29,6 +29,24 @@
 			|| BX_PLATFORM_OSX     \
 			|| BX_PLATFORM_WINDOWS \
 			)
+
+#define BGFX_GL_PROFILER_BEGIN(_view, _abgr)                                               \
+	BX_MACRO_BLOCK_BEGIN                                                                   \
+		GL_CHECK(glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, s_viewName[view]) ); \
+		BGFX_PROFILER_BEGIN(s_viewName[view], _abgr);                                      \
+	BX_MACRO_BLOCK_END
+
+#define BGFX_GL_PROFILER_BEGIN_LITERAL(_name, _abgr)                                       \
+	BX_MACRO_BLOCK_BEGIN                                                                   \
+		GL_CHECK(glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, "" # _name) );       \
+		BGFX_PROFILER_BEGIN_LITERAL("" # _name, _abgr);                                    \
+	BX_MACRO_BLOCK_END
+
+#define BGFX_GL_PROFILER_END()        \
+	BX_MACRO_BLOCK_BEGIN              \
+		BGFX_PROFILER_END();          \
+		GL_CHECK(glPopDebugGroup() ); \
+	BX_MACRO_BLOCK_END
 
 #if BGFX_CONFIG_RENDERER_OPENGL
 #	if BGFX_CONFIG_RENDERER_OPENGL >= 31
@@ -587,6 +605,10 @@ typedef uint64_t GLuint64;
 #	define GL_MAX_ARRAY_TEXTURE_LAYERS 0x88FF
 #endif // GL_MAX_ARRAY_TEXTURE_LAYERS
 
+#ifndef GL_MAX_LABEL_LENGTH
+#	define GL_MAX_LABEL_LENGTH 0x82E8
+#endif // GL_MAX_LABEL_LENGTH
+
 #ifndef GL_QUERY_RESULT
 #	define GL_QUERY_RESULT 0x8866
 #endif // GL_QUERY_RESULT
@@ -631,7 +653,7 @@ typedef uint64_t GLuint64;
 #	define GL_RENDERBUFFER_FREE_MEMORY_ATI 0x87FD
 #endif // GL_RENDERBUFFER_FREE_MEMORY_ATI
 
-// http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt
+// https://web.archive.org/web/20190207230448/http://developer.download.nvidia.com/opengl/specs/GL_NVX_gpu_memory_info.txt
 #ifndef GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX
 #	define GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX 0x9047
 #endif // GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX
@@ -915,6 +937,10 @@ typedef uint64_t GLuint64;
 #ifndef GL_TEXTURE
 #	define GL_TEXTURE 0x1702
 #endif // GL_TEXTURE
+
+#ifndef GL_BUFFER
+#	define GL_BUFFER 0x82E0
+#endif // GL_BUFFER
 
 // _KHR or _ARB...
 #define GL_DEBUG_OUTPUT_SYNCHRONOUS         0x8242
@@ -1245,7 +1271,7 @@ namespace bgfx { namespace gl
 		void update(uint8_t _side, uint8_t _mip, const Rect& _rect, uint16_t _z, uint16_t _depth, uint16_t _pitch, const Memory* _mem);
 		void setSamplerState(uint32_t _flags, const float _rgba[4]);
 		void commit(uint32_t _stage, uint32_t _flags, const float _palette[][4]);
-		void resolve() const;
+		void resolve(uint8_t _resolve) const;
 
 		bool isCubeMap() const
 		{
@@ -1265,6 +1291,7 @@ namespace bgfx { namespace gl
 		uint32_t m_width;
 		uint32_t m_height;
 		uint32_t m_depth;
+		uint32_t m_numLayers;
 		uint8_t m_numMips;
 		uint8_t m_requestedFormat;
 		uint8_t m_textureFormat;
@@ -1304,6 +1331,7 @@ namespace bgfx { namespace gl
 		uint16_t destroy();
 		void resolve();
 		void discard(uint16_t _flags);
+		void set();
 
 		SwapChainGL* m_swapChain;
 		GLuint m_fbo[2];
@@ -1329,6 +1357,7 @@ namespace bgfx { namespace gl
 		void destroy();
 		void init();
 		void bindInstanceData(uint32_t _stride, uint32_t _baseVertex = 0) const;
+		void unbindInstanceData() const;
 
 		void bindAttributesBegin()
 		{
@@ -1349,6 +1378,8 @@ namespace bgfx { namespace gl
 				}
 			}
 		}
+
+		void unbindAttributes();
 
 		GLuint m_id;
 
@@ -1541,6 +1572,13 @@ namespace bgfx { namespace gl
 		{
 		}
 
+		LineReader(const bx::StringView& _str)
+			: m_str(_str.getPtr() )
+			, m_pos(0)
+			, m_size(_str.getLength() )
+		{
+		}
+
 		virtual int32_t read(void* _data, int32_t _size, bx::Error* _err) override
 		{
 			if (m_str[m_pos] == '\0'
@@ -1552,7 +1590,7 @@ namespace bgfx { namespace gl
 
 			uint32_t pos = m_pos;
 			const char* str = &m_str[pos];
-			const char* nl = bx::strnl(str);
+			const char* nl = bx::strFindNl(str).getPtr();
 			pos += (uint32_t)(nl - str);
 
 			const char* eol = &m_str[pos];

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -24,6 +24,24 @@
 #include "renderer.h"
 #include "renderer_d3d.h"
 #include "nvapi.h"
+
+#define BGFX_D3D9_PROFILER_BEGIN(_view, _abgr)          \
+	BX_MACRO_BLOCK_BEGIN                                \
+		PIX_BEGINEVENT(_abgr, s_viewNameW[_view]);      \
+		BGFX_PROFILER_BEGIN(s_viewName[view], _abgr);   \
+	BX_MACRO_BLOCK_END
+
+#define BGFX_D3D9_PROFILER_BEGIN_LITERAL(_name, _abgr)  \
+	BX_MACRO_BLOCK_BEGIN                                \
+		PIX_BEGINEVENT(_abgr, L"" # _name);             \
+		BGFX_PROFILER_BEGIN_LITERAL("" # _name, _abgr); \
+	BX_MACRO_BLOCK_END
+
+#define BGFX_D3D9_PROFILER_END()                        \
+	BX_MACRO_BLOCK_BEGIN                                \
+		BGFX_PROFILER_END();                            \
+		PIX_ENDEVENT();                                 \
+	BX_MACRO_BLOCK_END
 
 namespace bgfx { namespace d3d9
 {
@@ -348,7 +366,7 @@ namespace bgfx { namespace d3d9
 		void update(uint8_t _side, uint8_t _mip, const Rect& _rect, uint16_t _z, uint16_t _depth, uint16_t _pitch, const Memory* _mem);
 		void updateEnd();
 		void commit(uint8_t _stage, uint32_t _flags, const float _palette[][4]);
-		void resolve() const;
+		void resolve(uint8_t _resolve) const;
 
 		void preReset();
 		void postReset();
