@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
@@ -21,6 +21,7 @@ namespace bx
 	};
 
 	/// Non-zero-terminated string view.
+	///
 	class StringView
 	{
 	public:
@@ -28,7 +29,7 @@ namespace bx
 		StringView();
 
 		///
-		StringView(const StringView& _rhs);
+		StringView(const StringView& _rhs, int32_t _start = 0, int32_t _len = INT32_MAX);
 
 		///
 		StringView& operator=(const char* _rhs);
@@ -37,7 +38,16 @@ namespace bx
 		StringView& operator=(const StringView& _rhs);
 
 		///
-		StringView(const char* _ptr, int32_t _len = INT32_MAX);
+		StringView(char* _ptr);
+
+		///
+		StringView(const char* _ptr);
+
+		///
+		StringView(char* _ptr, int32_t _len);
+
+		///
+		StringView(const char* _ptr, int32_t _len);
 
 		///
 		StringView(const char* _ptr, const char* _term);
@@ -47,13 +57,19 @@ namespace bx
 		explicit StringView(const Ty& _container);
 
 		///
-		void set(const char* _ptr, int32_t _len = INT32_MAX);
+		void set(char* _ptr);
+
+		///
+		void set(const char* _ptr);
+
+		///
+		void set(const char* _ptr, int32_t _len);
 
 		///
 		void set(const char* _ptr, const char* _term);
 
 		///
-		void set(const StringView& _str);
+		void set(const StringView& _str, int32_t _start = 0, int32_t _len = INT32_MAX);
 
 		///
 		template<typename Ty>
@@ -62,9 +78,16 @@ namespace bx
 		///
 		void clear();
 
+		/// Returns pointer to non-terminated string.
+		///
+		/// @attention Use of this pointer in standard C/C++ functions is not safe. You must use it
+		///   in conjunction with `getTerm()` or getLength()`.
 		///
 		const char* getPtr() const;
 
+		/// Returns pointer past last character in string view.
+		///
+		/// @attention Dereferencing this pointer is not safe.
 		///
 		const char* getTerm() const;
 
@@ -198,19 +221,25 @@ namespace bx
 	int32_t strCat(char* _dst, int32_t _dstSize, const StringView& _str, int32_t _num = INT32_MAX);
 
 	/// Find character in string. Limit search to _max characters.
-	const char* strFind(const StringView& _str, char _ch);
+	StringView strFind(const StringView& _str, char _ch);
 
 	/// Find character in string in reverse. Limit search to _max characters.
-	const char* strRFind(const StringView& _str, char _ch);
+	StringView strRFind(const StringView& _str, char _ch);
 
 	/// Find substring in string. Limit search to _max characters.
-	const char* strFind(const StringView& _str, const StringView& _find, int32_t _num = INT32_MAX);
+	StringView strFind(const StringView& _str, const StringView& _find, int32_t _num = INT32_MAX);
 
 	/// Find substring in string. Case insensitive. Limit search to _max characters.
-	const char* strFindI(const StringView& _str, const StringView& _find, int32_t _num = INT32_MAX);
+	StringView strFindI(const StringView& _str, const StringView& _find, int32_t _num = INT32_MAX);
 
 	/// Returns string view with characters _chars trimmed from left.
 	StringView strLTrim(const StringView& _str, const StringView& _chars);
+
+	/// Returns string view with whitespace characters trimmed from left.
+	StringView strLTrimSpace(const StringView& _str);
+
+	/// Returns string view with non-whitespace characters trimmed from left.
+	StringView strLTrimNonSpace(const StringView& _str);
 
 	/// Returns string view with characters _chars trimmed from right.
 	StringView strRTrim(const StringView& _str, const StringView& _chars);
@@ -219,34 +248,28 @@ namespace bx
 	StringView strTrim(const StringView& _str, const StringView& _chars);
 
 	/// Find new line. Returns pointer after new line terminator.
-	const char* strnl(const char* _str);
+	StringView strFindNl(const StringView& _str);
 
 	/// Find end of line. Retuns pointer to new line terminator.
-	const char* streol(const char* _str);
-
-	/// Skip whitespace.
-	const char* strws(const char* _str);
-
-	/// Skip non-whitespace.
-	const char* strnws(const char* _str);
-
-	/// Returns pointer to first character after word.
-	const char* strSkipWord(const char* _str, int32_t _max = INT32_MAX);
+	StringView strFindEol(const StringView& _str);
 
 	/// Returns StringView of word or empty.
 	StringView strWord(const StringView& _str);
 
+	/// Returns substring in string.
+	StringView strSubstr(const StringView& _str, int32_t _start, int32_t _len = INT32_MAX);
+
 	/// Find matching block.
-	const char* strmb(const char* _str, char _open, char _close);
+	StringView strFindBlock(const StringView& _str, char _open, char _close);
 
 	// Normalize string to sane line endings.
-	void eolLF(char* _out, int32_t _size, const char* _str);
+	StringView normalizeEolLf(char* _out, int32_t _size, const StringView& _str);
 
 	// Finds identifier.
-	const char* findIdentifierMatch(const char* _str, const char* _word);
+	StringView findIdentifierMatch(const StringView& _str, const StringView& _word);
 
 	/// Finds any identifier from NULL terminated array of identifiers.
-	const char* findIdentifierMatch(const char* _str, const char* _words[]);
+	StringView findIdentifierMatch(const StringView& _str, const char** _words, int32_t _num = INT32_MAX);
 
 	/// Cross platform implementation of vsnprintf that returns number of
 	/// characters which would have been written to the final string if
@@ -257,6 +280,12 @@ namespace bx
 	/// characters which would have been written to the final string if
 	/// enough space had been available.
 	int32_t snprintf(char* _out, int32_t _max, const char* _format, ...);
+
+	///
+	int32_t vprintf(const char* _format, va_list _argList);
+
+	///
+	int32_t printf(const char* _format, ...);
 
 	/// Templatized snprintf.
 	template <typename Ty>
@@ -305,6 +334,31 @@ namespace bx
 
 	/// Converts string to 32-bit unsigned integer value.
 	bool fromString(uint32_t* _out, const StringView& _str);
+
+	///
+	class LineReader
+	{
+	public:
+		///
+		LineReader(const bx::StringView& _str);
+
+		///
+		void reset();
+
+		///
+		StringView next();
+
+		///
+		bool isDone() const;
+
+		///
+		uint32_t getLine() const;
+
+	private:
+		const bx::StringView m_str;
+		bx::StringView m_curr;
+		uint32_t m_line;
+	};
 
 } // namespace bx
 

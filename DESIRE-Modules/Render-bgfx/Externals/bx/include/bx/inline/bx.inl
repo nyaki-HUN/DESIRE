@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
@@ -9,6 +9,12 @@
 
 namespace bx
 {
+	// Reference(S):
+	// - https://web.archive.org/web/20181115035420/http://cnicholson.net/2011/01/stupid-c-tricks-a-better-sizeof_array/
+	//
+	template<typename Ty, size_t Num>
+	char(&CountOfRequireArrayArgumentT(const Ty(&)[Num]))[Num];
+
 	template<bool>
 	inline constexpr bool isEnabled()
 	{
@@ -33,7 +39,7 @@ namespace bx
 	}
 
 	template<typename Ty>
-	inline void xchg(Ty& _a, Ty& _b)
+	inline void swap(Ty& _a, Ty& _b)
 	{
 		Ty tmp = _a; _a = _b; _b = tmp;
 	}
