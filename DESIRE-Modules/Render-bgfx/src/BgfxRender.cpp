@@ -64,10 +64,10 @@ void BgfxRender::Init(OSWindow *mainWindow)
 		bgfx::setViewClear(viewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColor, 1.0f, 0);
 	}
 
-	samplerUniforms[0] = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
+	samplerUniforms[0] = bgfx::createUniform("s_tex", bgfx::UniformType::Sampler);
 	for(uint8_t i = 1; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
 	{
-		samplerUniforms[i] = bgfx::createUniform(StackString<7>::Format("s_tex%u", i).Str(), bgfx::UniformType::Int1);
+		samplerUniforms[i] = bgfx::createUniform(StackString<7>::Format("s_tex%u", i).Str(), bgfx::UniformType::Sampler);
 	}
 
 	renderState = BGFX_STATE_MSAA;

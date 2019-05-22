@@ -58,6 +58,27 @@
     <Filter Include="Externals\bimg">
       <UniqueIdentifier>{498D97ED-355B-8BF3-1EEF-FB190A5C6758}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Externals\bimg\3rdparty">
+      <UniqueIdentifier>{D18134CD-3DB9-7C64-46C3-E087B279A35D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\bimg\3rdparty\astc-codec">
+      <UniqueIdentifier>{B64C2ED8-A288-3142-0B9B-4939F7F5D95C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\bimg\3rdparty\astc-codec\include">
+      <UniqueIdentifier>{29CABFE2-1532-86B0-7E9D-9AC66A249D9C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\bimg\3rdparty\astc-codec\include\astc-codec">
+      <UniqueIdentifier>{0EAEC4C6-7ACA-B6B7-43A2-2325AF7D2079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\bimg\3rdparty\astc-codec\src">
+      <UniqueIdentifier>{CD756DAB-B9C7-449B-A2E6-81AB8ED75D84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\bimg\3rdparty\astc-codec\src\base">
+      <UniqueIdentifier>{9706DAA4-036C-6D2B-8C44-0F04F8A8629A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\bimg\3rdparty\astc-codec\src\decoder">
+      <UniqueIdentifier>{D2D96554-BE57-B6ED-A74F-7485936CF815}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Externals\bimg\include">
       <UniqueIdentifier>{BCEDDD50-A8E7-06A3-9154-9DB37DED6C0F}</UniqueIdentifier>
     </Filter>
@@ -132,6 +153,9 @@
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl31.h">
       <Filter>Externals\bgfx\3rdparty\khronos\GLES3</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl32.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\GLES3</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl3ext.h">
       <Filter>Externals\bgfx\3rdparty\khronos\GLES3</Filter>
     </ClInclude>
@@ -153,10 +177,58 @@
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\glx\glxext.h">
       <Filter>Externals\bgfx\3rdparty\khronos\glx</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_icd.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_layer.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_platform.h">
       <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_sdk_platform.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_android.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_core.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_fuchsia.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_ios.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_macos.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_metal.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_mir.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_vi.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_wayland.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_win32.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_xcb.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_xlib.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_xlib_xrandr.h">
       <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\wgl\wglext.h">
@@ -287,6 +359,69 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\src\vs_debugfont.bin.h">
       <Filter>Externals\bgfx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\include\astc-codec\astc-codec.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\include\astc-codec</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\bit_stream.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\bottom_n.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\math_utils.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\optional.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\string_utils.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\type_traits.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\uint128.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\utils.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\astc_file.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\codec.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\footprint.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\partition.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\quantization.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\types.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\weight_infill.h">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bimg\include\bimg\bimg.h">
       <Filter>Externals\bimg\include\bimg</Filter>
@@ -506,6 +641,9 @@
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_noop.cpp">
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\bgfx\src\renderer_nvn.cpp">
+      <Filter>Externals\bgfx\src</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_vk.cpp">
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
@@ -526,6 +664,39 @@
     </ClCompile>
     <ClCompile Include="..\..\Externals\bgfx\src\vertexdecl.cpp">
       <Filter>Externals\bgfx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\astc_file.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\codec.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\footprint.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\partition.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\quantization.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\weight_infill.cc">
+      <Filter>Externals\bimg\3rdparty\astc-codec\src\decoder</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bimg\src\image.cpp">
       <Filter>Externals\bimg\src</Filter>

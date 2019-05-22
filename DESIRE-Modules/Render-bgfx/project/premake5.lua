@@ -9,6 +9,8 @@ project "Render-bgfx"
 		"../Externals/bgfx/3rdparty/dxsdk/include",
 		"../Externals/bgfx/3rdparty/khronos",
 		"../Externals/bimg/include",
+		"../Externals/bimg/3rdparty/astc-codec",
+		"../Externals/bimg/3rdparty/astc-codec/include",
 		"../Externals/bx/include",
 	}
 
@@ -16,6 +18,7 @@ project "Render-bgfx"
 	{
 		"../Externals/**.h",
 		"../Externals/**.cpp",
+		"../Externals/**.cc",
 	}
 
 	removefiles

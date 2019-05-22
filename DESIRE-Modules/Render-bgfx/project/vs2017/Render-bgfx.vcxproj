@@ -58,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;BX_CONFIG_DEBUG=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\bgfx\include;..\..\Externals\bgfx\3rdparty;..\..\Externals\bgfx\3rdparty\dxsdk\include;..\..\Externals\bgfx\3rdparty\khronos;..\..\Externals\bimg\include;..\..\Externals\bx\include;..\..\Externals\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\bgfx\include;..\..\Externals\bgfx\3rdparty;..\..\Externals\bgfx\3rdparty\dxsdk\include;..\..\Externals\bgfx\3rdparty\khronos;..\..\Externals\bimg\include;..\..\Externals\bimg\3rdparty\astc-codec;..\..\Externals\bimg\3rdparty\astc-codec\include;..\..\Externals\bx\include;..\..\Externals\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -81,7 +81,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\bgfx\include;..\..\Externals\bgfx\3rdparty;..\..\Externals\bgfx\3rdparty\dxsdk\include;..\..\Externals\bgfx\3rdparty\khronos;..\..\Externals\bimg\include;..\..\Externals\bx\include;..\..\Externals\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\bgfx\include;..\..\Externals\bgfx\3rdparty;..\..\Externals\bgfx\3rdparty\dxsdk\include;..\..\Externals\bgfx\3rdparty\khronos;..\..\Externals\bimg\include;..\..\Externals\bimg\3rdparty\astc-codec;..\..\Externals\bimg\3rdparty\astc-codec\include;..\..\Externals\bx\include;..\..\Externals\bx\include\compat\msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -112,6 +112,7 @@
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES2\gl2platform.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl3.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl31.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl32.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl3ext.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\GLES3\gl3platform.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\KHR\khrplatform.h" />
@@ -119,8 +120,24 @@
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\gl\glcorearb.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\gl\glext.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\glx\glxext.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_icd.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_layer.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_platform.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vk_sdk_platform.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_android.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_core.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_fuchsia.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_ios.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_macos.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_metal.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_mir.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_vi.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_wayland.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_win32.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_xcb.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_xlib.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_xlib_xrandr.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\wgl\wglext.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\renderdoc\renderdoc_app.h" />
     <ClInclude Include="..\..\Externals\bgfx\include\bgfx\bgfx.h" />
@@ -164,6 +181,27 @@
     <ClInclude Include="..\..\Externals\bgfx\src\vertexdecl.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\vs_clear.bin.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\vs_debugfont.bin.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\include\astc-codec\astc-codec.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\bit_stream.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\bottom_n.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\math_utils.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\optional.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\string_utils.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\type_traits.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\uint128.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\base\utils.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\astc_file.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\codec.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\footprint.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\partition.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\quantization.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\types.h" />
+    <ClInclude Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\weight_infill.h" />
     <ClInclude Include="..\..\Externals\bimg\include\bimg\bimg.h" />
     <ClInclude Include="..\..\Externals\bimg\src\bimg_p.h" />
     <ClInclude Include="..\..\Externals\bx\include\bx\allocator.h" />
@@ -238,6 +276,7 @@
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_gl.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_gnm.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_noop.cpp" />
+    <ClCompile Include="..\..\Externals\bgfx\src\renderer_nvn.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_vk.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\shader.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\shader_dx9bc.cpp" />
@@ -245,6 +284,17 @@
     <ClCompile Include="..\..\Externals\bgfx\src\shader_spirv.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\topology.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\vertexdecl.cpp" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\astc_file.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\codec.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\endpoint_codec.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\footprint.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\integer_sequence_codec.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\intermediate_astc_block.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\logical_astc_block.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\partition.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\physical_astc_block.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\quantization.cc" />
+    <ClCompile Include="..\..\Externals\bimg\3rdparty\astc-codec\src\decoder\weight_infill.cc" />
     <ClCompile Include="..\..\Externals\bimg\src\image.cpp" />
     <ClCompile Include="..\..\Externals\bimg\src\image_gnf.cpp" />
     <ClCompile Include="..\..\Externals\bx\src\allocator.cpp" />
