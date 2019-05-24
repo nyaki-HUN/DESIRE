@@ -52,16 +52,6 @@ const String& Object::GetObjectName() const
 	return objectName;
 }
 
-void Object::SetID(uint32_t id)
-{
-	objectID = id;
-}
-
-uint32_t Object::GetID() const
-{
-	return objectID;
-}
-
 void Object::SetActive(bool active)
 {
 
@@ -163,14 +153,14 @@ void Object::RemoveComponent(const Component *component)
 	}
 }
 
-Component* Object::GetComponentByTypeID(int typeID) const
+Component* Object::GetComponentByTypeId(int typeId) const
 {
 	// Binary find
-	auto it = std::lower_bound(components.begin(), components.end(), typeID, [](const std::unique_ptr<Component>& component, int id)
+	auto it = std::lower_bound(components.begin(), components.end(), typeId, [](const std::unique_ptr<Component>& component, int id)
 	{
-		return (component->GetTypeID() < id);
+		return (component->GetTypeId() < id);
 	});
-	return (it != components.end() && !(typeID < (*it)->GetTypeID())) ? it->get() : nullptr;
+	return (it != components.end() && !(typeId < (*it)->GetTypeId())) ? it->get() : nullptr;
 }
 
 const Array<std::unique_ptr<Component>>& Object::GetComponents() const
@@ -228,7 +218,7 @@ Component& Object::AddComponent_Internal(std::unique_ptr<Component> component)
 {
 	std::unique_ptr<Component>& addedComponent = components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
 	{
-		return (a->GetTypeID() < b->GetTypeID());
+		return (a->GetTypeId() < b->GetTypeId());
 	});
 	return *(addedComponent.get());
 }

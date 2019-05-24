@@ -19,9 +19,6 @@ public:
 	const String& GetObjectName() const;
 	void SetObjectName(const String& name);
 
-	uint32_t GetID() const;
-	void SetID(uint32_t id);
-
 	void SetActive(bool active);
 	void SetVisible(bool visible);
 
@@ -39,13 +36,13 @@ public:
 	void RemoveComponent(const Component *component);
 
 	// Get the component with the given typeID
-	Component* GetComponentByTypeID(int typeID) const;
+	Component* GetComponentByTypeId(int typeId) const;
 
 	// Get the component with the given template type
 	template<class T>
 	T* GetComponent() const
 	{
-		return static_cast<T*>(GetComponentByTypeID(T::kTypeID));
+		return static_cast<T*>(GetComponentByTypeId(T::kTypeId));
 	}
 
 	// Get all components
@@ -77,6 +74,5 @@ private:
 	Object *parent = nullptr;
 	Array<Object*> children;
 
-	uint32_t objectID = 0;
 	DynamicString objectName;
 };

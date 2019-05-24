@@ -26,7 +26,7 @@ struct TgaHeader
 		DIRECTION_TOP_TO_BOTTOM = 0x20,
 	};
 
-	uint8_t sizeOfID;					// size of ID field that follows the header
+	uint8_t sizeOfId;					// size of ID field that follows the header
 	uint8_t colorMapType;				// 0=none, 1=has color map
 	EImageType imageType;
 

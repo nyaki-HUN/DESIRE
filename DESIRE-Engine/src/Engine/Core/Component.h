@@ -8,8 +8,8 @@ constexpr int MakeFourCC(const char(&c)[5])
 
 #define DECLARE_COMPONENT_FURCC_TYPE_ID(STR_ID)						\
 public:																\
-	static constexpr int kTypeID = MakeFourCC(STR_ID);				\
-	int GetTypeID() const override final { return kTypeID; }
+	static constexpr int kTypeId = MakeFourCC(STR_ID);				\
+	int GetTypeId() const override final { return kTypeId; }
 
 class Object;
 
@@ -27,7 +27,7 @@ public:
 	bool IsEnabled() const;
 
 	virtual void CloneTo(Object& otherObject) const = 0;
-	virtual int GetTypeID() const = 0;
+	virtual int GetTypeId() const = 0;
 
 	inline Object& GetObject() const
 	{
