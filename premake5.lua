@@ -20,7 +20,7 @@ flags
 	"MultiProcessorCompile",
 }
 
-if _ACTION == "vs2017" then
+if _ACTION == "vs2019" then
 	systemversion "10.0.16299.0"
 	defines
 	{
