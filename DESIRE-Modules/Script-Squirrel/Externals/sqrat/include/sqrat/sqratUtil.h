@@ -1,10 +1,3 @@
-#pragma once
-
-// --------------------------------------------------------------------------------------------------------------------
-//	This is a modified version of sqrat
-//	The changes include switching to C++11 and removing features
-// --------------------------------------------------------------------------------------------------------------------
-
 //
 // SqratUtil: Squirrel Utilities
 //
@@ -36,14 +29,35 @@
 #define _SCRAT_UTIL_H_
 
 #include <cassert>
+#include <map>
 #include <squirrel.h>
 #include <string.h>
 
+#if defined(SCRAT_USE_CXX11_OPTIMIZATIONS)
 #include <unordered_map>
+#endif
 
 namespace Sqrat {
 
 /// @cond DEV
+
+#if defined(SCRAT_USE_CXX11_OPTIMIZATIONS)
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Define an unordered map for Sqrat to use based on whether SCRAT_USE_CXX11_OPTIMIZATIONS is defined or not
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<class Key, class T>
+    struct unordered_map {
+        typedef std::unordered_map<Key, T> type;
+    };
+#else
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Define an unordered map for Sqrat to use based on whether SCRAT_USE_CXX11_OPTIMIZATIONS is defined or not
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<class Key, class T>
+    struct unordered_map {
+        typedef std::map<Key, T> type;
+    };
+#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Define an inline function to avoid MSVC's "conditional expression is constant" warning
@@ -164,6 +178,12 @@ static std::string wstring_to_string(const std::wstring& wstr)
 }
 
 #endif // SQUNICODE
+
+template <class T>
+class SharedPtr;
+
+template <class T>
+class WeakPtr;
 
 /// @endcond
 
@@ -450,6 +470,726 @@ inline string LastErrorString(HSQUIRRELVM vm) {
     sq_pop(vm, 2);
     return string(sqErr);
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// A smart pointer that retains shared ownership of an object through a pointer (see std::shared_ptr)
+///
+/// \tparam T Type of pointer
+///
+/// \remarks
+/// SharedPtr exists to automatically delete an object when all references to it are destroyed.
+///
+/// \remarks
+/// std::shared_ptr was not used because it is a C++11 feature.
+///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template <class T>
+class SharedPtr
+{
+    template <class U>
+    friend class SharedPtr;
+
+    template <class U>
+    friend class WeakPtr;
+
+private:
+
+    T*            m_Ptr;
+    unsigned int* m_RefCount;
+    unsigned int* m_RefCountRefCount;
+
+public:
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Constructs a new SharedPtr
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    SharedPtr() :
+    m_Ptr             (NULL),
+    m_RefCount        (NULL),
+    m_RefCountRefCount(NULL)
+    {
+
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Constructs a new SharedPtr from an object allocated with the new operator
+    ///
+    /// \param ptr Should be the return value from a call to the new operator
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    SharedPtr(T* ptr) :
+    m_Ptr             (NULL),
+    m_RefCount        (NULL),
+    m_RefCountRefCount(NULL)
+    {
+        Init(ptr);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Constructs a new SharedPtr from an object allocated with the new operator
+    ///
+    /// \param ptr Should be the return value from a call to the new operator
+    ///
+    /// \tparam U Type of pointer (usually doesnt need to be defined explicitly)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    SharedPtr(U* ptr) :
+    m_Ptr             (NULL),
+    m_RefCount        (NULL),
+    m_RefCountRefCount(NULL)
+    {
+        Init(ptr);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Copy constructor
+    ///
+    /// \param copy SharedPtr to copy
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    SharedPtr(const SharedPtr<T>& copy)
+    {
+        if (copy.Get() != NULL)
+        {
+            m_Ptr              = copy.Get();
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCount         += 1;
+            *m_RefCountRefCount += 1;
+        }
+        else
+        {
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Copy constructor
+    ///
+    /// \param copy SharedPtr to copy
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    SharedPtr(const SharedPtr<U>& copy)
+    {
+        if (copy.Get() != NULL)
+        {
+            m_Ptr              = static_cast<T*>(copy.Get());
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCount         += 1;
+            *m_RefCountRefCount += 1;
+        }
+        else
+        {
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Copy constructor
+    ///
+    /// \param copy WeakPtr to copy
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    SharedPtr(const WeakPtr<U>& copy)
+    {
+        if (copy.m_Ptr != NULL)
+        {
+            m_Ptr              = static_cast<T*>(copy.m_Ptr);
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCount         += 1;
+            *m_RefCountRefCount += 1;
+        }
+        else
+        {
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Destructs the owned object if no more SharedPtr link to it
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ~SharedPtr()
+    {
+        Reset();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Assigns the SharedPtr
+    ///
+    /// \param copy SharedPtr to copy
+    ///
+    /// \return The SharedPtr itself
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    SharedPtr<T>& operator=(const SharedPtr<T>& copy)
+    {
+        if (this != &copy)
+        {
+            Reset();
+
+            if (copy.Get() != NULL)
+            {
+                m_Ptr              = copy.Get();
+                m_RefCount         = copy.m_RefCount;
+                m_RefCountRefCount = copy.m_RefCountRefCount;
+
+                *m_RefCount         += 1;
+                *m_RefCountRefCount += 1;
+            }
+        }
+
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Assigns the SharedPtr
+    ///
+    /// \param copy SharedPtr to copy
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /// \return The SharedPtr itself
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    SharedPtr<T>& operator=(const SharedPtr<U>& copy)
+    {
+        Reset();
+
+        if (copy.Get() != NULL)
+        {
+            m_Ptr              = static_cast<T*>(copy.Get());
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCount         += 1;
+            *m_RefCountRefCount += 1;
+        }
+
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Sets up a new object to be managed by the SharedPtr
+    ///
+    /// \param ptr Should be the return value from a call to the new operator
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void Init(T* ptr)
+    {
+        Reset();
+
+        m_Ptr = ptr;
+
+        m_RefCount = new unsigned int;
+        *m_RefCount = 1;
+
+        m_RefCountRefCount = new unsigned int;
+        *m_RefCountRefCount = 1;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Sets up a new object to be managed by the SharedPtr
+    ///
+    /// \param ptr Should be the return value from a call to the new operator
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    void Init(U* ptr)
+    {
+        Reset();
+
+        m_Ptr = static_cast<T*>(ptr);
+
+        m_RefCount = new unsigned int;
+        *m_RefCount = 1;
+
+        m_RefCountRefCount = new unsigned int;
+        *m_RefCountRefCount = 1;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Clears the owned object for this SharedPtr and deletes it if no more SharedPtr link to it
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void Reset()
+    {
+        if (m_Ptr != NULL)
+        {
+            *m_RefCount         -= 1;
+            *m_RefCountRefCount -= 1;
+
+            if (*m_RefCount == 0)
+            {
+                delete m_Ptr;
+            }
+
+            if (*m_RefCountRefCount == 0)
+            {
+                delete m_RefCount;
+                delete m_RefCountRefCount;
+            }
+
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Checks if there is NOT an associated managed object
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool operator!() const
+    {
+        return m_Ptr == NULL;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another SharedPtr
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <typename U>
+    bool operator ==(const SharedPtr<U>& right) const
+    {
+        return m_Ptr == right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another SharedPtr
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool operator ==(const SharedPtr<T>& right) const
+    {
+        return m_Ptr == right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <typename U>
+    bool friend operator ==(const SharedPtr<T>& left, const U* right)
+    {
+        return left.m_Ptr == right;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool friend operator ==(const SharedPtr<T>& left, const T* right)
+    {
+        return left.m_Ptr == right;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <typename U>
+    bool friend operator ==(const U* left, const SharedPtr<T>& right)
+    {
+        return left == right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool friend operator ==(const T* left, const SharedPtr<T>& right)
+    {
+        return left == right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another SharedPtr
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <typename U>
+    bool operator !=(const SharedPtr<U>& right) const
+    {
+        return m_Ptr != right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another SharedPtr
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool operator !=(const SharedPtr<T>& right) const
+    {
+        return m_Ptr != right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <typename U>
+    bool friend operator !=(const SharedPtr<T>& left, const U* right)
+    {
+        return left.m_Ptr != right;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool friend operator !=(const SharedPtr<T>& left, const T* right)
+    {
+        return left.m_Ptr != right;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <typename U>
+    bool friend operator !=(const U* left, const SharedPtr<T>& right)
+    {
+        return left != right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Compares with another pointer
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool friend operator !=(const T* left, const SharedPtr<T>& right)
+    {
+        return left != right.m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Dereferences pointer to the managed object
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    T& operator*() const
+    {
+        assert(m_Ptr != NULL); // fails when dereferencing a null SharedPtr
+        return *m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Dereferences pointer to the managed object
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    T* operator->() const
+    {
+        assert(m_Ptr != NULL); // fails when dereferencing a null SharedPtr
+        return m_Ptr;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Gets the underlying pointer
+    ///
+    /// \return Pointer to the managed object
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    T* Get() const
+    {
+        return m_Ptr;
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// A smart pointer that retains a non-owning ("weak") reference to an object that is managed by SharedPtr (see std::weak_ptr)
+///
+/// \tparam T Type of pointer
+///
+/// \remarks
+/// WeakPtr exists for when an object that may be deleted at any time needs to be accessed if it exists.
+///
+/// \remarks
+/// std::weak_ptr was not used because it is a C++11 feature.
+///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template <class T>
+class WeakPtr
+{
+    template <class U>
+    friend class SharedPtr;
+
+private:
+
+    T*            m_Ptr;
+    unsigned int* m_RefCount;
+    unsigned int* m_RefCountRefCount;
+
+public:
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Constructs a new WeakPtr
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    WeakPtr() :
+    m_Ptr             (NULL),
+    m_RefCount        (NULL),
+    m_RefCountRefCount(NULL)
+    {
+
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Copy constructor
+    ///
+    /// \param copy WeakPtr to copy
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    WeakPtr(const WeakPtr<T>& copy)
+    {
+        if (copy.m_Ptr != NULL)
+        {
+            m_Ptr              = copy.m_Ptr;
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCountRefCount += 1;
+        }
+        else
+        {
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Copy constructor
+    ///
+    /// \param copy WeakPtr to copy
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    WeakPtr(const WeakPtr<U>& copy)
+    {
+        if (copy.m_Ptr != NULL)
+        {
+            m_Ptr              = static_cast<T*>(copy.m_Ptr);
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCountRefCount += 1;
+        }
+        else
+        {
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Copy constructor
+    ///
+    /// \param copy SharedPtr to copy
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    WeakPtr(const SharedPtr<U>& copy)
+    {
+        if (copy.Get() != NULL)
+        {
+            m_Ptr              = static_cast<T*>(copy.Get());
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCountRefCount += 1;
+        }
+        else
+        {
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Destructs the WeakPtr but has no influence on the object that was managed
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ~WeakPtr()
+    {
+        Reset();
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Assigns the WeakPtr
+    ///
+    /// \param copy WeakPtr to copy
+    ///
+    /// \return The WeakPtr itself
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    WeakPtr<T>& operator=(const WeakPtr<T>& copy)
+    {
+        if (this != &copy)
+        {
+            Reset();
+
+            if (copy.m_Ptr != NULL)
+            {
+                m_Ptr              = copy.m_Ptr;
+                m_RefCount         = copy.m_RefCount;
+                m_RefCountRefCount = copy.m_RefCountRefCount;
+
+                *m_RefCountRefCount += 1;
+            }
+        }
+
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Assigns the WeakPtr
+    ///
+    /// \param copy WeakPtr to copy
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /// \return The WeakPtr itself
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    WeakPtr<T>& operator=(const WeakPtr<U>& copy)
+    {
+        Reset();
+
+        if (copy.m_Ptr != NULL)
+        {
+            m_Ptr              = static_cast<T*>(copy.m_Ptr);
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCountRefCount += 1;
+        }
+
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Assigns the WeakPtr
+    ///
+    /// \param copy SharedPtr to copy
+    ///
+    /// \tparam U Type of copy (usually doesnt need to be defined explicitly)
+    ///
+    /// \return The WeakPtr itself
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template <class U>
+    WeakPtr<T>& operator=(const SharedPtr<U>& copy)
+    {
+        Reset();
+
+        if (copy.Get() != NULL)
+        {
+            m_Ptr              = static_cast<T*>(copy.Get());
+            m_RefCount         = copy.m_RefCount;
+            m_RefCountRefCount = copy.m_RefCountRefCount;
+
+            *m_RefCountRefCount += 1;
+        }
+
+        return *this;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Checks whether the managed object exists
+    ///
+    /// \return True if the managed object does not exist, false otherwise
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    bool Expired() const
+    {
+        return (m_Ptr == NULL || *m_RefCount == 0);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Creates a new SharedPtr that shares ownership of the managed object
+    ///
+    /// \return A SharedPtr which shares ownership of the managed object
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    SharedPtr<T> Lock() const
+    {
+        SharedPtr<T> other;
+        if (m_Ptr != NULL)
+        {
+            other.m_Ptr              = m_Ptr;
+            other.m_RefCount         = m_RefCount;
+            other.m_RefCountRefCount = m_RefCountRefCount;
+
+            *m_RefCount         += 1;
+            *m_RefCountRefCount += 1;
+        }
+        return other;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Clears the associated object for this WeakPtr
+    ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    void Reset()
+    {
+        if (m_Ptr != NULL)
+        {
+            *m_RefCountRefCount -= 1;
+
+            if (*m_RefCountRefCount == 0)
+            {
+                delete m_RefCount;
+                delete m_RefCountRefCount;
+            }
+
+            m_Ptr              = NULL;
+            m_RefCount         = NULL;
+            m_RefCountRefCount = NULL;
+        }
+    }
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @cond DEV
+/// Used internally to get and manipulate the underlying type of variables - retrieved from cppreference.com
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template<class T> struct remove_const                                                {typedef T type;};
+template<class T> struct remove_const<const T>                                       {typedef T type;};
+template<class T> struct remove_volatile                                             {typedef T type;};
+template<class T> struct remove_volatile<volatile T>                                 {typedef T type;};
+template<class T> struct remove_cv                                                   {typedef typename remove_volatile<typename remove_const<T>::type>::type type;};
+template<class T> struct is_pointer_helper                                           {static const bool value = false;};
+template<class T> struct is_pointer_helper<T*>                                       {static const bool value = true;};
+template<class T> struct is_pointer_helper<SharedPtr<T> >                            {static const bool value = true;};
+template<class T> struct is_pointer_helper<WeakPtr<T> >                              {static const bool value = true;};
+template<class T> struct is_pointer : is_pointer_helper<typename remove_cv<T>::type> {};
+template<class T> struct is_reference                                                {static const bool value = false;};
+template<class T> struct is_reference<T&>                                            {static const bool value = true;};
 /// @endcond
 
 }

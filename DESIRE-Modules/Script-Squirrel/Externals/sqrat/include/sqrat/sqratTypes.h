@@ -1,10 +1,3 @@
-#pragma once
-
-// --------------------------------------------------------------------------------------------------------------------
-//	This is a modified version of sqrat
-//	The changes include switching to C++11 and removing features
-// --------------------------------------------------------------------------------------------------------------------
-
 //
 // SqratTypes: Type Translators
 //
@@ -49,6 +42,25 @@
 namespace Sqrat {
 
 /// @cond DEV
+
+// copied from http://www.experts-exchange.com/Programming/Languages/CPP/A_223-Determing-if-a-C-type-is-convertable-to-another-at-compile-time.html
+template <typename T1, typename T2>
+struct is_convertible
+{
+private:
+    struct True_ { char x[2]; };
+    struct False_ { };
+
+    static True_ helper(T2 const &);
+    static False_ helper(...);
+
+    static T1* dummy;
+
+public:
+    static bool const YES = (
+        sizeof(True_) == sizeof(is_convertible::helper(*dummy))
+    );
+};
 
 template <typename T, bool b>
 struct popAsInt
@@ -154,20 +166,20 @@ struct Var {
         if (ptr != NULL) {
             value = *ptr;
 #if !defined (SCRAT_NO_ERROR_CHECKING)
-        } else if (std::is_convertible<T, SQInteger>::value) { /* value is likely of integral type like enums */
+        } else if (is_convertible<T, SQInteger>::YES) { /* value is likely of integral type like enums */
             SQCLEAR(vm); // clear the previous error
-            value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
+            value = popAsInt<T, is_convertible<T, SQInteger>::YES>(vm, idx).value;
 #endif
         } else {
             // initialize value to avoid warnings
-            value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
+            value = popAsInt<T, is_convertible<T, SQInteger>::YES>(vm, idx).value;
         }
         SQCATCH(vm) {
 #if defined (SCRAT_USE_EXCEPTIONS)
             SQUNUSED(e); // avoid "unreferenced local variable" warning
 #endif
-            if (std::is_convertible<T, SQInteger>::value) { /* value is likely of integral type like enums */
-                value = popAsInt<T, std::is_convertible<T, SQInteger>::value>(vm, idx).value;
+            if (is_convertible<T, SQInteger>::YES) { /* value is likely of integral type like enums */
+                value = popAsInt<T, is_convertible<T, SQInteger>::YES>(vm, idx).value;
             } else {
                 SQRETHROW(vm);
             }
@@ -185,7 +197,7 @@ struct Var {
         if (ClassType<T>::hasClassData(vm))
             ClassType<T>::PushInstanceCopy(vm, value);
         else /* try integral type */
-            pushAsInt<T, std::is_convertible<T, SQInteger>::value>().push(vm, value);
+            pushAsInt<T, is_convertible<T, SQInteger>::YES>().push(vm, value);
     }
 
 private:
@@ -241,7 +253,7 @@ struct Var<T&> {
         if (ClassType<T>::hasClassData(vm))
             ClassType<T>::PushInstance(vm, &value);
         else /* try integral type */
-            pushAsInt<T, std::is_convertible<T, SQInteger>::value>().push(vm, value);
+            pushAsInt<T, is_convertible<T, SQInteger>::YES>().push(vm, value);
     }
 
 private:
@@ -443,16 +455,16 @@ struct Var<const T* const> {
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Used to get (as copies) and push (as references) class instances to and from the stack as a std::shared_ptr
+/// Used to get (as copies) and push (as references) class instances to and from the stack as a SharedPtr
 ///
 /// \tparam T Type of instance (usually doesnt need to be defined explicitly)
 ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T> void PushVarR(HSQUIRRELVM vm, T& value);
 template<class T>
-struct Var<std::shared_ptr<T> > {
+struct Var<SharedPtr<T> > {
 
-    std::shared_ptr<T> value; ///< The actual value of get operations
+    SharedPtr<T> value; ///< The actual value of get operations
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// Attempts to get the value off the stack at idx as the given type
@@ -481,7 +493,7 @@ struct Var<std::shared_ptr<T> > {
     /// \param value Value to push on to the VM's stack
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    static void push(HSQUIRRELVM vm, const std::shared_ptr<T>& value) {
+    static void push(HSQUIRRELVM vm, const SharedPtr<T>& value) {
         PushVarR(vm, *value);
     }
 };
@@ -510,14 +522,23 @@ struct Var<std::shared_ptr<T> > {
      } \
  };
 
-SCRAT_INTEGER(uint32_t)
-SCRAT_INTEGER(int32_t)
-SCRAT_INTEGER(uint16_t)
-SCRAT_INTEGER(int16_t)
-SCRAT_INTEGER(uint8_t)
-SCRAT_INTEGER(int8_t)
-SCRAT_INTEGER(uint64_t)
-SCRAT_INTEGER(int64_t)
+SCRAT_INTEGER(unsigned int)
+SCRAT_INTEGER(signed int)
+SCRAT_INTEGER(unsigned long)
+SCRAT_INTEGER(signed long)
+SCRAT_INTEGER(unsigned short)
+SCRAT_INTEGER(signed short)
+SCRAT_INTEGER(unsigned char)
+SCRAT_INTEGER(signed char)
+SCRAT_INTEGER(unsigned long long)
+SCRAT_INTEGER(signed long long)
+
+#ifdef _MSC_VER
+#if defined(__int64)
+SCRAT_INTEGER(unsigned __int64)
+SCRAT_INTEGER(signed __int64)
+#endif
+#endif
 
 // Float types
 #define SCRAT_FLOAT( type ) \
@@ -989,18 +1010,27 @@ template<class T> struct is_referencable {static const bool value = true;};
 #define SCRAT_MAKE_NONREFERENCABLE( type ) \
  template<> struct is_referencable<type> {static const bool value = false;};
 
-SCRAT_MAKE_NONREFERENCABLE(uint32_t)
-SCRAT_MAKE_NONREFERENCABLE(int32_t)
-SCRAT_MAKE_NONREFERENCABLE(uint16_t)
-SCRAT_MAKE_NONREFERENCABLE(int16_t)
-SCRAT_MAKE_NONREFERENCABLE(uint8_t)
-SCRAT_MAKE_NONREFERENCABLE(int8_t)
-SCRAT_MAKE_NONREFERENCABLE(uint64_t)
-SCRAT_MAKE_NONREFERENCABLE(int64_t)
+SCRAT_MAKE_NONREFERENCABLE(unsigned int)
+SCRAT_MAKE_NONREFERENCABLE(signed int)
+SCRAT_MAKE_NONREFERENCABLE(unsigned long)
+SCRAT_MAKE_NONREFERENCABLE(signed long)
+SCRAT_MAKE_NONREFERENCABLE(unsigned short)
+SCRAT_MAKE_NONREFERENCABLE(signed short)
+SCRAT_MAKE_NONREFERENCABLE(unsigned char)
+SCRAT_MAKE_NONREFERENCABLE(signed char)
+SCRAT_MAKE_NONREFERENCABLE(unsigned long long)
+SCRAT_MAKE_NONREFERENCABLE(signed long long)
 SCRAT_MAKE_NONREFERENCABLE(float)
 SCRAT_MAKE_NONREFERENCABLE(double)
 SCRAT_MAKE_NONREFERENCABLE(bool)
 SCRAT_MAKE_NONREFERENCABLE(string)
+
+#ifdef _MSC_VER
+#if defined(__int64)
+SCRAT_MAKE_NONREFERENCABLE(unsigned __int64)
+SCRAT_MAKE_NONREFERENCABLE(signed __int64)
+#endif
+#endif
 
 #ifdef SQUNICODE
 SCRAT_MAKE_NONREFERENCABLE(std::string)
@@ -1079,10 +1109,10 @@ struct PushVarR_helper<T, false> {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 template<class T>
 inline void PushVarR(HSQUIRRELVM vm, T& value) {
-    if (!std::is_pointer<T>::value && is_referencable<typename std::remove_cv<T>::type>::value) {
+    if (!is_pointer<T>::value && is_referencable<typename remove_cv<T>::type>::value) {
         Var<T&>::push(vm, value);
     } else {
-        PushVarR_helper<T, std::is_pointer<T>::value>::push(vm, value);
+        PushVarR_helper<T, is_pointer<T>::value>::push(vm, value);
     }
 }
 

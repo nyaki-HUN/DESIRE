@@ -1,10 +1,3 @@
-#pragma once
-
-// --------------------------------------------------------------------------------------------------------------------
-//	This is a modified version of sqrat
-//	The changes include switching to C++11 and removing features
-// --------------------------------------------------------------------------------------------------------------------
-
 //
 // SqratObject: Referenced Squirrel Object Wrapper
 //

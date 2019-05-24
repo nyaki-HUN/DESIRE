@@ -1,10 +1,3 @@
-#pragma once
-
-// --------------------------------------------------------------------------------------------------------------------
-//	This is a modified version of sqrat
-//	The changes include switching to C++11 and removing features
-// --------------------------------------------------------------------------------------------------------------------
-
 //
 // SqratMemberMethods: Member Methods
 //
@@ -5526,7 +5519,7 @@ inline SQInteger sqDefaultSet(HSQUIRRELVM vm) {
     M member = *memberPtr;
 
     SQTRY()
-    if (std::is_pointer<V>::value || std::is_reference<V>::value) {
+    if (is_pointer<V>::value || is_reference<V>::value) {
         ptr->*member = Var<V>(vm, 2).value;
     } else {
         ptr->*member = Var<const V&>(vm, 2).value;
@@ -5549,7 +5542,7 @@ inline SQInteger sqStaticSet(HSQUIRRELVM vm) {
     M member = *memberPtr;
 
     SQTRY()
-    if (std::is_pointer<V>::value || std::is_reference<V>::value) {
+    if (is_pointer<V>::value || is_reference<V>::value) {
         *member = Var<V>(vm, 2).value;
     } else {
         *member = Var<const V&>(vm, 2).value;

@@ -1,10 +1,3 @@
-#pragma once
-
-// --------------------------------------------------------------------------------------------------------------------
-//	This is a modified version of sqrat
-//	The changes include switching to C++11 and removing features
-// --------------------------------------------------------------------------------------------------------------------
-
 //
 // SqratClass: Class Binding
 //
@@ -35,6 +28,7 @@
 #if !defined(_SCRAT_CLASS_H_)
 #define _SCRAT_CLASS_H_
 
+#include <typeinfo>
 #include <squirrel.h>
 #include <string.h>
 
@@ -106,15 +100,15 @@ public:
 
             ClassData<C>* cd = *ud;
 
-            if (ClassType<C>::getStaticClassData().expired()) {
-                cd->staticData = std::make_shared<StaticClassData<C, void>>();
+            if (ClassType<C>::getStaticClassData().Expired()) {
+                cd->staticData.Init(new StaticClassData<C, void>);
                 cd->staticData->copyFunc  = &A::Copy;
                 cd->staticData->className = string(className);
                 cd->staticData->baseClass = NULL;
 
                 ClassType<C>::getStaticClassData() = cd->staticData;
             } else {
-                cd->staticData = ClassType<C>::getStaticClassData().lock();
+                cd->staticData = ClassType<C>::getStaticClassData().Lock();
             }
 
             HSQOBJECT& classObj = cd->classObj;
@@ -134,7 +128,7 @@ public:
     /// \return Squirrel object representing the Squirrel class
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    virtual HSQOBJECT GetObject() const override {
+    virtual HSQOBJECT GetObject() const {
         return ClassType<C>::getClassData(vm)->classObj;
     }
 
@@ -144,7 +138,7 @@ public:
     /// \return Squirrel object representing the Squirrel class
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    virtual HSQOBJECT& GetObject() override {
+    virtual HSQOBJECT& GetObject() {
         return ClassType<C>::getClassData(vm)->classObj;
     }
 
@@ -552,13 +546,13 @@ protected:
 
     // Initialize the required data structure for the class
     void InitClass(ClassData<C>* cd) {
-        cd->instances = std::make_shared<std::unordered_map<C*, HSQOBJECT>>();
+        cd->instances.Init(new typename unordered_map<C*, HSQOBJECT>::type);
 
         // push the class
         sq_pushobject(vm, cd->classObj);
 
         // set the typetag of the class
-        sq_settypetag(vm, -1, cd->staticData.get());
+        sq_settypetag(vm, -1, cd->staticData.Get());
 
         // add the default constructor
         sq_pushstring(vm, _SC("constructor"), -1);
@@ -923,15 +917,15 @@ public:
             ClassData<B>* bd = ClassType<B>::getClassData(v);
             ClassData<C>* cd = *ud;
 
-            if (ClassType<C>::getStaticClassData().expired()) {
-                cd->staticData = std::make_shared<StaticClassData<C, B>>();
+            if (ClassType<C>::getStaticClassData().Expired()) {
+                cd->staticData.Init(new StaticClassData<C, B>);
                 cd->staticData->copyFunc  = &A::Copy;
                 cd->staticData->className = string(className);
-                cd->staticData->baseClass = bd->staticData.get();
+                cd->staticData->baseClass = bd->staticData.Get();
 
                 ClassType<C>::getStaticClassData() = cd->staticData;
             } else {
-                cd->staticData = ClassType<C>::getStaticClassData().lock();
+                cd->staticData = ClassType<C>::getStaticClassData().Lock();
             }
 
             HSQOBJECT& classObj = cd->classObj;
@@ -951,13 +945,13 @@ protected:
 /// @cond DEV
 
     void InitDerivedClass(HSQUIRRELVM vm, ClassData<C>* cd, ClassData<B>* bd) {
-        cd->instances = std::make_shared<std::unordered_map<C*, HSQOBJECT>>();
+        cd->instances.Init(new typename unordered_map<C*, HSQOBJECT>::type);
 
         // push the class
         sq_pushobject(vm, cd->classObj);
 
         // set the typetag of the class
-        sq_settypetag(vm, -1, cd->staticData.get());
+        sq_settypetag(vm, -1, cd->staticData.Get());
 
         // add the default constructor
         sq_pushstring(vm, _SC("constructor"), -1);

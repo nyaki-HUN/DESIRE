@@ -1,10 +1,3 @@
-#pragma once
-
-// --------------------------------------------------------------------------------------------------------------------
-//	This is a modified version of sqrat
-//	The changes include switching to C++11 and removing features
-// --------------------------------------------------------------------------------------------------------------------
-
 //
 // SqratTable: Table Binding
 //
@@ -245,14 +238,14 @@ public:
     ///
     /// \tparam T Type of value (fails if value is not of this type)
     ///
-    /// \return std::shared_ptr containing the value (or null if failed)
+    /// \return SharedPtr containing the value (or null if failed)
     ///
     /// \remarks
     /// This function MUST have its Error handled if it occurred.
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <typename T>
-    std::shared_ptr<T> GetValue(const SQChar* name)
+    SharedPtr<T> GetValue(const SQChar* name)
     {
         sq_pushobject(vm, obj);
         sq_pushstring(vm, name, -1);
@@ -260,16 +253,16 @@ public:
         if (SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
             SQTHROW(vm, _SC("illegal index"));
-            return std::shared_ptr<T>();
+            return SharedPtr<T>();
         }
 #else
         sq_get(vm, -2);
 #endif
         SQTRY()
-        Var<std::shared_ptr<T> > entry(vm, -1);
+        Var<SharedPtr<T> > entry(vm, -1);
         SQCATCH_NOEXCEPT(vm) {
             sq_pop(vm, 2);
-            return std::shared_ptr<T>();
+            return SharedPtr<T>();
         }
         sq_pop(vm, 2);
         return entry.value;
@@ -280,7 +273,7 @@ public:
             sq_pop(vm, 2);
             SQRETHROW(vm);
         }
-        return std::shared_ptr<T>(); // avoid "not all control paths return a value" warning
+        return SharedPtr<T>(); // avoid "not all control paths return a value" warning
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -290,14 +283,14 @@ public:
     ///
     /// \tparam T Type of value (fails if value is not of this type)
     ///
-    /// \return std::shared_ptr containing the value (or null if failed)
+    /// \return SharedPtr containing the value (or null if failed)
     ///
     /// \remarks
     /// This function MUST have its Error handled if it occurred.
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     template <typename T>
-    std::shared_ptr<T> GetValue(int index)
+    SharedPtr<T> GetValue(int index)
     {
         sq_pushobject(vm, obj);
         sq_pushinteger(vm, index);
@@ -305,16 +298,16 @@ public:
         if (SQ_FAILED(sq_get(vm, -2))) {
             sq_pop(vm, 1);
             SQTHROW(vm, _SC("illegal index"));
-            return std::shared_ptr<T>();
+            return SharedPtr<T>();
         }
 #else
         sq_get(vm, -2);
 #endif
         SQTRY()
-        Var<std::shared_ptr<T> > entry(vm, -1);
+        Var<SharedPtr<T> > entry(vm, -1);
         SQCATCH_NOEXCEPT(vm) {
             sq_pop(vm, 2);
-            return std::shared_ptr<T>();
+            return SharedPtr<T>();
         }
         sq_pop(vm, 2);
         return entry.value;
@@ -325,7 +318,7 @@ public:
             sq_pop(vm, 2);
             SQRETHROW(vm);
         }
-        return std::shared_ptr<T>(); // avoid "not all control paths return a value" warning
+        return SharedPtr<T>(); // avoid "not all control paths return a value" warning
     }
 };
 
