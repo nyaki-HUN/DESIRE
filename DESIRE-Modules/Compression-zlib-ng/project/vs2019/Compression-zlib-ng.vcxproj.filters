@@ -21,6 +21,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Externals\zlib-ng\adler32_p.h">
+      <Filter>Externals\zlib-ng</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.h">
       <Filter>Externals\zlib-ng\arch\x86</Filter>
     </ClInclude>

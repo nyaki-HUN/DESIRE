@@ -103,6 +103,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Externals\zlib-ng\adler32_p.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\ctzl.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\x86.h" />
