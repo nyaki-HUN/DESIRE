@@ -257,7 +257,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static void Clear(HSQUIRRELVM vm) {
         sq_pushregistrytable(vm);
-        sq_pushstring(vm, "__error", -1);
+        sq_pushstring(vm, _SC("__error"), -1);
         sq_rawdeleteslot(vm, -2, false);
         sq_pop(vm, 1);
     }
@@ -272,18 +272,18 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static string Message(HSQUIRRELVM vm) {
         sq_pushregistrytable(vm);
-        sq_pushstring(vm, "__error", -1);
+        sq_pushstring(vm, _SC("__error"), -1);
         if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
             string** ud;
             sq_getuserdata(vm, -1, (SQUserPointer*)&ud, NULL);
             sq_pop(vm, 1);
             string err = **ud;
-            sq_pushstring(vm, "__error", -1);
+            sq_pushstring(vm, _SC("__error"), -1);
             sq_rawdeleteslot(vm, -2, false);
             sq_pop(vm, 1);
             return err;
         }
-        sq_pushstring(vm, "__error", -1);
+        sq_pushstring(vm, _SC("__error"), -1);
         sq_rawdeleteslot(vm, -2, false);
         sq_pop(vm, 1);
         return string(_SC("an unknown error has occurred"));
@@ -299,7 +299,7 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static bool Occurred(HSQUIRRELVM vm) {
         sq_pushregistrytable(vm);
-        sq_pushstring(vm, "__error", -1);
+        sq_pushstring(vm, _SC("__error"), -1);
         if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
             sq_pop(vm, 2);
             return true;
@@ -317,9 +317,9 @@ public:
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     static void Throw(HSQUIRRELVM vm, const string& err) {
         sq_pushregistrytable(vm);
-        sq_pushstring(vm, "__error", -1);
+        sq_pushstring(vm, _SC("__error"), -1);
         if (SQ_FAILED(sq_rawget(vm, -2))) {
-            sq_pushstring(vm, "__error", -1);
+            sq_pushstring(vm, _SC("__error"), -1);
             string** ud = reinterpret_cast<string**>(sq_newuserdata(vm, sizeof(string*)));
             *ud = new string(err);
             sq_setreleasehook(vm, -1, &error_cleanup_hook);

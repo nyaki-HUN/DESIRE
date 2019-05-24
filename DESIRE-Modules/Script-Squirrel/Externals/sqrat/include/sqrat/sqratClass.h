@@ -84,10 +84,10 @@ public:
     Class(HSQUIRRELVM v, const string& className, bool createClass = true) : Object(v, false) {
         if (createClass && !ClassType<C>::hasClassData(v)) {
             sq_pushregistrytable(v);
-            sq_pushstring(v, "__classes", -1);
+            sq_pushstring(v, _SC("__classes"), -1);
             if (SQ_FAILED(sq_rawget(v, -2))) {
                 sq_newtable(v);
-                sq_pushstring(v, "__classes", -1);
+                sq_pushstring(v, _SC("__classes"), -1);
                 sq_push(v, -2);
                 sq_rawset(v, -4);
             }
@@ -900,10 +900,10 @@ public:
     DerivedClass(HSQUIRRELVM v, const string& className) : Class<C, A>(v, string(), false) {
         if (!ClassType<C>::hasClassData(v)) {
             sq_pushregistrytable(v);
-            sq_pushstring(v, "__classes", -1);
+            sq_pushstring(v, _SC("__classes"), -1);
             if (SQ_FAILED(sq_rawget(v, -2))) {
                 sq_newtable(v);
-                sq_pushstring(v, "__classes", -1);
+                sq_pushstring(v, _SC("__classes"), -1);
                 sq_push(v, -2);
                 sq_rawset(v, -4);
             }

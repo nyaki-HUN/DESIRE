@@ -97,7 +97,7 @@ public:
 
     static inline ClassData<C>* getClassData(HSQUIRRELVM vm) {
         sq_pushregistrytable(vm);
-        sq_pushstring(vm, "__classes", -1);
+        sq_pushstring(vm, _SC("__classes"), -1);
 #ifndef NDEBUG
         SQRESULT r = sq_rawget(vm, -2);
         assert(SQ_SUCCEEDED(r)); // fails if getClassData is called when the data does not exist for the given VM yet (bind the class)
@@ -124,7 +124,7 @@ public:
     static inline bool hasClassData(HSQUIRRELVM vm) {
         if (!getStaticClassData().Expired()) {
             sq_pushregistrytable(vm);
-            sq_pushstring(vm, "__classes", -1);
+            sq_pushstring(vm, _SC("__classes"), -1);
             if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
                 sq_pushstring(vm, ClassName().c_str(), -1);
                 if (SQ_SUCCEEDED(sq_rawget(vm, -2))) {
