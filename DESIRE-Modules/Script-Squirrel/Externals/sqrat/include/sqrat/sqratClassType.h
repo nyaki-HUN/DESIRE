@@ -36,6 +36,7 @@
 #define _SCRAT_CLASSTYPE_H_
 
 #include <squirrel.h>
+#include <memory>
 
 #include "sqratUtil.h"
 
