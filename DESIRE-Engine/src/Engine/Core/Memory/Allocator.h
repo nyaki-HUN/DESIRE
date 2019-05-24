@@ -18,11 +18,11 @@ public:
 	// Returns the default MallocAllocator
 	static Allocator& GetDefaultAllocator();
 
-	// Returns a linear allocator which is reset at the end of each frame
-	static Allocator& GetFrameAllocator();
+	// Returns a linear allocator which gets reset at the end of each frame
+	static Allocator& GetScratchAllocator();
 
 	// Reset all allocations in the frame allocator (this should happen at the end of the frame)
-	static void ResetFrameAllocator();
+	static void ResetScratchAllocator();
 
 private:
 	// Prevent copy

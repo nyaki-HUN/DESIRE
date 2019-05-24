@@ -3,22 +3,21 @@
 #include "Engine/Core/Memory/MallocAllocator.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
 
-#define DESIRE_FRAME_ALLOCATOR_SIZE	4 * 1024 * 1024
-
 Allocator& Allocator::GetDefaultAllocator()
 {
 	static MallocAllocator s_defaultAllocator;
 	return s_defaultAllocator;
 }
 
-Allocator& Allocator::GetFrameAllocator()
+Allocator& Allocator::GetScratchAllocator()
 {
-	static std::unique_ptr<char[]> data = std::make_unique<char[]>(DESIRE_FRAME_ALLOCATOR_SIZE);
-	static LinearAllocator s_frameAllocator(data.get(), DESIRE_FRAME_ALLOCATOR_SIZE);
-	return s_frameAllocator;
+	static constexpr size_t kScratchAllocatorSize = 10 * 1024 * 1024;
+	static std::unique_ptr<char[]> data = std::make_unique<char[]>(kScratchAllocatorSize);
+	static LinearAllocator s_scratchAllocator(data.get(), kScratchAllocatorSize);
+	return s_scratchAllocator;
 }
 
-void Allocator::ResetFrameAllocator()
+void Allocator::ResetScratchAllocator()
 {
-	static_cast<LinearAllocator&>(GetFrameAllocator()).Reset();
+	static_cast<LinearAllocator&>(GetScratchAllocator()).Reset();
 }
