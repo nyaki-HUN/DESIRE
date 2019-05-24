@@ -4,7 +4,7 @@
 TEST_CASE("IAllocator", "[Core][memory]")
 {
 	Allocator& defaultAllocator = Allocator::GetDefaultAllocator();
-	Allocator& frameAllocator = Allocator::GetFrameAllocator();
+	Allocator& scratchAllocator = Allocator::GetScratchAllocator();
 }
 
 TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
@@ -26,8 +26,8 @@ TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
 		int value;
 	};
 
-	Allocator::ResetFrameAllocator();
-	Allocator& a = Allocator::GetFrameAllocator();
+	Allocator::ResetScratchAllocator();
+	Allocator& a = Allocator::GetScratchAllocator();
 
 	const size_t numAllocBegin = globalMemoryAllocationCount;
 

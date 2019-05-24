@@ -3,7 +3,7 @@
 
 TEST_CASE("StdAllocatorWrapper", "[Core][memory]")
 {
-	Allocator::ResetFrameAllocator();
+	Allocator::ResetScratchAllocator();
 
 	{
 		const size_t numAllocBegin = globalMemoryAllocationCount;

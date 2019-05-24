@@ -12,7 +12,7 @@ DESIRE_ENABLE_WARNINGS
 
 // Template function for registering a class derived from Component
 #define ANGELSCRIPT_API_REGISTER_COMPONENT(CLASS)																										\
-	engine->RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeID);																					\
+	engine->RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeId);																					\
 	engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																					\
 	engine->RegisterObjectMethod(#CLASS, "Object& get_object()", asMETHODPR(Component, GetObject, () const, Object&), asCALL_THISCALL);					\
 	engine->RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);		\

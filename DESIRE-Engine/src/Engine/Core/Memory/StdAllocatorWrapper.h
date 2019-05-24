@@ -27,14 +27,14 @@ public:
 			return nullptr;
 		}
 
-		void *ptr = Allocator::GetFrameAllocator().Allocate(n * sizeof(T));
+		void *ptr = Allocator::GetScratchAllocator().Allocate(n * sizeof(T));
 		return static_cast<T*>(ptr);
 	}
 
 	void deallocate(T *ptr, size_t n) const
 	{
 		DESIRE_UNUSED(n);
-		Allocator::GetFrameAllocator().Deallocate(ptr);
+		Allocator::GetScratchAllocator().Deallocate(ptr);
 	}
 
 	// Stateless allocators are always equal
