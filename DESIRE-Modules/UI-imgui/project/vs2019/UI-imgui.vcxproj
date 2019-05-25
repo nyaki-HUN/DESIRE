@@ -118,6 +118,9 @@
     <ClCompile Include="..\..\Externals\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\..\src\ImGuiImpl.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\..\Externals\imgui\misc\natvis\imgui.natvis" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

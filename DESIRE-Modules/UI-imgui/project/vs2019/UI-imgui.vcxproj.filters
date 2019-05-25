@@ -7,6 +7,12 @@
     <Filter Include="Externals\imgui">
       <UniqueIdentifier>{25FC09A1-9187-7765-9A98-FA5906A3D365}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Externals\imgui\misc">
+      <UniqueIdentifier>{206E86DC-0CFD-0FA6-B51B-24A1A189204C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\imgui\misc\natvis">
+      <UniqueIdentifier>{84CF1EC5-F0DC-4CAB-79C3-4896E5CF1862}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
@@ -50,5 +56,10 @@
     <ClCompile Include="..\..\src\ImGuiImpl.cpp">
       <Filter>src</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="..\..\Externals\imgui\misc\natvis\imgui.natvis">
+      <Filter>Externals\imgui\misc\natvis</Filter>
+    </Natvis>
   </ItemGroup>
 </Project>

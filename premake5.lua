@@ -20,14 +20,14 @@ flags
 	"MultiProcessorCompile",
 }
 
-if _ACTION == "vs2019" then
+filter { "system:windows", "action:vs*" }
 	systemversion "10.0.16299.0"
 	defines
 	{
 		"WIN32",
 		"_CRT_SECURE_NO_DEPRECATE",
 	}
-end
+filter {}
 
 configuration { "Debug" }
 	targetsuffix "_d"
