@@ -19,8 +19,8 @@ public:
 	void Reset();
 
 private:
-	char *memoryStart;
-	size_t memorySize;
-	size_t freeSpace;
+	char *memoryStart = nullptr;
+	size_t memorySize = 0;
+	size_t freeSpace = 0;
 	Allocator& fallbackAllocator;
 };

@@ -2,7 +2,7 @@
 #include "Engine/Core/Memory/LinearAllocator.h"
 
 LinearAllocator::LinearAllocator(void *memoryStart, size_t memorySize, Allocator& fallbackAllocator)
-	: memoryStart((char*)memoryStart)
+	: memoryStart(static_cast<char*>(memoryStart))
 	, memorySize(memorySize)
 	, freeSpace(memorySize)
 	, fallbackAllocator(fallbackAllocator)
