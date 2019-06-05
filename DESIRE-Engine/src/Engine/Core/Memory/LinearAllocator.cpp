@@ -21,6 +21,7 @@ void* LinearAllocator::Allocate(size_t size, size_t alignment)
 		return fallbackAllocator.Allocate(size, alignment);
 	}
 
+	freeSpace -= size;
 	return ptr;
 }
 
