@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	virtual ~String() = default;
+	virtual ~String() {}
 
 	// Find character(s) in string
 	size_t Find(const String& search, size_t startIndex = 0) const;
@@ -64,12 +64,13 @@ public:
 	bool EndsWith(char suffix) const;
 
 protected:
-	String() = default;
+	String() {}
 
 	char *data = nullptr;
 	size_t size = 0;
 
 private:
+	// Prevent copy and move
 	String(const String& string) = delete;
 	String(String&& string) = delete;
 	String& operator =(const String& string) = delete;

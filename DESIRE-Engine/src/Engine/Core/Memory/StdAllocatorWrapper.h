@@ -11,13 +11,11 @@ public:
 
 	StdAllocatorWrapper()
 	{
-
 	}
 
 	template<typename U>
 	StdAllocatorWrapper(const StdAllocatorWrapper<U>&)
 	{
-
 	}
 
 	T* allocate(size_t n) const
@@ -38,17 +36,13 @@ public:
 	}
 
 	// Stateless allocators are always equal
-	bool operator ==(const StdAllocatorWrapper& other) const
-	{
-		return true;
-	}
-
-	// Stateless allocators are always equal
-	bool operator !=(const StdAllocatorWrapper& other) const
-	{
-		return false;
-	}
+	bool operator ==(const StdAllocatorWrapper& other) const	{ return true; }
+	bool operator !=(const StdAllocatorWrapper& other) const	{ return false;	}
 
 private:
-	StdAllocatorWrapper& operator =(const StdAllocatorWrapper&) = delete;
+	// Prevent copy and move
+	StdAllocatorWrapper(const StdAllocatorWrapper& other) = delete;
+	StdAllocatorWrapper(StdAllocatorWrapper&& other) = delete;
+	StdAllocatorWrapper& operator=(const StdAllocatorWrapper& other) = delete;
+	StdAllocatorWrapper& operator=(StdAllocatorWrapper&& other) = delete;
 };

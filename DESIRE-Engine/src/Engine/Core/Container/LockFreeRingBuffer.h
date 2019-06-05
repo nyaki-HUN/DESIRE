@@ -22,11 +22,7 @@ public:
 	}
 
 	// No synchronization needed in destructor as only one thread can do this
-	~LockFreeRingBuffer() = default;
-
-	// Prevent copy
-	LockFreeRingBuffer(const LockFreeRingBuffer& other) = delete;
-	LockFreeRingBuffer& operator=(const LockFreeRingBuffer& other) = delete;
+	~LockFreeRingBuffer() {}
 
 	// Add new element at the end of the buffer, after its current last element
 	// The content of value is copied to the new element
@@ -85,6 +81,12 @@ public:
 	}
 
 private:
+	// Prevent copy and move
+	LockFreeRingBuffer(const LockFreeRingBuffer& other) = delete;
+	LockFreeRingBuffer(LockFreeRingBuffer&& other) = delete;
+	LockFreeRingBuffer& operator=(const LockFreeRingBuffer& other) = delete;
+	LockFreeRingBuffer& operator=(LockFreeRingBuffer&& other) = delete;
+
 	T data[SIZE];
 
 	std::atomic<uint32_t> readIdx;

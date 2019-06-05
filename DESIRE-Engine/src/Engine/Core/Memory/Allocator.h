@@ -25,9 +25,11 @@ public:
 	static void ResetScratchAllocator();
 
 private:
-	// Prevent copy
+	// Prevent copy and move
 	Allocator(const Allocator& other) = delete;
+	Allocator(Allocator&& other) = delete;
 	Allocator& operator=(const Allocator& other) = delete;
+	Allocator& operator=(Allocator&& other) = delete;
 };
 
 // Creates a new object of type T using the allocator 'A' to allocate its memory
