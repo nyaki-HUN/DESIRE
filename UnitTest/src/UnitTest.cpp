@@ -17,12 +17,12 @@ void* operator new[](size_t size)
 	return malloc(size);
 }
 
-void operator delete(void *ptr)
+void operator delete(void* ptr)
 {
 	++globalMemoryDeallocationCount;
 	free(ptr);
 }
-void operator delete[](void *ptr)
+void operator delete[](void* ptr)
 {
 	++globalMemoryDeallocationCount;
 	free(ptr);

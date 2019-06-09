@@ -31,8 +31,8 @@ TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
 
 	const size_t numAllocBegin = globalMemoryAllocationCount;
 
-	TestClass *ptr1 = DESIRE_ALLOCATOR_NEW(a, TestClass);
-	TestClass *ptr2 = DESIRE_ALLOCATOR_NEW(a, TestClass, 123);
+	TestClass* ptr1 = DESIRE_ALLOCATOR_NEW(a, TestClass);
+	TestClass* ptr2 = DESIRE_ALLOCATOR_NEW(a, TestClass, 123);
 
 	CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
 

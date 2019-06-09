@@ -5,8 +5,8 @@
 
 TEST_CASE("Object", "[Scene]")
 {
-	Object *rootObj = new Object();
-	const Transform *preallocatedTransforms = &rootObj->GetTransform();
+	Object* rootObj = new Object();
+	const Transform* preallocatedTransforms = &rootObj->GetTransform();
 
 /*	   R
 	  /|\
@@ -17,23 +17,23 @@ TEST_CASE("Object", "[Scene]")
 	|   |
 	X   Y
 */
-	Object *child1 = rootObj->CreateChildObject("1");
-	Object *child2 = rootObj->CreateChildObject("2");
-	Object *child3 = rootObj->CreateChildObject("3");
+	Object* child1 = rootObj->CreateChildObject("1");
+	Object* child2 = rootObj->CreateChildObject("2");
+	Object* child3 = rootObj->CreateChildObject("3");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &child2->GetTransform());
 	REQUIRE((preallocatedTransforms + 3) == &child3->GetTransform());
 
-	Object *childA = child1->CreateChildObject("A");
+	Object* childA = child1->CreateChildObject("A");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
 	REQUIRE((preallocatedTransforms + 3) == &child2->GetTransform());
 	REQUIRE((preallocatedTransforms + 4) == &child3->GetTransform());
 
-	Object *childB = child3->CreateChildObject("B");
-	Object *childC = child3->CreateChildObject("C");
+	Object* childB = child3->CreateChildObject("B");
+	Object* childC = child3->CreateChildObject("C");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -42,8 +42,8 @@ TEST_CASE("Object", "[Scene]")
 	REQUIRE((preallocatedTransforms + 5) == &childB->GetTransform());
 	REQUIRE((preallocatedTransforms + 6) == &childC->GetTransform());
 
-	Object *childX = childA->CreateChildObject("X");
-	Object *childY = childB->CreateChildObject("Y");
+	Object* childX = childA->CreateChildObject("X");
+	Object* childY = childB->CreateChildObject("Y");
 	REQUIRE((preallocatedTransforms + 0) == &rootObj->GetTransform());
 	REQUIRE((preallocatedTransforms + 1) == &child1->GetTransform());
 	REQUIRE((preallocatedTransforms + 2) == &childA->GetTransform());
@@ -197,7 +197,7 @@ TEST_CASE("Object", "[Scene]")
 
 		REQUIRE((rootObj->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) != 0);
 		REQUIRE((child1->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) != 0);
-		
+
 		rootObj->UpdateAllTransformsInHierarchy();
 
 		CHECK((rootObj->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) == 0);
@@ -214,7 +214,7 @@ TEST_CASE("Object", "[Scene]")
 		CHECK(worldPos.GetZ() == Approx(3.0f));
 	}
 
-	const size_t traversedCount = SceneGraphTraversal::Traverse(rootObj, [](Object *node)
+	const size_t traversedCount = SceneGraphTraversal::Traverse(rootObj, [](Object* node)
 	{
 		CHECK((node->GetTransform().GetFlags() & Transform::EFlags::SCALE_CHANGED) == 0);
 		return true;

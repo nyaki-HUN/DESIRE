@@ -28,7 +28,7 @@ TEST_CASE("String", "[Core]")
 //		size_t Find(const char *search, size_t startIndex = 0) const;
 //		size_t Find(char search, size_t startIndex = 0) const;
 	}
-	
+
 	SECTION("FindLast()")
 	{
 		// TODO: Add test cases
