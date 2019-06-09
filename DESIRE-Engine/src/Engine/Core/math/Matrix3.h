@@ -10,40 +10,25 @@ public:
 		// No initialization
 	}
 
-	// Copy a 3x3 matrix
 	inline Matrix3(const Matrix3& mat)
 		: col0(mat.col0)
 		, col1(mat.col1)
 		, col2(mat.col2)
 	{
-
 	}
 
-	// Construct a 3x3 matrix containing the specified columns
 	inline Matrix3(const Vector3& col0, const Vector3& col1, const Vector3& col2)
 		: col0(col0)
 		, col1(col1)
 		, col2(col2)
 	{
-
 	}
 
-	// Construct a 3x3 rotation matrix from a unit-length quaternion
 	explicit inline Matrix3(const Quat& unitQuat);
 
-	// Set the column of a 3x3 matrix referred to by the specified index
-	inline void SetCol(int idx, const Vector3& vec)
-	{
-		*(&col0 + idx) = vec;
-	}
+	inline void SetCol(int idx, const Vector3& vec)				{ *(&col0 + idx) = vec; }
+	inline const Vector3& GetCol(int idx) const					{ return *(&col0 + idx); }
 
-	// Get the column of a 3x3 matrix referred to by the specified index
-	inline const Vector3& GetCol(int idx) const
-	{
-		return *(&col0 + idx);
-	}
-
-	// Set the first row of a 3x3 matrix
 	inline void SetRow0(const Vector3& vec)
 	{
 		col0.SetX(vec.GetX());
@@ -51,12 +36,10 @@ public:
 		col2.SetX(vec.GetZ());
 	}
 
-	// Get the row of a 3x3 matrix
-	inline Vector3 GetRow0() const		{ return Vector3(col0.GetX(), col1.GetX(), col2.GetX()); }
-	inline Vector3 GetRow1() const		{ return Vector3(col0.GetY(), col1.GetY(), col2.GetY()); }
-	inline Vector3 GetRow2() const		{ return Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ()); }
+	inline Vector3 GetRow0() const								{ return Vector3(col0.GetX(), col1.GetX(), col2.GetX()); }
+	inline Vector3 GetRow1() const								{ return Vector3(col0.GetY(), col1.GetY(), col2.GetY()); }
+	inline Vector3 GetRow2() const								{ return Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ()); }
 
-	// Operator overloads
 	inline Matrix3& operator =(const Matrix3& mat)
 	{
 		col0 = mat.col0;
@@ -65,55 +48,19 @@ public:
 		return *this;
 	}
 
-	inline Matrix3 operator -() const
-	{
-		return Matrix3(-col0, -col1, -col2);
-	}
-
-	inline Matrix3 operator +(const Matrix3& mat) const
-	{
-		return Matrix3(
-			col0 + mat.col0,
-			col1 + mat.col1,
-			col2 + mat.col2
-		);
-	}
-
-	inline Matrix3 operator -(const Matrix3& mat) const
-	{
-		return Matrix3(
-			col0 - mat.col0,
-			col1 - mat.col1,
-			col2 - mat.col2
-		);
-	}
-
-	inline Matrix3 operator *(float scalar) const
-	{
-		return Matrix3(
-			col0 * scalar,
-			col1 * scalar,
-			col2 * scalar
-		);
-	}
-
+	inline Matrix3 operator -() const							{ return Matrix3(-col0, -col1, -col2); }
+	inline Matrix3 operator +(const Matrix3& mat) const			{ return Matrix3(col0 + mat.col0, col1 + mat.col1, col2 + mat.col2); }
+	inline Matrix3 operator -(const Matrix3& mat) const			{ return Matrix3(col0 - mat.col0, col1 - mat.col1, col2 - mat.col2); }
+	inline Matrix3 operator *(float scalar) const				{ return Matrix3(col0 * scalar, col1 * scalar, col2 * scalar); }
 	inline Vector3 operator *(const Vector3& vec) const;
+	inline Matrix3 operator *(const Matrix3& mat) const			{ return Matrix3(*this * mat.col0, *this * mat.col1, *this * mat.col2); }
 
-	inline Matrix3 operator *(const Matrix3& mat) const
-	{
-		return Matrix3(
-			*this * mat.col0,
-			*this * mat.col1,
-			*this * mat.col2
-		);
-	}
+	inline Matrix3& operator +=(const Matrix3& mat)				{ *this = *this + mat;		return *this; }
+	inline Matrix3& operator -=(const Matrix3& mat)				{ *this = *this - mat;		return *this; }
+	inline Matrix3& operator *=(float scalar)					{ *this = *this * scalar;	return *this; }
+	inline Matrix3& operator *=(const Matrix3& mat)				{ *this = *this * mat;		return *this; }
 
-	inline Matrix3& operator +=(const Matrix3& mat)		{ *this = *this + mat;		return *this; }
-	inline Matrix3& operator -=(const Matrix3& mat)		{ *this = *this - mat;		return *this; }
-	inline Matrix3& operator *=(float scalar)			{ *this = *this * scalar;	return *this; }
-	inline Matrix3& operator *=(const Matrix3& mat)		{ *this = *this * mat;		return *this; }
-
-	// Append (post-multiply) a scale transformation to a 3x3 matrix
+	// Append (post-multiply) a scale transformation
 	// NOTE: Faster than creating and multiplying a scale transformation matrix
 	inline Matrix3& AppendScale(const Vector3& scaleVec)
 	{
@@ -123,7 +70,7 @@ public:
 		return *this;
 	}
 
-	// Prepend (pre-multiply) a scale transformation to a 3x3 matrix
+	// Prepend (pre-multiply) a scale transformation
 	// NOTE: Faster than creating and multiplying a scale transformation matrix
 	inline Matrix3& PrependScale(const Vector3& scaleVec)
 	{
@@ -133,48 +80,30 @@ public:
 		return *this;
 	}
 
-	// Transpose a 3x3 matrix
 	inline void Transpose();
 
 	// Compute the inverse of a 3x3 matrix
 	// NOTE: Result is unpredictable when the determinant of mat is equal to or near 0
 	inline void Invert();
 
-	// Determinant of a 3x3 matrix
 	inline float CalculateDeterminant() const
 	{
 		return col2.Dot(col0.Cross(col1));
 	}
 
-	// Construct an identity 3x3 matrix
-	static inline Matrix3 Identity()
-	{
-		return Matrix3(
-			Vector3::AxisX(),
-			Vector3::AxisY(),
-			Vector3::AxisZ()
-		);
-	}
+	static inline Matrix3 Identity()						{ return Matrix3(Vector3::AxisX(), Vector3::AxisY(), Vector3::AxisZ()); }
 
-	// Construct a 3x3 matrix to rotate around the x axis
 	static inline Matrix3 CreateRotationX(float radians);
-
-	// Construct a 3x3 matrix to rotate around the y axis
 	static inline Matrix3 CreateRotationY(float radians);
-
-	// Construct a 3x3 matrix to rotate around the z axis
 	static inline Matrix3 CreateRotationZ(float radians);
-
-	// Construct a 3x3 matrix to rotate around the x, y, and z axes
 	static inline Matrix3 CreateRotationZYX(const Vector3& radiansXYZ);
 
 	// Construct a 3x3 matrix to rotate around a unit-length 3-D vector
 	static inline Matrix3 CreateRotation(float radians, const Vector3& unitVec);
 
-	// Construct a 3x3 matrix to perform scaling
 	static inline Matrix3 CreateScale(const Vector3& scaleVec)
 	{
-		const Vector3 zero(0.0f);
+		const Vector3 zero = Vector3::Zero();
 		return Matrix3(
 			Vector3(SIMD::Blend_X(zero, scaleVec)),
 			Vector3(SIMD::Blend_Y(zero, scaleVec)),
@@ -187,7 +116,6 @@ public:
 	Vector3 col2;
 };
 
-// Multiply a 3x3 matrix by a scalar
 inline Matrix3 operator *(float scalar, const Matrix3& mat)
 {
 	return mat * scalar;
@@ -195,7 +123,6 @@ inline Matrix3 operator *(float scalar, const Matrix3& mat)
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// Construct a 3x3 rotation matrix from a unit-length quaternion
 inline Matrix3::Matrix3(const Quat& unitQuat)
 {
 #if defined(DESIRE_USE_SSE)
@@ -242,7 +169,6 @@ inline Matrix3::Matrix3(const Quat& unitQuat)
 #endif
 }
 
-// Multiply a 3x3 matrix by a 3-D vector
 inline Vector3 Matrix3::operator *(const Vector3& vec) const
 {
 #if defined(DESIRE_USE_SSE)
@@ -268,7 +194,6 @@ inline Vector3 Matrix3::operator *(const Vector3& vec) const
 #endif
 }
 
-// Transpose a 3x3 matrix
 inline void Matrix3::Transpose()
 {
 #if defined(DESIRE_USE_SSE)
@@ -291,7 +216,6 @@ inline void Matrix3::Transpose()
 #endif
 }
 
-// Compute the inverse of a 3x3 matrix
 inline void Matrix3::Invert()
 {
 	const Vector3 tmp2 = col0.Cross(col1);
@@ -320,7 +244,6 @@ inline void Matrix3::Invert()
 #endif
 }
 
-// Construct a 3x3 matrix to rotate around the x axis
 inline Matrix3 Matrix3::Matrix3::CreateRotationX(float radians)
 {
 	Vector3 vecY, vecZ;
@@ -347,7 +270,6 @@ inline Matrix3 Matrix3::Matrix3::CreateRotationX(float radians)
 	);
 }
 
-// Construct a 3x3 matrix to rotate around the y axis
 inline Matrix3 Matrix3::CreateRotationY(float radians)
 {
 	Vector3 vecX, vecZ;
@@ -374,7 +296,6 @@ inline Matrix3 Matrix3::CreateRotationY(float radians)
 	);
 }
 
-// Construct a 3x3 matrix to rotate around the z axis
 inline Matrix3 Matrix3::CreateRotationZ(float radians)
 {
 	Vector3 vecX, vecY;
@@ -401,7 +322,6 @@ inline Matrix3 Matrix3::CreateRotationZ(float radians)
 	);
 }
 
-// Construct a 3x3 matrix to rotate around the x, y, and z axes
 inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 {
 #if defined(DESIRE_USE_SSE)
@@ -441,7 +361,6 @@ inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 #endif
 }
 
-// Construct a 3x3 matrix to rotate around a unit-length 3-D vector
 inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 {
 #if defined(DESIRE_USE_SSE)

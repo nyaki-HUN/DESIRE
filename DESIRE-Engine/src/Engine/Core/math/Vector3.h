@@ -5,33 +5,11 @@
 class Vector3
 {
 public:
-	inline Vector3()
-	{
-		// No initialization
-	}
-
-	inline Vector3(const Vector3& vec)
-		: mVec128(vec.mVec128)
-	{
-
-	}
-	
-	inline Vector3(vec_float3_t vf)
-		: mVec128(vf)
-	{
-
-	}
-
-	inline Vector3(float x, float y, float z)
-		: mVec128(SIMD::Construct(x, y, z))
-	{
-
-	}
-
-	explicit inline Vector3(float scalar)
-	{
-		SIMD::Construct(mVec128, scalar);
-	}
+	inline Vector3()																{}
+	inline Vector3(const Vector3& vec)			: mVec128(vec.mVec128)				{}
+	inline Vector3(vec_float3_t vf)				: mVec128(vf)						{}
+	inline Vector3(float x, float y, float z)	: mVec128(SIMD::Construct(x, y, z)) {}
+	explicit inline Vector3(float scalar)											{ SIMD::Construct(mVec128, scalar); }
 
 	// Load x, y, and z elements from the first three elements of a float array
 	inline void LoadXYZ(const float *fptr)
@@ -47,27 +25,17 @@ public:
 		fptr[2] = GetZ();
 	}
 
-	// Set element
-	inline void SetX(float x)		{ SIMD::SetX(mVec128, x); }
-	inline void SetY(float y)		{ SIMD::SetY(mVec128, y); }
-	inline void SetZ(float z)		{ SIMD::SetZ(mVec128, z); }
+	inline void SetX(float x)								{ SIMD::SetX(mVec128, x); }
+	inline void SetY(float y)								{ SIMD::SetY(mVec128, y); }
+	inline void SetZ(float z)								{ SIMD::SetZ(mVec128, z); }
 
-	// Get element
-	inline float GetX() const		{ return SIMD::GetX(mVec128); }
-	inline float GetY() const		{ return SIMD::GetY(mVec128); }
-	inline float GetZ() const		{ return SIMD::GetZ(mVec128); }
+	inline float GetX() const								{ return SIMD::GetX(mVec128); }
+	inline float GetY() const								{ return SIMD::GetY(mVec128); }
+	inline float GetZ() const								{ return SIMD::GetZ(mVec128); }
 
-	// Operator overloads
-	inline operator vec_float3_t() const
-	{
-		return mVec128;
-	}
+	inline operator vec_float3_t() const					{ return mVec128; }
 
-	inline Vector3& operator =(const Vector3& vec)
-	{
-		mVec128 = vec.mVec128;
-		return *this;
-	}
+	inline Vector3& operator =(const Vector3& vec)			{ mVec128 = vec.mVec128; return *this; }
 
 	inline Vector3 operator -() const						{ return SIMD::Negate(mVec128); }
 	inline Vector3 operator +(const Vector3& vec) const		{ return SIMD::Add(mVec128, vec.mVec128); }
@@ -89,78 +57,25 @@ public:
 	inline bool operator >=(const Vector3& vec) const		{ return SIMD::OpCmpGE(mVec128, vec); }
 	inline bool operator <=(const Vector3& vec) const		{ return SIMD::OpCmpLE(mVec128, vec); }
 
-	// Maximum element of a 3-D vector
-	inline float GetMaxElem() const
-	{
-		return SIMD::GetX(SIMD::MaxElem3(mVec128));
-	}
+	inline float Dot(const Vector3& vec) const				{ return SIMD::GetX(SIMD::Dot3(mVec128, vec)); }
+	inline Vector3 Cross(const Vector3& vec) const			{ return SIMD::Cross(mVec128, vec); }
 
-	// Minimum element of a 3-D vector
-	inline float GetMinElem() const
-	{
-		return SIMD::GetX(SIMD::MinElem3(mVec128));
-	}
+	inline float LengthSqr() const							{ return Dot(*this); }
+	inline float Length() const								{ return std::sqrt(LengthSqr()); }
 
-	// Compute the dot product of two 3-D vectors
-	inline float Dot(const Vector3& vec) const
-	{
-		return SIMD::GetX(SIMD::Dot3(mVec128, vec));
-	}
+	inline void Normalize()									{ mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot3(mVec128, mVec128))); }
+	inline Vector3 Normalized() const						{ return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot3(mVec128, mVec128))); }
 
-	// Compute cross product of two 3-D vectors
-	inline Vector3 Cross(const Vector3& vec) const
-	{
-		return SIMD::Cross(mVec128, vec);
-	}
+	inline Vector3 AbsPerElem() const						{ return SIMD::AbsPerElem(mVec128); }
 
-	// Compute the square of the length of a 3-D vector
-	inline float LengthSqr() const
-	{
-		return Dot(*this);
-	}
+	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem3(mVec128)); }
+	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem3(mVec128)); }
 
-	// Compute the length of a 3-D vector
-	inline float Length() const
-	{
-		return std::sqrt(LengthSqr());
-	}
+	static inline Vector3 MaxPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MaxPerElem(a, b); }
+	static inline Vector3 MinPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MinPerElem(a, b); }
 
-	// Normalize a 3-D vector
-	// NOTE: The result is unpredictable when all elements of vec are at or near zero
-	inline void Normalize()
-	{
-		mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot3(mVec128, mVec128)));
-	}
-
-	// Get normalized 3-D vector
-	// NOTE: The result is unpredictable when all elements of vec are at or near zero
-	inline Vector3 Normalized() const
-	{
-		return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot3(mVec128, mVec128)));
-	}
-
-	// Compute the absolute value of a 3-D vector per element
-	inline Vector3 AbsPerElem() const
-	{
-		return SIMD::AbsPerElem(mVec128);
-	}
-
-	// Maximum of two 3-D vectors per element
-	static inline Vector3 MaxPerElem(const Vector3& vec0, const Vector3& vec1)
-	{
-		return SIMD::MaxPerElem(vec0, vec1);
-	}
-
-	// Minimum of two 3-D vectors per element
-	static inline Vector3 MinPerElem(const Vector3& vec0, const Vector3& vec1)
-	{
-		return SIMD::MinPerElem(vec0, vec1);
-	}
-
-	// Spherical linear interpolation between two 3-D vectors
-	// NOTE: 
-	// The result is unpredictable if the vectors point in opposite directions.
-	// Does not clamp t between 0 and 1.
+	// Spherical linear interpolation
+	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
 	static inline Vector3 Slerp(float t, const Vector3& unitVec0, const Vector3& unitVec1)
 	{
 		float scale0, scale1;
@@ -180,7 +95,6 @@ public:
 		return unitVec0 * scale0 + unitVec1 * scale1;
 	}
 
-	// Construct 3-D vector
 	static inline Vector3 Zero()		{ return Vector3(0.0f); }
 	static inline Vector3 AxisX()		{ return Vector3(1.0f, 0.0f, 0.0f); }
 	static inline Vector3 AxisY()		{ return Vector3(0.0f, 1.0f, 0.0f); }
@@ -190,7 +104,6 @@ private:
 	vec_float3_t mVec128;
 };
 
-// Multiply a 3-D vector by a scalar
 inline Vector3 operator *(float scalar, const Vector3& vec)
 {
 	return vec * scalar;

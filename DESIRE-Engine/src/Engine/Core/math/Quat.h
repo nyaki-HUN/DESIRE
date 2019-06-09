@@ -7,110 +7,46 @@ class Matrix3;
 class Quat
 {
 public:
-	inline Quat()
-	{
-		// No initialization
-	}
-
-	inline Quat(const Quat& vec)
-		: mVec128(vec.mVec128)
-	{
-
-	}
-	
-	inline Quat(vec_float4_t vf4)
-		: mVec128(vf4)
-	{
-
-	}
-	
-	inline Quat(float x, float y, float z, float w)
-	{
-		mVec128 = SIMD::Construct(x, y, z, w);
-	}
-
-	// Convert a rotation matrix to a unit-length quaternion
+	inline Quat()																			{}
+	inline Quat(const Quat& vec)					: mVec128(vec.mVec128)					{}
+	inline Quat(vec_float4_t vf4)					: mVec128(vf4)							{}
+	inline Quat(float x, float y, float z, float w) : mVec128(SIMD::Construct(x, y, z, w))	{}
 	explicit inline Quat(const Matrix3& rotMat);
 
-	// Load x, y, z, and w elements from the first four words of a float array
-	inline void LoadXYZW(const float *fptr)
-	{
-		SIMD::LoadXYZW(mVec128, fptr);
-	}
+	// Load x, y, z, and w elements from the first four elements of a float array
+	inline void LoadXYZW(const float *fptr)					{ SIMD::LoadXYZW(mVec128, fptr); }
 
-	// Store x, y, z, and w elements of a quaternion in the first four words of a float array
-	inline void StoreXYZW(float *fptr) const
-	{
-		SIMD::StoreXYZW(mVec128, fptr);
-	}
+	// Store x, y, z, and w elements in the first four elements of a float array
+	inline void StoreXYZW(float *fptr) const				{ SIMD::StoreXYZW(mVec128, fptr); }
 
-	// Set element
-	inline void SetX(float x)		{ SIMD::SetX(mVec128, x); }
-	inline void SetY(float y)		{ SIMD::SetY(mVec128, y); }
-	inline void SetZ(float z)		{ SIMD::SetZ(mVec128, z); }
-	inline void SetW(float w)		{ SIMD::SetW(mVec128, w); }
+	inline void SetX(float x)								{ SIMD::SetX(mVec128, x); }
+	inline void SetY(float y)								{ SIMD::SetY(mVec128, y); }
+	inline void SetZ(float z)								{ SIMD::SetZ(mVec128, z); }
+	inline void SetW(float w)								{ SIMD::SetW(mVec128, w); }
 
-	// Get element
-	inline float GetX() const		{ return SIMD::GetX(mVec128); }
-	inline float GetY() const		{ return SIMD::GetY(mVec128); }
-	inline float GetZ() const		{ return SIMD::GetZ(mVec128); }
-	inline float GetW() const		{ return SIMD::GetW(mVec128); }
+	inline float GetX() const								{ return SIMD::GetX(mVec128); }
+	inline float GetY() const								{ return SIMD::GetY(mVec128); }
+	inline float GetZ() const								{ return SIMD::GetZ(mVec128); }
+	inline float GetW() const								{ return SIMD::GetW(mVec128); }
 
-	// Operator overloads
-	inline operator vec_float4_t() const
-	{
-		return mVec128;
-	}
+	inline operator vec_float4_t() const					{ return mVec128; }
 
-	inline Quat& operator =(const Quat& quat)
-	{
-		mVec128 = quat.mVec128;
-		return *this;
-	}
+	inline Quat& operator =(const Quat& quat)				{ mVec128 = quat.mVec128; return *this; }
 
-	inline Quat operator -() const						{ return SIMD::Negate(mVec128); }
-	inline Quat operator +(const Quat& quat) const		{ return SIMD::Add(mVec128, quat.mVec128); }
-	inline Quat operator -(const Quat& quat) const		{ return SIMD::Sub(mVec128, quat.mVec128); }
-
+	inline Quat operator -() const							{ return SIMD::Negate(mVec128); }
+	inline Quat operator +(const Quat& quat) const			{ return SIMD::Add(mVec128, quat.mVec128); }
+	inline Quat operator -(const Quat& quat) const			{ return SIMD::Sub(mVec128, quat.mVec128); }
 	inline Quat operator *(const Quat& quat) const;
 
-	inline Quat& operator +=(const Quat& quat)
-	{
-		*this = *this + quat;
-		return *this;
-	}
+	inline Quat& operator +=(const Quat& quat)				{ *this = *this + quat; return *this; }
+	inline Quat& operator -=(const Quat& quat)				{ *this = *this - quat; return *this; }
+	inline Quat& operator *=(const Quat& quat)				{ *this = *this * quat; return *this; }
 
-	inline Quat& operator -=(const Quat& quat)
-	{
-		*this = *this - quat;
-		return *this;
-	}
+	inline float Dot(const Quat& quat) const				{ return SIMD::GetX(SIMD::Dot4(mVec128, quat)); }
 
-	inline Quat& operator *=(const Quat& quat)
-	{
-		*this = *this * quat;
-		return *this;
-	}
+	inline float Norm() const								{ return Dot(*this); }
+	inline float Length() const								{ return std::sqrt(Norm()); }
 
-	// Compute the dot product of two quaternions
-	inline float Dot(const Quat& quat) const
-	{
-		return SIMD::GetX(SIMD::Dot4(mVec128, quat));
-	}
-
-	// Compute the norm of a quaternion
-	inline float Norm() const
-	{
-		return Dot(*this);
-	}
-
-	// Compute the length of a quaternion
-	inline float Length() const
-	{
-		return std::sqrt(Norm());
-	}
-
-	// Compute the conjugate of a quaternion
 	inline Quat Conjugate() const;
 
 	// Compute the Euler angle representation of the rotation in radians
@@ -135,52 +71,33 @@ public:
 		); 
 	}
 
-	// Rotate a 3-D vector with this unit-length quaternion
 	inline Vector3 RotateVec(const Vector3& vec) const;
 
-	// Normalize a quaternion
-	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
-	inline void Normalize()
-	{
-		mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
-	}
+	inline void Normalize()									{ mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128))); }
+	inline Quat Normalized() const							{ return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128))); }
 
-	// Get normalized quaternion
-	// NOTE: The result is unpredictable when all elements of quat are at or near zero.
-	inline Quat Normalized() const
-	{
-		return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128)));
-	}
-
-	// Spherical linear interpolation between two quaternions
-	// NOTE: 
-	// Interpolates along the shortest path between orientations
-	// Does not clamp t between 0 and 1.
+	// Spherical linear interpolation
+	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
 	static inline Quat Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1);
 
 	// Spherical quadrangle interpolation
 	static inline Quat Squad(float t, const Quat& unitQuat0, const Quat& unitQuat1, const Quat& unitQuat2, const Quat& unitQuat3)
 	{
-		return Quat::Slerp((2.0f * t) * (1.0f - t), Quat::Slerp(t, unitQuat0, unitQuat3), Quat::Slerp(t, unitQuat1, unitQuat2));
+		return Quat::Slerp(
+			(2.0f * t) * (1.0f - t),
+			Quat::Slerp(t, unitQuat0, unitQuat3),
+			Quat::Slerp(t, unitQuat1, unitQuat2)
+		);
 	}
 
-	// Construct an identity quaternion
-	static inline Quat Identity()
-	{
-		return Quat(0.0f, 0.0f, 0.0f, 1.0f);
-	}
+	static inline Quat Identity()							{ return Quat(0.0f, 0.0f, 0.0f, 1.0f); }
+
+	static inline Quat CreateRotationX(float radians);
+	static inline Quat CreateRotationY(float radians);
+	static inline Quat CreateRotationZ(float radians);
 
 	// Construct a quaternion to rotate around a unit-length 3-D vector
 	static inline Quat CreateRotation(float radians, const Vector3& unitVec);
-
-	// Construct a quaternion to rotate around the x axis
-	static inline Quat CreateRotationX(float radians);
-
-	// Construct a quaternion to rotate around the y axis
-	static inline Quat CreateRotationY(float radians);
-
-	// Construct a quaternion to rotate around the z axis
-	static inline Quat CreateRotationZ(float radians);
 
 	// Construct a quaternion to rotate using Euler angles for each axis
 	static inline Quat CreateRotationFromEulerAngles(const Vector3& radiansXYZ);
@@ -325,22 +242,6 @@ inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 #endif
 }
 
-// Construct a quaternion to rotate around a unit-length 3-D vector
-inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
-{
-	const float halfAngle = radians * 0.5f;
-
-#if defined(DESIRE_USE_SSE)
-	__m128 s, c;
-	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
-#else
-	const float s = std::sin(halfAngle);
-	const Vector4 c(std::cos(halfAngle));
-#endif
-	return SIMD::Blend_W(SIMD::Mul(unitVec, s), c);
-}
-
-// Construct a quaternion to rotate around the x axis
 inline Quat Quat::CreateRotationX(float radians)
 {
 	const float halfAngle = radians * 0.5f;
@@ -357,7 +258,6 @@ inline Quat Quat::CreateRotationX(float radians)
 #endif
 }
 
-// Construct a quaternion to rotate around the y axis
 inline Quat Quat::CreateRotationY(float radians)
 {
 	const float halfAngle = radians * 0.5f;
@@ -374,7 +274,6 @@ inline Quat Quat::CreateRotationY(float radians)
 #endif
 }
 
-// Construct a quaternion to rotate around the z axis
 inline Quat Quat::CreateRotationZ(float radians)
 {
 	const float halfAngle = radians * 0.5f;
@@ -389,6 +288,21 @@ inline Quat Quat::CreateRotationZ(float radians)
 	const float c = std::cos(halfAngle);
 	return Quat(0.0f, 0.0f, s, c);
 #endif
+}
+
+// Construct a quaternion to rotate around a unit-length 3-D vector
+inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
+{
+	const float halfAngle = radians * 0.5f;
+
+#if defined(DESIRE_USE_SSE)
+	__m128 s, c;
+	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
+#else
+	const float s = std::sin(halfAngle);
+	const Vector4 c(std::cos(halfAngle));
+#endif
+	return SIMD::Blend_W(SIMD::Mul(unitVec, s), c);
 }
 
 // Construct a quaternion to rotate using Euler angles for each axis
