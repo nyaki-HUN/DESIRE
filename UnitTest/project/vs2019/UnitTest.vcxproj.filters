@@ -7,14 +7,14 @@
     <Filter Include="Core\ConfigValue">
       <UniqueIdentifier>{50D630CC-3CCF-4F1E-6501-35A351592F2A}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Memory">
+      <UniqueIdentifier>{D62B9585-42E1-0D7B-CBD5-0752378A047F}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Core\String">
       <UniqueIdentifier>{F432A694-60E8-1E8A-E9DC-18615591158E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\math">
       <UniqueIdentifier>{E771D115-53DC-858C-9C1A-373208C463E1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\memory">
-      <UniqueIdentifier>{F63F3AD0-62F5-B2C5-EBE9-AC9C579EA9C9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{B3F7140E-1F0C-3DBF-E88D-E01E546139F0}</UniqueIdentifier>
@@ -33,6 +33,18 @@
     <ClCompile Include="..\..\src\Core\ConfigValue\test_IConfigValue.cpp">
       <Filter>Core\ConfigValue</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Core\Memory\test_IAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\Memory\test_PoolAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\Memory\test_StackAllocator.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Core\Memory\test_StdFrameAllocatorWrapper.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Core\String\test_DynamicString.cpp">
       <Filter>Core\String</Filter>
     </ClCompile>
@@ -47,18 +59,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Core\math\test_Vector4.cpp">
       <Filter>Core\math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\test_IAllocator.cpp">
-      <Filter>Core\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\test_PoolAllocator.cpp">
-      <Filter>Core\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\test_StackAllocator.cpp">
-      <Filter>Core\memory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Core\memory\test_StdFrameAllocatorWrapper.cpp">
-      <Filter>Core\memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\test_HashedStringMap.cpp">
       <Filter>Core</Filter>
