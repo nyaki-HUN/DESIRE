@@ -63,8 +63,8 @@ private:
 	mutable Matrix4 worldMatrix = Matrix4::Identity();
 	mutable uint8_t flags = IS_IDENTITY;
 
-	Transform *parent = nullptr;
-	Object *owner = nullptr;
+	Transform* parent = nullptr;
+	Object* owner = nullptr;
 
 	friend class Object;
 };

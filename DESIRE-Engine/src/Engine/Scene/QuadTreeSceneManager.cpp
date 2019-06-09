@@ -9,22 +9,14 @@
 
 QuadTreeSceneManager::QuadTreeSceneManager()
 	: rootLeaf(new QuadTreeLeaf(0))
-	, activeCamera(nullptr)
-	, visibleDynamicObjects(nullptr)
-	, invisibleDynamicObjects(nullptr)
-	, numVisibleDynamicObjects(0)
-	, numInvisibleDynamicObjects(0)
 	, numAllocatedVisibleDynamicObjects(512)
 	, numAllocatedInvisibleDynamicObjects(512)
-	, debugDraw(nullptr)
-	, doInvisibleLeafTest(false)
-	, needToPlaceObjectsInsideQuadTree(false)
 {
 	visibleLeafList.Reserve(256);
 	tmpLeafList.Reserve(256);
 
-	visibleDynamicObjects = (Object**)malloc(numAllocatedVisibleDynamicObjects * sizeof(Object*));
-	invisibleDynamicObjects = (Object**)malloc(numAllocatedInvisibleDynamicObjects * sizeof(Object*));
+	visibleDynamicObjects = static_cast<Object**>(malloc(numAllocatedVisibleDynamicObjects * sizeof(Object*)));
+	invisibleDynamicObjects = static_cast<Object**>(malloc(numAllocatedInvisibleDynamicObjects * sizeof(Object*)));
 }
 
 QuadTreeSceneManager::~QuadTreeSceneManager()
@@ -35,7 +27,7 @@ QuadTreeSceneManager::~QuadTreeSceneManager()
 	free(invisibleDynamicObjects);
 }
 
-void QuadTreeSceneManager::AddObject(Object *obj, bool dynamic)
+void QuadTreeSceneManager::AddObject(Object* obj, bool dynamic)
 {
 	if(dynamic)
 	{
@@ -43,7 +35,7 @@ void QuadTreeSceneManager::AddObject(Object *obj, bool dynamic)
 		if(numVisibleDynamicObjects > numAllocatedVisibleDynamicObjects)
 		{
 			numAllocatedVisibleDynamicObjects *= 2;
-			visibleDynamicObjects = (Object**)realloc(visibleDynamicObjects, sizeof(Object*) * numAllocatedVisibleDynamicObjects);
+			visibleDynamicObjects = static_cast<Object**>(realloc(visibleDynamicObjects, sizeof(Object*) * numAllocatedVisibleDynamicObjects));
 		}
 		visibleDynamicObjects[numVisibleDynamicObjects - 1] = obj;
 	}
@@ -56,7 +48,7 @@ void QuadTreeSceneManager::AddObject(Object *obj, bool dynamic)
 	obj->SetVisible(true);
 }
 
-void QuadTreeSceneManager::RemoveObject(Object *obj)
+void QuadTreeSceneManager::RemoveObject(Object* obj)
 {
 	for(uint32_t i = 0; i < numVisibleDynamicObjects; i++)
 	{
@@ -81,7 +73,7 @@ void QuadTreeSceneManager::RemoveObject(Object *obj)
 	rootLeaf->RemoveObject(obj);
 }
 
-void QuadTreeSceneManager::SetActiveCamera(Camera *camera)
+void QuadTreeSceneManager::SetActiveCamera(Camera* camera)
 {
 	activeCamera = camera;
 
@@ -94,7 +86,7 @@ void QuadTreeSceneManager::SetActiveCamera(Camera *camera)
 		if(numVisibleDynamicObjects > numAllocatedVisibleDynamicObjects)
 		{
 			numAllocatedVisibleDynamicObjects *= 2;
-			visibleDynamicObjects = (Object**)realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(Object*));
+			visibleDynamicObjects = static_cast<Object**>(realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(Object*)));
 		}
 
 		visibleDynamicObjects[numVisibleDynamicObjects - 1] = invisibleDynamicObjects[i];
@@ -152,7 +144,7 @@ void QuadTreeSceneManager::Reset()
 	doInvisibleLeafTest = true;
 }
 
-void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera *camera, Vector3 *normals, uint8_t& nNormal, float (&pointDotNormal)[MAX_FURSTUM_NORMAL], uint8_t (&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* camera, Vector3* normals, uint8_t& nNormal, float(&pointDotNormal)[MAX_FURSTUM_NORMAL], uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
 {
 	nNormal = 0;
 
@@ -279,9 +271,9 @@ void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera *camera, Vector3 
 	}
 }
 
-void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *normals, const float *pointDotNormal, const uint8_t (&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3* normals, const float* pointDotNormal, const uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
 {
-	for(QuadTreeLeaf *ltmp : visibleLeafList)
+	for(QuadTreeLeaf* ltmp : visibleLeafList)
 	{
 		EState state = IsAabbVisible(ltmp->aabbPoints, nNormal, normals, pointDotNormal, aabbNPVertex);
 		if(state == EState::Outside)
@@ -293,7 +285,7 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 
 	for(int j = 0; j < (int)numVisibleDynamicObjects; j++)
 	{
-		Object *obj = visibleDynamicObjects[j];
+		Object* obj = visibleDynamicObjects[j];
 
 		Vector3 points[4];
 		obj->GetAABB().GetPoints2D(points);
@@ -307,7 +299,7 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 			if(numInvisibleDynamicObjects > numAllocatedInvisibleDynamicObjects)
 			{
 				numAllocatedInvisibleDynamicObjects *= 2;
-				invisibleDynamicObjects = (Object**)realloc(invisibleDynamicObjects, numAllocatedInvisibleDynamicObjects * sizeof(Object*));
+				invisibleDynamicObjects = (Object * *)realloc(invisibleDynamicObjects, numAllocatedInvisibleDynamicObjects * sizeof(Object*));
 			}
 			invisibleDynamicObjects[numInvisibleDynamicObjects - 1] = obj;
 			numVisibleDynamicObjects--;
@@ -317,11 +309,11 @@ void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3 *norm
 	}
 }
 
-void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *normals, const float *pointDotNormal, const uint8_t (&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3* normals, const float* pointDotNormal, const uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
 {
 	ASSERT(visibleLeafList.IsEmpty());
 	ASSERT(tmpLeafList.IsEmpty());
-	QuadTreeLeaf *ltmp = rootLeaf;
+	QuadTreeLeaf* ltmp = rootLeaf;
 	for(;;)
 	{
 		EState state = IsAabbVisible(ltmp->aabbPoints, nNormal, normals, pointDotNormal, aabbNPVertex);
@@ -335,7 +327,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			visibleLeafList.Add(ltmp);
 
 			// Set objects visible
-			for(Object *obj : ltmp->objects)
+			for(Object* obj : ltmp->objects)
 			{
 				obj->SetVisible(true);
 			}
@@ -379,7 +371,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			if(state != EState::Outside)
 			{
 				const Vector3 objectColor(0.0f, 0.5f, 1.0f);
-				for(const Object *obj : ltmp->objects)
+				for(const Object* obj : ltmp->objects)
 				{
 					debugDraw->AddAABB(obj->GetAABB(), objectColor);
 				}
@@ -397,7 +389,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 
 	for(int j = 0; j < (int)numInvisibleDynamicObjects; j++)
 	{
-		Object *obj = invisibleDynamicObjects[j];
+		Object* obj = invisibleDynamicObjects[j];
 		Vector3 points[4];
 		obj->GetAABB().GetPoints2D(points);
 
@@ -410,7 +402,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 			if(numVisibleDynamicObjects > numAllocatedVisibleDynamicObjects)
 			{
 				numAllocatedVisibleDynamicObjects *= 2;
-				visibleDynamicObjects = (Object**)realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(Object*));
+				visibleDynamicObjects = static_cast<Object**>(realloc(visibleDynamicObjects, numAllocatedVisibleDynamicObjects * sizeof(Object*)));
 			}
 			visibleDynamicObjects[numVisibleDynamicObjects - 1] = obj;
 			numInvisibleDynamicObjects--;
@@ -420,9 +412,9 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3 *no
 	}
 }
 
-void QuadTreeSceneManager::SetLeafsVisible_recursive(QuadTreeLeaf *leaf, bool visible)
+void QuadTreeSceneManager::SetLeafsVisible_recursive(QuadTreeLeaf* leaf, bool visible)
 {
-	for(Object *obj : leaf->objects)
+	for(Object* obj : leaf->objects)
 	{
 		obj->SetVisible(visible);
 	}
@@ -436,7 +428,7 @@ void QuadTreeSceneManager::SetLeafsVisible_recursive(QuadTreeLeaf *leaf, bool vi
 	}
 }
 
-QuadTreeSceneManager::EState QuadTreeSceneManager::IsAabbVisible(const Vector3 *points, uint8_t nNormal, const Vector3 *normals, const float *pointDotNormal, const uint8_t (&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+QuadTreeSceneManager::EState QuadTreeSceneManager::IsAabbVisible(const Vector3* points, uint8_t nNormal, const Vector3* normals, const float* pointDotNormal, const uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
 {
 	EState rv = EState::Inside;
 	for(uint8_t i = 0; i < nNormal; i++)

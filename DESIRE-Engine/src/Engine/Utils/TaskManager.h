@@ -23,7 +23,7 @@ private:
 		float time;
 		std::function<void(void)> task;
 
-		bool operator >(const TimedTask &other) const
+		bool operator >(const TimedTask& other) const
 		{
 			return time > other.time;
 		}

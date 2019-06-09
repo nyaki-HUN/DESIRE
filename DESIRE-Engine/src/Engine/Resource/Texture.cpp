@@ -21,7 +21,7 @@ Texture::~Texture()
 
 bool Texture::IsDepthFormat() const
 {
-	return (format == Texture::EFormat::D16
-		||	format == Texture::EFormat::D24_S8
-		||	format == Texture::EFormat::D32);
+	return format == Texture::EFormat::D16
+		|| format == Texture::EFormat::D24_S8
+		|| format == Texture::EFormat::D32;
 }

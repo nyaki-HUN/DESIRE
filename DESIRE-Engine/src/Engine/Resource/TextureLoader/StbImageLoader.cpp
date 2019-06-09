@@ -14,22 +14,22 @@ DESIRE_ENABLE_WARNINGS
 Texture* StbImageLoader::Load(const ReadFilePtr& file)
 {
 	stbi_io_callbacks callbacks;
-	callbacks.read = [](void *file, char *data, int size)
+	callbacks.read = [](void* file, char* data, int size)
 	{
 		return (int)static_cast<IReadFile*>(file)->ReadBuffer(data, (size_t)size);
 	};
 
-	callbacks.skip = [](void *file, int n)
+	callbacks.skip = [](void* file, int n)
 	{
 		static_cast<IReadFile*>(file)->Seek(n);
 	};
 
-	callbacks.eof = [](void *file)
+	callbacks.eof = [](void* file)
 	{
 		return static_cast<IReadFile*>(file)->IsEof() ? 1 : 0;
 	};
 
-	void *data = nullptr;
+	void* data = nullptr;
 	Texture::EFormat format = Texture::EFormat::Unknown;
 
 	int width = 0;
@@ -63,7 +63,7 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 		return nullptr;
 	}
 
-	Texture *texture = new Texture((uint16_t)width, (uint16_t)height, format);
+	Texture* texture = new Texture((uint16_t)width, (uint16_t)height, format);
 	texture->data = MemoryBuffer(data, (size_t)(width * height * numComponents));
 	return texture;
 }

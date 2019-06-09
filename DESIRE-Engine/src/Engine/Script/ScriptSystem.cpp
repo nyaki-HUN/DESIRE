@@ -20,11 +20,11 @@ void ScriptSystem::RegisterScript(HashedString scriptName, Factory<IScript>::Fun
 	scriptFactories.Insert(scriptName, factory);
 }
 
-ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, const char *scriptName)
+ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, const char* scriptName)
 {
 	// Try to create as a native script 
 	HashedString scriptNameHash = HashedString::CreateFromDynamicString(scriptName);
-	Factory<IScript>::Func_t *scriptFactory = scriptFactories.Find(scriptNameHash);
+	Factory<IScript>::Func_t* scriptFactory = scriptFactories.Find(scriptNameHash);
 	if(scriptFactory != nullptr)
 	{
 		NativeScriptComponent& scriptComponent = object.AddComponent<NativeScriptComponent>((*scriptFactory)());
@@ -35,19 +35,19 @@ ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, con
 	return CreateScriptComponentOnObject_Internal(object, scriptName);
 }
 
-void ScriptSystem::OnScriptComponentCreated(ScriptComponent *component)
+void ScriptSystem::OnScriptComponentCreated(ScriptComponent* component)
 {
 	scriptComponents.Add(component);
 }
 
-void ScriptSystem::OnScriptComponentDestroyed(ScriptComponent *component)
+void ScriptSystem::OnScriptComponentDestroyed(ScriptComponent* component)
 {
 	scriptComponents.RemoveFast(component);
 }
 
 void ScriptSystem::Update()
 {
-	for(ScriptComponent *scriptComponent : scriptComponents)
+	for(ScriptComponent* scriptComponent : scriptComponents)
 	{
 		scriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::Update);
 	}

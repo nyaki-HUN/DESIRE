@@ -28,7 +28,7 @@ public:
 	bool IsDepthFormat() const;
 
 	// Render engine specific data set at bind
-	void *renderData = nullptr;
+	void* renderData = nullptr;
 
 	const uint16_t width;
 	const uint16_t height;

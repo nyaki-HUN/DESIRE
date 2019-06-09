@@ -4,7 +4,7 @@
 #include "Engine/Core/FS/IReadFile.h"
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
-	#include <PshPack1.h>
+#include <PshPack1.h>
 #endif
 
 struct TgaHeader
@@ -45,7 +45,7 @@ struct TgaHeader
 } DESIRE_ATTRIBUTE_PACKED;
 
 #if defined(DESIRE_PLATFORM_WINDOWS)
-	#include <PopPack.h>
+#include <PopPack.h>
 #endif
 
 Texture* TgaLoader::Load(const ReadFilePtr& file)
@@ -62,10 +62,10 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 		return nullptr;
 	}
 
-	const uint8_t numComponents = header.bitsPerPixel / 8u;
+	const size_t numComponents = header.bitsPerPixel / 8u;
 	const size_t dataSize = (size_t)(header.width * header.height * numComponents);
 
-	uint8_t *data = (uint8_t*)malloc(dataSize);
+	uint8_t* data = (uint8_t*)malloc(dataSize);
 	switch(header.imageType)
 	{
 		case TgaHeader::EImageType::TrueColor:
@@ -78,12 +78,12 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 		case TgaHeader::EImageType::RLE_TrueColor:
 		{
 			uint8_t rlePacket[5];
-			uint8_t *dataPtr = data;
+			uint8_t* dataPtr = data;
 			do
 			{
 				// Read the packed (header byte + color info)
-				bytesRead = file->ReadBuffer(rlePacket, 1u + numComponents);
-				if(bytesRead != 1u + numComponents)
+				bytesRead = file->ReadBuffer(rlePacket, numComponents + 1);
+				if(bytesRead != numComponents + 1)
 				{
 					free(data);
 					return nullptr;
@@ -134,11 +134,11 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 	{
 		// Flip the image horizontally
 		const size_t rowSize = (size_t)(header.width * numComponents);
-		void *tmp = malloc(rowSize);
+		void* tmp = malloc(rowSize);
 		for(uint16_t i = 0; i < header.height / 2u; ++i)
 		{
-			uint8_t *src = data + i * rowSize;
-			uint8_t *dst = data + (header.height - i - 1) * rowSize;
+			uint8_t* src = data + i * rowSize;
+			uint8_t* dst = data + (header.height - i - 1) * rowSize;
 			memcpy(tmp, dst, rowSize);
 			memcpy(dst, src, rowSize);
 			memcpy(src, tmp, rowSize);
@@ -148,7 +148,7 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 
 	Texture::EFormat format = (numComponents == 3) ? Texture::EFormat::RGB8 : Texture::EFormat::RGBA8;
 
-	Texture *texture = new Texture(header.width, header.height, format);
+	Texture* texture = new Texture(header.width, header.height, format);
 	texture->data = MemoryBuffer(data, dataSize);
 	return texture;
 }

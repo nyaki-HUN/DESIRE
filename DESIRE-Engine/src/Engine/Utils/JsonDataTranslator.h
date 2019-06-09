@@ -79,7 +79,7 @@ public:
 		return *this;
 	}
 
-	void TranslateJson(const rapidjson::Value& json, T *data) const
+	void TranslateJson(const rapidjson::Value& json, T* data) const
 	{
 		ASSERT(data != nullptr);
 
@@ -95,7 +95,7 @@ public:
 				case rapidjson::kFalseType:
 				case rapidjson::kTrueType:
 				{
-					const BoolMember_t *memberPtr = boolMembers.Find(name);
+					const BoolMember_t* memberPtr = boolMembers.Find(name);
 					if(memberPtr != nullptr)
 					{
 						BoolMember_t member = *memberPtr;
@@ -113,7 +113,7 @@ public:
 						const rapidjson::Type arrayType = it->value[0].GetType();
 						if(arrayType == rapidjson::kFalseType || arrayType == rapidjson::kTrueType)
 						{
-							const BoolArrayMember_t *memberPtr = boolArrayMembers.Find(name);
+							const BoolArrayMember_t* memberPtr = boolArrayMembers.Find(name);
 							if(memberPtr != nullptr)
 							{
 								BoolArrayMember_t member = *memberPtr;
@@ -130,7 +130,7 @@ public:
 						}
 						else if(arrayType == rapidjson::kStringType)
 						{
-							const StringArrayMember_t *memberPtr = stringArrayMembers.Find(name);
+							const StringArrayMember_t* memberPtr = stringArrayMembers.Find(name);
 							if(memberPtr != nullptr)
 							{
 								StringArrayMember_t member = *memberPtr;
@@ -149,7 +149,7 @@ public:
 						{
 							if(it->value[0].IsInt())
 							{
-								const IntArrayMember_t *memberPtr = intArrayMembers.Find(name);
+								const IntArrayMember_t* memberPtr = intArrayMembers.Find(name);
 								if(memberPtr != nullptr)
 								{
 									IntArrayMember_t member = *memberPtr;
@@ -165,7 +165,7 @@ public:
 							}
 							else
 							{
-								const FloatArrayMember_t *memberPtr = floatArrayMembers.Find(name);
+								const FloatArrayMember_t* memberPtr = floatArrayMembers.Find(name);
 								if(memberPtr != nullptr)
 								{
 									FloatArrayMember_t member = *memberPtr;
@@ -186,7 +186,7 @@ public:
 
 				case rapidjson::kStringType:
 				{
-					const StringMember_t *memberPtr = stringMembers.Find(name);
+					const StringMember_t* memberPtr = stringMembers.Find(name);
 					if(memberPtr != nullptr)
 					{
 						StringMember_t member = *memberPtr;
@@ -198,7 +198,7 @@ public:
 				case rapidjson::kNumberType:
 					if(it->value.IsInt())
 					{
-						const IntMember_t *memberPtr = intMembers.Find(name);
+						const IntMember_t* memberPtr = intMembers.Find(name);
 						if(memberPtr != nullptr)
 						{
 							IntMember_t member = *memberPtr;
@@ -207,7 +207,7 @@ public:
 					}
 					else
 					{
-						const FloatMember_t *memberPtr = floatMembers.Find(name);
+						const FloatMember_t* memberPtr = floatMembers.Find(name);
 						if(memberPtr != nullptr)
 						{
 							FloatMember_t member = *memberPtr;

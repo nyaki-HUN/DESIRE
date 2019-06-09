@@ -22,7 +22,7 @@ public:
 	void SetActive(bool active);
 	void SetVisible(bool visible);
 
-	void SetParent(Object *newParent);
+	void SetParent(Object* newParent);
 	Object* CreateChildObject(const String& name);
 	Object* CreateChildObject(DynamicString&& name);
 
@@ -33,7 +33,7 @@ public:
 	}
 
 	// Removes and destroys a component
-	void RemoveComponent(const Component *component);
+	void RemoveComponent(const Component* component);
 
 	// Get the component with the given typeID
 	Component* GetComponentByTypeId(int typeId) const;
@@ -53,25 +53,25 @@ public:
 	Object* GetParent() const;
 	const Array<Object*>& GetChildren() const;
 
-	bool HasObjectInParentHierarchy(const Object *obj) const;
+	bool HasObjectInParentHierarchy(const Object* obj) const;
 
 	void UpdateAllTransformsInHierarchy();
 
 private:
 	Component& AddComponent_Internal(std::unique_ptr<Component> component);
-	void AddChild_Internal(Object *child);
-	void RemoveChild_Internal(Object *child);
+	void AddChild_Internal(Object* child);
+	void RemoveChild_Internal(Object* child);
 
 	void SetTransform();
 
-	static void RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount);
+	static void RefreshParentPointerInTransforms(Transform* firstTransform, size_t transformCount);
 
 	Array<std::unique_ptr<Component>> components;
-	Transform *transform = nullptr;
+	Transform* transform = nullptr;
 	std::unique_ptr<AABB> aabb;
 	size_t numTransformsInHierarchy = 1;
 
-	Object *parent = nullptr;
+	Object* parent = nullptr;
 	Array<Object*> children;
 
 	DynamicString objectName;

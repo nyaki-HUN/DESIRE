@@ -14,7 +14,6 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
-
 }
 
 std::shared_ptr<Mesh> ResourceManager::GetMesh(const String& filename)
@@ -158,7 +157,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 	{
 		for(MeshLoaderFunc_t loaderFunc : s_meshLoaders)
 		{
-			Mesh *mesh = loaderFunc(file);
+			Mesh* mesh = loaderFunc(file);
 			if(mesh != nullptr)
 			{
 				return std::shared_ptr<Mesh>(mesh);
@@ -180,7 +179,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 	{
 		for(ShaderLoaderFunc_t loaderFunc : s_shaderLoaders)
 		{
-			Shader *shader = loaderFunc(file);
+			Shader* shader = loaderFunc(file);
 			if(shader != nullptr)
 			{
 				return std::shared_ptr<Shader>(shader);
@@ -201,7 +200,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 	{
 		for(TextureLoaderFunc_t loaderFunc : s_textureLoaders)
 		{
-			Texture *texture = loaderFunc(file);
+			Texture* texture = loaderFunc(file);
 			if(texture != nullptr)
 			{
 				return std::shared_ptr<Texture>(texture);
@@ -220,7 +219,7 @@ void ResourceManager::CreateErrorTexture()
 	const uint16_t textureSize = 128;
 	errorTexture = std::make_shared<Texture>(textureSize, textureSize, Texture::EFormat::RGBA8);
 	errorTexture->data = MemoryBuffer(textureSize * textureSize * 4);
-	uint32_t *pixel = reinterpret_cast<uint32_t*>(errorTexture->data.data);
+	uint32_t* pixel = reinterpret_cast<uint32_t*>(errorTexture->data.data);
 	for(int i = 0; i < textureSize * textureSize; ++i)
 	{
 		*pixel = ((i % 26) < 14) ? 0xFFFF8000 : 0xFF000000;

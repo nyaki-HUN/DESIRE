@@ -32,8 +32,8 @@ public:
 			float floatVal;
 			double doubleVal;
 			bool boolVal;
-			void *voidPtrVal;
-			const char *stringVal;
+			void* voidPtrVal;
+			const char* stringVal;
 		};
 	};
 
@@ -43,10 +43,10 @@ public:
 	virtual void Kill() = 0;
 	virtual void Update() = 0;
 
-	virtual std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const char *functionName) = 0;
+	virtual std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const char* functionName) = 0;
 
 protected:
-	ScriptComponent *self = nullptr;
+	ScriptComponent* self = nullptr;
 
 private:
 	friend class NativeScriptComponent;

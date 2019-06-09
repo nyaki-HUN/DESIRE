@@ -26,7 +26,7 @@ void NativeScriptComponent::CallByType(EBuiltinFuncType funcType)
 	};
 }
 
-bool NativeScriptComponent::PrepareFunctionCall(const char *functionName)
+bool NativeScriptComponent::PrepareFunctionCall(const char* functionName)
 {
 	functionToCall = script->GetFunctionToCall(functionName);
 	if(functionToCall == nullptr)
@@ -86,7 +86,7 @@ bool NativeScriptComponent::AddFunctionCallArg(bool arg)
 	return true;
 }
 
-bool NativeScriptComponent::AddFunctionCallArg(void *arg)
+bool NativeScriptComponent::AddFunctionCallArg(void* arg)
 {
 	ASSERT(numFunctionCallArgs < functionArgs.max_size());
 

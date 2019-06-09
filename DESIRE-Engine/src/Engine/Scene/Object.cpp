@@ -31,7 +31,7 @@ Object::~Object()
 		numTransforms -= numTransformsInHierarchy;
 	}
 
-	for(Object *child : children)
+	for(Object* child : children)
 	{
 		child->transform->owner = nullptr;
 		delete child;
@@ -62,7 +62,7 @@ void Object::SetVisible(bool visible)
 
 }
 
-void Object::SetParent(Object *newParent)
+void Object::SetParent(Object* newParent)
 {
 	if(parent == newParent)
 	{
@@ -74,7 +74,7 @@ void Object::SetParent(Object *newParent)
 		parent->RemoveChild_Internal(this);
 	}
 
-	Transform *oldTransform = transform;
+	Transform* oldTransform = transform;
 	if(newParent != nullptr)
 	{
 		transform = newParent->transform + newParent->numTransformsInHierarchy;
@@ -95,12 +95,12 @@ void Object::SetParent(Object *newParent)
 	ptrdiff_t numToMove = oldTransform - transform;
 	if(numToMove != 0)
 	{
-		Transform *savedTransforms = &preallocatedTransforms[numTransforms];
+		Transform* savedTransforms = &preallocatedTransforms[numTransforms];
 		ASSERT(numTransformsInHierarchy <= DESIRE_ASIZEOF(preallocatedTransforms) - numTransforms);
 		memcpy(savedTransforms, oldTransform, numTransformsInHierarchy * sizeof(Transform));
 
-		Transform *movedTransformDst = nullptr;
-		Transform *movedTransformSrc = nullptr;
+		Transform* movedTransformDst = nullptr;
+		Transform* movedTransformSrc = nullptr;
 		if(numToMove < 0)
 		{
 			numToMove = std::abs(numToMove);
@@ -128,19 +128,19 @@ void Object::SetParent(Object *newParent)
 
 Object* Object::CreateChildObject(const String& name)
 {
-	Object *obj = new Object(name);
+	Object* obj = new Object(name);
 	obj->SetParent(this);
 	return obj;
 }
 
 Object* Object::CreateChildObject(DynamicString&& name)
 {
-	Object *obj = new Object(std::move(name));
+	Object* obj = new Object(std::move(name));
 	obj->SetParent(this);
 	return obj;
 }
 
-void Object::RemoveComponent(const Component *component)
+void Object::RemoveComponent(const Component* component)
 {
 	const size_t idx = components.SpecializedFind([component](const std::unique_ptr<Component>& comp)
 	{
@@ -188,9 +188,9 @@ const Array<Object*>& Object::GetChildren() const
 	return children;
 }
 
-bool Object::HasObjectInParentHierarchy(const Object *obj) const
+bool Object::HasObjectInParentHierarchy(const Object* obj) const
 {
-	const Object *otmp = parent;
+	const Object* otmp = parent;
 	while(otmp != nullptr)
 	{
 		if(otmp == obj)
@@ -206,7 +206,7 @@ bool Object::HasObjectInParentHierarchy(const Object *obj) const
 
 void Object::UpdateAllTransformsInHierarchy()
 {
-	Transform *transformTmp = transform;
+	Transform* transformTmp = transform;
 	for(size_t i = 0; i < numTransformsInHierarchy; i++)
 	{
 		transformTmp->UpdateWorldMatrix();
@@ -223,9 +223,9 @@ Component& Object::AddComponent_Internal(std::unique_ptr<Component> component)
 	return *(addedComponent.get());
 }
 
-void Object::AddChild_Internal(Object *child)
+void Object::AddChild_Internal(Object* child)
 {
-	Object *obj = this;
+	Object* obj = this;
 	do
 	{
 		obj->numTransformsInHierarchy += child->numTransformsInHierarchy;
@@ -237,9 +237,9 @@ void Object::AddChild_Internal(Object *child)
 	child->transform->parent = transform;
 }
 
-void Object::RemoveChild_Internal(Object *child)
+void Object::RemoveChild_Internal(Object* child)
 {
-	Object *obj = this;
+	Object* obj = this;
 	do
 	{
 		ASSERT(obj->numTransformsInHierarchy > child->numTransformsInHierarchy);
@@ -258,9 +258,9 @@ void Object::SetTransform()
 	transform->owner = this;
 }
 
-void Object::RefreshParentPointerInTransforms(Transform *firstTransform, size_t transformCount)
+void Object::RefreshParentPointerInTransforms(Transform* firstTransform, size_t transformCount)
 {
-	Transform *transformTmp = firstTransform;
+	Transform* transformTmp = firstTransform;
 	for(size_t i = 0; i < transformCount; ++i)
 	{
 		transformTmp->owner->transform = transformTmp;

@@ -22,7 +22,7 @@ Shader* FileShaderLoader::Load(const ReadFilePtr& file)
 		name.RemoveFrom(0, pos + 1);
 	}
 
-	Shader *shader = new Shader(name);
+	Shader* shader = new Shader(name);
 	shader->data = file->ReadFileContent();
 
 	return shader;

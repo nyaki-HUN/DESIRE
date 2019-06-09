@@ -17,26 +17,26 @@ QuadTreeLeaf::QuadTreeLeaf(uint8_t level)
 
 QuadTreeLeaf::~QuadTreeLeaf()
 {
-	for(QuadTreeLeaf *childLeaf : leafs)
+	for(QuadTreeLeaf* childLeaf : leafs)
 	{
 		delete childLeaf;
 	}
 }
 
-void QuadTreeLeaf::AddObject(Object *obj)
+void QuadTreeLeaf::AddObject(Object* obj)
 {
 	aabb.AddAABB(obj->GetAABB());
 	objects.Add(obj);
 }
 
-bool QuadTreeLeaf::RemoveObject(Object *obj)
+bool QuadTreeLeaf::RemoveObject(Object* obj)
 {
 	if(objects.RemoveFast(obj))
 	{
 		return true;
 	}
 
-	for(QuadTreeLeaf *childLeaf : leafs)
+	for(QuadTreeLeaf* childLeaf : leafs)
 	{
 		if(childLeaf != nullptr && childLeaf->RemoveObject(obj))
 		{
@@ -67,14 +67,14 @@ void QuadTreeLeaf::Init()
 	}
 
 	const Vector3 center = aabb.GetCenter();
-	
+
 	for(int i = 0; i < 4; i++)
 	{
 		leafs[i] = new QuadTreeLeaf(level + 1u);
 
 /*		    X
 		 -------
-		| 2 | 3 | 
+		| 2 | 3 |
 		|-------| Z
 		| 0 | 1 |
 		 -------
@@ -91,10 +91,10 @@ void QuadTreeLeaf::Init()
 	// Try to insert objects into child leafs
 	Array<Object*> objectsToAdd;
 	objectsToAdd.Swap(objects);
-	for(Object *comp : objectsToAdd)
+	for(Object* comp : objectsToAdd)
 	{
 		bool addedToChild = false;
-		for(QuadTreeLeaf *childLeaf : leafs)
+		for(QuadTreeLeaf* childLeaf : leafs)
 		{
 			if(childLeaf->TryToInsertObject(comp))
 			{
@@ -128,7 +128,7 @@ void QuadTreeLeaf::Init()
 	}
 }
 
-bool QuadTreeLeaf::TryToInsertObject(Object *obj)
+bool QuadTreeLeaf::TryToInsertObject(Object* obj)
 {
 	const AABB& compAABB = obj->GetAABB();
 	if(!aabb.IsAABBFullyInside2D(compAABB))

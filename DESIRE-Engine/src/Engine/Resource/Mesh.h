@@ -55,7 +55,7 @@ public:
 	void CalculateStrideFromVertexDecl();
 
 	// Render engine specific data set at bind
-	void *renderData;
+	void* renderData;
 
 	// Index data
 	std::unique_ptr<uint16_t[]> indices;

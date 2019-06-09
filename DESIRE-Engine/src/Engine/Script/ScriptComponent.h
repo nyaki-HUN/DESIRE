@@ -29,7 +29,7 @@ public:
 
 	// Call a script function with arbitrary arguments
 	template<class... Args>
-	void Call(const char *functionName, Args... args)
+	void Call(const char* functionName, Args... args)
 	{
 		if(PrepareFunctionCall(functionName))
 		{
@@ -41,7 +41,7 @@ public:
 	}
 
 private:
-	virtual bool PrepareFunctionCall(const char *functionName) = 0;
+	virtual bool PrepareFunctionCall(const char* functionName) = 0;
 	virtual void ExecuteFunctionCall() = 0;
 
 	// Add argument for function call
@@ -49,6 +49,6 @@ private:
 	virtual bool AddFunctionCallArg(float arg) = 0;
 	virtual bool AddFunctionCallArg(double arg) = 0;
 	virtual bool AddFunctionCallArg(bool arg) = 0;
-	virtual bool AddFunctionCallArg(void *arg) = 0;
+	virtual bool AddFunctionCallArg(void* arg) = 0;
 	virtual bool AddFunctionCallArg(const String& string) = 0;
 };
