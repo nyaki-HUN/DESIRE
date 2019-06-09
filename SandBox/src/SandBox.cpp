@@ -24,7 +24,7 @@ enum EAction
 	FIRE,
 	CAMERA_YAW,
 	CAMERA_PITCH
-}; 
+};
 
 SandBox::SandBox()
 {
@@ -59,7 +59,7 @@ void SandBox::Init()
 
 	scriptedObject = new Object("Obj_1");
 	Modules::ScriptSystem->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
-	ScriptComponent *scriptComp = scriptedObject->GetComponent<ScriptComponent>();
+	ScriptComponent* scriptComp = scriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
 	{
 		scriptComp->CallByType(ScriptComponent::EBuiltinFuncType::Init);
@@ -108,7 +108,7 @@ void SandBox::Init()
 
 	dataDirWatcher = std::make_unique<FileSystemWatcher>(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)
 	{
-		const char *strAction = "";
+		const char* strAction = "";
 		switch(action)
 		{
 			case FileSystemWatcher::EAction::Added:		strAction = "added";  break;

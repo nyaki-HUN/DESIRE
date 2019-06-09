@@ -23,8 +23,8 @@ private:
 	std::unique_ptr<ImGuiImpl> UI;
 	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
 
-	Object *scriptedObject = nullptr;
-	Object *cubeObj = nullptr;
+	Object* scriptedObject = nullptr;
+	Object* cubeObj = nullptr;
 
 	InputMapping inputMapping;
 };
