@@ -4,11 +4,10 @@
 TEST_CASE("Allocator", "[Core][memory]")
 {
 	Allocator& defaultAllocator = Allocator::GetDefaultAllocator();
-	Allocator& scratchAllocator = Allocator::GetScratchAllocator();
-}
+	Allocator& a = Allocator::GetScratchAllocator();
 
-TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
-{
+	Allocator::ResetScratchAllocator();
+
 	class TestClass
 	{
 	public:
@@ -26,22 +25,22 @@ TEST_CASE("DESIRE_ALLOCATOR_NEW | DESIRE_ALLOCATOR_DELETE", "[Core][memory]")
 		int value;
 	};
 
-	Allocator::ResetScratchAllocator();
-	Allocator& a = Allocator::GetScratchAllocator();
+	SECTION("Alloc")
+	{
+		const size_t numAllocBegin = globalMemoryAllocationCount;
 
-	const size_t numAllocBegin = globalMemoryAllocationCount;
+		TestClass* ptr1 = new(a.Alloc(sizeof(TestClass))) TestClass();
+		TestClass* ptr2 = new(a.Alloc(sizeof(TestClass))) TestClass(123);
 
-	TestClass* ptr1 = new(a.Alloc(sizeof(TestClass))) TestClass();
-	TestClass* ptr2 = new(a.Alloc(sizeof(TestClass))) TestClass(123);
+		CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
 
-	CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
+		// Check if the constructor has run
+		CHECK(ptr1->value == -1);
+		CHECK(ptr2->value == 123);
 
-	// Check if the constructor has run
-	CHECK(ptr1->value == -1);
-	CHECK(ptr2->value == 123);
-
-	ptr1->~TestClass();
-	ptr2->~TestClass();
-	a.Free(ptr1);
-	a.Free(ptr2);
+		ptr1->~TestClass();
+		ptr2->~TestClass();
+		a.Free(ptr1);
+		a.Free(ptr2);
+	}
 }

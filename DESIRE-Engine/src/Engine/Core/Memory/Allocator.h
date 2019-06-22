@@ -13,7 +13,9 @@ public:
 	virtual ~Allocator() {}
 
 	virtual void* Alloc(size_t size) = 0;
+	virtual void* Realloc(void* ptr, size_t size);
 	virtual void Free(void* ptr) = 0;
+	virtual size_t MemSize(void* ptr) = 0;
 
 	// Returns the default SystemMemoryAllocator
 	static Allocator& GetDefaultAllocator();

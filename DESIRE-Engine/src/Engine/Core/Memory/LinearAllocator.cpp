@@ -34,6 +34,17 @@ void LinearAllocator::Free(void* ptr)
 	// Do nothing
 }
 
+size_t LinearAllocator::MemSize(void* ptr)
+{
+	if(ptr < memoryStart || ptr >= memoryStart + memorySize)
+	{
+		return fallbackAllocator.MemSize(ptr);
+	}
+
+	// TODO
+	return 0;
+}
+
 void LinearAllocator::Reset()
 {
 	freeSpace = memorySize;

@@ -17,6 +17,7 @@ public:
 	static void* SystemAlignedAlloc(size_t size, size_t alignment);
 	static void SystemFree(void* ptr);
 	static void SystemAlignedFree(void* ptr);
+	static size_t SystemMemSize(void* ptr);
 };
 
 #if DESIRE_PLATFORM_OSX

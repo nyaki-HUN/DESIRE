@@ -4,12 +4,13 @@
 
 void* MemorySystem::Alloc(size_t size)
 {
-	return SystemAlloc(size);
+	Allocator& allocator = Allocator::GetDefaultAllocator();
+	return allocator.Alloc(size);
 }
 
 void* MemorySystem::Calloc(size_t num, size_t size)
 {
-	void* ptr = SystemAlloc(num * size);
+	void* ptr = Alloc(num * size);
 	if(ptr != nullptr)
 	{
 		memset(ptr, 0, num * size);
@@ -19,7 +20,8 @@ void* MemorySystem::Calloc(size_t num, size_t size)
 
 void* MemorySystem::Realloc(void* ptr, size_t size)
 {
-	return SystemRealloc(ptr, size);
+	Allocator& allocator = Allocator::GetDefaultAllocator();
+	return allocator.Realloc(ptr, size);
 }
 
 void* MemorySystem::AlignedAlloc(size_t size, size_t alignment)
@@ -29,7 +31,8 @@ void* MemorySystem::AlignedAlloc(size_t size, size_t alignment)
 
 void MemorySystem::Free(void* ptr)
 {
-	return SystemFree(ptr);
+	Allocator& allocator = Allocator::GetDefaultAllocator();
+	return allocator.Free(ptr);
 }
 
 void MemorySystem::AlignedFree(void* ptr)

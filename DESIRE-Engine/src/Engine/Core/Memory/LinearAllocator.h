@@ -14,6 +14,7 @@ public:
 
 	void* Alloc(size_t size) final override;
 	void Free(void* ptr) final override;
+	size_t MemSize(void* ptr) final override;
 
 	// Free everything in O(1)
 	void Reset();

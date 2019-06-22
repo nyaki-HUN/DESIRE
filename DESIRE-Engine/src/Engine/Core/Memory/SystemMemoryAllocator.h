@@ -6,6 +6,8 @@
 class SystemMemoryAllocator : public Allocator
 {
 public:
-	void* Alloc(size_t size) override	{ return MemorySystem::Alloc(size); }
-	void Free(void *ptr) override		{ return MemorySystem::Free(ptr); }
+	void* Alloc(size_t size) final override					{ return MemorySystem::SystemAlloc(size); }
+	void* Realloc(void* ptr, size_t size) final override	{ return MemorySystem::SystemRealloc(ptr, size); }
+	void Free(void* ptr) final override 					{ return MemorySystem::SystemFree(ptr); }
+	size_t MemSize(void* ptr) final override				{ return MemorySystem::SystemMemSize(ptr); }
 };

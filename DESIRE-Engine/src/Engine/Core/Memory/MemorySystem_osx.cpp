@@ -42,4 +42,10 @@ void MemorySystem::SystemAlignedFree(void* ptr)
 	SystemFree(ptr)
 }
 
+size_t MemorySystem::SystemMemSize(void* ptr)
+{
+	malloc_zone_t* zone = malloc_zone_from_ptr(ptr);
+	return (zone != nullptr) ? zone->size(zone, ptr) : 0;
+}
+
 #endif	// #if DESIRE_PLATFORM_OSX
