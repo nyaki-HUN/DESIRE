@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 
 #include "Engine/Core/Time.h"
 #include "Engine/Core/WINDOWS/os.h"		// we need <windows.h> for the LARGE_INTEGER type
@@ -35,4 +35,4 @@ void Time::GetLocalTime(const time_t& time, tm *timeInfo)
 	localtime_s(timeInfo, &time);
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_WINDOWS)
+#endif	// #if DESIRE_PLATFORM_WINDOWS

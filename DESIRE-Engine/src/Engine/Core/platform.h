@@ -37,14 +37,14 @@
 //	Platform specific macros
 // --------------------------------------------------------------------------------------------------------------------
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 	#define DESIRE_ATTRIBUTE_PACKED
 
 	#define DESIRE_PRAGMA(X)				__pragma(X)
 	#define DESIRE_DISABLE_WARNINGS			DESIRE_PRAGMA(warning(push, 1))
 	#define DESIRE_ENABLE_WARNINGS			DESIRE_PRAGMA(warning(pop))
 
-#elif defined(DESIRE_PLATFORM_LINUX) || defined(DESIRE_PLATFORM_OSX) || defined(DESIRE_PLATFORM_IOS) || defined(DESIRE_PLATFORM_TVOS)
+#elif DESIRE_PLATFORM_LINUX || DESIRE_PLATFORM_OSX || DESIRE_PLATFORM_IOS || DESIRE_PLATFORM_TVOS
 	#define DESIRE_ATTRIBUTE_PACKED			__attribute__((packed))
 
 	#define DESIRE_PRAGMA(X)				_Pragma(#X)
@@ -64,7 +64,7 @@
 #endif
 
 // Enable SSE on desktop as all 64-bit CPU has at least SSE2
-#if defined(DESIRE_PLATFORM_WINDOWS) || defined(DESIRE_PLATFORM_LINUX) || defined(DESIRE_PLATFORM_OSX)
+#if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_LINUX || DESIRE_PLATFORM_OSX
 	#define DESIRE_USE_SSE
 
 	// Enable SSE 4.1

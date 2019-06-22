@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_ANDROID)
+#if DESIRE_PLATFORM_ANDROID
 
 #include "Engine/Input/Input.h"
 
@@ -116,4 +116,4 @@ void Input::Update_internal()
 	}
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_ANDROID)
+#endif	// #if DESIRE_PLATFORM_ANDROID

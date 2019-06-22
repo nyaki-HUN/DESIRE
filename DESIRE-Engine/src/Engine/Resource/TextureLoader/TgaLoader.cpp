@@ -3,9 +3,9 @@
 #include "Engine/Resource/Texture.h"
 #include "Engine/Core/FS/IReadFile.h"
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
-#include <PshPack1.h>
-#endif
+#if DESIRE_PLATFORM_WINDOWS
+	#include <PshPack1.h>
+#endif	// #if DESIRE_PLATFORM_WINDOWS
 
 struct TgaHeader
 {
@@ -44,9 +44,9 @@ struct TgaHeader
 	uint8_t descriptor;					// bits 0-3 give the alpha channel depth, bits 4-5 give direction
 } DESIRE_ATTRIBUTE_PACKED;
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
-#include <PopPack.h>
-#endif
+#if DESIRE_PLATFORM_WINDOWS
+	#include <PopPack.h>
+#endif	// #if DESIRE_PLATFORM_WINDOWS
 
 Texture* TgaLoader::Load(const ReadFilePtr& file)
 {

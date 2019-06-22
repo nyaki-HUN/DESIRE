@@ -178,7 +178,7 @@ int String::Compare(const String& string) const
 
 int String::CompareIgnoreCase(const String& string) const
 {
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 	return _stricmp(data, string.data);
 #else
 	return strcasecmp(data, string.data);

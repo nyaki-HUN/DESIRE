@@ -46,9 +46,9 @@ BgfxRender::~BgfxRender()
 void BgfxRender::Init(OSWindow *mainWindow)
 {
 	bgfx::PlatformData pd = {};
-#if defined(DESIRE_PLATFORM_LINUX)
+#if DESIRE_PLATFORM_LINUX
 	pd.ndt = GetDisplay();
-#endif
+#endif	// #if DESIRE_PLATFORM_LINUX
 	pd.nwh = mainWindow->GetHandle();
 	bgfx::setPlatformData(pd);
 

@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_IOS)
+#if DESIRE_PLATFORM_IOS
 
 #include "Engine/Input/Input.h"
 
@@ -90,4 +90,4 @@ void Input::Update_internal()
 	}
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_IOS)
+#endif	// #if DESIRE_PLATFORM_IOS

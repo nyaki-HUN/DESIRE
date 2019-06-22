@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_LINUX)
+#if DESIRE_PLATFORM_LINUX
 
 #include "Engine/Input/Input.h"
 #include "Engine/Application/OSWindow.h"
@@ -165,4 +165,4 @@ void Input::Update_internal()
 
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_LINUX)
+#endif	// #if DESIRE_PLATFORM_LINUX

@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_LINUX)
+#if DESIRE_PLATFORM_LINUX
 
 #include "Engine/Core/Time.h"
 
@@ -27,4 +27,4 @@ void Time::GetLocalTime(const time_t& time, tm *timeInfo)
 	localtime_r(&time, timeInfo);
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_LINUX)
+#endif	// #if DESIRE_PLATFORM_LINUX
