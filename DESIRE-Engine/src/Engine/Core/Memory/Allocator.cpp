@@ -1,11 +1,11 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/Allocator.h"
-#include "Engine/Core/Memory/MallocAllocator.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
+#include "Engine/Core/Memory/SystemMemoryAllocator.h"
 
 Allocator& Allocator::GetDefaultAllocator()
 {
-	static MallocAllocator s_defaultAllocator;
+	static SystemMemoryAllocator s_defaultAllocator;
 	return s_defaultAllocator;
 }
 
