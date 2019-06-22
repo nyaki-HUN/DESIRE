@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 
 #include "Engine/Core/FS/FileSystemWatcher.h"
 #include "Engine/Core/WINDOWS/os.h"
@@ -135,4 +135,4 @@ void FileSystemWatcher::UpdateAll()
 	MsgWaitForMultipleObjectsEx(0, NULL, 0, QS_ALLINPUT, MWMO_ALERTABLE);
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_WINDOWS)
+#endif	// #if DESIRE_PLATFORM_WINDOWS

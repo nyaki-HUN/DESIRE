@@ -3,21 +3,34 @@
 // --------------------------------------------------------------------------------------------------------------------
 //	Determine platform
 // --------------------------------------------------------------------------------------------------------------------
+#define DESIRE_PLATFORM_WINDOWS	0
+#define DESIRE_PLATFORM_LINUX	0
+#define DESIRE_PLATFORM_OSX		0
+#define DESIRE_PLATFORM_IOS		0
+#define DESIRE_PLATFORM_TVOS	0
+#define DESIRE_PLATFORM_ANDROID	0
+
 #if defined(_WIN32)
-	#define DESIRE_PLATFORM_WINDOWS
+	#undef DESIRE_PLATFORM_WINDOWS
+	#define DESIRE_PLATFORM_WINDOWS 1
 #elif defined(__APPLE__) && __APPLE__
 	#include <TargetConditionals.h>
 	#if TARGET_OS_TV
-		#define DESIRE_PLATFORM_TVOS
+		#undef DESIRE_PLATFORM_TVOS
+		#define DESIRE_PLATFORM_TVOS 1
 	#elif TARGET_OS_IPHONE
-		#define DESIRE_PLATFORM_IOS
+		#undef DESIRE_PLATFORM_IOS
+		#define DESIRE_PLATFORM_IOS 1
 	#elif TARGET_OS_MAC
-		#define DESIRE_PLATFORM_OSX
+		#undef DESIRE_PLATFORM_OSX
+		#define DESIRE_PLATFORM_OSX 1
 	#endif
 #elif defined(__ANDROID__)
-	#define DESIRE_PLATFORM_ANDROID
+	#undef DESIRE_PLATFORM_ANDROID
+	#define DESIRE_PLATFORM_ANDROID 1
 #elif defined(__linux__) || defined(__linux)
-	#define DESIRE_PLATFORM_LINUX
+	#undef DESIRE_PLATFORM_LINUX
+	#define DESIRE_PLATFORM_LINUX 1
 #endif
 
 // --------------------------------------------------------------------------------------------------------------------

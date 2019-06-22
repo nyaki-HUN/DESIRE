@@ -9,9 +9,9 @@ constexpr int kZipSignatureCentralDirectoryFileHeader	= 0x02014b50;	//'PK12'
 constexpr int kZipSignatureLocalFileHeader				= 0x04034b50;	//'PK34'
 constexpr int kZipSignatureEndOfCentralDirectory		= 0x06054b50;	//'PK56'
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 	#include <PshPack1.h>
-#endif
+#endif	// #if DESIRE_PLATFORM_WINDOWS
 
 /*
 	The structure of a PKZip file is taken from:
@@ -91,9 +91,9 @@ struct ZipEndOfCentralDirectoryRecord
 	uint16_t zipCommentLength;
 } DESIRE_ATTRIBUTE_PACKED;
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 	#include <PopPack.h>
-#endif
+#endif	// #if DESIRE_PLATFORM_WINDOWS
 
 FileSourceZip::FileSourceZip(ReadFilePtr zipFile, int flags)
 	: zipFile(std::move(zipFile))

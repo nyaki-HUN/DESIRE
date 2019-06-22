@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_ANDROID)
+#if DESIRE_PLATFORM_ANDROID
 
 #include "Engine/Application/OSWindow.h"
 #include "Engine/Core/String/WritableString.h"
@@ -60,4 +60,4 @@ void OSWindow::GetClipboardString(WritableString& outString)
 	outString.Clear();
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_ANDROID)
+#endif	// #if DESIRE_PLATFORM_ANDROID

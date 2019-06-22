@@ -25,7 +25,7 @@ void FileOutputPolicy::Process(const Log::LogData& logData)
 	}
 
 	char strTime[10];
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 	_strtime_s(strTime);
 #else
 	time_t now = time(nullptr);

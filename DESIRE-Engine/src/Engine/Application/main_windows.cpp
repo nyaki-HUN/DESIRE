@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 
 #include "Engine/Application/Application.h"
 #include "Engine/Core/WINDOWS/os.h"
@@ -22,4 +22,4 @@ int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /
 	return Application::Start(__argc, __argv);
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_WINDOWS)
+#endif	// #if DESIRE_PLATFORM_WINDOWS

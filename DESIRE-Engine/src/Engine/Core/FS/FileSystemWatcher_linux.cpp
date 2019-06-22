@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_LINUX)
+#if DESIRE_PLATFORM_LINUX
 
 #include "Engine/Core/FS/FileSystemWatcher.h"
 
@@ -103,4 +103,4 @@ void FileSystemWatcher::UpdateAll()
 	}
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_LINUX)
+#endif	// #if DESIRE_PLATFORM_LINUX

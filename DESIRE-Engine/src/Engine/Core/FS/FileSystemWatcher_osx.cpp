@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_OSX)
+#if DESIRE_PLATFORM_OSX
 
 #include "Engine/Core/FS/FileSystemWatcher.h"
 
@@ -34,4 +34,4 @@ void FileSystemWatcher::UpdateAll()
 
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_OSX)
+#endif	// #if DESIRE_PLATFORM_OSX

@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_OSX)
+#if DESIRE_PLATFORM_OSX
 
 #include "Engine/Application/OSWindow.h"
 
@@ -115,4 +115,4 @@ void OSWindow::GetClipboardString(WritableString& outString)
 	}
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_OSX)
+#endif	// #if DESIRE_PLATFORM_OSX

@@ -2,11 +2,11 @@
 #include "Engine/Core/Log.h"
 #include "Engine/Core/Logger.h"
 
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 	#include "Engine/Core/WINDOWS/WINDOWSLoggerPolicies.h"
-#elif defined(DESIRE_PLATFORM_IOS)
+#elif DESIRE_PLATFORM_IOS
 	#include "Engine/Core/IOS/IOSLoggerPolicies.h"
-#elif defined(DESIRE_PLATFORM_ANDROID)
+#elif DESIRE_PLATFORM_ANDROID
 	#include "Engine/Core/ANDROID/ANDROIDLoggerPolicies.h"
 #endif
 
@@ -21,14 +21,14 @@ void Log::LogWithData(const Log::LogData& logData)
 	else
 	{
 		// Default logging
-#if defined(DESIRE_PLATFORM_WINDOWS)
+#if DESIRE_PLATFORM_WINDOWS
 		static Logger<NoFilterPolicy, VisualStudioOutputPolicy> ideLogger;
 		ideLogger.Log(logData);
 
 		static Logger<NoFilterPolicy, WIN32ConsoleOutputPolicy> consoleLogger;
-#elif defined(DESIRE_PLATFORM_IOS)
+#elif DESIRE_PLATFORM_IOS
 		static Logger<NoFilterPolicy, NSLogOutputPolicy> consoleLogger;
-#elif defined(DESIRE_PLATFORM_ANDROID)
+#elif DESIRE_PLATFORM_ANDROID
 		static Logger<NoFilterPolicy, LogCatOutputPolicy> consoleLogger;
 #else
 		static Logger<NoFilterPolicy, ConsoleOutputPolicy> consoleLogger;

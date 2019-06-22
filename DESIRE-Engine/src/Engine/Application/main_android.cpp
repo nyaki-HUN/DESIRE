@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
 
-#if defined(DESIRE_PLATFORM_ANDROID)
+#if DESIRE_PLATFORM_ANDROID
 
 #include "Engine/Application/Application.h"
 #include "Engine/Application/EAppEventType.h"
@@ -153,4 +153,4 @@ void android_main(android_app *androidApp)
 	Application::Start(0, nullptr);
 }
 
-#endif	// #if defined(DESIRE_PLATFORM_ANDROID)
+#endif	// #if DESIRE_PLATFORM_ANDROID
