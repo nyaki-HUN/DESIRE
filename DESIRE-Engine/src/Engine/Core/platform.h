@@ -3,65 +3,49 @@
 // --------------------------------------------------------------------------------------------------------------------
 //	Determine platform
 // --------------------------------------------------------------------------------------------------------------------
-#define DESIRE_PLATFORM_WINDOWS	0
-#define DESIRE_PLATFORM_LINUX	0
-#define DESIRE_PLATFORM_OSX		0
-#define DESIRE_PLATFORM_IOS		0
-#define DESIRE_PLATFORM_TVOS	0
 #define DESIRE_PLATFORM_ANDROID	0
+#define DESIRE_PLATFORM_IOS		0
+#define DESIRE_PLATFORM_LINUX	0
+#define DESIRE_PLATFORM_NX		0
+#define DESIRE_PLATFORM_OSX		0
+#define DESIRE_PLATFORM_PS4		0
+#define DESIRE_PLATFORM_WINDOWS	0
+#define DESIRE_PLATFORM_XBOXONE	0
 
-#if defined(_WIN32)
+#if defined(_DURANGO) || defined(_XBOX_ONE)
+	#undef DESIRE_PLATFORM_XBOXONE
+	#define DESIRE_PLATFORM_XBOXONE 1
+#elif defined(_WIN32) || defined(_WIN64)
+	#include <sdkddkver.h>
 	#undef DESIRE_PLATFORM_WINDOWS
 	#define DESIRE_PLATFORM_WINDOWS 1
+#elif defined(__ANDROID__)
+	// Also defines __linux__
+	#undef DESIRE_PLATFORM_ANDROID
+	#define DESIRE_PLATFORM_ANDROID 1
+#elif defined(__linux__) || defined(__linux)
+	#undef DESIRE_PLATFORM_LINUX
+	#define DESIRE_PLATFORM_LINUX 1
 #elif defined(__APPLE__) && __APPLE__
 	#include <TargetConditionals.h>
-	#if TARGET_OS_TV
-		#undef DESIRE_PLATFORM_TVOS
-		#define DESIRE_PLATFORM_TVOS 1
-	#elif TARGET_OS_IPHONE
+	#if TARGET_OS_IPHONE
 		#undef DESIRE_PLATFORM_IOS
 		#define DESIRE_PLATFORM_IOS 1
 	#elif TARGET_OS_MAC
 		#undef DESIRE_PLATFORM_OSX
 		#define DESIRE_PLATFORM_OSX 1
 	#endif
-#elif defined(__ANDROID__)
-	#undef DESIRE_PLATFORM_ANDROID
-	#define DESIRE_PLATFORM_ANDROID 1
-#elif defined(__linux__) || defined(__linux)
-	#undef DESIRE_PLATFORM_LINUX
-	#define DESIRE_PLATFORM_LINUX 1
+#elif defined(__ORBIS__)
+	#undef DESIRE_PLATFORM_PS4
+	#define DESIRE_PLATFORM_PS4 1
+#elif defined(__NX__)
+	#undef DESIRE_PLATFORM_NX
+	#define DESIRE_PLATFORM_NX 1
 #endif
 
 // --------------------------------------------------------------------------------------------------------------------
-//	Platform specific macros
+//	Macros
 // --------------------------------------------------------------------------------------------------------------------
-
-#if DESIRE_PLATFORM_WINDOWS
-	#define DESIRE_ATTRIBUTE_PACKED
-
-	#define DESIRE_PRAGMA(X)				__pragma(X)
-	#define DESIRE_DISABLE_WARNINGS			DESIRE_PRAGMA(warning(push, 1))
-	#define DESIRE_ENABLE_WARNINGS			DESIRE_PRAGMA(warning(pop))
-
-#elif DESIRE_PLATFORM_LINUX || DESIRE_PLATFORM_OSX || DESIRE_PLATFORM_IOS || DESIRE_PLATFORM_TVOS
-	#define DESIRE_ATTRIBUTE_PACKED			__attribute__((packed))
-
-	#define DESIRE_PRAGMA(X)				_Pragma(#X)
-//	#define DESIRE_DISABLE_WARNINGS			DESIRE_PRAGMA(GCC diagnostic ignored "-Wall")
-//	#define DESIRE_ENABLE_WARNINGS			DESIRE_PRAGMA(GCC diagnostic warning "-Wall")
-	#define DESIRE_DISABLE_WARNINGS
-	#define DESIRE_ENABLE_WARNINGS
-
-#else
-	#define DESIRE_ATTRIBUTE_PACKED
-
-	#define DESIRE_PRAGMA(X)
-	#define DESIRE_DISABLE_WARNINGS
-	#define DESIRE_ENABLE_WARNINGS
-
-	static_assert(false, "Unsupported platform");
-#endif
 
 // Enable SSE on desktop as all 64-bit CPU has at least SSE2
 #if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_LINUX || DESIRE_PLATFORM_OSX
@@ -72,10 +56,6 @@
 		#define __SSE4_1__
 	#endif
 #endif
-
-// --------------------------------------------------------------------------------------------------------------------
-//	Macros
-// --------------------------------------------------------------------------------------------------------------------
 
 // Stringify utility macro
 #define _DESIRE_STRINGIFY(STR)				#STR
@@ -100,3 +80,15 @@ constexpr size_t DesireArraySizeHelper(T(&)[N])
 
 // The value of this macro represents the maximum length of a file name string
 #define DESIRE_MAX_PATH_LEN					512
+
+#if defined(_MSC_VER)
+	#define DESIRE_ATTRIBUTE_PACKED
+	#define DESIRE_PRAGMA(X)				__pragma(X)
+	#define DESIRE_DISABLE_WARNINGS			DESIRE_PRAGMA(warning(push, 1))
+	#define DESIRE_ENABLE_WARNINGS			DESIRE_PRAGMA(warning(pop))
+#else
+	#define DESIRE_ATTRIBUTE_PACKED			__attribute__((packed))
+	#define DESIRE_PRAGMA(X)				_Pragma(#X)
+	#define DESIRE_DISABLE_WARNINGS
+	#define DESIRE_ENABLE_WARNINGS
+#endif
