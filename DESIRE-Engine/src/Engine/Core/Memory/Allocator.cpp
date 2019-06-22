@@ -8,12 +8,8 @@ void* Allocator::Realloc(void* ptr, size_t size)
 	void* newPtr = Alloc(size);
 	if(ptr != nullptr)
 	{
-		if(newPtr != nullptr)
-		{
-			const size_t oldSize = MemSize(ptr);
-			memcpy(newPtr, ptr, std::min(oldSize, size));
-		}
-
+		const size_t oldSize = MemSize(ptr);
+		memcpy(newPtr, ptr, std::min(oldSize, size));
 		Free(ptr);
 	}
 
