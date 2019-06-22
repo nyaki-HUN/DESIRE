@@ -22,21 +22,21 @@ TEST_CASE("PoolAllocator", "[Core][memory]")
 	TestClass* tmp[10];
 	for(int i = 0; i < 10; ++i)
 	{
-		tmp[i] = a.Allocate();
+		tmp[i] = a.Alloc();
 		REQUIRE(tmp[i] != nullptr);
 		CHECK(tmp[i]->value == 123);
 	}
 
 	CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
 
-	TestClass* elementAllocatedWhenPoolIsEmpty = a.Allocate();
+	TestClass* elementAllocatedWhenPoolIsEmpty = a.Alloc();
 
-	a.Deallocate(elementAllocatedWhenPoolIsEmpty);
+	a.Free(elementAllocatedWhenPoolIsEmpty);
 	elementAllocatedWhenPoolIsEmpty = nullptr;
 
 	for(int i = 0; i < 10; ++i)
 	{
-		a.Deallocate(tmp[i]);
+		a.Free(tmp[i]);
 		tmp[i] = nullptr;
 	}
 }

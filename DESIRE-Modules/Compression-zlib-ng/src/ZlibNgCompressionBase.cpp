@@ -36,7 +36,7 @@ size_t ZlibNgCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) c
 	return maxSize;
 }
 
-size_t ZlibNgCompressionBase::CompressBuffer(void *compressedDataBuffer, size_t compressedDataBufferSize, const void *data, size_t dataSize)
+size_t ZlibNgCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize)
 {
 	if(dataSize > UINT32_MAX || compressedDataBufferSize > UINT32_MAX)
 	{
@@ -70,13 +70,13 @@ size_t ZlibNgCompressionBase::CompressBuffer(void *compressedDataBuffer, size_t 
 	return stream.total_out;
 }
 
-size_t ZlibNgCompressionBase::GetMaxDecompressionDataBufferSize(const void *compressedData, size_t compressedDataSize) const
+size_t ZlibNgCompressionBase::GetMaxDecompressionDataBufferSize(const void* compressedData, size_t compressedDataSize) const
 {
 	ASSERT(false && "Unimplemented");
 	return 0;
 }
 
-size_t ZlibNgCompressionBase::DecompressBuffer(void *dataBuffer, size_t dataBufferSize, const void *compressedData, size_t compressedDataSize)
+size_t ZlibNgCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBufferSize, const void* compressedData, size_t compressedDataSize)
 {
 	if(compressedDataSize > UINT32_MAX || dataBufferSize > UINT32_MAX)
 	{
@@ -120,16 +120,16 @@ int ZlibNgCompressionBase::GetMaxCompressionLevel() const
 	return Z_BEST_COMPRESSION;
 }
 
-void* ZlibNgCompressionBase::CustomAlloc(void *opaque, uint32_t items, uint32_t size)
+void* ZlibNgCompressionBase::CustomAlloc(void* opaque, uint32_t items, uint32_t size)
 {
-	Allocator *allocator = static_cast<Allocator*>(opaque);
-	return allocator->Allocate(items * size);
+	Allocator* allocator = static_cast<Allocator*>(opaque);
+	return allocator->Alloc(static_cast<size_t>(items) * size);
 }
 
-void ZlibNgCompressionBase::CustomFree(void *opaque, void *address)
+void ZlibNgCompressionBase::CustomFree(void* opaque, void* address)
 {
-	Allocator *allocator = static_cast<Allocator*>(opaque);
-	allocator->Deallocate(address);
+	Allocator* allocator = static_cast<Allocator*>(opaque);
+	allocator->Free(address);
 }
 
 void ZlibNgCompressionBase::StreamInit(z_stream& stream)

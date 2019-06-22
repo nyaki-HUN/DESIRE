@@ -33,7 +33,7 @@
     <ClCompile Include="..\..\src\Core\ConfigValue\test_IConfigValue.cpp">
       <Filter>Core\ConfigValue</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\Memory\test_IAllocator.cpp">
+    <ClCompile Include="..\..\src\Core\Memory\test_Allocator.cpp">
       <Filter>Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\Memory\test_PoolAllocator.cpp">

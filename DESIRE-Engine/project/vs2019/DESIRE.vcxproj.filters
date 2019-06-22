@@ -294,7 +294,7 @@
     <ClInclude Include="..\..\src\Engine\Core\Memory\LinearAllocator.h">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\Memory\MallocAllocator.h">
+    <ClInclude Include="..\..\src\Engine\Core\Memory\MemorySystem.h">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Memory\PoolAllocator.h">
@@ -304,6 +304,9 @@
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\SystemMemoryAllocator.h">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
@@ -602,7 +605,13 @@
     <ClCompile Include="..\..\src\Engine\Core\Memory\LinearAllocator.cpp">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\Memory\MallocAllocator.cpp">
+    <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem.cpp">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem_osx.cpp">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem_windows.cpp">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp">

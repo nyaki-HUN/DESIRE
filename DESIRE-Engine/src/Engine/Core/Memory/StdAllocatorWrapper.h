@@ -25,19 +25,19 @@ public:
 			return nullptr;
 		}
 
-		void *ptr = Allocator::GetScratchAllocator().Allocate(n * sizeof(T));
+		void* ptr = Allocator::GetScratchAllocator().Alloc(n * sizeof(T));
 		return static_cast<T*>(ptr);
 	}
 
-	void deallocate(T *ptr, size_t n) const
+	void deallocate(T* ptr, size_t n) const
 	{
 		DESIRE_UNUSED(n);
-		Allocator::GetScratchAllocator().Deallocate(ptr);
+		Allocator::GetScratchAllocator().Free(ptr);
 	}
 
 	// Stateless allocators are always equal
 	bool operator ==(const StdAllocatorWrapper& other) const	{ return true; }
-	bool operator !=(const StdAllocatorWrapper& other) const	{ return false;	}
+	bool operator !=(const StdAllocatorWrapper& other) const	{ return false; }
 
 private:
 	// Prevent copy and move

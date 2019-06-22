@@ -12,10 +12,10 @@ public:
 	Allocator() {}
 	virtual ~Allocator() {}
 
-	virtual void* Allocate(size_t size, size_t alignment = Allocator::kDefaultAlignment) = 0;
-	virtual void Deallocate(void *ptr) = 0;
+	virtual void* Alloc(size_t size) = 0;
+	virtual void Free(void* ptr) = 0;
 
-	// Returns the default MallocAllocator
+	// Returns the default SystemMemoryAllocator
 	static Allocator& GetDefaultAllocator();
 
 	// Returns a linear allocator which gets reset at the end of each frame
@@ -31,9 +31,3 @@ private:
 	Allocator& operator=(const Allocator& other) = delete;
 	Allocator& operator=(Allocator&& other) = delete;
 };
-
-// Creates a new object of type T using the allocator 'A' to allocate its memory
-#define DESIRE_ALLOCATOR_NEW(A, T, ...)			( new ((A).Allocate(sizeof(T), alignof(T))) T(__VA_ARGS__) )
-
-// Destroys an object allocated with DESIRE_ALLOCATOR_NEW
-#define DESIRE_ALLOCATOR_DELETE(A, T, PTR)		do{ if(PTR) { (PTR)->~T(); A.Deallocate(PTR); } }while(0)

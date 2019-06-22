@@ -111,7 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Core\ConfigValue\test_IConfigValue.cpp" />
-    <ClCompile Include="..\..\src\Core\Memory\test_IAllocator.cpp" />
+    <ClCompile Include="..\..\src\Core\Memory\test_Allocator.cpp" />
     <ClCompile Include="..\..\src\Core\Memory\test_PoolAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\Memory\test_StackAllocator.cpp" />
     <ClCompile Include="..\..\src\Core\Memory\test_StdFrameAllocatorWrapper.cpp" />

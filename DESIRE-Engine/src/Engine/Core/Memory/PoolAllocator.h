@@ -8,7 +8,7 @@ class PoolAllocator
 public:
 	PoolAllocator()
 	{
-		char *ptr = static_cast<char*>(data);
+		char* ptr = static_cast<char*>(data);
 		for(size_t i = 0; i < NUM_ELEMENTS; ++i)
 		{
 			list.Push(ptr);
@@ -16,13 +16,13 @@ public:
 		}
 	}
 
-	T* PoolAllocator::Allocate()
+	T* Alloc()
 	{
-		void *memory = list.Pop();
+		void* memory = list.Pop();
 		return (memory != nullptr) ? new (memory) T() : new T();
 	}
 
-	void PoolAllocator::Deallocate(T *ptr)
+	void Free(T* ptr)
 	{
 		if(data <= reinterpret_cast<char*>(ptr) && reinterpret_cast<char*>(ptr) <= data + (NUM_ELEMENTS - 1) * kElementSize)
 		{

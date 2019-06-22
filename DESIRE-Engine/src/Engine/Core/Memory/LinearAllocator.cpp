@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
 
-LinearAllocator::LinearAllocator(void *memoryStart, size_t memorySize, Allocator& fallbackAllocator)
+LinearAllocator::LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator)
 	: memoryStart(static_cast<char*>(memoryStart))
 	, memorySize(memorySize)
 	, freeSpace(memorySize)
@@ -10,26 +10,24 @@ LinearAllocator::LinearAllocator(void *memoryStart, size_t memorySize, Allocator
 
 }
 
-void* LinearAllocator::Allocate(size_t size, size_t alignment)
+void* LinearAllocator::Alloc(size_t size)
 {
-	ASSERT((alignment & (alignment - 1)) == 0 && "Alignment must be power of two");
-
-	void *ptr = memoryStart + (memorySize - freeSpace);
-	ptr = std::align(alignment, size, ptr, freeSpace);
-	if(ptr == nullptr)
+	void* ptr = memoryStart + (memorySize - freeSpace);
+	ptr = std::align(kDefaultAlignment, size, ptr, freeSpace);
+	if(ptr != nullptr)
 	{
-		return fallbackAllocator.Allocate(size, alignment);
+		freeSpace -= size;
+		return ptr;
 	}
 
-	freeSpace -= size;
-	return ptr;
+	return fallbackAllocator.Alloc(size);
 }
 
-void LinearAllocator::Deallocate(void *ptr)
+void LinearAllocator::Free(void* ptr)
 {
 	if(ptr < memoryStart || ptr >= memoryStart + memorySize)
 	{
-		fallbackAllocator.Deallocate(ptr);
+		fallbackAllocator.Free(ptr);
 		return;
 	}
 

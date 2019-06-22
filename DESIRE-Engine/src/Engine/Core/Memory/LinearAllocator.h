@@ -10,16 +10,16 @@
 class LinearAllocator : public Allocator
 {
 public:
-	LinearAllocator(void *memoryStart, size_t memorySize, Allocator& fallbackAllocator = Allocator::GetDefaultAllocator());
+	LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator = Allocator::GetDefaultAllocator());
 
-	void* Allocate(size_t size, size_t alignment = Allocator::kDefaultAlignment) final override;
-	void Deallocate(void *ptr) final override;
+	void* Alloc(size_t size) final override;
+	void Free(void* ptr) final override;
 
-	// Deallocate everything in O(1)
+	// Free everything in O(1)
 	void Reset();
 
 private:
-	char *memoryStart = nullptr;
+	char* memoryStart = nullptr;
 	size_t memorySize = 0;
 	size_t freeSpace = 0;
 	Allocator& fallbackAllocator;
