@@ -46,7 +46,7 @@ void DebugDraw::AddAABB(const AABB& aabb, const Vector3& color)
 	AddLine(points[3], points[7], color);
 }
 
-void DebugDraw::AddText(const Vector3& pos, const char *text)
+void DebugDraw::AddText(const Vector3& pos, const char* text)
 {
 
 }

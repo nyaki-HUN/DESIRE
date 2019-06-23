@@ -19,7 +19,7 @@ public:
 	const std::shared_ptr<Texture>& GetTexture(uint8_t idx = 0) const;
 
 	// Render engine specific data set at bind
-	void *renderData = nullptr;
+	void* renderData = nullptr;
 
 private:
 	Array<std::shared_ptr<Texture>> textures;

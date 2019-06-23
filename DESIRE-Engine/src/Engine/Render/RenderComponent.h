@@ -16,12 +16,12 @@ public:
 	void SetLayer(int layer);
 	int GetLayer() const;
 
-	void SetMaterial(Material *material);
+	void SetMaterial(Material* material);
 	Material* GetMaterial() const;
 
 private:
-	const Mesh *mesh;
-	Material *material;
+	const Mesh* mesh;
+	Material* material;
 
 	int renderLayer;
 };

@@ -81,20 +81,20 @@ public:
 	Render();
 	virtual ~Render();
 
-	virtual void Init(OSWindow *mainWindow) = 0;
-	virtual void UpdateRenderWindow(OSWindow *window) = 0;
+	virtual void Init(OSWindow* mainWindow) = 0;
+	virtual void UpdateRenderWindow(OSWindow* window) = 0;
 	virtual void Kill() = 0;
 
 	virtual DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const = 0;
 
-	virtual void BeginFrame(OSWindow *window) = 0;
+	virtual void BeginFrame(OSWindow* window) = 0;
 	virtual void EndFrame() = 0;
 
-	void RenderMesh(Mesh *mesh, Material *material);
-	void RenderScreenSpaceQuad(Material *material);
+	void RenderMesh(Mesh* mesh, Material* material);
+	void RenderScreenSpaceQuad(Material* material);
 
 	// Sets the current view that the rendering will happen on. (Use nullptr to set the default view which is using the frame buffer)
-	virtual void SetView(View *view) = 0;
+	virtual void SetView(View* view) = 0;
 
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
@@ -111,19 +111,19 @@ public:
 	virtual void SetBlendModeDisabled() = 0;
 
 	// Resource bind
-	virtual void Bind(Mesh *mesh) = 0;
-	virtual void Bind(Shader *shader) = 0;
-	virtual void Bind(Texture *texture) = 0;
-	virtual void Bind(RenderTarget *renderTarget) = 0;
+	virtual void Bind(Mesh* mesh) = 0;
+	virtual void Bind(Shader* shader) = 0;
+	virtual void Bind(Texture* texture) = 0;
+	virtual void Bind(RenderTarget* renderTarget) = 0;
 
 	// Resource unbind
-	virtual void Unbind(Mesh *mesh) = 0;
-	virtual void Unbind(Shader *shader) = 0;
-	virtual void Unbind(Texture *texture) = 0;
-	virtual void Unbind(RenderTarget *renderTarget) = 0;
+	virtual void Unbind(Mesh* mesh) = 0;
+	virtual void Unbind(Shader* shader) = 0;
+	virtual void Unbind(Texture* texture) = 0;
+	virtual void Unbind(RenderTarget* renderTarget) = 0;
 
 	// Resource update
-	virtual void UpdateDynamicMesh(DynamicMesh *mesh) = 0;
+	virtual void UpdateDynamicMesh(DynamicMesh* mesh) = 0;
 
 protected:
 	void SetDefaultRenderStates();
@@ -133,13 +133,13 @@ protected:
 	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
 
 private:
-	virtual void SetMesh(Mesh *mesh) = 0;
+	virtual void SetMesh(Mesh* mesh) = 0;
 	virtual void SetScreenSpaceQuadMesh() = 0;
-	void SetMaterial(Material *material);
-	virtual void SetVertexShader(Shader *vertexShader) = 0;
-	virtual void SetFragmentShader(Shader *fragmentShader) = 0;
-	virtual void SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
-	virtual void UpdateShaderParams(const Material *material) = 0;
+	void SetMaterial(Material* material);
+	virtual void SetVertexShader(Shader* vertexShader) = 0;
+	virtual void SetFragmentShader(Shader* fragmentShader) = 0;
+	virtual void SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
+	virtual void UpdateShaderParams(const Material* material) = 0;
 
 	// Submit draw command
 	virtual void DoRender() = 0;

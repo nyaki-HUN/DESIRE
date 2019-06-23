@@ -22,7 +22,7 @@ int RenderComponent::GetLayer() const
 	return renderLayer;
 }
 
-void RenderComponent::SetMaterial(Material *i_material)
+void RenderComponent::SetMaterial(Material* i_material)
 {
 	material = i_material;
 }

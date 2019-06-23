@@ -28,14 +28,14 @@ public:
 		const void* GetValue() const;
 
 	private:
-		std::function<void(void *)> func;
+		std::function<void(void*)> func;
 	};
 
 	Material();
 	~Material();
 
 	void AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode = Render::EFilterMode::Trilinear, Render::EAddressMode addressMode = Render::EAddressMode::Repeat);
-	void ChangeTexture(uint8_t idx,  const std::shared_ptr<Texture>& texture);
+	void ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& texture);
 	const Array<TextureInfo>& GetTextures() const;
 
 	void AddShaderParam(HashedString name, std::function<void(void*)>&& func);

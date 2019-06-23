@@ -93,7 +93,7 @@ void Camera::RecalculateMatrices()
 	{
 		viewMat = CreateViewMatrix(position, target);
 	}
-	
+
 	if(flags & PROJECTION_MATRIX_IS_DIRTY)
 	{
 		projMat = CreatePerspectiveProjectionMatrix(fov, aspect, zNear, zFar);

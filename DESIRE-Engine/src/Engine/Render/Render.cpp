@@ -15,7 +15,7 @@ Render::~Render()
 
 }
 
-void Render::RenderMesh(Mesh *mesh, Material *material)
+void Render::RenderMesh(Mesh* mesh, Material* material)
 {
 	ASSERT(mesh != nullptr);
 	ASSERT(material != nullptr);
@@ -42,7 +42,7 @@ void Render::RenderMesh(Mesh *mesh, Material *material)
 	DoRender();
 }
 
-void Render::RenderScreenSpaceQuad(Material *material)
+void Render::RenderScreenSpaceQuad(Material* material)
 {
 	ASSERT(material != nullptr);
 	ASSERT(screenSpaceQuadVertexShader->renderData != nullptr && "Shader needs to be bound by the render module");
@@ -74,7 +74,7 @@ void Render::SetDefaultRenderStates()
 	SetCullMode(ECullMode::CCW);
 }
 
-void Render::SetMaterial(Material *material)
+void Render::SetMaterial(Material* material)
 {
 	// Vertex shader
 	if(material->vertexShader != nullptr)
