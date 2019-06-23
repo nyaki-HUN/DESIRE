@@ -9,9 +9,9 @@ TEST_CASE("Allocator", "[Core][memory]")
 	{
 		void* ptr = a.Alloc(10);
 		memcpy(ptr, "0123456789", 10);
-		a.Realloc(ptr, 20);
+		ptr = a.Realloc(ptr, 20);
 		CHECK(memcmp(ptr, "0123456789", 10) == 0);
-		a.Realloc(ptr, 5);
+		ptr = a.Realloc(ptr, 5);
 		CHECK(memcmp(ptr, "01234", 5) == 0);
 		a.Free(ptr);
 	}
