@@ -27,7 +27,6 @@ protected:
 	};
 
 	bool IsAllocationOwned(const void* ptr) const;
-	size_t GetAllocationTotalSize(const void* ptr) const;
 
 	char* memoryStart = nullptr;
 	size_t memorySize = 0;

@@ -17,7 +17,6 @@ public:
 	static void* SystemAlignedAlloc(size_t size, size_t alignment);
 	static void SystemFree(void* ptr);
 	static void SystemAlignedFree(void* ptr);
-	static size_t SystemMemSize(void* ptr);
 
 	static Allocator& GetActiveAllocator();
 	static void PushAllocator(Allocator& allocator);
@@ -28,6 +27,12 @@ public:
 	// Reset all allocations in the scratch allocator (this should happen at the end of the frame)
 	static void ResetScratchAllocator();
 
+	struct AllocatorScope
+	{
+		AllocatorScope(Allocator& allocator)	{ MemorySystem::PushAllocator(allocator); }
+		~AllocatorScope()						{ MemorySystem::PopAllocator(); }
+	};
+
 private:
 	static constexpr size_t kAllocatorStackSize = 16;
 
@@ -35,14 +40,7 @@ private:
 	static thread_local size_t allocatorStackIndex;
 };
 
-class MemorySystemAllocatorScope
-{
-public:
-	MemorySystemAllocatorScope(Allocator& allocator)	{ MemorySystem::PushAllocator(allocator); }
-	~MemorySystemAllocatorScope()						{ MemorySystem::PopAllocator(); }
-};
-
-#define DESIRE_ALLOCATOR_SCOPE(ALLOCATOR)	MemorySystemAllocatorScope DESIRE_CONCAT_MACRO(allocatorScope, __COUNTER__)(ALLOCATOR)
+#define DESIRE_ALLOCATOR_SCOPE(ALLOCATOR)	MemorySystem::AllocatorScope DESIRE_CONCAT_MACRO(allocatorScope, __COUNTER__)(ALLOCATOR)
 
 #if DESIRE_PLATFORM_OSX
 

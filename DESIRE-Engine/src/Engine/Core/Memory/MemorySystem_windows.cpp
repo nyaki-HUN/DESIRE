@@ -29,9 +29,4 @@ void MemorySystem::SystemAlignedFree(void* ptr)
 	_aligned_free(ptr);
 }
 
-size_t MemorySystem::SystemMemSize(void* ptr)
-{
-	return _msize(ptr);
-}
-
 #endif	// #if DESIRE_PLATFORM_WINDOWS

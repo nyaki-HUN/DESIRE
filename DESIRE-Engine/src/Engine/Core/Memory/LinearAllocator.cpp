@@ -129,11 +129,3 @@ bool LinearAllocator::IsAllocationOwned(const void* ptr) const
 {
 	return (ptr >= memoryStart && ptr < memoryStart + memorySize);
 }
-
-size_t LinearAllocator::GetAllocationTotalSize(const void* ptr) const
-{
-	ASSERT(IsAllocationOwned(ptr));
-
-	const AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-	return header.totalSize;
-}
