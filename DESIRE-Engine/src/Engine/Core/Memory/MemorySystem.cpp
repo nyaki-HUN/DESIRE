@@ -7,6 +7,8 @@ thread_local size_t MemorySystem::allocatorStackIndex = 0;
 
 void* MemorySystem::Alloc(size_t size)
 {
+	ASSERT(size != 0);
+
 	Allocator& allocator = GetActiveAllocator();
 	return allocator.Alloc(size);
 }
@@ -23,6 +25,8 @@ void* MemorySystem::Calloc(size_t num, size_t size)
 
 void* MemorySystem::Realloc(void* ptr, size_t size)
 {
+	ASSERT(size != 0);
+
 	Allocator& allocator = GetActiveAllocator();
 	return allocator.Realloc(ptr, size);
 }
@@ -34,12 +38,22 @@ void* MemorySystem::AlignedAlloc(size_t size, size_t alignment)
 
 void MemorySystem::Free(void* ptr)
 {
+	if(ptr == nullptr)
+	{
+		return;
+	}
+
 	Allocator& allocator = GetActiveAllocator();
 	return allocator.Free(ptr);
 }
 
 void MemorySystem::AlignedFree(void* ptr)
 {
+	if(ptr == nullptr)
+	{
+		return;
+	}
+
 	return SystemAlignedFree(ptr);
 }
 
