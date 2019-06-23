@@ -3,14 +3,18 @@
 // --------------------------------------------------------------------------------------------------------------------
 //	Determine platform
 // --------------------------------------------------------------------------------------------------------------------
+
+// Desktop platforms
+#define DESIRE_PLATFORM_WINDOWS	0
+#define DESIRE_PLATFORM_LINUX	0
+#define DESIRE_PLATFORM_OSX		0
+// Console platforms
+#define DESIRE_PLATFORM_XBOXONE	0
+#define DESIRE_PLATFORM_PS4		0
+#define DESIRE_PLATFORM_NX		0
+// Mobile platforms
 #define DESIRE_PLATFORM_ANDROID	0
 #define DESIRE_PLATFORM_IOS		0
-#define DESIRE_PLATFORM_LINUX	0
-#define DESIRE_PLATFORM_NX		0
-#define DESIRE_PLATFORM_OSX		0
-#define DESIRE_PLATFORM_PS4		0
-#define DESIRE_PLATFORM_WINDOWS	0
-#define DESIRE_PLATFORM_XBOXONE	0
 
 #if defined(_DURANGO) || defined(_XBOX_ONE)
 	#undef DESIRE_PLATFORM_XBOXONE
@@ -41,6 +45,25 @@
 #elif defined(__NX__)
 	#undef DESIRE_PLATFORM_NX
 	#define DESIRE_PLATFORM_NX 1
+#endif
+
+// Sanity check
+#if (DESIRE_PLATFORM_WINDOWS + DESIRE_PLATFORM_LINUX + DESIRE_PLATFORM_OSX + DESIRE_PLATFORM_XBOXONE + DESIRE_PLATFORM_PS4 + DESIRE_PLATFORM_NX + DESIRE_PLATFORM_ANDROID + DESIRE_PLATFORM_IOS) != 1
+	#error "Platform detection failed"
+#endif
+
+#if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_LINUX || DESIRE_PLATFORM_OSX
+	#define DESIRE_PLATFORM_TYPE_DESKTOP	1
+	#define DESIRE_PLATFORM_TYPE_CONSOLE	0
+	#define DESIRE_PLATFORM_TYPE_MOBILE		0
+#elif DESIRE_PLATFORM_XBOXONE || DESIRE_PLATFORM_PS4 || DESIRE_PLATFORM_NX
+	#define DESIRE_PLATFORM_TYPE_DESKTOP	0
+	#define DESIRE_PLATFORM_TYPE_CONSOLE	1
+	#define DESIRE_PLATFORM_TYPE_MOBILE		0
+#elif DESIRE_PLATFORM_ANDROID || DESIRE_PLATFORM_IOS
+	#define DESIRE_PLATFORM_TYPE_DESKTOP	0
+	#define DESIRE_PLATFORM_TYPE_CONSOLE	0
+	#define DESIRE_PLATFORM_TYPE_MOBILE		1
 #endif
 
 // --------------------------------------------------------------------------------------------------------------------
