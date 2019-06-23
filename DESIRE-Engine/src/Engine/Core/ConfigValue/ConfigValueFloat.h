@@ -2,12 +2,12 @@
 
 #include "Engine/Core/ConfigValue/IConfigValue.h"
 
-#include <float.h>		// for FLT_MAX
+#include <cfloat>		// for FLT_MAX
 
 class ConfigValueFloat : public IConfigValue
 {
 public:
-	ConfigValueFloat(const char *name, const char *description, float initValue, float minValue = -FLT_MAX, float maxValue = FLT_MAX);
+	ConfigValueFloat(const char* name, const char* description, float initValue, float minValue = -FLT_MAX, float maxValue = FLT_MAX);
 
 	ConfigValueFloat& operator =(float newValue);
 

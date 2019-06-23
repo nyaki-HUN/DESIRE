@@ -1,9 +1,9 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Logger.h"
+#include "Engine/Core/Time.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IWriteFile.h"
-
-#include <time.h>
+#include "Engine/Core/String/StackString.h"
 
 void ConsoleOutputPolicy::Process(const Log::LogData& logData)
 {
@@ -24,19 +24,12 @@ void FileOutputPolicy::Process(const Log::LogData& logData)
 		return;
 	}
 
-	char strTime[10];
-#if DESIRE_PLATFORM_WINDOWS
-	_strtime_s(strTime);
-#else
-	time_t now = time(nullptr);
-	strftime(strTime, sizeof(strTime), "%T", localtime(&now));
-#endif
+	const std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	tm timeInfo;
+	Time::GetLocalTime(std::chrono::system_clock::to_time_t(now), &timeInfo);
 
-	char logLine[Log::kMaxMessageLength];
-	int len = snprintf(logLine, Log::kMaxMessageLength, "%s [%s] % s\n", strTime, logData.logType, logData.message);
-	if(len > 0)
-	{
-		const size_t numCharsToWrite = std::min((size_t)len, Log::kMaxMessageLength);
-		logFile->WriteBuffer(logLine, numCharsToWrite);
-	}
+	StackString<Log::kMaxMessageLength> strLogLine;
+	strLogLine.Sprintf("%02d:%02d:%02d [%s] %s\n", timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec, logData.logType, logData.message);
+
+	logFile->WriteBuffer(strLogLine.Str(), strLogLine.Length());
 }

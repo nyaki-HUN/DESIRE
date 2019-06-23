@@ -3,7 +3,7 @@
 
 #include <cctype>	// for std::tolower() and std::toupper()
 
-void WritableString::Assign(const char *str, size_t numChars)
+void WritableString::Assign(const char* str, size_t numChars)
 {
 	ASSERT(str != nullptr);
 	ASSERT(data != str);	// It's not allowed to copy from ourself
@@ -25,7 +25,7 @@ void WritableString::Clear()
 	data[size] = '\0';
 }
 
-void WritableString::Insert(size_t startIndex, const char *str, size_t numChars)
+void WritableString::Insert(size_t startIndex, const char* str, size_t numChars)
 {
 	ASSERT(str != nullptr);
 
@@ -153,7 +153,7 @@ void WritableString::ReplaceAllChar(char search, char replaceTo)
 	} while(foundPos != kInvalidPos);
 }
 
-void WritableString::Append(const char *str, size_t numChars)
+void WritableString::Append(const char* str, size_t numChars)
 {
 	ASSERT(str != nullptr);
 
@@ -238,7 +238,7 @@ void WritableString::Trim()
 	data[size] = '\0';
 
 	// Remove from beginning
-	char *ch = data;
+	char* ch = data;
 	while(*ch != '\0' && IsWhiteSpace(*ch))
 	{
 		++ch;
@@ -253,7 +253,7 @@ void WritableString::Trim()
 
 void WritableString::ToLower()
 {
-	char *ch = data;
+	char* ch = data;
 	while(*ch != '\0')
 	{
 		*ch = (char)std::tolower(*ch);
@@ -263,7 +263,7 @@ void WritableString::ToLower()
 
 void WritableString::ToUpper()
 {
-	char *ch = data;
+	char* ch = data;
 	while(*ch != '\0')
 	{
 		*ch = (char)std::toupper(*ch);
@@ -271,7 +271,7 @@ void WritableString::ToUpper()
 	}
 }
 
-void WritableString::Sprintf(const char *format, ...)
+void WritableString::Sprintf(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -279,7 +279,7 @@ void WritableString::Sprintf(const char *format, ...)
 	va_end(args);
 }
 
-void WritableString::Sprintf_internal(const char *format, va_list args)
+void WritableString::Sprintf_internal(const char* format, va_list args)
 {
 	ASSERT(format != nullptr);
 
@@ -291,7 +291,7 @@ void WritableString::Sprintf_internal(const char *format, va_list args)
 	if(requiredSize > 0 && Reserve(requiredSize))
 	{
 		size = requiredSize;
-		vsnprintf(data, requiredSize + 1, format, args);
+		vsnprintf(data, size + 1, format, args);
 	}
 }
 
