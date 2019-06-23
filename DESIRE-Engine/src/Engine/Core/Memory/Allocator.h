@@ -1,7 +1,7 @@
 #pragma once
 
 // --------------------------------------------------------------------------------------------------------------------
-//	Base class for memory allocators
+//	Base class for memory allocators with a default implementation that is using the system memory
 // --------------------------------------------------------------------------------------------------------------------
 
 class Allocator
@@ -9,22 +9,14 @@ class Allocator
 public:
 	static constexpr size_t kDefaultAlignment = 8;
 
-	Allocator() {}
-	virtual ~Allocator() {}
+	Allocator();
+	virtual ~Allocator();
 
-	virtual void* Alloc(size_t size) = 0;
+	virtual void* Alloc(size_t size);
 	virtual void* Realloc(void* ptr, size_t size);
-	virtual void Free(void* ptr) = 0;
-	virtual size_t MemSize(void* ptr) = 0;
+	virtual void Free(void* ptr);
 
-	// Returns the default SystemMemoryAllocator
 	static Allocator& GetDefaultAllocator();
-
-	// Returns a linear allocator which gets reset at the end of each frame
-	static Allocator& GetScratchAllocator();
-
-	// Reset all allocations in the frame allocator (this should happen at the end of the frame)
-	static void ResetScratchAllocator();
 
 private:
 	// Prevent copy and move
@@ -32,4 +24,6 @@ private:
 	Allocator(Allocator&& other) = delete;
 	Allocator& operator=(const Allocator& other) = delete;
 	Allocator& operator=(Allocator&& other) = delete;
+
+	static Allocator s_defaultAllocator;
 };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/platform.h"			// for DESIRE_UNUSED
-#include "Engine/Core/Memory/Allocator.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 template<typename T>
 class StdAllocatorWrapper
@@ -25,14 +25,14 @@ public:
 			return nullptr;
 		}
 
-		void* ptr = Allocator::GetScratchAllocator().Alloc(n * sizeof(T));
+		void* ptr = MemorySystem::Alloc(n * sizeof(T));
 		return static_cast<T*>(ptr);
 	}
 
 	void deallocate(T* ptr, size_t n) const
 	{
 		DESIRE_UNUSED(n);
-		Allocator::GetScratchAllocator().Free(ptr);
+		MemorySystem::Free(ptr);
 	}
 
 	// Stateless allocators are always equal

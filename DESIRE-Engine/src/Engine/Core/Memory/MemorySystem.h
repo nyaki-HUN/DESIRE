@@ -18,7 +18,31 @@ public:
 	static void SystemFree(void* ptr);
 	static void SystemAlignedFree(void* ptr);
 	static size_t SystemMemSize(void* ptr);
+
+	static Allocator& GetActiveAllocator();
+	static void PushAllocator(Allocator& allocator);
+	static void PopAllocator();
+
+	// Returns a linear allocator which gets reset at the end of each frame
+	static Allocator& GetScratchAllocator();
+	// Reset all allocations in the scratch allocator (this should happen at the end of the frame)
+	static void ResetScratchAllocator();
+
+private:
+	static constexpr size_t kAllocatorStackSize = 16;
+
+	static thread_local Allocator* allocatorStack[kAllocatorStackSize];
+	static thread_local size_t allocatorStackIndex;
 };
+
+class MemorySystemAllocatorScope
+{
+public:
+	MemorySystemAllocatorScope(Allocator& allocator)	{ MemorySystem::PushAllocator(allocator); }
+	~MemorySystemAllocatorScope()						{ MemorySystem::PopAllocator(); }
+};
+
+#define DESIRE_ALLOCATOR_SCOPE(ALLOCATOR)	MemorySystemAllocatorScope DESIRE_CONCAT_MACRO(allocatorScope, __COUNTER__)(ALLOCATOR)
 
 #if DESIRE_PLATFORM_OSX
 

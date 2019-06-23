@@ -3,44 +3,16 @@
 
 TEST_CASE("Allocator", "[Core][memory]")
 {
-	Allocator& defaultAllocator = Allocator::GetDefaultAllocator();
-	Allocator& a = Allocator::GetScratchAllocator();
+	Allocator& a = Allocator::GetDefaultAllocator();
 
-	Allocator::ResetScratchAllocator();
-
-	class TestClass
+	SECTION("Alloc/Realloc/Free")
 	{
-	public:
-		TestClass(int value = -1)
-			: value(value)
-		{
-
-		}
-
-		~TestClass()
-		{
-			value = 0;
-		}
-
-		int value;
-	};
-
-	SECTION("Alloc")
-	{
-		const size_t numAllocBegin = globalMemoryAllocationCount;
-
-		TestClass* ptr1 = new(a.Alloc(sizeof(TestClass))) TestClass();
-		TestClass* ptr2 = new(a.Alloc(sizeof(TestClass))) TestClass(123);
-
-		CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
-
-		// Check if the constructor has run
-		CHECK(ptr1->value == -1);
-		CHECK(ptr2->value == 123);
-
-		ptr1->~TestClass();
-		ptr2->~TestClass();
-		a.Free(ptr1);
-		a.Free(ptr2);
+		void* ptr = a.Alloc(10);
+		memcpy(ptr, "0123456789", 10);
+		a.Realloc(ptr, 20);
+		CHECK(memcmp(ptr, "0123456789", 10) == 0);
+		a.Realloc(ptr, 5);
+		CHECK(memcmp(ptr, "01234", 5) == 0);
+		a.Free(ptr);
 	}
 }

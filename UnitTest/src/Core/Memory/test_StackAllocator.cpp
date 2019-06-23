@@ -24,7 +24,7 @@ TEST_CASE("StackAllocator", "[Core][memory]")
 	{
 		const size_t numAllocBegin = globalMemoryAllocationCount;
 
-		// ptr3 is supposed to be allocated via the fallback allocator
+		// ptrFB is supposed to be allocated via the fallback allocator
 		void* ptr1 = a.Alloc(64);
 		void* ptr2 = a.Alloc(64);
 		CHECK_NO_ALLOCATION_SINCE(numAllocBegin);

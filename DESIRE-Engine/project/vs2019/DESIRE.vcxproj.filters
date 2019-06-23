@@ -306,9 +306,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\Memory\SystemMemoryAllocator.h">
-      <Filter>src\Engine\Core\Memory</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>

@@ -175,7 +175,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Memory\PoolAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\StackAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h" />
-    <ClInclude Include="..\..\src\Engine\Core\Memory\SystemMemoryAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\StackString.h" />
