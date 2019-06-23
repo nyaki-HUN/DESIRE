@@ -1,30 +1,30 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
 
-uint32_t SizeToUint32Safe(size_t value)
+inline uint32_t SizeToUint32Safe(size_t value)
 {
 	ASSERT(value <= UINT32_MAX);
 	return static_cast<uint32_t>(value);
 }
 
-size_t Align(size_t value, size_t alignment)
+inline size_t Align(size_t value, size_t alignment)
 {
-	return value + (alignment - 1) & ~alignment;
+	return (value + (alignment - 1)) & -alignment;
 }
 
-void* Align(void* ptr, size_t alignment)
+inline void* Align(void* ptr, size_t alignment)
 {
 	return reinterpret_cast<void*>(reinterpret_cast<size_t>(ptr), alignment);
 }
 
 template<typename T>
-T* OffsetVoidPtr(const void* ptr, size_t offset)
+inline T* OffsetVoidPtr(const void* ptr, size_t offset)
 {
 	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) + offset);
 }
 
 template<typename T>
-T* OffsetVoidPtrBackwards(const void* ptr, size_t offset)
+inline T* OffsetVoidPtrBackwards(const void* ptr, size_t offset)
 {
 	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) - offset);
 }
@@ -46,7 +46,7 @@ void* LinearAllocator::Alloc(size_t size)
 		void* ptr = memoryStart + (memorySize - freeSpace) + sizeof(AllocationHeader);
 		AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
 		header.totalSize = totalSize;
-		header.offsetToPrev = SizeToUint32Safe(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(lastAllocation));
+		header.offsetToPrev = (lastAllocation != nullptr) ? SizeToUint32Safe(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(lastAllocation)) : 0;
 
 		freeSpace -= totalSize;
 		lastAllocation = ptr;
@@ -109,7 +109,7 @@ void LinearAllocator::Free(void* ptr)
 		if(lastAllocation == ptr)
 		{
 			const AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-			lastAllocation = OffsetVoidPtrBackwards<void>(lastAllocation, header.offsetToPrev);
+			lastAllocation = (header.offsetToPrev != 0) ? OffsetVoidPtrBackwards<void>(lastAllocation, header.offsetToPrev) : nullptr;
 			freeSpace += header.totalSize;
 		}
 
