@@ -80,9 +80,11 @@
 	#endif
 #endif
 
-// Stringify utility macro
+// Stringify and concat macro magic
 #define _DESIRE_STRINGIFY(STR)				#STR
 #define DESIRE_STRINGIFY(STR)				_DESIRE_STRINGIFY(STR)
+#define _DESIRE_CONCAT_MACRO(A, B)			A ## B
+#define DESIRE_CONCAT_MACRO(A, B)			_DESIRE_CONCAT_MACRO(A, B)
 
 // Macro for displaying compile time message with file and line number
 #define DESIRE_TODO(STR)					DESIRE_PRAGMA(message(__FILE__ "(" DESIRE_STRINGIFY(__LINE__) "): TODO - " STR))
