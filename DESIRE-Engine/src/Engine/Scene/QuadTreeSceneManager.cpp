@@ -15,8 +15,8 @@ QuadTreeSceneManager::QuadTreeSceneManager()
 	visibleLeafList.Reserve(256);
 	tmpLeafList.Reserve(256);
 
-	visibleDynamicComponents = static_cast<RenderComponent **>(malloc(numAllocatedVisibleDynamicComponents * sizeof(RenderComponent*)));
-	invisibleDynamicComponents = static_cast<RenderComponent **>(malloc(numAllocatedInvisibleDynamicComponents * sizeof(RenderComponent*)));
+	visibleDynamicComponents = static_cast<RenderComponent**>(malloc(numAllocatedVisibleDynamicComponents * sizeof(RenderComponent*)));
+	invisibleDynamicComponents = static_cast<RenderComponent**>(malloc(numAllocatedInvisibleDynamicComponents * sizeof(RenderComponent*)));
 }
 
 QuadTreeSceneManager::~QuadTreeSceneManager()
@@ -35,7 +35,7 @@ void QuadTreeSceneManager::Add(RenderComponent* component, bool dynamic)
 		if(numVisibleDynamicComponents > numAllocatedVisibleDynamicComponents)
 		{
 			numAllocatedVisibleDynamicComponents *= 2;
-			visibleDynamicComponents = static_cast<RenderComponent **>(realloc(visibleDynamicComponents, sizeof(RenderComponent*) * numAllocatedVisibleDynamicComponents));
+			visibleDynamicComponents = static_cast<RenderComponent**>(realloc(visibleDynamicComponents, sizeof(RenderComponent*) * numAllocatedVisibleDynamicComponents));
 		}
 		visibleDynamicComponents[numVisibleDynamicComponents - 1] = component;
 	}

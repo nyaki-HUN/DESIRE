@@ -16,7 +16,7 @@ public:
 
 	void Init();
 
-	QuadTreeLeaf *leafs[4];
+	QuadTreeLeaf* leafs[4];
 	Array<RenderComponent*> renderComponents;
 	uint8_t level;
 
