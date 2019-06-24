@@ -31,5 +31,5 @@ private:
 #if defined(_DEBUG)
 	#define LOG_DEBUG(format, ...)				Log::LogWithFormat(__FILE__, __LINE__, "DBG", format, __VA_ARGS__)
 #else
-	#define LOG_DEBUG(format, ...)
+	#define LOG_DEBUG(format, ...)				(void)(format, __VA_ARGS__)
 #endif

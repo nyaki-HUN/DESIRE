@@ -15,5 +15,7 @@ ScriptComponent::~ScriptComponent()
 
 void ScriptComponent::CloneTo(Object& otherObject) const
 {
+	DESIRE_UNUSED(otherObject);
+	DESIRE_TODO("Implement");
 //	Modules::ScriptSystem->CreateScriptComponentOnObject(otherObject, );
 }

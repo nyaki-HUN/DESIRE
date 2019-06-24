@@ -14,7 +14,9 @@ DebugDraw::~DebugDraw()
 
 void DebugDraw::AddLine(const Vector3& a, const Vector3& b, const Vector3& color)
 {
-
+	DESIRE_UNUSED(a);
+	DESIRE_UNUSED(b);
+	DESIRE_UNUSED(color);
 }
 
 void DebugDraw::AddPoint(const Vector3& a, float pointSize, const Vector3& color)
@@ -48,7 +50,8 @@ void DebugDraw::AddAABB(const AABB& aabb, const Vector3& color)
 
 void DebugDraw::AddText(const Vector3& pos, const char* text)
 {
-
+	DESIRE_UNUSED(pos);
+	DESIRE_UNUSED(text);
 }
 
 void DebugDraw::Reset()

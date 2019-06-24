@@ -173,7 +173,7 @@ double String::AsDouble() const
 int String::Compare(const String& string) const
 {
 	const int rv = memcmp(data, string.data, std::min(size, string.size));
-	return (rv != 0 || size == string.size) ? rv : string.size - size;
+	return (rv != 0) ? rv : static_cast<int>(string.size) - static_cast<int>(size);
 }
 
 int String::CompareIgnoreCase(const String& string) const
