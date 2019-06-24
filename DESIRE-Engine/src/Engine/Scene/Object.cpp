@@ -2,22 +2,19 @@
 #include "Engine/Scene/Object.h"
 #include "Engine/Scene/Transform.h"
 #include "Engine/Core/Component.h"
-#include "Engine/Core/math/AABB.h"
 
 #define MAX_TRANSFORMS	10000
 static Transform preallocatedTransforms[MAX_TRANSFORMS];
 static size_t numTransforms = 0;
 
 Object::Object(const String& name)
-	: aabb(std::make_unique<AABB>())
-	, objectName(name)
+	: objectName(name)
 {
 	SetTransform();
 }
 
 Object::Object(const DynamicString&& name)
-	: aabb(std::make_unique<AABB>())
-	, objectName(std::move(name))
+	: objectName(std::move(name))
 {
 	SetTransform();
 }
@@ -54,12 +51,7 @@ const String& Object::GetObjectName() const
 
 void Object::SetActive(bool active)
 {
-
-}
-
-void Object::SetVisible(bool visible)
-{
-
+	isActive = active;
 }
 
 void Object::SetParent(Object* newParent)
@@ -171,11 +163,6 @@ const Array<std::unique_ptr<Component>>& Object::GetComponents() const
 Transform& Object::GetTransform() const
 {
 	return *transform;
-}
-
-const AABB& Object::GetAABB() const
-{
-	return *aabb;
 }
 
 Object* Object::GetParent() const

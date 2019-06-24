@@ -1,7 +1,7 @@
 #pragma once
 
-class Object;
 class Camera;
+class RenderComponent;
 
 class ISceneManager
 {
@@ -11,8 +11,8 @@ protected:
 public:
 	virtual ~ISceneManager() {}
 
-	virtual void AddObject(Object* obj, bool dynamic) = 0;
-	virtual void RemoveObject(Object* obj) = 0;
+	virtual void Add(RenderComponent* component, bool dynamic) = 0;
+	virtual void Remove(RenderComponent* component) = 0;
 
 	virtual void SetActiveCamera(Camera* camera) = 0;
 

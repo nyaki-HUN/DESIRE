@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Core/Container/Array.h"
 #include "Engine/Scene/ISceneManager.h"
+#include "Engine/Core/Container/Array.h"
 
 #define MAX_FURSTUM_NORMAL	4
 
@@ -15,8 +15,8 @@ public:
 	QuadTreeSceneManager();
 	~QuadTreeSceneManager() override;
 
-	void AddObject(Object* obj, bool dynamic) override;
-	void RemoveObject(Object* obj) override;
+	void Add(RenderComponent* component, bool dynamic) override;
+	void Remove(RenderComponent* component) override;
 
 	void SetActiveCamera(Camera* camera) override;
 
@@ -42,12 +42,12 @@ private:
 	QuadTreeLeaf* rootLeaf = nullptr;
 	Camera* activeCamera = nullptr;
 
-	Object** visibleDynamicObjects = nullptr;
-	Object** invisibleDynamicObjects = nullptr;
-	uint32_t numVisibleDynamicObjects = 0;
-	uint32_t numInvisibleDynamicObjects = 0;
-	uint32_t numAllocatedVisibleDynamicObjects;
-	uint32_t numAllocatedInvisibleDynamicObjects;
+	RenderComponent** visibleDynamicComponents = nullptr;
+	RenderComponent** invisibleDynamicComponents = nullptr;
+	uint32_t numVisibleDynamicComponents = 0;
+	uint32_t numInvisibleDynamicComponents = 0;
+	uint32_t numAllocatedVisibleDynamicComponents;
+	uint32_t numAllocatedInvisibleDynamicComponents;
 
 	Array<QuadTreeLeaf*> visibleLeafList;
 	Array<QuadTreeLeaf*> tmpLeafList;

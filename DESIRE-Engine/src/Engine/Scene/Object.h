@@ -7,7 +7,6 @@
 
 class Component;
 class Transform;
-class AABB;
 
 class Object
 {
@@ -20,7 +19,6 @@ public:
 	void SetObjectName(const String& name);
 
 	void SetActive(bool active);
-	void SetVisible(bool visible);
 
 	void SetParent(Object* newParent);
 	Object* CreateChildObject(const String& name);
@@ -49,7 +47,6 @@ public:
 	const Array<std::unique_ptr<Component>>& GetComponents() const;
 
 	Transform& GetTransform() const;
-	const AABB& GetAABB() const;
 	Object* GetParent() const;
 	const Array<Object*>& GetChildren() const;
 
@@ -68,11 +65,12 @@ private:
 
 	Array<std::unique_ptr<Component>> components;
 	Transform* transform = nullptr;
-	std::unique_ptr<AABB> aabb;
 	size_t numTransformsInHierarchy = 1;
 
 	Object* parent = nullptr;
 	Array<Object*> children;
+
+	bool isActive = false;
 
 	DynamicString objectName;
 };
