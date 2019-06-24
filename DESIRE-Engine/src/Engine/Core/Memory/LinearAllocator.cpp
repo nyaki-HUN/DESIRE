@@ -9,7 +9,8 @@ inline uint32_t SizeToUint32Safe(size_t value)
 
 inline size_t Align(size_t value, size_t alignment)
 {
-	return (value + (alignment - 1)) & -alignment;
+	alignment--;
+	return (value + alignment) & ~alignment;
 }
 
 inline void* Align(void* ptr, size_t alignment)
