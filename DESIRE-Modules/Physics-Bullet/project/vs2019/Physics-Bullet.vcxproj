@@ -57,7 +57,6 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\Bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -81,7 +80,6 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\Bullet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -218,6 +216,7 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\Gimpact\gim_linear_math.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\Gimpact\gim_math.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\Gimpact\gim_memory.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\Gimpact\gim_pair.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\Gimpact\gim_radixsort.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\Gimpact\gim_tri_collision.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletCollision\NarrowPhaseCollision\btComputeGjkEpaPenetration.h" />
@@ -284,9 +283,11 @@
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointMotor.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyLink.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyLinkCollider.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyMLCPConstraintSolver.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyPoint2Point.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodySliderConstraint.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodySolverConstraint.h" />
+    <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodySphericalJointMotor.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\MLCPSolvers\btDantzigLCP.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\MLCPSolvers\btDantzigSolver.h" />
     <ClInclude Include="..\..\Externals\Bullet\src\BulletDynamics\MLCPSolvers\btLemkeAlgorithm.h" />
@@ -481,8 +482,10 @@
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyGearConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyJointMotor.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyMLCPConstraintSolver.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodyPoint2Point.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodySliderConstraint.cpp" />
+    <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\Featherstone\btMultiBodySphericalJointMotor.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\MLCPSolvers\btDantzigLCP.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\MLCPSolvers\btLemkeAlgorithm.cpp" />
     <ClCompile Include="..\..\Externals\Bullet\src\BulletDynamics\MLCPSolvers\btMLCPSolver.cpp" />
