@@ -18,6 +18,7 @@ buildoptions
 flags
 {
 	"MultiProcessorCompile",
+	"FatalCompileWarnings",
 }
 
 filter { "system:windows", "action:vs*" }
