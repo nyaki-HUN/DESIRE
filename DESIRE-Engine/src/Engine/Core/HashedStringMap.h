@@ -39,8 +39,11 @@ public:
 
 	void Insert(HashedString key, const T& value)
 	{
-		KeyValuePair& pair = elements.BinaryFindOrInsert(KeyValuePair(key, value));
-		ASSERT(memcmp(&pair.value, &value, sizeof(T)) == 0 && "An other value is already added with this key");
+		const KeyValuePair& pair = elements.BinaryFindOrInsert(KeyValuePair(key, value));
+		if(memcmp(&pair.value, &value, sizeof(T)) != 0)
+		{
+			ASSERT(false && "An other value is already added with this key");
+		}
 	}
 
 	T* Find(HashedString key)

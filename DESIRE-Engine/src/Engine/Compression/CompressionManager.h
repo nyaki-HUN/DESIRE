@@ -4,8 +4,6 @@
 #include "Engine/Core/HashedStringMap.h"
 #include "Engine/Core/Factory.h"
 
-#include <memory>
-
 class CompressionManager
 {
 public:
