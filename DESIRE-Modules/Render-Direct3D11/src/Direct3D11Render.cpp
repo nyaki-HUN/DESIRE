@@ -949,7 +949,9 @@ void Direct3D11Render::Unbind(RenderTarget *renderTarget)
 
 void Direct3D11Render::UpdateDynamicMesh(DynamicMesh *mesh)
 {
-	if(mesh == nullptr || mesh->renderData == nullptr)
+	ASSERT(mesh != nullptr);
+
+	if(mesh->renderData == nullptr)
 	{
 		// Not yet bound
 		mesh->isIndexDataUpdateRequired = false;

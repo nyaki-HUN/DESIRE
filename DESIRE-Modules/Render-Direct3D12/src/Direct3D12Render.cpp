@@ -226,7 +226,7 @@ void Direct3D12Render::SetView(View *view)
 			Bind(rt);
 		}
 
-		RenderTargetRenderDataD3D12 *renderData = static_cast<RenderTargetRenderDataD3D12*>(rt->renderData);
+//		RenderTargetRenderDataD3D12 *renderData = static_cast<RenderTargetRenderDataD3D12*>(rt->renderData);
 		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
 	}
 	else
@@ -260,7 +260,10 @@ void Direct3D12Render::SetViewProjectionMatrices(const Matrix4& viewMatrix, cons
 
 void Direct3D12Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
-
+	DESIRE_UNUSED(x);
+	DESIRE_UNUSED(y);
+	DESIRE_UNUSED(width);
+	DESIRE_UNUSED(height);
 }
 
 void Direct3D12Render::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -655,7 +658,9 @@ void Direct3D12Render::Unbind(RenderTarget *renderTarget)
 
 void Direct3D12Render::UpdateDynamicMesh(DynamicMesh *mesh)
 {
-	if(mesh == nullptr || mesh->renderData == nullptr)
+	ASSERT(mesh != nullptr);
+
+	if(mesh->renderData == nullptr)
 	{
 		// Not yet bound
 		mesh->isIndexDataUpdateRequired = false;
@@ -663,7 +668,7 @@ void Direct3D12Render::UpdateDynamicMesh(DynamicMesh *mesh)
 		return;
 	}
 
-	MeshRenderDataD3D12 *renderData = static_cast<MeshRenderDataD3D12*>(mesh->renderData);
+//	MeshRenderDataD3D12 *renderData = static_cast<MeshRenderDataD3D12*>(mesh->renderData);
 
 	if(mesh->isIndexDataUpdateRequired)
 	{
@@ -729,7 +734,7 @@ void Direct3D12Render::SetVertexShader(Shader *vertexShader)
 		return;
 	}
 
-	const ShaderRenderDataD3D12 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader->renderData);
+//	const ShaderRenderDataD3D12 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader->renderData);
 
 	activeVertexShader = vertexShader;
 }
@@ -741,7 +746,7 @@ void Direct3D12Render::SetFragmentShader(Shader *fragmentShader)
 		return;
 	}
 
-	const ShaderRenderDataD3D12 *shaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader->renderData);
+//	const ShaderRenderDataD3D12 *shaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader->renderData);
 
 	activeFragmentShader = fragmentShader;
 }
@@ -750,7 +755,7 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterM
 {
 	ASSERT(samplerIdx < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
-	TextureRenderDataD3D12 *renderData = static_cast<TextureRenderDataD3D12*>(texture->renderData);
+//	TextureRenderDataD3D12 *renderData = static_cast<TextureRenderDataD3D12*>(texture->renderData);
 
 	static const D3D12_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
 	{
@@ -775,6 +780,8 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterM
 	samplerDesc.MaxAnisotropy = D3D12_MAX_MAXANISOTROPY;
 	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
 	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+
+	DESIRE_UNUSED(texture);
 }
 
 void Direct3D12Render::UpdateShaderParams(const Material *material)
