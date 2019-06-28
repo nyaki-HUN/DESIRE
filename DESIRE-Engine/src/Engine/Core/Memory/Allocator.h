@@ -7,7 +7,7 @@
 class Allocator
 {
 public:
-	static constexpr size_t kDefaultAlignment = 8;
+	static constexpr size_t kDefaultAlignment = __STDCPP_DEFAULT_NEW_ALIGNMENT__;
 
 	Allocator();
 	virtual ~Allocator();

@@ -5,6 +5,18 @@
 thread_local Allocator* MemorySystem::allocatorStack[kAllocatorStackSize] = {};
 thread_local size_t MemorySystem::allocatorStackIndex = 0;
 
+// Operator new/delete overrides
+void* operator new  (size_t size)											{ return MemorySystem::Alloc(size); }
+void* operator new[](size_t size)											{ return MemorySystem::Alloc(size); }
+void* operator new  (size_t size, std::align_val_t alignment)				{ return MemorySystem::AlignedAlloc(size, static_cast<std::size_t>(alignment)); }
+void* operator new[](size_t size, std::align_val_t alignment)				{ return MemorySystem::AlignedAlloc(size, static_cast<std::size_t>(alignment)); }
+
+// Operator delete overrides
+void operator delete  (void* ptr) noexcept									{ MemorySystem::Free(ptr); }
+void operator delete[](void* ptr) noexcept									{ MemorySystem::Free(ptr); }
+void operator delete  (void* ptr, std::align_val_t /*alignment*/) noexcept	{ MemorySystem::AlignedFree(ptr); }
+void operator delete[](void* ptr, std::align_val_t /*alignment*/) noexcept	{ MemorySystem::AlignedFree(ptr); }
+
 void* MemorySystem::Alloc(size_t size)
 {
 	ASSERT(size != 0);

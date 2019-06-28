@@ -1,5 +1,7 @@
 #pragma once
 
+#include <new>
+
 class Allocator;
 
 class MemorySystem
@@ -42,18 +44,19 @@ private:
 
 #define DESIRE_ALLOCATOR_SCOPE(ALLOCATOR)	MemorySystem::AllocatorScope DESIRE_CONCAT_MACRO(allocatorScope, __COUNTER__)(ALLOCATOR)
 
-#if DESIRE_PLATFORM_OSX
+// Operator new/delete overrides
+// Note: The behavior is undefined if more than one replacement is provided in the program or if a replacement is defined with the inline specifier.
+void* operator new  (size_t size);
+void* operator new[](size_t size);
+void* operator new  (size_t size, std::align_val_t alignment);
+void* operator new[](size_t size, std::align_val_t alignment);
 
-#include <new>
+void operator delete  (void* ptr) noexcept;
+void operator delete[](void* ptr) noexcept;
+void operator delete  (void* ptr, std::align_val_t alignment) noexcept;
+void operator delete[](void* ptr, std::align_val_t alignment) noexcept;
 
-void* operator new(size_t aSize) throw (std::bad_alloc)		{ return MemorySystem::Malloc(aSize); }
-void* operator new[](size_t aSize) throw (std::bad_alloc)	{ return MemorySystem::Malloc(aSize); }
-void operator delete(void* apMemory) throw ()				{ return MemorySystem::Free(aSize); }
-void operator delete[](void* apMemory) throw ()				{ return MemorySystem::Free(aSize); }
-
-#define malloc MemorySystem::Malloc
-#define calloc MemorySystem::Calloc
-#define realloc MemorySystem::Realloc
-#define free MemorySystem::Free
-
-#endif	// #if DESIRE_PLATFORM_OSX
+#define malloc	MemorySystem::Alloc
+#define calloc	MemorySystem::Calloc
+#define realloc	MemorySystem::Realloc
+#define free	MemorySystem::Free

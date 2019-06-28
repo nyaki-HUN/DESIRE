@@ -1,12 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
 
-inline uint32_t SizeToUint32Safe(size_t value)
-{
-	ASSERT(value <= UINT32_MAX);
-	return static_cast<uint32_t>(value);
-}
-
 inline size_t Align(size_t value, size_t alignment)
 {
 	alignment--;
@@ -41,13 +35,13 @@ LinearAllocator::LinearAllocator(void* memoryStart, size_t memorySize, Allocator
 
 void* LinearAllocator::Alloc(size_t size)
 {
-	const uint32_t totalSize = SizeToUint32Safe(Align(size, kDefaultAlignment) + sizeof(AllocationHeader));
+	const size_t totalSize = Align(size, kDefaultAlignment) + sizeof(AllocationHeader);
 	if(totalSize <= freeSpace)
 	{
 		void* ptr = memoryStart + (memorySize - freeSpace) + sizeof(AllocationHeader);
 		AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
 		header.totalSize = totalSize;
-		header.offsetToPrev = (lastAllocation != nullptr) ? SizeToUint32Safe(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(lastAllocation)) : 0;
+		header.offsetToPrev = (lastAllocation != nullptr) ? reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(lastAllocation) : 0;
 
 		freeSpace -= totalSize;
 		lastAllocation = ptr;
@@ -66,7 +60,7 @@ void* LinearAllocator::Realloc(void* ptr, size_t size)
 
 	if(IsAllocationOwned(ptr))
 	{
-		const uint32_t totalSize = SizeToUint32Safe(Align(size, kDefaultAlignment) + sizeof(AllocationHeader));
+		const size_t totalSize = Align(size, kDefaultAlignment) + sizeof(AllocationHeader);
 		AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
 
 		if(totalSize <= header.totalSize)
@@ -74,7 +68,7 @@ void* LinearAllocator::Realloc(void* ptr, size_t size)
 			// Shrink an existing allocation only if it was the last
 			if(lastAllocation == ptr)
 			{
-				const uint32_t sizeDiff = header.totalSize - totalSize;
+				const size_t sizeDiff = header.totalSize - totalSize;
 				header.totalSize -= sizeDiff;
 				freeSpace += sizeDiff;
 			}
@@ -85,7 +79,7 @@ void* LinearAllocator::Realloc(void* ptr, size_t size)
 		if(lastAllocation == ptr)
 		{
 			// Try to grow the last allocation
-			const uint32_t sizeDiff = totalSize - header.totalSize;
+			const size_t sizeDiff = totalSize - header.totalSize;
 			if(sizeDiff <= freeSpace)
 			{
 				header.totalSize += sizeDiff;

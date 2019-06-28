@@ -22,8 +22,8 @@ public:
 protected:
 	struct AllocationHeader
 	{
-		uint32_t totalSize;
-		uint32_t offsetToPrev;
+		size_t totalSize;
+		size_t offsetToPrev;
 	};
 
 	bool IsAllocationOwned(const void* ptr) const;

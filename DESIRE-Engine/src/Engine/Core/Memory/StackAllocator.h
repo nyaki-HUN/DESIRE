@@ -20,6 +20,8 @@ private:
 	// Prevent heap allocation
 	void* operator new(size_t) = delete;
 	void* operator new[](size_t) = delete;
+	void operator delete(void*) = delete;
+	void operator delete[](void*) = delete;
 
 	char data[STACK_SIZE];
 };
