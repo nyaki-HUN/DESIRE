@@ -7,8 +7,6 @@
 class Allocator
 {
 public:
-	static constexpr size_t kDefaultAlignment = __STDCPP_DEFAULT_NEW_ALIGNMENT__;
-
 	Allocator();
 	virtual ~Allocator();
 
@@ -24,6 +22,4 @@ private:
 	Allocator(Allocator&& other) = delete;
 	Allocator& operator=(const Allocator& other) = delete;
 	Allocator& operator=(Allocator&& other) = delete;
-
-	static Allocator s_defaultAllocator;
 };

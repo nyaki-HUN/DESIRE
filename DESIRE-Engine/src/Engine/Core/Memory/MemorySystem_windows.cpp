@@ -4,6 +4,10 @@
 
 #include "Engine/Core/Memory/MemorySystem.h"
 
+#undef malloc
+#undef realloc
+#undef free
+
 void* MemorySystem::SystemAlloc(size_t size)
 {
 	return malloc(size);

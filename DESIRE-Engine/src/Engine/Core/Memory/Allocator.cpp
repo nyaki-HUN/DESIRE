@@ -1,8 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/Allocator.h"
 
-Allocator Allocator::s_defaultAllocator;
-
 Allocator::Allocator()
 {
 }
@@ -28,5 +26,6 @@ void Allocator::Free(void* ptr)
 
 Allocator& Allocator::GetDefaultAllocator()
 {
+	static Allocator s_defaultAllocator;
 	return s_defaultAllocator;
 }

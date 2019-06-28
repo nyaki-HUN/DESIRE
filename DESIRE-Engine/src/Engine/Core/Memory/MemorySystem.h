@@ -7,6 +7,8 @@ class Allocator;
 class MemorySystem
 {
 public:
+	static constexpr size_t kDefaultAlignment = __STDCPP_DEFAULT_NEW_ALIGNMENT__;
+
 	static void* Alloc(size_t size);
 	static void* Calloc(size_t num, size_t size);
 	static void* Realloc(void* ptr, size_t size);
@@ -44,7 +46,30 @@ private:
 
 #define DESIRE_ALLOCATOR_SCOPE(ALLOCATOR)	MemorySystem::AllocatorScope DESIRE_CONCAT_MACRO(allocatorScope, __COUNTER__)(ALLOCATOR)
 
-// Operator new/delete overrides
+inline size_t Align(size_t value, size_t alignment)
+{
+	alignment--;
+	return (value + alignment) & ~alignment;
+}
+
+inline void* Align(void* ptr, size_t alignment)
+{
+	return reinterpret_cast<void*>(reinterpret_cast<size_t>(ptr), alignment);
+}
+
+template<typename T>
+inline T* OffsetVoidPtr(const void* ptr, size_t offset)
+{
+	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) + offset);
+}
+
+template<typename T>
+inline T* OffsetVoidPtrBackwards(const void* ptr, size_t offset)
+{
+	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) - offset);
+}
+
+// Global operator new/delete overrides
 // Note: The behavior is undefined if more than one replacement is provided in the program or if a replacement is defined with the inline specifier.
 void* operator new  (size_t size);
 void* operator new[](size_t size);
