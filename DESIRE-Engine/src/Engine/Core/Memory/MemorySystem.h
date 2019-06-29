@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/platform.h"
+
 #include <new>
 
 class Allocator;
@@ -34,10 +36,17 @@ public:
 	struct AllocatorScope
 	{
 		AllocatorScope(Allocator& allocator)	{ MemorySystem::PushAllocator(allocator); }
+		AllocatorScope(Allocator* allocator)	{ MemorySystem::PushAllocator(*allocator); }
 		~AllocatorScope()						{ MemorySystem::PopAllocator(); }
 	};
 
 private:
+	struct AllocationHeader
+	{
+		Allocator* allocator;
+		size_t allocatedSize;
+	};
+
 	static constexpr size_t kAllocatorStackSize = 16;
 
 	static thread_local Allocator* allocatorStack[kAllocatorStackSize];

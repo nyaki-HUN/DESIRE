@@ -1,7 +1,7 @@
 #include "ZstdCompression.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Core/Memory/Allocator.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 #define ZSTD_STATIC_LINKING_ONLY
 #include "zstd.h"
@@ -43,12 +43,12 @@ int ZstdCompression::GetMaxCompressionLevel() const
 
 void* ZstdCompression::CustomAlloc(void* opaque, size_t size)
 {
-	Allocator* allocator = static_cast<Allocator*>(opaque);
-	return allocator->Alloc(size);
+	DESIRE_UNUSED(opaque);
+	return MemorySystem::Alloc(size);
 }
 
 void ZstdCompression::CustomFree(void* opaque, void* address)
 {
-	Allocator* allocator = static_cast<Allocator*>(opaque);
-	allocator->Free(address);
+	DESIRE_UNUSED(opaque);
+	MemorySystem::Free(address);
 }

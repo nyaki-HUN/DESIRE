@@ -2,7 +2,7 @@
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/Log.h"
-#include "Engine/Core/Memory/Allocator.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 #include "zlib.h"
 
@@ -122,20 +122,18 @@ int ZlibNgCompressionBase::GetMaxCompressionLevel() const
 
 void* ZlibNgCompressionBase::CustomAlloc(void* opaque, uint32_t items, uint32_t size)
 {
-	Allocator* allocator = static_cast<Allocator*>(opaque);
-	return allocator->Alloc(static_cast<size_t>(items) * size);
+	DESIRE_UNUSED(opaque);
+	return MemorySystem::Alloc(static_cast<size_t>(items) * size);
 }
 
 void ZlibNgCompressionBase::CustomFree(void* opaque, void* address)
 {
-	Allocator* allocator = static_cast<Allocator*>(opaque);
-	allocator->Free(address);
+	DESIRE_UNUSED(opaque);
+	MemorySystem::Free(address);
 }
 
 void ZlibNgCompressionBase::StreamInit(z_stream& stream)
 {
 	stream.zalloc = &ZlibNgCompressionBase::CustomAlloc;
 	stream.zfree = &ZlibNgCompressionBase::CustomFree;
-	stream.opaque = &Allocator::GetDefaultAllocator();
-	// TODO: Test and use a LinearAllocator
 }

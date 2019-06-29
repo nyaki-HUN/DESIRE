@@ -306,6 +306,9 @@
     <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Memory\SystemAllocator.h">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
@@ -609,6 +612,9 @@
       <Filter>src\Engine\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem_windows.cpp">
+      <Filter>src\Engine\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Memory\SystemAllocator.cpp">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp">

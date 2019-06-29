@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Engine/Core/Memory/StackAllocator.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 TEST_CASE("StackAllocator", "[Core][memory]")
 {
@@ -16,8 +17,8 @@ TEST_CASE("StackAllocator", "[Core][memory]")
 		void* ptr2 = a.Alloc(1);
 		CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
 
-		CHECK(reinterpret_cast<uintptr_t>(ptr1) % Allocator::kDefaultAlignment == 0);
-		CHECK(reinterpret_cast<uintptr_t>(ptr2) % Allocator::kDefaultAlignment == 0);
+		CHECK(reinterpret_cast<uintptr_t>(ptr1) % MemorySystem::kDefaultAlignment == 0);
+		CHECK(reinterpret_cast<uintptr_t>(ptr2) % MemorySystem::kDefaultAlignment == 0);
 	}
 
 	SECTION("Test Fallback Allocator 1/4")
@@ -25,8 +26,8 @@ TEST_CASE("StackAllocator", "[Core][memory]")
 		const size_t numAllocBegin = globalMemoryAllocationCount;
 
 		// ptrFB is supposed to be allocated via the fallback allocator
-		void* ptr1 = a.Alloc(64 - Allocator::kDefaultAlignment);
-		void* ptr2 = a.Alloc(64 - Allocator::kDefaultAlignment);
+		void* ptr1 = a.Alloc(64 - MemorySystem::kDefaultAlignment);
+		void* ptr2 = a.Alloc(64 - MemorySystem::kDefaultAlignment);
 		CHECK_NO_ALLOCATION_SINCE(numAllocBegin);
 		void* ptrFB = a.Alloc(10);
 
@@ -70,7 +71,7 @@ TEST_CASE("StackAllocator", "[Core][memory]")
 
 	SECTION("Test Fallback Allocator 4/4")
 	{
-		// Because of the alignment the second allocations cannot be made regardless of the fact that the overall size would be only 128
+		// Because of the default alignment the second allocation cannot be made inside the allocator regardless of the fact that the overall size would be only 128
 		void* ptr1 = a.Alloc(113);
 		void* ptrFB = a.Alloc(15);
 		CHECK((memoryStart <= ptr1 && ptr1 < memoryEnd));

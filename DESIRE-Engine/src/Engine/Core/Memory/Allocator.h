@@ -1,18 +1,18 @@
 #pragma once
 
 // --------------------------------------------------------------------------------------------------------------------
-//	Base class for memory allocators with a default implementation that is using the system memory
+//	Base class for memory allocators
 // --------------------------------------------------------------------------------------------------------------------
 
 class Allocator
 {
 public:
-	Allocator();
-	virtual ~Allocator();
+	Allocator() {}
+	virtual ~Allocator() {}
 
-	virtual void* Alloc(size_t size);
-	virtual void* Realloc(void* ptr, size_t size);
-	virtual void Free(void* ptr);
+	virtual void* Alloc(size_t size) = 0;
+	virtual void* Realloc(void* ptr, size_t newSize, size_t oldSize);
+	virtual void Free(void* ptr, size_t size) = 0;
 
 	static Allocator& GetDefaultAllocator();
 

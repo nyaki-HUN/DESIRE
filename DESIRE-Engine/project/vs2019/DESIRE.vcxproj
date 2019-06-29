@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\src\Engine\Core\Memory\PoolAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\StackAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\StdAllocatorWrapper.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Memory\SystemAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h" />
     <ClInclude Include="..\..\src\Engine\Core\String\StackString.h" />
@@ -280,6 +281,7 @@
     <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem_osx.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem_windows.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Memory\SystemAllocator.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\String\DynamicString.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\String\String.cpp" />

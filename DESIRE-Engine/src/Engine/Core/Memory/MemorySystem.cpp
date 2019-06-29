@@ -5,13 +5,12 @@
 thread_local Allocator* MemorySystem::allocatorStack[kAllocatorStackSize] = {};
 thread_local size_t MemorySystem::allocatorStackIndex = 0;
 
-// Operator new/delete overrides
+// Global operator new/delete overrides
 void* operator new  (size_t size)											{ return MemorySystem::Alloc(size); }
 void* operator new[](size_t size)											{ return MemorySystem::Alloc(size); }
 void* operator new  (size_t size, std::align_val_t alignment)				{ return MemorySystem::AlignedAlloc(size, static_cast<std::size_t>(alignment)); }
 void* operator new[](size_t size, std::align_val_t alignment)				{ return MemorySystem::AlignedAlloc(size, static_cast<std::size_t>(alignment)); }
 
-// Operator delete overrides
 void operator delete  (void* ptr) noexcept									{ MemorySystem::Free(ptr); }
 void operator delete[](void* ptr) noexcept									{ MemorySystem::Free(ptr); }
 void operator delete  (void* ptr, std::align_val_t /*alignment*/) noexcept	{ MemorySystem::AlignedFree(ptr); }
@@ -20,9 +19,19 @@ void operator delete[](void* ptr, std::align_val_t /*alignment*/) noexcept	{ Mem
 void* MemorySystem::Alloc(size_t size)
 {
 	ASSERT(size != 0);
+	static_assert(kDefaultAlignment >= sizeof(AllocationHeader));
+
+	const size_t totalSize = size + kDefaultAlignment;
 
 	Allocator& allocator = GetActiveAllocator();
-	return allocator.Alloc(size);
+	void* allocatedMemory = allocator.Alloc(totalSize);
+	ASSERT(allocatedMemory != nullptr);
+
+	AllocationHeader& header = *reinterpret_cast<AllocationHeader*>(allocatedMemory);
+	header.allocator = &allocator;
+	header.allocatedSize = totalSize;
+
+	return OffsetVoidPtr<void*>(allocatedMemory, kDefaultAlignment);
 }
 
 void* MemorySystem::Calloc(size_t num, size_t size)
@@ -37,10 +46,39 @@ void* MemorySystem::Calloc(size_t num, size_t size)
 
 void* MemorySystem::Realloc(void* ptr, size_t size)
 {
-	ASSERT(size != 0);
+	if(ptr == nullptr)
+	{
+		return Alloc(size);
+	}
+	else if(size == 0)
+	{
+		Free(ptr);
+		return nullptr;
+	}
 
-	Allocator& allocator = GetActiveAllocator();
-	return allocator.Realloc(ptr, size);
+	const size_t totalSize = size + kDefaultAlignment;
+
+	void* oldAllocatedMemory = OffsetVoidPtrBackwards<void*>(ptr, kDefaultAlignment);
+	const AllocationHeader& oldHeader = *reinterpret_cast<AllocationHeader*>(oldAllocatedMemory);
+	void* allocatedMemory = oldHeader.allocator->Realloc(oldAllocatedMemory, totalSize, oldHeader.allocatedSize);
+	if(allocatedMemory != nullptr)
+	{
+		// Need to update only the size in the header because the allocator's Realloc() is responsible for copying the memory
+		AllocationHeader& header = *reinterpret_cast<AllocationHeader*>(allocatedMemory);
+		header.allocatedSize = totalSize;
+
+		return OffsetVoidPtr<void*>(allocatedMemory, kDefaultAlignment);
+	}
+
+	ASSERT(false && "TODO: Use fallback allocator");
+	Allocator* fallbackAllocator = nullptr;
+		
+	DESIRE_ALLOCATOR_SCOPE(fallbackAllocator);
+	void* newPtr = Alloc(size);
+	memcpy(newPtr, ptr, std::min(size, oldHeader.allocatedSize - kDefaultAlignment));
+	oldHeader.allocator->Free(oldAllocatedMemory, oldHeader.allocatedSize);
+
+	return newPtr;
 }
 
 void* MemorySystem::AlignedAlloc(size_t size, size_t alignment)
@@ -55,8 +93,10 @@ void MemorySystem::Free(void* ptr)
 		return;
 	}
 
-	Allocator& allocator = GetActiveAllocator();
-	return allocator.Free(ptr);
+	void* allocatedMemory = OffsetVoidPtrBackwards<void*>(ptr, kDefaultAlignment);
+	AllocationHeader& header = *reinterpret_cast<AllocationHeader*>(allocatedMemory);
+
+	header.allocator->Free(allocatedMemory, header.allocatedSize);
 }
 
 void MemorySystem::AlignedFree(void* ptr)
