@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Engine/Core/platform.h"			// for DESIRE_UNUSED
 #include "Engine/Core/Memory/MemorySystem.h"
 
 template<typename T>
@@ -29,9 +28,8 @@ public:
 		return static_cast<T*>(ptr);
 	}
 
-	void deallocate(T* ptr, size_t n) const
+	void deallocate(T* ptr, size_t /*n*/) const
 	{
-		DESIRE_UNUSED(n);
 		MemorySystem::Free(ptr);
 	}
 
