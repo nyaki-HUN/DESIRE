@@ -19,7 +19,7 @@ static EKeyCode s_keyConversionTable[256] = {};
 class InputImpl
 {
 public:
-	static OSStatus Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
+	static OSStatus Handle_OSXKeyboardEvent(EventHandlerCallRef nextHandler, EventRef event, void* userData)
 	{
 		Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
 
@@ -61,7 +61,7 @@ public:
 				keyboard.HandleButton(KEY_LWIN,		(modifiers & cmdKey));
 				keyboard.HandleButton(KEY_CAPSLOCK,	(modifiers & alphaLock));
 				keyboard.HandleButton(KEY_APPS,		(modifiers & kEventKeyModifierFnMask));
-	//			keyboard.HandleButton(KEY_,			(modifiers & kEventKeyModifierNumLockMask));
+//				keyboard.HandleButton(KEY_,			(modifiers & kEventKeyModifierNumLockMask));
 				break;
 			}
 		}
@@ -69,7 +69,7 @@ public:
 		return CallNextEventHandler(nextHandler, event);
 	}
 
-	static OSStatus Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventRef event, void *userData)
+	static OSStatus Handle_OSXMouseEvent(EventHandlerCallRef nextHandler, EventRef event, void* userData)
 	{
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 
@@ -161,7 +161,7 @@ public:
 //	Input
 // --------------------------------------------------------------------------------------------------------------------
 
-void Input::Init_internal(OSWindow *window)
+void Input::Init_internal(OSWindow* window)
 {
 	OSStatus status = noErr;
 	EventTargetRef eventTargetRef = GetApplicationEventTarget();

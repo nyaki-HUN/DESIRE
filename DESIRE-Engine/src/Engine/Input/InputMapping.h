@@ -28,7 +28,7 @@ private:
 	struct MappedInput
 	{
 		int id;
-		const void *inputDeviceHandle;
+		const void* inputDeviceHandle;
 	};
 
 	struct MappedAxis : public MappedInput

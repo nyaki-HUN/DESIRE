@@ -10,7 +10,7 @@
 constexpr int kFirstMappedKeyCode = 96;
 constexpr int kLastMappedKeyCode = 126;
 
-static Display *s_display = nullptr;
+static Display* s_display = nullptr;
 static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 1] = { (EKeyCode)0 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 
 class InputImpl
 {
 public:
-	static void Handle_KeyPress_KeyRelease(const void *param)
+	static void Handle_KeyPress_KeyRelease(const void* param)
 	{
 		const XEvent& event = *static_cast<const XEvent*>(param);
 		Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
@@ -47,7 +47,7 @@ public:
 			char buffer[5] = {};
 			XLookupString(&event.xkey, buffer, DESIRE_ASIZEOF(buffer), nullptr, nullptr);
 
-			char *typingCharacters = Modules::Input->typingCharacters;
+			char* typingCharacters = Modules::Input->typingCharacters;
 			const size_t len = strlen(typingCharacters);
 			const size_t bufferLen = strlen(buffer);
 			if(len + bufferLen + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
@@ -62,7 +62,7 @@ public:
 		}
 	}
 
-	static void Handle_ButtonPress_ButtonRelease(const void *param)
+	static void Handle_ButtonPress_ButtonRelease(const void* param)
 	{
 		const XEvent& event = *static_cast<const XEvent*>(param);
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	static void Handle_MotionNotify(const void *param)
+	static void Handle_MotionNotify(const void* param)
 	{
 		const XEvent& event = *static_cast<const XEvent*>(param);
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
@@ -106,7 +106,7 @@ public:
 //	Input
 // --------------------------------------------------------------------------------------------------------------------
 
-void Input::Init_internal(OSWindow *window)
+void Input::Init_internal(OSWindow* window)
 {
 	ASSERT(s_display == nullptr && "Input is already initialized");
 
@@ -118,7 +118,7 @@ void Input::Init_internal(OSWindow *window)
 		return;
 	}
 
-	LINUXWindow *win = static_cast<LINUXWindow*>(window);
+	LINUXWindow* win = static_cast<LINUXWindow*>(window);
 	win->RegisterMessageHandler(KeyPress, InputImpl::Handle_KeyPress_KeyRelease);
 	win->RegisterMessageHandler(KeyRelease, InputImpl::Handle_KeyPress_KeyRelease);
 	win->RegisterMessageHandler(ButtonPress, InputImpl::Handle_ButtonPress_ButtonRelease);

@@ -13,7 +13,7 @@ class Input
 public:
 	static constexpr int kMaxNumTypingCharacters = 8;
 
-	typedef void(*HotkeyCallback_t)(void *userData);
+	typedef void(*HotkeyCallback_t)(void* userData);
 
 	enum EModifierType
 	{
@@ -28,19 +28,19 @@ public:
 	Input();
 	~Input();
 
-	void Init(OSWindow *window);
+	void Init(OSWindow* window);
 	void Kill();
 	void Update();
 	void Reset();
 
-	bool RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void *userData = nullptr);
+	bool RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void* userData = nullptr);
 	void UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers);
 
 	const Array<Keyboard>& GetKeyboards() const;
 	const Array<Mouse>& GetMouses() const;
 	const Array<GameController>& GetControllers() const;
 
-	const InputDevice* GetInputDeviceByHandle(const void *handle) const;
+	const InputDevice* GetInputDeviceByHandle(const void* handle) const;
 
 	// Returns a string from the characters typed since the last frame (maximized by MAX_NUM_TYPING_CHARACTERS)
 	const char* GetTypingCharacters() const;
@@ -48,10 +48,10 @@ public:
 	const Vector2& GetOsMouseCursorPos() const;
 
 private:
-	Keyboard& GetKeyboardByHandle(void *handle);
-	Mouse& GetMouseByHandle(void *handle);
+	Keyboard& GetKeyboardByHandle(void* handle);
+	Mouse& GetMouseByHandle(void* handle);
 
-	void Init_internal(OSWindow *window);
+	void Init_internal(OSWindow* window);
 	void Kill_internal();
 	void Update_internal();
 
@@ -60,7 +60,7 @@ private:
 		EKeyCode keyCode;
 		uint8_t modifiers;
 		HotkeyCallback_t callback;
-		void *userData;
+		void* userData;
 	};
 
 	Array<Hotkey> hotkeys;

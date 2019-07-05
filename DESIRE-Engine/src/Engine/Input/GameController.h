@@ -4,7 +4,7 @@
 
 class GameController : public InputDevice
 {
-	GameController(void *handle);
+	GameController(void* handle);
 
 public:
 	enum EButtonId

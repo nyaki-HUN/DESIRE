@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/InputDevice.h"
 
-InputDevice::InputDevice(void *handle, size_t offsetOfButtonStates, uint16_t numButtonStates, size_t offsetOfAxisStates, uint16_t numAxisStates)
+InputDevice::InputDevice(void* handle, size_t offsetOfButtonStates, uint16_t numButtonStates, size_t offsetOfAxisStates, uint16_t numAxisStates)
 	: handle(handle)
 	, offsetOfButtonStatesInDerivedClass((uint16_t)offsetOfButtonStates)
 	, numButtonStates(numButtonStates)
@@ -83,7 +83,7 @@ void InputDevice::Update()
 
 void InputDevice::Reset()
 {
-	uint8_t *buttonStates = (uint8_t*)this + offsetOfButtonStatesInDerivedClass;
+	uint8_t* buttonStates = (uint8_t*)this + offsetOfButtonStatesInDerivedClass;
 	memset(buttonStates, 0, numButtonStates * sizeof(uint8_t));
 }
 

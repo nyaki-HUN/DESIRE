@@ -37,8 +37,8 @@ public:
 
 	virtual PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) = 0;
 
-	void OnPhysicsComponentCreated(PhysicsComponent *component);
-	void OnPhysicsComponentDestroyed(PhysicsComponent *component);
+	void OnPhysicsComponentCreated(PhysicsComponent* component);
+	void OnPhysicsComponentDestroyed(PhysicsComponent* component);
 
 	void SetFixedStepTime(float stepTime);
 	float GetFixedStepTime() const;

@@ -5,7 +5,7 @@
 
 class Keyboard : public InputDevice
 {
-	Keyboard(void *handle);
+	Keyboard(void* handle);
 
 public:
 	// Returns a combination of modifiers from Input::EModifierType

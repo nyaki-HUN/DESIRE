@@ -4,7 +4,7 @@
 
 class Mouse : public InputDevice
 {
-	Mouse(void *handle);
+	Mouse(void* handle);
 
 public:
 	enum EButtonId

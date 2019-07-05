@@ -3,7 +3,7 @@
 class InputDevice
 {
 protected:
-	InputDevice(void *handle, size_t offsetOfButtonStates, uint16_t numButtonStates, size_t offsetOfAxisStates = 0, uint16_t numAxisStates = 0);
+	InputDevice(void* handle, size_t offsetOfButtonStates, uint16_t numButtonStates, size_t offsetOfAxisStates = 0, uint16_t numAxisStates = 0);
 
 public:
 	static constexpr uint8_t BUTTON_STATE_DOWN_FLAG = 0x80;
@@ -20,7 +20,7 @@ public:
 	// Returns the difference in axis position since the last frame
 	float GetAxisDelta(int axisId) const;
 
-	void *handle;
+	void* handle;
 
 protected:
 	struct AxisState
@@ -28,7 +28,7 @@ protected:
 		float delta = 0.0f;
 		float pos = 0.0f;
 	};
-	
+
 	void Update();
 	void Reset();
 

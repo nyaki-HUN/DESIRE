@@ -21,7 +21,7 @@
 class InputImpl
 {
 public:
-	static void Handle_WM_INPUT(const void *param)
+	static void Handle_WM_INPUT(const void* param)
 	{
 		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->first;
 		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->second;
@@ -139,14 +139,14 @@ public:
 		}
 	}
 
-	static void Handle_WM_MOUSEMOVE(const void *param)
+	static void Handle_WM_MOUSEMOVE(const void* param)
 	{
 		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->second;
 
 		Modules::Input->mouseCursorPos = Vector2((float)GET_MOUSE_X(lParam), (float)GET_MOUSE_Y(lParam));
 	}
 
-	static void Handle_WM_CHAR(const void *param)
+	static void Handle_WM_CHAR(const void* param)
 	{
 		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->first;
 
@@ -157,7 +157,7 @@ public:
 			return;
 		}
 
-		char *typingCharacters = Modules::Input->typingCharacters;
+		char* typingCharacters = Modules::Input->typingCharacters;
 		size_t len = strlen(typingCharacters);
 		if(len + 1 < Input::kMaxNumTypingCharacters)
 		{
@@ -171,7 +171,7 @@ public:
 //	Input
 // --------------------------------------------------------------------------------------------------------------------
 
-void Input::Init_internal(OSWindow *window)
+void Input::Init_internal(OSWindow* window)
 {
 	window->RegisterMessageHandler(WM_INPUT, InputImpl::Handle_WM_INPUT);
 	window->RegisterMessageHandler(WM_MOUSEMOVE, InputImpl::Handle_WM_MOUSEMOVE);

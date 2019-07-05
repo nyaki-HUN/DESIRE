@@ -2,10 +2,9 @@
 #include "Engine/Input/Keyboard.h"
 #include "Engine/Input/Input.h"
 
-Keyboard::Keyboard(void *handle)
+Keyboard::Keyboard(void* handle)
 	: InputDevice(handle, offsetof(Keyboard, keyStates), (uint16_t)DESIRE_ASIZEOF(keyStates))
 {
-
 }
 
 uint8_t Keyboard::GetModifierMask() const

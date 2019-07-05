@@ -3,15 +3,13 @@
 
 Input::Input()
 {
-
 }
 
 Input::~Input()
 {
-
 }
 
-void Input::Init(OSWindow *window)
+void Input::Init(OSWindow* window)
 {
 	Init_internal(window);
 }
@@ -74,7 +72,7 @@ void Input::Reset()
 	{
 		mouse.Reset();
 	}
-	
+
 	// Game Controller
 	for(GameController& gamepad : gameControllers)
 	{
@@ -82,7 +80,7 @@ void Input::Reset()
 	}
 }
 
-bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void *userData)
+bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void* userData)
 {
 	ASSERT(callback != nullptr);
 
@@ -132,7 +130,7 @@ const Array<GameController>& Input::GetControllers() const
 	return gameControllers;
 }
 
-const InputDevice* Input::GetInputDeviceByHandle(const void *handle) const
+const InputDevice* Input::GetInputDeviceByHandle(const void* handle) const
 {
 	for(const Keyboard& device : keyboards)
 	{
@@ -171,7 +169,7 @@ const Vector2& Input::GetOsMouseCursorPos() const
 	return mouseCursorPos;
 }
 
-Keyboard& Input::GetKeyboardByHandle(void *handle)
+Keyboard& Input::GetKeyboardByHandle(void* handle)
 {
 	for(Keyboard& keyboard : keyboards)
 	{
@@ -186,7 +184,7 @@ Keyboard& Input::GetKeyboardByHandle(void *handle)
 	return keyboards.GetLast();
 }
 
-Mouse& Input::GetMouseByHandle(void *handle)
+Mouse& Input::GetMouseByHandle(void* handle)
 {
 	for(Mouse& mouse : mouses)
 	{

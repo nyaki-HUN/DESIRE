@@ -6,19 +6,19 @@
 
 #include <android/sensor.h>
 
-static As_sensorManager *s_sensorManager = nullptr;
-static As_sensorEventQueue *s_sensorEventQueue = nullptr;
-static const ASensor *s_accelerometerSensor = nullptr;
-static const ASensor *s_gyroscopeSensor = nullptr;
-static const ASensor *s_magneticSensor = nullptr;
+static As_sensorManager* s_sensorManager = nullptr;
+static As_sensorEventQueue* s_sensorEventQueue = nullptr;
+static const ASensor* s_accelerometerSensor = nullptr;
+static const ASensor* s_gyroscopeSensor = nullptr;
+static const ASensor* s_magneticSensor = nullptr;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Input
 // --------------------------------------------------------------------------------------------------------------------
 
-void Input::Init_internal(OSWindow *window)
+void Input::Init_internal(OSWindow* window)
 {
-	ALooper *looper = ALooper_forThread();
+	ALooper* looper = ALooper_forThread();
 	if(looper == nullptr)
 	{
 		looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);

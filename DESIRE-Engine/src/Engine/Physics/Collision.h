@@ -11,11 +11,10 @@ public:
 
 	Collision()
 	{
-
 	}
 
 	// Constructor to create single-point collision
-	Collision(PhysicsComponent *component, const Vector3& point, const Vector3& normal)
+	Collision(PhysicsComponent* component, const Vector3& point, const Vector3& normal)
 		: component(component)
 		, pointCount(1)
 	{
@@ -23,8 +22,8 @@ public:
 		contactNormals[0] = normal;
 	}
 
-	PhysicsComponent *component = nullptr;
-	PhysicsComponent *incomingComponent = nullptr;
+	PhysicsComponent* component = nullptr;
+	PhysicsComponent* incomingComponent = nullptr;
 
 	Vector3 contactPoints[kMaxContactPoints];
 	Vector3 contactNormals[kMaxContactPoints];

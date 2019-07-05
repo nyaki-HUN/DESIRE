@@ -20,12 +20,12 @@ Physics::~Physics()
 
 }
 
-void Physics::OnPhysicsComponentCreated(PhysicsComponent *component)
+void Physics::OnPhysicsComponentCreated(PhysicsComponent* component)
 {
 	components.Add(component);
 }
 
-void Physics::OnPhysicsComponentDestroyed(PhysicsComponent *component)
+void Physics::OnPhysicsComponentDestroyed(PhysicsComponent* component)
 {
 	components.RemoveFast(component);
 }
@@ -60,7 +60,7 @@ void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLay
 	}
 
 	// Force refresh collision layer to apply changes in collision matrix
-	for(PhysicsComponent *component : components)
+	for(PhysicsComponent* component : components)
 	{
 		component->SetCollisionLayer(component->GetCollisionLayer());
 	}
@@ -74,7 +74,7 @@ int Physics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
 
 void Physics::UpdateComponents()
 {
-	for(PhysicsComponent *component : components)
+	for(PhysicsComponent* component : components)
 	{
 		switch(component->GetBodyType())
 		{
