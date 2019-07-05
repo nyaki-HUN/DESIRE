@@ -64,7 +64,7 @@ inline size_t Align(size_t value, size_t alignment)
 
 inline void* Align(void* ptr, size_t alignment)
 {
-	return reinterpret_cast<void*>(reinterpret_cast<size_t>(ptr), alignment);
+	return reinterpret_cast<void*>(Align(reinterpret_cast<size_t>(ptr), alignment));
 }
 
 template<typename T>
