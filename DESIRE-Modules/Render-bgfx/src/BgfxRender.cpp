@@ -452,7 +452,7 @@ void BgfxRender::Bind(Shader* shader)
 	bgfx::setName(renderData->shaderHandle, shader->name.Str());
 
 	const uint16_t uniformCount = bgfx::getShaderUniforms(renderData->shaderHandle, nullptr, 0);
-	bgfx::UniformHandle* uniforms = (bgfx::UniformHandle*)alloca(uniformCount * sizeof(bgfx::UniformHandle));
+	bgfx::UniformHandle* uniforms = static_cast<bgfx::UniformHandle*>(alloca(uniformCount * sizeof(bgfx::UniformHandle)));
 	bgfx::getShaderUniforms(renderData->shaderHandle, uniforms, uniformCount);
 	for(uint16_t i = 0; i < uniformCount; ++i)
 	{

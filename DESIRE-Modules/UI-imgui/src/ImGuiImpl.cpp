@@ -132,7 +132,7 @@ void ImGuiImpl::NewFrame(OSWindow *window)
 	const char *typedCharacters = Modules::Input->GetTypingCharacters();
 	for(int i = 0; typedCharacters[i] != '\0'; ++i)
 	{
-		io.AddInputCharacter((ImWchar)typedCharacters[i]);
+		io.AddInputCharacter(typedCharacters[i]);
 	}
 
 	// Mouse
