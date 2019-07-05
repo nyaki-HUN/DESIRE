@@ -29,7 +29,7 @@ float FastInvSqrt(float x)
 	return y;
 }
 
-bool IsPowerOfTwo(uint32_t x)
+bool IsPowerOfTwo(size_t x)
 {
 	return (x & (x - 1)) == 0;
 }

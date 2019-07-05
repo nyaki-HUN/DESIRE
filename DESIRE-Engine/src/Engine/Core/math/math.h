@@ -15,7 +15,7 @@ int RoundUp(float x, int roundFactor);
 
 float FastInvSqrt(float x);
 
-bool IsPowerOfTwo(uint32_t x);
+bool IsPowerOfTwo(size_t x);
 
 // Efficient computation of integer powers. Computes a^e (mod UINT32_MAX)
 uint32_t IntPow(uint32_t a, uint32_t e);
