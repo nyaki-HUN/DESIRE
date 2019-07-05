@@ -34,7 +34,8 @@ public:
 	template<typename T>
 	bool Read(T& val)
 	{
-		static_assert(std::is_pod<T>::value, "T must be POD");
+		static_assert(std::is_pod<T>::value);
+
 		size_t numBytesRead = ReadBuffer(&val, sizeof(T));
 		return numBytesRead == sizeof(T);
 	}

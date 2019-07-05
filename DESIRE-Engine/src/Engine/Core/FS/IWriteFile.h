@@ -12,7 +12,8 @@ public:
 	template<typename T>
 	bool Write(const T& val)
 	{
-		static_assert(std::is_pod<T>::value, "T must be POD");
+		static_assert(std::is_pod<T>::value);
+
 		size_t numBytesWritten = WriteBuffer(&val, sizeof(T));
 		return numBytesWritten == sizeof(T);
 	}

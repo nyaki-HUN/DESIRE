@@ -18,7 +18,7 @@ public:
 		: readIdx(0)
 		, writeIdx(0)
 	{
-		static_assert(SIZE >= 2, "Size must be at least 2");
+		static_assert(SIZE >= 2);
 	}
 
 	// No synchronization needed in destructor as only one thread can do this

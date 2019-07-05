@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/SystemAllocator.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 void* SystemAllocator::Alloc(size_t size)
 {
