@@ -42,7 +42,7 @@
     <ClCompile Include="..\..\src\Core\Memory\test_StackAllocator.cpp">
       <Filter>Core\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Core\Memory\test_StdFrameAllocatorWrapper.cpp">
+    <ClCompile Include="..\..\src\Core\Memory\test_StdAllocatorWrapper.cpp">
       <Filter>Core\Memory</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Core\String\test_DynamicString.cpp">
