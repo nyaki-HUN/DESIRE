@@ -21,10 +21,10 @@ public:
 
 protected:
 	bool IsAllocationOwned(const void* ptr) const;
+	bool IsTheLastAllocation(const void* ptr, size_t size) const;
 
 	char* memoryStart = nullptr;
 	size_t memorySize = 0;
 	size_t freeSpace = 0;
-	void* lastAllocation = nullptr;
 	Allocator& fallbackAllocator;
 };

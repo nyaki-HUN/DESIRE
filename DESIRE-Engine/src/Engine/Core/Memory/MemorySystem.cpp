@@ -24,29 +24,26 @@ void* MemorySystem::Alloc(size_t size, size_t alignment)
 	ASSERT(Math::IsPowerOfTwo(alignment));
 	static_assert(kDefaultAlignment >= sizeof(AllocationHeader));
 
-	const size_t totalSize = size + ((alignment <= kDefaultAlignment) ? kDefaultAlignment : alignment - 1);
+	const size_t totalSize = size + std::max(kDefaultAlignment, alignment);
 	Allocator& allocator = GetActiveAllocator();
 	void* allocatedMemory = allocator.Alloc(totalSize);
-	ASSERT(allocatedMemory != nullptr);
+	ASSERT(allocatedMemory != nullptr && "Out of memory");
 
 	// Make room for the header and apply alignment
 	void* ptr = Align(OffsetVoidPtr<void>(allocatedMemory, kDefaultAlignment), alignment);
 
 	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
 	header->allocator = &allocator;
-	header->allocatedSize = SafeSizeToUint32(totalSize);
-	header->offsetBetweenPtrAndAllocatedMemory = SafeSizeToUint32(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(allocatedMemory));
+	header->allocatedSize = Math::SafeSizeToUint32(totalSize);
+	header->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(allocatedMemory));
 
 	return ptr;
 }
 
 void* MemorySystem::Calloc(size_t num, size_t size)
 {
-	void* ptr = Alloc(num * size);
-	if(ptr != nullptr)
-	{
-		memset(ptr, 0, num * size);
-	}
+	void* ptr = MemorySystem::Alloc(num * size);
+	memset(ptr, 0, num * size);
 	return ptr;
 }
 
@@ -54,38 +51,32 @@ void* MemorySystem::Realloc(void* ptr, size_t size)
 {
 	if(ptr == nullptr)
 	{
-		return Alloc(size);
+		return MemorySystem::Alloc(size);
 	}
 	else if(size == 0)
 	{
-		Free(ptr);
+		MemorySystem::Free(ptr);
 		return nullptr;
 	}
 
 	const AllocationHeader oldHeader = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-	ASSERT(oldHeader.offsetBetweenPtrAndAllocatedMemory == kDefaultAlignment && "Only default alignment is supported");
 	void* oldAllocatedMemory = OffsetVoidPtrBackwards<void*>(ptr, oldHeader.offsetBetweenPtrAndAllocatedMemory);
 
+	ASSERT(oldHeader.offsetBetweenPtrAndAllocatedMemory == kDefaultAlignment && "Only default alignment is supported");
 	const size_t totalSize = size + kDefaultAlignment;
-	void* allocatedMemory = oldHeader.allocator->Realloc(oldAllocatedMemory, totalSize, oldHeader.allocatedSize);
-	if(allocatedMemory != nullptr)
+	if(totalSize == oldHeader.allocatedSize)
 	{
-		void* newPtr = OffsetVoidPtr<void*>(allocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
-
-		// Only need to update the size in the header because the allocator's Realloc() is responsible for copying all the contents of the memory
-		AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(newPtr, sizeof(AllocationHeader));
-		header->allocatedSize = SafeSizeToUint32(totalSize);
-
-		return newPtr;
+		return ptr;
 	}
 
-	ASSERT(false && "TODO: Use fallback allocator");
-	Allocator* fallbackAllocator = nullptr;
+	void* allocatedMemory = oldHeader.allocator->Realloc(oldAllocatedMemory, totalSize, oldHeader.allocatedSize);
+	ASSERT(allocatedMemory != nullptr && "Out of memory");
 
-	DESIRE_ALLOCATOR_SCOPE(fallbackAllocator);
-	void* newPtr = Alloc(size);
-	memcpy(newPtr, ptr, std::min(size, oldHeader.allocatedSize - kDefaultAlignment));
-	oldHeader.allocator->Free(oldAllocatedMemory, oldHeader.allocatedSize);
+	void* newPtr = OffsetVoidPtr<void*>(allocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
+
+	// Only need to update the size in the header because the allocator's Realloc() is responsible for copying all the contents of the memory
+	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(newPtr, sizeof(AllocationHeader));
+	header->allocatedSize = Math::SafeSizeToUint32(totalSize);
 
 	return newPtr;
 }
@@ -99,6 +90,7 @@ void MemorySystem::Free(void* ptr)
 
 	const AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
 	void* allocatedMemory = OffsetVoidPtrBackwards<void*>(ptr, header->offsetBetweenPtrAndAllocatedMemory);
+
 	header->allocator->Free(allocatedMemory, header->allocatedSize);
 }
 
