@@ -10,6 +10,11 @@ void* Allocator::Realloc(void* ptr, size_t newSize, size_t oldSize)
 	return newPtr;
 }
 
+uint64_t Allocator::GetAllocatedBytes() const
+{
+	return allocatedBytes;
+}
+
 Allocator& Allocator::GetDefaultAllocator()
 {
 	static SystemAllocator s_defaultAllocator;

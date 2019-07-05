@@ -5,18 +5,18 @@
 LinearAllocator::LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator)
 	: memoryStart(static_cast<char*>(memoryStart))
 	, memorySize(memorySize)
-	, freeSpace(memorySize)
 	, fallbackAllocator(fallbackAllocator)
 {
 }
 
 void* LinearAllocator::Alloc(size_t size)
 {
-	void* ptr = memoryStart + memorySize - freeSpace;
-	ptr = std::align(MemorySystem::kDefaultAlignment, size, ptr, freeSpace);
-	if(ptr != nullptr)
+	void* ptr = memoryStart + allocatedBytes;
+	size_t freeSpace = memorySize - allocatedBytes;
+	if(std::align(MemorySystem::kDefaultAlignment, size, ptr, freeSpace))
 	{
-		freeSpace -= size;
+		const size_t offset = (memorySize - allocatedBytes) - freeSpace;
+		allocatedBytes += offset + size;
 		return ptr;
 	}
 
@@ -36,17 +36,16 @@ void* LinearAllocator::Realloc(void* ptr, size_t newSize, size_t oldSize)
 		{
 			// Try to grow the last allocation
 			const size_t sizeDiff = newSize - oldSize;
-			if(sizeDiff <= freeSpace)
+			if(allocatedBytes + sizeDiff <= memorySize)
 			{
-				freeSpace -= sizeDiff;
+				allocatedBytes += sizeDiff;
 				return ptr;
 			}
 		}
 		else
 		{
 			// Shrink the last allocation
-			const size_t sizeDiff = oldSize - newSize;
-			freeSpace += sizeDiff;
+			allocatedBytes -= oldSize - newSize;
 			return ptr;
 		}
 	}
@@ -66,15 +65,14 @@ void LinearAllocator::Free(void* ptr, size_t size)
 
 	if(IsTheLastAllocation(ptr, size))
 	{
-		const size_t totalSize = Align(size, MemorySystem::kDefaultAlignment);
-		freeSpace += totalSize;
-		ASSERT(freeSpace <= memorySize);
+		ASSERT(allocatedBytes >= size);
+		allocatedBytes -= size;
 	}
 }
 
 void LinearAllocator::Reset()
 {
-	freeSpace = memorySize;
+	allocatedBytes = 0;
 }
 
 bool LinearAllocator::IsAllocationOwned(const void* ptr) const
@@ -84,5 +82,5 @@ bool LinearAllocator::IsAllocationOwned(const void* ptr) const
 
 bool LinearAllocator::IsTheLastAllocation(const void* ptr, size_t size) const
 {
-	return (ptr == memoryStart + memorySize - freeSpace - size);
+	return (ptr == memoryStart + allocatedBytes - size);
 }
