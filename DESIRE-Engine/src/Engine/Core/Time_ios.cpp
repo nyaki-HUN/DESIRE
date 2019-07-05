@@ -25,12 +25,12 @@ uint64_t Time::GetMicroTime()
 	return static_cast<uint64_t>((double)(time - startTime) / ticksPerMicroSecond);
 }
 
-void Time::GetGMTime(const time_t& time, tm *timeInfo)
+void Time::GetGMTime(const time_t& time, tm* timeInfo)
 {
 	gmtime_r(&time, timeInfo);
 }
 
-void Time::GetLocalTime(const time_t& time, tm *timeInfo)
+void Time::GetLocalTime(const time_t& time, tm* timeInfo)
 {
 	localtime_r(&time, timeInfo);
 }

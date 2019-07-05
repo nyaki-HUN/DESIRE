@@ -7,16 +7,16 @@ public:
 
 	struct LogData
 	{
-		const char *file;
+		const char* file;
 		int line;
-		const char *logType;
+		const char* logType;
 		char message[kMaxMessageLength];
 	};
 
 	typedef void(*LogFunction_t)(const Log::LogData& logData);
 
 	static void LogWithData(const Log::LogData& logData);
-	static void LogWithFormat(const char *file, int line, const char *logType, const char *format, ...);
+	static void LogWithFormat(const char* file, int line, const char* logType, const char* format, ...);
 	static void SetUserDefinedLogFunction(LogFunction_t func);
 
 private:

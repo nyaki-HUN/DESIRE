@@ -37,7 +37,7 @@ void Log::LogWithData(const Log::LogData& logData)
 	}
 }
 
-void Log::LogWithFormat(const char *file, int line, const char *logType, const char *format, ...)
+void Log::LogWithFormat(const char* file, int line, const char* logType, const char* format, ...)
 {
 	Log::LogData logData;
 	logData.file = file;
