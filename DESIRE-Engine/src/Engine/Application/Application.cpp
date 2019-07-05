@@ -2,6 +2,7 @@
 #include "Engine/Application/Application.h"
 #include "Engine/Application/CoreAppEvent.h"
 #include "Engine/Application/OSWindow.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Physics/Physics.h"

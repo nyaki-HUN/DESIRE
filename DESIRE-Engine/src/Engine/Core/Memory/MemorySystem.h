@@ -3,20 +3,19 @@
 #include "Engine/Core/platform.h"
 
 #include <new>
+#include <cstddef>	// for std::max_align_t
 
 class Allocator;
 
 class MemorySystem
 {
 public:
-	static constexpr size_t kDefaultAlignment = __STDCPP_DEFAULT_NEW_ALIGNMENT__;
+	static constexpr size_t kDefaultAlignment = alignof(std::max_align_t);
 
-	static void* Alloc(size_t size);
+	static void* Alloc(size_t size, size_t alignment = kDefaultAlignment);
 	static void* Calloc(size_t num, size_t size);
 	static void* Realloc(void* ptr, size_t size);
-	static void* AlignedAlloc(size_t size, size_t alignment);
 	static void Free(void* ptr);
-	static void AlignedFree(void* ptr);
 
 	static void* SystemAlloc(size_t size);
 	static void* SystemRealloc(void* ptr, size_t size);
@@ -44,7 +43,8 @@ private:
 	struct AllocationHeader
 	{
 		Allocator* allocator;
-		size_t allocatedSize;
+		uint32_t allocatedSize;
+		uint32_t offsetBetweenPtrAndAllocatedMemory;
 	};
 
 	static constexpr size_t kAllocatorStackSize = 16;
@@ -78,19 +78,8 @@ inline T* OffsetVoidPtrBackwards(const void* ptr, size_t offset)
 	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) - offset);
 }
 
-// Global operator new/delete overrides
-// Note: The behavior is undefined if more than one replacement is provided in the program or if a replacement is defined with the inline specifier.
-void* operator new  (size_t size);
-void* operator new[](size_t size);
-void* operator new  (size_t size, std::align_val_t alignment);
-void* operator new[](size_t size, std::align_val_t alignment);
-
-void operator delete  (void* ptr) noexcept;
-void operator delete[](void* ptr) noexcept;
-void operator delete  (void* ptr, std::align_val_t alignment) noexcept;
-void operator delete[](void* ptr, std::align_val_t alignment) noexcept;
-
-#define malloc	MemorySystem::Alloc
-#define calloc	MemorySystem::Calloc
-#define realloc	MemorySystem::Realloc
-#define free	MemorySystem::Free
+inline uint32_t SafeSizeToUint32(size_t value)
+{
+	ASSERT(value <= UINT32_MAX);
+	return static_cast<uint32_t>(value);
+}
