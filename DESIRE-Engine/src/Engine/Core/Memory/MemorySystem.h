@@ -2,8 +2,9 @@
 
 #include "Engine/Core/platform.h"
 
-#include <new>
+#include <stdint.h>
 #include <cstddef>	// for std::max_align_t
+#include <new>
 
 class Allocator;
 
@@ -76,10 +77,4 @@ template<typename T>
 inline T* OffsetVoidPtrBackwards(const void* ptr, size_t offset)
 {
 	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) - offset);
-}
-
-inline uint32_t SafeSizeToUint32(size_t value)
-{
-	ASSERT(value <= UINT32_MAX);
-	return static_cast<uint32_t>(value);
 }

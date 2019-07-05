@@ -34,6 +34,12 @@ bool IsPowerOfTwo(size_t x)
 	return (x & (x - 1)) == 0;
 }
 
+uint32_t SafeSizeToUint32(size_t value)
+{
+	ASSERT(value <= UINT32_MAX);
+	return static_cast<uint32_t>(value);
+}
+
 uint32_t IntPow(uint32_t a, uint32_t e)
 {
 	uint32_t ret;
