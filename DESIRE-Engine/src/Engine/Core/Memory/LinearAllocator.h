@@ -13,19 +13,13 @@ public:
 	LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator = Allocator::GetDefaultAllocator());
 
 	void* Alloc(size_t size) final override;
-	void* Realloc(void* ptr, size_t size) final override;
-	void Free(void* ptr) final override;
+	void* Realloc(void* ptr, size_t newSize, size_t oldSize) final override;
+	void Free(void* ptr, size_t size) final override;
 
 	// Free everything in O(1)
 	void Reset();
 
 protected:
-	struct AllocationHeader
-	{
-		size_t totalSize;
-		size_t offsetToPrev;
-	};
-
 	bool IsAllocationOwned(const void* ptr) const;
 
 	char* memoryStart = nullptr;

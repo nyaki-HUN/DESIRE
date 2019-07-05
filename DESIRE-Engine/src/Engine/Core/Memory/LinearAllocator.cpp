@@ -1,28 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
-
-inline size_t Align(size_t value, size_t alignment)
-{
-	alignment--;
-	return (value + alignment) & ~alignment;
-}
-
-inline void* Align(void* ptr, size_t alignment)
-{
-	return reinterpret_cast<void*>(reinterpret_cast<size_t>(ptr), alignment);
-}
-
-template<typename T>
-inline T* OffsetVoidPtr(const void* ptr, size_t offset)
-{
-	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) + offset);
-}
-
-template<typename T>
-inline T* OffsetVoidPtrBackwards(const void* ptr, size_t offset)
-{
-	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) - offset);
-}
+#include "Engine/Core/Memory/MemorySystem.h"
 
 LinearAllocator::LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator)
 	: memoryStart(static_cast<char*>(memoryStart))
@@ -30,18 +8,14 @@ LinearAllocator::LinearAllocator(void* memoryStart, size_t memorySize, Allocator
 	, freeSpace(memorySize)
 	, fallbackAllocator(fallbackAllocator)
 {
-	static_assert(kDefaultAlignment == sizeof(AllocationHeader), "AllocationHeader's size has to be equal to kDefaultAlignment");
 }
 
 void* LinearAllocator::Alloc(size_t size)
 {
-	const size_t totalSize = Align(size, kDefaultAlignment) + sizeof(AllocationHeader);
+	const size_t totalSize = Align(size, MemorySystem::kDefaultAlignment);
 	if(totalSize <= freeSpace)
 	{
-		void* ptr = memoryStart + (memorySize - freeSpace) + sizeof(AllocationHeader);
-		AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-		header.totalSize = totalSize;
-		header.offsetToPrev = (lastAllocation != nullptr) ? reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(lastAllocation) : 0;
+		void* ptr = memoryStart + (memorySize - freeSpace);
 
 		freeSpace -= totalSize;
 		lastAllocation = ptr;
@@ -51,67 +25,40 @@ void* LinearAllocator::Alloc(size_t size)
 	return fallbackAllocator.Alloc(size);
 }
 
-void* LinearAllocator::Realloc(void* ptr, size_t size)
+void* LinearAllocator::Realloc(void* ptr, size_t newSize, size_t oldSize)
 {
-	if(ptr == nullptr)
-	{
-		return Alloc(size);
-	}
+	ASSERT(IsAllocationOwned(ptr));
 
-	if(IsAllocationOwned(ptr))
+	if(lastAllocation == ptr)
 	{
-		const size_t totalSize = Align(size, kDefaultAlignment) + sizeof(AllocationHeader);
-		AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-
-		if(totalSize <= header.totalSize)
+		// Try to grow the last allocation
+		const size_t sizeDiff = Align(newSize, MemorySystem::kDefaultAlignment) - Align(oldSize, MemorySystem::kDefaultAlignment);
+		if(sizeDiff <= freeSpace)
 		{
-			// Shrink an existing allocation only if it was the last
-			if(lastAllocation == ptr)
-			{
-				const size_t sizeDiff = header.totalSize - totalSize;
-				header.totalSize -= sizeDiff;
-				freeSpace += sizeDiff;
-			}
-
+			freeSpace -= sizeDiff;
 			return ptr;
 		}
-
-		if(lastAllocation == ptr)
-		{
-			// Try to grow the last allocation
-			const size_t sizeDiff = totalSize - header.totalSize;
-			if(sizeDiff <= freeSpace)
-			{
-				header.totalSize += sizeDiff;
-				freeSpace -= sizeDiff;
-				return ptr;
-			}
-		}
-
-		void* newPtr = Alloc(size);
-		memcpy(newPtr, ptr, header.totalSize - sizeof(AllocationHeader));
-		Free(ptr);
-		return newPtr;
 	}
 
-	return fallbackAllocator.Realloc(ptr, size);
+	void* newPtr = Alloc(newSize);
+	if(newPtr != nullptr)
+	{
+		memcpy(newPtr, ptr, std::min(newSize, oldSize));
+	}
+	return newPtr;
 }
 
-void LinearAllocator::Free(void* ptr)
+void LinearAllocator::Free(void* ptr, size_t size)
 {
-	if(IsAllocationOwned(ptr))
+	ASSERT(IsAllocationOwned(ptr));
+
+	if(lastAllocation == ptr)
 	{
-		if(lastAllocation == ptr)
-		{
-			const AllocationHeader& header = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-			lastAllocation = (header.offsetToPrev != 0) ? OffsetVoidPtrBackwards<void>(lastAllocation, header.offsetToPrev) : nullptr;
-			freeSpace += header.totalSize;
-		}
-
-		return;
+		const size_t totalSize = Align(size, MemorySystem::kDefaultAlignment);
+		freeSpace += totalSize;
+		ASSERT(freeSpace <= memorySize);
+		lastAllocation = (freeSpace < memorySize) ? OffsetVoidPtrBackwards<void>(lastAllocation, totalSize) : nullptr;
 	}
-
-	fallbackAllocator.Free(ptr);
 }
 
 void LinearAllocator::Reset()
