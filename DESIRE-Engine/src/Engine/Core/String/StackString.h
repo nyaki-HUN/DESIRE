@@ -11,7 +11,7 @@ public:
 		data = charBuffer;
 	}
 
-	StackString(const char *str, size_t size)
+	StackString(const char* str, size_t size)
 	{
 		data = charBuffer;
 		Assign(str, size);
@@ -34,7 +34,7 @@ public:
 	}
 
 	// Create formatted string from variable argument list
-	static StackString<STACK_SIZE> Format(const char *format, ...)
+	static StackString<STACK_SIZE> Format(const char* format, ...)
 	{
 		StackString<STACK_SIZE> string;
 

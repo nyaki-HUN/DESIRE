@@ -10,7 +10,7 @@ size_t String::Find(const String& search, size_t startIndex) const
 		return kInvalidPos;
 	}
 
-	const char *foundPtr = strstr(data + startIndex, search.Str());
+	const char* foundPtr = strstr(data + startIndex, search.Str());
 	return (foundPtr != nullptr) ? foundPtr - data : kInvalidPos;
 }
 
@@ -21,13 +21,13 @@ size_t String::Find(char search, size_t startIndex) const
 		return kInvalidPos;
 	}
 
-	const char *foundPtr = strchr(data + startIndex, search);
+	const char* foundPtr = strchr(data + startIndex, search);
 	return (foundPtr != nullptr) ? foundPtr - data : kInvalidPos;
 }
 
 size_t String::FindLast(const String& search) const
 {
-	const char *s = data + size - search.Length();
+	const char* s = data + size - search.Length();
 	while(s >= data)
 	{
 		if(strncmp(s, search.Str(), search.Length()) == 0)
@@ -43,7 +43,7 @@ size_t String::FindLast(const String& search) const
 
 size_t String::FindLast(char search) const
 {
-	const char *s = data + size - 1;
+	const char* s = data + size - 1;
 	while(s >= data)
 	{
 		if(*s == search)
@@ -70,7 +70,7 @@ size_t String::Length() const
 size_t String::LengthUTF8() const
 {
 	size_t len = 0;
-	const char *ch = data;
+	const char* ch = data;
 	while(*ch != '\0')
 	{
 		if(*ch > 0)
@@ -100,7 +100,7 @@ bool String::IsEmpty() const
 
 int32_t String::AsInt32() const
 {
-	char *end = nullptr;
+	char* end = nullptr;
 	const int32_t value = strtol(data, &end, 10);
 	if(end != data + size)
 	{
@@ -112,7 +112,7 @@ int32_t String::AsInt32() const
 
 int64_t String::AsInt64() const
 {
-	char *end = nullptr;
+	char* end = nullptr;
 	const int64_t value = strtoll(data, &end, 0);
 	if(end != data + size)
 	{
@@ -124,7 +124,7 @@ int64_t String::AsInt64() const
 
 uint32_t String::AsUint32() const
 {
-	char *end = nullptr;
+	char* end = nullptr;
 	const uint32_t value = strtoul(data, &end, 0);
 	if(end != data + size)
 	{
@@ -136,7 +136,7 @@ uint32_t String::AsUint32() const
 
 uint64_t String::AsUint64() const
 {
-	char *end = nullptr;
+	char* end = nullptr;
 	const uint64_t value = strtoull(data, &end, 0);
 	if(end != data + size)
 	{
@@ -148,7 +148,7 @@ uint64_t String::AsUint64() const
 
 float String::AsFloat() const
 {
-	char *end = nullptr;
+	char* end = nullptr;
 	const float value = strtof(data, &end);
 	if(end != data + size)
 	{
@@ -160,7 +160,7 @@ float String::AsFloat() const
 
 double String::AsDouble() const
 {
-	char *end = nullptr;
+	char* end = nullptr;
 	const double value = strtod(data, &end);
 	if(end != data + size)
 	{
@@ -210,7 +210,7 @@ bool String::StartsWith(const String& prefix) const
 	return StartsWith(prefix.Str(), prefix.Length());
 }
 
-bool String::StartsWith(const char *prefix, size_t numChars) const
+bool String::StartsWith(const char* prefix, size_t numChars) const
 {
 	ASSERT(prefix != nullptr);
 	return (numChars == 0) ? false : (strncmp(data, prefix, numChars) == 0);
@@ -221,7 +221,7 @@ bool String::EndsWith(const String& prefix) const
 	return EndsWith(prefix.Str(), prefix.Length());
 }
 
-bool String::EndsWith(const char *suffix, size_t numChars) const
+bool String::EndsWith(const char* suffix, size_t numChars) const
 {
 	ASSERT(suffix != nullptr);
 	return (numChars == 0 || size < numChars) ? false : (strncmp(&data[size - numChars], suffix, numChars) == 0);

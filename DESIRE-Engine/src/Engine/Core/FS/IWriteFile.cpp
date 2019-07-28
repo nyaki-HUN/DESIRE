@@ -11,7 +11,7 @@ IWriteFile::~IWriteFile()
 
 }
 
-bool IWriteFile::WriteString(const char *str, size_t len)
+bool IWriteFile::WriteString(const char* str, size_t len)
 {
 	if(str == nullptr)
 	{

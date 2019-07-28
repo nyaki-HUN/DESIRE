@@ -35,12 +35,12 @@ public:
 			return;
 		}
 
-		FileSystemWatcher *watcher = static_cast<FileSystemWatcher*>(lpOverlapped->hEvent);
+		FileSystemWatcher* watcher = static_cast<FileSystemWatcher*>(lpOverlapped->hEvent);
 
 		if(dwErrorCode == ERROR_SUCCESS)
 		{
 			char str[DESIRE_MAX_PATH_LEN];
-			FILE_NOTIFY_INFORMATION *notify = nullptr;
+			FILE_NOTIFY_INFORMATION* notify = nullptr;
 			size_t offset = 0;
 			do
 			{

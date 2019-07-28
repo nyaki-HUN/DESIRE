@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/ConfigValue/ConfigValueInt.h"
 
-ConfigValueInt::ConfigValueInt(const char *name, const char *description, int initValue, int minValue, int maxValue)
+ConfigValueInt::ConfigValueInt(const char* name, const char* description, int initValue, int minValue, int maxValue)
 	: IConfigValue(name, description)
 	, value(initValue)
 	, minValue(minValue)

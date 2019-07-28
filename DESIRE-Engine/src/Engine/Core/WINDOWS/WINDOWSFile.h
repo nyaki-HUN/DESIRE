@@ -13,11 +13,11 @@ public:
 	// IReadFile
 	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::Current) override;
 
-	void ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback) override;
-	size_t ReadBuffer(void *buffer, size_t size) override;
+	void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback) override;
+	size_t ReadBuffer(void* buffer, size_t size) override;
 
 	// IWriteFile
-	size_t WriteBuffer(const void *buffer, size_t size) override;
+	size_t WriteBuffer(const void* buffer, size_t size) override;
 
 private:
 	HANDLE hFile;

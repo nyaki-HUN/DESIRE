@@ -41,7 +41,7 @@ public:
 
 	// Opens a file for reading
 	ReadFilePtr Open(const String& filename, ELocation location = ELocation::AppDir);
-	
+
 	// Creates a file for writing
 	WriteFilePtr CreateWriteFile(const String& filename);
 

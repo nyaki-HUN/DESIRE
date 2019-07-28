@@ -6,7 +6,7 @@ class DynamicString : public WritableString
 {
 public:
 	DynamicString(size_t numReservedChars = 0);
-	DynamicString(const char *str, size_t size);
+	DynamicString(const char* str, size_t size);
 	DynamicString(const String& string)				: DynamicString(string.Str(), string.Length()) {}
 	DynamicString(const DynamicString& string)		: DynamicString(string.Str(), string.Length()) {}
 	DynamicString(DynamicString&& string);
@@ -24,7 +24,7 @@ public:
 	DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 
 	// Create formatted string from variable argument list
-	static DynamicString Format(const char *format, ...);
+	static DynamicString Format(const char* format, ...);
 
 private:
 	bool Reserve(size_t numChars) override;

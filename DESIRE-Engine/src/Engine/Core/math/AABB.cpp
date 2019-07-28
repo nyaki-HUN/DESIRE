@@ -16,7 +16,7 @@ bool AABB::IntersectsWithAABB(const AABB& other) const
 
 bool AABB::IntersectsWithAABB2D(const AABB& other) const
 {
-	return (minEdge.GetX() <= other.maxEdge.GetX() && minEdge.GetZ() <= other.maxEdge.GetZ() && 
+	return (minEdge.GetX() <= other.maxEdge.GetX() && minEdge.GetZ() <= other.maxEdge.GetZ() &&
 			maxEdge.GetX() >= other.minEdge.GetX() && maxEdge.GetZ() >= other.minEdge.GetZ());
 }
 

@@ -260,7 +260,7 @@ public:
 
 	void Swap(Array& otherArray)
 	{
-		const T *tmpData = data;
+		const T* tmpData = data;
 		data = otherArray.data;
 		otherArray.data = tmpData;
 
@@ -286,14 +286,14 @@ private:
 
 	void DestructElements(size_t fromIdx, size_t count)
 	{
-		T *elements = data + fromIdx;
+		T* elements = data + fromIdx;
 		for(size_t i = 0; i < count; ++i)
 		{
 			elements[i].~T();
 		}
 	}
 
-	T *data = nullptr;
+	T* data = nullptr;
 	size_t size = 0;
 	size_t reservedSize = 0;
 };

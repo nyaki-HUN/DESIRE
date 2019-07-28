@@ -80,10 +80,10 @@ void FileSystemWatcher::UpdateAll()
 		ssize_t offset = 0;
 		while(offset < numRead)
 		{
-			inotify_event *event = reinterpret_cast<inotify_event*>(buffer + offset);
+			inotify_event* event = reinterpret_cast<inotify_event*>(buffer + offset);
 			const String filename(event->name, event->len);
 
-			FileSystemWatcher *watcher = watchers[event->wd];
+			FileSystemWatcher* watcher = watchers[event->wd];
 
 			if(event->mask & IN_MOVED_TO || event->mask & IN_CREATE)
 			{

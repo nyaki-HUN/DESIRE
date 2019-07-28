@@ -1,10 +1,10 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/ConfigValue/IConfigValue.h"
 
-IConfigValue *IConfigValue::s_listHead = nullptr;
-IConfigValue *IConfigValue::s_listTail = nullptr;
+IConfigValue* IConfigValue::s_listHead = nullptr;
+IConfigValue* IConfigValue::s_listTail = nullptr;
 
-IConfigValue::IConfigValue(const char *name, const char *description)
+IConfigValue::IConfigValue(const char* name, const char* description)
 	: next(nullptr)
 	, name(name)
 	, description(description)
@@ -31,7 +31,7 @@ IConfigValue::~IConfigValue()
 		return;
 	}
 
-	IConfigValue *prevConfig = s_listHead;
+	IConfigValue* prevConfig = s_listHead;
 	while(this != prevConfig->next)
 	{
 		prevConfig = prevConfig->next;
@@ -40,9 +40,9 @@ IConfigValue::~IConfigValue()
 	prevConfig->next = prevConfig->next->next;
 }
 
-IConfigValue* IConfigValue::FindConfigValue(const char *name)
+IConfigValue* IConfigValue::FindConfigValue(const char* name)
 {
-	IConfigValue *config = s_listHead;
+	IConfigValue* config = s_listHead;
 	while(config != nullptr && strcmp(config->name, name) != 0)
 	{
 		config = config->next;

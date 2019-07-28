@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/FS/MemoryFile.h"
 
-MemoryFile::MemoryFile(void *buffer, int64_t size)
+MemoryFile::MemoryFile(void* buffer, int64_t size)
 	: IReadFile(size)
 	, data(static_cast<char*>(buffer))
 {
@@ -11,7 +11,6 @@ MemoryFile::MemoryFile(void *buffer, int64_t size)
 
 MemoryFile::MemoryFile(ReadFilePtr& file, int64_t size)
 	: IReadFile(0)
-	, data(nullptr)
 {
 	if(size < 0)
 	{
@@ -50,7 +49,7 @@ bool MemoryFile::Seek(int64_t offset, ESeekOrigin origin)
 	return true;
 }
 
-void MemoryFile::ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback)
+void MemoryFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
 {
 	// No need for real async read
 	ASSERT(callback != nullptr);
@@ -58,7 +57,7 @@ void MemoryFile::ReadBufferAsync(void *buffer, size_t size, std::function<void()
 	callback();
 }
 
-size_t MemoryFile::ReadBuffer(void *buffer, size_t size)
+size_t MemoryFile::ReadBuffer(void* buffer, size_t size)
 {
 	const size_t remainingSize = static_cast<size_t>(fileSize - position);
 	size = std::min(size, remainingSize);

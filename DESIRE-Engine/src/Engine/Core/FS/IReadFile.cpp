@@ -19,7 +19,7 @@ const String& IReadFile::GetFilename() const
 	return filename;
 }
 
-size_t IReadFile::ReadString(char **str)
+size_t IReadFile::ReadString(char** str)
 {
 	ASSERT(str != nullptr);
 

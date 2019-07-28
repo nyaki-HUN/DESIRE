@@ -29,7 +29,7 @@ WIN32ConsoleOutputPolicy::WIN32ConsoleOutputPolicy()
 	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
 	// Redirect stdio functions as well just in case
-	FILE *file;
+	FILE* file = nullptr;
 	freopen_s(&file, "CONIN$", "r", stdin);
 	freopen_s(&file, "CONOUT$", "w", stdout);
 	freopen_s(&file, "CONOUT$", "w", stderr);

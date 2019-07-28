@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/ConfigValue/ConfigValueFloat.h"
 
-ConfigValueFloat::ConfigValueFloat(const char *name, const char *description, float initValue, float minValue, float maxValue)
+ConfigValueFloat::ConfigValueFloat(const char* name, const char* description, float initValue, float minValue, float maxValue)
 	: IConfigValue(name, description)
 	, value(initValue)
 	, minValue(minValue)

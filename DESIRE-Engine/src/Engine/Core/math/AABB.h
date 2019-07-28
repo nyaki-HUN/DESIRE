@@ -23,25 +23,11 @@ public:
 	void GetPoints(Vector3(&points)[8]) const;
 	void GetPoints2D(Vector3(&points)[4]) const;
 
-	inline Vector3 GetCenter() const
-	{
-		return (minEdge + maxEdge) * 0.5f;
-	}
+	inline Vector3 GetCenter() const			{ return (minEdge + maxEdge) * 0.5f; }
+	inline Vector3 GetSize() const				{ return maxEdge - minEdge; }
 
-	inline Vector3 GetSize() const
-	{
-		return maxEdge - minEdge;
-	}
-
-	inline const Vector3& GetMinEdge() const
-	{
-		return minEdge;
-	}
-
-	inline const Vector3& GetMaxEdge() const
-	{
-		return maxEdge;
-	}
+	inline const Vector3& GetMinEdge() const	{ return minEdge; }
+	inline const Vector3& GetMaxEdge() const	{ return maxEdge; }
 
 	inline void AddPoint(const Vector3& other)
 	{

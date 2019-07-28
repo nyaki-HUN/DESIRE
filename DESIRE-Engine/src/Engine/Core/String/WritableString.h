@@ -8,13 +8,13 @@ class WritableString : public String
 {
 public:
 	// Assign a new value to the string, replacing its current contents
-	void Assign(const char *str, size_t numChars);
+	void Assign(const char* str, size_t numChars);
 
 	// Erases the contents of the string, which becomes an empty string
 	void Clear();
 
 	// Insert characters
-	void Insert(size_t startIndex, const char *str, size_t numChars);
+	void Insert(size_t startIndex, const char* str, size_t numChars);
 	void Insert(size_t startIndex, const String& string)				{ Insert(startIndex, string.Str(), string.Length()); }
 
 	template<size_t SIZE>
@@ -33,7 +33,7 @@ public:
 	void ReplaceAllChar(char search, char replaceTo);
 
 	// Append characters
-	void Append(const char *str, size_t numChars);
+	void Append(const char* str, size_t numChars);
 
 	WritableString& operator +=(const String& string)
 	{
@@ -58,11 +58,11 @@ public:
 	void ToUpper();
 
 	// Write formatted data into the string from variable argument list
-	void Sprintf(const char *format, ...);
+	void Sprintf(const char* format, ...);
 
 protected:
 	virtual bool Reserve(size_t newSize) = 0;
 
-	void Sprintf_internal(const char *format, va_list args);
+	void Sprintf_internal(const char* format, va_list args);
 	void Replace_Internal(size_t pos, size_t numChars, const String& replaceTo);
 };

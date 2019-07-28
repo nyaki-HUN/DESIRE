@@ -38,14 +38,14 @@ bool WINDOWSFile::Seek(int64_t offset, ESeekOrigin origin)
 	return true;
 }
 
-void WINDOWSFile::ReadBufferAsync(void *buffer, size_t size, std::function<void()> callback)
+void WINDOWSFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
 {
 	ASSERT(callback != nullptr);
 	ReadBuffer(buffer, size);
 	callback();
 }
 
-size_t WINDOWSFile::ReadBuffer(void *buffer, size_t size)
+size_t WINDOWSFile::ReadBuffer(void* buffer, size_t size)
 {
 	ASSERT(buffer != nullptr);
 	DWORD numBytesRead = 0;
@@ -60,7 +60,7 @@ size_t WINDOWSFile::ReadBuffer(void *buffer, size_t size)
 	return numBytesRead;
 }
 
-size_t WINDOWSFile::WriteBuffer(const void *buffer, size_t size)
+size_t WINDOWSFile::WriteBuffer(const void* buffer, size_t size)
 {
 	ASSERT(buffer != nullptr);
 	DWORD numBytesWritten = 0;
@@ -118,7 +118,7 @@ void FileSystem::SetupDirectories()
 	const DWORD len = GetModuleFileNameA(NULL, exePath, DESIRE_MAX_PATH_LEN);
 	if(len > 0 && len < DESIRE_MAX_PATH_LEN)
 	{
-		char *slash = std::strrchr(exePath, '\\');
+		char* slash = std::strrchr(exePath, '\\');
 		if(slash != nullptr)
 		{
 			slash++;

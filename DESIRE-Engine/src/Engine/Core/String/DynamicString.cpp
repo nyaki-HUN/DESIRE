@@ -7,7 +7,7 @@ DynamicString::DynamicString(size_t numReservedChars)
 	memset(data, 0, preallocatedSize * sizeof(char));
 }
 
-DynamicString::DynamicString(const char *str, size_t size)
+DynamicString::DynamicString(const char* str, size_t size)
 {
 	Assign(str, size);
 }
@@ -55,7 +55,7 @@ DynamicString DynamicString::SubString(size_t startIndex, size_t numChars) const
 	return DynamicString(&data[startIndex], std::min(numChars, size - startIndex));
 }
 
-DynamicString DynamicString::Format(const char *format, ...)
+DynamicString DynamicString::Format(const char* format, ...)
 {
 	DynamicString string;
 

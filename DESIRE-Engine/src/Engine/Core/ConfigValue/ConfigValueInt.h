@@ -7,7 +7,7 @@
 class ConfigValueInt : public IConfigValue
 {
 public:
-	ConfigValueInt(const char *name, const char *description, int initValue, int minValue = INT32_MIN, int maxValue = INT32_MAX);
+	ConfigValueInt(const char* name, const char* description, int initValue, int minValue = INT32_MIN, int maxValue = INT32_MAX);
 
 	ConfigValueInt& operator =(int newValue);
 

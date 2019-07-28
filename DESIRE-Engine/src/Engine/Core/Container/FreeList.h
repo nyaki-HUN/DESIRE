@@ -8,14 +8,14 @@
 class FreeList
 {
 public:
-	void Push(void *element);
+	void Push(void* element);
 	void* Pop();
 
 private:
 	struct ListElement
 	{
-		ListElement *next;
+		ListElement* next;
 	};
 
-	ListElement *head = nullptr;
+	ListElement* head = nullptr;
 };
