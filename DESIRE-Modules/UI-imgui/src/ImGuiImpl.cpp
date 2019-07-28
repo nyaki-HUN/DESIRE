@@ -48,6 +48,7 @@ void ImGuiImpl::Init()
 	io.KeyMap[ImGuiKey_Space] = KEY_SPACE;
 	io.KeyMap[ImGuiKey_Enter] = KEY_RETURN;
 	io.KeyMap[ImGuiKey_Escape] = KEY_ESCAPE;
+	io.KeyMap[ImGuiKey_KeyPadEnter] = KEY_NUMPADENTER;
 	io.KeyMap[ImGuiKey_A] = KEY_A;
 	io.KeyMap[ImGuiKey_C] = KEY_C;
 	io.KeyMap[ImGuiKey_V] = KEY_V;
@@ -56,6 +57,7 @@ void ImGuiImpl::Init()
 	io.KeyMap[ImGuiKey_Z] = KEY_Z;
 
 	io.IniFilename = nullptr;
+	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
 	// Dynamic mesh for the draw list
 	mesh = std::make_unique<DynamicMesh>();
