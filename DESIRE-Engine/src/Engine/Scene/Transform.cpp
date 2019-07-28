@@ -7,40 +7,22 @@ Transform::Transform()
 
 }
 
-Transform::~Transform()
-{
-
-}
-
-void Transform::ResetToIdentity()
-{
-	localPosition = Vector3::Zero();
-	localRotation = Quat(0.0f, 0.0f, 0.0f, 1.0f);
-	localScale = Vector3(1.0f);
-	flags = IS_IDENTITY;
-
-	UpdateWorldMatrix();
-}
-
 void Transform::SetLocalPosition(const Vector3& position)
 {
 	localPosition = position;
 	flags |= POSITION_CHANGED;
-	flags &= ~IS_IDENTITY;
 }
 
 void Transform::SetLocalRotation(const Quat& rotation)
 {
 	localRotation = rotation;
 	flags |= ROTATION_CHANGED;
-	flags &= ~IS_IDENTITY;
 }
 
 void Transform::SetLocalScale(const Vector3& scale)
 {
 	localScale = scale;
 	flags |= SCALE_CHANGED;
-	flags &= ~IS_IDENTITY;
 }
 
 Matrix4 Transform::ConstructLocalMatrix() const
@@ -50,14 +32,14 @@ Matrix4 Transform::ConstructLocalMatrix() const
 	return mat;
 }
 
-const Matrix4& Transform::GetWorldMatrix() const
+void Transform::ResetToIdentity()
 {
-	if(flags & WORLD_MATRIX_DIRTY)
-	{
-		UpdateWorldMatrix();
-	}
+	localPosition = Vector3::Zero();
+	localRotation = Quat::Identity();
+	localScale = Vector3(1.0f);
 
-	return worldMatrix;
+	worldMatrix = (parent != nullptr) ? parent->GetWorldMatrix() : Matrix4::Identity();
+	flags &= ~WORLD_MATRIX_DIRTY;
 }
 
 Vector3 Transform::GetPosition() const
@@ -121,33 +103,18 @@ void Transform::SetScale(const Vector3& scale)
 	}
 }
 
-uint8_t Transform::GetFlags() const
+const Matrix4& Transform::GetWorldMatrix() const
 {
-	return flags;
-}
-
-void Transform::UpdateWorldMatrix() const
-{
-	if(flags & IS_IDENTITY)
-	{
-		if(parent != nullptr)
-		{
-			worldMatrix = parent->GetWorldMatrix();
-		}
-		else
-		{
-			worldMatrix = Matrix4::Identity();
-		}
-	}
-	else
+	if(flags & WORLD_MATRIX_DIRTY)
 	{
 		worldMatrix = ConstructLocalMatrix();
-
 		if(parent != nullptr)
 		{
 			worldMatrix = parent->GetWorldMatrix() * worldMatrix;
 		}
+
+		flags &= ~WORLD_MATRIX_DIRTY;
 	}
 
-	flags &= ~WORLD_MATRIX_DIRTY;
+	return worldMatrix;
 }
