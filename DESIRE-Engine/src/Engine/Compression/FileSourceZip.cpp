@@ -196,10 +196,9 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 			if(zlibRawDeflate != nullptr)
 			{
 				std::unique_ptr<uint8_t[]> compressedData = std::make_unique<uint8_t[]>(entry.compressedSize);
-				uint8_t *decompressedData = (uint8_t*)malloc(entry.uncompressedSize);
+				std::unique_ptr<uint8_t[]> decompressedData = std::make_unique<uint8_t[]>(entry.uncompressedSize);
 				if(compressedData == nullptr || decompressedData == nullptr)
 				{
-					free(decompressedData);
 					LOG_ERROR("Not enough memory to decompress file: %s", it->first.Str());
 					return nullptr;
 				}
@@ -207,9 +206,9 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 				zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
 				zipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
 
-				const size_t decompressedSize = zlibRawDeflate->DecompressBuffer(decompressedData, entry.uncompressedSize, compressedData.get(), entry.compressedSize);
+				const size_t decompressedSize = zlibRawDeflate->DecompressBuffer(decompressedData.get(), entry.uncompressedSize, compressedData.get(), entry.compressedSize);
 				ASSERT(decompressedSize == entry.uncompressedSize);
-				return std::make_unique<MemoryFile>(decompressedData, decompressedSize);
+				return std::make_unique<MemoryFile>(std::move(decompressedData), decompressedSize);
 			}
 
 			ASSERT(false && "This compression method is only supported when zlib is enabled in modules.cpp");

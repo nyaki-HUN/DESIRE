@@ -1,9 +1,9 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/FS/MemoryFile.h"
 
-MemoryFile::MemoryFile(void* buffer, int64_t size)
+MemoryFile::MemoryFile(std::unique_ptr<uint8_t[]> data, int64_t size)
 	: IReadFile(size)
-	, data(static_cast<char*>(buffer))
+	, data(std::move(data))
 {
 	ASSERT(size >= 0);
 	ASSERT(data != nullptr);
@@ -19,15 +19,10 @@ MemoryFile::MemoryFile(ReadFilePtr& file, int64_t size)
 
 	ASSERT(size >= 0 && size < SIZE_MAX);
 	const size_t sizeToRead = static_cast<size_t>(size);
-	data = (char*)malloc(sizeToRead);
-	size_t numBytesRead = file->ReadBuffer(data, sizeToRead);
+	data = std::make_unique<uint8_t[]>(sizeToRead);
+	const size_t numBytesRead = file->ReadBuffer(data.get(), sizeToRead);
 	ASSERT(numBytesRead == sizeToRead);
 	fileSize = static_cast<int64_t>(numBytesRead);
-}
-
-MemoryFile::~MemoryFile()
-{
-	free(data);
 }
 
 bool MemoryFile::Seek(int64_t offset, ESeekOrigin origin)
@@ -51,8 +46,10 @@ bool MemoryFile::Seek(int64_t offset, ESeekOrigin origin)
 
 void MemoryFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
 {
-	// No need for real async read
+	ASSERT(buffer != nullptr);
 	ASSERT(callback != nullptr);
+
+	// Data is already in memory so we can do blocking read (which will just copy it)
 	ReadBuffer(buffer, size);
 	callback();
 }
@@ -62,7 +59,7 @@ size_t MemoryFile::ReadBuffer(void* buffer, size_t size)
 	const size_t remainingSize = static_cast<size_t>(fileSize - position);
 	size = std::min(size, remainingSize);
 
-	memcpy(buffer, data + position, size);
+	memcpy(buffer, data.get() + position, size);
 	position += size;
 	return size;
 }
