@@ -190,18 +190,10 @@ TEST_CASE("Object", "[Scene]")
 		childA = nullptr;
 	}
 
-	// "Update hierarchy"
+	// Absolut position update in hierarchy
 	{
 		rootObj->GetTransform().SetLocalPosition(Vector3(1.0f, 1.0f, 1.0f));
 		child1->GetTransform().SetLocalPosition(Vector3(2.0f, 2.0f, 2.0f));
-
-		REQUIRE((rootObj->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) != 0);
-		REQUIRE((child1->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) != 0);
-
-		rootObj->UpdateAllTransformsInHierarchy();
-
-		CHECK((rootObj->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) == 0);
-		CHECK((child1->GetTransform().GetFlags() & Transform::WORLD_MATRIX_DIRTY) == 0);
 
 		Vector3 worldPos = rootObj->GetTransform().GetPosition();
 		CHECK(worldPos.GetX() == Approx(1.0f));
@@ -216,7 +208,7 @@ TEST_CASE("Object", "[Scene]")
 
 	const size_t traversedCount = SceneGraphTraversal::Traverse(rootObj, [](Object* node)
 	{
-		CHECK((node->GetTransform().GetFlags() & Transform::EFlags::SCALE_CHANGED) == 0);
+		node->GetTransform().SetScale(Vector3(5.0f));
 		return true;
 	});
 	CHECK(traversedCount == 3);

@@ -52,8 +52,6 @@ public:
 
 	bool HasObjectInParentHierarchy(const Object* obj) const;
 
-	void UpdateAllTransformsInHierarchy();
-
 private:
 	Component& AddComponent_Internal(std::unique_ptr<Component> component);
 	void AddChild_Internal(Object* child);

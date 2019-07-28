@@ -191,16 +191,6 @@ bool Object::HasObjectInParentHierarchy(const Object* obj) const
 	return false;
 }
 
-void Object::UpdateAllTransformsInHierarchy()
-{
-	Transform* transformTmp = transform;
-	for(size_t i = 0; i < numTransformsInHierarchy; i++)
-	{
-		transformTmp->UpdateWorldMatrix();
-		transformTmp++;
-	}
-}
-
 Component& Object::AddComponent_Internal(std::unique_ptr<Component> component)
 {
 	std::unique_ptr<Component>& addedComponent = components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
