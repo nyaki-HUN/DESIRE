@@ -124,7 +124,7 @@
     <ClCompile Include="..\..\src\Core\math\test_Vector4.cpp" />
     <ClCompile Include="..\..\src\Core\test_HashedStringMap.cpp" />
     <ClCompile Include="..\..\src\Core\test_LockFreeRingBuffer.cpp" />
-    <ClCompile Include="..\..\src\Scene\test_Object.cpp" />
+    <ClCompile Include="..\..\src\Core\test_Object.cpp" />
     <ClCompile Include="..\..\src\Script\test_ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\UnitTest.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

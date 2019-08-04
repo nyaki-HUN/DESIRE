@@ -3,7 +3,7 @@
 #include "Engine/Modules.h"
 #include "Engine/Application/Application.h"
 #include "Engine/Core/Timer.h"
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Scene/Transform.h"
 #include "Engine/Script/ScriptComponent.h"
 

@@ -312,6 +312,9 @@
     <ClInclude Include="..\..\src\Engine\Core\MemoryBuffer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Object.h">
+      <Filter>src\Engine\Core</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\String\DynamicString.h">
       <Filter>src\Engine\Core\String</Filter>
     </ClInclude>
@@ -468,9 +471,6 @@
     <ClInclude Include="..\..\src\Engine\Scene\ISceneManager.h">
       <Filter>src\Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Scene\Object.h">
-      <Filter>src\Engine\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Scene\QuadTreeLeaf.h">
       <Filter>src\Engine\Scene</Filter>
     </ClInclude>
@@ -620,6 +620,9 @@
     <ClCompile Include="..\..\src\Engine\Core\MemoryBuffer.cpp">
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Object.cpp">
+      <Filter>src\Engine\Core</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\String\DynamicString.cpp">
       <Filter>src\Engine\Core\String</Filter>
     </ClCompile>
@@ -742,9 +745,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Resource\TextureLoader\TgaLoader.cpp">
       <Filter>src\Engine\Resource\TextureLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Scene\Object.cpp">
-      <Filter>src\Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Scene\QuadTreeLeaf.cpp">
       <Filter>src\Engine\Scene</Filter>

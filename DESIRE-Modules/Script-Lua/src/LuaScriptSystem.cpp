@@ -3,10 +3,10 @@
 #include "API/LuaScriptAPI.h"
 
 #include "Engine/Core/Log.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/StackString.h"
-#include "Engine/Scene/Object.h"
 
 #include "lua.hpp"
 

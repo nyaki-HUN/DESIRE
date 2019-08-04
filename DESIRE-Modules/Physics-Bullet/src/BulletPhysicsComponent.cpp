@@ -4,7 +4,7 @@
 
 #include "Engine/Modules.h"
 #include "Engine/Core/math/AABB.h"
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Scene/Transform.h"
 
 #include "btBulletDynamicsCommon.h"

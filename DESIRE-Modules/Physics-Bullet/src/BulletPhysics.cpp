@@ -4,7 +4,7 @@
 #include "BulletVectormathExt.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Script/ScriptComponent.h"
 
 #include "btBulletDynamicsCommon.h"

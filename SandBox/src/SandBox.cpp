@@ -4,6 +4,7 @@
 #include "Engine/Modules.h"
 #include "Engine/Compression/FileSourceZip.h"
 #include "Engine/Core/Log.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/FileSystemWatcher.h"
 #include "Engine/Core/FS/IReadFile.h"
@@ -11,7 +12,6 @@
 #include "Engine/Input/Input.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Resource/ResourceManager.h"
-#include "Engine/Scene/Object.h"
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Script/ScriptComponent.h"
 

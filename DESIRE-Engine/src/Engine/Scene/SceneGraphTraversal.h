@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 
 #include <functional>
 

@@ -16,9 +16,6 @@
     <Filter Include="Core\math">
       <UniqueIdentifier>{E771D115-53DC-858C-9C1A-373208C463E1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene">
-      <UniqueIdentifier>{B3F7140E-1F0C-3DBF-E88D-E01E546139F0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Script">
       <UniqueIdentifier>{9AFBBAD0-869D-E5A6-6F58-F9FA5B996CF7}</UniqueIdentifier>
     </Filter>
@@ -66,8 +63,8 @@
     <ClCompile Include="..\..\src\Core\test_LockFreeRingBuffer.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Scene\test_Object.cpp">
-      <Filter>Scene</Filter>
+    <ClCompile Include="..\..\src\Core\test_Object.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Script\test_ScriptComponent.cpp">
       <Filter>Script</Filter>

@@ -4,7 +4,7 @@
 #include "b2MathExt.h"
 
 #include "Engine/Modules.h"
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Scene/Transform.h"
 
 #include "Box2D/Dynamics/b2World.h"

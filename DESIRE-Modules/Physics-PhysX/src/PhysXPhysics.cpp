@@ -3,7 +3,7 @@
 #include "PxMathExt.h"
 
 #include "Engine/Core/Log.h"
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 
 #include "PxPhysicsAPI.h"
 

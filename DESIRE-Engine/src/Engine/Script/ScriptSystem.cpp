@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Script/NativeScriptComponent.h"
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 
 ScriptSystem::ScriptSystem()
 {

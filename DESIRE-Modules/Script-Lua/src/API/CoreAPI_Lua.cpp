@@ -3,10 +3,14 @@
 #include "Engine/Modules.h"
 #include "Engine/Application/Application.h"
 #include "Engine/Core/Component.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
 #include "Engine/Core/math/Rand.h"
+#include "Engine/Scene/Transform.h"
+#include "Engine/Physics/PhysicsComponent.h"
+#include "Engine/Render/RenderComponent.h"
 
 void RegisterVectormathFunctions_Lua(lua_State *L)
 {
@@ -221,9 +225,32 @@ void RegisterCoreAPI_Lua(lua_State *L)
 	RegisterVectormathFunctions_Lua(L);
 	RegisterMathFunctions_Lua(L);
 
+	// Transform
+	luabridge::getGlobalNamespace(L).beginClass<Transform>("Transform")
+		.addProperty("localPosition", &Transform::GetLocalPosition, &Transform::SetLocalPosition)
+		.addProperty("localRotation", &Transform::GetLocalRotation, &Transform::SetLocalRotation)
+		.addProperty("localScale", &Transform::GetLocalScale, &Transform::SetLocalScale)
+		.addProperty("position", &Transform::GetPosition, &Transform::SetPosition)
+		.addProperty("rotation", &Transform::GetRotation, &Transform::SetRotation)
+		.addProperty("scale", &Transform::GetScale, &Transform::SetScale)
+		.endClass();
+
 	// Component
 	luabridge::getGlobalNamespace(L).beginClass<Component>("Component")
 		.addProperty("object", &Component::GetObject)
+		.endClass();
+
+	// Object
+	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
+		.addFunction("GetObjectName", &Object::GetObjectName)
+		.addFunction("SetActive", &Object::SetActive)
+		.addFunction("RemoveComponent", &Object::RemoveComponent)
+		.addFunction<Component* (Object::*)(int) const>("GetComponent", &Object::GetComponentByTypeId)
+		.addFunction<PhysicsComponent* (Object::*)() const>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
+		.addFunction<RenderComponent* (Object::*)() const>("GetRenderComponent", &Object::GetComponent<RenderComponent>)
+		.addFunction<LuaScriptComponent* (Object::*)() const>("GetScriptComponent", &Object::GetComponent<LuaScriptComponent>)
+		.addProperty("transform", &Object::GetTransform)
+		.addFunction("GetParent", &Object::GetParent)
 		.endClass();
 
 	// Timer

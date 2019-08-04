@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Engine/Scene/Object.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Scene/Transform.h"
 #include "Engine/Scene/SceneGraphTraversal.h"
 
