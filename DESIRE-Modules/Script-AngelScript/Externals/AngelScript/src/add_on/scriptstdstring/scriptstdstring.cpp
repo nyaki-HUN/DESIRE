@@ -89,7 +89,7 @@ static CStdStringFactory *stringFactory = 0;
 // TODO: Make this public so the application can also use the string 
 //       factory and share the string constants if so desired, or to
 //       monitor the size of the string factory cache.
-CStdStringFactory *GetStdStringFactorySingleton()
+asIStringFactory *GetStdStringFactorySingleton()
 {
 	if( stringFactory == 0 )
 	{
