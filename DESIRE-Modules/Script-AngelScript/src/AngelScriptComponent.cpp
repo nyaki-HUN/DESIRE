@@ -9,6 +9,8 @@ DESIRE_DISABLE_WARNINGS
 #include "angelscript.h"
 DESIRE_ENABLE_WARNINGS
 
+extern asIStringFactory* GetStdStringFactorySingleton();
+
 AngelScriptComponent::AngelScriptComponent(Object& object)
 	: ScriptComponent(object)
 {
@@ -22,14 +24,14 @@ AngelScriptComponent::~AngelScriptComponent()
 
 void AngelScriptComponent::CallByType(EBuiltinFuncType funcType)
 {
-	const asITypeInfo *typeInfo = scriptObject->GetObjectType();
-	asIScriptFunction *func = static_cast<asIScriptFunction*>(typeInfo->GetUserData((asPWORD)funcType));
+	const asITypeInfo* typeInfo = scriptObject->GetObjectType();
+	asIScriptFunction* func = static_cast<asIScriptFunction*>(typeInfo->GetUserData((asPWORD)funcType));
 	if(func == nullptr)
 	{
 		return;
 	}
 
-	asIScriptContext *ctx = scriptObject->GetEngine()->RequestContext();
+	asIScriptContext* ctx = scriptObject->GetEngine()->RequestContext();
 	int result = ctx->Prepare(func);
 	if(result == asSUCCESS)
 	{
@@ -40,11 +42,11 @@ void AngelScriptComponent::CallByType(EBuiltinFuncType funcType)
 	ctx->GetEngine()->ReturnContext(ctx);
 }
 
-void AngelScriptComponent::CallFromScript(asIScriptGeneric *gen)
+void AngelScriptComponent::CallFromScript(asIScriptGeneric* gen)
 {
-	AngelScriptComponent *scriptComp = static_cast<AngelScriptComponent*>(gen->GetObject());
+	AngelScriptComponent* scriptComp = static_cast<AngelScriptComponent*>(gen->GetObject());
 
-	const String *functionName = static_cast<const String*>(gen->GetArgObject(0));
+	const String* functionName = static_cast<const String*>(gen->GetArgObject(0));
 	if(functionName == nullptr)
 	{
 		return;
@@ -56,7 +58,7 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric *gen)
 		for(asUINT i = 1; i < (asUINT)gen->GetArgCount(); ++i)
 		{
 			int result = asERROR;
-			void *argPtr = gen->GetArgAddress(i);
+			void* argPtr = gen->GetArgAddress(i);
 			const int typeId = gen->GetArgTypeId(i);
 			if(typeId & asTYPEID_MASK_OBJECT)
 			{
@@ -113,12 +115,12 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric *gen)
 	}
 }
 
-bool AngelScriptComponent::PrepareFunctionCall(const char *functionName)
+bool AngelScriptComponent::PrepareFunctionCall(const char* functionName)
 {
 	ASSERT(functionName != nullptr);
 
-	const asITypeInfo *typeInfo = scriptObject->GetObjectType();
-	asIScriptFunction *func = typeInfo->GetMethodByName(functionName);
+	const asITypeInfo* typeInfo = scriptObject->GetObjectType();
+	asIScriptFunction* func = typeInfo->GetMethodByName(functionName);
 	if(func == nullptr)
 	{
 		return false;
@@ -150,6 +152,13 @@ void AngelScriptComponent::ExecuteFunctionCall()
 	const int result = functionCallCtx->Execute();
 	functionCallCtx->GetEngine()->ReturnContext(functionCallCtx);
 	functionCallCtx = nullptr;
+
+	asIStringFactory* stringFactory = GetStdStringFactorySingleton();
+	for(const void* stringArg : functionCallStringArgs)
+	{
+		stringFactory->ReleaseStringConstant(stringArg);
+	}
+	functionCallStringArgs.Clear();
 
 	switch(result)
 	{
@@ -185,15 +194,18 @@ bool AngelScriptComponent::AddFunctionCallArg(bool arg)
 	return (result == asSUCCESS);
 }
 
-bool AngelScriptComponent::AddFunctionCallArg(void *arg)
+bool AngelScriptComponent::AddFunctionCallArg(void* arg)
 {
 	ASSERT(arg != nullptr);
+
 	int result = functionCallCtx->SetArgAddress(numFunctionCallArgs++, arg);
 	return (result == asSUCCESS);
 }
 
 bool AngelScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	int result = functionCallCtx->SetArgObject(numFunctionCallArgs++, (void*)&arg);
+	const void* stringArg = GetStdStringFactorySingleton()->GetStringConstant(arg.Str(), static_cast<asUINT>(arg.Length()));
+	functionCallStringArgs.Add(stringArg);
+	int result = functionCallCtx->SetArgObject(numFunctionCallArgs++, const_cast<void*>(stringArg));
 	return (result == asSUCCESS);
 }

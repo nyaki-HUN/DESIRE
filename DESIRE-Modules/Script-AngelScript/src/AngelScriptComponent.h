@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Script/ScriptComponent.h"
+#include "Engine/Core/Container/Array.h"
 
 #include <stdint.h>
 
@@ -33,4 +34,5 @@ private:
 
 	asIScriptContext *functionCallCtx = nullptr;
 	uint32_t numFunctionCallArgs = 0;
+	Array<const void*> functionCallStringArgs;
 };
