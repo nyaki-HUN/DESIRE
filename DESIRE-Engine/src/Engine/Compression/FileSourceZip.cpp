@@ -18,7 +18,7 @@ constexpr int kZipSignatureEndOfCentralDirectory		= 0x06054b50;	//'PK56'
 	https://users.cs.jmu.edu/buchhofp/forensics/formats/pkzip.html
 
 	fileModificationTime - stored in standard MS-DOS format:
-		Bits 00-04: seconds divided by 2 
+		Bits 00-04: seconds divided by 2
 		Bits 05-10: minute
 		Bits 11-15: hour
 	fileModificationDate - stored in standard MS-DOS format:

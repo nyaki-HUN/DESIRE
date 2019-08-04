@@ -11,7 +11,7 @@ struct OSWindowCreationParams;
 class OSWindow
 {
 public:
-	typedef void(*MessageHandler_t)(const void *);
+	typedef void(*MessageHandler_t)(const void*);
 
 	enum ECursor
 	{
@@ -40,7 +40,7 @@ public:
 
 	void RegisterMessageHandler(int msgType, MessageHandler_t messageHandler);
 
-	void SetWindowTitle(const char *newTitle);
+	void SetWindowTitle(const char* newTitle);
 
 	// Change the OS cursor
 	void SetCursor(ECursor cursor);

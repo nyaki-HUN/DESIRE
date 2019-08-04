@@ -15,13 +15,12 @@ bool Application::s_isMainLoopRunning = false;
 int Application::s_returnValue = 0;
 
 Application::Application()
+	: timer(std::make_unique<Timer>())
 {
-	timer = std::make_unique<Timer>();
 }
 
 Application::~Application()
 {
-
 }
 
 const Timer* Application::GetTimer() const
@@ -45,7 +44,7 @@ void Application::SendEvent(EAppEventType eventType)
 	SendEvent(CoreAppEvent(eventType));
 }
 
-int Application::Start(int argc, const char * const *argv)
+int Application::Start(int argc, const char* const* argv)
 {
 	ASSERT(!s_isMainLoopRunning);
 
@@ -116,7 +115,7 @@ void Application::Run()
 	Kill();
 }
 
-Application::CreationParams Application::GetCreationParams(int argc, const char * const *argv)
+Application::CreationParams Application::GetCreationParams(int argc, const char* const* argv)
 {
 	DESIRE_UNUSED(argc);
 	DESIRE_UNUSED(argv);

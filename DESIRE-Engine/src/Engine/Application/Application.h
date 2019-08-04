@@ -32,7 +32,7 @@ public:
 	virtual void Kill() = 0;
 	virtual void Update() = 0;
 
-	static int Start(int argc, const char * const *argv);
+	static int Start(int argc, const char* const* argv);
 	static void Stop(int returnValue = 0);
 
 protected:
@@ -65,7 +65,7 @@ protected:
 private:
 	void Run();
 
-	virtual CreationParams GetCreationParams(int argc, const char * const *argv);
+	virtual CreationParams GetCreationParams(int argc, const char* const* argv);
 
 	static void CreateModules();
 	static void DestroyModules();

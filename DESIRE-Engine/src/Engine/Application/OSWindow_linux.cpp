@@ -17,7 +17,7 @@
 class OSWindowImpl
 {
 public:
-	Display *display;
+	Display* display;
 	Window windowHandle;
 	Cursor cursors[OSWindow::NUM_CURSORS];
 };
@@ -143,7 +143,7 @@ void* OSWindow::GetHandle() const
 	return impl->windowHandle;
 }
 
-void OSWindow::SetWindowTitle(const char *newTitle)
+void OSWindow::SetWindowTitle(const char* newTitle)
 {
 	if(impl->display == nullptr)
 	{
@@ -210,7 +210,7 @@ void OSWindow::GetClipboardString(WritableString& outString)
 	}
 
 	int size = 0;
-	char *ptr = XFetchBytes(impl->display, &size);
+	char* ptr = XFetchBytes(impl->display, &size);
 	if(ptr != nullptr)
 	{
 		outString.Assign(ptr, size);

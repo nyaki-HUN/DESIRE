@@ -25,7 +25,7 @@ public:
 		NOTIFICATION_LOCAL
 	};
 
-	NotificationEvent(ENotificationType notifType, const char *message)
+	NotificationEvent(ENotificationType notifType, const char* message)
 		: CoreAppEvent(EAppEventType::Notification)
 		, notifType(notifType)
 		, message(message)
@@ -34,7 +34,7 @@ public:
 	}
 
 	ENotificationType notifType;
-	const char *message;
+	const char* message;
 };
 
 // --------------------------------------------------------------------------------------------------------------------

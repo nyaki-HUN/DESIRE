@@ -14,7 +14,7 @@
 class OSWindowImpl
 {
 public:
-	ANativeWindow *nativeWindow = nullptr;
+	ANativeWindow* nativeWindow = nullptr;
 };
 
 // --------------------------------------------------------------------------------------------------------------------

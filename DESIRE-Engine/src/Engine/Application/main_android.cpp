@@ -8,7 +8,7 @@
 
 #include <android_native_app_glue.h>
 
-static void Desire_HandleOnAppCmd(android_app *androidApp, int32_t cmd)
+static void Desire_HandleOnAppCmd(android_app* androidApp, int32_t cmd)
 {
 	switch(cmd)
 	{
@@ -32,7 +32,7 @@ static void Desire_HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 				params.height = (uint16_t)height;
 				params.isFullscreen = true;
 
-				OSWindow *window = new OSWindow(params);
+				OSWindow* window = new OSWindow(params);
 				window->impl->nativeWindow = androidApp->window;
 				androidApp->userData = window;
 			}
@@ -49,7 +49,7 @@ static void Desire_HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 			{
 				int32_t width = ANativeWindow_getWidth(androidApp->window);
 				int32_t height = ANativeWindow_getHeight(androidApp->window);
-				OSWindow *window = reinterpret_cast<OSWindow*>(androidApp->userData);
+				OSWindow* window = reinterpret_cast<OSWindow*>(androidApp->userData);
 				window->SetSize((uint16_t)width, (uint16_t)height);
 			}
 			break;
@@ -109,7 +109,7 @@ static void Desire_HandleOnAppCmd(android_app *androidApp, int32_t cmd)
 	}
 }
 
-static int32_t Desire_AndroidOnInputEvent(android_app *app, AInputEvent *event)
+static int32_t Desire_AndroidOnInputEvent(android_app* app, AInputEvent* event)
 {
 	if(AInputEvent_getType(event) == AINPUT_EVENT_TYPE_MOTION)
 	{
@@ -136,7 +136,7 @@ static int32_t Desire_AndroidOnInputEvent(android_app *app, AInputEvent *event)
 }
 
 // Android native glue entry point
-void android_main(android_app *androidApp)
+void android_main(android_app* androidApp)
 {
 	if(androidApp == nullptr || androidApp->activity == nullptr)
 	{

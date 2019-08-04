@@ -17,13 +17,13 @@ public:
 		if(msg == WM_CREATE)
 		{
 			// Store pointer to the WINDOWSWindow in user data area
-			CREATESTRUCT *createStruct = (CREATESTRUCT*)lParam;
+			CREATESTRUCT* createStruct = (CREATESTRUCT*)lParam;
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)createStruct->lpCreateParams);
 			return 0;
 		}
 
 		// Get the window instance
-		OSWindow *window = reinterpret_cast<OSWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+		OSWindow* window = reinterpret_cast<OSWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 		if(window == nullptr)
 		{
 			return DefWindowProc(hWnd, msg, wParam, lParam);
@@ -230,7 +230,7 @@ void* OSWindow::GetHandle() const
 	return impl->hWnd;
 }
 
-void OSWindow::SetWindowTitle(const char *newTitle)
+void OSWindow::SetWindowTitle(const char* newTitle)
 {
 	SetWindowText(impl->hWnd, newTitle);
 }
@@ -273,7 +273,7 @@ bool OSWindow::SetClipboardString(const String& string)
 		return false;
 	}
 
-	void *ptr = GlobalLock(stringHandle);
+	void* ptr = GlobalLock(stringHandle);
 	if(ptr == nullptr)
 	{
 		return false;
@@ -302,7 +302,7 @@ void OSWindow::GetClipboardString(WritableString& outString)
 		HGLOBAL stringHandle = GetClipboardData(CF_TEXT);
 		if(stringHandle != nullptr)
 		{
-			char *ptr = (char*)GlobalLock(stringHandle);
+			char* ptr = (char*)GlobalLock(stringHandle);
 			if(ptr != nullptr)
 			{
 				outString.Assign(ptr, strlen(ptr));
