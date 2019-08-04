@@ -60,10 +60,10 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 	// argCount is the number of arguments to call the script function with (-2 because we need to exclude the instance and the function name)
 	const SQInteger argCount = sq_gettop(vm) - 2;
 
-	SquirrelScriptComponent *scriptComp = Sqrat::Var<SquirrelScriptComponent*>(vm, -2 - argCount).value;
+	SquirrelScriptComponent* scriptComp = Sqrat::Var<SquirrelScriptComponent*>(vm, -2 - argCount).value;
 	ASSERT(vm == scriptComp->vm);
 
-	const char *functionName;
+	const char* functionName = nullptr;
 	sq_getstring(vm, -1 - argCount, &functionName);
 
 	if(scriptComp->PrepareFunctionCall(functionName))
@@ -82,7 +82,7 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 	return 0;
 }
 
-bool SquirrelScriptComponent::PrepareFunctionCall(const char *functionName)
+bool SquirrelScriptComponent::PrepareFunctionCall(const char* functionName)
 {
 	ASSERT(functionName != nullptr);
 
@@ -115,7 +115,7 @@ void SquirrelScriptComponent::ExecuteFunctionCall()
 	const SQRESULT result = sq_call(vm, numFunctionCallArgs, SQFalse, SQTrue);
 	// Restore the original stack size
 	sq_settop(vm, savedStackTop);
-	
+
 	if(SQ_FAILED(result))
 	{
 		LOG_ERROR("Execution error");
@@ -150,7 +150,7 @@ bool SquirrelScriptComponent::AddFunctionCallArg(bool arg)
 	return true;
 }
 
-bool SquirrelScriptComponent::AddFunctionCallArg(void *arg)
+bool SquirrelScriptComponent::AddFunctionCallArg(void* arg)
 {
 	ASSERT(arg != nullptr);
 	sq_pushuserpointer(vm, arg);
@@ -160,7 +160,7 @@ bool SquirrelScriptComponent::AddFunctionCallArg(void *arg)
 
 bool SquirrelScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	sq_pushstring(vm, arg.Str(), (SQInteger)arg.Length());
+	sq_pushstring(vm, arg.Str(), static_cast<SQInteger>(arg.Length()));
 	numFunctionCallArgs++;
 	return true;
 }

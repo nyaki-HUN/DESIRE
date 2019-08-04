@@ -8,7 +8,7 @@
 #include "lua.hpp"
 #include "LuaBridge/LuaBridge.h"
 
-LuaScriptComponent::LuaScriptComponent(Object& object, lua_State *L)
+LuaScriptComponent::LuaScriptComponent(Object& object, lua_State* L)
 	: ScriptComponent(object)
 	, L(L)
 {
@@ -17,12 +17,11 @@ LuaScriptComponent::LuaScriptComponent(Object& object, lua_State *L)
 
 LuaScriptComponent::~LuaScriptComponent()
 {
-
 }
 
 void LuaScriptComponent::CallByType(EBuiltinFuncType funcType)
 {
-	const char *functionNames[] =
+	const char* functionNames[] =
 	{
 		"Update",
 		"Init",
@@ -33,11 +32,11 @@ void LuaScriptComponent::CallByType(EBuiltinFuncType funcType)
 	Call(functionNames[(size_t)funcType]);
 }
 
-int LuaScriptComponent::CallFromScript(lua_State *from_L)
+int LuaScriptComponent::CallFromScript(lua_State* from_L)
 {
 	// argCount is the number of arguments to call the script function with (-2 because we need to exclude the instance and the function name)
 	const int argCount = lua_gettop(from_L) - 2;
-	const char *functionName = lua_tostring(from_L, -1 - argCount);
+	const char* functionName = lua_tostring(from_L, -1 - argCount);
 
 	if(PrepareFunctionCall(functionName))
 	{
@@ -63,7 +62,7 @@ int LuaScriptComponent::CallFromScript(lua_State *from_L)
 	return 0;
 }
 
-bool LuaScriptComponent::PrepareFunctionCall(const char *functionName)
+bool LuaScriptComponent::PrepareFunctionCall(const char* functionName)
 {
 	ASSERT(functionName != nullptr);
 
@@ -120,7 +119,7 @@ bool LuaScriptComponent::AddFunctionCallArg(bool arg)
 	return true;
 }
 
-bool LuaScriptComponent::AddFunctionCallArg(void *arg)
+bool LuaScriptComponent::AddFunctionCallArg(void* arg)
 {
 	lua_pushlightuserdata(L, arg);
 	numFunctionCallArgs++;
