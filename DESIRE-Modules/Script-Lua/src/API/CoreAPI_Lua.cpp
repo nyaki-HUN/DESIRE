@@ -9,10 +9,8 @@
 #include "Engine/Core/math/math.h"
 #include "Engine/Core/math/Rand.h"
 #include "Engine/Scene/Transform.h"
-#include "Engine/Physics/PhysicsComponent.h"
-#include "Engine/Render/RenderComponent.h"
 
-void RegisterVectormathFunctions_Lua(lua_State *L)
+void RegisterVectormathFunctions_Lua(lua_State* L)
 {
 	// Vector3
 	luabridge::getGlobalNamespace(L).beginClass<Vector3>("Vector3")
@@ -174,7 +172,7 @@ void RegisterVectormathFunctions_Lua(lua_State *L)
 		.endClass();
 }
 
-void RegisterMathFunctions_Lua(lua_State *L)
+void RegisterMathFunctions_Lua(lua_State* L)
 {
 	luabridge::Namespace rootTable = luabridge::getGlobalNamespace(L);
 
@@ -220,7 +218,7 @@ void RegisterMathFunctions_Lua(lua_State *L)
 	luabridge::setGlobal(L, &Rand::s_globalRand, "globalRand");
 }
 
-void RegisterCoreAPI_Lua(lua_State *L)
+void RegisterCoreAPI_Lua(lua_State* L)
 {
 	RegisterVectormathFunctions_Lua(L);
 	RegisterMathFunctions_Lua(L);
@@ -246,9 +244,6 @@ void RegisterCoreAPI_Lua(lua_State *L)
 		.addFunction("SetActive", &Object::SetActive)
 		.addFunction("RemoveComponent", &Object::RemoveComponent)
 		.addFunction<Component* (Object::*)(int) const>("GetComponent", &Object::GetComponentByTypeId)
-		.addFunction<PhysicsComponent* (Object::*)() const>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
-		.addFunction<RenderComponent* (Object::*)() const>("GetRenderComponent", &Object::GetComponent<RenderComponent>)
-		.addFunction<LuaScriptComponent* (Object::*)() const>("GetScriptComponent", &Object::GetComponent<LuaScriptComponent>)
 		.addProperty("transform", &Object::GetTransform)
 		.addFunction("GetParent", &Object::GetParent)
 		.endClass();

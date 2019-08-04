@@ -47,6 +47,8 @@ SquirrelScriptSystem::SquirrelScriptSystem()
 	rootTable.Bind("ScriptComponent", Sqrat::DerivedClass<SquirrelScriptComponent, Component, Sqrat::NoConstructor<SquirrelScriptComponent>>(vm, "ScriptComponent")
 		.SquirrelFunc("Call", &SquirrelScriptComponent::CallFromScript)
 	);
+
+	Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object", false).Func<SquirrelScriptComponent* (Object::*)() const>("GetScriptComponent", &Object::GetComponent<SquirrelScriptComponent>);
 }
 
 SquirrelScriptSystem::~SquirrelScriptSystem()

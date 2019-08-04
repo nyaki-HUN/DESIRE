@@ -43,6 +43,10 @@ LuaScriptSystem::LuaScriptSystem()
 	luabridge::getGlobalNamespace(L).deriveClass<LuaScriptComponent, Component>("ScriptComponent")
 		.addCFunction("Call", &LuaScriptComponent::CallFromScript)
 		.endClass();
+
+	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
+		.addFunction<LuaScriptComponent* (Object::*)() const>("GetScriptComponent", &Object::GetComponent<LuaScriptComponent>)
+		.endClass();
 }
 
 LuaScriptSystem::~LuaScriptSystem()

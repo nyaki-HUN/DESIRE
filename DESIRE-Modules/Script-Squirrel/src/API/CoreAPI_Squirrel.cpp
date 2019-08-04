@@ -3,12 +3,12 @@
 #include "Engine/Modules.h"
 #include "Engine/Application/Application.h"
 #include "Engine/Core/Component.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
 #include "Engine/Core/math/Rand.h"
-
-#include "Engine/Scene/Object.h"
+#include "Engine/Scene/Transform.h"
 
 void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 {
@@ -227,9 +227,29 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 
 	HSQUIRRELVM vm = rootTable.GetVM();
 
+	// Transform
+	rootTable.Bind("Transform", Sqrat::Class<Transform, Sqrat::NoConstructor<Transform>>(vm, "Transform")
+		.Prop("localPosition", &Transform::GetLocalPosition, &Transform::SetLocalPosition)
+		.Prop("localRotation", &Transform::GetLocalRotation, &Transform::SetLocalRotation)
+		.Prop("localScale", &Transform::GetLocalScale, &Transform::SetLocalScale)
+		.Prop("position", &Transform::GetPosition, &Transform::SetPosition)
+		.Prop("rotation", &Transform::GetRotation, &Transform::SetRotation)
+		.Prop("scale", &Transform::GetScale, &Transform::SetScale)
+	);
+
 	// Component
 	rootTable.Bind("Component", Sqrat::Class<Component, Sqrat::NoConstructor<Component>>(vm, "Component")
 		.Prop("object", &Component::GetObject)
+	);
+
+	// Object
+	rootTable.Bind("Object", Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object")
+		.Func("GetObjectName", &Object::GetObjectName)
+		.Func("SetActive", &Object::SetActive)
+		.Func("RemoveComponent", &Object::RemoveComponent)
+		.Func<Component * (Object::*)(int) const>("GetComponent", &Object::GetComponentByTypeId)
+		.Prop("transform", &Object::GetTransform)
+		.Func("GetParent", &Object::GetParent)
 	);
 
 	// Timer
