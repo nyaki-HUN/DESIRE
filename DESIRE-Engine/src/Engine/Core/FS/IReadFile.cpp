@@ -30,7 +30,7 @@ size_t IReadFile::ReadString(char** str)
 		return 0;
 	}
 
-	*str = (char*)malloc(len);
+	*str = static_cast<char*>(malloc(len));
 	return ReadBuffer(*str, len);
 }
 
@@ -41,7 +41,7 @@ MemoryBuffer IReadFile::ReadFileContent()
 		return MemoryBuffer();
 	}
 
-	MemoryBuffer buffer = MemoryBuffer((size_t)(fileSize - position));
+	MemoryBuffer buffer = MemoryBuffer(static_cast<size_t>(fileSize - position));
 	const size_t numBytesRead = ReadBuffer(buffer.data, buffer.size);
 	ASSERT(numBytesRead == buffer.size);
 	return buffer;

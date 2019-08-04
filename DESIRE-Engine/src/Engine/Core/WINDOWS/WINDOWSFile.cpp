@@ -40,7 +40,10 @@ bool WINDOWSFile::Seek(int64_t offset, ESeekOrigin origin)
 
 void WINDOWSFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
 {
+	ASSERT(buffer != nullptr);
 	ASSERT(callback != nullptr);
+
+	DESIRE_TODO("Implement proper async file read");
 	ReadBuffer(buffer, size);
 	callback();
 }

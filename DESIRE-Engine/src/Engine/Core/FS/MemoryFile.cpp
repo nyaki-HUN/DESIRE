@@ -1,11 +1,11 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/FS/MemoryFile.h"
 
-MemoryFile::MemoryFile(std::unique_ptr<uint8_t[]> data, int64_t size)
+MemoryFile::MemoryFile(std::unique_ptr<uint8_t[]> i_data, int64_t size)
 	: IReadFile(size)
-	, data(std::move(data))
+	, data(std::move(i_data))
 {
-	ASSERT(size >= 0);
+	ASSERT(fileSize >= 0);
 	ASSERT(data != nullptr);
 }
 

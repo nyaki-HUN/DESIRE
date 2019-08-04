@@ -4,9 +4,9 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Render/RenderComponent.h"
 
-void RegisterRenderAPI_AngelScript(asIScriptEngine *engine)
+void RegisterRenderAPI_AngelScript(asIScriptEngine* engine)
 {
-	Render *render = Modules::Render.get();
+	Render* render = Modules::Render.get();
 	if(render == nullptr)
 	{
 		return;
