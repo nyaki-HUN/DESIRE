@@ -195,6 +195,7 @@
     <ClInclude Include="..\..\src\Engine\Core\math\Matrix4.h" />
     <ClInclude Include="..\..\src\Engine\Core\math\Quat.h" />
     <ClInclude Include="..\..\src\Engine\Core\math\Rand.h" />
+    <ClInclude Include="..\..\src\Engine\Core\math\Transform.h" />
     <ClInclude Include="..\..\src\Engine\Core\math\Vector2.h" />
     <ClInclude Include="..\..\src\Engine\Core\math\Vector3.h" />
     <ClInclude Include="..\..\src\Engine\Core\math\Vector4.h" />
@@ -235,7 +236,6 @@
     <ClInclude Include="..\..\src\Engine\Scene\QuadTreeLeaf.h" />
     <ClInclude Include="..\..\src\Engine\Scene\QuadTreeSceneManager.h" />
     <ClInclude Include="..\..\src\Engine\Scene\SceneGraphTraversal.h" />
-    <ClInclude Include="..\..\src\Engine\Scene\Transform.h" />
     <ClInclude Include="..\..\src\Engine\Script\IScript.h" />
     <ClInclude Include="..\..\src\Engine\Script\NativeScriptComponent.h" />
     <ClInclude Include="..\..\src\Engine\Script\ScriptComponent.h" />
@@ -296,6 +296,7 @@
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\Rand.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\math\Transform.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\math.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\GameController.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\Input.cpp" />
@@ -327,7 +328,6 @@
     <ClCompile Include="..\..\src\Engine\Resource\TextureLoader\TgaLoader.cpp" />
     <ClCompile Include="..\..\src\Engine\Scene\QuadTreeLeaf.cpp" />
     <ClCompile Include="..\..\src\Engine\Scene\QuadTreeSceneManager.cpp" />
-    <ClCompile Include="..\..\src\Engine\Scene\Transform.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\NativeScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp" />

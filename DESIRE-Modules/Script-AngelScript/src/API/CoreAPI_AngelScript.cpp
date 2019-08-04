@@ -7,7 +7,7 @@
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
-#include "Engine/Scene/Transform.h"
+#include "Engine/Core/math/Transform.h"
 
 static Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)	{ return new Vector3(vec0.Cross(vec1)); }
 static Vector3* Transform_GetPosition(const Transform& transform)		{ return new Vector3(transform.GetPosition()); }

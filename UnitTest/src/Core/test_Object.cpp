@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Engine/Core/Object.h"
-#include "Engine/Scene/Transform.h"
+#include "Engine/Core/math/Transform.h"
 #include "Engine/Scene/SceneGraphTraversal.h"
 
 TEST_CASE("Object", "[Scene]")

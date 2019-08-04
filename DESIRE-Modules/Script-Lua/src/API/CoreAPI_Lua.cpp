@@ -8,7 +8,7 @@
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
 #include "Engine/Core/math/Rand.h"
-#include "Engine/Scene/Transform.h"
+#include "Engine/Core/math/Transform.h"
 
 void RegisterVectormathFunctions_Lua(lua_State* L)
 {

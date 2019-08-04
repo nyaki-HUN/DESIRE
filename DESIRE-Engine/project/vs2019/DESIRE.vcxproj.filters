@@ -360,6 +360,9 @@
     <ClInclude Include="..\..\src\Engine\Core\math\Rand.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\Transform.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\Vector2.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
@@ -478,9 +481,6 @@
       <Filter>src\Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Scene\SceneGraphTraversal.h">
-      <Filter>src\Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Scene\Transform.h">
       <Filter>src\Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Script\IScript.h">
@@ -659,6 +659,9 @@
     <ClCompile Include="..\..\src\Engine\Core\math\Rand.cpp">
       <Filter>src\Engine\Core\math</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\math\Transform.cpp">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\math\math.cpp">
       <Filter>src\Engine\Core\math</Filter>
     </ClCompile>
@@ -750,9 +753,6 @@
       <Filter>src\Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Scene\QuadTreeSceneManager.cpp">
-      <Filter>src\Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Scene\Transform.cpp">
       <Filter>src\Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Script\NativeScriptComponent.cpp">
