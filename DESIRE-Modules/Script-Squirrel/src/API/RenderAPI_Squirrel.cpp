@@ -20,7 +20,7 @@ void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Prop("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
 	);
 
-	Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object", false).Func<RenderComponent* (Object::*)() const>("GetRenderComponent", &Object::GetComponent<RenderComponent>);
+	Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object", false).Func("GetRenderComponent", &Object::GetComponent<RenderComponent>);
 
 	// Render
 	rootTable.Bind("IRender", Sqrat::Class<Render, Sqrat::NoConstructor<Render>>(vm, "IRender")

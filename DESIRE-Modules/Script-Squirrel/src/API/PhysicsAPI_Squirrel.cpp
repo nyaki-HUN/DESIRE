@@ -20,7 +20,7 @@ void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Prop("mass", &PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
 	);
 
-	Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object", false).Func<PhysicsComponent* (Object::*)() const>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>);
+	Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object", false).Func("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>);
 
 	// Physics
 	rootTable.Bind("IPhysics", Sqrat::Class<Physics, Sqrat::NoConstructor<Physics>>(vm, "IPhysics")

@@ -247,7 +247,7 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Func("GetObjectName", &Object::GetObjectName)
 		.Func("SetActive", &Object::SetActive)
 		.Func("RemoveComponent", &Object::RemoveComponent)
-		.Func<Component * (Object::*)(int) const>("GetComponent", &Object::GetComponentByTypeId)
+		.Func("GetComponent", &Object::GetComponentByTypeId)
 		.Prop("transform", &Object::GetTransform)
 		.Func("GetParent", &Object::GetParent)
 	);
