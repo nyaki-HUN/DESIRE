@@ -53,7 +53,7 @@ function Function1()
 end
 
 function Function2(a1, a2)
-	print("FunctionTest called with: ", a1, ", ", a2);
+	print("Function2 called with: ", a1, ", ", a2);
 end
 
 function Function3(str)

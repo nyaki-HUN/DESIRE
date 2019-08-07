@@ -63,7 +63,7 @@ void Function1()
 
 void Function2(float a1, uint32 a2)
 {
-	print("FunctionTest called with: " + a1 + ", " + a2);
+	print("Function2 called with: " + a1 + ", " + a2);
 }
 
 void Function3(const string& in str)

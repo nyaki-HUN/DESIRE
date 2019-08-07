@@ -63,7 +63,7 @@ function Function1()
 
 function Function2(a1, a2)
 {
-	print("FunctionTest called with: " + a1 + ", " + a2);
+	print("Function2 called with: " + a1 + ", " + a2);
 }
 
 function Function3(str)
