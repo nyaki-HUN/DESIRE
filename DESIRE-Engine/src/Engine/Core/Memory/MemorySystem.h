@@ -11,7 +11,7 @@ class Allocator;
 class MemorySystem
 {
 public:
-	static constexpr size_t kDefaultAlignment = alignof(std::max_align_t);
+	static constexpr size_t kDefaultAlignment = __STDCPP_DEFAULT_NEW_ALIGNMENT__;
 
 	static void* Alloc(size_t size, size_t alignment = kDefaultAlignment);
 	static void* Calloc(size_t num, size_t size);
