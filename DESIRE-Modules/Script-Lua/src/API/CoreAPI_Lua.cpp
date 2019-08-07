@@ -174,29 +174,28 @@ void RegisterVectormathFunctions_Lua(lua_State* L)
 
 void RegisterMathFunctions_Lua(lua_State* L)
 {
-	luabridge::Namespace rootTable = luabridge::getGlobalNamespace(L);
-
-	// Trigonometric functions
-	rootTable.addFunction("cos", &std::cosf);
-	rootTable.addFunction("sin", &std::sinf);
-	rootTable.addFunction("tan", &std::tanf);
-	rootTable.addFunction("acos", &std::acosf);
-	rootTable.addFunction("asin", &std::asinf);
-	rootTable.addFunction("atan", &std::atanf);
-	rootTable.addFunction("atan2", &std::atan2f);
-	// Hyberbolic functions
-	rootTable.addFunction("cosh", &std::coshf);
-	rootTable.addFunction("sinh", &std::sinhf);
-	rootTable.addFunction("tanh", &std::tanhf);
-	// Exponential and logarithmic functions
-	rootTable.addFunction("log", &std::logf);
-	rootTable.addFunction("log10", &std::log10f);
-	// Power functions
-	rootTable.addFunction("pow", &std::powf);
-	rootTable.addFunction("sqrt", &std::sqrtf);
-	// Absolute value functions
-	rootTable.addFunction("fabsf", &std::fabsf);
-	rootTable.addFunction<int(*)(int)>("abs", &std::abs);
+	luabridge::getGlobalNamespace(L)
+		// Trigonometric functions
+		.addFunction("cos", &std::cosf)
+		.addFunction("sin", &std::sinf)
+		.addFunction("tan", &std::tanf)
+		.addFunction("acos", &std::acosf)
+		.addFunction("asin", &std::asinf)
+		.addFunction("atan", &std::atanf)
+		.addFunction("atan2", &std::atan2f)
+		// Hyberbolic functions
+		.addFunction("cosh", &std::coshf)
+		.addFunction("sinh", &std::sinhf)
+		.addFunction("tanh", &std::tanhf)
+		// Exponential and logarithmic functions
+		.addFunction("log", &std::logf)
+		.addFunction("log10", &std::log10f)
+		// Power functions
+		.addFunction("pow", &std::powf)
+		.addFunction("sqrt", &std::sqrtf)
+		// Absolute value functions
+		.addFunction("fabsf", &std::fabsf)
+		.addFunction<int(*)(int)>("abs", &std::abs);
 
 	// Math
 	luabridge::getGlobalNamespace(L).beginNamespace("Math")
