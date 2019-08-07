@@ -19,7 +19,7 @@ void RegisterRenderAPI_Lua(lua_State* L)
 		.endClass();
 
 	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
-		.addFunction<RenderComponent* (Object::*)() const>("GetRenderComponent", &Object::GetComponent<RenderComponent>)
+		.addFunction("GetRenderComponent", &Object::GetComponent<RenderComponent>)
 		.endClass();
 
 	// Render

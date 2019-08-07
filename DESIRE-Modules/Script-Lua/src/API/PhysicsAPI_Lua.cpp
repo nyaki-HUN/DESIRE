@@ -19,7 +19,7 @@ void RegisterPhysicsAPI_Lua(lua_State* L)
 		.endClass();
 
 	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
-		.addFunction<PhysicsComponent* (Object::*)() const>("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
+		.addFunction("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
 		.endClass();
 
 	// Physics
