@@ -234,7 +234,7 @@ void RegisterCoreAPI_Lua(lua_State* L)
 
 	// Component
 	luabridge::getGlobalNamespace(L).beginClass<Component>("Component")
-		.addProperty("object", &Component::GetObject)
+		.addProperty<Object&, Object*>("object", &Component::GetObject)
 		.endClass();
 
 	// Object
