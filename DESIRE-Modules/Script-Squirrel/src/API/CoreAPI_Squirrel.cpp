@@ -239,6 +239,7 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 
 	// Component
 	rootTable.Bind("Component", Sqrat::Class<Component, Sqrat::NoConstructor<Component>>(vm, "Component")
+		.Prop("enabled", &Component::IsEnabled, &Component::SetEnabled)
 		.Prop("object", &Component::GetObject)
 	);
 

@@ -295,6 +295,8 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
 	// Component
 	engine->RegisterEnum("EComponent");
 	engine->RegisterInterface("Component");
+	engine->RegisterObjectMethod("Component", "bool get_enabled() const", asMETHODPR(Component, IsEnabled, () const, bool), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Component", "void set_enabled(bool)", asMETHODPR(Component, SetEnabled, (bool), void), asCALL_THISCALL);
 	engine->RegisterObjectType("Object", 0, asOBJ_REF | asOBJ_NOCOUNT);
 	engine->RegisterInterfaceMethod("Component", "Object@ get_object()");
 

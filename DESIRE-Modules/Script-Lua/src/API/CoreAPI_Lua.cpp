@@ -234,6 +234,7 @@ void RegisterCoreAPI_Lua(lua_State* L)
 
 	// Component
 	luabridge::getGlobalNamespace(L).beginClass<Component>("Component")
+		.addProperty("enabled", &Component::IsEnabled, &Component::SetEnabled)
 		.addProperty<Object&, Object*>("object", &Component::GetObject)
 		.endClass();
 
