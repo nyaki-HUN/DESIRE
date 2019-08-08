@@ -3,7 +3,6 @@
 #include "Engine/Core/platform.h"
 
 #include <stdint.h>
-#include <cstddef>	// for std::max_align_t
 #include <new>
 
 class Allocator;
