@@ -29,10 +29,7 @@ public:
 	virtual void CloneTo(Object& otherObject) const = 0;
 	virtual int GetTypeId() const = 0;
 
-	inline Object& GetObject() const
-	{
-		return object;
-	}
+	Object& GetObject() const;
 
 protected:
 	Object& object;

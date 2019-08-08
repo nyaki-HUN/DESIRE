@@ -27,3 +27,8 @@ bool Component::IsEnabled() const
 {
 	return enabled;
 }
+
+Object& Component::GetObject() const
+{
+	return object;
+}
