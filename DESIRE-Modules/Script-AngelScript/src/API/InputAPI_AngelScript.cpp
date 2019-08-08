@@ -3,9 +3,9 @@
 #include "Engine/Modules.h"
 #include "Engine/Input/Input.h"
 
-void RegisterInputAPI_AngelScript(asIScriptEngine *engine)
+void RegisterInputAPI_AngelScript(asIScriptEngine* engine)
 {
-	Input *input = Modules::Input.get();
+	Input* input = Modules::Input.get();
 	if(input == nullptr)
 	{
 		return;

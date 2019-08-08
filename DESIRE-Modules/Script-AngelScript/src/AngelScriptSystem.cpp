@@ -60,7 +60,7 @@ AngelScriptSystem::AngelScriptSystem()
 
 AngelScriptSystem::~AngelScriptSystem()
 {
-	for(asIScriptContext *ctx : contextPool)
+	for(asIScriptContext* ctx : contextPool)
 	{
 		ctx->Release();
 	}
@@ -70,11 +70,11 @@ AngelScriptSystem::~AngelScriptSystem()
 	engine = nullptr;
 }
 
-ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
-	asIScriptModule *module = engine->GetModule(scriptName);
+	asIScriptModule* module = engine->GetModule(scriptName);
 	if(module == nullptr)
 	{
 		module = CompileScript(scriptName, engine);
@@ -85,23 +85,23 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 	}
 
 	// Get factory function
-	asIScriptFunction *factoryFunc = (asIScriptFunction*)module->GetUserData();
+	asIScriptFunction* factoryFunc = (asIScriptFunction*)module->GetUserData();
 	if(factoryFunc == nullptr)
 	{
 		return nullptr;
 	}
 
-	AngelScriptComponent *scriptComponent = &object.AddComponent<AngelScriptComponent>();
+	AngelScriptComponent* scriptComponent = &object.AddComponent<AngelScriptComponent>();
 
 	// Call the constructor
-	asIScriptContext *ctx = engine->RequestContext();
+	asIScriptContext* ctx = engine->RequestContext();
 	ctx->Prepare(factoryFunc);
 	ctx->SetArgObject(0, scriptComponent);
 	int result = ctx->Execute();
 	if(result == asEXECUTION_FINISHED)
 	{
 		// Get the object that was created and increase the reference, otherwise it would be destroyed when the context is reused or destroyed
-		scriptComponent->scriptObject = *(asIScriptObject**)ctx->GetAddressOfReturnValue();
+		scriptComponent->scriptObject = *(asIScriptObject * *)ctx->GetAddressOfReturnValue();
 		scriptComponent->scriptObject->AddRef();
 	}
 	else
@@ -115,7 +115,7 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 	return scriptComponent;
 }
 
-asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScriptEngine *engine)
+asIScriptModule* AngelScriptSystem::CompileScript(const char* scriptName, asIScriptEngine* engine)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.as", scriptName);
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
@@ -136,7 +136,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 	scriptSrc.Append(content.data, content.size);
 	scriptSrc += "}";
 
-	asIScriptModule *module = engine->GetModule(scriptName, asGM_ALWAYS_CREATE);
+	asIScriptModule* module = engine->GetModule(scriptName, asGM_ALWAYS_CREATE);
 	module->AddScriptSection(scriptName, scriptSrc.Str(), scriptSrc.Length());
 	int result = module->Build();
 	if(result != asSUCCESS)
@@ -145,14 +145,14 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 		return module;
 	}
 
-	asITypeInfo *typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName));
-	
+	asITypeInfo* typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName));
+
 	// Cache factory in the script module
-	asIScriptFunction *factoryFunc = typeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
+	asIScriptFunction* factoryFunc = typeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
 	module->SetUserData(factoryFunc);
-	
+
 	// Cache built-in functions in the object type
-	const char *builtinFunctionNames[] =
+	const char* builtinFunctionNames[] =
 	{
 		"Update",
 		"Init",
@@ -162,7 +162,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char *scriptName, asIScr
 
 	for(auto i : Enumerator<ScriptComponent::EBuiltinFuncType>())
 	{
-		asIScriptFunction *func = typeInfo->GetMethodByName(builtinFunctionNames[i]);
+		asIScriptFunction* func = typeInfo->GetMethodByName(builtinFunctionNames[i]);
 		typeInfo->SetUserData(func, i);
 	}
 
@@ -173,16 +173,16 @@ asIScriptContext* AngelScriptSystem::CreateScriptContext()
 {
 	ASSERT(engine != nullptr);
 
-	asIScriptContext *ctx = engine->CreateContext();
-	int result = ctx->SetExceptionCallback(asMETHODPR(AngelScriptSystem, ExceptionCallback, (asIScriptContext *), void), this, asCALL_THISCALL);
+	asIScriptContext* ctx = engine->CreateContext();
+	int result = ctx->SetExceptionCallback(asMETHODPR(AngelScriptSystem, ExceptionCallback, (asIScriptContext*), void), this, asCALL_THISCALL);
 	ASSERT(result == asSUCCESS);
-	result = ctx->SetLineCallback(asMETHODPR(AngelScriptSystem, LineCallback, (asIScriptContext *), void), this, asCALL_THISCALL);
+	result = ctx->SetLineCallback(asMETHODPR(AngelScriptSystem, LineCallback, (asIScriptContext*), void), this, asCALL_THISCALL);
 	ASSERT(result == asSUCCESS);
 
 	return ctx;
 }
 
-bool AngelScriptSystem::IsBreakpoint(const char *scriptSection, int line, asIScriptFunction *function) const
+bool AngelScriptSystem::IsBreakpoint(const char* scriptSection, int line, asIScriptFunction* function) const
 {
 	DESIRE_UNUSED(scriptSection);
 	DESIRE_UNUSED(line);
@@ -192,13 +192,13 @@ bool AngelScriptSystem::IsBreakpoint(const char *scriptSection, int line, asIScr
 	return false;
 }
 
-void AngelScriptSystem::PrintCallback(asIScriptGeneric *gen)
+void AngelScriptSystem::PrintCallback(asIScriptGeneric* gen)
 {
-	const std::string *message = static_cast<const std::string*>(gen->GetArgObject(0));
+	const std::string* message = static_cast<const std::string*>(gen->GetArgObject(0));
 	LOG_DEBUG("%s", message->c_str());
 }
 
-void AngelScriptSystem::MessageCallback(const asSMessageInfo *msg, void *thisPtr)
+void AngelScriptSystem::MessageCallback(const asSMessageInfo* msg, void* thisPtr)
 {
 	DESIRE_UNUSED(thisPtr);
 
@@ -216,13 +216,13 @@ void AngelScriptSystem::MessageCallback(const asSMessageInfo *msg, void *thisPtr
 	}
 }
 
-asIScriptContext* AngelScriptSystem::RequestContextCallback(asIScriptEngine *engine, void *thisPtr)
+asIScriptContext* AngelScriptSystem::RequestContextCallback(asIScriptEngine* engine, void* thisPtr)
 {
 	DESIRE_UNUSED(engine);
 
-	AngelScriptSystem *scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
+	AngelScriptSystem* scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
 
-	asIScriptContext *ctx = nullptr;
+	asIScriptContext* ctx = nullptr;
 	if(scriptSystem->contextPool.IsEmpty())
 	{
 		ctx = scriptSystem->CreateScriptContext();
@@ -236,33 +236,33 @@ asIScriptContext* AngelScriptSystem::RequestContextCallback(asIScriptEngine *eng
 	return ctx;
 }
 
-void AngelScriptSystem::ReturnContextCallback(asIScriptEngine *engine, asIScriptContext *ctx, void *thisPtr)
+void AngelScriptSystem::ReturnContextCallback(asIScriptEngine* engine, asIScriptContext* ctx, void* thisPtr)
 {
 	DESIRE_UNUSED(engine);
 
 	ctx->Unprepare();
 
-	AngelScriptSystem *scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
+	AngelScriptSystem* scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
 	scriptSystem->contextPool.Add(ctx);
 }
 
-void AngelScriptSystem::ExceptionCallback(asIScriptContext *ctx)
+void AngelScriptSystem::ExceptionCallback(asIScriptContext* ctx)
 {
 	LOG_ERROR("Exception: %s", ctx->GetExceptionString());
-	const asIScriptFunction *function = ctx->GetExceptionFunction();
+	const asIScriptFunction* function = ctx->GetExceptionFunction();
 	LOG_ERROR("module: %s", function->GetModuleName());
 	LOG_ERROR("func: %s", function->GetDeclaration());
 //	LOG_ERROR("section: %s", function->GetScriptSectionName());
 	LOG_ERROR("line: %d", ctx->GetExceptionLineNumber());
 }
 
-void AngelScriptSystem::LineCallback(asIScriptContext *ctx)
+void AngelScriptSystem::LineCallback(asIScriptContext* ctx)
 {
 	// Determine if we have reached a break point
 	int column;
-	const char *scriptSection;
+	const char* scriptSection;
 	int line = ctx->GetLineNumber(0, &column, &scriptSection);
-	asIScriptFunction *function = ctx->GetFunction();
+	asIScriptFunction* function = ctx->GetFunction();
 	if(IsBreakpoint(scriptSection, line, function))
 	{
 		// A breakpoint has been reached so the execution of the script should be suspended
@@ -271,7 +271,7 @@ void AngelScriptSystem::LineCallback(asIScriptContext *ctx)
 		// Show the call stack
 		for(asUINT i = 0; i < ctx->GetCallstackSize(); ++i)
 		{
-			asIScriptFunction *func = ctx->GetFunction(i);
+			asIScriptFunction* func = ctx->GetFunction(i);
 			line = ctx->GetLineNumber(i, &column, &scriptSection);
 			LOG_MESSAGE("%s:%s:%d,%d\n", scriptSection, func->GetDeclaration(), line, column);
 		}

@@ -14,7 +14,7 @@ static Vector3* Transform_GetPosition(const Transform& transform)		{ return new 
 static Quat* Transform_GetRotation(const Transform& transform)			{ return new Quat(transform.GetRotation()); }
 static Vector3* Transform_GetScale(const Transform& transform)			{ return new Vector3(transform.GetScale()); }
 
-void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
+void RegisterVectormathFunctions_AngelScript(asIScriptEngine* engine)
 {
 	// Vector3
 	engine->RegisterObjectType("Vector3", 0, asOBJ_REF | asOBJ_SCOPED);
@@ -239,7 +239,7 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->SetDefaultNamespace("");
 }
 
-void RegisterMathFunctions_AngelScript(asIScriptEngine *engine)
+void RegisterMathFunctions_AngelScript(asIScriptEngine* engine)
 {
 	// Trigonometric functions
 	engine->RegisterGlobalFunction("float cos(float)", asFUNCTION(std::cosf), asCALL_CDECL);
@@ -272,7 +272,7 @@ void RegisterMathFunctions_AngelScript(asIScriptEngine *engine)
 	engine->SetDefaultNamespace("");
 }
 
-void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
+void RegisterCoreAPI_AngelScript(asIScriptEngine* engine)
 {
 	RegisterVectormathFunctions_AngelScript(engine);
 	RegisterMathFunctions_AngelScript(engine);
@@ -310,7 +310,7 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine *engine)
 
 	// Timer
 	engine->RegisterObjectType("ITimer", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterGlobalProperty("ITimer Timer", (void*)Modules::Application->GetTimer());
+	engine->RegisterGlobalProperty("ITimer Timer", const_cast<Timer*>(Modules::Application->GetTimer()));
 	engine->RegisterObjectMethod("ITimer", "uint64 GetTimeMicroSec() const", asMETHODPR(Timer, GetTimeMicroSec, () const, uint64_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("ITimer", "uint GetTimeMilliSec() const", asMETHODPR(Timer, GetTimeMilliSec, () const, uint32_t), asCALL_THISCALL);
 	engine->RegisterObjectMethod("ITimer", "float GetTimeSec() const", asMETHODPR(Timer, GetTimeSec, () const, float), asCALL_THISCALL);

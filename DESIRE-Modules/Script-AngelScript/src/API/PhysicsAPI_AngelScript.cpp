@@ -4,9 +4,9 @@
 #include "Engine/Physics/Physics.h"
 #include "Engine/Physics/PhysicsComponent.h"
 
-void RegisterPhysicsAPI_AngelScript(asIScriptEngine *engine)
+void RegisterPhysicsAPI_AngelScript(asIScriptEngine* engine)
 {
-	Physics *physics = Modules::Physics.get();
+	Physics* physics = Modules::Physics.get();
 	if(physics == nullptr)
 	{
 		return;
