@@ -10,8 +10,8 @@ project "Script-Lua"
 
 	files
 	{
-		"../Externals/**.h",
-		"../Externals/**.hpp",
-		"../Externals/**.c",
-		"../Externals/**.cpp",
+		"../Externals/lua/src/*.h",
+		"../Externals/lua/src/*.hpp",
+		"../Externals/lua/src/*.c",
+		"../Externals/LuaBridge/Source/**.h",
 	}

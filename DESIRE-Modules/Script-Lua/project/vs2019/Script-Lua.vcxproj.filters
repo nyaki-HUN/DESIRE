@@ -30,7 +30,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\List.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\LuaBridge.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Map.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedObject.h">
@@ -39,10 +45,19 @@
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedPtr.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\UnorderedMap.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Vector.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\CFunctions.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\ClassInfo.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Config.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Constructor.h">
@@ -64,6 +79,9 @@
       <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Namespace.h">
+      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Security.h">
       <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Stack.h">

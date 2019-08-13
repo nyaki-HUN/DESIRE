@@ -105,11 +105,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\List.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\LuaBridge.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Map.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedObject.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedPtr.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\UnorderedMap.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Vector.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\CFunctions.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\ClassInfo.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Config.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Constructor.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\FuncTraits.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Iterator.h" />
@@ -117,6 +122,7 @@
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaHelpers.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaRef.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Namespace.h" />
+    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Security.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Stack.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeList.h" />
     <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeTraits.h" />
