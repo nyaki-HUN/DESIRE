@@ -5,9 +5,9 @@
 #include "Engine/Core/Log/LoggerPolicies.h"
 #include "Engine/Core/WINDOWS/os.h"
 
-WIN32ConsoleOutputPolicy::WIN32ConsoleOutputPolicy()
+ConsoleWindowOutputPolicy::ConsoleWindowOutputPolicy()
 {
-	// We need to create console window on WIN32
+	// We need to create console window
 	if(!AllocConsole())
 	{
 		return;
@@ -38,7 +38,7 @@ WIN32ConsoleOutputPolicy::WIN32ConsoleOutputPolicy()
 	freopen_s(&file, "CONOUT$", "w", stderr);
 }
 
-void WIN32ConsoleOutputPolicy::Process(const Log::LogData& logData)
+void ConsoleWindowOutputPolicy::Process(const Log::LogData& logData)
 {
 	bool hasToRestoreColor = true;
 	switch(logData.logType[0])

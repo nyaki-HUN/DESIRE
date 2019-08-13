@@ -51,9 +51,9 @@ struct FileOutputPolicy
 
 #if DESIRE_PLATFORM_WINDOWS
 
-struct WIN32ConsoleOutputPolicy
+struct ConsoleWindowOutputPolicy
 {
-	WIN32ConsoleOutputPolicy();
+	ConsoleWindowOutputPolicy();
 	void Process(const Log::LogData& logData);
 };
 
@@ -72,6 +72,11 @@ struct LogCatOutputPolicy
 #elif DESIRE_PLATFORM_IOS
 
 struct NSLogOutputPolicy
+{
+	void Process(const Log::LogData& logData);
+};
+
+struct XcodeOutputPolicy
 {
 	void Process(const Log::LogData& logData);
 };

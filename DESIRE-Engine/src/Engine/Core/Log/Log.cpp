@@ -18,7 +18,7 @@ void Log::LogWithData(const Log::LogData& logData)
 		static Logger<NoFilterPolicy, VisualStudioOutputPolicy> ideLogger;
 		ideLogger.Log(logData);
 
-		static Logger<NoFilterPolicy, WIN32ConsoleOutputPolicy> consoleLogger;
+		static Logger<NoFilterPolicy, ConsoleWindowOutputPolicy> consoleLogger;
 #elif DESIRE_PLATFORM_IOS
 		static Logger<NoFilterPolicy, NSLogOutputPolicy> consoleLogger;
 #elif DESIRE_PLATFORM_ANDROID
