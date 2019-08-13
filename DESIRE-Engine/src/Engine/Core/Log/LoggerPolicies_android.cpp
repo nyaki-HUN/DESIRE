@@ -1,5 +1,8 @@
-#include "stdafx.h"
-#include "Engine/Core/ANDROID/ANDROIDLoggerPolicies.h"
+#include "Engine/stdafx.h"
+
+#if DESIRE_PLATFORM_ANDROID
+
+#include "Engine/Core/Log/LoggerPolicies.h"
 
 #include <android/log.h>
 
@@ -15,3 +18,5 @@ void LogCatOutputPolicy::Process(const Log::LogData& logData)
 
 	__android_log_print(prio, "DESIRE", "[%s] %s\n", logData.logType, logData.message); break;
 }
+
+#endif // #if DESIRE_PLATFORM_ANDROID

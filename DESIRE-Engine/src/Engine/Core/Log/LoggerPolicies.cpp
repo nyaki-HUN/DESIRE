@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/Logger.h"
+#include "Engine/Core/Log/LoggerPolicies.h"
 #include "Engine/Core/Time.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IWriteFile.h"

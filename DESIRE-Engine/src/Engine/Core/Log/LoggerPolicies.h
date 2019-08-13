@@ -1,32 +1,7 @@
 #pragma once
 
-#include "Engine/Core/Log.h"
 #include "Engine/Core/FS/FilePtr_fwd.h"
-
-// --------------------------------------------------------------------------------------------------------------------
-//	This is a very generic logger class which passes on the task of filtering, formatting and outputting messages to
-//	certain policies, which are handed down to the implementation via template parameters.
-// --------------------------------------------------------------------------------------------------------------------
-
-template<typename FilterPolicy, typename OutputPolicy>
-class Logger
-{
-public:
-	Logger() {}
-	~Logger() {}
-
-	inline void Log(const Log::LogData& logData)
-	{
-		if(filterPolicy.Filter(logData))
-		{
-			outputPolicy.Process(logData);
-		}
-	}
-
-private:
-	FilterPolicy filterPolicy;
-	OutputPolicy outputPolicy;
-};
+#include "Engine/Core/Log/Log.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Default filter policies
@@ -69,3 +44,36 @@ struct FileOutputPolicy
 
 	WriteFilePtr logFile;
 };
+
+// --------------------------------------------------------------------------------------------------------------------
+//	Platform specific output policies
+// --------------------------------------------------------------------------------------------------------------------
+
+#if DESIRE_PLATFORM_WINDOWS
+
+struct WIN32ConsoleOutputPolicy
+{
+	WIN32ConsoleOutputPolicy();
+	void Process(const Log::LogData& logData);
+};
+
+struct VisualStudioOutputPolicy
+{
+	void Process(const Log::LogData& logData);
+};
+
+#elif DESIRE_PLATFORM_ANDROID
+
+struct LogCatOutputPolicy
+{
+	void Process(const Log::LogData& logData);
+};
+
+#elif DESIRE_PLATFORM_IOS
+
+struct NSLogOutputPolicy
+{
+	void Process(const Log::LogData& logData);
+};
+
+#endif

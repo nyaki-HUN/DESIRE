@@ -49,6 +49,9 @@
     <Filter Include="src\Engine\Core\FS">
       <UniqueIdentifier>{B249CB24-9E2D-8C7A-078E-86CDF39076FC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core\Log">
+      <UniqueIdentifier>{7B9D34BE-E7FE-11CC-706C-587EDCCC488B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Core\Memory">
       <UniqueIdentifier>{D254B4D9-BE4E-DD2B-A7BB-733C93544398}</UniqueIdentifier>
     </Filter>
@@ -282,11 +285,14 @@
     <ClInclude Include="..\..\src\Engine\Core\HashedStringMap.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\Log.h">
-      <Filter>src\Engine\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\Log\Log.h">
+      <Filter>src\Engine\Core\Log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\Logger.h">
-      <Filter>src\Engine\Core</Filter>
+    <ClInclude Include="..\..\src\Engine\Core\Log\Logger.h">
+      <Filter>src\Engine\Core\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Log\LoggerPolicies.h">
+      <Filter>src\Engine\Core\Log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Memory\Allocator.h">
       <Filter>src\Engine\Core\Memory</Filter>
@@ -334,9 +340,6 @@
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.h">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.h">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h">
@@ -593,11 +596,20 @@
     <ClCompile Include="..\..\src\Engine\Core\FS\MemoryFile.cpp">
       <Filter>src\Engine\Core\FS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\Log.cpp">
-      <Filter>src\Engine\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\Log\Log.cpp">
+      <Filter>src\Engine\Core\Log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\Logger.cpp">
-      <Filter>src\Engine\Core</Filter>
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies.cpp">
+      <Filter>src\Engine\Core\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies_android.cpp">
+      <Filter>src\Engine\Core\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies_ios.mm">
+      <Filter>src\Engine\Core\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies_windows.cpp">
+      <Filter>src\Engine\Core\Log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Memory\Allocator.cpp">
       <Filter>src\Engine\Core\Memory</Filter>
@@ -648,9 +660,6 @@
       <Filter>src\Engine\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.cpp">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.cpp">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp">

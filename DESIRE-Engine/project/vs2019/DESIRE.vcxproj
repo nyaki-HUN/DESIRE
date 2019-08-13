@@ -169,8 +169,9 @@
     <ClInclude Include="..\..\src\Engine\Core\Factory.h" />
     <ClInclude Include="..\..\src\Engine\Core\HashedString.h" />
     <ClInclude Include="..\..\src\Engine\Core\HashedStringMap.h" />
-    <ClInclude Include="..\..\src\Engine\Core\Log.h" />
-    <ClInclude Include="..\..\src\Engine\Core\Logger.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Log\Log.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Log\Logger.h" />
+    <ClInclude Include="..\..\src\Engine\Core\Log\LoggerPolicies.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\Allocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\LinearAllocator.h" />
     <ClInclude Include="..\..\src\Engine\Core\Memory\MemorySystem.h" />
@@ -187,7 +188,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Time.h" />
     <ClInclude Include="..\..\src\Engine\Core\Timer.h" />
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.h" />
-    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.h" />
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h" />
     <ClInclude Include="..\..\src\Engine\Core\assert.h" />
     <ClInclude Include="..\..\src\Engine\Core\math\AABB.h" />
@@ -274,8 +274,11 @@
     <ClCompile Include="..\..\src\Engine\Core\FS\IReadFile.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\IWriteFile.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\MemoryFile.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\Log.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\Logger.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Log\Log.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies_android.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies_ios.mm" />
+    <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\Allocator.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\LinearAllocator.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Memory\MemorySystem.cpp" />
@@ -293,7 +296,6 @@
     <ClCompile Include="..\..\src\Engine\Core\Time_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSLoggerPolicies.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\Rand.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\Transform.cpp" />

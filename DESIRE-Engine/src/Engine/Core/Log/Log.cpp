@@ -1,14 +1,7 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/Log.h"
-#include "Engine/Core/Logger.h"
-
-#if DESIRE_PLATFORM_WINDOWS
-	#include "Engine/Core/WINDOWS/WINDOWSLoggerPolicies.h"
-#elif DESIRE_PLATFORM_IOS
-	#include "Engine/Core/IOS/IOSLoggerPolicies.h"
-#elif DESIRE_PLATFORM_ANDROID
-	#include "Engine/Core/ANDROID/ANDROIDLoggerPolicies.h"
-#endif
+#include "Engine/Core/Log/Log.h"
+#include "Engine/Core/Log/Logger.h"
+#include "Engine/Core/Log/LoggerPolicies.h"
 
 Log::LogFunction_t Log::userDefinedLogFunction = nullptr;
 

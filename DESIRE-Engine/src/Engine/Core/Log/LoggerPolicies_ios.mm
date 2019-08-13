@@ -1,5 +1,8 @@
-#include "stdafx.h"
-#include "Engine/Core/IOS/IOSLoggerPolicies.h"
+#include "Engine/stdafx.h"
+
+#if DESIRE_PLATFORM_IOS
+
+#include "Engine/Core/Log/LoggerPolicies.h"
 
 #import <Foundation/Foundation.h>
 
@@ -13,3 +16,5 @@ void XcodeOutputPolicy::Process(const Log::LogData& logData)
 	// Xcode is using the "file:line: message" format for clickable messages
 	NSLog(@"%s:%d: [%s] %s\n", logData.file, logData.line, logData.logType, logData.message);
 }
+
+#endif	// #if DESIRE_PLATFORM_IOS

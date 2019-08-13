@@ -1,5 +1,8 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/WINDOWS/WINDOWSLoggerPolicies.h"
+
+#if DESIRE_PLATFORM_WINDOWS
+
+#include "Engine/Core/Log/LoggerPolicies.h"
 #include "Engine/Core/WINDOWS/os.h"
 
 WIN32ConsoleOutputPolicy::WIN32ConsoleOutputPolicy()
@@ -73,3 +76,5 @@ void VisualStudioOutputPolicy::Process(const Log::LogData& logData)
 
 	OutputDebugStringW(logLine);
 }
+
+#endif	// #if DESIRE_PLATFORM_WINDOWS
