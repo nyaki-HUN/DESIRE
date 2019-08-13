@@ -15,11 +15,6 @@ project "DESIRE"
 	{
 		"../3rdparty/**.h",
 	}
-	filter "system:not ios"
-		removefiles
-		{
-			"../src/**/IOS/**",
-		}
 
 	filter "system:not windows"
 		removefiles
