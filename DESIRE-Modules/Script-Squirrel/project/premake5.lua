@@ -14,7 +14,7 @@ project "Script-Squirrel"
 	{
 		"../Externals/squirrel/include/sqconfig.h",
 		"../Externals/squirrel/include/squirrel.h",
-		"../Externals/squirrel/squirrel/**.h",
-		"../Externals/squirrel/squirrel/**.cpp",
-		"../Externals/sqrat/**.h",
+		"../Externals/squirrel/squirrel/*.h",
+		"../Externals/squirrel/squirrel/*.cpp",
+		"../Externals/sqrat/include/**.h",
 	}
