@@ -11,9 +11,9 @@ public:
 	~LuaScriptSystem() override;
 
 private:
-	ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName) override;
+	ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName) override;
 
-	static void CompileScript(const char *scriptName, lua_State *L);
+	static void CompileScript(const char* scriptName, lua_State* L);
 
-	lua_State *L = nullptr;
+	lua_State* L = nullptr;
 };

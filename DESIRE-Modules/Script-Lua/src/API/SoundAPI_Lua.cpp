@@ -3,9 +3,9 @@
 #include "Engine/Modules.h"
 #include "Engine/Sound/SoundSystem.h"
 
-void RegisterSoundAPI_Lua(lua_State *L)
+void RegisterSoundAPI_Lua(lua_State* L)
 {
-	SoundSystem *soundSystem = Modules::SoundSystem.get();
+	SoundSystem* soundSystem = Modules::SoundSystem.get();
 	if(soundSystem == nullptr)
 	{
 		return;

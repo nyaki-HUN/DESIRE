@@ -54,11 +54,11 @@ LuaScriptSystem::~LuaScriptSystem()
 	lua_close(L);
 }
 
-ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
-	lua_State *newL = lua_newthread(L);
+	lua_State* newL = lua_newthread(L);
 	if(newL == nullptr)
 	{
 		LOG_ERROR("Failed to create new script thread");
@@ -67,11 +67,11 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object&
 
 	CompileScript(scriptName, newL);
 
-	LuaScriptComponent *scriptComponent = &object.AddComponent<LuaScriptComponent>(newL);
+	LuaScriptComponent* scriptComponent = &object.AddComponent<LuaScriptComponent>(newL);
 	return scriptComponent;
 }
 
-void LuaScriptSystem::CompileScript(const char *scriptName, lua_State *L)
+void LuaScriptSystem::CompileScript(const char* scriptName, lua_State* L)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.lua", scriptName);
 	ReadFilePtr file = FileSystem::Get()->Open(filename);

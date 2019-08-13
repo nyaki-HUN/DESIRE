@@ -6,13 +6,13 @@
 #include "LuaBridge/LuaBridge.h"
 
 // Engine API register functions
-void RegisterCoreAPI_Lua(lua_State *L);
-void RegisterInputAPI_Lua(lua_State *L);
-void RegisterNetworkAPI_Lua(lua_State *L);
-void RegisterPhysicsAPI_Lua(lua_State *L);
-void RegisterRenderAPI_Lua(lua_State *L);
-void RegisterSceneAPI_Lua(lua_State *L);
-void RegisterSoundAPI_Lua(lua_State *L);
+void RegisterCoreAPI_Lua(lua_State* L);
+void RegisterInputAPI_Lua(lua_State* L);
+void RegisterNetworkAPI_Lua(lua_State* L);
+void RegisterPhysicsAPI_Lua(lua_State* L);
+void RegisterRenderAPI_Lua(lua_State* L);
+void RegisterSceneAPI_Lua(lua_State* L);
+void RegisterSoundAPI_Lua(lua_State* L);
 
 template<>
 struct luabridge::Stack<const String&>

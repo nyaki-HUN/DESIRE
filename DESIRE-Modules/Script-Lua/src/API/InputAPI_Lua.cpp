@@ -3,9 +3,9 @@
 #include "Engine/Modules.h"
 #include "Engine/Input/Input.h"
 
-void RegisterInputAPI_Lua(lua_State *L)
+void RegisterInputAPI_Lua(lua_State* L)
 {
-	Input *input = Modules::Input.get();
+	Input* input = Modules::Input.get();
 	if(input == nullptr)
 	{
 		return;
