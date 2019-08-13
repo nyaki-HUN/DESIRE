@@ -5,7 +5,7 @@
 
 void RegisterSoundAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
-	SoundSystem *soundSystem = Modules::SoundSystem.get();
+	SoundSystem* soundSystem = Modules::SoundSystem.get();
 	if(soundSystem == nullptr)
 	{
 		return;

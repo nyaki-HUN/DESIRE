@@ -56,7 +56,7 @@ SquirrelScriptSystem::~SquirrelScriptSystem()
 	sq_close(vm);
 }
 
-ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char *scriptName)
+ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName)
 {
 	ASSERT(scriptName != nullptr);
 
@@ -77,7 +77,7 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 		}
 	}
 
-	SquirrelScriptComponent *scriptComponent = &object.AddComponent<SquirrelScriptComponent>(vm);
+	SquirrelScriptComponent* scriptComponent = &object.AddComponent<SquirrelScriptComponent>(vm);
 
 	// Call the constructor
 	sq_pushroottable(vm);	// the 'this' parameter
@@ -91,7 +91,7 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 		sq_pop(vm, 1);	// pop instance
 
 		// Cache built-in functions
-		const char *builtinFunctionNames[] =
+		const char* builtinFunctionNames[] =
 		{
 			"Update",
 			"Init",
@@ -123,7 +123,7 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 	return scriptComponent;
 }
 
-void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
+void SquirrelScriptSystem::CompileScript(const char* scriptName, HSQUIRRELVM vm)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.nut", scriptName);
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
@@ -162,7 +162,7 @@ void SquirrelScriptSystem::CompileScript(const char *scriptName, HSQUIRRELVM vm)
 	sq_pop(vm, 1);	// pop scriptModule
 }
 
-void SquirrelScriptSystem::PrintCallback(HSQUIRRELVM vm, const SQChar *format, ...)
+void SquirrelScriptSystem::PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 {
 	DESIRE_UNUSED(vm);
 
@@ -179,7 +179,7 @@ void SquirrelScriptSystem::PrintCallback(HSQUIRRELVM vm, const SQChar *format, .
 	Log::LogWithData(logData);
 }
 
-void SquirrelScriptSystem::ErrorCallback(HSQUIRRELVM vm, const SQChar *format, ...)
+void SquirrelScriptSystem::ErrorCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 {
 	DESIRE_UNUSED(vm);
 
@@ -196,14 +196,14 @@ void SquirrelScriptSystem::ErrorCallback(HSQUIRRELVM vm, const SQChar *format, .
 	Log::LogWithData(logData);
 }
 
-void SquirrelScriptSystem::CompilerErrorCallback(HSQUIRRELVM vm, const SQChar *desc, const SQChar *source, SQInteger line, SQInteger column)
+void SquirrelScriptSystem::CompilerErrorCallback(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source, SQInteger line, SQInteger column)
 {
 	DESIRE_UNUSED(vm);
 
 	LOG_ERROR("%s(%d, %d): %s", source, line, column, desc);
 }
 
-void SquirrelScriptSystem::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar *sourcename, SQInteger line, const SQChar *funcname)
+void SquirrelScriptSystem::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar* sourcename, SQInteger line, const SQChar* funcname)
 {
 	DESIRE_UNUSED(vm);
 	DESIRE_UNUSED(type);
@@ -216,7 +216,7 @@ void SquirrelScriptSystem::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, con
 
 SQInteger SquirrelScriptSystem::RuntimeErrorHandler(HSQUIRRELVM vm)
 {
-	const SQChar *errorStr = 0;
+	const SQChar* errorStr = 0;
 	if(sq_gettop(vm) >= 1)
 	{
 		if(SQ_SUCCEEDED(sq_getstring(vm, 2, &errorStr)))

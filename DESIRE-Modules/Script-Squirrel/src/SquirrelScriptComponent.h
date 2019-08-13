@@ -18,14 +18,14 @@ public:
 	HSQOBJECT builtinFunctions[(size_t)EBuiltinFuncType::Num];
 
 private:
-	bool PrepareFunctionCall(const char *functionName) override;
+	bool PrepareFunctionCall(const char* functionName) override;
 	void ExecuteFunctionCall() override;
 
 	bool AddFunctionCallArg(int arg) override;
 	bool AddFunctionCallArg(float arg) override;
 	bool AddFunctionCallArg(double arg) override;
 	bool AddFunctionCallArg(bool arg) override;
-	bool AddFunctionCallArg(void *arg) override;
+	bool AddFunctionCallArg(void* arg) override;
 	bool AddFunctionCallArg(const String& string) override;
 
 	HSQUIRRELVM vm = nullptr;

@@ -5,7 +5,7 @@
 
 void RegisterInputAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
-	Input *input = Modules::Input.get();
+	Input* input = Modules::Input.get();
 	if(input == nullptr)
 	{
 		return;
