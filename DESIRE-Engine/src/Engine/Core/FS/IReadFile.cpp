@@ -19,6 +19,16 @@ const String& IReadFile::GetFilename() const
 	return filename;
 }
 
+void IReadFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
+{
+	ASSERT(buffer != nullptr);
+	ASSERT(callback != nullptr);
+
+	// Fallback to blocking read
+	ReadBuffer(buffer, size);
+	callback();
+}
+
 size_t IReadFile::ReadString(char** str)
 {
 	ASSERT(str != nullptr);

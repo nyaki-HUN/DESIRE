@@ -30,8 +30,7 @@ public:
 			FILE_CURRENT,
 			FILE_END
 		};
-		ASSERT((size_t)origin < DESIRE_ASIZEOF(mapping));
-		const DWORD moveMethod = mapping[(int)origin];
+		const DWORD moveMethod = mapping[static_cast<size_t>(origin)];
 
 		LARGE_INTEGER fileOffset;
 		fileOffset.QuadPart = offset;
@@ -48,12 +47,8 @@ public:
 
 	void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback) override
 	{
-		ASSERT(buffer != nullptr);
-		ASSERT(callback != nullptr);
-
 		DESIRE_TODO("Implement proper async file read");
-		ReadBuffer(buffer, size);
-		callback();
+		IReadFile::ReadBufferAsync(buffer, size, callback);
 	}
 
 	size_t ReadBuffer(void* buffer, size_t size) override

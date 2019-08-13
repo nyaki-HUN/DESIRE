@@ -26,7 +26,7 @@ public:
 	inline int64_t Tell() const			{ return position; }
 	inline bool IsEof() const			{ return position >= fileSize; }
 
-	virtual void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback) = 0;
+	virtual void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback);
 	virtual size_t ReadBuffer(void* buffer, size_t size) = 0;
 	size_t ReadString(char** str);
 	MemoryBuffer ReadFileContent();

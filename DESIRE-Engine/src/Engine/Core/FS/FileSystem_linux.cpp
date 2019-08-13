@@ -36,8 +36,7 @@ public:
 			SEEK_CUR,
 			SEEK_END
 		};
-		ASSERT(static_cast<size_t>(origin) < DESIRE_ASIZEOF(mapping));
-		const int whence = mapping[(int)origin];
+		const int whence = mapping[static_cast<size_t>(origin)];
 
 		off64_t result = lseek64(fileDesc, offset, whence);
 		if(result == -1)
@@ -47,13 +46,6 @@ public:
 
 		position = result;
 		return true;
-	}
-
-	void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback) override
-	{
-		ASSERT(callback != nullptr);
-		ReadBuffer(buffer, size);
-		callback();
 	}
 
 	size_t ReadBuffer(void* buffer, size_t size) override
@@ -85,7 +77,7 @@ public:
 	}
 
 private:
-	int fileDesc;
+	int fileDesc = -1;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
