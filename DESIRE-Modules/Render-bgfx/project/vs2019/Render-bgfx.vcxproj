@@ -130,6 +130,7 @@
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_android.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_core.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_fuchsia.h" />
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_ggp.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_ios.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_macos.h" />
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_metal.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_eagl.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_egl.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_glx.h" />
+    <ClInclude Include="..\..\Externals\bgfx\src\glcontext_html5.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_nsgl.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_wgl.h" />
     <ClInclude Include="..\..\Externals\bgfx\src\glimports.h" />
@@ -270,6 +272,7 @@
     <ClCompile Include="..\..\Externals\bgfx\src\dxgi.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_egl.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_glx.cpp" />
+    <ClCompile Include="..\..\Externals\bgfx\src\glcontext_html5.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_wgl.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\nvapi.cpp" />
     <ClCompile Include="..\..\Externals\bgfx\src\renderer_d3d11.cpp" />

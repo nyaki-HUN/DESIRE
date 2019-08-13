@@ -201,6 +201,9 @@
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_fuchsia.h">
       <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_ggp.h">
+      <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\3rdparty\khronos\vulkan\vulkan_ios.h">
       <Filter>Externals\bgfx\3rdparty\khronos\vulkan</Filter>
     </ClInclude>
@@ -298,6 +301,9 @@
       <Filter>Externals\bgfx\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_glx.h">
+      <Filter>Externals\bgfx\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\bgfx\src\glcontext_html5.h">
       <Filter>Externals\bgfx\src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\bgfx\src\glcontext_nsgl.h">
@@ -615,6 +621,9 @@
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_glx.cpp">
+      <Filter>Externals\bgfx\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\bgfx\src\glcontext_html5.cpp">
       <Filter>Externals\bgfx\src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\bgfx\src\glcontext_wgl.cpp">
