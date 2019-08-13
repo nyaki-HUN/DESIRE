@@ -187,7 +187,6 @@
     <ClInclude Include="..\..\src\Engine\Core\String\WritableString.h" />
     <ClInclude Include="..\..\src\Engine\Core\Time.h" />
     <ClInclude Include="..\..\src\Engine\Core\Timer.h" />
-    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.h" />
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h" />
     <ClInclude Include="..\..\src\Engine\Core\assert.h" />
     <ClInclude Include="..\..\src\Engine\Core\math\AABB.h" />
@@ -271,6 +270,8 @@
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_linux.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_osx.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_windows.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem_linux.cpp" />
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\IReadFile.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\IWriteFile.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\MemoryFile.cpp" />
@@ -295,7 +296,6 @@
     <ClCompile Include="..\..\src\Engine\Core\Time_linux.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Time_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\Rand.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\math\Transform.cpp" />

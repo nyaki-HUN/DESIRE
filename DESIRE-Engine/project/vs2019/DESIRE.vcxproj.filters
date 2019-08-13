@@ -339,9 +339,6 @@
     <ClInclude Include="..\..\src\Engine\Core\Timer.h">
       <Filter>src\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.h">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\WINDOWS\os.h">
       <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClInclude>
@@ -587,6 +584,12 @@
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_windows.cpp">
       <Filter>src\Engine\Core\FS</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem_linux.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem_windows.cpp">
+      <Filter>src\Engine\Core\FS</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\FS\IReadFile.cpp">
       <Filter>src\Engine\Core\FS</Filter>
     </ClCompile>
@@ -658,9 +661,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp">
       <Filter>src\Engine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\WINDOWS\WINDOWSFile.cpp">
-      <Filter>src\Engine\Core\WINDOWS</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp">
       <Filter>src\Engine\Core\math</Filter>

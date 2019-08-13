@@ -15,29 +15,10 @@ project "DESIRE"
 	{
 		"../3rdparty/**.h",
 	}
-
-	filter "system:not android"
-		removefiles
-		{
-			"../src/**/ANDROID/**",
-		}
-
 	filter "system:not ios"
 		removefiles
 		{
 			"../src/**/IOS/**",
-		}
-
-	filter "system:not linux"
-		removefiles
-		{
-			"../src/**/LINUX/**",
-		}
-
-	filter "system:not macosx"
-		removefiles
-		{
-			"../src/**/OSX/**",
 		}
 
 	filter "system:not windows"
