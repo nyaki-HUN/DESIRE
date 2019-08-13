@@ -2,8 +2,8 @@
 #include "PhysXPhysicsComponent.h"
 #include "PxMathExt.h"
 
-#include "Engine/Core/Log.h"
 #include "Engine/Core/Object.h"
+#include "Engine/Core/Log/Log.h"
 
 #include "PxPhysicsAPI.h"
 

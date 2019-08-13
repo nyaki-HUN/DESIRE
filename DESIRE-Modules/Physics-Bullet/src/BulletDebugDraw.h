@@ -2,7 +2,7 @@
 
 #include "BulletVectormathExt.h"
 
-#include "Engine/Core/Log.h"
+#include "Engine/Core/Log/Log.h"
 #include "Engine/Render/DebugDraw.h"
 
 #include "LinearMath/btIDebugDraw.h"
@@ -14,7 +14,6 @@ public:
 		: debugDraw(debugDraw)
 		, debugMode(0)
 	{
-
 	}
 
 	void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override

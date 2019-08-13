@@ -15,7 +15,6 @@ public:
 	AssimpIOStreamWrapper(const ReadFilePtr& file)
 		: file(file)
 	{
-
 	}
 
 	size_t Read(void *pvBuffer, size_t pSize, size_t pCount) override
@@ -71,7 +70,6 @@ public:
 	AssimpIOSystemWrapper(const ReadFilePtr& file)
 		: file(file)
 	{
-
 	}
 
 	bool Exists(const char *pFile) const override

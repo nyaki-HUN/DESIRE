@@ -7,8 +7,8 @@
 
 #include "Engine/Application/OSWindow.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/Log.h"
 #include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Render/Material.h"
 #include "Engine/Render/RenderTarget.h"
@@ -106,7 +106,6 @@ Direct3D12Render::Direct3D12Render()
 
 Direct3D12Render::~Direct3D12Render()
 {
-
 }
 
 void Direct3D12Render::Init(OSWindow *mainWindow)
