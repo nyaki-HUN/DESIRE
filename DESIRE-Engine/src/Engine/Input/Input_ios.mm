@@ -6,8 +6,8 @@
 
 #import <CoreMotion/CoreMotion.h>
 
-static CMs_motionManager *s_motionManager = nil;
-static CMAttitude *s_referenceAttitude = nil;
+static CMMotionManager* s_motionManager = nil;
+static CMAttitude* s_referenceAttitude = nil;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	InputImpl
@@ -27,9 +27,9 @@ public:
 //	Input
 // --------------------------------------------------------------------------------------------------------------------
 
-void Input::Init_internal(OSWindow *window)
+void Input::Init_internal(OSWindow* window)
 {
-	s_motionManager = [[CMs_motionManager alloc] init];
+	s_motionManager = [[CMMotionManager alloc] init];
 
 	// Set refresh rates (10-100 Hz)
 	s_motionManager.deviceMotionUpdateInterval = 1.0f / 60.0f;
@@ -70,7 +70,7 @@ void Input::Update_internal()
 	// Gyroscope
 	if([s_motionManager isGyroAvailable])
 	{
-		CMAttitude *attitude = s_motionManager.deviceMotion.attitude;
+		CMAttitude* attitude = s_motionManager.deviceMotion.attitude;
 		if(s_referenceAttitude != nil)
 		{
 			[attitude multiplyByInverseOfAttitude:s_referenceAttitude];
