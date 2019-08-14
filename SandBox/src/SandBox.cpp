@@ -3,11 +3,11 @@
 
 #include "Engine/Modules.h"
 #include "Engine/Compression/FileSourceZip.h"
-#include "Engine/Core/Log.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/FileSystemWatcher.h"
 #include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/StackString.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Render/Render.h"
@@ -28,12 +28,10 @@ enum EAction
 
 SandBox::SandBox()
 {
-
 }
 
 SandBox::~SandBox()
 {
-
 }
 
 void SandBox::Init()

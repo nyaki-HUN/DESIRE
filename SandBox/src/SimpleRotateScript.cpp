@@ -2,29 +2,25 @@
 
 #include "Engine/Modules.h"
 #include "Engine/Application/Application.h"
-#include "Engine/Core/Timer.h"
 #include "Engine/Core/Object.h"
+#include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Transform.h"
 #include "Engine/Script/ScriptComponent.h"
 
 SimpleRotateScript::SimpleRotateScript()
 {
-
 }
 
 SimpleRotateScript::~SimpleRotateScript()
 {
-
 }
 
 void SimpleRotateScript::Init()
 {
-
 }
 
 void SimpleRotateScript::Kill()
 {
-
 }
 
 void SimpleRotateScript::Update()
