@@ -3,7 +3,7 @@
 #include "Engine/Core/math/Transform.h"
 #include "Engine/Scene/SceneGraphTraversal.h"
 
-TEST_CASE("Object", "[Scene]")
+TEST_CASE("Object", "[Core]")
 {
 	Object* rootObj = new Object();
 	const Transform* preallocatedTransforms = &rootObj->GetTransform();
@@ -190,17 +190,27 @@ TEST_CASE("Object", "[Scene]")
 		childA = nullptr;
 	}
 
+/*	   R
+	  /|
+	 / |
+	1  2
+*/
+
 	// Absolut position update in hierarchy
 	{
-		rootObj->GetTransform().SetLocalPosition(Vector3(1.0f, 1.0f, 1.0f));
-		child1->GetTransform().SetLocalPosition(Vector3(2.0f, 2.0f, 2.0f));
+		child2->GetTransform().SetLocalPosition(Vector3(2.0f));
+		Vector3 worldPos = child2->GetTransform().GetPosition();
+		CHECK(worldPos.GetX() == Approx(2.0f));
+		CHECK(worldPos.GetY() == Approx(2.0f));
+		CHECK(worldPos.GetZ() == Approx(2.0f));
 
-		Vector3 worldPos = rootObj->GetTransform().GetPosition();
+		rootObj->GetTransform().SetLocalPosition(Vector3(1.0f));
+		worldPos = rootObj->GetTransform().GetPosition();
 		CHECK(worldPos.GetX() == Approx(1.0f));
 		CHECK(worldPos.GetY() == Approx(1.0f));
 		CHECK(worldPos.GetZ() == Approx(1.0f));
 
-		worldPos = child1->GetTransform().GetPosition();
+		worldPos = child2->GetTransform().GetPosition();
 		CHECK(worldPos.GetX() == Approx(3.0f));
 		CHECK(worldPos.GetY() == Approx(3.0f));
 		CHECK(worldPos.GetZ() == Approx(3.0f));
