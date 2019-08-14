@@ -191,6 +191,16 @@ bool Object::HasObjectInParentHierarchy(const Object* obj) const
 	return false;
 }
 
+void Object::MarkAllChildrenTransformDirty()
+{
+	Transform* childTransform = transform + 1;
+	for(size_t i = 1; i < numTransformsInHierarchy; ++i)
+	{
+		childTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
+		childTransform++;
+	}
+}
+
 Component& Object::AddComponent_Internal(std::unique_ptr<Component> component)
 {
 	std::unique_ptr<Component>& addedComponent = components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)

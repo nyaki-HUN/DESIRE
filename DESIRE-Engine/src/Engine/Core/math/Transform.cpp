@@ -1,6 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/math/Transform.h"
 #include "Engine/Core/math/math.h"
+#include "Engine/Core/Object.h"
 
 Transform::Transform()
 {
@@ -11,18 +12,33 @@ void Transform::SetLocalPosition(const Vector3& position)
 {
 	localPosition = position;
 	flags |= POSITION_CHANGED;
+
+	if(owner != nullptr)
+	{
+		owner->MarkAllChildrenTransformDirty();
+	}
 }
 
 void Transform::SetLocalRotation(const Quat& rotation)
 {
 	localRotation = rotation;
 	flags |= ROTATION_CHANGED;
+
+	if(owner != nullptr)
+	{
+		owner->MarkAllChildrenTransformDirty();
+	}
 }
 
 void Transform::SetLocalScale(const Vector3& scale)
 {
 	localScale = scale;
 	flags |= SCALE_CHANGED;
+
+	if(owner != nullptr)
+	{
+		owner->MarkAllChildrenTransformDirty();
+	}
 }
 
 Matrix4 Transform::ConstructLocalMatrix() const
@@ -40,6 +56,11 @@ void Transform::ResetToIdentity()
 
 	worldMatrix = (parent != nullptr) ? parent->GetWorldMatrix() : Matrix4::Identity();
 	flags &= ~WORLD_MATRIX_DIRTY;
+
+	if(owner != nullptr)
+	{
+		owner->MarkAllChildrenTransformDirty();
+	}
 }
 
 Vector3 Transform::GetPosition() const

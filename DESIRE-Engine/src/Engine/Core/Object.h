@@ -49,8 +49,9 @@ public:
 	Transform& GetTransform() const;
 	Object* GetParent() const;
 	const Array<Object*>& GetChildren() const;
-
 	bool HasObjectInParentHierarchy(const Object* obj) const;
+
+	void MarkAllChildrenTransformDirty();
 
 private:
 	Component& AddComponent_Internal(std::unique_ptr<Component> component);
