@@ -17,11 +17,11 @@ public:
 	void Init();
 	void Kill();
 
-	void NewFrame(OSWindow *window);
+	void NewFrame(OSWindow* window);
 	void EndFrame();
 
 private:
-	void DoRender(ImDrawData *data);
+	void DoRender(ImDrawData* data);
 
 	std::unique_ptr<DynamicMesh> mesh;
 	std::unique_ptr<Material> material;

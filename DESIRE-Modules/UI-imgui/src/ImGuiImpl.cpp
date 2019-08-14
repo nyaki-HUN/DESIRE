@@ -19,12 +19,10 @@
 
 ImGuiImpl::ImGuiImpl()
 {
-
 }
 
 ImGuiImpl::~ImGuiImpl()
 {
-
 }
 
 void ImGuiImpl::Init()
@@ -83,16 +81,16 @@ void ImGuiImpl::Init()
 	material->fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
 
 	// Setup font texture
-	unsigned char *textureData;
+	unsigned char* textureData = nullptr;
 	int width, height;
 	io.Fonts->AddFontDefault();
 	io.Fonts->GetTexDataAsRGBA32(&textureData, &width, &height);
 
-	fontTexture = std::make_shared<Texture>((uint16_t)width, (uint16_t)height, Texture::EFormat::RGBA8);
+	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8);
 	fontTexture->data = MemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
 	material->AddTexture(fontTexture);
 	io.Fonts->TexID = &fontTexture;
-	
+
 	// Cleanup (don't clear the input data if you want to append new fonts later)
 	io.Fonts->ClearInputData();
 	io.Fonts->ClearTexData();
@@ -107,7 +105,7 @@ void ImGuiImpl::Kill()
 	fontTexture = nullptr;
 }
 
-void ImGuiImpl::NewFrame(OSWindow *window)
+void ImGuiImpl::NewFrame(OSWindow* window)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(window->GetWidth(), window->GetHeight());
@@ -131,7 +129,7 @@ void ImGuiImpl::NewFrame(OSWindow *window)
 		}
 	}
 
-	const char *typedCharacters = Modules::Input->GetTypingCharacters();
+	const char* typedCharacters = Modules::Input->GetTypingCharacters();
 	for(int i = 0; typedCharacters[i] != '\0'; ++i)
 	{
 		io.AddInputCharacter(typedCharacters[i]);
@@ -161,7 +159,7 @@ void ImGuiImpl::NewFrame(OSWindow *window)
 void ImGuiImpl::EndFrame()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	OSWindow *window = static_cast<OSWindow*>(io.UserData);
+	OSWindow* window = static_cast<OSWindow*>(io.UserData);
 	switch(ImGui::GetMouseCursor())
 	{
 		case ImGuiMouseCursor_Arrow:		window->SetCursor(OSWindow::CURSOR_ARROW); break;
@@ -174,27 +172,27 @@ void ImGuiImpl::EndFrame()
 	};
 
 	ImGui::Render();
-	ImDrawData *drawData = ImGui::GetDrawData();
+	ImDrawData* drawData = ImGui::GetDrawData();
 	if(drawData != nullptr)
 	{
 		DoRender(drawData);
 	}
 }
 
-void ImGuiImpl::DoRender(ImDrawData *drawData)
+void ImGuiImpl::DoRender(ImDrawData* drawData)
 {
 	Modules::Render->SetDepthWriteEnabled(false);
 	Modules::Render->SetCullMode(Render::ECullMode::None);
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-	ASSERT((uint32_t)drawData->TotalIdxCount <= mesh->maxNumOfIndices);
-	ASSERT((uint32_t)drawData->TotalVtxCount <= mesh->maxNumOfVertices);
+	ASSERT(static_cast<uint32_t>(drawData->TotalIdxCount) <= mesh->maxNumOfIndices);
+	ASSERT(static_cast<uint32_t>(drawData->TotalVtxCount) <= mesh->maxNumOfVertices);
 	mesh->numIndices = 0;
 	mesh->numVertices = 0;
 	for(int cmdIdx = 0; cmdIdx < drawData->CmdListsCount; ++cmdIdx)
 	{
-		const ImDrawList *drawList = drawData->CmdLists[cmdIdx];
+		const ImDrawList* drawList = drawData->CmdLists[cmdIdx];
 		if(mesh->numIndices + drawList->IdxBuffer.size() > mesh->maxNumOfIndices ||
 			mesh->numVertices + drawList->VtxBuffer.size() > mesh->maxNumOfVertices)
 		{
@@ -202,10 +200,10 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 		}
 
 		memcpy(&mesh->indices[mesh->numIndices], drawList->IdxBuffer.Data, drawList->IdxBuffer.size() * sizeof(uint16_t));
-		mesh->numIndices += (uint32_t)drawList->IdxBuffer.size();
+		mesh->numIndices += static_cast<uint32_t>(drawList->IdxBuffer.size());
 
-		memcpy((uint8_t*)mesh->vertices.get() + mesh->numVertices * mesh->stride, drawList->VtxBuffer.Data, drawList->VtxBuffer.size() * mesh->stride);
-		mesh->numVertices += (uint32_t)drawList->VtxBuffer.size();
+		memcpy(reinterpret_cast<uint8_t*>(mesh->vertices.get()) + mesh->numVertices * mesh->stride, drawList->VtxBuffer.Data, drawList->VtxBuffer.size() * mesh->stride);
+		mesh->numVertices += static_cast<uint32_t>(drawList->VtxBuffer.size());
 	}
 	mesh->isIndexDataUpdateRequired = true;
 	mesh->isVertexDataUpdateRequired = true;
@@ -215,14 +213,14 @@ void ImGuiImpl::DoRender(ImDrawData *drawData)
 	mesh->vertexOffset = 0;
 	for(int cmdIdx = 0; cmdIdx < drawData->CmdListsCount; ++cmdIdx)
 	{
-		const ImDrawList *drawList = drawData->CmdLists[cmdIdx];
-		mesh->numVertices = (uint32_t)drawList->VtxBuffer.size();
+		const ImDrawList* drawList = drawData->CmdLists[cmdIdx];
+		mesh->numVertices = static_cast<uint32_t>(drawList->VtxBuffer.size());
 
 		for(const ImDrawCmd& cmd : drawList->CmdBuffer)
 		{
-			const uint16_t clipX = std::max<uint16_t>(0, (uint16_t)cmd.ClipRect.x);
-			const uint16_t clipY = std::max<uint16_t>(0, (uint16_t)cmd.ClipRect.y);
-			Modules::Render->SetScissor(clipX, clipY, (uint16_t)(cmd.ClipRect.z - clipX), (uint16_t)(cmd.ClipRect.w - clipY));
+			const uint16_t clipX = std::max<uint16_t>(0, static_cast<uint16_t>(cmd.ClipRect.x));
+			const uint16_t clipY = std::max<uint16_t>(0, static_cast<uint16_t>(cmd.ClipRect.y));
+			Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(cmd.ClipRect.z - clipX), static_cast<uint16_t>(cmd.ClipRect.w - clipY));
 
 			if(cmd.UserCallback)
 			{

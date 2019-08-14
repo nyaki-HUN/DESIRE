@@ -7,7 +7,6 @@ public:
 	TestClass()
 		: value(123)
 	{
-
 	}
 
 	int value;

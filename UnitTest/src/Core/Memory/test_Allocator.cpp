@@ -14,7 +14,7 @@ TEST_CASE("Allocator", "[Core][memory]")
 		ptr = a.Realloc(ptr, 20, 10);
 		REQUIRE(ptr != nullptr);
 		CHECK(memcmp(ptr, "0123456789", 10) == 0);
-		
+
 		ptr = a.Realloc(ptr, 5, 20);
 		REQUIRE(ptr != nullptr);
 		CHECK(memcmp(ptr, "01234", 5) == 0);
