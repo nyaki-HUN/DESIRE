@@ -1,6 +1,6 @@
 #include "ZlibCompression.h"
 
-#include "Engine/Core/Log.h"
+#include "Engine/Core/Log/Log.h"
 
 #include "zlib.h"
 

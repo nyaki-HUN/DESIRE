@@ -57,7 +57,6 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;Z_SOLO;ZLIB_COMPAT;X86_64;X86_NOCHECK_SSE2;UNALIGNED_OK;UNROLL_LESS;X86_SSE2_FILL_WINDOW;X86_CPUID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib-ng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -81,7 +80,6 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;Z_SOLO;ZLIB_COMPAT;X86_64;X86_NOCHECK_SSE2;UNALIGNED_OK;UNROLL_LESS;X86_SSE2_FILL_WINDOW;X86_CPUID;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib-ng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
@@ -107,20 +105,22 @@
   <ItemGroup>
     <ClInclude Include="..\..\Externals\zlib-ng\adler32_p.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\ctzl.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\x86.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\crc32.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\deflate.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\deflate_p.h" />
+    <ClInclude Include="..\..\Externals\zlib-ng\fallback_builtins.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\functable.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\inffast.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\inffixed.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\inflate.h" />
+    <ClInclude Include="..\..\Externals\zlib-ng\inflate_p.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\inftrees.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\match_p.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\memcopy.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\trees.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zbuild.h" />
+    <ClInclude Include="..\..\Externals\zlib-ng\zendian.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zlib-ng.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zlib.h" />
     <ClInclude Include="..\..\Externals\zlib-ng\zutil.h" />
@@ -137,6 +137,7 @@
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\deflate_quick.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\fill_window_sse.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\insert_string_sse.c" />
+    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\slide_sse.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\x86.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\compress.c" />
     <ClCompile Include="..\..\Externals\zlib-ng\crc32.c" />

@@ -27,9 +27,6 @@
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.h">
       <Filter>Externals\zlib-ng\arch\x86</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\ctzl.h">
-      <Filter>Externals\zlib-ng\arch\x86</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\x86.h">
       <Filter>Externals\zlib-ng\arch\x86</Filter>
     </ClInclude>
@@ -42,6 +39,9 @@
     <ClInclude Include="..\..\Externals\zlib-ng\deflate_p.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib-ng\fallback_builtins.h">
+      <Filter>Externals\zlib-ng</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\functable.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
@@ -52,6 +52,9 @@
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\inflate.h">
+      <Filter>Externals\zlib-ng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib-ng\inflate_p.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\inftrees.h">
@@ -67,6 +70,9 @@
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\zbuild.h">
+      <Filter>Externals\zlib-ng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib-ng\zendian.h">
       <Filter>Externals\zlib-ng</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\zlib-ng\zlib-ng.h">
@@ -111,6 +117,9 @@
       <Filter>Externals\zlib-ng\arch\x86</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\insert_string_sse.c">
+      <Filter>Externals\zlib-ng\arch\x86</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\slide_sse.c">
       <Filter>Externals\zlib-ng\arch\x86</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\x86.c">
