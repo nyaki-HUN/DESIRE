@@ -1,7 +1,7 @@
 #include "SquirrelScriptComponent.h"
 
 #include "Engine/Core/assert.h"
-#include "Engine/Core/Log.h"
+#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/String.h"
 #include "Engine/Utils/Enumerator.h"
 
