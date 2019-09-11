@@ -2,8 +2,8 @@
 #include "SquirrelScriptComponent.h"
 #include "API/SquirrelScriptAPI.h"
 
-#include "Engine/Core/Log.h"
 #include "Engine/Core/Object.h"
+#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/DynamicString.h"
