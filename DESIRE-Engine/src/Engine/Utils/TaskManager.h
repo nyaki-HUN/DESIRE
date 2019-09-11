@@ -11,7 +11,9 @@ public:
 	TaskManager();
 	~TaskManager();
 
-	void AddTask(std::function<void()> task, bool toFront = false);
+	uint32_t AddTask(std::function<void()> task, bool toFront = false);
+	void CancelTask(uint32_t taskId);
+
 	void AddDelayedTask(float delaySecs, std::function<void()> task);
 
 	void Update(float deltaTime);
@@ -29,8 +31,9 @@ private:
 		}
 	};
 
-	std::mutex mutex;
-	std::deque<std::function<void()>> taskQueue;
+	std::mutex taskQueueMutex;
+	std::deque<std::pair<uint32_t, std::function<void()>>> taskQueue;
 	std::priority_queue<TimedTask, std::vector<TimedTask>, std::greater<TimedTask>> timedTasks;
-	float timer = 0;
+	float timer = 0.0f;
+	uint32_t taskUniqueId = 0;
 };
