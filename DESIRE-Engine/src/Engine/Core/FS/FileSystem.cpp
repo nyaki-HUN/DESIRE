@@ -6,12 +6,11 @@
 
 FileSystem::FileSystem()
 {
-	SetupDirectories();
+	Setup();
 }
 
 FileSystem::~FileSystem()
 {
-
 }
 
 FileSystem* FileSystem::Get()
@@ -22,7 +21,7 @@ FileSystem* FileSystem::Get()
 	return &s_instance;
 }
 
-ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
+ReadFilePtr FileSystem::Open(const String& filename)
 {
 	for(std::unique_ptr<IFileSource>& fileSource : fileSources)
 	{
@@ -33,13 +32,7 @@ ReadFilePtr FileSystem::Open(const String& filename, ELocation location)
 		}
 	}
 
-	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath;
-	switch(location)
-	{
-		case ELocation::AppDir:		filenameWithPath = appDir; break;
-		case ELocation::DataDir:	filenameWithPath = dataDir; break;
-		case ELocation::CacheDir:	filenameWithPath = cacheDir; break;
-	}
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = appDir;
 	filenameWithPath += filename;
 
 	return OpenNative(filenameWithPath);

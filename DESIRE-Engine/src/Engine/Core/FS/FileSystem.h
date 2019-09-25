@@ -13,24 +13,6 @@ private:
 	~FileSystem();
 
 public:
-	enum class ELocation
-	{
-		// Application directory, where the binary is located
-		AppDir,
-
-		// Folder for storing any downloaded or generated files
-		// WIN32:		C:/Users/<username>/AppData/Roaming/DESIRE/<exename>
-		// IOS:			/var/mobile/Applications/<XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX>/Library
-		// ANDROID:		/mnt/sdcard/DESIRE/<activityname>
-		DataDir,
-
-		// Cache directory
-		// WIN32:		C:/Users/<username>/AppData/Roaming/DESIRE/<exename>/Cache
-		// IOS:			/var/mobile/Applications/<XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX>/Library/Caches		(this is not backed up by iTunes)
-		// ANDROID:		/data/data/<packagename>/cache
-		CacheDir
-	};
-
 	enum EFileSourceFlags
 	{
 		FILESOURCE_IGNORE_PATH = 0x01,
@@ -40,7 +22,7 @@ public:
 	static FileSystem* Get();
 
 	// Opens a file for reading
-	ReadFilePtr Open(const String& filename, ELocation location = ELocation::AppDir);
+	ReadFilePtr Open(const String& filename);
 
 	// Creates a file for writing
 	WriteFilePtr CreateWriteFile(const String& filename);
@@ -51,11 +33,9 @@ public:
 
 private:
 	ReadFilePtr OpenNative(const String& filename);
-	void SetupDirectories();
+	void Setup();
 
 	Array<std::unique_ptr<IFileSource>> fileSources;
 
 	DynamicString appDir;
-	DynamicString dataDir;
-	DynamicString cacheDir;
 };

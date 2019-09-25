@@ -121,7 +121,7 @@ WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
 	return std::make_unique<WINDOWSFile>(hFile, 0, filename);
 }
 
-void FileSystem::SetupDirectories()
+void FileSystem::Setup()
 {
 	char exePath[DESIRE_MAX_PATH_LEN] = {};
 
@@ -141,10 +141,6 @@ void FileSystem::SetupDirectories()
 	}
 
 	appDir = DynamicString(exePath, strlen(exePath));
-
-	DESIRE_TODO("Set dataDir and cacheDir properly");
-	dataDir = appDir;
-	cacheDir = appDir;
 }
 
 #endif	// #if DESIRE_PLATFORM_WINDOWS
