@@ -70,6 +70,9 @@
     <Filter Include="src\Engine\Input">
       <UniqueIdentifier>{915689A8-7D4F-A8FA-A681-8D7F92D98706}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Network">
+      <UniqueIdentifier>{8B75675C-7759-28B2-E0B9-2205CCBC1234}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Physics">
       <UniqueIdentifier>{8496B3FD-707A-7453-D9DA-6EA6C5DD5ED5}</UniqueIdentifier>
     </Filter>
@@ -414,6 +417,9 @@
     <ClInclude Include="..\..\src\Engine\Modules.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Network\Socket.h">
+      <Filter>src\Engine\Network</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Physics\ColliderShape.h">
       <Filter>src\Engine\Physics</Filter>
     </ClInclude>
@@ -578,9 +584,6 @@
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_linux.cpp">
       <Filter>src\Engine\Core\FS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_osx.cpp">
-      <Filter>src\Engine\Core\FS</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_windows.cpp">
       <Filter>src\Engine\Core\FS</Filter>
     </ClCompile>
@@ -709,6 +712,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Modules.cpp">
       <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Network\Socket_linux.cpp">
+      <Filter>src\Engine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Network\Socket_ps4.cpp">
+      <Filter>src\Engine\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Network\Socket_windows.cpp">
+      <Filter>src\Engine\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp">
       <Filter>src\Engine\Physics</Filter>

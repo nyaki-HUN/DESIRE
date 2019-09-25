@@ -212,6 +212,7 @@
     <ClInclude Include="..\..\src\Engine\Input\Mouse.h" />
     <ClInclude Include="..\..\src\Engine\Input\keyCodes.h" />
     <ClInclude Include="..\..\src\Engine\Modules.h" />
+    <ClInclude Include="..\..\src\Engine\Network\Socket.h" />
     <ClInclude Include="..\..\src\Engine\Physics\ColliderShape.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Collision.h" />
     <ClInclude Include="..\..\src\Engine\Physics\Physics.h" />
@@ -268,7 +269,6 @@
     <ClCompile Include="..\..\src\Engine\Core\Container\FreeList.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_linux.cpp" />
-    <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_osx.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystemWatcher_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem_linux.cpp" />
     <ClCompile Include="..\..\src\Engine\Core\FS\FileSystem_windows.cpp" />
@@ -312,6 +312,9 @@
     <ClCompile Include="..\..\src\Engine\Input\Keyboard.cpp" />
     <ClCompile Include="..\..\src\Engine\Input\Mouse.cpp" />
     <ClCompile Include="..\..\src\Engine\Modules.cpp" />
+    <ClCompile Include="..\..\src\Engine\Network\Socket_linux.cpp" />
+    <ClCompile Include="..\..\src\Engine\Network\Socket_ps4.cpp" />
+    <ClCompile Include="..\..\src\Engine\Network\Socket_windows.cpp" />
     <ClCompile Include="..\..\src\Engine\Physics\Physics.cpp" />
     <ClCompile Include="..\..\src\Engine\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Render\Camera.cpp" />
