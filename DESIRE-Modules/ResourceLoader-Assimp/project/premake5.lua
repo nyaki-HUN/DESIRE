@@ -8,22 +8,37 @@ project "ResourceLoader-Assimp"
 	defines
 	{
 		"OPENDDL_STATIC_LIBARY",
-		"ASSIMP_BUILD_NO_OWN_ZLIB",
 		"_SCL_SECURE_NO_WARNINGS",
+		"ASSIMP_BUILD_NO_OWN_ZLIB",
+
+		"ASSIMP_BUILD_NO_FBX_EXPORTER",
+		"ASSIMP_BUILD_NO_GLTF_EXPORTER",
+
+		"ASSIMP_BUILD_NO_C4D_IMPORTER",
+		"ASSIMP_BUILD_NO_IFC_IMPORTER",
+		"ASSIMP_BUILD_NO_STEP_IMPORTER",
 	}
 
 	includedirs
 	{
+		"../Externals/Assimp/",
+		"../Externals/Assimp/code",
 		"../Externals/Assimp/include",
 		"../Externals/Assimp/contrib",
+		"../Externals/Assimp/contrib/irrXML",
 		"../Externals/Assimp/contrib/openddlparser/include",
-		"../../Compression-zlib-ng/Externals/zlib-ng",
-		"../../Compression-zlib-ng/include",
+		"../Externals/Assimp/contrib/unzip",
+		"../../Compression-zlib/Externals/zlib",
+		"../../../DESIRE-Engine/3rdparty/rapidjson/include",
 	}
 
 	files
 	{
 		"../Externals/**.h",
 		"../Externals/**.hpp",
+		"../Externals/**.c",
 		"../Externals/**.cpp",
 	}
+
+	filter "system:windows"
+		buildoptions { "/bigobj" }
