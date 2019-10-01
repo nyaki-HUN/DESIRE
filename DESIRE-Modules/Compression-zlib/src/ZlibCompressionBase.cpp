@@ -46,10 +46,10 @@ size_t ZlibCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t co
 
 	z_stream stream = {};
 	StreamInit(stream);
-	stream.next_in = static_cast<const uint8_t*>(data);
-	stream.avail_in = (uint32_t)dataSize;
-	stream.next_out = static_cast<uint8_t*>(compressedDataBuffer);
-	stream.avail_out = (uint32_t)compressedDataBufferSize;
+	stream.next_in = static_cast<const Bytef*>(data);
+	stream.avail_in = static_cast<uInt>(dataSize);
+	stream.next_out = static_cast<Bytef*>(compressedDataBuffer);
+	stream.avail_out = static_cast<uInt>(compressedDataBufferSize);
 
 	int result = deflateInit2(&stream, compressionLevel, Z_DEFLATED, windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
 	if(result != Z_OK)
@@ -86,10 +86,10 @@ size_t ZlibCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBuffer
 
 	z_stream stream = {};
 	StreamInit(stream);
-	stream.next_in = static_cast<const uint8_t*>(compressedData);
-	stream.avail_in = (uint32_t)compressedDataSize;
-	stream.next_out = static_cast<uint8_t*>(dataBuffer);
-	stream.avail_out = (uint32_t)dataBufferSize;
+	stream.next_in = static_cast<const Bytef*>(compressedData);
+	stream.avail_in = static_cast<uInt>(compressedDataSize);
+	stream.next_out = static_cast<Bytef*>(dataBuffer);
+	stream.avail_out = static_cast<uInt>(dataBufferSize);
 
 	int result = inflateInit2(&stream, windowBits);
 	if(result != Z_OK)
