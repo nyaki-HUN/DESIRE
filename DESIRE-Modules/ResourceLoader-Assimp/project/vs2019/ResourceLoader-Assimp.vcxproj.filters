@@ -225,6 +225,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Externals\Assimp\code\3DS\3DSExporter.h">
+      <Filter>Externals\Assimp\code\3DS</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\3DS\3DSHelper.h">
       <Filter>Externals\Assimp\code\3DS</Filter>
     </ClInclude>
@@ -232,6 +235,9 @@
       <Filter>Externals\Assimp\code\3DS</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\3MF\3MFXmlTags.h">
+      <Filter>Externals\Assimp\code\3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Assimp\code\3MF\D3MFExporter.h">
       <Filter>Externals\Assimp\code\3MF</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\3MF\D3MFImporter.h">
@@ -257,6 +263,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\ASE\ASEParser.h">
       <Filter>Externals\Assimp\code\ASE</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Assimp\code\Assbin\AssbinExporter.h">
+      <Filter>Externals\Assimp\code\Assbin</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\Assbin\AssbinLoader.h">
       <Filter>Externals\Assimp\code\Assbin</Filter>
@@ -311,6 +320,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\CSM\CSMLoader.h">
       <Filter>Externals\Assimp\code\CSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Assimp\code\Collada\ColladaExporter.h">
+      <Filter>Externals\Assimp\code\Collada</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\Collada\ColladaHelper.h">
       <Filter>Externals\Assimp\code\Collada</Filter>
@@ -522,6 +534,9 @@
     <ClInclude Include="..\..\Externals\Assimp\code\OFF\OFFLoader.h">
       <Filter>Externals\Assimp\code\OFF</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\Assimp\code\Obj\ObjExporter.h">
+      <Filter>Externals\Assimp\code\Obj</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\Obj\ObjFileData.h">
       <Filter>Externals\Assimp\code\Obj</Filter>
     </ClInclude>
@@ -552,11 +567,17 @@
     <ClInclude Include="..\..\Externals\Assimp\code\Ogre\OgreXmlSerializer.h">
       <Filter>Externals\Assimp\code\Ogre</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXExporter.h">
+      <Filter>Externals\Assimp\code\OpenGEX</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXImporter.h">
       <Filter>Externals\Assimp\code\OpenGEX</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXStructs.h">
       <Filter>Externals\Assimp\code\OpenGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Assimp\code\Ply\PlyExporter.h">
+      <Filter>Externals\Assimp\code\Ply</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\Ply\PlyLoader.h">
       <Filter>Externals\Assimp\code\Ply</Filter>
@@ -671,6 +692,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\SMD\SMDLoader.h">
       <Filter>Externals\Assimp\code\SMD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\Assimp\code\STL\STLExporter.h">
+      <Filter>Externals\Assimp\code\STL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Externals\Assimp\code\STL\STLLoader.h">
       <Filter>Externals\Assimp\code\STL</Filter>
@@ -1046,8 +1070,14 @@
     <ClCompile Include="..\..\Externals\Assimp\code\3DS\3DSConverter.cpp">
       <Filter>Externals\Assimp\code\3DS</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\3DS\3DSExporter.cpp">
+      <Filter>Externals\Assimp\code\3DS</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\3DS\3DSLoader.cpp">
       <Filter>Externals\Assimp\code\3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\3MF\D3MFExporter.cpp">
+      <Filter>Externals\Assimp\code\3MF</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\3MF\D3MFImporter.cpp">
       <Filter>Externals\Assimp\code\3MF</Filter>
@@ -1076,10 +1106,16 @@
     <ClCompile Include="..\..\Externals\Assimp\code\ASE\ASEParser.cpp">
       <Filter>Externals\Assimp\code\ASE</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\Assbin\AssbinExporter.cpp">
+      <Filter>Externals\Assimp\code\Assbin</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Assbin\AssbinLoader.cpp">
       <Filter>Externals\Assimp\code\Assbin</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Assjson\cencode.c">
+      <Filter>Externals\Assimp\code\Assjson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\Assjson\json_exporter.cpp">
       <Filter>Externals\Assimp\code\Assjson</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Assjson\mesh_splitter.cpp">
@@ -1121,6 +1157,9 @@
     <ClCompile Include="..\..\Externals\Assimp\code\CSM\CSMLoader.cpp">
       <Filter>Externals\Assimp\code\CSM</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\Collada\ColladaExporter.cpp">
+      <Filter>Externals\Assimp\code\Collada</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Collada\ColladaLoader.cpp">
       <Filter>Externals\Assimp\code\Collada</Filter>
     </ClCompile>
@@ -1146,6 +1185,9 @@
       <Filter>Externals\Assimp\code\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Common\DefaultLogger.cpp">
+      <Filter>Externals\Assimp\code\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\Common\Exporter.cpp">
       <Filter>Externals\Assimp\code\Common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Common\Importer.cpp">
@@ -1328,6 +1370,9 @@
     <ClCompile Include="..\..\Externals\Assimp\code\OFF\OFFLoader.cpp">
       <Filter>Externals\Assimp\code\OFF</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\Obj\ObjExporter.cpp">
+      <Filter>Externals\Assimp\code\Obj</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Obj\ObjFileImporter.cpp">
       <Filter>Externals\Assimp\code\Obj</Filter>
     </ClCompile>
@@ -1352,8 +1397,14 @@
     <ClCompile Include="..\..\Externals\Assimp\code\Ogre\OgreXmlSerializer.cpp">
       <Filter>Externals\Assimp\code\Ogre</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXExporter.cpp">
+      <Filter>Externals\Assimp\code\OpenGEX</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXImporter.cpp">
       <Filter>Externals\Assimp\code\OpenGEX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\Ply\PlyExporter.cpp">
+      <Filter>Externals\Assimp\code\Ply</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\Ply\PlyLoader.cpp">
       <Filter>Externals\Assimp\code\Ply</Filter>
@@ -1465,6 +1516,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\SMD\SMDLoader.cpp">
       <Filter>Externals\Assimp\code\SMD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\Assimp\code\STL\STLExporter.cpp">
+      <Filter>Externals\Assimp\code\STL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Externals\Assimp\code\STL\STLLoader.cpp">
       <Filter>Externals\Assimp\code\STL</Filter>

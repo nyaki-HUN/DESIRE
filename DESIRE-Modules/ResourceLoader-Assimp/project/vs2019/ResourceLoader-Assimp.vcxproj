@@ -57,7 +57,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;OPENDDL_STATIC_LIBARY;_SCL_SECURE_NO_WARNINGS;ASSIMP_BUILD_NO_OWN_ZLIB;ASSIMP_BUILD_NO_FBX_EXPORTER;ASSIMP_BUILD_NO_GLTF_EXPORTER;ASSIMP_BUILD_NO_C4D_IMPORTER;ASSIMP_BUILD_NO_IFC_IMPORTER;ASSIMP_BUILD_NO_STEP_IMPORTER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;OPENDDL_STATIC_LIBARY;_SCL_SECURE_NO_WARNINGS;ASSIMP_BUILD_NO_OWN_ZLIB;ASSIMP_BUILD_NO_EXPORT;ASSIMP_BUILD_NO_C4D_IMPORTER;ASSIMP_BUILD_NO_IFC_IMPORTER;ASSIMP_BUILD_NO_STEP_IMPORTER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\Assimp;..\..\Externals\Assimp\code;..\..\Externals\Assimp\include;..\..\Externals\Assimp\contrib;..\..\Externals\Assimp\contrib\irrXML;..\..\Externals\Assimp\contrib\openddlparser\include;..\..\Externals\Assimp\contrib\unzip;..\..\..\Compression-zlib\Externals\zlib;..\..\..\..\DESIRE-Engine\3rdparty\rapidjson\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -80,7 +80,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;OPENDDL_STATIC_LIBARY;_SCL_SECURE_NO_WARNINGS;ASSIMP_BUILD_NO_OWN_ZLIB;ASSIMP_BUILD_NO_FBX_EXPORTER;ASSIMP_BUILD_NO_GLTF_EXPORTER;ASSIMP_BUILD_NO_C4D_IMPORTER;ASSIMP_BUILD_NO_IFC_IMPORTER;ASSIMP_BUILD_NO_STEP_IMPORTER;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;OPENDDL_STATIC_LIBARY;_SCL_SECURE_NO_WARNINGS;ASSIMP_BUILD_NO_OWN_ZLIB;ASSIMP_BUILD_NO_EXPORT;ASSIMP_BUILD_NO_C4D_IMPORTER;ASSIMP_BUILD_NO_IFC_IMPORTER;ASSIMP_BUILD_NO_STEP_IMPORTER;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\Assimp;..\..\Externals\Assimp\code;..\..\Externals\Assimp\include;..\..\Externals\Assimp\contrib;..\..\Externals\Assimp\contrib\irrXML;..\..\Externals\Assimp\contrib\openddlparser\include;..\..\Externals\Assimp\contrib\unzip;..\..\..\Compression-zlib\Externals\zlib;..\..\..\..\DESIRE-Engine\3rdparty\rapidjson\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -103,9 +103,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Externals\Assimp\code\3DS\3DSExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\3DS\3DSHelper.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\3DS\3DSLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\3MF\3MFXmlTags.h" />
+    <ClInclude Include="..\..\Externals\Assimp\code\3MF\D3MFExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\3MF\D3MFImporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\3MF\D3MFOpcPackage.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\AC\ACLoader.h" />
@@ -114,6 +116,7 @@
     <ClInclude Include="..\..\Externals\Assimp\code\AMF\AMFImporter_Node.hpp" />
     <ClInclude Include="..\..\Externals\Assimp\code\ASE\ASELoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\ASE\ASEParser.h" />
+    <ClInclude Include="..\..\Externals\Assimp\code\Assbin\AssbinExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Assbin\AssbinLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Assjson\cencode.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Assjson\mesh_splitter.h" />
@@ -132,6 +135,7 @@
     <ClInclude Include="..\..\Externals\Assimp\code\COB\COBLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\COB\COBScene.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\CSM\CSMLoader.h" />
+    <ClInclude Include="..\..\Externals\Assimp\code\Collada\ColladaExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Collada\ColladaHelper.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Collada\ColladaLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Collada\ColladaParser.h" />
@@ -202,6 +206,7 @@
     <ClInclude Include="..\..\Externals\Assimp\code\NDO\NDOLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\NFF\NFFLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\OFF\OFFLoader.h" />
+    <ClInclude Include="..\..\Externals\Assimp\code\Obj\ObjExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Obj\ObjFileData.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Obj\ObjFileImporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Obj\ObjFileMtlImporter.h" />
@@ -212,8 +217,10 @@
     <ClInclude Include="..\..\Externals\Assimp\code\Ogre\OgreParsingUtils.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Ogre\OgreStructs.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Ogre\OgreXmlSerializer.h" />
+    <ClInclude Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXImporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXStructs.h" />
+    <ClInclude Include="..\..\Externals\Assimp\code\Ply\PlyExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Ply\PlyLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Ply\PlyParser.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\PostProcessing\CalcTangentsProcess.h" />
@@ -252,6 +259,7 @@
     <ClInclude Include="..\..\Externals\Assimp\code\Raw\RawLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\SIB\SIBImporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\SMD\SMDLoader.h" />
+    <ClInclude Include="..\..\Externals\Assimp\code\STL\STLExporter.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\STL\STLLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Terragen\TerragenLoader.h" />
     <ClInclude Include="..\..\Externals\Assimp\code\Unreal\UnrealLoader.h" />
@@ -378,7 +386,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\Assimp\code\3DS\3DSConverter.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\3DS\3DSExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\3DS\3DSLoader.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\3MF\D3MFExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\3MF\D3MFImporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\3MF\D3MFOpcPackage.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\AC\ACLoader.cpp" />
@@ -388,8 +398,10 @@
     <ClCompile Include="..\..\Externals\Assimp\code\AMF\AMFImporter_Postprocess.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\ASE\ASELoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\ASE\ASEParser.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\Assbin\AssbinExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Assbin\AssbinLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Assjson\cencode.c" />
+    <ClCompile Include="..\..\Externals\Assimp\code\Assjson\json_exporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Assjson\mesh_splitter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\B3D\B3DImporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\BVH\BVHLoader.cpp" />
@@ -403,6 +415,7 @@
     <ClCompile Include="..\..\Externals\Assimp\code\C4D\C4DImporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\COB\COBLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\CSM\CSMLoader.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\Collada\ColladaExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Collada\ColladaLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Collada\ColladaParser.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Common\BaseImporter.cpp" />
@@ -412,6 +425,7 @@
     <ClCompile Include="..\..\Externals\Assimp\code\Common\DefaultIOStream.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Common\DefaultIOSystem.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Common\DefaultLogger.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\Common\Exporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Common\Importer.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Common\ImporterRegistry.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Common\PostStepRegistry.cpp" />
@@ -472,6 +486,7 @@
     <ClCompile Include="..\..\Externals\Assimp\code\NDO\NDOLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\NFF\NFFLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\OFF\OFFLoader.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\Obj\ObjExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Obj\ObjFileImporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Obj\ObjFileMtlImporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Obj\ObjFileParser.cpp" />
@@ -480,7 +495,9 @@
     <ClCompile Include="..\..\Externals\Assimp\code\Ogre\OgreMaterial.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Ogre\OgreStructs.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Ogre\OgreXmlSerializer.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\OpenGEX\OpenGEXImporter.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\Ply\PlyExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Ply\PlyLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Ply\PlyParser.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\PostProcessing\CalcTangentsProcess.cpp" />
@@ -518,6 +535,7 @@
     <ClCompile Include="..\..\Externals\Assimp\code\Raw\RawLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\SIB\SIBImporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\SMD\SMDLoader.cpp" />
+    <ClCompile Include="..\..\Externals\Assimp\code\STL\STLExporter.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\STL\STLLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Terragen\TerragenLoader.cpp" />
     <ClCompile Include="..\..\Externals\Assimp\code\Unreal\UnrealLoader.cpp" />

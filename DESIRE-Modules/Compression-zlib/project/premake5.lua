@@ -16,8 +16,8 @@ project "Compression-zlib"
 
 	files
 	{
-		"../Externals/zlib/*.h",
-		"../Externals/zlib/*.c",
+		"../Externals/**.h",
+		"../Externals/**.c",
 	}
 
 	removefiles
