@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ZlibNgCompressionBase.h"
+#include "ZlibCompressionBase.h"
 
-class RawDeflateCompression : public ZlibNgCompressionBase
+class RawDeflateCompression : public ZlibCompressionBase
 {
 public:
 	RawDeflateCompression();

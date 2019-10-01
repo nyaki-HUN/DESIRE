@@ -51,7 +51,7 @@
     <ClInclude Include="..\..\src\ZlibCompression.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\ZlibNgCompressionBase.h">
+    <ClInclude Include="..\..\src\ZlibCompressionBase.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClCompile Include="..\..\src\ZlibCompression.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\ZlibNgCompressionBase.cpp">
+    <ClCompile Include="..\..\src\ZlibCompressionBase.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

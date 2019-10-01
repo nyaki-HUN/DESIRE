@@ -1,4 +1,4 @@
-#include "ZlibNgCompressionBase.h"
+#include "ZlibCompressionBase.h"
 
 #include "Engine/Core/assert.h"
 #include "Engine/Core/Log/Log.h"
@@ -6,13 +6,13 @@
 
 #include "zlib.h"
 
-ZlibNgCompressionBase::ZlibNgCompressionBase(int windowBits)
+ZlibCompressionBase::ZlibCompressionBase(int windowBits)
 	: windowBits(windowBits)
 {
 	compressionLevel = Z_DEFAULT_COMPRESSION;
 }
 
-size_t ZlibNgCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) const
+size_t ZlibCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) const
 {
 	if(dataSize > UINT32_MAX)
 	{
@@ -36,7 +36,7 @@ size_t ZlibNgCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) c
 	return maxSize;
 }
 
-size_t ZlibNgCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize)
+size_t ZlibCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize)
 {
 	if(dataSize > UINT32_MAX || compressedDataBufferSize > UINT32_MAX)
 	{
@@ -70,13 +70,13 @@ size_t ZlibNgCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t 
 	return stream.total_out;
 }
 
-size_t ZlibNgCompressionBase::GetMaxDecompressionDataBufferSize(const void* compressedData, size_t compressedDataSize) const
+size_t ZlibCompressionBase::GetMaxDecompressionDataBufferSize(const void* compressedData, size_t compressedDataSize) const
 {
 	ASSERT(false && "Unimplemented");
 	return 0;
 }
 
-size_t ZlibNgCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBufferSize, const void* compressedData, size_t compressedDataSize)
+size_t ZlibCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBufferSize, const void* compressedData, size_t compressedDataSize)
 {
 	if(compressedDataSize > UINT32_MAX || dataBufferSize > UINT32_MAX)
 	{
@@ -110,30 +110,30 @@ size_t ZlibNgCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBuff
 	return stream.total_out;
 }
 
-int ZlibNgCompressionBase::GetMinCompressionLevel() const
+int ZlibCompressionBase::GetMinCompressionLevel() const
 {
 	return Z_BEST_SPEED;
 }
 
-int ZlibNgCompressionBase::GetMaxCompressionLevel() const
+int ZlibCompressionBase::GetMaxCompressionLevel() const
 {
 	return Z_BEST_COMPRESSION;
 }
 
-void* ZlibNgCompressionBase::CustomAlloc(void* opaque, uint32_t items, uint32_t size)
+void* ZlibCompressionBase::CustomAlloc(void* opaque, uint32_t items, uint32_t size)
 {
 	DESIRE_UNUSED(opaque);
 	return MemorySystem::Alloc(static_cast<size_t>(items) * size);
 }
 
-void ZlibNgCompressionBase::CustomFree(void* opaque, void* address)
+void ZlibCompressionBase::CustomFree(void* opaque, void* address)
 {
 	DESIRE_UNUSED(opaque);
 	MemorySystem::Free(address);
 }
 
-void ZlibNgCompressionBase::StreamInit(z_stream& stream)
+void ZlibCompressionBase::StreamInit(z_stream& stream)
 {
-	stream.zalloc = &ZlibNgCompressionBase::CustomAlloc;
-	stream.zfree = &ZlibNgCompressionBase::CustomFree;
+	stream.zalloc = &ZlibCompressionBase::CustomAlloc;
+	stream.zfree = &ZlibCompressionBase::CustomFree;
 }

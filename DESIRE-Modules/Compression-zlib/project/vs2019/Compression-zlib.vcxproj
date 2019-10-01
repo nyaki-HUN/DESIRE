@@ -57,7 +57,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;Z_SOLO;ZLIB_CONST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;ZLIB_CONST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
@@ -80,7 +80,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;Z_SOLO;ZLIB_CONST;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;ZLIB_CONST;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -116,7 +116,7 @@
     <ClInclude Include="..\..\src\GZipCompression.h" />
     <ClInclude Include="..\..\src\RawDeflateCompression.h" />
     <ClInclude Include="..\..\src\ZlibCompression.h" />
-    <ClInclude Include="..\..\src\ZlibNgCompressionBase.h" />
+    <ClInclude Include="..\..\src\ZlibCompressionBase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Externals\zlib\adler32.c" />
@@ -133,7 +133,7 @@
     <ClCompile Include="..\..\src\GZipCompression.cpp" />
     <ClCompile Include="..\..\src\RawDeflateCompression.cpp" />
     <ClCompile Include="..\..\src\ZlibCompression.cpp" />
-    <ClCompile Include="..\..\src\ZlibNgCompressionBase.cpp" />
+    <ClCompile Include="..\..\src\ZlibCompressionBase.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

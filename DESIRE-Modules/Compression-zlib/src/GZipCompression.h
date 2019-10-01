@@ -1,12 +1,10 @@
 #pragma once
 
-#include "ZlibNgCompressionBase.h"
+#include "ZlibCompressionBase.h"
 
-class GZipCompression : public ZlibNgCompressionBase
+class GZipCompression : public ZlibCompressionBase
 {
 public:
 	GZipCompression();
 	~GZipCompression() override;
-
-private:
 };

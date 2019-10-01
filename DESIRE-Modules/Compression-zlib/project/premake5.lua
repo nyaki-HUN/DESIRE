@@ -6,7 +6,6 @@ project "Compression-zlib"
 
 	defines
 	{
-		"Z_SOLO",
 		"ZLIB_CONST",
 	}
 

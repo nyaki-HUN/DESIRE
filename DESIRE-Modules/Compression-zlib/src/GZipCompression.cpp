@@ -3,12 +3,10 @@
 #include "zlib.h"
 
 GZipCompression::GZipCompression()
-	: ZlibNgCompressionBase(MAX_WBITS + 16)		// use gzip header
+	: ZlibCompressionBase(MAX_WBITS + 16)		// use gzip header
 {
-
 }
 
 GZipCompression::~GZipCompression()
 {
-
 }
