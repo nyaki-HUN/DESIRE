@@ -16,7 +16,7 @@ project "SandBox"
 		"DESIRE",
 		"Compression-Lizard",
 		"Compression-LZ4",
-		"Compression-zlib-ng",
+		"Compression-zlib",
 		"Compression-zstd",
 		"Physics-Box2D",
 		"Physics-Bullet",

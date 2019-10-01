@@ -14,7 +14,7 @@
     <ProjectGuid>{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Compression-zlib-ng</RootNamespace>
+    <RootNamespace>Compression-zlib</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -44,21 +44,21 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>..\..\lib\vs2019\</OutDir>
     <IntDir>obj\Debug\</IntDir>
-    <TargetName>Compression-zlib-ng_d</TargetName>
+    <TargetName>Compression-zlib_d</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>..\..\lib\vs2019\</OutDir>
     <IntDir>obj\Release\</IntDir>
-    <TargetName>Compression-zlib-ng</TargetName>
+    <TargetName>Compression-zlib</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;Z_SOLO;ZLIB_COMPAT;X86_64;X86_NOCHECK_SSE2;UNALIGNED_OK;UNROLL_LESS;X86_SSE2_FILL_WINDOW;X86_CPUID;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib-ng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;Z_SOLO;ZLIB_CONST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -80,8 +80,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;Z_SOLO;ZLIB_COMPAT;X86_64;X86_NOCHECK_SSE2;UNALIGNED_OK;UNROLL_LESS;X86_SSE2_FILL_WINDOW;X86_CPUID;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib-ng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;Z_SOLO;ZLIB_CONST;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -103,56 +103,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Externals\zlib-ng\adler32_p.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\arch\x86\x86.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\crc32.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\deflate.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\deflate_p.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\fallback_builtins.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\functable.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\inffast.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\inffixed.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\inflate.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\inflate_p.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\inftrees.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\match_p.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\memcopy.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\trees.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\zbuild.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\zendian.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\zlib-ng.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\zlib.h" />
-    <ClInclude Include="..\..\Externals\zlib-ng\zutil.h" />
-    <ClInclude Include="..\..\include\zconf-ng.h" />
-    <ClInclude Include="..\..\include\zconf.h" />
+    <ClInclude Include="..\..\Externals\zlib\crc32.h" />
+    <ClInclude Include="..\..\Externals\zlib\deflate.h" />
+    <ClInclude Include="..\..\Externals\zlib\inffast.h" />
+    <ClInclude Include="..\..\Externals\zlib\inffixed.h" />
+    <ClInclude Include="..\..\Externals\zlib\inflate.h" />
+    <ClInclude Include="..\..\Externals\zlib\inftrees.h" />
+    <ClInclude Include="..\..\Externals\zlib\trees.h" />
+    <ClInclude Include="..\..\Externals\zlib\zconf.h" />
+    <ClInclude Include="..\..\Externals\zlib\zlib.h" />
+    <ClInclude Include="..\..\Externals\zlib\zutil.h" />
     <ClInclude Include="..\..\src\GZipCompression.h" />
     <ClInclude Include="..\..\src\RawDeflateCompression.h" />
     <ClInclude Include="..\..\src\ZlibCompression.h" />
     <ClInclude Include="..\..\src\ZlibNgCompressionBase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Externals\zlib-ng\adler32.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\crc_folding.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\deflate_quick.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\fill_window_sse.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\insert_string_sse.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\slide_sse.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\arch\x86\x86.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\compress.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\crc32.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\deflate.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\deflate_fast.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\deflate_medium.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\deflate_slow.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\functable.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\infback.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\inffast.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\inflate.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\inftrees.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\trees.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\uncompr.c" />
-    <ClCompile Include="..\..\Externals\zlib-ng\zutil.c" />
+    <ClCompile Include="..\..\Externals\zlib\adler32.c" />
+    <ClCompile Include="..\..\Externals\zlib\compress.c" />
+    <ClCompile Include="..\..\Externals\zlib\crc32.c" />
+    <ClCompile Include="..\..\Externals\zlib\deflate.c" />
+    <ClCompile Include="..\..\Externals\zlib\infback.c" />
+    <ClCompile Include="..\..\Externals\zlib\inffast.c" />
+    <ClCompile Include="..\..\Externals\zlib\inflate.c" />
+    <ClCompile Include="..\..\Externals\zlib\inftrees.c" />
+    <ClCompile Include="..\..\Externals\zlib\trees.c" />
+    <ClCompile Include="..\..\Externals\zlib\uncompr.c" />
+    <ClCompile Include="..\..\Externals\zlib\zutil.c" />
     <ClCompile Include="..\..\src\GZipCompression.cpp" />
     <ClCompile Include="..\..\src\RawDeflateCompression.cpp" />
     <ClCompile Include="..\..\src\ZlibCompression.cpp" />

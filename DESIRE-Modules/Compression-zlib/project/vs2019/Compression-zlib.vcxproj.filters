@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Externals">
+      <UniqueIdentifier>{7B3ECCEB-E7A8-8062-30E7-31089C905EB7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\zlib">
+      <UniqueIdentifier>{9BC2A4ED-8790-98F3-7024-091A5C917458}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Externals\zlib\crc32.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\deflate.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\inffast.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\inffixed.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\inflate.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\inftrees.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\trees.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\zconf.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\zlib.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\zlib\zutil.h">
+      <Filter>Externals\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\GZipCompression.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\RawDeflateCompression.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ZlibCompression.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ZlibNgCompressionBase.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Externals\zlib\adler32.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\compress.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\crc32.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\deflate.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\infback.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\inffast.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\inflate.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\inftrees.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\trees.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\uncompr.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Externals\zlib\zutil.c">
+      <Filter>Externals\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GZipCompression.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\RawDeflateCompression.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ZlibCompression.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ZlibNgCompressionBase.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

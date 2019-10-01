@@ -127,7 +127,7 @@
     <ProjectReference Include="..\..\..\DESIRE-Modules\Compression-LZ4\project\vs2019\Compression-LZ4.vcxproj">
       <Project>{83295281-AF7D-4CBD-B089-92DFE9016E28}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DESIRE-Modules\Compression-zlib-ng\project\vs2019\Compression-zlib-ng.vcxproj">
+    <ProjectReference Include="..\..\..\DESIRE-Modules\Compression-zlib\project\vs2019\Compression-zlib.vcxproj">
       <Project>{07C8AFBA-5E54-4A5B-BD68-C5C8ED113D57}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\DESIRE-Modules\Compression-zstd\project\vs2019\Compression-zstd.vcxproj">

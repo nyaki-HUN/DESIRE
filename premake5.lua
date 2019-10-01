@@ -127,7 +127,7 @@ solution "DESIRE"
 	-- Compression modules
 	include "DESIRE-Modules/Compression-Lizard/project/premake5.lua"
 	include "DESIRE-Modules/Compression-LZ4/project/premake5.lua"
-	include "DESIRE-Modules/Compression-zlib-ng/project/premake5.lua"
+	include "DESIRE-Modules/Compression-zlib/project/premake5.lua"
 	include "DESIRE-Modules/Compression-zstd/project/premake5.lua"
 
 	-- Physics modules
