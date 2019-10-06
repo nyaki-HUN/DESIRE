@@ -96,6 +96,7 @@ public:
 	}
 
 	static inline Vector3 Zero()		{ return Vector3(0.0f); }
+	static inline Vector3 One()			{ return Vector3(1.0f); }
 	static inline Vector3 AxisX()		{ return Vector3(1.0f, 0.0f, 0.0f); }
 	static inline Vector3 AxisY()		{ return Vector3(0.0f, 1.0f, 0.0f); }
 	static inline Vector3 AxisZ()		{ return Vector3(0.0f, 0.0f, 1.0f); }

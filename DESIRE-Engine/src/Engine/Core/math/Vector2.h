@@ -69,6 +69,7 @@ public:
 	static inline Vector2 MinPerElem(const Vector2& a, const Vector2& b)	{ return Vector2((a.x < b.x) ? a.x : b.x, (a.y < b.y) ? a.y : b.y); }
 
 	static inline Vector2 Zero()		{ return Vector2(0.0f); }
+	static inline Vector2 One()			{ return Vector2(1.0f); }
 	static inline Vector2 AxisX()		{ return Vector2(1.0f, 0.0f); }
 	static inline Vector2 AxisY()		{ return Vector2(0.0f, 1.0f); }
 

@@ -55,6 +55,8 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine* engine)
 	engine->RegisterGlobalFunction("Vector3@ MaxPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<const Vector3&, const Vector3&, &Vector3::MaxPerElem>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Vector3@ MinPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<const Vector3&, const Vector3&, &Vector3::MinPerElem>)), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Vector3@ Slerp(float, const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<float, const Vector3&, const Vector3&, &Vector3::Slerp>)), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ Zero()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::Zero>), asCALL_GENERIC);
+	engine->RegisterGlobalFunction("Vector3@ One()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::One>), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Vector3@ AxisX()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::AxisX>), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Vector3@ AxisY()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::AxisY>), asCALL_GENERIC);
 	engine->RegisterGlobalFunction("Vector3@ AxisZ()", asFUNCTION(AngelScriptGenericAPI<Vector3>::StaticFunc<&Vector3::AxisZ>), asCALL_GENERIC);

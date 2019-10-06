@@ -49,7 +49,7 @@ private:
 
 	Vector3 localPosition = Vector3::Zero();
 	Quat localRotation = Quat::Identity();
-	Vector3 localScale = Vector3(1.0f);
+	Vector3 localScale = Vector3::One();
 
 	mutable Matrix4 worldMatrix = Matrix4::Identity();
 	mutable uint8_t flags = 0;
