@@ -85,7 +85,7 @@ public:
 
 		for(auto it = json.MemberBegin(); it != json.MemberEnd(); ++it)
 		{
-			const HashedString name = HashedString::CreateFromDynamicString(it->name.GetString(), it->name.GetStringLength());
+			const HashedString name = HashedString::CreateFromString(String(it->name.GetString(), it->name.GetStringLength()));
 
 			switch(it->value.GetType())
 			{

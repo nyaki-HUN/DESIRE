@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Engine/Core/platform.h"	// for DESIRE_DISABLE_WARNINGS and DESIRE_ENABLE_WARNINGS
+#include "Engine/Core/String/String.h"
 
 #include <stdint.h>
-#include <string.h>		// for strlen()
 
 // --------------------------------------------------------------------------------------------------------------------
 //	HashedString is a helper class for creating compile-time hash values from string literals.
@@ -44,16 +44,12 @@ public:
 		return hash;
 	}
 
-	static inline HashedString CreateFromDynamicString(const char* key)
+	static HashedString CreateFromString(const String& string)
 	{
-		return CreateFromDynamicString(key, strlen(key));
-	}
-
-	static HashedString CreateFromDynamicString(const char* key, size_t len)
-	{
+		const size_t len = string.Length();
 		uint64_t h = len * m;
 
-		const uint64_t* data = (const uint64_t*)key;
+		const uint64_t* data = reinterpret_cast<const uint64_t*>(string.Str());
 		const uint64_t* end = data + (len / 8);
 		while(data != end)
 		{
@@ -67,7 +63,7 @@ public:
 			h *= m;
 		}
 
-		const uint8_t* data2 = (const uint8_t*)data;
+		const uint8_t* data2 = reinterpret_cast<const uint8_t*>(data);
 		switch(len & 7)
 		{
 			case 7: h ^= uint64_t(data2[6]) << 48;

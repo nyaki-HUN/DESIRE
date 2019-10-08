@@ -474,7 +474,7 @@ void BgfxRender::Bind(Shader* shader)
 
 		bgfx::UniformInfo info;
 		bgfx::getUniformInfo(uniforms[i], info);
-		renderData->uniforms.Insert(HashedString::CreateFromDynamicString(info.name), uniforms[i]);
+		renderData->uniforms.Insert(HashedString::CreateFromString(info.name), uniforms[i]);
 	}
 
 	shader->renderData = renderData;

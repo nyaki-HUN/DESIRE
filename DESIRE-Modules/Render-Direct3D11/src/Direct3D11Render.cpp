@@ -717,7 +717,8 @@ void Direct3D11Render::Bind(Shader *shader)
 				continue;
 			}
 
-			bufferData.variableOffsetSizePairs.Insert(HashedString::CreateFromDynamicString(varDesc.Name), std::make_pair(varDesc.StartOffset, varDesc.Size));
+			const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
+			bufferData.variableOffsetSizePairs.Insert(key, std::make_pair(varDesc.StartOffset, varDesc.Size));
 		}
 	}
 
