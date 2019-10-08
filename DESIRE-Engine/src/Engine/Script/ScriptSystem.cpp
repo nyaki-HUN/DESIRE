@@ -5,12 +5,10 @@
 
 ScriptSystem::ScriptSystem()
 {
-
 }
 
 ScriptSystem::~ScriptSystem()
 {
-
 }
 
 void ScriptSystem::RegisterScript(HashedString scriptName, Factory<IScript>::Func_t factory)
@@ -20,11 +18,10 @@ void ScriptSystem::RegisterScript(HashedString scriptName, Factory<IScript>::Fun
 	scriptFactories.Insert(scriptName, factory);
 }
 
-ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, const char* scriptName)
+ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, const String& scriptName)
 {
 	// Try to create as a native script 
-	HashedString scriptNameHash = HashedString::CreateFromDynamicString(scriptName);
-	Factory<IScript>::Func_t* scriptFactory = scriptFactories.Find(scriptNameHash);
+	Factory<IScript>::Func_t* scriptFactory = scriptFactories.Find(HashedString::CreateFromString(scriptName));
 	if(scriptFactory != nullptr)
 	{
 		NativeScriptComponent& scriptComponent = object.AddComponent<NativeScriptComponent>((*scriptFactory)());

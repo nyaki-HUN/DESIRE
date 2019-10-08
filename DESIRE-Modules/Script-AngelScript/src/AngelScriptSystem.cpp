@@ -70,11 +70,9 @@ AngelScriptSystem::~AngelScriptSystem()
 	engine = nullptr;
 }
 
-ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName)
+ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName)
 {
-	ASSERT(scriptName != nullptr);
-
-	asIScriptModule* module = engine->GetModule(scriptName);
+	asIScriptModule* module = engine->GetModule(scriptName.Str());
 	if(module == nullptr)
 	{
 		module = CompileScript(scriptName, engine);
@@ -115,9 +113,9 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 	return scriptComponent;
 }
 
-asIScriptModule* AngelScriptSystem::CompileScript(const char* scriptName, asIScriptEngine* engine)
+asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIScriptEngine* engine)
 {
-	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.as", scriptName);
+	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.as", scriptName.Str());
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{
@@ -131,13 +129,13 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char* scriptName, asIScr
 		"{"
 		"	ScriptComponent @self;"
 		"	%s(ScriptComponent @component) { @self = component; }"
-		, scriptName
-		, scriptName);
+		, scriptName.Str()
+		, scriptName.Str());
 	scriptSrc.Append(content.data, content.size);
 	scriptSrc += "}";
 
-	asIScriptModule* module = engine->GetModule(scriptName, asGM_ALWAYS_CREATE);
-	module->AddScriptSection(scriptName, scriptSrc.Str(), scriptSrc.Length());
+	asIScriptModule* module = engine->GetModule(scriptName.Str(), asGM_ALWAYS_CREATE);
+	module->AddScriptSection(scriptName.Str(), scriptSrc.Str(), scriptSrc.Length());
 	int result = module->Build();
 	if(result != asSUCCESS)
 	{
@@ -145,10 +143,10 @@ asIScriptModule* AngelScriptSystem::CompileScript(const char* scriptName, asIScr
 		return module;
 	}
 
-	asITypeInfo* typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName));
+	asITypeInfo* typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName.Str()));
 
 	// Cache factory in the script module
-	asIScriptFunction* factoryFunc = typeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName, scriptName).Str());
+	asIScriptFunction* factoryFunc = typeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName.Str(), scriptName.Str()).Str());
 	module->SetUserData(factoryFunc);
 
 	// Cache built-in functions in the object type

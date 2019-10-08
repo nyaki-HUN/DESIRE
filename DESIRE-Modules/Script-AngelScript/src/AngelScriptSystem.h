@@ -16,9 +16,9 @@ public:
 	~AngelScriptSystem() override;
 
 private:
-	ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName) override;
+	ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName) override;
 
-	static asIScriptModule* CompileScript(const char* scriptName, asIScriptEngine* engine);
+	static asIScriptModule* CompileScript(const String& scriptName, asIScriptEngine* engine);
 	asIScriptContext* CreateScriptContext();
 
 	bool IsBreakpoint(const char* scriptSection, int line, asIScriptFunction* function) const;

@@ -54,10 +54,8 @@ LuaScriptSystem::~LuaScriptSystem()
 	lua_close(L);
 }
 
-ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName)
+ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName)
 {
-	ASSERT(scriptName != nullptr);
-
 	lua_State* newL = lua_newthread(L);
 	if(newL == nullptr)
 	{
@@ -71,9 +69,9 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object&
 	return scriptComponent;
 }
 
-void LuaScriptSystem::CompileScript(const char* scriptName, lua_State* L)
+void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 {
-	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.lua", scriptName);
+	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.lua", scriptName.Str());
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{
@@ -82,7 +80,7 @@ void LuaScriptSystem::CompileScript(const char* scriptName, lua_State* L)
 	}
 
 	MemoryBuffer content = file->ReadFileContent();
-	luaL_loadbuffer(L, content.data, content.size, scriptName);
+	luaL_loadbuffer(L, content.data, content.size, scriptName.Str());
 	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
 	ASSERT(statusCode == LUA_OK);
 }

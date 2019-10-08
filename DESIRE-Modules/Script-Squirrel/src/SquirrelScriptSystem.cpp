@@ -56,19 +56,17 @@ SquirrelScriptSystem::~SquirrelScriptSystem()
 	sq_close(vm);
 }
 
-ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName)
+ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName)
 {
-	ASSERT(scriptName != nullptr);
-
 	// Get factory function
 	sq_pushroottable(vm);
-	sq_pushstring(vm, scriptName, -1);
+	sq_pushstring(vm, scriptName.Str(), -1);
 	SQRESULT result = sq_get(vm, -2);
 	if(SQ_FAILED(result))
 	{
 		CompileScript(scriptName, vm);
 
-		sq_pushstring(vm, scriptName, -1);
+		sq_pushstring(vm, scriptName.Str(), -1);
 		result = sq_get(vm, -2);
 		if(SQ_FAILED(result))
 		{
@@ -123,9 +121,9 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 	return scriptComponent;
 }
 
-void SquirrelScriptSystem::CompileScript(const char* scriptName, HSQUIRRELVM vm)
+void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM vm)
 {
-	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.nut", scriptName);
+	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.nut", scriptName.Str());
 	ReadFilePtr file = FileSystem::Get()->Open(filename);
 	if(file == nullptr)
 	{
@@ -139,11 +137,11 @@ void SquirrelScriptSystem::CompileScript(const char* scriptName, HSQUIRRELVM vm)
 		"{"
 		"	self = null;"
 		"	constructor(component) { self = component; }"
-		, scriptName);
+		, scriptName.Str());
 	scriptSrc.Append(content.data, content.size);
 	scriptSrc += "}";
 
-	SQRESULT result = sq_compilebuffer(vm, scriptSrc.Str(), (SQInteger)scriptSrc.Length(), scriptName, SQTrue);
+	SQRESULT result = sq_compilebuffer(vm, scriptSrc.Str(), (SQInteger)scriptSrc.Length(), scriptName.Str(), SQTrue);
 	if(SQ_FAILED(result))
 	{
 		LOG_ERROR("Could not compile script: %s", filename.Str());

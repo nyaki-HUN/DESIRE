@@ -11,9 +11,9 @@ public:
 	~SquirrelScriptSystem() override;
 
 private:
-	ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const char* scriptName) override;
+	ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName) override;
 
-	static void CompileScript(const char* scriptName, HSQUIRRELVM vm);
+	static void CompileScript(const String& scriptName, HSQUIRRELVM vm);
 
 	// Callbacks
 	static void PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...);
