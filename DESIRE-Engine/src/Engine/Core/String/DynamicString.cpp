@@ -72,7 +72,7 @@ bool DynamicString::Reserve(size_t numChars)
 	if(preallocatedSize < numChars + 1)
 	{
 		preallocatedSize = numChars + 1;
-		data = (char*)realloc(data, preallocatedSize * sizeof(char));
+		data = static_cast<char*>(realloc(data, preallocatedSize * sizeof(char)));
 	}
 
 	return true;

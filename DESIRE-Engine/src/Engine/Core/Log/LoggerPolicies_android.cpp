@@ -16,7 +16,7 @@ void LogCatOutputPolicy::Process(const Log::LogData& logData)
 		case 'M':	prio = ANDROID_LOG_INFO; break;
 	}
 
-	__android_log_print(prio, "DESIRE", "[%s] %s\n", logData.logType, logData.message); break;
+	__android_log_write(prio, "DESIRE", "[%s] %s\n", logData.logType, logData.message); break;
 }
 
 #endif // #if DESIRE_PLATFORM_ANDROID
