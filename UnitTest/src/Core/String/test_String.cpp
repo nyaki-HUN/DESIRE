@@ -8,17 +8,19 @@ TEST_CASE("String", "[Core]")
 
 	SECTION("Constructor | Equals()")
 	{
-		// From char sequence
-		CHECK(strcmp(string.Str(), charSeq) == 0);
-		CHECK(string.Equals(charSeq));
-
 		// Default empty string
 		CHECK(strcmp(String::kEmptyString.Str(), "") == 0);
 		CHECK(String::kEmptyString.Equals(""));
 
+		// From char sequence
+		String strCharSequence(charSeq, strlen(charSeq));
+		CHECK(strcmp(strCharSequence.Str(), charSeq) == 0);
+		CHECK(strCharSequence.Equals(charSeq));
+
 		// From string literal (the pointer has to be the same)
 		String str("stringLiteral");
 		CHECK(str.Str() == (const char*)"stringLiteral");
+		CHECK(string.Str() == charSeq);
 	}
 
 	SECTION("Find()")
@@ -154,6 +156,7 @@ TEST_CASE("String", "[Core]")
 	{
 		CHECK(string.StartsWith(String("Str")));
 		CHECK(string.StartsWith("Str!!!", 3));
+		CHECK(string.StartsWith('S'));
 		CHECK(string.StartsWith(charSeq));
 		CHECK_FALSE(string.StartsWith(String::kEmptyString));
 	}
@@ -162,6 +165,7 @@ TEST_CASE("String", "[Core]")
 	{
 		CHECK(string.EndsWith(String(" ASD")));
 		CHECK(string.EndsWith(" ASD!!!", 4));
+		CHECK(string.EndsWith('D'));
 		CHECK(string.EndsWith(charSeq));
 		CHECK_FALSE(string.EndsWith(String::kEmptyString));
 	}

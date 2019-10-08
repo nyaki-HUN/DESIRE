@@ -3,6 +3,14 @@
 
 const String String::kEmptyString = "";
 
+String::String(const char* str, size_t size)
+	: data(const_cast<char*>(str))
+	, size(size)
+{
+	ASSERT(data != nullptr);
+	ASSERT(data[size] == '\0');
+}
+
 size_t String::Find(const String& search, size_t startIndex) const
 {
 	if(startIndex >= size || search.IsEmpty())
@@ -214,6 +222,11 @@ bool String::StartsWith(const char* prefix, size_t numChars) const
 {
 	ASSERT(prefix != nullptr);
 	return (numChars == 0) ? false : (strncmp(data, prefix, numChars) == 0);
+}
+
+bool String::StartsWith(char prefix) const
+{
+	return (data[0] == prefix);
 }
 
 bool String::EndsWith(const String& prefix) const

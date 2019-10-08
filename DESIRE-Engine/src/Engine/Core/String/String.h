@@ -8,6 +8,8 @@ public:
 	static constexpr size_t kInvalidPos = (size_t)-1;
 	static const String kEmptyString;
 
+	String(const char* str, size_t size);
+
 	template<size_t SIZE>
 	String(const char(&str)[SIZE])
 		: data(const_cast<char*>(str))
@@ -57,6 +59,7 @@ public:
 	// Check if the string begins with the given prefix
 	bool StartsWith(const String& prefix) const;
 	bool StartsWith(const char* prefix, size_t numChars) const;
+	bool StartsWith(char prefix) const;
 
 	// Check if the string ends with the given suffix
 	bool EndsWith(const String& prefix) const;
