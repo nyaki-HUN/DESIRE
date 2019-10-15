@@ -3,7 +3,7 @@
 #include "Engine/Input/Input.h"
 
 Keyboard::Keyboard(void* handle)
-	: InputDevice(handle, offsetof(Keyboard, keyStates), (uint16_t)DESIRE_ASIZEOF(keyStates))
+	: InputDevice(handle, offsetof(Keyboard, keyStates), static_cast<uint16_t>(DESIRE_ASIZEOF(keyStates)))
 {
 }
 

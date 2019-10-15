@@ -12,7 +12,7 @@ public:
 	uint8_t GetModifierMask() const;
 
 private:
-	uint8_t keyStates[256];
+	uint8_t keyStates[256] = {};
 
 	friend class Input;
 	friend class InputImpl;

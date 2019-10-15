@@ -30,8 +30,8 @@ public:
 	};
 
 private:
-	uint8_t buttons[NUM_BUTTONS];
-	AxisState axes[NUM_AXES];
+	uint8_t buttons[NUM_BUTTONS] = {};
+	AxisState axes[NUM_AXES] = {};
 
 	friend class Input;
 	friend class InputImpl;

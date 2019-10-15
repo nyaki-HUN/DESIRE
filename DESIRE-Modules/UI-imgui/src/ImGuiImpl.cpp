@@ -114,18 +114,21 @@ void ImGuiImpl::NewFrame(OSWindow* window)
 	io.ImeWindowHandle = window->GetHandle();
 
 	// Keyboard
-	const Array<Keyboard>& keyboards = Modules::Input->GetKeyboards();
-	if(!keyboards.IsEmpty())
+	io.KeyCtrl = false;
+	io.KeyShift = false;
+	io.KeyAlt = false;
+	io.KeySuper = false;
+	memset(io.KeysDown, 0, sizeof(io.KeysDown));
+	for(const Keyboard& keyboard : Modules::Input->GetKeyboards())
 	{
-		const Keyboard& keyboard = keyboards.GetLast();
-		io.KeyCtrl = keyboard.IsDown(KEY_LCONTROL) || keyboard.IsDown(KEY_RCONTROL);
-		io.KeyShift = keyboard.IsDown(KEY_LSHIFT) || keyboard.IsDown(KEY_RSHIFT);
-		io.KeyAlt = keyboard.IsDown(KEY_LALT) || keyboard.IsDown(KEY_RALT);
-		io.KeySuper = keyboard.IsDown(KEY_LWIN) || keyboard.IsDown(KEY_RWIN);
+		io.KeyCtrl |= keyboard.IsDown(KEY_LCONTROL) || keyboard.IsDown(KEY_RCONTROL);
+		io.KeyShift |= keyboard.IsDown(KEY_LSHIFT) || keyboard.IsDown(KEY_RSHIFT);
+		io.KeyAlt |= keyboard.IsDown(KEY_LALT) || keyboard.IsDown(KEY_RALT);
+		io.KeySuper |= keyboard.IsDown(KEY_LWIN) || keyboard.IsDown(KEY_RWIN);
 
 		for(int keyCode : io.KeyMap)
 		{
-			io.KeysDown[keyCode] = keyboard.IsDown(keyCode);
+			io.KeysDown[keyCode] |= keyboard.IsDown(keyCode);
 		}
 	}
 
@@ -139,14 +142,13 @@ void ImGuiImpl::NewFrame(OSWindow* window)
 	const Vector2& mousePos = Modules::Input->GetOsMouseCursorPos();
 	io.MousePos = ImVec2(mousePos.GetX(), mousePos.GetY());
 
+	memset(io.MouseDown, 0, sizeof(io.MouseDown));
 	io.MouseWheel = 0.0f;
-	for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
-	{
-		io.MouseDown[i] = false;
-	}
+	io.MouseWheelH = 0.0f;
 	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
 		io.MouseWheel += mouse.GetAxisDelta(Mouse::Wheel);
+
 		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
 		{
 			io.MouseDown[i] |= mouse.IsDown(i);
