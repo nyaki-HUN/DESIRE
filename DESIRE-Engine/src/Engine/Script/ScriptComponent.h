@@ -6,7 +6,7 @@ class String;
 
 class ScriptComponent : public Component
 {
-	DECLARE_COMPONENT_FURCC_TYPE_ID("SCRI");
+	DECLARE_COMPONENT_FOURCC_TYPE_ID("SCRI");
 
 protected:
 	ScriptComponent(Object& object);

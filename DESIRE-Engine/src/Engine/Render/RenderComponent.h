@@ -8,7 +8,7 @@ class AABB;
 
 class RenderComponent : public Component
 {
-	DECLARE_COMPONENT_FURCC_TYPE_ID("REND");
+	DECLARE_COMPONENT_FOURCC_TYPE_ID("REND");
 
 public:
 	RenderComponent(Object& object);

@@ -6,7 +6,7 @@ constexpr int MakeFourCC(const char(&c)[5])
 	return (c[0] << 24) | (c[1] << 16) | (c[2] << 8) | c[3];
 }
 
-#define DECLARE_COMPONENT_FURCC_TYPE_ID(STR_ID)						\
+#define DECLARE_COMPONENT_FOURCC_TYPE_ID(STR_ID)					\
 public:																\
 	static constexpr int kTypeId = MakeFourCC(STR_ID);				\
 	int GetTypeId() const override final { return kTypeId; }

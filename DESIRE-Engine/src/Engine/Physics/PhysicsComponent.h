@@ -12,7 +12,7 @@ enum class EPhysicsCollisionLayer;
 
 class PhysicsComponent : public Component
 {
-	DECLARE_COMPONENT_FURCC_TYPE_ID("PHYS");
+	DECLARE_COMPONENT_FOURCC_TYPE_ID("PHYS");
 
 protected:
 	PhysicsComponent(Object& object);
