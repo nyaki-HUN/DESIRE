@@ -19,7 +19,7 @@ public:
 	// Store x, y, z, and w elements in the first four elements of a float array
 	inline void StoreXYZW(float *fptr) const				{ SIMD::StoreXYZW(mVec128, fptr); }
 
-	inline void SetXYZ(const Vector3& vec)					{ mVec128 = SIMD::Blend_W(vec, mVec128); }
+	inline void SetXYZ(const Vector3& vec)					{ mVec128 = SIMD::Blend_W(vec, *this); }
 	inline Vector3 GetXYZ() const							{ return mVec128; }
 
 	inline void SetX(float x)								{ SIMD::SetX(mVec128, x); }
@@ -36,13 +36,13 @@ public:
 
 	inline Vector4& operator =(const Vector4& vec)			{ mVec128 = vec.mVec128; return *this; }
 
-	inline Vector4 operator -() const						{ return SIMD::Negate(mVec128); }
-	inline Vector4 operator +(const Vector4& vec) const		{ return SIMD::Add(mVec128, vec.mVec128); }
-	inline Vector4 operator -(const Vector4& vec) const		{ return SIMD::Sub(mVec128, vec.mVec128); }
-	inline Vector4 operator *(const Vector4& vec) const		{ return SIMD::Mul(mVec128, vec.mVec128); }
-	inline Vector4 operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
-	inline Vector4 operator /(const Vector4& vec) const		{ return SIMD::Div(mVec128, vec.mVec128); }
-	inline Vector4 operator /(float scalar) const			{ return SIMD::Mul(mVec128, 1.0f / scalar); }
+	inline Vector4 operator -() const						{ return SIMD::Negate(*this); }
+	inline Vector4 operator +(const Vector4& vec) const		{ return SIMD::Add(*this, vec); }
+	inline Vector4 operator -(const Vector4& vec) const		{ return SIMD::Sub(*this, vec); }
+	inline Vector4 operator *(const Vector4& vec) const		{ return SIMD::Mul(*this, vec); }
+	inline Vector4 operator *(float scalar) const			{ return SIMD::Mul(*this, scalar); }
+	inline Vector4 operator /(const Vector4& vec) const		{ return SIMD::Div(*this, vec); }
+	inline Vector4 operator /(float scalar) const			{ return SIMD::Mul(*this, 1.0f / scalar); }
 
 	inline Vector4& operator +=(const Vector4& vec)			{ *this = *this + vec;		return *this; }
 	inline Vector4& operator -=(const Vector4& vec)			{ *this = *this - vec;		return *this; }
@@ -51,18 +51,18 @@ public:
 	inline Vector4& operator /=(const Vector4& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector4& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
-	inline float Dot(const Vector4& vec) const				{ return SIMD::GetX(SIMD::Dot4(mVec128, vec)); }
+	inline float Dot(const Vector4& vec) const				{ return SIMD::GetX(SIMD::Dot4(*this, vec)); }
 
 	inline float LengthSqr() const							{ return Dot(*this); }
 	inline float Length() const								{ return std::sqrt(LengthSqr()); }
 
-	inline void Normalize()									{ mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128))); }
-	inline Vector4 Normalized() const						{ return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128))); }
+	inline void Normalize()									{ mVec128 = Normalized(); }
+	inline Vector4 Normalized() const						{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot4(*this, *this))); }
 
-	inline Vector4 AbsPerElem() const						{ return SIMD::AbsPerElem(mVec128); }
+	inline Vector4 AbsPerElem() const						{ return SIMD::AbsPerElem(*this); }
 
-	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem4(mVec128)); }
-	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem4(mVec128)); }
+	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem4(*this)); }
+	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem4(*this)); }
 
 	static inline Vector4 MaxPerElem(const Vector4& a, const Vector4& b)	{ return SIMD::MaxPerElem(a, b); }
 	static inline Vector4 MinPerElem(const Vector4& a, const Vector4& b)	{ return SIMD::MinPerElem(a, b); }

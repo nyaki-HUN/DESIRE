@@ -268,7 +268,7 @@ public:
 
 	static inline float32x4_t Swizzle_WXYZ(float32x4_t vec)		{ return vextq_f32(vec, vec, 3); }
 	static inline float32x4_t Swizzle_WZXY(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_high_f32(vec)), vget_low_f32(vec)); }
-	static inline float32x4_t Swizzle_WZYX(float32x4_t vec)		{ const float32x4_t yxwz = vrev64q_f32(vec); return vcombine_f32(vget_high_f32(yxwz), vget_low_f32(yxwz)); }
+	static inline float32x4_t Swizzle_WZYX(float32x4_t vec)		{ return Swizzle_ZWXY(Swizzle_YXWZ(vec)); }
 	static inline float32x4_t Swizzle_WZWZ(float32x4_t vec)		{ const float32x2_t wz = vrev64_f32(vget_high_f32(vec)); return vcombine_f32(wz, wz); }
 	static inline float32x4_t Swizzle_WWWW(float32x4_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 1); }
 };

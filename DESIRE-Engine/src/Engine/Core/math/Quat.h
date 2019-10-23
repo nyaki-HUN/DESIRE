@@ -31,18 +31,18 @@ public:
 
 	inline operator vec_float4_t() const					{ return mVec128; }
 
-	inline Quat& operator =(const Quat& quat)				{ mVec128 = quat.mVec128; return *this; }
+	inline Quat& operator =(const Quat& quat)				{ mVec128 = quat; return *this; }
 
-	inline Quat operator -() const							{ return SIMD::Negate(mVec128); }
-	inline Quat operator +(const Quat& quat) const			{ return SIMD::Add(mVec128, quat.mVec128); }
-	inline Quat operator -(const Quat& quat) const			{ return SIMD::Sub(mVec128, quat.mVec128); }
+	inline Quat operator -() const							{ return SIMD::Negate(*this); }
+	inline Quat operator +(const Quat& quat) const			{ return SIMD::Add(*this, quat); }
+	inline Quat operator -(const Quat& quat) const			{ return SIMD::Sub(*this, quat); }
 	inline Quat operator *(const Quat& quat) const;
 
 	inline Quat& operator +=(const Quat& quat)				{ *this = *this + quat; return *this; }
 	inline Quat& operator -=(const Quat& quat)				{ *this = *this - quat; return *this; }
 	inline Quat& operator *=(const Quat& quat)				{ *this = *this * quat; return *this; }
 
-	inline float Dot(const Quat& quat) const				{ return SIMD::GetX(SIMD::Dot4(mVec128, quat)); }
+	inline float Dot(const Quat& quat) const				{ return SIMD::GetX(SIMD::Dot4(*this, quat)); }
 
 	inline float Norm() const								{ return Dot(*this); }
 	inline float Length() const								{ return std::sqrt(Norm()); }
@@ -52,7 +52,7 @@ public:
 	// Compute the Euler angle representation of the rotation in radians
 	inline Vector3 EulerAngles() const
 	{
-		const vec_float4_t vecSq2 = SIMD::Mul(SIMD::Mul(mVec128, mVec128), 2.0f);
+		const vec_float4_t vecSq2 = SIMD::Mul(SIMD::Mul(*this, *this), 2.0f);
 		const float tmpX1 = 1.0f - (SIMD::GetX(vecSq2) + SIMD::GetY(vecSq2));
 		const float tmpX2 = 1.0f - (SIMD::GetY(vecSq2) + SIMD::GetZ(vecSq2));
 
@@ -73,8 +73,8 @@ public:
 
 	inline Vector3 RotateVec(const Vector3& vec) const;
 
-	inline void Normalize()									{ mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128))); }
-	inline Quat Normalized() const							{ return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot4(mVec128, mVec128))); }
+	inline void Normalize()									{ mVec128 = SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot4(*this, *this))); }
+	inline Quat Normalized() const							{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot4(*this, *this))); }
 
 	// Spherical linear interpolation
 	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
@@ -133,10 +133,10 @@ inline Quat Quat::operator *(const Quat& quat) const
 	return SIMD::Blend_W(qv, qw);
 #else
 	return Quat(
-		((GetW() * quat.GetX() + GetX() * quat.GetW()) + GetY() * quat.GetZ()) - GetZ() * quat.GetY(),
-		((GetW() * quat.GetY() + GetY() * quat.GetW()) + GetZ() * quat.GetX()) - GetX() * quat.GetZ(),
-		((GetW() * quat.GetZ() + GetZ() * quat.GetW()) + GetX() * quat.GetY()) - GetY() * quat.GetX(),
-		((GetW() * quat.GetW() - GetX() * quat.GetX()) - GetY() * quat.GetY()) - GetZ() * quat.GetZ()
+		GetW() * quat.GetX()  +  GetX() * quat.GetW()  +  GetY() * quat.GetZ()  -  GetZ() * quat.GetY(),
+		GetW() * quat.GetY()  +  GetY() * quat.GetW()  +  GetZ() * quat.GetX()  -  GetX() * quat.GetZ(),
+		GetW() * quat.GetZ()  +  GetZ() * quat.GetW()  +  GetX() * quat.GetY()  -  GetY() * quat.GetX(),
+		GetW() * quat.GetW()  -  GetX() * quat.GetX()  -  GetY() * quat.GetY()  -  GetZ() * quat.GetZ()
 	);
 #endif
 }
@@ -152,7 +152,7 @@ inline Quat Quat::Conjugate() const
 	mask = vsetq_lane_u32(0, mask, 3);
 	return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(mVec128), mask));
 #else
-	return Quat(-mVec128.x, -mVec128.y, -mVec128.z, mVec128.w);
+	return Quat(-GetX(), -GetY(), -GetZ(), GetW());
 #endif
 }
 
@@ -160,33 +160,33 @@ inline Quat Quat::Conjugate() const
 inline Vector3 Quat::RotateVec(const Vector3& vec) const
 {
 #if defined(DESIRE_USE_SSE)
-	const __m128 tmp0 = SIMD::Swizzle_YZXW(mVec128);
+	const __m128 tmp0 = SIMD::Swizzle_YZXW(*this);
 	__m128 tmp1 = SIMD::Swizzle_ZXYW(vec);
-	const __m128 tmp2 = SIMD::Swizzle_ZXYW(mVec128);
+	const __m128 tmp2 = SIMD::Swizzle_ZXYW(*this);
 	__m128 tmp3 = SIMD::Swizzle_YZXW(vec);
-	const __m128 wwww = SIMD::Swizzle_WWWW(mVec128);
+	const __m128 wwww = SIMD::Swizzle_WWWW(*this);
 	__m128 qv = SIMD::Mul(wwww, vec);
 	qv = SIMD::MulAdd(tmp0, tmp1, qv);
 	qv = SIMD::MulSub(tmp2, tmp3, qv);
-	const __m128 product = SIMD::Mul(mVec128, vec);
-	__m128 qw = SIMD::MulAdd(_mm_ror_ps(mVec128, 1), _mm_ror_ps(vec, 1), product);
+	const __m128 product = SIMD::Mul(*this, vec);
+	__m128 qw = SIMD::MulAdd(_mm_ror_ps(*this, 1), _mm_ror_ps(vec, 1), product);
 	qw = SIMD::Add(_mm_ror_ps(product, 2), qw);
 	tmp1 = SIMD::Swizzle_ZXYW(qv);
 	tmp3 = SIMD::Swizzle_YZXW(qv);
-	__m128 res = SIMD::Mul(SIMD::Swizzle_XXXX(qw), mVec128);
+	__m128 res = SIMD::Mul(SIMD::Swizzle_XXXX(qw), *this);
 	res = SIMD::MulAdd(wwww, qv, res);
 	res = SIMD::MulAdd(tmp0, tmp1, res);
 	res = SIMD::MulSub(tmp2, tmp3, res);
 	return res;
 #else
-	const float tmpX = ((GetW() * vec.GetX()) + (GetY() * vec.GetZ())) - (GetZ() * vec.GetY());
-	const float tmpY = ((GetW() * vec.GetY()) + (GetZ() * vec.GetX())) - (GetX() * vec.GetZ());
-	const float tmpZ = ((GetW() * vec.GetZ()) + (GetX() * vec.GetY())) - (GetY() * vec.GetX());
-	const float tmpW = ((GetX() * vec.GetX()) + (GetY() * vec.GetY())) + (GetZ() * vec.GetZ());
+	const float tmpX = GetW() * vec.GetX()  +  GetY() * vec.GetZ()  -  GetZ() * vec.GetY();
+	const float tmpY = GetW() * vec.GetY()  +  GetZ() * vec.GetX()  -  GetX() * vec.GetZ();
+	const float tmpZ = GetW() * vec.GetZ()  +  GetX() * vec.GetY()  -  GetY() * vec.GetX();
+	const float tmpW = GetX() * vec.GetX()  +  GetY() * vec.GetY()  +  GetZ() * vec.GetZ();
 	return Vector3(
-		(((tmpW * GetX()) + (tmpX * GetW())) - (tmpY * GetZ())) + (tmpZ * GetY()),
-		(((tmpW * GetY()) + (tmpY * GetW())) - (tmpZ * GetX())) + (tmpX * GetZ()),
-		(((tmpW * GetZ()) + (tmpZ * GetW())) - (tmpX * GetY())) + (tmpY * GetX())
+		tmpW * GetX()  +  tmpX * GetW()  -  tmpY * GetZ()  +  tmpZ * GetY(),
+		tmpW * GetY()  +  tmpY * GetW()  -  tmpZ * GetX()  +  tmpX * GetZ(),
+		tmpW * GetZ()  +  tmpZ * GetW()  -  tmpX * GetY()  +  tmpY * GetX()
 	);
 #endif
 }

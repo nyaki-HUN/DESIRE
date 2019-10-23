@@ -37,13 +37,13 @@ public:
 
 	inline Vector3& operator =(const Vector3& vec)			{ mVec128 = vec.mVec128; return *this; }
 
-	inline Vector3 operator -() const						{ return SIMD::Negate(mVec128); }
-	inline Vector3 operator +(const Vector3& vec) const		{ return SIMD::Add(mVec128, vec.mVec128); }
-	inline Vector3 operator -(const Vector3& vec) const		{ return SIMD::Sub(mVec128, vec.mVec128); }
-	inline Vector3 operator *(const Vector3& vec) const		{ return SIMD::Mul(mVec128, vec.mVec128); }
-	inline Vector3 operator *(float scalar) const			{ return SIMD::Mul(mVec128, scalar); }
-	inline Vector3 operator /(const Vector3& vec) const		{ return SIMD::Div(mVec128, vec.mVec128); }
-	inline Vector3 operator /(float scalar) const			{ return SIMD::Mul(mVec128, 1.0f / scalar); }
+	inline Vector3 operator -() const						{ return SIMD::Negate(*this); }
+	inline Vector3 operator +(const Vector3& vec) const		{ return SIMD::Add(*this, vec); }
+	inline Vector3 operator -(const Vector3& vec) const		{ return SIMD::Sub(*this, vec); }
+	inline Vector3 operator *(const Vector3& vec) const		{ return SIMD::Mul(*this, vec); }
+	inline Vector3 operator *(float scalar) const			{ return SIMD::Mul(*this, scalar); }
+	inline Vector3 operator /(const Vector3& vec) const		{ return SIMD::Div(*this, vec); }
+	inline Vector3 operator /(float scalar) const			{ return SIMD::Mul(*this, 1.0f / scalar); }
 
 	inline Vector3& operator +=(const Vector3& vec)			{ *this = *this + vec;		return *this; }
 	inline Vector3& operator -=(const Vector3& vec)			{ *this = *this - vec;		return *this; }
@@ -52,24 +52,24 @@ public:
 	inline Vector3& operator /=(const Vector3& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector3& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
-	inline bool operator >(const Vector3& vec) const		{ return SIMD::OpCmpGT(mVec128, vec); }
-	inline bool operator <(const Vector3& vec) const		{ return SIMD::OpCmpLT(mVec128, vec); }
-	inline bool operator >=(const Vector3& vec) const		{ return SIMD::OpCmpGE(mVec128, vec); }
-	inline bool operator <=(const Vector3& vec) const		{ return SIMD::OpCmpLE(mVec128, vec); }
+	inline bool operator >(const Vector3& vec) const		{ return SIMD::OpCmpGT(*this, vec); }
+	inline bool operator <(const Vector3& vec) const		{ return SIMD::OpCmpLT(*this, vec); }
+	inline bool operator >=(const Vector3& vec) const		{ return SIMD::OpCmpGE(*this, vec); }
+	inline bool operator <=(const Vector3& vec) const		{ return SIMD::OpCmpLE(*this, vec); }
 
-	inline float Dot(const Vector3& vec) const				{ return SIMD::GetX(SIMD::Dot3(mVec128, vec)); }
-	inline Vector3 Cross(const Vector3& vec) const			{ return SIMD::Cross(mVec128, vec); }
+	inline float Dot(const Vector3& vec) const				{ return SIMD::GetX(SIMD::Dot3(*this, vec)); }
+	inline Vector3 Cross(const Vector3& vec) const			{ return SIMD::Cross(*this, vec); }
 
 	inline float LengthSqr() const							{ return Dot(*this); }
 	inline float Length() const								{ return std::sqrt(LengthSqr()); }
 
-	inline void Normalize()									{ mVec128 = SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot3(mVec128, mVec128))); }
-	inline Vector3 Normalized() const						{ return SIMD::Mul(mVec128, newtonrapson_rsqrt4(SIMD::Dot3(mVec128, mVec128))); }
+	inline void Normalize()									{ mVec128 = Normalized(); }
+	inline Vector3 Normalized() const						{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot3(*this, *this))); }
 
-	inline Vector3 AbsPerElem() const						{ return SIMD::AbsPerElem(mVec128); }
+	inline Vector3 AbsPerElem() const						{ return SIMD::AbsPerElem(*this); }
 
-	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem3(mVec128)); }
-	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem3(mVec128)); }
+	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem3(*this)); }
+	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem3(*this)); }
 
 	static inline Vector3 MaxPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MaxPerElem(a, b); }
 	static inline Vector3 MinPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MinPerElem(a, b); }
