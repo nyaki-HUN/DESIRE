@@ -116,26 +116,40 @@ private:
 inline Quat Quat::operator *(const Quat& quat) const
 {
 #if defined(DESIRE_USE_SSE)
-	const __m128 tmp0 = SIMD::Swizzle_YZXW(mVec128);
-	const __m128 tmp1 = SIMD::Swizzle_ZXYW(quat.mVec128);
-	const __m128 tmp2 = SIMD::Swizzle_ZXYW(mVec128);
-	const __m128 tmp3 = SIMD::Swizzle_YZXW(quat.mVec128);
-	__m128 qv = SIMD::Mul(SIMD::Swizzle_WWWW(mVec128), quat.mVec128);
-	qv = SIMD::MulAdd(SIMD::Swizzle_WWWW(quat.mVec128), mVec128, qv);
-	qv = SIMD::MulAdd(tmp0, tmp1, qv);
-	qv = SIMD::MulSub(tmp2, tmp3, qv);
-	const __m128 product = SIMD::Mul(mVec128, quat.mVec128);
-	const __m128 l_wxyz = _mm_ror_ps(mVec128, 3);
-	const __m128 r_wxyz = _mm_ror_ps(quat.mVec128, 3);
-	__m128 qw = SIMD::MulSub(l_wxyz, r_wxyz, product);
-	const __m128 xy = SIMD::MulAdd(l_wxyz, r_wxyz, product);
-	qw = SIMD::Sub(qw, _mm_ror_ps(xy, 2));
-	return SIMD::Blend_W(qv, qw);
+	const __m128 sign_wzyx = SIMD::Construct(0.0f, -0.0f, 0.0f, -0.0f);
+	const __m128 sign_zwxy = SIMD::Construct(0.0f, 0.0f, -0.0f, -0.0f);
+	const __m128 sign_yxwz = SIMD::Construct(-0.0f, 0.0f, 0.0f, -0.0f);
+
+	const __m128 w0_xyzw1 = SIMD::Mul(SIMD::Swizzle_WWWW(*this), quat);
+	const __m128 x0_wzyx1 = SIMD::Mul(SIMD::Swizzle_XXXX(*this), SIMD::Swizzle_WZYX(quat));
+	const __m128 y0_zwxy1 = SIMD::Mul(SIMD::Swizzle_YYYY(*this), SIMD::Swizzle_ZWXY(quat));
+	const __m128 z0_yxwz1 = SIMD::Mul(SIMD::Swizzle_ZZZZ(*this), SIMD::Swizzle_YXWZ(quat));
+
+	__m128 result = SIMD::Add(w0_xyzw1, _mm_xor_ps(x0_wzyx1, sign_wzyx));
+	result = SIMD::Add(result, _mm_xor_ps(y0_zwxy1, sign_zwxy));
+	return SIMD::Add(result, _mm_xor_ps(z0_yxwz1, sign_yxwz));
+#elif defined(__ARM_NEON__)
+	const float32x4_t sign_wzyx = SIMD::Construct(1.0f, -1.0f, 1.0f, -1.0f);
+	const float32x4_t sign_zwxy = SIMD::Construct(1.0f, 1.0f, -1.0f, -1.0f);
+	const float32x4_t sign_yxwz = SIMD::Construct(-1.0f, 1.0f, 1.0f, -1.0f);
+
+	const float32x2_t xy0 = vget_low_f32(*this);
+	const float32x2_t zw0 = vget_high_f32(*this);
+	const float32x4_t yxwz1 = SIMD::Swizzle_YXWZ(quat);
+
+	const float32x4_t w0_xyzw1 = vmulq_lane_f32(quat, zw0, 1);
+	const float32x4_t x0_wzyx1 = vmulq_lane_f32(SIMD::Swizzle_ZWXY(yxwz1), xy0, 0);
+	const float32x4_t y0_zwxy1 = vmulq_lane_f32(SIMD::Swizzle_ZWXY(quat), xy0, 1);
+	const float32x4_t z0_yxwz1 = vmulq_lane_f32(yxwz1, zw0, 0);
+
+	float32x4_t result = SIMD::MulAdd(x0_wzyx1, sign_wzyx, w0_xyzw1);
+	result = SIMD::MulAdd(y0_zwxy1, sign_zwxy, result);
+	return SIMD::MulAdd(z0_yxwz1, sign_yxwz, result);
 #else
 	return Quat(
 		GetW() * quat.GetX()  +  GetX() * quat.GetW()  +  GetY() * quat.GetZ()  -  GetZ() * quat.GetY(),
-		GetW() * quat.GetY()  +  GetY() * quat.GetW()  +  GetZ() * quat.GetX()  -  GetX() * quat.GetZ(),
-		GetW() * quat.GetZ()  +  GetZ() * quat.GetW()  +  GetX() * quat.GetY()  -  GetY() * quat.GetX(),
+		GetW() * quat.GetY()  -  GetX() * quat.GetZ()  +  GetY() * quat.GetW()  +  GetZ() * quat.GetX(),
+		GetW() * quat.GetZ()  +  GetX() * quat.GetY()  -  GetY() * quat.GetX()  +  GetZ() * quat.GetW(),
 		GetW() * quat.GetW()  -  GetX() * quat.GetX()  -  GetY() * quat.GetY()  -  GetZ() * quat.GetZ()
 	);
 #endif
@@ -145,12 +159,12 @@ inline Quat Quat::operator *(const Quat& quat) const
 inline Quat Quat::Conjugate() const
 {
 #if defined(DESIRE_USE_SSE)
-	alignas(16) const uint32_t mask[4] = { 0x80000000, 0x80000000, 0x80000000, 0 };
-	return _mm_xor_ps(mVec128, _mm_load_ps((float*)mask));
+	const __m128 mask = SIMD::Construct(-0.0f, -0.0f, -0.0f, 0.0f);
+	return _mm_xor_ps(*this, mask);
 #elif defined(__ARM_NEON__)
-	const uint32x4_t mask = vdupq_n_u32(0x80000000);
-	mask = vsetq_lane_u32(0, mask, 3);
-	return vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(mVec128), mask));
+	Quat conjugate = SIMD::Negate(*this);
+	conjugate.SetW(GetW());
+	return conjugate;
 #else
 	return Quat(-GetX(), -GetY(), -GetZ(), GetW());
 #endif
