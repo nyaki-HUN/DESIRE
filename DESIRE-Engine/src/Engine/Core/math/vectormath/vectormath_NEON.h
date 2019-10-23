@@ -233,9 +233,9 @@ public:
 	static inline float32x4_t Swizzle_XXZZ(float32x4_t vec)		{ return vtrnq_f32(vec, vec).val[0]; }
 	static inline float32x4_t Swizzle_XXZW(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 2, 3 }); }
 	static inline float32x4_t Swizzle_XYXX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 1, 0, 0 }); }
-	static inline float32x4_t Swizzle_XYXY(float32x4_t vec)		{ const float32x2_t v = vget_low_f32(vec); return vcombine_f32(v, v); }
+	static inline float32x4_t Swizzle_XYXY(float32x4_t vec)		{ const float32x2_t xy = vget_low_f32(vec); return vcombine_f32(xy, xy); }
 	static inline float32x4_t Swizzle_XYXW(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 1, 0, 3 }); }
-	static inline float32x4_t Swizzle_XYYX(float32x4_t vec)		{ const float32x2_t v = vget_low_f32(vec); return vcombine_f32(v, vrev64_f32(v)); }
+	static inline float32x4_t Swizzle_XYYX(float32x4_t vec)		{ const float32x2_t xy = vget_low_f32(vec); return vcombine_f32(xy, vrev64_f32(xy)); }
 	static inline float32x4_t Swizzle_XYZX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 1, 2, 0 }); }
 	static inline float32x4_t Swizzle_XYWZ(float32x4_t vec)		{ return vcombine_f32(vget_low_f32(vec), vrev64_f32(vget_high_f32(vec))); }
 	static inline float32x4_t Swizzle_XZXX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 2, 0, 0 }); }
@@ -243,9 +243,9 @@ public:
 	static inline float32x4_t Swizzle_XZYX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 2, 1, 0 }); }
 
 	static inline float32x4_t Swizzle_YXXX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 0, 0, 0 }); }
-	static inline float32x4_t Swizzle_YXYX(float32x4_t vec)		{ const float32x2_t v = vrev64_f32(vget_low_f32(vec)); return vcombine_f32(v, v); }
+	static inline float32x4_t Swizzle_YXYX(float32x4_t vec)		{ const float32x2_t yx = vrev64_f32(vget_low_f32(vec)); return vcombine_f32(yx, yx); }
 	static inline float32x4_t Swizzle_YXZW(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_low_f32(vec)), vget_high_f32(vec)); }
-	static inline float32x4_t Swizzle_YXWZ(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_low_f32(vec)), vrev64_f32(vget_high_f32(vec))); }
+	static inline float32x4_t Swizzle_YXWZ(float32x4_t vec)		{ return vrev64q_f32(vec); }
 	static inline float32x4_t Swizzle_YYYY(float32x4_t vec)		{ return vdupq_lane_f32(vget_low_f32(vec), 1); }
 	static inline float32x4_t Swizzle_YYWW(float32x4_t vec)		{ return vtrnq_f32(vec, vec).val[1]; }
 	static inline float32x4_t Swizzle_YZXY(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 2, 0, 1 }); }
@@ -256,20 +256,20 @@ public:
 	static inline float32x4_t Swizzle_ZXXX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 0, 0 }); }
 	static inline float32x4_t Swizzle_ZXYZ(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 2 }); }
 	static inline float32x4_t Swizzle_ZXYW(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 3 }); }
-	static inline float32x4_t Swizzle_ZXWY(float32x4_t vec)		{ return vrev64q_f32(vec); }
+	static inline float32x4_t Swizzle_ZXWY(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 3, 1 }); }
 	static inline float32x4_t Swizzle_ZZYX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 1, 0 }); }
 	static inline float32x4_t Swizzle_ZZZZ(float32x4_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 0); }
 	static inline float32x4_t Swizzle_ZZWX(float32x4_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 3, 0 }); }
 	static inline float32x4_t Swizzle_ZZWW(float32x4_t vec)		{ return vzipq_f32(vec, vec).val[1]; }
 	static inline float32x4_t Swizzle_ZWXY(float32x4_t vec)		{ return vextq_f32(vec, vec, 2); }
 	static inline float32x4_t Swizzle_ZWYX(float32x4_t vec)		{ return vcombine_f32(vget_high_f32(vec), vrev64_f32(vget_low_f32(vec))); }
-	static inline float32x4_t Swizzle_ZWZW(float32x4_t vec)		{ const float32x2_t v = vget_high_f32(vec); return vcombine_f32(v, v); }
-	static inline float32x4_t Swizzle_ZWWZ(float32x4_t vec)		{ const float32x2_t v = vget_high_f32(vec); return vcombine_f32(v, vrev64_f32(v)); }
+	static inline float32x4_t Swizzle_ZWZW(float32x4_t vec)		{ const float32x2_t zw = vget_high_f32(vec); return vcombine_f32(zw, zw); }
+	static inline float32x4_t Swizzle_ZWWZ(float32x4_t vec)		{ const float32x2_t zw = vget_high_f32(vec); return vcombine_f32(zw, vrev64_f32(zw)); }
 
 	static inline float32x4_t Swizzle_WXYZ(float32x4_t vec)		{ return vextq_f32(vec, vec, 3); }
 	static inline float32x4_t Swizzle_WZXY(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_high_f32(vec)), vget_low_f32(vec)); }
-	static inline float32x4_t Swizzle_WZYX(float32x4_t vec)		{ return vcombine_f32(vrev64_f32(vget_high_f32(vec)), vrev64_f32(vget_low_f32(vec))); }
-	static inline float32x4_t Swizzle_WZWZ(float32x4_t vec)		{ const float32x2_t v = vrev64_f32(vget_high_f32(vec)); return vcombine_f32(v, v); }
+	static inline float32x4_t Swizzle_WZYX(float32x4_t vec)		{ const float32x4_t yxwz = vrev64q_f32(vec); return vcombine_f32(vget_high_f32(yxwz), vget_low_f32(yxwz)); }
+	static inline float32x4_t Swizzle_WZWZ(float32x4_t vec)		{ const float32x2_t wz = vrev64_f32(vget_high_f32(vec)); return vcombine_f32(wz, wz); }
 	static inline float32x4_t Swizzle_WWWW(float32x4_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 1); }
 };
 
