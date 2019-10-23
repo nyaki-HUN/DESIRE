@@ -57,7 +57,7 @@ public:
 	// Construct by setting all elements to the same scalar value
 	static inline void Construct(__m128& vec, float scalar)
 	{
-		vec = _mm_set1_ps(scalar);
+		vec = _mm_set_ps1(scalar);
 	}
 
 	// Load x, y, z, and w elements from the first four elements of a float array
@@ -80,23 +80,35 @@ public:
 
 	static inline void SetY(__m128& vec, float y)
 	{
-		__m128 t = _mm_move_ss(vec, _mm_set_ss(y));
-		t = SIMD::Swizzle_XXZW(t);
-		vec = _mm_move_ss(t, vec);
+#if defined(__SSE4_1__)
+		vec = _mm_insert_ps(vec, _mm_set_ss(y), 0x10);
+#else
+		__m128 tmp = _mm_move_ss(vec, _mm_set_ss(y));
+		tmp = SIMD::Swizzle_XXZW(tmp);
+		vec = _mm_move_ss(tmp, vec);
+#endif
 	}
 
 	static inline void SetZ(__m128& vec, float z)
 	{
-		__m128 t = _mm_move_ss(vec, _mm_set_ss(z));
-		t = SIMD::Swizzle_XYXW(t);
-		vec = _mm_move_ss(t, vec);
+#if defined(__SSE4_1__)
+		vec = _mm_insert_ps(vec, _mm_set_ss(z), 0x20);
+#else
+		__m128 tmp = _mm_move_ss(vec, _mm_set_ss(z));
+		tmp = SIMD::Swizzle_XYXW(tmp);
+		vec = _mm_move_ss(tmp, vec);
+#endif
 	}
 
 	static inline void SetW(__m128& vec, float w)
 	{
-		__m128 t = _mm_move_ss(vec, _mm_set_ss(w));
-		t = SIMD::Swizzle_XYZX(t);
-		vec = _mm_move_ss(t, vec);
+#if defined(__SSE4_1__)
+		vec = _mm_insert_ps(vec, _mm_set_ss(w), 0x30);
+#else
+		__m128 tmp = _mm_move_ss(vec, _mm_set_ss(w));
+		tmp = SIMD::Swizzle_XYZX(tmp);
+		vec = _mm_move_ss(tmp, vec);
+#endif
 	}
 
 	// Get element
@@ -170,7 +182,7 @@ public:
 	// Compute the dot product of two 3-D vectors
 	static inline __m128 Dot3(__m128 a, __m128 b)
 	{
-#if defined(__SSE4_1__)
+#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
 		return _mm_dp_ps(a, b, 0x77);
 #else
 		__m128 result = SIMD::Mul(a, b);
@@ -183,7 +195,7 @@ public:
 	// Compute the dot product of two 4-D vectors
 	static inline __m128 Dot4(__m128 a, __m128 b)
 	{
-#if defined(__SSE4_1__)
+#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
 		return _mm_dp_ps(a, b, 0xff);
 #else
 		__m128 result = SIMD::Mul(a, b);
