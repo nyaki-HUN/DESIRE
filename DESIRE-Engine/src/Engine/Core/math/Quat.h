@@ -73,7 +73,7 @@ public:
 
 	inline Vector3 RotateVec(const Vector3& vec) const;
 
-	inline void Normalize()									{ mVec128 = SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot4(*this, *this))); }
+	inline void Normalize()									{ mVec128 = Normalized(); }
 	inline Quat Normalized() const							{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot4(*this, *this))); }
 
 	// Spherical linear interpolation
@@ -322,24 +322,13 @@ inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 // Construct a quaternion to rotate using Euler angles for each axis
 inline Quat Quat::CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
 {
-#if defined(DESIRE_USE_SSE)
-	__m128 s, c;
-	sincosf4(radiansXYZ * 0.5f, &s, &c);
-	const float cZ = SIMD::GetZ(c);
-	const float sZ = SIMD::GetZ(s);
-	const float cX = SIMD::GetX(c);
-	const float sX = SIMD::GetX(s);
-	const float cY = SIMD::GetY(c);
-	const float sY = SIMD::GetY(s);
-#else
 	const Vector3 halfAngle = radiansXYZ * 0.5f;
-	const float cZ = std::cos(halfAngle.GetZ());
-	const float sZ = std::sin(halfAngle.GetZ());
 	const float cX = std::cos(halfAngle.GetX());
 	const float sX = std::sin(halfAngle.GetX());
 	const float cY = std::cos(halfAngle.GetY());
 	const float sY = std::sin(halfAngle.GetY());
-#endif
+	const float cZ = std::cos(halfAngle.GetZ());
+	const float sZ = std::sin(halfAngle.GetZ());
 
 	const float cYcZ = cY * cZ;
 	const float sYcZ = sY * cZ;
