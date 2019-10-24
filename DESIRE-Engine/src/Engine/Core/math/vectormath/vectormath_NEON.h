@@ -73,14 +73,14 @@ public:
 		return vsubq_f32(a, b);
 	}
 
-	static inline float32x4_t Mul(float32x4_t vec, float scalar)
-	{
-		return vmulq_n_f32(vec, scalar);
-	}
-
 	static inline float32x4_t Mul(float32x4_t a, float32x4_t b)
 	{
 		return vmulq_f32(a, b);
+	}
+
+	static inline float32x4_t Mul(float32x4_t vec, float scalar)
+	{
+		return vmulq_n_f32(vec, scalar);
 	}
 
 	static inline float32x4_t MulAdd(float32x4_t a, float32x4_t b, float32x4_t c)

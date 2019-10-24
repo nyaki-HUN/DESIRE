@@ -63,7 +63,7 @@ public:
 	// Load x, y, z, and w elements from the first four elements of a float array
 	static inline void LoadXYZW(__m128& vec, const float *fptr)
 	{
-		vec = _mm_castsi128_ps(_mm_lddqu_si128((const __m128i*)fptr));
+		vec = _mm_loadu_ps(fptr);
 	}
 
 	// Store x, y, z, and w elements in the first four elements of a float array
@@ -120,7 +120,7 @@ public:
 	// Operator overloads
 	static inline __m128 Negate(__m128 vec)
 	{
-		return _mm_xor_ps(vec, toM128(0x80000000));
+		return _mm_xor_ps(vec, _mm_set1_ps(-0.0f));
 	}
 
 	static inline __m128 Add(__m128 a, __m128 b)
@@ -133,14 +133,14 @@ public:
 		return _mm_sub_ps(a, b);
 	}
 
-	static inline __m128 Mul(__m128 vec, float scalar)
-	{
-		return _mm_mul_ps(vec, _mm_set1_ps(scalar));
-	}
-
 	static inline __m128 Mul(__m128 a, __m128 b)
 	{
 		return _mm_mul_ps(a, b);
+	}
+
+	static inline __m128 Mul(__m128 vec, float scalar)
+	{
+		return Mul(vec, _mm_set1_ps(scalar));
 	}
 
 	static inline __m128 MulAdd(__m128 a, __m128 b, __m128 c)
