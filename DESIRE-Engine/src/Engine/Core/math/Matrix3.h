@@ -340,7 +340,7 @@ inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 	return Matrix3(
 		SIMD::Mul(Z0, Y0),
 		SIMD::MulAdd(Z1, X1, SIMD::Mul(tmp, X0)),
-		SIMD::MulSub(Z1, X0, SIMD::Mul(tmp, X1))
+		SIMD::NegMulSub(Z1, X0, SIMD::Mul(tmp, X1))
 	);
 #else
 	const float sX = std::sin(radiansXYZ.GetX());

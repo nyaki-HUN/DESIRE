@@ -305,16 +305,17 @@ public:
 	static inline simd128_t MulAdd(simd128_t a, simd128_t b, simd128_t c)
 	{
 #if defined(__ARM_NEON__)
-		return vmlaq_f32(c, a, b);
+		return vfmaq_f32(c, a, b);
 #else
 		return SIMD::Add(c, SIMD::Mul(a, b));
 #endif
 	}
 
-	static inline simd128_t MulSub(simd128_t a, simd128_t b, simd128_t c)
+	// Per component negative multiplication and subtraction of the three inputs "-((a * b) - c)" which is equivalent to: "c - (a * b)"
+	static inline simd128_t NegMulSub(simd128_t a, simd128_t b, simd128_t c)
 	{
 #if defined(__ARM_NEON__)
-		return vmlsq_f32(c, a, b);
+		return vfmsq_f32(c, a, b);
 #else
 		return SIMD::Sub(c, SIMD::Mul(a, b));
 #endif
@@ -325,19 +326,9 @@ public:
 #if defined(DESIRE_USE_SSE)
 		return _mm_div_ps(a, b);
 #elif defined(__ARM_NEON__)
-		// Get an initial estimate then perform two Newton-Raphson iterations
-		float32x4_t reciprocal = vrecpeq_f32(b);
-		reciprocal = SIMD::Mul(vrecpsq_f32(b, reciprocal), reciprocal);
-		reciprocal = SIMD::Mul(vrecpsq_f32(b, reciprocal), reciprocal);
-
-		return SIMD::Mul(a, reciprocal);
+		return vdivq_f32(a, b);
 #else
-		return SIMD::Construct(
-			a.x / b.x,
-			a.y / b.y,
-			a.z / b.z,
-			a.w / b.w
-		);
+		return SIMD::Construct(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
 #endif
 	}
 
@@ -828,7 +819,7 @@ static inline __m128 acosf4(__m128 x)
 	// Adjust the result if x is negactive.
 	return SIMD::Blend(
 		SIMD::Mul(t1, result),									// Positive
-		SIMD::MulSub(t1, result, SIMD::Construct(3.1415926535898f)),	// Negative
+		SIMD::NegMulSub(t1, result, SIMD::Construct(3.1415926535898f)),	// Negative
 		select);
 }
 
@@ -859,7 +850,7 @@ static inline __m128 sinf4(__m128 x)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
+	xl = SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
@@ -908,7 +899,7 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
+	xl = SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
