@@ -172,7 +172,7 @@ inline Matrix3::Matrix3(const Quat& unitQuat)
 inline Vector3 Matrix3::operator *(const Vector3& vec) const
 {
 #if defined(DESIRE_USE_SSE)
-	vec_float3_t result;
+	__m128 result;
 	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
@@ -459,7 +459,7 @@ inline Quat::Quat(const Matrix3& rotMat)
 	__m128 res = SIMD::Blend(res0, res1, _mm_cmpgt_ps(yy, xx));
 	res = SIMD::Blend(res, res2, _mm_and_ps(_mm_cmpgt_ps(zz, xx), _mm_cmpgt_ps(zz, yy)));
 	res = SIMD::Blend(res, res3, _mm_cmpgt_ps(SIMD::Swizzle_XXXX(diagSum), _mm_setzero_ps()));
-	mVec128 = res;
+	*this = res;
 #else
 	float q[4];
 

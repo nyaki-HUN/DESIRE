@@ -203,7 +203,7 @@ inline Matrix4 operator *(float scalar, const Matrix4& mat)
 inline Vector4 Matrix4::operator *(const Vector4& vec) const
 {
 #if defined(DESIRE_USE_SSE)
-	vec_float4_t result;
+	__m128 result;
 	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
@@ -231,7 +231,7 @@ inline Vector4 Matrix4::operator *(const Vector4& vec) const
 inline Vector4 Matrix4::operator *(const Vector3& vec) const
 {
 #if defined(DESIRE_USE_SSE)
-	vec_float4_t result;
+	__m128 result;
 	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
