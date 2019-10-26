@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Engine/Core/math/vectormath/vectormath.h"
+#include "Engine/Core/math/SIMD.h"
 
 class Vector3
 {
 public:
 	inline Vector3()																{}
-	inline Vector3(const Vector3& vec)			: mVec128(vec.mVec128)				{}
-	inline Vector3(vec_float3_t vf)				: mVec128(vf)						{}
-	inline Vector3(float x, float y, float z)	: mVec128(SIMD::Construct(x, y, z)) {}
-	explicit inline Vector3(float scalar)											{ SIMD::Construct(mVec128, scalar); }
+	inline Vector3(simd128_t vec)				: vec128(vec)						{}
+	inline Vector3(float x, float y, float z)	: vec128(SIMD::Construct(x, y, z))	{}
+	explicit inline Vector3(float scalar)		: vec128(SIMD::Construct(scalar))	{}
 
 	// Load x, y, and z elements from the first three elements of a float array
 	inline void LoadXYZ(const float *fptr)
@@ -25,17 +24,17 @@ public:
 		fptr[2] = GetZ();
 	}
 
-	inline void SetX(float x)								{ SIMD::SetX(mVec128, x); }
-	inline void SetY(float y)								{ SIMD::SetY(mVec128, y); }
-	inline void SetZ(float z)								{ SIMD::SetZ(mVec128, z); }
+	inline void SetX(float x)								{ vec128 = SIMD::SetX(*this, x); }
+	inline void SetY(float y)								{ vec128 = SIMD::SetY(*this, y); }
+	inline void SetZ(float z)								{ vec128 = SIMD::SetZ(*this, z); }
 
-	inline float GetX() const								{ return SIMD::GetX(mVec128); }
-	inline float GetY() const								{ return SIMD::GetY(mVec128); }
-	inline float GetZ() const								{ return SIMD::GetZ(mVec128); }
+	inline float GetX() const								{ return SIMD::GetX(*this); }
+	inline float GetY() const								{ return SIMD::GetY(*this); }
+	inline float GetZ() const								{ return SIMD::GetZ(*this); }
 
-	inline operator vec_float3_t() const					{ return mVec128; }
+	inline operator simd128_t() const						{ return vec128; }
 
-	inline Vector3& operator =(const Vector3& vec)			{ mVec128 = vec.mVec128; return *this; }
+	inline Vector3& operator =(const Vector3& vec)			{ vec128 = vec; return *this; }
 
 	inline Vector3 operator -() const						{ return SIMD::Negate(*this); }
 	inline Vector3 operator +(const Vector3& vec) const		{ return SIMD::Add(*this, vec); }
@@ -63,7 +62,7 @@ public:
 	inline float LengthSqr() const							{ return Dot(*this); }
 	inline float Length() const								{ return std::sqrt(LengthSqr()); }
 
-	inline void Normalize()									{ mVec128 = Normalized(); }
+	inline void Normalize()									{ *this = Normalized(); }
 	inline Vector3 Normalized() const						{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot3(*this, *this))); }
 
 	inline Vector3 AbsPerElem() const						{ return SIMD::AbsPerElem(*this); }
@@ -102,7 +101,7 @@ public:
 	static inline Vector3 AxisZ()		{ return Vector3(0.0f, 0.0f, 1.0f); }
 
 private:
-	vec_float3_t mVec128;
+	simd128_t vec128;
 };
 
 inline Vector3 operator *(float scalar, const Vector3& vec)

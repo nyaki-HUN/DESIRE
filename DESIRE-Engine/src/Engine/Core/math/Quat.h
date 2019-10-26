@@ -8,30 +8,29 @@ class Quat
 {
 public:
 	inline Quat()																			{}
-	inline Quat(const Quat& vec)					: mVec128(vec.mVec128)					{}
-	inline Quat(vec_float4_t vf4)					: mVec128(vf4)							{}
-	inline Quat(float x, float y, float z, float w) : mVec128(SIMD::Construct(x, y, z, w))	{}
+	inline Quat(simd128_t vec)						: vec128(vec)							{}
+	inline Quat(float x, float y, float z, float w) : vec128(SIMD::Construct(x, y, z, w))	{}
 	explicit inline Quat(const Matrix3& rotMat);
 
 	// Load x, y, z, and w elements from the first four elements of a float array
-	inline void LoadXYZW(const float *fptr)					{ SIMD::LoadXYZW(mVec128, fptr); }
+	inline void LoadXYZW(const float *fptr)					{ vec128 = SIMD::LoadXYZW(fptr); }
 
 	// Store x, y, z, and w elements in the first four elements of a float array
-	inline void StoreXYZW(float *fptr) const				{ SIMD::StoreXYZW(mVec128, fptr); }
+	inline void StoreXYZW(float *fptr) const				{ SIMD::StoreXYZW(*this, fptr); }
 
-	inline void SetX(float x)								{ SIMD::SetX(mVec128, x); }
-	inline void SetY(float y)								{ SIMD::SetY(mVec128, y); }
-	inline void SetZ(float z)								{ SIMD::SetZ(mVec128, z); }
-	inline void SetW(float w)								{ SIMD::SetW(mVec128, w); }
+	inline void SetX(float x)								{ vec128 = SIMD::SetX(*this, x); }
+	inline void SetY(float y)								{ vec128 = SIMD::SetY(*this, y); }
+	inline void SetZ(float z)								{ vec128 = SIMD::SetZ(*this, z); }
+	inline void SetW(float w)								{ vec128 = SIMD::SetW(*this, w); }
 
-	inline float GetX() const								{ return SIMD::GetX(mVec128); }
-	inline float GetY() const								{ return SIMD::GetY(mVec128); }
-	inline float GetZ() const								{ return SIMD::GetZ(mVec128); }
-	inline float GetW() const								{ return SIMD::GetW(mVec128); }
+	inline float GetX() const								{ return SIMD::GetX(*this); }
+	inline float GetY() const								{ return SIMD::GetY(*this); }
+	inline float GetZ() const								{ return SIMD::GetZ(*this); }
+	inline float GetW() const								{ return SIMD::GetW(*this); }
 
-	inline operator vec_float4_t() const					{ return mVec128; }
+	inline operator simd128_t() const						{ return vec128; }
 
-	inline Quat& operator =(const Quat& quat)				{ mVec128 = quat; return *this; }
+	inline Quat& operator =(const Quat& quat)				{ vec128 = quat; return *this; }
 
 	inline Quat operator -() const							{ return SIMD::Negate(*this); }
 	inline Quat operator +(const Quat& quat) const			{ return SIMD::Add(*this, quat); }
@@ -52,7 +51,7 @@ public:
 	// Compute the Euler angle representation of the rotation in radians
 	inline Vector3 EulerAngles() const
 	{
-		const vec_float4_t vecSq2 = SIMD::Mul(SIMD::Mul(*this, *this), 2.0f);
+		const simd128_t vecSq2 = SIMD::Mul(SIMD::Mul(*this, *this), 2.0f);
 		const float tmpX1 = 1.0f - (SIMD::GetX(vecSq2) + SIMD::GetY(vecSq2));
 		const float tmpX2 = 1.0f - (SIMD::GetY(vecSq2) + SIMD::GetZ(vecSq2));
 
@@ -73,7 +72,7 @@ public:
 
 	inline Vector3 RotateVec(const Vector3& vec) const;
 
-	inline void Normalize()									{ mVec128 = Normalized(); }
+	inline void Normalize()									{ *this = Normalized(); }
 	inline Quat Normalized() const							{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot4(*this, *this))); }
 
 	// Spherical linear interpolation
@@ -107,7 +106,7 @@ public:
 	static inline Quat CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo);
 
 private:
-	vec_float4_t mVec128;
+	simd128_t vec128;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -358,7 +357,7 @@ inline Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3
 #else
 	const float cosHalfAngleX2 = std::sqrt((2.0f * (1.0f + unitVecFrom.Dot(unitVecTo))));
 	const float recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);
-	result.mVec128 = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
+	result = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
 	result.SetW(cosHalfAngleX2 * 0.5f);
 #endif
 
