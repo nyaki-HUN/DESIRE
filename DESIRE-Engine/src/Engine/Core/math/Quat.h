@@ -355,7 +355,8 @@ inline Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3
 	const __m128 res = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
 	result = SIMD::Blend_W(res, SIMD::Mul(cosHalfAngleX2, 0.5f));
 #else
-	const float cosHalfAngleX2 = std::sqrt((2.0f * (1.0f + unitVecFrom.Dot(unitVecTo))));
+	const float cosAngle = unitVecFrom.Dot(unitVecTo);
+	const float cosHalfAngleX2 = std::sqrt(2.0f * (1.0f + cosAngle));
 	const float recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);
 	result = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
 	result.SetW(cosHalfAngleX2 * 0.5f);

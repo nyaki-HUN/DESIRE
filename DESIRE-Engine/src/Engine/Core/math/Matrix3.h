@@ -224,7 +224,6 @@ inline void Matrix3::Invert()
 
 #if defined(DESIRE_USE_SSE)
 	__m128 dot = SIMD::Dot3(tmp2, col2);
-	dot = SIMD::Swizzle_XXXX(dot);
 	const __m128 invDet = _mm_rcp_ps(dot);
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);

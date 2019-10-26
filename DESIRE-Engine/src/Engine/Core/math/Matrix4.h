@@ -307,8 +307,8 @@ inline void Matrix4::Invert()
 
 	alignas(16) static const uint32_t _vmathPNPN[4] = { 0x00000000, 0x80000000, 0x00000000, 0x80000000 };
 	alignas(16) static const uint32_t _vmathNPNP[4] = { 0x80000000, 0x00000000, 0x80000000, 0x00000000 };
-	const __m128 Sign_PNPN = _mm_load_ps((float*)_vmathPNPN);
-	const __m128 Sign_NPNP = _mm_load_ps((float*)_vmathNPNP);
+	const __m128 Sign_PNPN = _mm_load_ps(reinterpret_cast<const float*>(_vmathPNPN));
+	const __m128 Sign_NPNP = _mm_load_ps(reinterpret_cast<const float*>(_vmathNPNP));
 	__m128 mtL1 = _mm_xor_ps(sum, Sign_PNPN);
 
 	// Calculating the minterms of the second line (using previous results)
@@ -418,7 +418,6 @@ inline void Matrix4::AffineInvert()
 	const __m128 tmp1 = col2.GetXYZ().Cross(col0.GetXYZ());
 	inv3 = SIMD::Negate(col3);
 	__m128 dot = SIMD::Dot3(tmp2, col2);
-	dot = SIMD::Swizzle_XXXX(dot);
 	const __m128 invDet = _mm_rcp_ps(dot);
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);
