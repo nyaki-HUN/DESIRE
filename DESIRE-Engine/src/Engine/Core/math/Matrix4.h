@@ -615,8 +615,7 @@ inline Matrix4 Matrix4::CreateRotationZ(float radians)
 inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 {
 #if defined(DESIRE_USE_SSE)
-	__m128 angles = radiansXYZ;
-	SIMD::SetW(angles, 0.0f);
+	__m128 angles = SIMD::SetW(radiansXYZ, 0.0f);
 	__m128 s, c;
 	sincosf4(angles, &s, &c);
 	const __m128 negS = SIMD::Negate(s);
