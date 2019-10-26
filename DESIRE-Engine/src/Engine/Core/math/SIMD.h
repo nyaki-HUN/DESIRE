@@ -426,7 +426,7 @@ public:
 	static inline simd128_t Dot3(simd128_t a, simd128_t b)
 	{
 #if defined(DESIRE_USE_SSE)
-	#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
+	#if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0x7F);
 	#else
 		__m128 ab = SIMD::Mul(a, b);
@@ -452,7 +452,7 @@ public:
 	static inline simd128_t Dot4(simd128_t a, simd128_t b)
 	{
 #if defined(DESIRE_USE_SSE)
-	#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
+	#if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0xFF);
 	#else
 		__m128 ab = SIMD::Mul(a, b);
