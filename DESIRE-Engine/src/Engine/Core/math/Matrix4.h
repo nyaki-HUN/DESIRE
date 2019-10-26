@@ -538,7 +538,7 @@ inline Matrix4 Matrix4::CreateRotationX(float radians)
 #if defined(DESIRE_USE_SSE)
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	vecY = SIMD::Blend_Y(zero, c);
 	vecY = SIMD::Blend_Z(vecY, s);
 	vecZ = SIMD::Blend_Y(zero, SIMD::Negate(s));
@@ -565,7 +565,7 @@ inline Matrix4 Matrix4::CreateRotationY(float radians)
 #if defined(DESIRE_USE_SSE)
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	vecX = SIMD::Blend_X(zero, c);
 	vecX = SIMD::Blend_Z(vecX, SIMD::Negate(s));
 	vecZ = SIMD::Blend_X(zero, s);
@@ -592,7 +592,7 @@ inline Matrix4 Matrix4::CreateRotationZ(float radians)
 #if defined(DESIRE_USE_SSE)
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	vecX = SIMD::Blend_X(zero, c);
 	vecX = SIMD::Blend_Y(vecX, s);
 	vecY = SIMD::Blend_X(zero, SIMD::Negate(s));
@@ -657,11 +657,11 @@ inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 #if defined(DESIRE_USE_SSE)
 	__m128 axis = unitVec;
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	const __m128 xxxx = SIMD::Swizzle_XXXX(axis);
 	const __m128 yyyy = SIMD::Swizzle_YYYY(axis);
 	const __m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
-	const __m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
+	const __m128 oneMinusC = SIMD::Sub(SIMD::Construct(1.0f), c);
 	const __m128 axisS = SIMD::Mul(axis, s);
 	const __m128 negAxisS = SIMD::Negate(axisS);
 	__m128 tmp0 = SIMD::Blend_Z(SIMD::Swizzle_XZXX(axisS), SIMD::Swizzle_YYYY(negAxisS));

@@ -430,15 +430,15 @@ public:
 	#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
 		return _mm_dp_ps(a, b, 0x77);
 	#else
-		__m128 result = SIMD::Mul(a, b);
-		return SIMD::Add(	SIMD::Swizzle_XXXX(result),
-							SIMD::Add(	SIMD::Swizzle_YYYY(result),
-										SIMD::Swizzle_ZZZZ(result)));
+		__m128 ab = SIMD::Mul(a, b);
+		return SIMD::Add(	SIMD::Swizzle_XXXX(ab),
+							SIMD::Add(	SIMD::Swizzle_YYYY(ab),
+										SIMD::Swizzle_ZZZZ(ab)));
 	#endif
 #elif defined(__ARM_NEON__)
-		float32x4_t vd = SIMD::Mul(a, b);
-		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_low_f32(vd));
-		return vadd_f32(x, vget_high_f32(vd));
+		float32x4_t ab = SIMD::Mul(a, b);
+		float32x2_t x = vpadd_f32(vget_low_f32(ab), vget_low_f32(ab));
+		return vadd_f32(x, vget_high_f32(ab));
 #else
 		return SIMD::Construct(a.x * b.x + a.y * b.y + a.z * b.z);
 #endif
@@ -451,15 +451,15 @@ public:
 	#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
 		return _mm_dp_ps(a, b, 0xff);
 	#else
-		__m128 result = SIMD::Mul(a, b);
-		return SIMD::Add(	SIMD::Swizzle_XXXX(result),
-							SIMD::Add(	SIMD::Swizzle_YYYY(result),
-										SIMD::Add(	SIMD::Swizzle_ZZZZ(result),
-													SIMD::Swizzle_WWWW(result))));
+		__m128 ab = SIMD::Mul(a, b);
+		return SIMD::Add(	SIMD::Swizzle_XXXX(ab),
+							SIMD::Add(	SIMD::Swizzle_YYYY(ab),
+										SIMD::Add(	SIMD::Swizzle_ZZZZ(ab),
+													SIMD::Swizzle_WWWW(ab))));
 	#endif
 #elif defined(__ARM_NEON__)
-		float32x4_t vd = SIMD::Mul(a, b);
-		float32x2_t x = vpadd_f32(vget_low_f32(vd), vget_high_f32(vd));
+		float32x4_t ab = SIMD::Mul(a, b);
+		float32x2_t x = vpadd_f32(vget_low_f32(ab), vget_high_f32(ab));
 		return vpadd_f32(x, x);
 #else
 		return SIMD::Construct(a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
@@ -566,6 +566,25 @@ public:
 	static inline simd128_t MinElem4(simd128_t vec)
 	{
 		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
+	}
+
+	// Compute the inverse/reciprocal square root
+	static inline simd128_t InvSqrt(simd128_t vec)
+	{
+#if defined(DESIRE_USE_SSE)
+		// Perform two passes of Newton-Raphson iteration
+		const __m128 approx = _mm_rsqrt_ps(vec);
+		const __m128 muls = SIMD::Mul(SIMD::Mul(vec, approx), approx);
+		return SIMD::Mul(SIMD::Mul(approx, 0.5f), SIMD::Sub(SIMD::Construct(3.0f), muls));
+#elif defined(__ARM_NEON__)
+		float32x4_t result = vrsqrteq_f32(vec);
+		result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
+		result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
+		return result;
+#else
+		const float result = 1.0f / std::sqrt(vec.x);
+		return SIMD::Construct(result);
+#endif
 	}
 
 	// Blend (select) elements from a and b using the mask
@@ -775,18 +794,11 @@ static inline __m128 toM128(uint32_t x)
 	return SIMD::Construct(*(float*)&x);
 }
 
-static inline simd128_t newtonrapson_rsqrt4(simd128_t v)
-{
-	const __m128 approx = _mm_rsqrt_ps(v);
-	const __m128 muls = SIMD::Mul(SIMD::Mul(v, approx), approx);
-	return SIMD::Mul(SIMD::Mul(approx, 0.5f), SIMD::Sub(_mm_set1_ps(3.0f), muls));
-}
-
 static inline __m128 acosf4(__m128 x)
 {
 	__m128 xabs = SIMD::AbsPerElem(x);
 	__m128 select = _mm_cmplt_ps(x, _mm_setzero_ps());
-	__m128 t1 = _mm_sqrt_ps(SIMD::Sub(_mm_set1_ps(1.0f), xabs));
+	__m128 t1 = _mm_sqrt_ps(SIMD::Sub(SIMD::Construct(1.0f), xabs));
 
 	/* Instruction counts can be reduced if the polynomial was
 	* computed entirely from nested (dependent) fma's. However,
@@ -795,21 +807,21 @@ static inline __m128 acosf4(__m128 x)
 	*/
 	__m128 xabs2 = SIMD::Mul(xabs, xabs);
 	__m128 xabs4 = SIMD::Mul(xabs2, xabs2);
-	__m128 hi = SIMD::MulAdd(SIMD::MulAdd(SIMD::MulAdd(_mm_set1_ps(-0.0012624911f),
-		xabs, _mm_set1_ps(0.0066700901f)),
-		xabs, _mm_set1_ps(-0.0170881256f)),
-		xabs, _mm_set1_ps(0.0308918810f));
-	__m128 lo = SIMD::MulAdd(SIMD::MulAdd(SIMD::MulAdd(_mm_set1_ps(-0.0501743046f),
-		xabs, _mm_set1_ps(0.0889789874f)),
-		xabs, _mm_set1_ps(-0.2145988016f)),
-		xabs, _mm_set1_ps(1.5707963050f));
+	__m128 hi = SIMD::MulAdd(SIMD::MulAdd(SIMD::MulAdd(SIMD::Construct(-0.0012624911f),
+		xabs, SIMD::Construct(0.0066700901f)),
+		xabs, SIMD::Construct(-0.0170881256f)),
+		xabs, SIMD::Construct(0.0308918810f));
+	__m128 lo = SIMD::MulAdd(SIMD::MulAdd(SIMD::MulAdd(SIMD::Construct(-0.0501743046f),
+		xabs, SIMD::Construct(0.0889789874f)),
+		xabs, SIMD::Construct(-0.2145988016f)),
+		xabs, SIMD::Construct(1.5707963050f));
 
 	__m128 result = SIMD::MulAdd(hi, xabs4, lo);
 
 	// Adjust the result if x is negactive.
 	return SIMD::Blend(
 		SIMD::Mul(t1, result),									// Positive
-		SIMD::MulSub(t1, result, _mm_set1_ps(3.1415926535898f)),	// Negative
+		SIMD::MulSub(t1, result, SIMD::Construct(3.1415926535898f)),	// Negative
 		select);
 }
 
@@ -829,7 +841,7 @@ static inline __m128 sinf4(__m128 x)
 	__m128 xl, xl2, xl3, res;
 
 	// Range reduction using : xl = angle * TwoOverPi;
-	xl = SIMD::Mul(x, _mm_set1_ps(0.63661977236f));
+	xl = SIMD::Mul(x, SIMD::Construct(0.63661977236f));
 
 	// Find the quadrant the angle falls in
 	// using:  q = (int)(ceil(abs(xl)) * sign(xl))
@@ -840,7 +852,7 @@ static inline __m128 sinf4(__m128 x)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC2), SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC1), x));
+	xl = SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
@@ -853,11 +865,11 @@ static inline __m128 sinf4(__m128 x)
 	__m128 cx =
 		SIMD::MulAdd(
 			SIMD::MulAdd(
-				SIMD::MulAdd(_mm_set1_ps(_SINCOS_CC0), xl2, _mm_set1_ps(_SINCOS_CC1)), xl2, _mm_set1_ps(_SINCOS_CC2)), xl2, _mm_set1_ps(1.0f));
+				SIMD::MulAdd(SIMD::Construct(_SINCOS_CC0), xl2, SIMD::Construct(_SINCOS_CC1)), xl2, SIMD::Construct(_SINCOS_CC2)), xl2, SIMD::Construct(1.0f));
 	__m128 sx =
 		SIMD::MulAdd(
 			SIMD::MulAdd(
-				SIMD::MulAdd(_mm_set1_ps(_SINCOS_SC0), xl2, _mm_set1_ps(_SINCOS_SC1)), xl2, _mm_set1_ps(_SINCOS_SC2)), xl3, xl);
+				SIMD::MulAdd(SIMD::Construct(_SINCOS_SC0), xl2, SIMD::Construct(_SINCOS_SC1)), xl2, SIMD::Construct(_SINCOS_SC2)), xl3, xl);
 
 	// Use the cosine when the offset is odd and the sin
 	// when the offset is even
@@ -875,11 +887,11 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 	__m128 xl, xl2, xl3;
 
 	// Range reduction using : xl = angle * TwoOverPi;
-	xl = SIMD::Mul(x, _mm_set1_ps(0.63661977236f));
+	xl = SIMD::Mul(x, SIMD::Construct(0.63661977236f));
 
 	// Find the quadrant the angle falls in
 	// using:  q = (int)(ceil(abs(xl)) * sign(xl))
-//	const __m128i q = _mm_cvtps_epi32(SIMD::Add(xl, SIMD::Blend(_mm_set1_ps(0.5f), xl, 0x80000000)));
+//	const __m128i q = _mm_cvtps_epi32(SIMD::Add(xl, SIMD::Blend(SIMD::Construct(0.5f), xl, 0x80000000)));
 	const __m128i q = _mm_cvtps_epi32(xl);
 
 	// Compute the offset based on the quadrant that the angle falls in.
@@ -889,7 +901,7 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC2), SIMD::MulSub(qf, _mm_set1_ps(_SINCOS_KC1), x));
+	xl = SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
@@ -902,11 +914,11 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 	__m128 cx =
 		SIMD::MulAdd(
 			SIMD::MulAdd(
-				SIMD::MulAdd(_mm_set1_ps(_SINCOS_CC0), xl2, _mm_set1_ps(_SINCOS_CC1)), xl2, _mm_set1_ps(_SINCOS_CC2)), xl2, _mm_set1_ps(1.0f));
+				SIMD::MulAdd(SIMD::Construct(_SINCOS_CC0), xl2, SIMD::Construct(_SINCOS_CC1)), xl2, SIMD::Construct(_SINCOS_CC2)), xl2, SIMD::Construct(1.0f));
 	__m128 sx =
 		SIMD::MulAdd(
 			SIMD::MulAdd(
-				SIMD::MulAdd(_mm_set1_ps(_SINCOS_SC0), xl2, _mm_set1_ps(_SINCOS_SC1)), xl2, _mm_set1_ps(_SINCOS_SC2)), xl3, xl);
+				SIMD::MulAdd(SIMD::Construct(_SINCOS_SC0), xl2, SIMD::Construct(_SINCOS_SC1)), xl2, SIMD::Construct(_SINCOS_SC2)), xl3, xl);
 
 	// Use the cosine when the offset is odd and the sin
 	// when the offset is even
@@ -921,24 +933,6 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 
 	*s = SIMD::Blend(_mm_xor_ps(toM128(0x80000000), *s), *s, sinMask);
 	*c = SIMD::Blend(_mm_xor_ps(toM128(0x80000000), *c), *c, cosMask);
-}
-
-#elif defined(__ARM_NEON__)
-
-static inline simd128_t newtonrapson_rsqrt4(simd128_t vec)
-{
-	float32x4_t result = vrsqrteq_f32(vec);
-	result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
-	result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
-	return result;
-}
-
-#else
-
-static inline simd128_t newtonrapson_rsqrt4(simd128_t vec)
-{
-	const float result = 1.0f / std::sqrt(vec.x);
-	return SIMD::Construct(result);
 }
 
 #endif

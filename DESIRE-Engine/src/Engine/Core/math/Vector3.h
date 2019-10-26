@@ -63,7 +63,7 @@ public:
 	inline float Length() const								{ return std::sqrt(LengthSqr()); }
 
 	inline void Normalize()									{ *this = Normalized(); }
-	inline Vector3 Normalized() const						{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot3(*this, *this))); }
+	inline Vector3 Normalized() const						{ return SIMD::Mul(*this, SIMD::InvSqrt(SIMD::Dot3(*this, *this))); }
 
 	inline Vector3 AbsPerElem() const						{ return SIMD::AbsPerElem(*this); }
 

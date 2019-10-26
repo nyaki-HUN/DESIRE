@@ -73,7 +73,7 @@ public:
 	inline Vector3 RotateVec(const Vector3& vec) const;
 
 	inline void Normalize()									{ *this = Normalized(); }
-	inline Quat Normalized() const							{ return SIMD::Mul(*this, newtonrapson_rsqrt4(SIMD::Dot4(*this, *this))); }
+	inline Quat Normalized() const							{ return SIMD::Mul(*this, SIMD::InvSqrt(SIMD::Dot4(*this, *this))); }
 
 	// Spherical linear interpolation
 	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
@@ -212,11 +212,11 @@ inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 	__m128 selectMask = _mm_cmpgt_ps(_mm_setzero_ps(), cosAngle);
 	cosAngle = SIMD::Blend(cosAngle, SIMD::Negate(cosAngle), selectMask);
 	const __m128 start = SIMD::Blend(unitQuat0, SIMD::Negate(unitQuat0), selectMask);
-	selectMask = _mm_cmpgt_ps(_mm_set1_ps(0.999f), cosAngle);
+	selectMask = _mm_cmpgt_ps(SIMD::Construct(0.999f), cosAngle);
 	const __m128 angle = acosf4(cosAngle);
-	const __m128 tttt = _mm_set1_ps(t);
-	const __m128 oneMinusT = _mm_sub_ps(_mm_set1_ps(1.0f), tttt);
-	__m128 angles = _mm_unpacklo_ps(_mm_set1_ps(1.0f), tttt);
+	const __m128 tttt = SIMD::Construct(t);
+	const __m128 oneMinusT = _mm_sub_ps(SIMD::Construct(1.0f), tttt);
+	__m128 angles = _mm_unpacklo_ps(SIMD::Construct(1.0f), tttt);
 	angles = _mm_unpacklo_ps(angles, oneMinusT);
 	angles = SIMD::MulAdd(angles, angle, _mm_setzero_ps());
 	const __m128 sines = sinf4(angles);
@@ -261,7 +261,7 @@ inline Quat Quat::CreateRotationX(float radians)
 
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
+	sincosf4(SIMD::Construct(halfAngle), &s, &c);
 	const __m128 res = SIMD::Blend_X(_mm_setzero_ps(), s);
 	return SIMD::Blend_W(res, c);
 #else
@@ -277,7 +277,7 @@ inline Quat Quat::CreateRotationY(float radians)
 
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
+	sincosf4(SIMD::Construct(halfAngle), &s, &c);
 	const __m128 res = SIMD::Blend_Y(_mm_setzero_ps(), s);
 	return SIMD::Blend_W(res, c);
 #else
@@ -293,7 +293,7 @@ inline Quat Quat::CreateRotationZ(float radians)
 
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
+	sincosf4(SIMD::Construct(halfAngle), &s, &c);
 	const __m128 res = SIMD::Blend_Z(_mm_setzero_ps(), s);
 	return SIMD::Blend_W(res, c);
 #else
@@ -310,7 +310,7 @@ inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 
 #if defined(DESIRE_USE_SSE)
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(halfAngle), &s, &c);
+	sincosf4(SIMD::Construct(halfAngle), &s, &c);
 #else
 	const float s = std::sin(halfAngle);
 	const Vector4 c(std::cos(halfAngle));
@@ -349,7 +349,7 @@ inline Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3
 
 #if defined(DESIRE_USE_SSE)
 	const __m128 cosAngle = SIMD::Dot3(unitVecFrom, unitVecTo);
-	const __m128 cosAngleX2Plus2 = SIMD::MulAdd(cosAngle, _mm_set1_ps(2.0f), _mm_set1_ps(2.0f));
+	const __m128 cosAngleX2Plus2 = SIMD::MulAdd(cosAngle, SIMD::Construct(2.0f), SIMD::Construct(2.0f));
 	const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
 	const __m128 cosHalfAngleX2 = SIMD::Mul(recipCosHalfAngleX2, cosAngleX2Plus2);
 	const __m128 res = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);

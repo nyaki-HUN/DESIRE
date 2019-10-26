@@ -134,7 +134,7 @@ inline Matrix3::Matrix3(const Quat& unitQuat)
 	const __m128 zxyw_2 = SIMD::Swizzle_ZXYW(xyzw_2);
 
 	__m128 tmp0 = SIMD::Mul(yzxw_2, wwww);									// tmp0 = 2yw, 2zw, 2xw, 2w2
-	__m128 tmp1 = SIMD::Sub(_mm_set1_ps(1.0f), SIMD::Mul(yzxw, yzxw_2));	// tmp1 = 1 - 2y2, 1 - 2z2, 1 - 2x2, 1 - 2w2
+	__m128 tmp1 = SIMD::Sub(SIMD::Construct(1.0f), SIMD::Mul(yzxw, yzxw_2));	// tmp1 = 1 - 2y2, 1 - 2z2, 1 - 2x2, 1 - 2w2
 	__m128 tmp2 = SIMD::Mul(yzxw, xyzw_2);									// tmp2 = 2xy, 2yz, 2xz, 2w2
 	tmp0 = SIMD::Add(SIMD::Mul(zxyw, xyzw_2), tmp0);						// tmp0 = 2yw + 2zx, 2zw + 2xy, 2xw + 2yz, 2w2 + 2w2
 	tmp1 = SIMD::Sub(tmp1, SIMD::Mul(zxyw, zxyw_2));						// tmp1 = 1 - 2y2 - 2z2, 1 - 2z2 - 2x2, 1 - 2x2 - 2y2, 1 - 2w2 - 2w2
@@ -251,7 +251,7 @@ inline Matrix3 Matrix3::Matrix3::CreateRotationX(float radians)
 #if defined(DESIRE_USE_SSE)
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	vecY = SIMD::Blend_Y(zero, c);
 	vecY = SIMD::Blend_Z(vecY, s);
 	vecZ = SIMD::Blend_Y(zero, SIMD::Negate(s));
@@ -277,7 +277,7 @@ inline Matrix3 Matrix3::CreateRotationY(float radians)
 #if defined(DESIRE_USE_SSE)
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	vecX = SIMD::Blend_X(zero, c);
 	vecX = SIMD::Blend_Z(vecX, SIMD::Negate(s));
 	vecZ = SIMD::Blend_X(zero, s);
@@ -303,7 +303,7 @@ inline Matrix3 Matrix3::CreateRotationZ(float radians)
 #if defined(DESIRE_USE_SSE)
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	vecX = SIMD::Blend_X(zero, c);
 	vecX = SIMD::Blend_Y(vecX, s);
 	vecY = SIMD::Blend_X(zero, SIMD::Negate(s));
@@ -365,11 +365,11 @@ inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 #if defined(DESIRE_USE_SSE)
 	__m128 axis = unitVec;
 	__m128 s, c;
-	sincosf4(_mm_set1_ps(radians), &s, &c);
+	sincosf4(SIMD::Construct(radians), &s, &c);
 	const __m128 xxxx = SIMD::Swizzle_XXXX(axis);
 	const __m128 yyyy = SIMD::Swizzle_YYYY(axis);
 	const __m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
-	const __m128 oneMinusC = SIMD::Sub(_mm_set1_ps(1.0f), c);
+	const __m128 oneMinusC = SIMD::Sub(SIMD::Construct(1.0f), c);
 	const __m128 axisS = SIMD::Mul(axis, s);
 	const __m128 negAxisS = SIMD::Negate(axisS);
 	__m128 tmp0 = SIMD::Blend_Z(SIMD::Swizzle_XZXX(axisS), SIMD::Swizzle_YYYY(negAxisS));
@@ -422,8 +422,8 @@ inline Quat::Quat(const Matrix3& rotMat)
 
 	const __m128 diagSum = SIMD::Add(SIMD::Add(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
 	const __m128 diagDiff = SIMD::Sub(SIMD::Sub(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
-	const __m128 radicand = SIMD::Add(SIMD::Blend_W(diagDiff, diagSum), _mm_set1_ps(1.0f));
-	const __m128 invSqrt = newtonrapson_rsqrt4(radicand);
+	const __m128 radicand = SIMD::Add(SIMD::Blend_W(diagDiff, diagSum), SIMD::Construct(1.0f));
+	const __m128 invSqrt = SIMD::InvSqrt(radicand);
 
 	__m128 zy_xz_yx = SIMD::Blend_Z(rotMat.col0, rotMat.col1);					// zy_xz_yx = 00 01 12 03
 	zy_xz_yx = SIMD::Swizzle_ZZYX(zy_xz_yx);									// zy_xz_yx = 12 12 01 00
