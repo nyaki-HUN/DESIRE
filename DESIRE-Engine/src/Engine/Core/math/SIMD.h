@@ -325,9 +325,8 @@ public:
 #if defined(DESIRE_USE_SSE)
 		return _mm_div_ps(a, b);
 #elif defined(__ARM_NEON__)
-		// Get an initial estimate of 1/vec
+		// Get an initial estimate then perform two Newton-Raphson iterations
 		float32x4_t reciprocal = vrecpeq_f32(b);
-		// Use a couple Newton-Raphson steps to refine the estimate
 		reciprocal = SIMD::Mul(vrecpsq_f32(b, reciprocal), reciprocal);
 		reciprocal = SIMD::Mul(vrecpsq_f32(b, reciprocal), reciprocal);
 
@@ -428,17 +427,22 @@ public:
 	{
 #if defined(DESIRE_USE_SSE)
 	#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
-		return _mm_dp_ps(a, b, 0x77);
+		return _mm_dp_ps(a, b, 0x7F);
 	#else
 		__m128 ab = SIMD::Mul(a, b);
-		return SIMD::Add(	SIMD::Swizzle_XXXX(ab),
-							SIMD::Add(	SIMD::Swizzle_YYYY(ab),
-										SIMD::Swizzle_ZZZZ(ab)));
+		alignas(16) static const uint32_t _mask3[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000 };
+		const __m128 mask3 = _mm_load_ps(reinterpret_cast<const float*>(_mask3));
+		ab = _mm_and_ps(ab, mask3);
+		__m128 xy_z_xy_z = _mm_hadd_ps(ab, ab);
+		return _mm_hadd_ps(xy_z_xy_z, xy_z_xy_z);
 	#endif
 #elif defined(__ARM_NEON__)
 		float32x4_t ab = SIMD::Mul(a, b);
-		float32x2_t x = vpadd_f32(vget_low_f32(ab), vget_low_f32(ab));
-		return vadd_f32(x, vget_high_f32(ab));
+		float32x2_t xy = vget_low_f32(ab);
+		float32x2_t xy_xy = vpadd_f32(xy, xy);
+		float32x2_t z_z = vdup_lane_f32(vget_high_f32(ab), 0);
+		float32x2_t xyz_xyz = vadd_f32(xy_xy, z_z);
+		return vcombine_f32(xyz_xyz, xyz_xyz);
 #else
 		return SIMD::Construct(a.x * b.x + a.y * b.y + a.z * b.z);
 #endif
@@ -449,18 +453,17 @@ public:
 	{
 #if defined(DESIRE_USE_SSE)
 	#if defined(__SSE4_1__) && 0	// SSE4 dot product instruction isn't precise enough
-		return _mm_dp_ps(a, b, 0xff);
+		return _mm_dp_ps(a, b, 0xFF);
 	#else
 		__m128 ab = SIMD::Mul(a, b);
-		return SIMD::Add(	SIMD::Swizzle_XXXX(ab),
-							SIMD::Add(	SIMD::Swizzle_YYYY(ab),
-										SIMD::Add(	SIMD::Swizzle_ZZZZ(ab),
-													SIMD::Swizzle_WWWW(ab))));
+		__m128 xy_zw_xy_zw = _mm_hadd_ps(ab, ab);
+		return _mm_hadd_ps(xy_zw_xy_zw, xy_zw_xy_zw);
 	#endif
 #elif defined(__ARM_NEON__)
 		float32x4_t ab = SIMD::Mul(a, b);
-		float32x2_t x = vpadd_f32(vget_low_f32(ab), vget_high_f32(ab));
-		return vpadd_f32(x, x);
+		float32x2_t xz_yw = vadd_f32(vget_low_f32(ab), vget_high_f32(ab));
+		float32x2_t xyzw_xyzw = vpadd_f32(xz_yw, xz_yw);
+		return vcombine_f32(xyzw_xyzw, xyzw_xyzw);
 #else
 		return SIMD::Construct(a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
 #endif
@@ -499,7 +502,7 @@ public:
 	{
 #if defined(DESIRE_USE_SSE)
 		const uint32_t mask = 0x7fffffff;
-		return _mm_and_ps(vec, SIMD::Construct(*(float*)&mask));
+		return _mm_and_ps(vec, SIMD::Construct(*reinterpret_cast<const float*>(&mask)));
 #elif defined(__ARM_NEON__)
 		return vabsq_f32(vec);
 #else
@@ -572,15 +575,16 @@ public:
 	static inline simd128_t InvSqrt(simd128_t vec)
 	{
 #if defined(DESIRE_USE_SSE)
-		// Perform two passes of Newton-Raphson iteration
-		const __m128 approx = _mm_rsqrt_ps(vec);
-		const __m128 muls = SIMD::Mul(SIMD::Mul(vec, approx), approx);
-		return SIMD::Mul(SIMD::Mul(approx, 0.5f), SIMD::Sub(SIMD::Construct(3.0f), muls));
+		// Get an initial estimate then perform two Newton-Raphson iterations
+		const __m128 invSqrt = _mm_rsqrt_ps(vec);
+		const __m128 muls = SIMD::Mul(SIMD::Mul(vec, invSqrt), invSqrt);
+		return SIMD::Mul(SIMD::Mul(invSqrt, 0.5f), SIMD::Sub(SIMD::Construct(3.0f), muls));
 #elif defined(__ARM_NEON__)
-		float32x4_t result = vrsqrteq_f32(vec);
-		result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
-		result = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(result, result), vec), result);
-		return result;
+		// Get an initial estimate then perform two Newton-Raphson iterations
+		float32x4_t invSqrt = vrsqrteq_f32(vec);
+		invSqrt = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(invSqrt, invSqrt), vec), result);
+		invSqrt = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(invSqrt, invSqrt), vec), result);
+		return invSqrt;
 #else
 		const float result = 1.0f / std::sqrt(vec.x);
 		return SIMD::Construct(result);
@@ -679,6 +683,7 @@ public:
 	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 2, 2, 2)); }
 	static inline simd128_t Swizzle_ZZWX(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 3, 2, 2)); }
 	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return _mm_unpackhi_ps(vec, vec); }
+	static inline simd128_t Swizzle_ZWXX(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 3, 2)); }
 	static inline simd128_t Swizzle_ZWXY(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(1, 0, 3, 2)); }
 	static inline simd128_t Swizzle_ZWYX(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 1, 3, 2)); }
 	static inline simd128_t Swizzle_ZWZW(simd128_t vec)		{ return _mm_movehl_ps(vec, vec); }
@@ -724,6 +729,7 @@ public:
 	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 0); }
 	static inline simd128_t Swizzle_ZZWX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 3, 0 }); }
 	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return vzipq_f32(vec, vec).val[1]; }
+	static inline simd128_t Swizzle_ZWXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 3, 0, 0 }); }
 	static inline simd128_t Swizzle_ZWXY(simd128_t vec)		{ return vextq_f32(vec, vec, 2); }
 	static inline simd128_t Swizzle_ZWYX(simd128_t vec)		{ return vcombine_f32(vget_high_f32(vec), vrev64_f32(vget_low_f32(vec))); }
 	static inline simd128_t Swizzle_ZWZW(simd128_t vec)		{ const float32x2_t zw = vget_high_f32(vec); return vcombine_f32(zw, zw); }
@@ -768,6 +774,7 @@ public:
 	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.z, vec.z, vec.z); }
 	static inline simd128_t Swizzle_ZZWX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.z, vec.w, vec.x); }
 	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.z, vec.w, vec.w); }
+	static inline simd128_t Swizzle_ZWXX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.x, vec.x); }
 	static inline simd128_t Swizzle_ZWXY(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.x, vec.y); }
 	static inline simd128_t Swizzle_ZWYX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.y, vec.x); }
 	static inline simd128_t Swizzle_ZWZW(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.z, vec.w); }
