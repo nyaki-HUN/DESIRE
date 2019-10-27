@@ -38,7 +38,7 @@
 
 #elif defined(__ARM_NEON__)
 
-#define ARM_NEON_GCC_COMPATIBILITY 1
+	#define ARM_NEON_GCC_COMPATIBILITY 1
 	#if defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64)
 		#include <arm64_neon.h>
 	#else

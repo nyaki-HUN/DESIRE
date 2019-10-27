@@ -307,15 +307,9 @@ inline Quat Quat::CreateRotationZ(float radians)
 inline Quat Quat::CreateRotation(float radians, const Vector3& unitVec)
 {
 	const float halfAngle = radians * 0.5f;
-
-#if defined(DESIRE_USE_SSE)
-	__m128 s, c;
-	sincosf4(SIMD::Construct(halfAngle), &s, &c);
-#else
 	const float s = std::sin(halfAngle);
-	const Vector4 c(std::cos(halfAngle));
-#endif
-	return SIMD::Blend_W(SIMD::Mul(unitVec, s), c);
+	const float c = std::cos(halfAngle);
+	return SIMD::SetW(SIMD::Mul(unitVec, s), c);
 }
 
 // Construct a quaternion to rotate using Euler angles for each axis
