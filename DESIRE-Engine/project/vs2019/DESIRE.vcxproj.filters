@@ -64,9 +64,6 @@
     <Filter Include="src\Engine\Core\math">
       <UniqueIdentifier>{E32BDA84-CFBA-634E-78D9-7749644774F4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Engine\Core\math\vectormath">
-      <UniqueIdentifier>{8FAC2369-FB8F-32A9-0493-60E570F5F8F9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Engine\Input">
       <UniqueIdentifier>{915689A8-7D4F-A8FA-A681-8D7F92D98706}</UniqueIdentifier>
     </Filter>
@@ -363,6 +360,9 @@
     <ClInclude Include="..\..\src\Engine\Core\math\Rand.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\math\SIMD.h">
+      <Filter>src\Engine\Core\math</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\Transform.h">
       <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
@@ -377,18 +377,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\math\math.h">
       <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_NEON.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_SSE.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\vectormath\vectormath_scalar.h">
-      <Filter>src\Engine\Core\math\vectormath</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\platform.h">
       <Filter>src\Engine\Core</Filter>
