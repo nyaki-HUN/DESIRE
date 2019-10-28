@@ -541,25 +541,17 @@ public:
 	}
 
 	// Get maximum element
-	static inline simd128_t MaxElem3(simd128_t vec)
+	static inline simd128_t MaxElem(simd128_t vec)
 	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
-	}
-
-	static inline simd128_t MaxElem4(simd128_t vec)
-	{
-		return SIMD::MaxPerElem(SIMD::MaxPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MaxPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
+		const simd128_t xz_yw_xz_yw = SIMD::MaxPerElem(vec, SIMD::Swizzle_ZWXY(vec));
+		return SIMD::MaxPerElem(xz_yw_xz_yw, SIMD::Swizzle_YXWZ(xz_yw_xz_yw));
 	}
 
 	// Get minimum element
-	static inline simd128_t MinElem3(simd128_t vec)
+	static inline simd128_t MinElem(simd128_t vec)
 	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::Swizzle_ZZZZ(vec));
-	}
-
-	static inline simd128_t MinElem4(simd128_t vec)
-	{
-		return SIMD::MinPerElem(SIMD::MinPerElem(vec, SIMD::Swizzle_YYYY(vec)), SIMD::MinPerElem(SIMD::Swizzle_ZZZZ(vec), SIMD::Swizzle_WWWW(vec)));
+		const simd128_t xz_yw_xz_yw = SIMD::MinPerElem(vec, SIMD::Swizzle_ZWXY(vec));
+		return SIMD::MinPerElem(xz_yw_xz_yw, SIMD::Swizzle_YXWZ(xz_yw_xz_yw));
 	}
 
 	// Compute the inverse/reciprocal square root

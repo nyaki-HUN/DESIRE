@@ -162,24 +162,6 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK((vec0 <= Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
 	}
 
-	SECTION("GetMaxElem()")
-	{
-		float result;
-		result = (vec0.GetX() > vec0.GetY()) ? vec0.GetX() : vec0.GetY();
-		result = (vec0.GetZ() > result) ? vec0.GetZ() : result;
-
-		CHECK(vec0.GetMaxElem() == Approx(result));
-	}
-
-	SECTION("GetMinElem()")
-	{
-		float result;
-		result = (vec0.GetX() < vec0.GetY()) ? vec0.GetX() : vec0.GetY();
-		result = (vec0.GetZ() < result) ? vec0.GetZ() : result;
-
-		CHECK(vec0.GetMinElem() == Approx(result));
-	}
-
 	SECTION("Dot()")
 	{
 		CHECK(vec0.Dot(vec1) == Approx(vec0.GetX() * vec1.GetX() + vec0.GetY() * vec1.GetY() + vec0.GetZ() * vec1.GetZ()));
@@ -227,6 +209,38 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(result.GetX() == Approx(std::fabsf(vec0.GetX())));
 		CHECK(result.GetY() == Approx(std::fabsf(vec0.GetY())));
 		CHECK(result.GetZ() == Approx(std::fabsf(vec0.GetZ())));
+	}
+
+	SECTION("GetMaxElem()")
+	{
+		float result;
+
+		result = vec0.GetX();
+		result = (result > vec0.GetY()) ? result : vec0.GetY();
+		result = (result > vec0.GetZ()) ? result : vec0.GetZ();
+		CHECK(vec0.GetMaxElem() == Approx(result));
+
+		result = vec1.GetX();
+		result = (result > vec1.GetY()) ? result : vec1.GetY();
+		result = (result > vec1.GetZ()) ? result : vec1.GetZ();
+		CHECK(vec1.GetMaxElem() == Approx(result));
+
+		CHECK(Vector3(-1.0f).GetMaxElem() == Approx(-1.0f));
+	}
+
+	SECTION("GetMinElem()")
+	{
+		float result;
+
+		result = vec0.GetX();
+		result = (result < vec0.GetY()) ? result : vec0.GetY();
+		result = (result < vec0.GetZ()) ? result : vec0.GetZ();
+		CHECK(vec0.GetMinElem() == Approx(result));
+
+		result = vec0.GetX();
+		result = (result < vec1.GetY()) ? result : vec1.GetY();
+		result = (result < vec1.GetZ()) ? result : vec1.GetZ();
+		CHECK(vec1.GetMinElem() == Approx(result));
 	}
 
 	SECTION("MaxPerElem()")

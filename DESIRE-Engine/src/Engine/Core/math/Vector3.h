@@ -2,6 +2,8 @@
 
 #include "Engine/Core/math/SIMD.h"
 
+#include <cfloat>	// for FLT_MAX
+
 class Vector3
 {
 public:
@@ -67,8 +69,8 @@ public:
 
 	inline Vector3 AbsPerElem() const						{ return SIMD::AbsPerElem(*this); }
 
-	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem3(*this)); }
-	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem3(*this)); }
+	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem(SIMD::SetW(*this, -FLT_MAX))); }
+	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem(SIMD::SetW(*this, FLT_MAX))); }
 
 	static inline Vector3 MaxPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MaxPerElem(a, b); }
 	static inline Vector3 MinPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MinPerElem(a, b); }

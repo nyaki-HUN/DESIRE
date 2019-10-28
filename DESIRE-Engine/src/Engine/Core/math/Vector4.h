@@ -60,8 +60,8 @@ public:
 
 	inline Vector4 AbsPerElem() const						{ return SIMD::AbsPerElem(*this); }
 
-	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem4(*this)); }
-	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem4(*this)); }
+	inline float GetMaxElem() const							{ return SIMD::GetX(SIMD::MaxElem(*this)); }
+	inline float GetMinElem() const							{ return SIMD::GetX(SIMD::MinElem(*this)); }
 
 	static inline Vector4 MaxPerElem(const Vector4& a, const Vector4& b)	{ return SIMD::MaxPerElem(a, b); }
 	static inline Vector4 MinPerElem(const Vector4& a, const Vector4& b)	{ return SIMD::MinPerElem(a, b); }
