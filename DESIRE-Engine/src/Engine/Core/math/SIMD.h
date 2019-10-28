@@ -30,20 +30,12 @@
 	#endif
 
 	typedef __m128	simd128_t;
-
 #elif defined(__ARM_NEON__)
-
 	#define ARM_NEON_GCC_COMPATIBILITY 1
-	#if defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64)
-		#include <arm64_neon.h>
-	#else
-		#include <arm_neon.h>
-	#endif
+	#include <arm64_neon.h>
 
 	typedef float32x4_t	simd128_t;
-
 #else
-
 	struct simd128_t
 	{
 		union
@@ -687,8 +679,8 @@ public:
 	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
 #elif defined(__ARM_NEON__)
 	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return vdupq_laneq_f32(vec, 0); }
-	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return vzipq_f32(vec, vec).val[0]; }
-	static inline simd128_t Swizzle_XXZZ(simd128_t vec)		{ return vtrnq_f32(vec, vec).val[0]; }
+	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return vzip1q_f32(vec, vec); }
+	static inline simd128_t Swizzle_XXZZ(simd128_t vec)		{ return vtrn1q_f32(vec, vec); }
 	static inline simd128_t Swizzle_XXZW(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 2, 3 }); }
 	static inline simd128_t Swizzle_XYXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 1, 0, 0 }); }
 	static inline simd128_t Swizzle_XYXY(simd128_t vec)		{ const float32x2_t xy = vget_low_f32(vec); return vcombine_f32(xy, xy); }
@@ -697,7 +689,7 @@ public:
 	static inline simd128_t Swizzle_XYZX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 1, 2, 0 }); }
 	static inline simd128_t Swizzle_XYWZ(simd128_t vec)		{ return vcombine_f32(vget_low_f32(vec), vrev64_f32(vget_high_f32(vec))); }
 	static inline simd128_t Swizzle_XZXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 2, 0, 0 }); }
-	static inline simd128_t Swizzle_XZXZ(simd128_t vec)		{ return vuzpq_f32(vec, vec).val[0]; }
+	static inline simd128_t Swizzle_XZXZ(simd128_t vec)		{ return vuzp1q_f32(vec, vec); }
 	static inline simd128_t Swizzle_XZYX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 2, 1, 0 }); }
 
 	static inline simd128_t Swizzle_YXXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 0, 0, 0 }); }
@@ -706,11 +698,11 @@ public:
 	static inline simd128_t Swizzle_YXZW(simd128_t vec)		{ return vcombine_f32(vrev64_f32(vget_low_f32(vec)), vget_high_f32(vec)); }
 	static inline simd128_t Swizzle_YXWZ(simd128_t vec)		{ return vrev64q_f32(vec); }
 	static inline simd128_t Swizzle_YYYY(simd128_t vec)		{ return vdupq_laneq_f32(vec, 1); }
-	static inline simd128_t Swizzle_YYWW(simd128_t vec)		{ return vtrnq_f32(vec, vec).val[1]; }
+	static inline simd128_t Swizzle_YYWW(simd128_t vec)		{ return vtrn2q_f32(vec, vec); }
 	static inline simd128_t Swizzle_YZXY(simd128_t vec)		{ const float32x2_t xy = vget_low_f32(vec); return vcombine_f32(vext_f32(xy, vget_high_f32(vec), 1), xy); }
 	static inline simd128_t Swizzle_YZXW(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 2, 0, 3 }); }
 	static inline simd128_t Swizzle_YZWX(simd128_t vec)		{ return vextq_f32(vec, vec, 1); }
-	static inline simd128_t Swizzle_YWYW(simd128_t vec)		{ return vuzpq_f32(vec, vec).val[1]; }
+	static inline simd128_t Swizzle_YWYW(simd128_t vec)		{ return vuzp2q_f32(vec, vec); }
 
 	static inline simd128_t Swizzle_ZXXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 0, 0 }); }
 	static inline simd128_t Swizzle_ZXYZ(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 2 }); }
@@ -719,7 +711,7 @@ public:
 	static inline simd128_t Swizzle_ZZYX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 1, 0 }); }
 	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return vdupq_laneq_f32(vec, 2); }
 	static inline simd128_t Swizzle_ZZWX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 3, 0 }); }
-	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return vzipq_f32(vec, vec).val[1]; }
+	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return vzip2q_f32(vec, vec); }
 	static inline simd128_t Swizzle_ZWXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 3, 0, 0 }); }
 	static inline simd128_t Swizzle_ZWXY(simd128_t vec)		{ return vextq_f32(vec, vec, 2); }
 	static inline simd128_t Swizzle_ZWYX(simd128_t vec)		{ return vcombine_f32(vget_high_f32(vec), vrev64_f32(vget_low_f32(vec))); }
