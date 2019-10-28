@@ -40,19 +40,29 @@
 	{
 		union
 		{
-			struct
-			{
-				float x;
-				float y;
-				float z;
-				float w;
-			};
-
+			float f32[4];
 			uint32_t u32[4];
 		};
 
-		inline simd128_t() {}
-		inline simd128_t(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+		inline simd128_t()
+		{
+		}
+
+		inline simd128_t(float x, float y, float z, float w)
+		{
+			f32[0] = x;
+			f32[1] = y;
+			f32[2] = z;
+			f32[3] = w;
+		}
+
+		inline simd128_t(uint32_t x, uint32_t y, uint32_t z, uint32_t w)
+		{
+			u32[0] = x;
+			u32[1] = y;
+			u32[2] = z;
+			u32[3] = w;
+		}
 	};
 #endif
 
@@ -103,10 +113,7 @@ public:
 #elif defined(__ARM_NEON__)
 		vst1q_f32(fptr, vec);
 #else
-		fptr[0] = vec.x;
-		fptr[1] = vec.y;
-		fptr[2] = vec.z;
-		fptr[3] = vec.w;
+		memcpy(fptr, vec.f32, 4 * sizeof(float));
 #endif
 	}
 
@@ -118,7 +125,8 @@ public:
 #elif defined(__ARM_NEON__)
 		return vsetq_lane_f32(x, vec, 0);
 #else
-		return SIMD::Construct(x, vec.y, vec.z, vec.w);
+		vec.f32[0] = x;
+		return vec;
 #endif
 	}
 
@@ -136,7 +144,8 @@ public:
 #elif defined(__ARM_NEON__)
 		return vsetq_lane_f32(y, vec, 1);
 #else
-		return SIMD::Construct(vec.x, y, vec.z, vec.w);
+		vec.f32[1] = y;
+		return vec;
 #endif
 	}
 
@@ -154,7 +163,8 @@ public:
 #elif defined(__ARM_NEON__)
 		return vsetq_lane_f32(z, vec, 2);
 #else
-		return SIMD::Construct(vec.x, vec.y, z, vec.w);
+		vec.f32[2] = z;
+		return vec;
 #endif
 	}
 
@@ -172,7 +182,8 @@ public:
 #elif defined(__ARM_NEON__)
 		return vsetq_lane_f32(w, vec, 3);
 #else
-		return SIMD::Construct(vec.x, vec.y, vec.z, w);
+		vec.f32[3] = w;
+		return vec;
 #endif
 	}
 
@@ -184,7 +195,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return vgetq_lane_f32(vec, 0);
 #else
-		return vec.x;
+		return vec.f32[0];
 #endif
 	}
 
@@ -195,7 +206,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return vgetq_lane_f32(vec, 1);
 #else
-		return vec.y;
+		return vec.f32[1];
 #endif
 	}
 
@@ -206,7 +217,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return vgetq_lane_f32(vec, 2);
 #else
-		return vec.z;
+		return vec.f32[2];
 #endif
 	}
 
@@ -217,7 +228,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return vgetq_lane_f32(vec, 3);
 #else
-		return vec.w;
+		return vec.f32[3];
 #endif
 	}
 
@@ -229,7 +240,12 @@ public:
 #elif defined(__ARM_NEON__)
 		return vnegq_f32(vec);
 #else
-		return SIMD::Construct(-vec.x, -vec.y, -vec.z, -vec.w);
+		return SIMD::Construct(
+			-SIMD::GetX(vec),
+			-SIMD::GetY(vec),
+			-SIMD::GetZ(vec),
+			-SIMD::GetW(vec)
+		);
 #endif
 	}
 
@@ -241,10 +257,10 @@ public:
 		return vaddq_f32(a, b); 
 #else
 		return SIMD::Construct(
-			a.x + b.x,
-			a.y + b.y,
-			a.z + b.z,
-			a.w + b.w
+			SIMD::GetX(a) + SIMD::GetX(b),
+			SIMD::GetY(a) + SIMD::GetY(b),
+			SIMD::GetZ(a) + SIMD::GetZ(b),
+			SIMD::GetW(a) + SIMD::GetW(b)
 		);
 #endif
 	}
@@ -257,10 +273,10 @@ public:
 		return vsubq_f32(a, b);
 #else
 		return SIMD::Construct(
-			a.x - b.x,
-			a.y - b.y,
-			a.z - b.z,
-			a.w - b.w
+			SIMD::GetX(a) - SIMD::GetX(b),
+			SIMD::GetY(a) - SIMD::GetY(b),
+			SIMD::GetZ(a) - SIMD::GetZ(b),
+			SIMD::GetW(a) - SIMD::GetW(b)
 		);
 #endif
 	}
@@ -273,10 +289,10 @@ public:
 		return vmulq_f32(a, b);
 #else
 		return SIMD::Construct(
-			a.x * b.x,
-			a.y * b.y,
-			a.z * b.z,
-			a.w * b.w
+			SIMD::GetX(a) * SIMD::GetX(b),
+			SIMD::GetY(a) * SIMD::GetY(b),
+			SIMD::GetZ(a) * SIMD::GetZ(b),
+			SIMD::GetW(a) * SIMD::GetW(b)
 		);
 #endif
 	}
@@ -289,10 +305,10 @@ public:
 		return vmulq_n_f32(vec, scalar);
 #else
 		return SIMD::Construct(
-			vec.x * scalar,
-			vec.y * scalar,
-			vec.z * scalar,
-			vec.w * scalar
+			SIMD::GetX(vec) * scalar,
+			SIMD::GetY(vec) * scalar,
+			SIMD::GetZ(vec) * scalar,
+			SIMD::GetW(vec) * scalar
 		);
 #endif
 	}
@@ -324,7 +340,12 @@ public:
 #elif defined(__ARM_NEON__)
 		return vdivq_f32(a, b);
 #else
-		return SIMD::Construct(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
+		return SIMD::Construct(
+			SIMD::GetX(a) / SIMD::GetX(b),
+			SIMD::GetY(a) / SIMD::GetY(b),
+			SIMD::GetZ(a) / SIMD::GetZ(b),
+			SIMD::GetW(a) / SIMD::GetW(b)
+		);
 #endif
 	}
 
@@ -336,15 +357,15 @@ public:
 #elif defined(__ARM_NEON__)
 //		uint32x4_t result = vcgtq_f32(a, b);
 		return (
-			a.GetX() > b.GetX() &&
-			a.GetY() > b.GetY() &&
-			a.GetZ() > b.GetZ()
+			SIMD::GetX(a) > SIMD::GetX(b) &&
+			SIMD::GetY(a) > SIMD::GetY(b) &&
+			SIMD::GetZ(a) > SIMD::GetZ(b)
 		);
 #else
 		return (
-			a.GetX() > b.GetX() &&
-			a.GetY() > b.GetY() &&
-			a.GetZ() > b.GetZ()
+			SIMD::GetX(a) > SIMD::GetX(b) &&
+			SIMD::GetY(a) > SIMD::GetY(b) &&
+			SIMD::GetZ(a) > SIMD::GetZ(b)
 		);
 #endif
 	}
@@ -356,15 +377,15 @@ public:
 #elif defined(__ARM_NEON__)
 //		uint32x4_t result = vcltq_f32(a, b);
 		return (
-			a.GetX() < b.GetX() &&
-			a.GetY() < b.GetY() &&
-			a.GetZ() < b.GetZ()
+			SIMD::GetX(a) < SIMD::GetX(b) &&
+			SIMD::GetY(a) < SIMD::GetY(b) &&
+			SIMD::GetZ(a) < SIMD::GetZ(b)
 		);
 #else
 		return (
-			a.GetX() < b.GetX() &&
-			a.GetY() < b.GetY() &&
-			a.GetZ() < b.GetZ()
+			SIMD::GetX(a) < SIMD::GetX(b) &&
+			SIMD::GetY(a) < SIMD::GetY(b) &&
+			SIMD::GetZ(a) < SIMD::GetZ(b)
 		);
 #endif
 	}
@@ -376,15 +397,15 @@ public:
 #elif defined(__ARM_NEON__)
 //		uint32x4_t result = vcgeq_f32(a, b);
 		return (
-			a.GetX() >= b.GetX() &&
-			a.GetY() >= b.GetY() &&
-			a.GetZ() >= b.GetZ()
+			SIMD::GetX(a) >= SIMD::GetX(b) &&
+			SIMD::GetY(a) >= SIMD::GetY(b) &&
+			SIMD::GetZ(a) >= SIMD::GetZ(b)
 		);
 #else
 		return (
-			a.GetX() >= b.GetX() &&
-			a.GetY() >= b.GetY() &&
-			a.GetZ() >= b.GetZ()
+			SIMD::GetX(a) >= SIMD::GetX(b) &&
+			SIMD::GetY(a) >= SIMD::GetY(b) &&
+			SIMD::GetZ(a) >= SIMD::GetZ(b)
 		);
 #endif
 	}
@@ -396,15 +417,15 @@ public:
 #elif defined(__ARM_NEON__)
 //		uint32x4_t result = vcleq_f32(a, b);
 		return (
-			a.GetX() <= b.GetX() &&
-			a.GetY() <= b.GetY() &&
-			a.GetZ() <= b.GetZ()
+			SIMD::GetX(a) <= SIMD::GetX(b) &&
+			SIMD::GetY(a) <= SIMD::GetY(b) &&
+			SIMD::GetZ(a) <= SIMD::GetZ(b)
 		);
 #else
 		return (
-			a.GetX() <= b.GetX() &&
-			a.GetY() <= b.GetY() &&
-			a.GetZ() <= b.GetZ()
+			SIMD::GetX(a) <= SIMD::GetX(b) &&
+			SIMD::GetY(a) <= SIMD::GetY(b) &&
+			SIMD::GetZ(a) <= SIMD::GetZ(b)
 		);
 #endif
 	}
@@ -431,7 +452,11 @@ public:
 		float32x2_t xyz_xyz = vadd_f32(xy_xy, z_z);
 		return vcombine_f32(xyz_xyz, xyz_xyz);
 #else
-		return SIMD::Construct(a.x * b.x + a.y * b.y + a.z * b.z);
+		return SIMD::Construct(
+			SIMD::GetX(a) * SIMD::GetX(b) +
+			SIMD::GetY(a) * SIMD::GetY(b) +
+			SIMD::GetZ(a) * SIMD::GetZ(b)
+		);
 #endif
 	}
 
@@ -452,7 +477,12 @@ public:
 		float32x2_t xyzw_xyzw = vpadd_f32(xz_yw, xz_yw);
 		return vcombine_f32(xyzw_xyzw, xyzw_xyzw);
 #else
-		return SIMD::Construct(a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
+		return SIMD::Construct(
+			SIMD::GetX(a) * SIMD::GetX(b) +
+			SIMD::GetY(a) * SIMD::GetY(b) +
+			SIMD::GetZ(a) * SIMD::GetZ(b) +
+			SIMD::GetW(a) * SIMD::GetW(b)
+		);
 #endif
 	}
 
@@ -466,9 +496,9 @@ public:
 		return SIMD::Swizzle_YZXY(result);
 #else
 		return SIMD::Construct(
-			a.y * b.z - a.z * b.y,
-			a.z * b.x - a.x * b.z,
-			a.x * b.y - a.y * b.x,
+			SIMD::GetY(a) * SIMD::GetZ(b) - SIMD::GetZ(a) * SIMD::GetY(b),
+			SIMD::GetZ(a) * SIMD::GetX(b) - SIMD::GetX(a) * SIMD::GetZ(b),
+			SIMD::GetX(a) * SIMD::GetY(b) - SIMD::GetY(a) * SIMD::GetX(b),
 			0.0f
 		);
 #endif
@@ -484,10 +514,10 @@ public:
 		return vabsq_f32(vec);
 #else
 		return SIMD::Construct(
-			std::abs(vec.x),
-			std::abs(vec.y),
-			std::abs(vec.z),
-			std::abs(vec.w)
+			std::abs(SIMD::GetX(vec)),
+			std::abs(SIMD::GetY(vec)),
+			std::abs(SIMD::GetZ(vec)),
+			std::abs(SIMD::GetW(vec))
 		);
 #endif
 	}
@@ -501,10 +531,10 @@ public:
 		return vmaxq_f32(a, b);
 #else
 		return SIMD::Construct(
-			(a.x > b.x) ? a.x : b.x,
-			(a.y > b.y) ? a.y : b.y,
-			(a.z > b.z) ? a.z : b.z,
-			(a.w > b.w) ? a.w : b.w
+			(SIMD::GetX(a) > SIMD::GetX(b)) ? SIMD::GetX(a) : SIMD::GetX(b),
+			(SIMD::GetY(a) > SIMD::GetY(b)) ? SIMD::GetY(a) : SIMD::GetY(b),
+			(SIMD::GetZ(a) > SIMD::GetZ(b)) ? SIMD::GetZ(a) : SIMD::GetZ(b),
+			(SIMD::GetW(a) > SIMD::GetW(b)) ? SIMD::GetW(a) : SIMD::GetW(b)
 		);
 #endif
 	}
@@ -518,10 +548,10 @@ public:
 		return vminq_f32(a, b);
 #else
 		return SIMD::Construct(
-			(a.x < b.x) ? a.x : b.x,
-			(a.y < b.y) ? a.y : b.y,
-			(a.z < b.z) ? a.z : b.z,
-			(a.w < b.w) ? a.w : b.w
+			(SIMD::GetX(a) < SIMD::GetX(b)) ? SIMD::GetX(a) : SIMD::GetX(b),
+			(SIMD::GetY(a) < SIMD::GetY(b)) ? SIMD::GetY(a) : SIMD::GetY(b),
+			(SIMD::GetZ(a) < SIMD::GetZ(b)) ? SIMD::GetZ(a) : SIMD::GetZ(b),
+			(SIMD::GetW(a) < SIMD::GetW(b)) ? SIMD::GetW(a) : SIMD::GetW(b)
 		);
 #endif
 	}
@@ -555,7 +585,7 @@ public:
 		invSqrt = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(invSqrt, invSqrt), vec), result);
 		return invSqrt;
 #else
-		const float result = 1.0f / std::sqrt(vec.x);
+		const float result = 1.0f / std::sqrt(SIMD::GetX(vec));
 		return SIMD::Construct(result);
 #endif
 	}
@@ -572,11 +602,11 @@ public:
 #elif defined(__ARM_NEON__)
 		return vbslq_f32(reinterpret_cast<uint32x4_t>(mask), b, a);
 #else
-		return SIMD::Construct(
-			(mask.u32[0] & b.u32[0]) | (~mask._u32[0] & a.u32[0]),
-			(mask.u32[1] & b.u32[1]) | (~mask._u32[1] & a.u32[1]),
-			(mask.u32[2] & b.u32[2]) | (~mask._u32[2] & a.u32[2]),
-			(mask.u32[3] & b.u32[3]) | (~mask._u32[3] & a.u32[3])
+		return simd128_t(
+			(mask.u32[0] & b.u32[0]) | (~mask.u32[0] & a.u32[0]),
+			(mask.u32[1] & b.u32[1]) | (~mask.u32[1] & a.u32[1]),
+			(mask.u32[2] & b.u32[2]) | (~mask.u32[2] & a.u32[2]),
+			(mask.u32[3] & b.u32[3]) | (~mask.u32[3] & a.u32[3])
 		);
 #endif
 	}
@@ -589,7 +619,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return SIMD::Blend(to, from, (uint32x4_t) { 0xffffffff, 0, 0, 0 });
 #else
-		return SIMD::Construct(from.x, to.y, to.z, to.w);
+		return SIMD::SetX(to, SIMD::GetX(from));
 #endif
 	}
 
@@ -600,7 +630,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return SIMD::Blend(to, from, (uint32x4_t) { 0, 0xffffffff, 0, 0 });
 #else
-		return SIMD::Construct(to.x, from.y, to.z, to.w);
+		return SIMD::SetY(to, SIMD::GetY(from));
 #endif
 	}
 
@@ -611,7 +641,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return SIMD::Blend(to, from, (uint32x4_t) { 0, 0, 0xffffffff, 0 });
 #else
-		return SIMD::Construct(to.x, to.y, from.z, to.w);
+		return SIMD::SetZ(to, SIMD::GetZ(from));
 #endif
 	}
 
@@ -622,7 +652,7 @@ public:
 #elif defined(__ARM_NEON__)
 		return SIMD::Blend(to, from, (uint32x4_t) { 0, 0, 0, 0xffffffff });
 #else
-		return SIMD::Construct(to.x, to.y, to.z, from.w);
+		return SIMD::SetW(to, SIMD::GetW(from));
 #endif
 	}
 
@@ -726,53 +756,53 @@ public:
 	static inline simd128_t Swizzle_WZWZ(simd128_t vec)		{ const float32x2_t wz = vrev64_f32(vget_high_f32(vec)); return vcombine_f32(wz, wz); }
 	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return vdupq_laneq_f32(vec, 3); }
 #else
-	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.x, vec.x, vec.x); }
-	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.x, vec.y, vec.y); }
-	static inline simd128_t Swizzle_XXZZ(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.x, vec.z, vec.z); }
-	static inline simd128_t Swizzle_XXZW(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.x, vec.z, vec.w); }
-	static inline simd128_t Swizzle_XYXX(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.y, vec.x, vec.x); }
-	static inline simd128_t Swizzle_XYXY(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.y, vec.x, vec.y); }
-	static inline simd128_t Swizzle_XYXW(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.y, vec.x, vec.w); }
-	static inline simd128_t Swizzle_XYYX(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.y, vec.y, vec.x); }
-	static inline simd128_t Swizzle_XYZX(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.y, vec.z, vec.x); }
-	static inline simd128_t Swizzle_XYWZ(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.y, vec.w, vec.z); }
-	static inline simd128_t Swizzle_XZXX(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.z, vec.x, vec.x); }
-	static inline simd128_t Swizzle_XZXZ(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.z, vec.x, vec.z); }
-	static inline simd128_t Swizzle_XZYX(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.z, vec.y, vec.x); }
+	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[0], vec.f32[0], vec.f32[0]); }
+	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[0], vec.f32[1], vec.f32[1]); }
+	static inline simd128_t Swizzle_XXZZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[0], vec.f32[2], vec.f32[2]); }
+	static inline simd128_t Swizzle_XXZW(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[0], vec.f32[2], vec.f32[3]); }
+	static inline simd128_t Swizzle_XYXX(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[1], vec.f32[0], vec.f32[0]); }
+	static inline simd128_t Swizzle_XYXY(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[1], vec.f32[0], vec.f32[1]); }
+	static inline simd128_t Swizzle_XYXW(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[1], vec.f32[0], vec.f32[3]); }
+	static inline simd128_t Swizzle_XYYX(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[1], vec.f32[1], vec.f32[0]); }
+	static inline simd128_t Swizzle_XYZX(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[1], vec.f32[2], vec.f32[0]); }
+	static inline simd128_t Swizzle_XYWZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[1], vec.f32[3], vec.f32[2]); }
+	static inline simd128_t Swizzle_XZXX(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[2], vec.f32[0], vec.f32[0]); }
+	static inline simd128_t Swizzle_XZXZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[2], vec.f32[0], vec.f32[2]); }
+	static inline simd128_t Swizzle_XZYX(simd128_t vec)		{ return SIMD::Construct(vec.f32[0], vec.f32[2], vec.f32[1], vec.f32[0]); }
 
-	static inline simd128_t Swizzle_YXXX(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.x, vec.x, vec.x); }
-	static inline simd128_t Swizzle_YXXY(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.x, vec.x, vec.y); }
-	static inline simd128_t Swizzle_YXYX(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.x, vec.y, vec.x); }
-	static inline simd128_t Swizzle_YXZW(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.x, vec.z, vec.w); }
-	static inline simd128_t Swizzle_YXWZ(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.x, vec.w, vec.z); }
-	static inline simd128_t Swizzle_YYYY(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.y, vec.y, vec.y); }
-	static inline simd128_t Swizzle_YYWW(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.y, vec.w, vec.w); }
-	static inline simd128_t Swizzle_YZXY(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.z, vec.x, vec.y); }
-	static inline simd128_t Swizzle_YZXW(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.z, vec.x, vec.w); }
-	static inline simd128_t Swizzle_YZWX(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.z, vec.w, vec.x); }
-	static inline simd128_t Swizzle_YWYW(simd128_t vec)		{ return SIMD::Construct(vec.y, vec.w, vec.y, vec.w); }
+	static inline simd128_t Swizzle_YXXX(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[0], vec.f32[0], vec.f32[0]); }
+	static inline simd128_t Swizzle_YXXY(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[0], vec.f32[0], vec.f32[1]); }
+	static inline simd128_t Swizzle_YXYX(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[0], vec.f32[1], vec.f32[0]); }
+	static inline simd128_t Swizzle_YXZW(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[0], vec.f32[2], vec.f32[3]); }
+	static inline simd128_t Swizzle_YXWZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[0], vec.f32[3], vec.f32[2]); }
+	static inline simd128_t Swizzle_YYYY(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[1], vec.f32[1], vec.f32[1]); }
+	static inline simd128_t Swizzle_YYWW(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[1], vec.f32[3], vec.f32[3]); }
+	static inline simd128_t Swizzle_YZXY(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[2], vec.f32[0], vec.f32[1]); }
+	static inline simd128_t Swizzle_YZXW(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[2], vec.f32[0], vec.f32[3]); }
+	static inline simd128_t Swizzle_YZWX(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[2], vec.f32[3], vec.f32[0]); }
+	static inline simd128_t Swizzle_YWYW(simd128_t vec)		{ return SIMD::Construct(vec.f32[1], vec.f32[3], vec.f32[1], vec.f32[3]); }
 
-	static inline simd128_t Swizzle_ZXXX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.x, vec.x, vec.x); }
-	static inline simd128_t Swizzle_ZXYZ(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.x, vec.y, vec.z); }
-	static inline simd128_t Swizzle_ZXYW(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.x, vec.y, vec.w); }
-	static inline simd128_t Swizzle_ZXWY(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.x, vec.w, vec.y); }
-	static inline simd128_t Swizzle_ZZYX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.z, vec.y, vec.x); }
-	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.z, vec.z, vec.z); }
-	static inline simd128_t Swizzle_ZZWX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.z, vec.w, vec.x); }
-	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.z, vec.w, vec.w); }
-	static inline simd128_t Swizzle_ZWXX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.x, vec.x); }
-	static inline simd128_t Swizzle_ZWXY(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.x, vec.y); }
-	static inline simd128_t Swizzle_ZWYX(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.y, vec.x); }
-	static inline simd128_t Swizzle_ZWZW(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.z, vec.w); }
-	static inline simd128_t Swizzle_ZWWZ(simd128_t vec)		{ return SIMD::Construct(vec.z, vec.w, vec.w, vec.z); }
+	static inline simd128_t Swizzle_ZXXX(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[0], vec.f32[0], vec.f32[0]); }
+	static inline simd128_t Swizzle_ZXYZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[0], vec.f32[1], vec.f32[2]); }
+	static inline simd128_t Swizzle_ZXYW(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[0], vec.f32[1], vec.f32[3]); }
+	static inline simd128_t Swizzle_ZXWY(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[0], vec.f32[3], vec.f32[1]); }
+	static inline simd128_t Swizzle_ZZYX(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[2], vec.f32[1], vec.f32[0]); }
+	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[2], vec.f32[2], vec.f32[2]); }
+	static inline simd128_t Swizzle_ZZWX(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[2], vec.f32[3], vec.f32[0]); }
+	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[2], vec.f32[3], vec.f32[3]); }
+	static inline simd128_t Swizzle_ZWXX(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[3], vec.f32[0], vec.f32[0]); }
+	static inline simd128_t Swizzle_ZWXY(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[3], vec.f32[0], vec.f32[1]); }
+	static inline simd128_t Swizzle_ZWYX(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[3], vec.f32[1], vec.f32[0]); }
+	static inline simd128_t Swizzle_ZWZW(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[3], vec.f32[2], vec.f32[3]); }
+	static inline simd128_t Swizzle_ZWWZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[2], vec.f32[3], vec.f32[3], vec.f32[2]); }
 
-	static inline simd128_t Swizzle_WXYZ(simd128_t vec)		{ return SIMD::Construct(vec.w, vec.x, vec.y, vec.z); }
-	static inline simd128_t Swizzle_WXZW(simd128_t vec)		{ return SIMD::Construct(vec.w, vec.x, vec.z, vec.w); }
-	static inline simd128_t Swizzle_WZXY(simd128_t vec)		{ return SIMD::Construct(vec.w, vec.z, vec.x, vec.y); }
-	static inline simd128_t Swizzle_WZYX(simd128_t vec)		{ return SIMD::Construct(vec.w, vec.z, vec.y, vec.x); }
-	static inline simd128_t Swizzle_WZZW(simd128_t vec)		{ return SIMD::Construct(vec.w, vec.z, vec.z, vec.w); }
-	static inline simd128_t Swizzle_WZWZ(simd128_t vec)		{ return SIMD::Construct(vec.w, vec.z, vec.w, vec.z); }
-	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return SIMD::Construct(vec.w, vec.w, vec.w, vec.w); }
+	static inline simd128_t Swizzle_WXYZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[3], vec.f32[0], vec.f32[1], vec.f32[2]); }
+	static inline simd128_t Swizzle_WXZW(simd128_t vec)		{ return SIMD::Construct(vec.f32[3], vec.f32[0], vec.f32[2], vec.f32[3]); }
+	static inline simd128_t Swizzle_WZXY(simd128_t vec)		{ return SIMD::Construct(vec.f32[3], vec.f32[2], vec.f32[0], vec.f32[1]); }
+	static inline simd128_t Swizzle_WZYX(simd128_t vec)		{ return SIMD::Construct(vec.f32[3], vec.f32[2], vec.f32[1], vec.f32[0]); }
+	static inline simd128_t Swizzle_WZZW(simd128_t vec)		{ return SIMD::Construct(vec.f32[3], vec.f32[2], vec.f32[2], vec.f32[3]); }
+	static inline simd128_t Swizzle_WZWZ(simd128_t vec)		{ return SIMD::Construct(vec.f32[3], vec.f32[2], vec.f32[3], vec.f32[2]); }
+	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return SIMD::Construct(vec.f32[3], vec.f32[3], vec.f32[3], vec.f32[3]); }
 #endif
 };
 
