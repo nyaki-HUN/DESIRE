@@ -180,7 +180,7 @@ inline Vector3 Quat::RotateVec(const Vector3& vec) const
 	const __m128 wwww = SIMD::Swizzle_WWWW(*this);
 	__m128 qv = SIMD::Mul(wwww, vec);
 	qv = SIMD::MulAdd(tmp0, tmp1, qv);
-	qv = SIMD::NegMulSub(tmp2, tmp3, qv);
+	qv = SIMD::MulSub(tmp2, tmp3, qv);
 	const __m128 product = SIMD::Mul(*this, vec);
 	__m128 qw = SIMD::MulAdd(_mm_ror_ps(*this, 1), _mm_ror_ps(vec, 1), product);
 	qw = SIMD::Add(_mm_ror_ps(product, 2), qw);
@@ -189,7 +189,7 @@ inline Vector3 Quat::RotateVec(const Vector3& vec) const
 	__m128 res = SIMD::Mul(SIMD::Swizzle_XXXX(qw), *this);
 	res = SIMD::MulAdd(wwww, qv, res);
 	res = SIMD::MulAdd(tmp0, tmp1, res);
-	res = SIMD::NegMulSub(tmp2, tmp3, res);
+	res = SIMD::MulSub(tmp2, tmp3, res);
 	return res;
 #else
 	const float tmpX = GetW() * vec.GetX()  +  GetY() * vec.GetZ()  -  GetZ() * vec.GetY();
@@ -218,9 +218,9 @@ inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 	const __m128 oneMinusT = _mm_sub_ps(SIMD::Construct(1.0f), tttt);
 	__m128 angles = _mm_unpacklo_ps(SIMD::Construct(1.0f), tttt);
 	angles = _mm_unpacklo_ps(angles, oneMinusT);
-	angles = SIMD::MulAdd(angles, angle, _mm_setzero_ps());
+	angles = SIMD::Mul(angles, angle);
 	const __m128 sines = sinf4(angles);
-	const __m128 scales = _mm_div_ps(sines, SIMD::Swizzle_XXXX(sines));
+	const __m128 scales = SIMD::Div(sines, SIMD::Swizzle_XXXX(sines));
 	const __m128 scale0 = SIMD::Blend(oneMinusT, SIMD::Swizzle_YYYY(scales), selectMask);
 	const __m128 scale1 = SIMD::Blend(tttt, SIMD::Swizzle_ZZZZ(scales), selectMask);
 	return SIMD::MulAdd(start, scale0, SIMD::Mul(unitQuat1, scale1));
@@ -258,49 +258,25 @@ inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 inline Quat Quat::CreateRotationX(float radians)
 {
 	const float halfAngle = radians * 0.5f;
-
-#if defined(DESIRE_USE_SSE)
-	__m128 s, c;
-	sincosf4(SIMD::Construct(halfAngle), &s, &c);
-	const __m128 res = SIMD::Blend_X(_mm_setzero_ps(), s);
-	return SIMD::Blend_W(res, c);
-#else
 	const float s = std::sin(halfAngle);
 	const float c = std::cos(halfAngle);
 	return Quat(s, 0.0f, 0.0f, c);
-#endif
 }
 
 inline Quat Quat::CreateRotationY(float radians)
 {
 	const float halfAngle = radians * 0.5f;
-
-#if defined(DESIRE_USE_SSE)
-	__m128 s, c;
-	sincosf4(SIMD::Construct(halfAngle), &s, &c);
-	const __m128 res = SIMD::Blend_Y(_mm_setzero_ps(), s);
-	return SIMD::Blend_W(res, c);
-#else
 	const float s = std::sin(halfAngle);
 	const float c = std::cos(halfAngle);
 	return Quat(0.0f, s, 0.0f, c);
-#endif
 }
 
 inline Quat Quat::CreateRotationZ(float radians)
 {
 	const float halfAngle = radians * 0.5f;
-
-#if defined(DESIRE_USE_SSE)
-	__m128 s, c;
-	sincosf4(SIMD::Construct(halfAngle), &s, &c);
-	const __m128 res = SIMD::Blend_Z(_mm_setzero_ps(), s);
-	return SIMD::Blend_W(res, c);
-#else
 	const float s = std::sin(halfAngle);
 	const float c = std::cos(halfAngle);
 	return Quat(0.0f, 0.0f, s, c);
-#endif
 }
 
 // Construct a quaternion to rotate around a unit-length 3-D vector

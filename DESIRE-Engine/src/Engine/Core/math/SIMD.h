@@ -27,11 +27,6 @@
 		// We are safe to use SSE3 because an x64 CPU with no SSE3 support is the 'first-generation' 64-bit which
 		// isn't supported by Windows 8.1 x64 native due to the requirements for CMPXCHG16b, PrefetchW, and LAHF/SAHF
 		#include <pmmintrin.h>
-
-		static inline __m128 _mm_blendv_ps(__m128 a, __m128 b, __m128 mask)
-		{
-			return _mm_or_ps(_mm_and_ps(mask, b), _mm_andnot_ps(mask, a));
-		}
 	#endif
 
 	typedef __m128	simd128_t;
@@ -51,10 +46,18 @@
 
 	struct simd128_t
 	{
-		float x;
-		float y;
-		float z;
-		float w;
+		union
+		{
+			struct
+			{
+				float x;
+				float y;
+				float z;
+				float w;
+			};
+
+			uint32_t u32[4];
+		};
 
 		inline simd128_t() {}
 		inline simd128_t(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
@@ -302,6 +305,7 @@ public:
 #endif
 	}
 
+	// Per component multiplication and addition of the three inputs: c + (a * b)
 	static inline simd128_t MulAdd(simd128_t a, simd128_t b, simd128_t c)
 	{
 #if defined(__ARM_NEON__)
@@ -311,8 +315,8 @@ public:
 #endif
 	}
 
-	// Per component negative multiplication and subtraction of the three inputs "-((a * b) - c)" which is equivalent to: "c - (a * b)"
-	static inline simd128_t NegMulSub(simd128_t a, simd128_t b, simd128_t c)
+	// Per component multiplication and subtraction of the three inputs: c - (a * b)
+	static inline simd128_t MulSub(simd128_t a, simd128_t b, simd128_t c)
 	{
 #if defined(__ARM_NEON__)
 		return vfmsq_f32(c, a, b);
@@ -463,21 +467,11 @@ public:
 	// Compute cross product of two 3-D vectors
 	static inline simd128_t Cross(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
-		__m128 yzx0 = SIMD::Swizzle_YZXW(a);
-		__m128 yzx1 = SIMD::Swizzle_YZXW(b);
-		__m128 result = SIMD::Sub(SIMD::Mul(yzx1, a), SIMD::Mul(yzx0, b));
-		return SIMD::Swizzle_YZXW(result);
-#elif defined(__ARM_NEON__)
-		float32x2_t xy0 = vget_low_f32(a);
-		float32x2_t xy1 = vget_low_f32(b);
-		float32x2_t yzx0 = vcombine_f32(vext_f32(xy0, vget_high_f32(a), 1), xy0);
-		float32x2_t yzx1 = vcombine_f32(vext_f32(xy1, vget_high_f32(b), 1), xy1);
-
-		float32x2_t result = vmlsq_f32(SIMD::Mul(yzx1, a), yzx0, b);
-		// form (Y, Z, X, _)
-		xy1 = vget_low_f32(result);
-		return vcombine_f32(vext_f32(xy1, vget_high_f32(result), 1), xy1);
+#if defined(DESIRE_USE_SSE) || defined(__ARM_NEON__)
+		simd128_t yzxA = SIMD::Swizzle_YZXY(a);
+		simd128_t yzxB = SIMD::Swizzle_YZXY(b);
+		simd128_t result = SIMD::MulSub(yzxA, b, SIMD::Mul(yzxB, a));
+		return SIMD::Swizzle_YZXY(result);
 #else
 		return SIMD::Construct(
 			a.y * b.z - a.z * b.y,
@@ -578,15 +572,19 @@ public:
 	static inline simd128_t Blend(simd128_t a, simd128_t b, simd128_t mask)
 	{
 #if defined(DESIRE_USE_SSE)
+	#if defined(__SSE4_1__)
 		return _mm_blendv_ps(a, b, mask);
+	#else
+		return _mm_or_ps(_mm_and_ps(mask, b), _mm_andnot_ps(mask, a));
+	#endif
 #elif defined(__ARM_NEON__)
 		return vbslq_f32(reinterpret_cast<uint32x4_t>(mask), b, a);
 #else
 		return SIMD::Construct(
-			mask.x ? b.x : a.x,
-			mask.y ? b.y : a.y,
-			mask.z ? b.z : a.z,
-			mask.w ? b.w : a.w
+			(mask.u32[0] & b.u32[0]) | (~mask._u32[0] & a.u32[0]),
+			(mask.u32[1] & b.u32[1]) | (~mask._u32[1] & a.u32[1]),
+			(mask.u32[2] & b.u32[2]) | (~mask._u32[2] & a.u32[2]),
+			(mask.u32[3] & b.u32[3]) | (~mask._u32[3] & a.u32[3])
 		);
 #endif
 	}
@@ -685,7 +683,7 @@ public:
 	static inline simd128_t Swizzle_WZWZ(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 3, 2, 3)); }
 	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
 #elif defined(__ARM_NEON__)
-	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return vdupq_lane_f32(vget_low_f32(vec), 0); }
+	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return vdupq_laneq_f32(vec, 0); }
 	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return vzipq_f32(vec, vec).val[0]; }
 	static inline simd128_t Swizzle_XXZZ(simd128_t vec)		{ return vtrnq_f32(vec, vec).val[0]; }
 	static inline simd128_t Swizzle_XXZW(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 0, 2, 3 }); }
@@ -703,9 +701,9 @@ public:
 	static inline simd128_t Swizzle_YXYX(simd128_t vec)		{ const float32x2_t yx = vrev64_f32(vget_low_f32(vec)); return vcombine_f32(yx, yx); }
 	static inline simd128_t Swizzle_YXZW(simd128_t vec)		{ return vcombine_f32(vrev64_f32(vget_low_f32(vec)), vget_high_f32(vec)); }
 	static inline simd128_t Swizzle_YXWZ(simd128_t vec)		{ return vrev64q_f32(vec); }
-	static inline simd128_t Swizzle_YYYY(simd128_t vec)		{ return vdupq_lane_f32(vget_low_f32(vec), 1); }
+	static inline simd128_t Swizzle_YYYY(simd128_t vec)		{ return vdupq_laneq_f32(vec, 1); }
 	static inline simd128_t Swizzle_YYWW(simd128_t vec)		{ return vtrnq_f32(vec, vec).val[1]; }
-	static inline simd128_t Swizzle_YZXY(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 2, 0, 1 }); }
+	static inline simd128_t Swizzle_YZXY(simd128_t vec)		{ const float32x2_t xy = vget_low_f32(vec); return vcombine_f32(vext_f32(xy, vget_high_f32(vec), 1), xy); }
 	static inline simd128_t Swizzle_YZXW(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 2, 0, 3 }); }
 	static inline simd128_t Swizzle_YZWX(simd128_t vec)		{ return vextq_f32(vec, vec, 1); }
 	static inline simd128_t Swizzle_YWYW(simd128_t vec)		{ return vuzpq_f32(vec, vec).val[1]; }
@@ -715,7 +713,7 @@ public:
 	static inline simd128_t Swizzle_ZXYW(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 1, 3 }); }
 	static inline simd128_t Swizzle_ZXWY(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 0, 3, 1 }); }
 	static inline simd128_t Swizzle_ZZYX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 1, 0 }); }
-	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 0); }
+	static inline simd128_t Swizzle_ZZZZ(simd128_t vec)		{ return vdupq_laneq_f32(vec, 2); }
 	static inline simd128_t Swizzle_ZZWX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 2, 3, 0 }); }
 	static inline simd128_t Swizzle_ZZWW(simd128_t vec)		{ return vzipq_f32(vec, vec).val[1]; }
 	static inline simd128_t Swizzle_ZWXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 2, 3, 0, 0 }); }
@@ -728,7 +726,7 @@ public:
 	static inline simd128_t Swizzle_WZXY(simd128_t vec)		{ return vcombine_f32(vrev64_f32(vget_high_f32(vec)), vget_low_f32(vec)); }
 	static inline simd128_t Swizzle_WZYX(simd128_t vec)		{ return Swizzle_ZWXY(Swizzle_YXWZ(vec)); }
 	static inline simd128_t Swizzle_WZWZ(simd128_t vec)		{ const float32x2_t wz = vrev64_f32(vget_high_f32(vec)); return vcombine_f32(wz, wz); }
-	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return vdupq_lane_f32(vget_high_f32(vec), 1); }
+	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return vdupq_laneq_f32(vec, 3); }
 #else
 	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.x, vec.x, vec.x); }
 	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return SIMD::Construct(vec.x, vec.x, vec.y, vec.y); }
@@ -817,7 +815,7 @@ static inline __m128 acosf4(__m128 x)
 	// Adjust the result if x is negactive.
 	return SIMD::Blend(
 		SIMD::Mul(t1, result),									// Positive
-		SIMD::NegMulSub(t1, result, SIMD::Construct(3.1415926535898f)),	// Negative
+		SIMD::MulSub(t1, result, SIMD::Construct(3.1415926535898f)),	// Negative
 		select);
 }
 
@@ -848,7 +846,7 @@ static inline __m128 sinf4(__m128 x)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
+	xl = SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
@@ -872,10 +870,7 @@ static inline __m128 sinf4(__m128 x)
 	res = SIMD::Blend(cx, sx, _mm_cmpeq_ps(_mm_and_ps(offset, toM128(0x1)), _mm_setzero_ps()));
 
 	// Flip the sign of the result when (offset mod 4) = 1 or 2
-	return SIMD::Blend(
-		_mm_xor_ps(toM128(0x80000000U), res),	// Negative
-		res,									// Positive
-		_mm_cmpeq_ps(_mm_and_ps(offset, toM128(0x2)), _mm_setzero_ps()));
+	return SIMD::Blend(SIMD::Negate(res), res, _mm_cmpeq_ps(_mm_and_ps(offset, toM128(0x2)), _mm_setzero_ps()));
 }
 
 static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
@@ -897,7 +892,7 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 
 	// Remainder in range [-pi/4..pi/4]
 	__m128 qf = _mm_cvtepi32_ps(q);
-	xl = SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::NegMulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
+	xl = SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC2), SIMD::MulSub(qf, SIMD::Construct(_SINCOS_KC1), x));
 
 	// Compute x^2 and x^3
 	xl2 = SIMD::Mul(xl, xl);
@@ -927,8 +922,8 @@ static inline void sincosf4(__m128 x, __m128 *s, __m128 *c)
 	sinMask = _mm_cmpeq_ps(_mm_and_ps(offsetSin, toM128(0x2)), _mm_setzero_ps());
 	cosMask = _mm_cmpeq_ps(_mm_and_ps(offsetCos, toM128(0x2)), _mm_setzero_ps());
 
-	*s = SIMD::Blend(_mm_xor_ps(toM128(0x80000000), *s), *s, sinMask);
-	*c = SIMD::Blend(_mm_xor_ps(toM128(0x80000000), *c), *c, cosMask);
+	*s = SIMD::Blend(SIMD::Negate(*s), *s, sinMask);
+	*c = SIMD::Blend(SIMD::Negate(*c), *c, cosMask);
 }
 
 #endif
