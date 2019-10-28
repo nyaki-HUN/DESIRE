@@ -582,6 +582,12 @@ public:
 #elif defined(__ARM_NEON__)
 		return vbslq_f32(reinterpret_cast<uint32x4_t>(mask), b, a);
 #else
+		return SIMD::Construct(
+			mask.x ? b.x : a.x,
+			mask.y ? b.y : a.y,
+			mask.z ? b.z : a.z,
+			mask.w ? b.w : a.w
+		);
 #endif
 	}
 
