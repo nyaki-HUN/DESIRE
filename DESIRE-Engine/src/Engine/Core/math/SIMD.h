@@ -701,7 +701,7 @@ public:
 	static inline simd128_t Swizzle_XZYX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 0, 2, 1, 0 }); }
 
 	static inline simd128_t Swizzle_YXXX(simd128_t vec)		{ return __builtin_shuffle(vec, (uint32x4_t){ 1, 0, 0, 0 }); }
-	static inline simd128_t Swizzle_YXXY(simd128_t vec)		{ const float32x2_t xy = vget_low_f32(vec); return vcombine_f32(vext_f32(xy, vget_low_f32(vec), 1), xy); }
+	static inline simd128_t Swizzle_YXXY(simd128_t vec)		{ const float32x2_t xy = vget_low_f32(vec); return vcombine_f32(vrev64_f32(xy), xy); }
 	static inline simd128_t Swizzle_YXYX(simd128_t vec)		{ const float32x2_t yx = vrev64_f32(vget_low_f32(vec)); return vcombine_f32(yx, yx); }
 	static inline simd128_t Swizzle_YXZW(simd128_t vec)		{ return vcombine_f32(vrev64_f32(vget_low_f32(vec)), vget_high_f32(vec)); }
 	static inline simd128_t Swizzle_YXWZ(simd128_t vec)		{ return vrev64q_f32(vec); }
@@ -730,7 +730,7 @@ public:
 	static inline simd128_t Swizzle_WXZW(simd128_t vec)		{ const float32x2_t zw = vget_high_f32(vec); return vcombine_f32(vext_f32(zw, vget_low_f32(vec), 1), zw); }
 	static inline simd128_t Swizzle_WZXY(simd128_t vec)		{ return vcombine_f32(vrev64_f32(vget_high_f32(vec)), vget_low_f32(vec)); }
 	static inline simd128_t Swizzle_WZYX(simd128_t vec)		{ return Swizzle_ZWXY(Swizzle_YXWZ(vec)); }
-	static inline simd128_t Swizzle_WZZW(simd128_t vec)		{ const float32x2_t zw = vget_high_f32(vec); return vcombine_f32(vext_f32(zw, vget_high_f32(vec), 1), zw); }
+	static inline simd128_t Swizzle_WZZW(simd128_t vec)		{ const float32x2_t zw = vget_high_f32(vec); return vcombine_f32(vrev64_f32(zw), zw); }
 	static inline simd128_t Swizzle_WZWZ(simd128_t vec)		{ const float32x2_t wz = vrev64_f32(vget_high_f32(vec)); return vcombine_f32(wz, wz); }
 	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return vdupq_laneq_f32(vec, 3); }
 #else
