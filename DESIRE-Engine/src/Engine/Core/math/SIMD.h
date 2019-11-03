@@ -31,7 +31,6 @@
 
 	typedef __m128	simd128_t;
 #elif defined(__ARM_NEON__)
-	#define ARM_NEON_GCC_COMPATIBILITY 1
 	#include <arm64_neon.h>
 
 	typedef float32x4_t	simd128_t;
@@ -350,17 +349,34 @@ public:
 	}
 
 	// Comparison operators
-	static inline bool OpCmpGT(simd128_t a, simd128_t b)
+	static inline bool OpCmp_GT(simd128_t a, simd128_t b)
+	{
+#if defined(DESIRE_USE_SSE)
+		return _mm_movemask_ps(_mm_cmpgt_ps(a, b)) == 0xF;
+#elif defined(__ARM_NEON__)
+		uint32x4_t mask = vcgtq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFF;
+#else
+		return (
+			SIMD::GetX(a) > SIMD::GetX(b) &&
+			SIMD::GetY(a) > SIMD::GetY(b) &&
+			SIMD::GetZ(a) > SIMD::GetZ(b) &&
+			SIMD::GetW(a) > SIMD::GetW(b)
+		);
+#endif
+	}
+
+	static inline bool OpCmp3_GT(simd128_t a, simd128_t b)
 	{
 #if defined(DESIRE_USE_SSE)
 		return (_mm_movemask_ps(_mm_cmpgt_ps(a, b)) & 0x7) == 0x7;
 #elif defined(__ARM_NEON__)
-//		uint32x4_t result = vcgtq_f32(a, b);
-		return (
-			SIMD::GetX(a) > SIMD::GetX(b) &&
-			SIMD::GetY(a) > SIMD::GetY(b) &&
-			SIMD::GetZ(a) > SIMD::GetZ(b)
-		);
+		uint32x4_t mask = vcgtq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFF) == 0x00FFFFFF;
 #else
 		return (
 			SIMD::GetX(a) > SIMD::GetX(b) &&
@@ -370,17 +386,34 @@ public:
 #endif
 	}
 
-	static inline bool OpCmpLT(simd128_t a, simd128_t b)
+	static inline bool OpCmp_LT(simd128_t a, simd128_t b)
+	{
+#if defined(DESIRE_USE_SSE)
+		return (_mm_movemask_ps(_mm_cmplt_ps(a, b)) == 0xF);
+#elif defined(__ARM_NEON__)
+		uint32x4_t mask = vcltq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFF;
+#else
+		return (
+			SIMD::GetX(a) < SIMD::GetX(b) &&
+			SIMD::GetY(a) < SIMD::GetY(b) &&
+			SIMD::GetZ(a) < SIMD::GetZ(b) &&
+			SIMD::GetW(a) < SIMD::GetW(b)
+		);
+#endif
+	}
+
+	static inline bool OpCmp3_LT(simd128_t a, simd128_t b)
 	{
 #if defined(DESIRE_USE_SSE)
 		return (_mm_movemask_ps(_mm_cmplt_ps(a, b)) & 0x7) == 0x7;
 #elif defined(__ARM_NEON__)
-//		uint32x4_t result = vcltq_f32(a, b);
-		return (
-			SIMD::GetX(a) < SIMD::GetX(b) &&
-			SIMD::GetY(a) < SIMD::GetY(b) &&
-			SIMD::GetZ(a) < SIMD::GetZ(b)
-		);
+		uint32x4_t mask = vcltq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFF) == 0x00FFFFFF;
 #else
 		return (
 			SIMD::GetX(a) < SIMD::GetX(b) &&
@@ -390,17 +423,34 @@ public:
 #endif
 	}
 
-	static inline bool OpCmpGE(simd128_t a, simd128_t b)
+	static inline bool OpCmp_GE(simd128_t a, simd128_t b)
+	{
+#if defined(DESIRE_USE_SSE)
+		return (_mm_movemask_ps(_mm_cmpge_ps(a, b)) == 0xF);
+#elif defined(__ARM_NEON__)
+		uint32x4_t mask = vcgeq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFF;
+#else
+		return (
+			SIMD::GetX(a) >= SIMD::GetX(b) &&
+			SIMD::GetY(a) >= SIMD::GetY(b) &&
+			SIMD::GetZ(a) >= SIMD::GetZ(b) && 
+			SIMD::GetW(a) >= SIMD::GetW(b)
+		);
+#endif
+	}
+
+	static inline bool OpCmp3_GE(simd128_t a, simd128_t b)
 	{
 #if defined(DESIRE_USE_SSE)
 		return (_mm_movemask_ps(_mm_cmpge_ps(a, b)) & 0x7) == 0x7;
 #elif defined(__ARM_NEON__)
-//		uint32x4_t result = vcgeq_f32(a, b);
-		return (
-			SIMD::GetX(a) >= SIMD::GetX(b) &&
-			SIMD::GetY(a) >= SIMD::GetY(b) &&
-			SIMD::GetZ(a) >= SIMD::GetZ(b)
-		);
+		uint32x4_t mask = vcgeq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFF) == 0x00FFFFFF;
 #else
 		return (
 			SIMD::GetX(a) >= SIMD::GetX(b) &&
@@ -410,17 +460,34 @@ public:
 #endif
 	}
 
-	static inline bool OpCmpLE(simd128_t a, simd128_t b)
+	static inline bool OpCmp_LE(simd128_t a, simd128_t b)
+	{
+#if defined(DESIRE_USE_SSE)
+		return (_mm_movemask_ps(_mm_cmple_ps(a, b)) == 0xF);
+#elif defined(__ARM_NEON__)
+		uint32x4_t mask = vcleq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) == 0xFFFFFFFF; 
+#else
+		return (
+			SIMD::GetX(a) <= SIMD::GetX(b) &&
+			SIMD::GetY(a) <= SIMD::GetY(b) &&
+			SIMD::GetZ(a) <= SIMD::GetZ(b) &&
+			SIMD::GetW(a) <= SIMD::GetW(b)
+		);
+#endif
+	}
+
+	static inline bool OpCmp3_LE(simd128_t a, simd128_t b)
 	{
 #if defined(DESIRE_USE_SSE)
 		return (_mm_movemask_ps(_mm_cmple_ps(a, b)) & 0x7) == 0x7;
 #elif defined(__ARM_NEON__)
-//		uint32x4_t result = vcleq_f32(a, b);
-		return (
-			SIMD::GetX(a) <= SIMD::GetX(b) &&
-			SIMD::GetY(a) <= SIMD::GetY(b) &&
-			SIMD::GetZ(a) <= SIMD::GetZ(b)
-		);
+		uint32x4_t mask = vcleq_f32(a, b);
+		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
+		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
+		return (vget_lane_u32(mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15.val[0], 0) & 0x00FFFFFF) == 0x00FFFFFF;
 #else
 		return (
 			SIMD::GetX(a) <= SIMD::GetX(b) &&

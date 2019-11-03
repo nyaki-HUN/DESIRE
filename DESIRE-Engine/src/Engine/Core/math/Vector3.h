@@ -53,10 +53,10 @@ public:
 	inline Vector3& operator /=(const Vector3& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector3& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
-	inline bool operator >(const Vector3& vec) const		{ return SIMD::OpCmpGT(*this, vec); }
-	inline bool operator <(const Vector3& vec) const		{ return SIMD::OpCmpLT(*this, vec); }
-	inline bool operator >=(const Vector3& vec) const		{ return SIMD::OpCmpGE(*this, vec); }
-	inline bool operator <=(const Vector3& vec) const		{ return SIMD::OpCmpLE(*this, vec); }
+	inline bool operator >(const Vector3& vec) const		{ return SIMD::OpCmp3_GT(*this, vec); }
+	inline bool operator <(const Vector3& vec) const		{ return SIMD::OpCmp3_LT(*this, vec); }
+	inline bool operator >=(const Vector3& vec) const		{ return SIMD::OpCmp3_GE(*this, vec); }
+	inline bool operator <=(const Vector3& vec) const		{ return SIMD::OpCmp3_LE(*this, vec); }
 
 	inline float Dot(const Vector3& vec) const				{ return SIMD::GetX(SIMD::Dot3(*this, vec)); }
 	inline Vector3 Cross(const Vector3& vec) const			{ return SIMD::Cross(*this, vec); }
