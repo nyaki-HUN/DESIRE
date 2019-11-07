@@ -1,4 +1,4 @@
-// dear imgui, v1.73 WIP
+// dear imgui, v1.74 WIP
 // (drawing and font code)
 
 /*
@@ -1202,7 +1202,7 @@ void ImDrawListSplitter::ClearFreeMemory()
 {
     for (int i = 0; i < _Channels.Size; i++)
     {
-        if (i == _Current) 
+        if (i == _Current)
             memset(&_Channels[i], 0, sizeof(_Channels[i]));  // Current channel is a copy of CmdBuffer/IdxBuffer, don't destruct again
         _Channels[i]._CmdBuffer.clear();
         _Channels[i]._IdxBuffer.clear();
@@ -1301,13 +1301,14 @@ void ImDrawListSplitter::Merge(ImDrawList* draw_list)
     }
     draw_list->_IdxWritePtr = idx_write;
     draw_list->UpdateClipRect(); // We call this instead of AddDrawCmd(), so that empty channels won't produce an extra draw call.
+    draw_list->UpdateTextureID();
     _Count = 1;
 }
 
 void ImDrawListSplitter::SetCurrentChannel(ImDrawList* draw_list, int idx)
 {
     IM_ASSERT(idx >= 0 && idx < _Count);
-    if (_Current == idx) 
+    if (_Current == idx)
         return;
     // Overwrite ImVector (12/16 bytes), four times. This is merely a silly optimization instead of doing .swap()
     memcpy(&_Channels.Data[_Current]._CmdBuffer, &draw_list->CmdBuffer, sizeof(draw_list->CmdBuffer));
@@ -1426,6 +1427,7 @@ ImFontConfig::ImFontConfig()
     MergeMode = false;
     RasterizerFlags = 0x00;
     RasterizerMultiply = 1.0f;
+    EllipsisChar = (ImWchar)-1;
     memset(Name, 0, sizeof(Name));
     DstFont = NULL;
 }
@@ -1618,6 +1620,9 @@ ImFont* ImFontAtlas::AddFont(const ImFontConfig* font_cfg)
         memcpy(new_font_cfg.FontData, font_cfg->FontData, (size_t)new_font_cfg.FontDataSize);
     }
 
+    if (new_font_cfg.DstFont->EllipsisChar == (ImWchar)-1)
+        new_font_cfg.DstFont->EllipsisChar = font_cfg->EllipsisChar;
+
     // Invalidate texture
     ClearTexData();
     return new_font_cfg.DstFont;
@@ -1652,6 +1657,7 @@ ImFont* ImFontAtlas::AddFontDefault(const ImFontConfig* font_cfg_template)
         font_cfg.SizePixels = 13.0f * 1.0f;
     if (font_cfg.Name[0] == '\0')
         ImFormatString(font_cfg.Name, IM_ARRAYSIZE(font_cfg.Name), "ProggyClean.ttf, %dpx", (int)font_cfg.SizePixels);
+    font_cfg.EllipsisChar = (ImWchar)0x0085;
 
     const char* ttf_compressed_base85 = GetDefaultCompressedFontDataTTFBase85();
     const ImWchar* glyph_ranges = font_cfg.GlyphRanges != NULL ? font_cfg.GlyphRanges : GetGlyphRangesDefault();
@@ -1746,7 +1752,7 @@ int ImFontAtlas::AddCustomRectFontGlyph(ImFont* font, ImWchar id, int width, int
     return CustomRects.Size - 1; // Return index
 }
 
-void ImFontAtlas::CalcCustomRectUV(const ImFontAtlasCustomRect* rect, ImVec2* out_uv_min, ImVec2* out_uv_max)
+void ImFontAtlas::CalcCustomRectUV(const ImFontAtlasCustomRect* rect, ImVec2* out_uv_min, ImVec2* out_uv_max) const
 {
     IM_ASSERT(TexWidth > 0 && TexHeight > 0);   // Font atlas needs to be built before we can calculate UV coordinates
     IM_ASSERT(rect->IsPacked());                // Make sure the rectangle has been packed
@@ -2063,7 +2069,7 @@ bool    ImFontAtlasBuildWithStbTruetype(ImFontAtlas* atlas)
         const float descent = ImFloor(unscaled_descent * font_scale + ((unscaled_descent > 0.0f) ? +1 : -1));
         ImFontAtlasBuildSetupFont(atlas, dst_font, &cfg, ascent, descent);
         const float font_off_x = cfg.GlyphOffset.x;
-        const float font_off_y = cfg.GlyphOffset.y + (float)(int)(dst_font->Ascent + 0.5f);
+        const float font_off_y = cfg.GlyphOffset.y + IM_ROUND(dst_font->Ascent);
 
         for (int glyph_i = 0; glyph_i < src_tmp.GlyphsCount; glyph_i++)
         {
@@ -2074,7 +2080,7 @@ bool    ImFontAtlasBuildWithStbTruetype(ImFontAtlas* atlas)
             const float char_advance_x_mod = ImClamp(char_advance_x_org, cfg.GlyphMinAdvanceX, cfg.GlyphMaxAdvanceX);
             float char_off_x = font_off_x;
             if (char_advance_x_org != char_advance_x_mod)
-                char_off_x += cfg.PixelSnapH ? (float)(int)((char_advance_x_mod - char_advance_x_org) * 0.5f) : (char_advance_x_mod - char_advance_x_org) * 0.5f;
+                char_off_x += cfg.PixelSnapH ? ImFloor((char_advance_x_mod - char_advance_x_org) * 0.5f) : (char_advance_x_mod - char_advance_x_org) * 0.5f;
 
             // Register glyph
             stbtt_aligned_quad q;
@@ -2196,6 +2202,23 @@ void ImFontAtlasBuildFinish(ImFontAtlas* atlas)
     for (int i = 0; i < atlas->Fonts.Size; i++)
         if (atlas->Fonts[i]->DirtyLookupTables)
             atlas->Fonts[i]->BuildLookupTable();
+
+    // Ellipsis character is required for rendering elided text. We prefer using U+2026 (horizontal ellipsis).
+    // However some old fonts may contain ellipsis at U+0085. Here we auto-detect most suitable ellipsis character.
+    // FIXME: Also note that 0x2026 is currently seldomly included in our font ranges. Because of this we are more likely to use three individual dots.
+    for (int i = 0; i < atlas->Fonts.size(); i++)
+    {
+        ImFont* font = atlas->Fonts[i];
+        if (font->EllipsisChar != (ImWchar)-1)
+            continue;
+        const ImWchar ellipsis_variants[] = { (ImWchar)0x2026, (ImWchar)0x0085 };
+        for (int j = 0; j < IM_ARRAYSIZE(ellipsis_variants); j++)
+            if (font->FindGlyphNoFallback(ellipsis_variants[j]) != NULL) // Verify glyph exists
+            {
+                font->EllipsisChar = ellipsis_variants[j];
+                break;
+            }
+    }
 }
 
 // Retrieve list of range (2 int per range, values are inclusive)
@@ -2465,6 +2488,7 @@ ImFont::ImFont()
     FontSize = 0.0f;
     FallbackAdvanceX = 0.0f;
     FallbackChar = (ImWchar)'?';
+    EllipsisChar = (ImWchar)-1;
     DisplayOffset = ImVec2(0.0f, 0.0f);
     FallbackGlyph = NULL;
     ContainerAtlas = NULL;
@@ -2567,7 +2591,7 @@ void ImFont::AddGlyph(ImWchar codepoint, float x0, float y0, float x1, float y1,
     glyph.AdvanceX = advance_x + ConfigData->GlyphExtraSpacing.x;  // Bake spacing into AdvanceX
 
     if (ConfigData->PixelSnapH)
-        glyph.AdvanceX = (float)(int)(glyph.AdvanceX + 0.5f);
+        glyph.AdvanceX = IM_ROUND(glyph.AdvanceX);
 
     // Compute rough surface usage metrics (+1 to account for average padding, +0.99 to round)
     DirtyLookupTables = true;
@@ -2809,8 +2833,8 @@ void ImFont::RenderChar(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
     if (const ImFontGlyph* glyph = FindGlyph(c))
     {
         float scale = (size >= 0.0f) ? (size / FontSize) : 1.0f;
-        pos.x = (float)(int)pos.x + DisplayOffset.x;
-        pos.y = (float)(int)pos.y + DisplayOffset.y;
+        pos.x = IM_FLOOR(pos.x + DisplayOffset.x);
+        pos.y = IM_FLOOR(pos.y + DisplayOffset.y);
         draw_list->PrimReserve(6, 4);
         draw_list->PrimRectUV(ImVec2(pos.x + glyph->X0 * scale, pos.y + glyph->Y0 * scale), ImVec2(pos.x + glyph->X1 * scale, pos.y + glyph->Y1 * scale), ImVec2(glyph->U0, glyph->V0), ImVec2(glyph->U1, glyph->V1), col);
     }
@@ -2822,8 +2846,8 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
         text_end = text_begin + strlen(text_begin); // ImGui:: functions generally already provides a valid text_end, so this is merely to handle direct calls.
 
     // Align to be pixel perfect
-    pos.x = (float)(int)pos.x + DisplayOffset.x;
-    pos.y = (float)(int)pos.y + DisplayOffset.y;
+    pos.x = IM_FLOOR(pos.x + DisplayOffset.x);
+    pos.y = IM_FLOOR(pos.y + DisplayOffset.y);
     float x = pos.x;
     float y = pos.y;
     if (y > clip_rect.w)
@@ -3012,18 +3036,13 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
 // - RenderMouseCursor()
 // - RenderArrowPointingAt()
 // - RenderRectFilledRangeH()
-// - RenderPixelEllipsis()
 //-----------------------------------------------------------------------------
 
-void ImGui::RenderMouseCursor(ImDrawList* draw_list, ImVec2 pos, float scale, ImGuiMouseCursor mouse_cursor)
+void ImGui::RenderMouseCursor(ImDrawList* draw_list, ImVec2 pos, float scale, ImGuiMouseCursor mouse_cursor, ImU32 col_fill, ImU32 col_border, ImU32 col_shadow)
 {
     if (mouse_cursor == ImGuiMouseCursor_None)
         return;
     IM_ASSERT(mouse_cursor > ImGuiMouseCursor_None && mouse_cursor < ImGuiMouseCursor_COUNT);
-
-    const ImU32 col_shadow = IM_COL32(0, 0, 0, 48);
-    const ImU32 col_border = IM_COL32(0, 0, 0, 255);          // Black
-    const ImU32 col_fill   = IM_COL32(255, 255, 255, 255);    // White
 
     ImFontAtlas* font_atlas = draw_list->_Data->Font->ContainerAtlas;
     ImVec2 offset, size, uv[4];
@@ -3122,18 +3141,6 @@ void ImGui::RenderRectFilledRangeH(ImDrawList* draw_list, const ImRect& rect, Im
     draw_list->PathFillConvex(col);
 }
 
-// FIXME: Rendering an ellipsis "..." is a surprisingly tricky problem for us... we cannot rely on font glyph having it,
-// and regular dot are typically too wide. If we render a dot/shape ourselves it comes with the risk that it wouldn't match
-// the boldness or positioning of what the font uses...
-void ImGui::RenderPixelEllipsis(ImDrawList* draw_list, ImVec2 pos, ImU32 col, int count)
-{
-    ImFont* font = draw_list->_Data->Font;
-    const float font_scale = draw_list->_Data->FontSize / font->FontSize;
-    pos.y += (float)(int)(font->DisplayOffset.y + font->Ascent * font_scale + 0.5f - 1.0f);
-    for (int dot_n = 0; dot_n < count; dot_n++)
-        draw_list->AddRectFilled(ImVec2(pos.x + dot_n * 2.0f, pos.y), ImVec2(pos.x + dot_n * 2.0f + 1.0f, pos.y + 1.0f), col);
-}
-
 //-----------------------------------------------------------------------------
 // [SECTION] Decompression code
 //-----------------------------------------------------------------------------
@@ -3194,9 +3201,9 @@ static unsigned int stb_adler32(unsigned int adler32, unsigned char *buffer, uns
 {
     const unsigned long ADLER_MOD = 65521;
     unsigned long s1 = adler32 & 0xffff, s2 = adler32 >> 16;
-    unsigned long blocklen, i;
+    unsigned long blocklen = buflen % 5552;
 
-    blocklen = buflen % 5552;
+    unsigned long i;
     while (buflen) {
         for (i=0; i + 7 < blocklen; i += 8) {
             s1 += buffer[0], s2 += s1;
@@ -3223,10 +3230,9 @@ static unsigned int stb_adler32(unsigned int adler32, unsigned char *buffer, uns
 
 static unsigned int stb_decompress(unsigned char *output, const unsigned char *i, unsigned int /*length*/)
 {
-    unsigned int olen;
     if (stb__in4(0) != 0x57bC0000) return 0;
     if (stb__in4(4) != 0)          return 0; // error! stream is > 4GB
-    olen = stb_decompress_length(i);
+    const unsigned int olen = stb_decompress_length(i);
     stb__barrier_in_b = i;
     stb__barrier_out_e = output + olen;
     stb__barrier_out_b = output;
