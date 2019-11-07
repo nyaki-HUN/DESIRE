@@ -275,11 +275,19 @@ void WritableString::Sprintf(const char* format, ...)
 {
 	va_list args;
 	va_start(args, format);
-	Sprintf_internal(format, args);
+	Sprintf_internal(0, format, args);
 	va_end(args);
 }
 
-void WritableString::Sprintf_internal(const char* format, va_list args)
+void WritableString::SprintfAppend(const char* format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	Sprintf_internal(size, format, args);
+	va_end(args);
+}
+
+void WritableString::Sprintf_internal(size_t pos, const char* format, va_list args)
 {
 	ASSERT(format != nullptr);
 
@@ -288,10 +296,16 @@ void WritableString::Sprintf_internal(const char* format, va_list args)
 	const int requiredSize = vsnprintf(nullptr, 0, format, argsCopy);
 	va_end(argsCopy);
 
-	if(requiredSize > 0 && Reserve(requiredSize))
+	if(requiredSize <= 0)
 	{
-		size = requiredSize;
-		vsnprintf(data, size + 1, format, args);
+		return;
+	}
+
+	const size_t newSize = pos + requiredSize;
+	if(Reserve(newSize))
+	{
+		size = newSize;
+		vsnprintf(data + pos, requiredSize + 1, format, args);
 	}
 }
 

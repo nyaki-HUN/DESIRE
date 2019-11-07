@@ -59,10 +59,11 @@ public:
 
 	// Write formatted data into the string from variable argument list
 	void Sprintf(const char* format, ...);
+	void SprintfAppend(const char* format, ...);
 
 protected:
 	virtual bool Reserve(size_t newSize) = 0;
 
-	void Sprintf_internal(const char* format, va_list args);
+	void Sprintf_internal(size_t pos, const char* format, va_list args);
 	void Replace_Internal(size_t pos, size_t numChars, const String& replaceTo);
 };

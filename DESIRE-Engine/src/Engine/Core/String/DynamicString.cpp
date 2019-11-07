@@ -61,7 +61,7 @@ DynamicString DynamicString::Format(const char* format, ...)
 
 	va_list args;
 	va_start(args, format);
-	string.Sprintf_internal(format, args);
+	string.Sprintf_internal(0, format, args);
 	va_end(args);
 
 	return string;

@@ -233,4 +233,18 @@ TEST_CASE("WritableString", "[Core]")
 		s.Sprintf("no args");
 		CHECK(s.Equals("no args"));
 	}
+
+	SECTION("SprintfAppend()")
+	{
+		string.SprintfAppend(" %d", 123);
+		CHECK(string.Equals("String ASD 123"));
+		string.SprintfAppend(" %05d", 123);
+		CHECK(string.Equals("String ASD 123 00123"));
+		string.SprintfAppend(" %.1f", 1.5f);
+		CHECK(string.Equals("String ASD 123 00123 1.5"));
+		string.SprintfAppend(" %c", 'X');
+		CHECK(string.Equals("String ASD 123 00123 1.5 X"));
+		string.SprintfAppend(" %s", "test");
+		CHECK(string.Equals("String ASD 123 00123 1.5 X test"));
+	}
 }
