@@ -109,7 +109,7 @@ void ImGuiImpl::NewFrame(OSWindow* window)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(window->GetWidth(), window->GetHeight());
-	io.DeltaTime = Modules::Application->GetTimer()->GetSecDelta();
+	io.DeltaTime = std::max(FLT_MIN, Modules::Application->GetTimer()->GetSecDelta());		// imgui needs a positive delta time
 	io.UserData = window;
 	io.ImeWindowHandle = window->GetHandle();
 

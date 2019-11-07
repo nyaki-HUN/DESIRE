@@ -13,9 +13,9 @@ Timer::~Timer()
 
 void Timer::Update()
 {
-	microDelta = microSec;
+	const uint64_t prevMicroSec = microSec;
 	microSec = Time::GetMicroTime();
-	microDelta = microSec - microDelta;
+	microDelta = microSec - prevMicroSec;
 
 	milliSec = static_cast<uint32_t>(microSec / 1000);
 	milliDelta = static_cast<uint32_t>(microDelta / 1000);
