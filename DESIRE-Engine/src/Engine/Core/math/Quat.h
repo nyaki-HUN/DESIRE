@@ -161,9 +161,7 @@ inline Quat Quat::Conjugate() const
 	const __m128 mask = SIMD::Construct(-0.0f, -0.0f, -0.0f, 0.0f);
 	return _mm_xor_ps(*this, mask);
 #elif defined(__ARM_NEON__)
-	Quat conjugate = SIMD::Negate(*this);
-	conjugate.SetW(GetW());
-	return conjugate;
+	return SIMD::SetW(SIMD::Negate(*this), GetW());
 #else
 	return Quat(-GetX(), -GetY(), -GetZ(), GetW());
 #endif
