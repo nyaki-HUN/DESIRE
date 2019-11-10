@@ -16,6 +16,9 @@ public:
 	inline float GetX() const								{ return x; }
 	inline float GetY() const								{ return y; }
 
+	inline Vector2 SetX(float _x) const						{ return Vector2(_x, y); }
+	inline Vector2 SetY(float _y) const						{ return Vector2(x, _y); }
+
 	inline Vector2& operator =(const Vector2& vec)
 	{
 		x = vec.x;

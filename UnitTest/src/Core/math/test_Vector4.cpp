@@ -55,6 +55,35 @@ TEST_CASE("Vector4", "[Core][math]")
 		CHECK(vec0.GetW() == Approx(123.0f));
 	}
 
+	SECTION("WithX() | WithY() | WithZ() | WithW()")
+	{
+		Vector4 result;
+
+		result = vec0.WithX(123.0f);
+		CHECK(result.GetX() == Approx(123.0f));
+		CHECK(result.GetY() == Approx(vec0.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW()));
+
+		result = vec0.WithY(123.0f);
+		CHECK(result.GetX() == Approx(vec0.GetX()));
+		CHECK(result.GetY() == Approx(123.0f));
+		CHECK(result.GetZ() == Approx(vec0.GetZ()));
+		CHECK(result.GetW() == Approx(vec0.GetW()));
+
+		result = vec0.WithZ(123.0f);
+		CHECK(result.GetX() == Approx(vec0.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY()));
+		CHECK(result.GetZ() == Approx(123.0f));
+		CHECK(result.GetW() == Approx(vec0.GetW()));
+
+		result = vec0.WithW(123.0f);
+		CHECK(result.GetX() == Approx(vec0.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ()));
+		CHECK(result.GetW() == Approx(123.0f));
+	}
+
 	SECTION("operator -()")
 	{
 		const Vector4 result = -vec0;

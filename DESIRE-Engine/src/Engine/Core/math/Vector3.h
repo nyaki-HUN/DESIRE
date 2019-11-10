@@ -34,6 +34,10 @@ public:
 	inline float GetY() const								{ return SIMD::GetY(*this); }
 	inline float GetZ() const								{ return SIMD::GetZ(*this); }
 
+	inline Vector3 WithX(float x) const						{ return SIMD::SetX(*this, x); }
+	inline Vector3 WithY(float y) const						{ return SIMD::SetY(*this, y); }
+	inline Vector3 WithZ(float z) const						{ return SIMD::SetZ(*this, z); }
+
 	inline operator simd128_t() const						{ return vec128; }
 
 	inline Vector3& operator =(const Vector3& vec)			{ vec128 = vec; return *this; }

@@ -41,6 +41,26 @@ TEST_CASE("Vector3", "[Core][math]")
 		CHECK(vec0.GetZ() == Approx(123.0f));
 	}
 
+	SECTION("WithX() | WithY() | WithZ()")
+	{
+		Vector3 result;
+
+		result = vec0.WithX(123.0f);
+		CHECK(result.GetX() == Approx(123.0f));
+		CHECK(result.GetY() == Approx(vec0.GetY()));
+		CHECK(result.GetZ() == Approx(vec0.GetZ()));
+
+		result = vec0.WithY(123.0f);
+		CHECK(result.GetX() == Approx(vec0.GetX()));
+		CHECK(result.GetY() == Approx(123.0f));
+		CHECK(result.GetZ() == Approx(vec0.GetZ()));
+
+		result = vec0.WithZ(123.0f);
+		CHECK(result.GetX() == Approx(vec0.GetX()));
+		CHECK(result.GetY() == Approx(vec0.GetY()));
+		CHECK(result.GetZ() == Approx(123.0f));
+	}
+
 	SECTION("operator -()")
 	{
 		const Vector3 result = -vec0;
