@@ -210,10 +210,38 @@ TEST_CASE("Object", "[Core]")
 		CHECK(worldPos.GetY() == Approx(1.0f));
 		CHECK(worldPos.GetZ() == Approx(1.0f));
 
+		worldPos = child1->GetTransform().GetPosition();
+		CHECK(worldPos.GetX() == Approx(1.0f));
+		CHECK(worldPos.GetY() == Approx(1.0f));
+		CHECK(worldPos.GetZ() == Approx(1.0f));
+
 		worldPos = child2->GetTransform().GetPosition();
 		CHECK(worldPos.GetX() == Approx(3.0f));
 		CHECK(worldPos.GetY() == Approx(3.0f));
 		CHECK(worldPos.GetZ() == Approx(3.0f));
+	}
+
+	{
+		Object* child1_A = child1->CreateChildObject("2A");
+		Object* child1_B = child1_A->CreateChildObject("2B");
+
+		Vector3 worldPos = child1_A->GetTransform().GetPosition();
+		CHECK(worldPos.GetX() == Approx(1.0f));
+		CHECK(worldPos.GetY() == Approx(1.0f));
+		CHECK(worldPos.GetZ() == Approx(1.0f));
+
+		worldPos = child1_B->GetTransform().GetPosition();
+		CHECK(worldPos.GetX() == Approx(1.0f));
+		CHECK(worldPos.GetY() == Approx(1.0f));
+		CHECK(worldPos.GetZ() == Approx(1.0f));
+
+		child1_B->GetTransform().SetLocalPosition(Vector3(10.0f));
+		worldPos = child1_B->GetTransform().GetPosition();
+		CHECK(worldPos.GetX() == Approx(11.0f));
+		CHECK(worldPos.GetY() == Approx(11.0f));
+		CHECK(worldPos.GetZ() == Approx(11.0f));
+
+		delete child1_A;
 	}
 
 	const size_t traversedCount = SceneGraphTraversal::Traverse(rootObj, [](Object* node)

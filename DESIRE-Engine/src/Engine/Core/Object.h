@@ -12,7 +12,7 @@ class Object
 {
 public:
 	Object(const String& name = "Object");
-	Object(const DynamicString&& name);
+	Object(DynamicString&& name);
 	~Object();
 
 	const String& GetObjectName() const;

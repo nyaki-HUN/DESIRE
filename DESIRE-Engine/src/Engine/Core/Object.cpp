@@ -13,7 +13,7 @@ Object::Object(const String& name)
 	SetTransform();
 }
 
-Object::Object(const DynamicString&& name)
+Object::Object(DynamicString&& name)
 	: objectName(std::move(name))
 {
 	SetTransform();
@@ -66,18 +66,20 @@ void Object::SetParent(Object* newParent)
 		parent->RemoveChild_Internal(this);
 	}
 
+	parent = newParent;
+
 	Transform* oldTransform = transform;
-	if(newParent != nullptr)
+	if(parent != nullptr)
 	{
-		transform = newParent->transform + newParent->numTransformsInHierarchy;
+		transform = parent->transform + parent->numTransformsInHierarchy;
 
 		// If the parent transform will be moved, we need to apply correction
-		if(newParent->transform > oldTransform)
+		if(parent->transform > oldTransform)
 		{
 			transform -= numTransformsInHierarchy;
 		}
 
-		newParent->AddChild_Internal(this);
+		parent->AddChild_Internal(this);
 	}
 	else
 	{
@@ -115,7 +117,7 @@ void Object::SetParent(Object* newParent)
 	}
 
 	transform->flags |= Transform::WORLD_MATRIX_DIRTY;
-	parent = newParent;
+	MarkAllChildrenTransformDirty();
 }
 
 Object* Object::CreateChildObject(const String& name)
