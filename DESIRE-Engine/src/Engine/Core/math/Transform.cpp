@@ -48,6 +48,13 @@ Matrix4 Transform::ConstructLocalMatrix() const
 	return mat;
 }
 
+void Transform::CopyTo(Transform& other) const
+{
+	other.SetLocalPosition(localPosition);
+	other.SetLocalRotation(localRotation);
+	other.SetLocalScale(localScale);
+}
+
 void Transform::ResetToIdentity()
 {
 	localPosition = Vector3::Zero();

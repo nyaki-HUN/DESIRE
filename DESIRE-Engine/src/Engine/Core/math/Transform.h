@@ -18,6 +18,7 @@ public:
 	void SetLocalScale(const Vector3& scale);
 
 	Matrix4 ConstructLocalMatrix() const;
+	void CopyTo(Transform& other) const;
 	void ResetToIdentity();
 
 	// Returns the absolute position
@@ -39,6 +40,12 @@ public:
 	const Matrix4& GetWorldMatrix() const;
 
 private:
+	// Prevent copy and move
+	Transform(const Transform& other) = delete;
+	Transform(Transform&& other) = delete;
+	Transform& operator=(const Transform& other) = delete;
+	Transform& operator=(Transform&& other) = delete;
+
 	enum EFlags
 	{
 		POSITION_CHANGED	= 0x01,
