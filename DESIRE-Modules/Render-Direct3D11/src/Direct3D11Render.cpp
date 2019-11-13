@@ -113,7 +113,7 @@ Direct3D11Render::~Direct3D11Render()
 {
 }
 
-void Direct3D11Render::Init(OSWindow *mainWindow)
+void Direct3D11Render::Init(OSWindow* mainWindow)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = mainWindow->GetWidth();
@@ -158,7 +158,7 @@ void Direct3D11Render::Init(OSWindow *mainWindow)
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 	// Create back buffer render target view
-	ID3D11Texture2D *backBufferTexture = nullptr;
+	ID3D11Texture2D* backBufferTexture = nullptr;
 	hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&backBufferTexture);
 	DX_CHECK_HRESULT(hr);
 	hr = d3dDevice->CreateRenderTargetView(backBufferTexture, nullptr, &backBufferRenderTargetView);
@@ -176,13 +176,13 @@ void Direct3D11Render::Init(OSWindow *mainWindow)
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-	ID3D11Texture2D *depthStencilTexture = nullptr;
+	ID3D11Texture2D* depthStencilTexture = nullptr;
 	hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &depthStencilTexture);
 	DX_CHECK_HRESULT(hr);
-	
+
 	hr = d3dDevice->CreateDepthStencilView(depthStencilTexture, nullptr, &backBufferDepthStencilView);
 	DX_CHECK_HRESULT(hr);
-	
+
 	DX_RELEASE(depthStencilTexture);
 
 	deviceCtx->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
@@ -194,14 +194,15 @@ void Direct3D11Render::Init(OSWindow *mainWindow)
 	Bind(errorPixelShader.get());
 }
 
-void Direct3D11Render::UpdateRenderWindow(OSWindow *window)
+void Direct3D11Render::UpdateRenderWindow(OSWindow* window)
 {
 	if(!initialized)
 	{
 		return;
 	}
 
-	swapChain->ResizeBuffers(0, window->GetWidth(), window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	HRESULT hr = swapChain->ResizeBuffers(0, window->GetWidth(), window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	DX_CHECK_HRESULT(hr);
 }
 
 void Direct3D11Render::Kill()
@@ -264,7 +265,7 @@ DynamicString Direct3D11Render::GetShaderFilenameWithPath(const String& shaderFi
 	return filenameWithPath;
 }
 
-void Direct3D11Render::BeginFrame(OSWindow *window)
+void Direct3D11Render::BeginFrame(OSWindow* window)
 {
 	activeWindow = window;
 	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
@@ -278,7 +279,7 @@ void Direct3D11Render::EndFrame()
 	swapChain->Present(1, 0);
 }
 
-void Direct3D11Render::SetView(View *view)
+void Direct3D11Render::SetView(View* view)
 {
 	if(view == activeView)
 	{
@@ -287,17 +288,17 @@ void Direct3D11Render::SetView(View *view)
 
 	if(view != nullptr)
 	{
-		RenderTarget *rt = view->GetRenderTarget();
+		RenderTarget* rt = view->GetRenderTarget();
 		if(rt->renderData == nullptr)
 		{
 			Bind(rt);
 		}
 
-		RenderTargetRenderDataD3D11 *renderData = static_cast<RenderTargetRenderDataD3D11*>(rt->renderData);
+		RenderTargetRenderDataD3D11* renderData = static_cast<RenderTargetRenderDataD3D11*>(rt->renderData);
 		deviceCtx->OMSetRenderTargets((UINT)renderData->renderTargetViews.size(), renderData->renderTargetViews.data(), renderData->depthStencilView);
 		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
 
-		for(ID3D11RenderTargetView *renderTargetView : renderData->renderTargetViews)
+		for(ID3D11RenderTargetView* renderTargetView : renderData->renderTargetViews)
 		{
 			deviceCtx->ClearRenderTargetView(renderTargetView, clearColor);
 		}
@@ -482,7 +483,7 @@ void Direct3D11Render::SetBlendModeDisabled()
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
-void Direct3D11Render::Bind(Mesh *mesh)
+void Direct3D11Render::Bind(Mesh* mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -492,7 +493,7 @@ void Direct3D11Render::Bind(Mesh *mesh)
 		return;
 	}
 
-	MeshRenderDataD3D11 *renderData = new MeshRenderDataD3D11();
+	MeshRenderDataD3D11* renderData = new MeshRenderDataD3D11();
 
 	static const D3D11_INPUT_ELEMENT_DESC attribConversionTable[] =
 	{
@@ -578,7 +579,7 @@ void Direct3D11Render::Bind(Mesh *mesh)
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-			DynamicMesh *dynamicMesh = static_cast<DynamicMesh*>(mesh);
+			DynamicMesh* dynamicMesh = static_cast<DynamicMesh*>(mesh);
 			if(dynamicMesh->maxNumOfIndices != 0)
 			{
 				bufferDesc.ByteWidth = dynamicMesh->GetMaxSizeOfIndices();
@@ -603,7 +604,7 @@ void Direct3D11Render::Bind(Mesh *mesh)
 	mesh->renderData = renderData;
 }
 
-void Direct3D11Render::Bind(Shader *shader)
+void Direct3D11Render::Bind(Shader* shader)
 {
 	ASSERT(shader != nullptr);
 
@@ -614,12 +615,12 @@ void Direct3D11Render::Bind(Shader *shader)
 	}
 
 	const bool isVertexShader = shader->name.StartsWith("vs_");
-	
-	ShaderRenderDataD3D11 *renderData = new ShaderRenderDataD3D11();
+
+	ShaderRenderDataD3D11* renderData = new ShaderRenderDataD3D11();
 
 	D3D_SHADER_MACRO defines[32] = {};
 	ASSERT(shader->defines.size() < DESIRE_ASIZEOF(defines));
-	D3D_SHADER_MACRO *definePtr = &defines[0];
+	D3D_SHADER_MACRO* definePtr = &defines[0];
 	for(const String& define : shader->defines)
 	{
 		definePtr->Name = define.Str();
@@ -627,7 +628,7 @@ void Direct3D11Render::Bind(Shader *shader)
 		definePtr++;
 	}
 
-	ID3DBlob *errorBlob = nullptr;
+	ID3DBlob* errorBlob = nullptr;
 	HRESULT hr = D3DCompile(shader->data.data														// pSrcData
 		, shader->data.size																			// SrcDataSize
 		, (FileSystem::Get()->GetAppDirectory() + GetShaderFilenameWithPath(shader->name)).Str()	// pSourceName
@@ -664,8 +665,8 @@ void Direct3D11Render::Bind(Shader *shader)
 
 	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)shader->name.Length(), shader->name.Str());
 
-	ID3D11ShaderReflection *reflection = nullptr;
-	hr = D3DReflect(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize() , IID_ID3D11ShaderReflection, (void**)&reflection);
+	ID3D11ShaderReflection* reflection = nullptr;
+	hr = D3DReflect(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&reflection);
 	if(FAILED(hr))
 	{
 		LOG_ERROR("D3DReflect failed 0x%08x\n", (uint32_t)hr);
@@ -682,7 +683,7 @@ void Direct3D11Render::Bind(Shader *shader)
 	renderData->constantBuffersData.resize(shaderDesc.ConstantBuffers);
 	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		ID3D11ShaderReflectionConstantBuffer *cbuffer = reflection->GetConstantBufferByIndex(i);
+		ID3D11ShaderReflectionConstantBuffer* cbuffer = reflection->GetConstantBufferByIndex(i);
 		D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
 		hr = cbuffer->GetDesc(&shaderBufferDesc);
 		DX_CHECK_HRESULT(hr);
@@ -701,7 +702,7 @@ void Direct3D11Render::Bind(Shader *shader)
 
 		for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
 		{
-			ID3D11ShaderReflectionVariable *shaderVar = cbuffer->GetVariableByIndex(j);
+			ID3D11ShaderReflectionVariable* shaderVar = cbuffer->GetVariableByIndex(j);
 			D3D11_SHADER_VARIABLE_DESC varDesc;
 			hr = shaderVar->GetDesc(&varDesc);
 			DX_CHECK_HRESULT(hr);
@@ -711,7 +712,7 @@ void Direct3D11Render::Bind(Shader *shader)
 				continue;
 			}
 
-			ID3D11ShaderReflectionType *type = shaderVar->GetType();
+			ID3D11ShaderReflectionType* type = shaderVar->GetType();
 			D3D11_SHADER_TYPE_DESC typeDesc;
 			hr = type->GetDesc(&typeDesc);
 			DX_CHECK_HRESULT(hr);
@@ -733,7 +734,7 @@ void Direct3D11Render::Bind(Shader *shader)
 	shader->renderData = renderData;
 }
 
-void Direct3D11Render::Bind(Texture *texture)
+void Direct3D11Render::Bind(Texture* texture)
 {
 	ASSERT(texture != nullptr);
 
@@ -743,7 +744,7 @@ void Direct3D11Render::Bind(Texture *texture)
 		return;
 	}
 
-	TextureRenderDataD3D11 *renderData = new TextureRenderDataD3D11();
+	TextureRenderDataD3D11* renderData = new TextureRenderDataD3D11();
 
 	const bool isRenderTarget = (texture->data.data == nullptr);
 
@@ -810,7 +811,7 @@ void Direct3D11Render::Bind(Texture *texture)
 	texture->renderData = renderData;
 }
 
-void Direct3D11Render::Bind(RenderTarget *renderTarget)
+void Direct3D11Render::Bind(RenderTarget* renderTarget)
 {
 	ASSERT(renderTarget != nullptr);
 
@@ -820,7 +821,7 @@ void Direct3D11Render::Bind(RenderTarget *renderTarget)
 		return;
 	}
 
-	RenderTargetRenderDataD3D11 *renderData = new RenderTargetRenderDataD3D11();
+	RenderTargetRenderDataD3D11* renderData = new RenderTargetRenderDataD3D11();
 
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
 	renderData->renderTargetViews.reserve(textureCount);
@@ -831,7 +832,7 @@ void Direct3D11Render::Bind(RenderTarget *renderTarget)
 		ASSERT(texture->renderData == nullptr);
 		Bind(texture.get());
 
-		TextureRenderDataD3D11 *textureRenderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
+		TextureRenderDataD3D11* textureRenderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 
 		if(texture->IsDepthFormat())
 		{
@@ -846,7 +847,7 @@ void Direct3D11Render::Bind(RenderTarget *renderTarget)
 			renderTargetViewDesc.Format = GetTextureFormat(texture.get());
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
-			ID3D11RenderTargetView *renderTargetView = nullptr;
+			ID3D11RenderTargetView* renderTargetView = nullptr;
 			HRESULT hr = d3dDevice->CreateRenderTargetView(textureRenderData->texture2D, &renderTargetViewDesc, &renderTargetView);
 			DX_CHECK_HRESULT(hr);
 
@@ -857,7 +858,7 @@ void Direct3D11Render::Bind(RenderTarget *renderTarget)
 	renderTarget->renderData = renderData;
 }
 
-void Direct3D11Render::Unbind(Mesh *mesh)
+void Direct3D11Render::Unbind(Mesh* mesh)
 {
 	if(mesh == nullptr || mesh->renderData == nullptr)
 	{
@@ -865,7 +866,7 @@ void Direct3D11Render::Unbind(Mesh *mesh)
 		return;
 	}
 
-	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+	MeshRenderDataD3D11* renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 	DX_RELEASE(renderData->indexBuffer);
 	DX_RELEASE(renderData->vertexBuffer);
 
@@ -878,7 +879,7 @@ void Direct3D11Render::Unbind(Mesh *mesh)
 	}
 }
 
-void Direct3D11Render::Unbind(Shader *shader)
+void Direct3D11Render::Unbind(Shader* shader)
 {
 	if(shader == nullptr || shader->renderData == nullptr)
 	{
@@ -894,7 +895,16 @@ void Direct3D11Render::Unbind(Shader *shader)
 		return;
 	}
 
-	ShaderRenderDataD3D11 *renderData = static_cast<ShaderRenderDataD3D11*>(shader->renderData);
+	ShaderRenderDataD3D11* renderData = static_cast<ShaderRenderDataD3D11*>(shader->renderData);
+	DX_RELEASE(renderData->ptr);
+	DX_RELEASE(renderData->shaderCode);
+
+	for(ID3D11Buffer* buffer : renderData->constantBuffers)
+	{
+		DX_RELEASE(buffer)
+	}
+	renderData->constantBuffers.clear();
+	renderData->constantBuffersData.clear();
 
 	delete renderData;
 	shader->renderData = nullptr;
@@ -909,7 +919,7 @@ void Direct3D11Render::Unbind(Shader *shader)
 	}
 }
 
-void Direct3D11Render::Unbind(Texture *texture)
+void Direct3D11Render::Unbind(Texture* texture)
 {
 	if(texture == nullptr || texture->renderData == nullptr)
 	{
@@ -917,7 +927,7 @@ void Direct3D11Render::Unbind(Texture *texture)
 		return;
 	}
 
-	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
+	TextureRenderDataD3D11* renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 	DX_RELEASE(renderData->textureSRV);
 	DX_RELEASE(renderData->texture2D);
 
@@ -925,7 +935,7 @@ void Direct3D11Render::Unbind(Texture *texture)
 	texture->renderData = nullptr;
 }
 
-void Direct3D11Render::Unbind(RenderTarget *renderTarget)
+void Direct3D11Render::Unbind(RenderTarget* renderTarget)
 {
 	if(renderTarget == nullptr || renderTarget->renderData == nullptr)
 	{
@@ -933,9 +943,9 @@ void Direct3D11Render::Unbind(RenderTarget *renderTarget)
 		return;
 	}
 
-	RenderTargetRenderDataD3D11 *renderData = static_cast<RenderTargetRenderDataD3D11*>(renderTarget->renderData);
+	RenderTargetRenderDataD3D11* renderData = static_cast<RenderTargetRenderDataD3D11*>(renderTarget->renderData);
 
-	for(ID3D11RenderTargetView *renderTargetView : renderData->renderTargetViews)
+	for(ID3D11RenderTargetView* renderTargetView : renderData->renderTargetViews)
 	{
 		DX_RELEASE(renderTargetView);
 	}
@@ -953,7 +963,7 @@ void Direct3D11Render::Unbind(RenderTarget *renderTarget)
 	renderTarget->renderData = nullptr;
 }
 
-void Direct3D11Render::UpdateDynamicMesh(DynamicMesh *mesh)
+void Direct3D11Render::UpdateDynamicMesh(DynamicMesh* mesh)
 {
 	ASSERT(mesh != nullptr);
 
@@ -965,7 +975,7 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh *mesh)
 		return;
 	}
 
-	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+	MeshRenderDataD3D11* renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
 	if(mesh->isIndexDataUpdateRequired)
 	{
@@ -986,9 +996,9 @@ void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 	deviceCtx->RSSetViewports(1, &vp);
 }
 
-void Direct3D11Render::SetMesh(Mesh *mesh)
+void Direct3D11Render::SetMesh(Mesh* mesh)
 {
-	MeshRenderDataD3D11 *renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+	MeshRenderDataD3D11* renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
 	uint32_t indexByteOffset = renderData->indexOffset * sizeof(uint16_t);
 	uint32_t vertexByteOffset = renderData->vertexOffset * mesh->stride;
@@ -1007,7 +1017,7 @@ void Direct3D11Render::SetMesh(Mesh *mesh)
 
 		case Mesh::EType::Dynamic:
 		{
-			const DynamicMesh *dynamicMesh = static_cast<const DynamicMesh*>(mesh);
+			const DynamicMesh* dynamicMesh = static_cast<const DynamicMesh*>(mesh);
 			indexByteOffset += dynamicMesh->indexOffset * sizeof(uint16_t);
 			vertexByteOffset += dynamicMesh->vertexOffset * mesh->stride;
 			break;
@@ -1031,7 +1041,7 @@ void Direct3D11Render::SetScreenSpaceQuadMesh()
 	{
 		return;
 	}
-	
+
 	deviceCtx->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
 	deviceCtx->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 
@@ -1040,14 +1050,14 @@ void Direct3D11Render::SetScreenSpaceQuadMesh()
 	activeMesh = nullptr;
 }
 
-void Direct3D11Render::SetVertexShader(Shader *vertexShader)
+void Direct3D11Render::SetVertexShader(Shader* vertexShader)
 {
 	if(activeVertexShader == vertexShader)
 	{
 		return;
 	}
 
-	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader->renderData);
+	const ShaderRenderDataD3D11* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader->renderData);
 
 	deviceCtx->VSSetShader(vertexShaderRenderData->vertexShader, nullptr, 0);
 	deviceCtx->VSSetConstantBuffers(0, (UINT)vertexShaderRenderData->constantBuffers.size(), vertexShaderRenderData->constantBuffers.data());
@@ -1055,14 +1065,14 @@ void Direct3D11Render::SetVertexShader(Shader *vertexShader)
 	activeVertexShader = vertexShader;
 }
 
-void Direct3D11Render::SetFragmentShader(Shader *fragmentShader)
+void Direct3D11Render::SetFragmentShader(Shader* fragmentShader)
 {
 	if(activeFragmentShader == fragmentShader)
 	{
 		return;
 	}
 
-	const ShaderRenderDataD3D11 *shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(fragmentShader->renderData);
+	const ShaderRenderDataD3D11* shaderRenderData = static_cast<const ShaderRenderDataD3D11*>(fragmentShader->renderData);
 
 	deviceCtx->PSSetShader(shaderRenderData->pixelShader, nullptr, 0);
 	deviceCtx->PSSetConstantBuffers(0, (UINT)shaderRenderData->constantBuffers.size(), shaderRenderData->constantBuffers.data());
@@ -1070,11 +1080,11 @@ void Direct3D11Render::SetFragmentShader(Shader *fragmentShader)
 	activeFragmentShader = fragmentShader;
 }
 
-void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterMode filterMode, EAddressMode addressMode)
+void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	ASSERT(samplerIdx < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
-	TextureRenderDataD3D11 *renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
+	TextureRenderDataD3D11* renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 
 	deviceCtx->VSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
 	deviceCtx->PSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
@@ -1106,18 +1116,18 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture *texture, EFilterM
 	SetSamplerState(samplerIdx, samplerDesc);
 }
 
-void Direct3D11Render::UpdateShaderParams(const Material *material)
+void Direct3D11Render::UpdateShaderParams(const Material* material)
 {
-	const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
+	const ShaderRenderDataD3D11* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
 	UpdateShaderParams(material, vertexShaderRenderData);
 
-	const ShaderRenderDataD3D11 *fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeFragmentShader->renderData);
+	const ShaderRenderDataD3D11* fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeFragmentShader->renderData);
 	UpdateShaderParams(material, fragmentShaderRenderData);
 }
 
-void Direct3D11Render::UpdateShaderParams(const Material *material, const ShaderRenderDataD3D11 *shaderRenderData)
+void Direct3D11Render::UpdateShaderParams(const Material* material, const ShaderRenderDataD3D11* shaderRenderData)
 {
-	const std::pair<uint32_t, uint32_t> *offsetSizePair = nullptr;
+	const std::pair<uint32_t, uint32_t>* offsetSizePair = nullptr;
 
 	for(size_t i = 0; i < shaderRenderData->constantBuffers.size(); ++i)
 	{
@@ -1146,6 +1156,12 @@ void Direct3D11Render::UpdateShaderParams(const Material *material, const Shader
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
 			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+		}
+
+		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matView");
+		if(offsetSizePair != nullptr)
+		{
+			isChanged |= CheckAndUpdateShaderParam(&matView.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
@@ -1187,7 +1203,7 @@ void Direct3D11Render::UpdateShaderParams(const Material *material, const Shader
 	}
 }
 
-bool Direct3D11Render::CheckAndUpdateShaderParam(const void *value, void *valueInConstantBuffer, uint32_t size)
+bool Direct3D11Render::CheckAndUpdateShaderParam(const void* value, void* valueInConstantBuffer, uint32_t size)
 {
 	if(memcmp(valueInConstantBuffer, value, size) == 0)
 	{
@@ -1222,7 +1238,7 @@ void Direct3D11Render::DoRender()
 	}
 }
 
-void Direct3D11Render::UpdateD3D11Resource(ID3D11Resource *resource, const void *data, size_t size)
+void Direct3D11Render::UpdateD3D11Resource(ID3D11Resource* resource, const void* data, size_t size)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	HRESULT hr = deviceCtx->Map(resource, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -1238,7 +1254,7 @@ void Direct3D11Render::UpdateD3D11Resource(ID3D11Resource *resource, const void 
 
 void Direct3D11Render::SetDepthStencilState()
 {
-	ID3D11DepthStencilState *depthStencilState = nullptr;
+	ID3D11DepthStencilState* depthStencilState = nullptr;
 
 	uint64_t key = 0;
 	key |= (uint64_t)depthStencilDesc.DepthEnable					<< 0;	// 1 bit
@@ -1277,7 +1293,7 @@ void Direct3D11Render::SetDepthStencilState()
 
 void Direct3D11Render::SetRasterizerState()
 {
-	ID3D11RasterizerState *rasterizerState = nullptr;
+	ID3D11RasterizerState* rasterizerState = nullptr;
 
 	uint64_t key = 0;
 	key |= (uint64_t)rasterizerDesc.FillMode				<< 0;	// 2 bits
@@ -1312,7 +1328,7 @@ void Direct3D11Render::SetRasterizerState()
 
 void Direct3D11Render::SetBlendState()
 {
-	ID3D11BlendState *blendState = nullptr;
+	ID3D11BlendState* blendState = nullptr;
 
 	uint64_t key = 0;
 	key |= (uint64_t)blendDesc.AlphaToCoverageEnable					<< 0;	// 1 bit
@@ -1347,7 +1363,7 @@ void Direct3D11Render::SetBlendState()
 
 void Direct3D11Render::SetInputLayout()
 {
-	ID3D11InputLayout *inputLayout = nullptr;
+	ID3D11InputLayout* inputLayout = nullptr;
 
 	if(activeMesh != nullptr)
 	{
@@ -1370,8 +1386,8 @@ void Direct3D11Render::SetInputLayout()
 		}
 		else
 		{
-			const MeshRenderDataD3D11 *meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
-			const ShaderRenderDataD3D11 *vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
+			const MeshRenderDataD3D11* meshRenderData = static_cast<const MeshRenderDataD3D11*>(activeMesh->renderData);
+			const ShaderRenderDataD3D11* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(activeVertexShader->renderData);
 			HRESULT hr = d3dDevice->CreateInputLayout(meshRenderData->vertexElementDesc.get(), (UINT)activeMesh->vertexDecl.Size(), vertexShaderRenderData->shaderCode->GetBufferPointer(), vertexShaderRenderData->shaderCode->GetBufferSize(), &inputLayout);
 			DX_CHECK_HRESULT(hr);
 			inputLayoutCache.insert(std::make_pair(key, inputLayout));
@@ -1387,7 +1403,7 @@ void Direct3D11Render::SetInputLayout()
 
 void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc)
 {
-	ID3D11SamplerState *samplerState = nullptr;
+	ID3D11SamplerState* samplerState = nullptr;
 
 	uint64_t key = 0;
 	key |= (uint64_t)samplerDesc.Filter			<< 0;	// 9 bits
@@ -1421,7 +1437,7 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 	}
 }
 
-DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture *texture)
+DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture* texture)
 {
 	const DXGI_FORMAT conversionTable[] =
 	{
