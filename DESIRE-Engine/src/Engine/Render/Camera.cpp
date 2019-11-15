@@ -143,7 +143,7 @@ Matrix4 Camera::CreatePerspectiveProjectionMatrix(float fov, float aspect, float
 {
 	// TODO: swap near and far for better depth precision
 
-	const float yScale = std::tanf(Math::PI_2 - (Math::DegToRad(fov) * 0.5f));
+	const float yScale = std::tanf(Math::Pi_2 - (Math::DegToRad(fov) * 0.5f));
 	const float xScale = yScale / aspect;
 	const float invFN = 1.0f / (zFar - zNear);
 	return Matrix4(

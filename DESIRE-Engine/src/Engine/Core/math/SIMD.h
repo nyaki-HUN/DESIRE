@@ -505,9 +505,8 @@ public:
 		return _mm_dp_ps(a, b, 0x7F);
 	#else
 		__m128 ab = SIMD::Mul(a, b);
-		alignas(16) static const uint32_t _mask3[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000 };
-		const __m128 mask3 = _mm_load_ps(reinterpret_cast<const float*>(_mask3));
-		ab = _mm_and_ps(ab, mask3);
+		alignas(16) const uint32_t mask_xyz[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 };
+		ab = _mm_and_ps(ab, _mm_load_ps(reinterpret_cast<const float*>(mask_xyz));
 		__m128 xy_z_xy_z = _mm_hadd_ps(ab, ab);
 		return _mm_hadd_ps(xy_z_xy_z, xy_z_xy_z);
 	#endif

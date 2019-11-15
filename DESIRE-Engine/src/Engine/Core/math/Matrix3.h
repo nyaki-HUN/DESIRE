@@ -330,8 +330,8 @@ inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 	const __m128 negS = SIMD::Negate(s);
 	const __m128 Z0 = _mm_unpackhi_ps(c, s);
 	__m128 Z1 = _mm_unpackhi_ps(negS, c);
-	alignas(16) const uint32_t select_xyz[4] = { 0xffffffff, 0xffffffff, 0xffffffff, 0 };
-	Z1 = _mm_and_ps(Z1, _mm_load_ps((float*)select_xyz));
+	alignas(16) const uint32_t mask_xyz[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 };
+	Z1 = _mm_and_ps(Z1, _mm_load_ps(reinterpret_cast<const float*>(mask_xyz)));
 	const __m128 Y0 = _mm_shuffle_ps(c, negS, _MM_SHUFFLE(0, 1, 1, 1));
 	const __m128 Y1 = _mm_shuffle_ps(s, c, _MM_SHUFFLE(0, 1, 1, 1));
 	const __m128 X0 = SIMD::Swizzle_XXXX(s);
@@ -352,9 +352,9 @@ inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 	const float tmp0 = cZ * sY;
 	const float tmp1 = sZ * sY;
 	return Matrix3(
-		Vector3(cZ * cY, sZ * cY, -sY),
-		Vector3((tmp0 * sX) - (sZ * cX), (tmp1 * sX) + (cZ * cX), cY * sX),
-		Vector3((tmp0 * cX) + (sZ * sX), (tmp1 * cX) - (cZ * sX), cY * cX)
+		Vector3(cZ * cY,				sZ * cY,				-sY),
+		Vector3(tmp0 * sX - sZ * cX,	tmp1 * sX + cZ * cX,	cY * sX),
+		Vector3(tmp0 * cX + sZ * sX,	tmp1 * cX - cZ * sX,	cY * cX)
 	);
 #endif
 }

@@ -5,10 +5,10 @@
 namespace Math
 {
 
-constexpr float PI = 3.14159265358979323846f;
-constexpr float TAU = (2.0f * PI);
-constexpr float PI_2 = (PI / 2.0f);
-constexpr float PI_4 = (PI / 4.0f);
+constexpr float Pi = 3.14159265358979323846f;
+constexpr float Tau = 2.0f * Pi;
+constexpr float Pi_2 = Pi / 2.0f;
+constexpr float Pi_4 = Pi / 4.0f;
 
 int Round32(float x);
 int RoundUp(float x, int roundFactor);
@@ -34,13 +34,13 @@ float Clamp01(float x);
 template<typename T>
 constexpr T DegToRad(T deg)
 {
-	return deg * 0.0174532925f;			// deg * (PI / 180.0f)
+	return deg * 0.0174532925f;			// deg * (Pi / 180.0f)
 }
 
 template<typename T>
 constexpr T RadToDeg(T rad)
 {
-	return rad * 57.2957795130f;		// rad * (180.0f / PI)
+	return rad * 57.2957795130f;		// rad * (180.0f / Pi)
 }
 
 // Returns linear interpolation of 'x' and 'y' with ratio 't'

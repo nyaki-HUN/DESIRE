@@ -305,8 +305,8 @@ inline void Matrix4::Invert()
 	// Testing the determinant
 	det = _mm_sub_ss(det, _mm_shuffle_ps(det, det, 1));
 
-	alignas(16) static const uint32_t _vmathPNPN[4] = { 0x00000000, 0x80000000, 0x00000000, 0x80000000 };
-	alignas(16) static const uint32_t _vmathNPNP[4] = { 0x80000000, 0x00000000, 0x80000000, 0x00000000 };
+	alignas(16) const uint32_t _vmathPNPN[4] = { 0x00000000, 0x80000000, 0x00000000, 0x80000000 };
+	alignas(16) const uint32_t _vmathNPNP[4] = { 0x80000000, 0x00000000, 0x80000000, 0x00000000 };
 	const __m128 Sign_PNPN = _mm_load_ps(reinterpret_cast<const float*>(_vmathPNPN));
 	const __m128 Sign_NPNP = _mm_load_ps(reinterpret_cast<const float*>(_vmathNPNP));
 	__m128 mtL1 = _mm_xor_ps(sum, Sign_PNPN);
@@ -620,8 +620,8 @@ inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 	const __m128 negS = SIMD::Negate(s);
 	const __m128 Z0 = _mm_unpackhi_ps(c, s);
 	__m128 Z1 = _mm_unpackhi_ps(negS, c);
-	alignas(16) const uint32_t select_xyz[4] = { 0xffffffff, 0xffffffff, 0xffffffff, 0 };
-	Z1 = _mm_and_ps(Z1, _mm_load_ps((float*)select_xyz));
+	alignas(16) const uint32_t mask_xyz[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 };
+	Z1 = _mm_and_ps(Z1, _mm_load_ps(reinterpret_cast<const float*>(mask_xyz)));
 	const __m128 Y0 = _mm_shuffle_ps(c, negS, _MM_SHUFFLE(0, 1, 1, 1));
 	const __m128 Y1 = _mm_shuffle_ps(s, c, _MM_SHUFFLE(0, 1, 1, 1));
 	const __m128 X0 = SIMD::Swizzle_XXXX(s);
@@ -669,8 +669,8 @@ inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 	tmp0 = SIMD::Blend_X(tmp0, c);
 	tmp1 = SIMD::Blend_Y(tmp1, c);
 	tmp2 = SIMD::Blend_Z(tmp2, c);
-	alignas(16) const uint32_t select_xyz[4] = { 0xffffffff, 0xffffffff, 0xffffffff, 0 };
-	const __m128 mask_xyz = _mm_load_ps((float*)select_xyz);
+	alignas(16) const uint32_t _mask_xyz[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 };
+	const __m128 mask_xyz = _mm_load_ps(reinterpret_cast<const float*>(_mask_xyz));
 	axis = _mm_and_ps(axis, mask_xyz);
 	tmp0 = _mm_and_ps(tmp0, mask_xyz);
 	tmp1 = _mm_and_ps(tmp1, mask_xyz);
