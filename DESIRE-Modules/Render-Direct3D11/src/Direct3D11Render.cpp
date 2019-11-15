@@ -115,6 +115,7 @@ Direct3D11Render::~Direct3D11Render()
 
 void Direct3D11Render::Init(OSWindow* mainWindow)
 {
+	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = mainWindow->GetWidth();
 	swapChainDesc.BufferDesc.Height = mainWindow->GetHeight();
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
@@ -156,7 +157,7 @@ void Direct3D11Render::Init(OSWindow* mainWindow)
 	// Set the default topology when there is no active mesh
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	CreateBackBuffer();
+	CreateBackBuffer(mainWindow->GetWidth(), mainWindow->GetHeight());
 	SetDefaultRenderStates();
 
 	Bind(screenSpaceQuadVertexShader.get());
@@ -185,7 +186,7 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow* window)
 
 	DX_CHECK_HRESULT(hr);
 
-	CreateBackBuffer();
+	CreateBackBuffer(window->GetWidth(), window->GetHeight());
 }
 
 void Direct3D11Render::Kill()
@@ -973,7 +974,7 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh* mesh)
 	}
 }
 
-void Direct3D11Render::CreateBackBuffer()
+void Direct3D11Render::CreateBackBuffer(uint32_t width, uint32_t height)
 {
 	// Create back buffer render target view
 	ID3D11Texture2D* backBufferTexture = nullptr;
@@ -985,12 +986,12 @@ void Direct3D11Render::CreateBackBuffer()
 
 	// Create back buffer depth stencil view
 	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = swapChainDesc.BufferDesc.Width;
-	textureDesc.Height = swapChainDesc.BufferDesc.Height;
+	textureDesc.Width = width;
+	textureDesc.Height = height;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	textureDesc.SampleDesc = swapChainDesc.SampleDesc;
+	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 

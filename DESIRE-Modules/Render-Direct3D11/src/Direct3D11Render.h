@@ -51,7 +51,7 @@ public:
 	void UpdateDynamicMesh(DynamicMesh* mesh) override;
 
 private:
-	void CreateBackBuffer();
+	void CreateBackBuffer(uint32_t width, uint32_t height);
 
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
@@ -81,7 +81,6 @@ private:
 	ID3D11RenderTargetView* backBufferRenderTargetView = nullptr;
 	ID3D11DepthStencilView* backBufferDepthStencilView = nullptr;
 
-	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
 	D3D11_RASTERIZER_DESC rasterizerDesc = {};
 	D3D11_BLEND_DESC blendDesc = {};
