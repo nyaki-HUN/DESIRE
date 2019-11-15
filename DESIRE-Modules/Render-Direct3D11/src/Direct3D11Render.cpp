@@ -115,7 +115,6 @@ Direct3D11Render::~Direct3D11Render()
 
 void Direct3D11Render::Init(OSWindow* mainWindow)
 {
-	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = mainWindow->GetWidth();
 	swapChainDesc.BufferDesc.Height = mainWindow->GetHeight();
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
@@ -157,36 +156,7 @@ void Direct3D11Render::Init(OSWindow* mainWindow)
 	// Set the default topology when there is no active mesh
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	// Create back buffer render target view
-	ID3D11Texture2D* backBufferTexture = nullptr;
-	hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&backBufferTexture);
-	DX_CHECK_HRESULT(hr);
-	hr = d3dDevice->CreateRenderTargetView(backBufferTexture, nullptr, &backBufferRenderTargetView);
-	DX_CHECK_HRESULT(hr);
-	DX_RELEASE(backBufferTexture);
-
-	// Create back buffer depth stencil view
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = swapChainDesc.BufferDesc.Width;
-	textureDesc.Height = swapChainDesc.BufferDesc.Height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	textureDesc.SampleDesc = swapChainDesc.SampleDesc;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
-	ID3D11Texture2D* depthStencilTexture = nullptr;
-	hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &depthStencilTexture);
-	DX_CHECK_HRESULT(hr);
-
-	hr = d3dDevice->CreateDepthStencilView(depthStencilTexture, nullptr, &backBufferDepthStencilView);
-	DX_CHECK_HRESULT(hr);
-
-	DX_RELEASE(depthStencilTexture);
-
-	deviceCtx->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
-
+	CreateBackBuffer();
 	SetDefaultRenderStates();
 
 	Bind(screenSpaceQuadVertexShader.get());
@@ -201,8 +171,21 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow* window)
 		return;
 	}
 
+	ID3D11RenderTargetView* nullViews[] = { nullptr };
+	deviceCtx->OMSetRenderTargets(1, nullViews, nullptr);
+	DX_RELEASE(backBufferDepthStencilView);
+	DX_RELEASE(backBufferRenderTargetView);
+	deviceCtx->Flush();
+
 	HRESULT hr = swapChain->ResizeBuffers(0, window->GetWidth(), window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	if(hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+	{
+		// Have to destroy the device, swapchain, and all resources and recreate them to recover from this case
+	}
+
 	DX_CHECK_HRESULT(hr);
+
+	CreateBackBuffer();
 }
 
 void Direct3D11Render::Kill()
@@ -988,6 +971,39 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh* mesh)
 		UpdateD3D11Resource(renderData->vertexBuffer, mesh->vertices.get(), mesh->GetSizeOfVertices());
 		mesh->isVertexDataUpdateRequired = false;
 	}
+}
+
+void Direct3D11Render::CreateBackBuffer()
+{
+	// Create back buffer render target view
+	ID3D11Texture2D* backBufferTexture = nullptr;
+	HRESULT hr = swapChain->GetBuffer(0, IID_ID3D11Texture2D, (void**)&backBufferTexture);
+	DX_CHECK_HRESULT(hr);
+	hr = d3dDevice->CreateRenderTargetView(backBufferTexture, nullptr, &backBufferRenderTargetView);
+	DX_CHECK_HRESULT(hr);
+	DX_RELEASE(backBufferTexture);
+
+	// Create back buffer depth stencil view
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = swapChainDesc.BufferDesc.Width;
+	textureDesc.Height = swapChainDesc.BufferDesc.Height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	textureDesc.SampleDesc = swapChainDesc.SampleDesc;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+	ID3D11Texture2D* depthStencilTexture = nullptr;
+	hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &depthStencilTexture);
+	DX_CHECK_HRESULT(hr);
+
+	hr = d3dDevice->CreateDepthStencilView(depthStencilTexture, nullptr, &backBufferDepthStencilView);
+	DX_CHECK_HRESULT(hr);
+
+	DX_RELEASE(depthStencilTexture);
+
+	deviceCtx->OMSetRenderTargets(1, &backBufferRenderTargetView, backBufferDepthStencilView);
 }
 
 void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)

@@ -84,7 +84,7 @@ public:
 
 				WINDOWINFO pwi;
 				GetWindowInfo(hWnd, &pwi);
-				window->SetSize((uint16_t)(pwi.rcClient.right - pwi.rcClient.left), (uint16_t)(pwi.rcClient.bottom - pwi.rcClient.top));
+				window->SetSize(static_cast<uint16_t>(pwi.rcClient.right - pwi.rcClient.left), static_cast<uint16_t>(pwi.rcClient.bottom - pwi.rcClient.top));
 				return 0;
 			}
 
@@ -95,7 +95,7 @@ public:
 					{
 //						window->SetPosition(0, 0);
 					}
-					window->SetSize((uint16_t)lParam, (uint16_t)(lParam >> 16));
+					window->SetSize(static_cast<uint16_t>(lParam), static_cast<uint16_t>(lParam >> 16));
 				}
 				return 0;
 
@@ -103,10 +103,13 @@ public:
 				break;
 
 			case WM_GETMINMAXINFO:		// When the size or position of the window is about to change
+			{
 				// Prevent the window from going smaller than some minimum size
-				((MINMAXINFO*)lParam)->ptMinTrackSize.x = OSWindow::kWindowMinSize;
-				((MINMAXINFO*)lParam)->ptMinTrackSize.y = OSWindow::kWindowMinSize;
+				MINMAXINFO* info = reinterpret_cast<MINMAXINFO*>(lParam);
+				info->ptMinTrackSize.x = OSWindow::kWindowMinSize;
+				info->ptMinTrackSize.y = OSWindow::kWindowMinSize;
 				break;
+			}
 
 			case WM_SYSCOMMAND:
 				switch(wParam)
@@ -212,13 +215,13 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 
 OSWindow::~OSWindow()
 {
-	SetWindowLongPtr(impl->hWnd, GWLP_USERDATA, (LONG_PTR)nullptr);
+	SetWindowLongPtr(impl->hWnd, GWLP_USERDATA, NULL);
 }
 
 void OSWindow::HandleWindowMessages()
 {
 	MSG msg;
-	while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
+	while(PeekMessage(&msg, HWND_TOP, 0, 0, PM_REMOVE) != 0)
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
