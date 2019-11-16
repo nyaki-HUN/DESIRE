@@ -57,10 +57,14 @@ public:
 				// Do not process the system keys since they would activate the context menu of the window or the main menu
 				return 0;
 
-/*			case WM_SETCURSOR:
-				SetCursor(nullptr);
-				return 1;
-*/
+			case WM_SETCURSOR:			// Sent to a window if the mouse causes the cursor to move within a window and mouse input is not captured
+				if(LOWORD(lParam) == HTCLIENT)
+				{
+					window->impl->UpdateCursor();
+					return TRUE;
+				}
+				break;
+
 			case WM_ACTIVATE:			// Sent to both the window being activated and the window being deactivated
 				if(wParam == WA_INACTIVE)
 				{
@@ -132,8 +136,54 @@ public:
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
+	void UpdateCursor()
+	{
+		CURSORINFO ci = {};
+		ci.cbSize = sizeof(ci);
+		if(GetCursorInfo(&ci) == FALSE || (ci.flags & CURSOR_SHOWING) == 0)
+		{
+			return;
+		}
+
+		if(cursors[currCursor] == nullptr)
+		{
+			switch(currCursor)
+			{
+				case OSWindow::CURSOR_ARROW:			cursors[currCursor] = LoadCursor(NULL, IDC_ARROW); break;
+				case OSWindow::CURSOR_MOVE:				cursors[currCursor] = LoadCursor(NULL, IDC_SIZEALL); break;
+				case OSWindow::CURSOR_SIZE_BOTTOMLEFT:	cursors[currCursor] = LoadCursor(NULL, IDC_SIZENESW); break;
+				case OSWindow::CURSOR_SIZE_BOTTOMRIGHT:	cursors[currCursor] = LoadCursor(NULL, IDC_SIZENWSE); break;
+				case OSWindow::CURSOR_SIZE_NS:			cursors[currCursor] = LoadCursor(NULL, IDC_SIZENS); break;
+				case OSWindow::CURSOR_SIZE_WE:			cursors[currCursor] = LoadCursor(NULL, IDC_SIZEWE); break;
+				case OSWindow::CURSOR_HAND:				cursors[currCursor] = LoadCursor(NULL, IDC_HAND); break;
+				case OSWindow::CURSOR_IBEAM:			cursors[currCursor] = LoadCursor(NULL, IDC_IBEAM); break;
+				case OSWindow::CURSOR_UP:				cursors[currCursor] = LoadCursor(NULL, IDC_UPARROW); break;
+				case OSWindow::NUM_CURSORS:				ASSERT(false); return;
+			}
+		}
+
+		SetCursor(cursors[currCursor]);
+	}
+
+	bool IsInsideClientArea()
+	{
+		POINT screenPos;
+		if(GetCursorPos(&screenPos) == FALSE || WindowFromPoint(screenPos) != hWnd)
+		{
+			return false;
+		}
+
+		RECT area;
+		GetClientRect(hWnd, &area);
+		ScreenToClient(hWnd, &screenPos);
+
+		const BOOL isInside = PtInRect(&area, screenPos);
+		return (isInside == TRUE);
+	}
+
 	HWND hWnd = 0;
 	HCURSOR cursors[OSWindow::NUM_CURSORS] = {};
+	OSWindow::ECursor currCursor = OSWindow::CURSOR_ARROW;
 	bool isInSizeMove = false;
 };
 
@@ -192,20 +242,14 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 	}
 
 	HINSTANCE hInstance = GetModuleHandle(nullptr);
-	WNDCLASSEX wc =
-	{
-		sizeof(WNDCLASSEX),
-		0,
-		OSWindowImpl::WndProc,
-		0, 0,
-		hInstance,
-		LoadIcon(hInstance, MAKEINTRESOURCE(101)),
-		LoadCursor(nullptr, IDC_ARROW),
-		nullptr,	// (HBRUSH)GetStockObject(BLACK_BRUSH),
-		nullptr,
-		"DESIRE_Wnd",
-		LoadIcon(hInstance, MAKEINTRESOURCE(101)),
-	};
+	WNDCLASSEX wc = {};
+	wc.cbSize = sizeof(WNDCLASSEX);
+	wc.lpfnWndProc = OSWindowImpl::WndProc;
+	wc.hInstance = hInstance;
+	wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(101));
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wc.lpszClassName = "DESIRE_Wnd";
+	wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(101));
 	RegisterClassEx(&wc);
 
 	impl->hWnd = CreateWindowExA(0, "DESIRE_Wnd", "DESIRE", windowStyleFlags, posX, posY, rect.right - rect.left, rect.bottom - rect.top, GetDesktopWindow(), nullptr, hInstance, this);
@@ -240,30 +284,16 @@ void OSWindow::SetWindowTitle(const char* newTitle)
 
 void OSWindow::SetCursor(ECursor cursor)
 {
-	if(impl->cursors[cursor] == nullptr)
+	if(impl->currCursor == cursor)
 	{
-		switch(cursor)
-		{
-			case CURSOR_ARROW:				impl->cursors[cursor] = LoadCursor(NULL, IDC_ARROW); break;
-			case CURSOR_MOVE:				impl->cursors[cursor] = LoadCursor(NULL, IDC_SIZEALL); break;
-			case CURSOR_SIZE_BOTTOMLEFT:	impl->cursors[cursor] = LoadCursor(NULL, IDC_SIZENESW); break;
-			case CURSOR_SIZE_BOTTOMRIGHT:	impl->cursors[cursor] = LoadCursor(NULL, IDC_SIZENWSE); break;
-			case CURSOR_SIZE_NS:			impl->cursors[cursor] = LoadCursor(NULL, IDC_SIZENS); break;
-			case CURSOR_SIZE_WE:			impl->cursors[cursor] = LoadCursor(NULL, IDC_SIZEWE); break;
-			case CURSOR_HAND:				impl->cursors[cursor] = LoadCursor(NULL, IDC_HAND); break;
-			case CURSOR_IBEAM:				impl->cursors[cursor] = LoadCursor(NULL, IDC_IBEAM); break;
-			case CURSOR_UP:					impl->cursors[cursor] = LoadCursor(NULL, IDC_UPARROW); break;
-			case NUM_CURSORS:				ASSERT(false); return;
-		}
+		return;
 	}
 
-	CURSORINFO ci;
-	memset(&ci, 0, sizeof(ci));
-	ci.cbSize = sizeof(ci);
-	BOOL ok = ::GetCursorInfo(&ci);
-	if(ok && (ci.flags & CURSOR_SHOWING))
+	impl->currCursor = cursor;
+
+	if(impl->IsInsideClientArea())
 	{
-		::SetCursor(impl->cursors[cursor]);
+		impl->UpdateCursor();
 	}
 }
 
