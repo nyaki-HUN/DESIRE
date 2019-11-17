@@ -54,6 +54,11 @@ void Object::SetActive(bool active)
 	isActive = active;
 }
 
+bool Object::IsActive() const
+{
+	return isActive;
+}
+
 void Object::SetParent(Object* newParent)
 {
 	if(parent == newParent)

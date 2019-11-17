@@ -19,6 +19,7 @@ public:
 	void SetObjectName(const String& name);
 
 	void SetActive(bool active);
+	bool IsActive() const;
 
 	void SetParent(Object* newParent);
 	Object* CreateChildObject(const String& name);
@@ -69,7 +70,7 @@ private:
 	Object* parent = nullptr;
 	Array<Object*> children;
 
-	bool isActive = false;
+	bool isActive = true;
 
 	DynamicString objectName;
 };
