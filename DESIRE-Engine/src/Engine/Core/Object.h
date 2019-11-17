@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Container/Array.h"
-#include "Engine/Core/String/DynamicString.h"
+#include "Engine/Core/String/StackString.h"
 
 #include <memory>
 
@@ -12,7 +12,6 @@ class Object
 {
 public:
 	Object(const String& name = "Object");
-	Object(DynamicString&& name);
 	~Object();
 
 	const String& GetObjectName() const;
@@ -23,7 +22,6 @@ public:
 
 	void SetParent(Object* newParent);
 	Object* CreateChildObject(const String& name);
-	Object* CreateChildObject(DynamicString&& name);
 
 	template<class T, class... Args>
 	T& AddComponent(Args&&... args)
@@ -54,6 +52,8 @@ public:
 
 	void MarkAllChildrenTransformDirty();
 
+	static constexpr size_t kMaxObjectNameLength = 32;
+
 private:
 	Component& AddComponent_Internal(std::unique_ptr<Component> component);
 	void AddChild_Internal(Object* child);
@@ -72,5 +72,5 @@ private:
 
 	bool isActive = true;
 
-	DynamicString objectName;
+	StackString<kMaxObjectNameLength> objectName;
 };

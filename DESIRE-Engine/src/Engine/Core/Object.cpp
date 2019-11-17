@@ -13,12 +13,6 @@ Object::Object(const String& name)
 	SetTransform();
 }
 
-Object::Object(DynamicString&& name)
-	: objectName(std::move(name))
-{
-	SetTransform();
-}
-
 Object::~Object()
 {
 	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and no need to call SetParent()
@@ -128,13 +122,6 @@ void Object::SetParent(Object* newParent)
 Object* Object::CreateChildObject(const String& name)
 {
 	Object* obj = new Object(name);
-	obj->SetParent(this);
-	return obj;
-}
-
-Object* Object::CreateChildObject(DynamicString&& name)
-{
-	Object* obj = new Object(std::move(name));
 	obj->SetParent(this);
 	return obj;
 }
