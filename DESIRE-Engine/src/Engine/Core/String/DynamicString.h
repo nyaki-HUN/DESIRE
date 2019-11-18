@@ -23,9 +23,6 @@ public:
 	// Create a new string which is initialized to a copy a substring of this string
 	DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 
-	// Create formatted string from variable argument list
-	static DynamicString Format(const char* format, ...);
-
 private:
 	bool Reserve(size_t numChars) override;
 

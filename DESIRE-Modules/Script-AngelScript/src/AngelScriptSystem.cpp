@@ -124,7 +124,8 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 	}
 
 	MemoryBuffer content = file->ReadFileContent();
-	DynamicString scriptSrc = DynamicString::Format(
+	DynamicString scriptSrc;
+	scriptSrc.Sprintf(
 		"class %s"
 		"{"
 		"	ScriptComponent @self;"

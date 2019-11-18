@@ -62,7 +62,7 @@ public:
 	void SprintfAppend(const char* format, ...);
 
 protected:
-	virtual bool Reserve(size_t newSize) = 0;
+	virtual bool Reserve(size_t numChars) = 0;
 
 	void Sprintf_internal(size_t pos, const char* format, va_list args);
 	void Replace_Internal(size_t pos, size_t numChars, const String& replaceTo);

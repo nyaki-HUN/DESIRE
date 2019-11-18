@@ -54,14 +54,6 @@ TEST_CASE("DynamicString", "[Core]")
 //		DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 	}
 
-	SECTION("Format()")
-	{
-		string = DynamicString::Format("%d %05d %.1f %c %s", 123, 123, 1.5f, 'X', "test");
-		CHECK(string.Equals("123 00123 1.5 X test"));
-		string = DynamicString::Format("no args");
-		CHECK(string.Equals("no args"));
-	}
-
 	SECTION("operator +()")
 	{
 		const DynamicString operator_plus = string + String("123");
