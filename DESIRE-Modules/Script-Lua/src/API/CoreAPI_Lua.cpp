@@ -246,7 +246,7 @@ void RegisterCoreAPI_Lua(lua_State* L)
 		.addFunction("SetActive", &Object::SetActive)
 		.addFunction("RemoveComponent", &Object::RemoveComponent)
 		.addFunction("GetComponent", &Object::GetComponentByTypeId)
-		.addProperty("transform", &Object::GetTransform)
+		.addProperty<Transform&, Transform*>("transform", &Object::GetTransform)
 		.addFunction("GetParent", &Object::GetParent)
 		.endClass();
 
