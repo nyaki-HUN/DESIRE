@@ -23,9 +23,9 @@ public:
 	// Create a new string which is initialized to a copy a substring of this string
 	DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 
-private:
 	bool Reserve(size_t numChars) override;
 
+private:
 	size_t preallocatedSize = 0;
 };
 
