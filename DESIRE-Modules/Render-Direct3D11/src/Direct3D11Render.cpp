@@ -10,6 +10,7 @@
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/Log/Log.h"
 #include "Engine/Core/math/Matrix4.h"
+#include "Engine/Core/String/StackString.h"
 #include "Engine/Render/Material.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/View.h"
@@ -241,12 +242,11 @@ void Direct3D11Render::Kill()
 	DX_RELEASE(backBufferRenderTargetView);
 }
 
-DynamicString Direct3D11Render::GetShaderFilenameWithPath(const String& shaderFilename) const
+void Direct3D11Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
 {
-	DynamicString filenameWithPath = "data/shaders/hlsl/";
-	filenameWithPath += shaderFilename;
-	filenameWithPath += ".hlsl";
-	return filenameWithPath;
+	outString += "data/shaders/hlsl/";
+	outString += shaderFilename;
+	outString += ".hlsl";
 }
 
 void Direct3D11Render::BeginFrame(OSWindow* window)
@@ -612,18 +612,21 @@ void Direct3D11Render::Bind(Shader* shader)
 		definePtr++;
 	}
 
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
+	AppendShaderFilenameWithPath(filenameWithPath, shader->name);
+
 	ID3DBlob* errorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader->data.data														// pSrcData
-		, shader->data.size																			// SrcDataSize
-		, (FileSystem::Get()->GetAppDirectory() + GetShaderFilenameWithPath(shader->name)).Str()	// pSourceName
-		, defines																					// pDefines
-		, D3D_COMPILE_STANDARD_FILE_INCLUDE															// pInclude
-		, "main"																					// pEntrypoint
-		, isVertexShader ? "vs_5_0" : "ps_5_0"														// pTarget
-		, 0																							// Flags1
-		, 0																							// Flags2
-		, &renderData->shaderCode																	// ppCode
-		, &errorBlob);																				// ppErrorMsgs
+	HRESULT hr = D3DCompile(shader->data.data		// pSrcData
+		, shader->data.size							// SrcDataSize
+		, filenameWithPath.Str()					// pSourceName
+		, defines									// pDefines
+		, D3D_COMPILE_STANDARD_FILE_INCLUDE			// pInclude
+		, "main"									// pEntrypoint
+		, isVertexShader ? "vs_5_0" : "ps_5_0"		// pTarget
+		, 0											// Flags1
+		, 0											// Flags2
+		, &renderData->shaderCode					// ppCode
+		, &errorBlob);								// ppErrorMsgs
 	if(FAILED(hr))
 	{
 		if(errorBlob != nullptr)

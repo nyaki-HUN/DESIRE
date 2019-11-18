@@ -54,10 +54,9 @@ TEST_CASE("DynamicString", "[Core]")
 //		DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 	}
 
-	SECTION("operator +()")
+	SECTION("Reserve()")
 	{
-		const DynamicString operator_plus = string + String("123");
-		CHECK(operator_plus.Equals("String ASD123"));
+		// TODO: Add test cases
 	}
 }
 

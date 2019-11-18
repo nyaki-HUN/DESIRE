@@ -19,7 +19,7 @@ public:
 	void UpdateRenderWindow(OSWindow* window) override;
 	void Kill() override;
 
-	DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const override;
+	void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const override;
 
 	void BeginFrame(OSWindow* window) override;
 	void EndFrame() override;

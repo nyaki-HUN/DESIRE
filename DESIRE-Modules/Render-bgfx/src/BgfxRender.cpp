@@ -111,26 +111,25 @@ void BgfxRender::Kill()
 	initialized = false;
 }
 
-DynamicString BgfxRender::GetShaderFilenameWithPath(const String& shaderFilename) const
+void BgfxRender::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
 {
-	DynamicString filenameWithPath = "data/shaders/bgfx/";
+	outString += "data/shaders/bgfx/";
 
 	switch(bgfx::getRendererType())
 	{
-		case bgfx::RendererType::Direct3D9:		filenameWithPath += "dx9/"; break;
-		case bgfx::RendererType::Direct3D11:	filenameWithPath += "dx11/"; break;
-		case bgfx::RendererType::Direct3D12:	filenameWithPath += "dx11/"; break;
-		case bgfx::RendererType::Gnm:			filenameWithPath += "pssl/"; break;
-		case bgfx::RendererType::Metal:			filenameWithPath += "metal/"; break;
-		case bgfx::RendererType::OpenGLES:		filenameWithPath += "essl/"; break;
-		case bgfx::RendererType::OpenGL:		filenameWithPath += "glsl/"; break;
-		case bgfx::RendererType::Vulkan:		filenameWithPath += "spirv/"; break;
+		case bgfx::RendererType::Direct3D9:		outString += "dx9/"; break;
+		case bgfx::RendererType::Direct3D11:	outString += "dx11/"; break;
+		case bgfx::RendererType::Direct3D12:	outString += "dx11/"; break;
+		case bgfx::RendererType::Gnm:			outString += "pssl/"; break;
+		case bgfx::RendererType::Metal:			outString += "metal/"; break;
+		case bgfx::RendererType::OpenGLES:		outString += "essl/"; break;
+		case bgfx::RendererType::OpenGL:		outString += "glsl/"; break;
+		case bgfx::RendererType::Vulkan:		outString += "spirv/"; break;
 		default:								ASSERT(false && "Not supported renderer type"); break;
 	}
 
-	filenameWithPath += shaderFilename;
-	filenameWithPath += ".bin";
-	return filenameWithPath;
+	outString += shaderFilename;
+	outString += ".bin";
 }
 
 void BgfxRender::BeginFrame(OSWindow* window)

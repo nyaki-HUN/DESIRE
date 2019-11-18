@@ -1,18 +1,18 @@
 #pragma once
 
-#include "Engine/Core/String/DynamicString.h"
-
 #include <memory>
 
-class OSWindow;
-class View;
-class Mesh;
 class DynamicMesh;
 class Material;
-class Shader;
-class Texture;
-class RenderTarget;
 class Matrix4;
+class Mesh;
+class OSWindow;
+class RenderTarget;
+class Shader;
+class String;
+class Texture;
+class View;
+class WritableString;
 
 class Render
 {
@@ -85,7 +85,7 @@ public:
 	virtual void UpdateRenderWindow(OSWindow* window) = 0;
 	virtual void Kill() = 0;
 
-	virtual DynamicString GetShaderFilenameWithPath(const String& shaderFilename) const = 0;
+	virtual void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const = 0;
 
 	virtual void BeginFrame(OSWindow* window) = 0;
 	virtual void EndFrame() = 0;

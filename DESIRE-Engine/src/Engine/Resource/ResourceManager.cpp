@@ -5,6 +5,7 @@
 #include "Engine/Resource/Texture.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/String/StackString.h"
 #include "Engine/Render/Render.h"
 
 ResourceManager::ResourceManager()
@@ -173,7 +174,9 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 {
-	const DynamicString filenameWithPath = Modules::Render->GetShaderFilenameWithPath(filename);
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath;
+	Modules::Render->AppendShaderFilenameWithPath(filenameWithPath, filename);
+
 	ReadFilePtr file = FileSystem::Get()->Open(filenameWithPath);
 	if(file)
 	{

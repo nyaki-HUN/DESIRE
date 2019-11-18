@@ -28,11 +28,3 @@ public:
 private:
 	size_t preallocatedSize = 0;
 };
-
-inline DynamicString operator +(const String& a, const String& b)
-{
-	DynamicString newString(a.Length() + b.Length());
-	newString += a;
-	newString += b;
-	return newString;
-}
