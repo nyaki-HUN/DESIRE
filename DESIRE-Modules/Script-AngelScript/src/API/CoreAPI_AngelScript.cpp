@@ -7,6 +7,7 @@
 #include "Engine/Core/Timer.h"
 #include "Engine/Core/math/Matrix4.h"
 #include "Engine/Core/math/math.h"
+#include "Engine/Core/math/Rand.h"
 #include "Engine/Core/math/Transform.h"
 
 static Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)	{ return new Vector3(vec0.Cross(vec1)); }
@@ -23,12 +24,12 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine* engine)
 	engine->RegisterObjectBehaviour("Vector3", asBEHAVE_FACTORY, "Vector3@ f(const Vector3& in)", asFUNCTION(AngelScriptAPI<Vector3>::FactoryWithArgs<const Vector3&>), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Vector3", asBEHAVE_FACTORY, "Vector3@ f(float, float, float)", asFUNCTION((AngelScriptAPI<Vector3>::FactoryWithArgs<float, float, float>)), asCALL_CDECL);
 	engine->RegisterObjectBehaviour("Vector3", asBEHAVE_FACTORY, "Vector3@ f(float)", asFUNCTION(AngelScriptAPI<Vector3>::FactoryWithArgs<float>), asCALL_CDECL);
-	engine->RegisterObjectMethod("Vector3", "void set_x(float)", asMETHODPR(Vector3, SetX, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "void set_y(float)", asMETHODPR(Vector3, SetY, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "void set_z(float)", asMETHODPR(Vector3, SetZ, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "float get_x() const", asMETHODPR(Vector3, GetX, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "float get_y() const", asMETHODPR(Vector3, GetY, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector3", "float get_z() const", asMETHODPR(Vector3, GetZ, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "void set_x(float) property", asMETHODPR(Vector3, SetX, (float), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "void set_y(float) property", asMETHODPR(Vector3, SetY, (float), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "void set_z(float) property", asMETHODPR(Vector3, SetZ, (float), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "float get_x() const property", asMETHODPR(Vector3, GetX, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "float get_y() const property", asMETHODPR(Vector3, GetY, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector3", "float get_z() const property", asMETHODPR(Vector3, GetZ, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector3", "void opAssign(const Vector3& in)", asFUNCTION(AngelScriptAPI<Vector3>::OpAssign<Vector3&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opNeg()", asFUNCTION(AngelScriptAPI<Vector3>::OpNeg), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector3", "Vector3@ opAdd(const Vector3& in) const", asFUNCTION(AngelScriptAPI<Vector3>::OpAdd<const Vector3&>), asCALL_CDECL_OBJFIRST);
@@ -73,14 +74,14 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine* engine)
 	engine->RegisterObjectBehaviour("Vector4", asBEHAVE_FACTORY, "Vector4@ f(const Vector3& in)", asFUNCTION(AngelScriptAPI<Vector4>::FactoryWithArgs<const Vector3&>), asCALL_CDECL);
 	engine->RegisterObjectMethod("Vector4", "void SetXYZ(const Vector3& in)", asMETHODPR(Vector4, SetXYZ, (const Vector3&), void), asCALL_THISCALL);
 //	Vector3 GetXYZ() const
-	engine->RegisterObjectMethod("Vector4", "void set_x(float)", asMETHODPR(Vector4, SetX, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "void set_y(float)", asMETHODPR(Vector4, SetY, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "void set_z(float)", asMETHODPR(Vector4, SetZ, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "void set_w(float)", asMETHODPR(Vector4, SetW, (float), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float get_x() const", asMETHODPR(Vector4, GetX, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float get_y() const", asMETHODPR(Vector4, GetY, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float get_z() const", asMETHODPR(Vector4, GetZ, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Vector4", "float get_w() const", asMETHODPR(Vector4, GetW, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "void set_x(float) property", asMETHODPR(Vector4, SetX, (float), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "void set_y(float) property", asMETHODPR(Vector4, SetY, (float), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "void set_z(float) property", asMETHODPR(Vector4, SetZ, (float), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "void set_w(float) property", asMETHODPR(Vector4, SetW, (float), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float get_x() const property", asMETHODPR(Vector4, GetX, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float get_y() const property", asMETHODPR(Vector4, GetY, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float get_z() const property", asMETHODPR(Vector4, GetZ, () const, float), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Vector4", "float get_w() const property", asMETHODPR(Vector4, GetW, () const, float), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Vector4", "void opAssign(const Vector4& in)", asFUNCTION(AngelScriptAPI<Vector4>::OpAssign<Vector4&>), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opNeg()", asFUNCTION(AngelScriptAPI<Vector4>::OpNeg), asCALL_CDECL_OBJFIRST);
 	engine->RegisterObjectMethod("Vector4", "Vector4@ opAdd(const Vector4& in) const", asFUNCTION(AngelScriptAPI<Vector4>::OpAdd<const Vector4&>), asCALL_CDECL_OBJFIRST);
@@ -243,35 +244,41 @@ void RegisterVectormathFunctions_AngelScript(asIScriptEngine* engine)
 
 void RegisterMathFunctions_AngelScript(asIScriptEngine* engine)
 {
+	int result = asSUCCESS;
+
 	// Trigonometric functions
-	engine->RegisterGlobalFunction("float cos(float)", asFUNCTION(std::cosf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float sin(float)", asFUNCTION(std::sinf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float tan(float)", asFUNCTION(std::tanf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float acos(float)", asFUNCTION(std::acosf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float asin(float)", asFUNCTION(std::asinf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float atan(float)", asFUNCTION(std::atanf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float atan2(float, float)", asFUNCTION(std::atan2f), asCALL_CDECL);
+	result = engine->RegisterGlobalFunction("float cos(float)", asFUNCTION(std::cosf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float sin(float)", asFUNCTION(std::sinf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float tan(float)", asFUNCTION(std::tanf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float acos(float)", asFUNCTION(std::acosf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float asin(float)", asFUNCTION(std::asinf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float atan(float)", asFUNCTION(std::atanf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float atan2(float, float)", asFUNCTION(std::atan2f), asCALL_CDECL);			ASSERT(result >= asSUCCESS);
 	// Hyberbolic functions
-	engine->RegisterGlobalFunction("float cosh(float)", asFUNCTION(std::coshf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float sinh(float)", asFUNCTION(std::sinhf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float tanh(float)", asFUNCTION(std::tanhf), asCALL_CDECL);
+	result = engine->RegisterGlobalFunction("float cosh(float)", asFUNCTION(std::coshf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float sinh(float)", asFUNCTION(std::sinhf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float tanh(float)", asFUNCTION(std::tanhf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
 	// Exponential and logarithmic functions
-	engine->RegisterGlobalFunction("float log(float)", asFUNCTION(std::logf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float log10(float)", asFUNCTION(std::log10f), asCALL_CDECL);
+	result = engine->RegisterGlobalFunction("float log(float)", asFUNCTION(std::logf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float log10(float)", asFUNCTION(std::log10f), asCALL_CDECL);					ASSERT(result >= asSUCCESS);
 	// Power functions
-	engine->RegisterGlobalFunction("float pow(float, float)", asFUNCTION(std::powf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float sqrt(float)", asFUNCTION(std::sqrtf), asCALL_CDECL);
+	result = engine->RegisterGlobalFunction("float pow(float, float)", asFUNCTION(std::powf), asCALL_CDECL);				ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float sqrt(float)", asFUNCTION(std::sqrtf), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
 	// Absolute value functions
-	engine->RegisterGlobalFunction("float fabsf(float)", asFUNCTION(std::fabsf), asCALL_CDECL);
-	engine->RegisterGlobalFunction("int64 abs(int64)", asFUNCTION(std::llabs), asCALL_CDECL);
+	result = engine->RegisterGlobalFunction("float fabsf(float)", asFUNCTION(std::fabsf), asCALL_CDECL);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("int64 abs(int64)", asFUNCTION(std::llabs), asCALL_CDECL);						ASSERT(result >= asSUCCESS);
 
 	// Math
-	engine->SetDefaultNamespace("Math");
-	engine->RegisterGlobalFunction("int Round32(float)", asFUNCTION(Math::Round32), asCALL_CDECL);
-	engine->RegisterGlobalFunction("int RoundUp(float, int)", asFUNCTION(Math::RoundUp), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float Clamp(float, float, float)", asFUNCTION(Math::Clamp), asCALL_CDECL);
-	engine->RegisterGlobalFunction("float Clamp01(float)", asFUNCTION(Math::Clamp01), asCALL_CDECL);
-	engine->SetDefaultNamespace("");
+	result = engine->SetDefaultNamespace("Math");
+	result = engine->RegisterGlobalFunction("int Round32(float)", asFUNCTION(Math::Round32), asCALL_CDECL);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("int RoundUp(float, int)", asFUNCTION(Math::RoundUp), asCALL_CDECL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float Clamp(float, float, float)", asFUNCTION(Math::Clamp), asCALL_CDECL);		ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("float Clamp01(float)", asFUNCTION(Math::Clamp01), asCALL_CDECL);				ASSERT(result >= asSUCCESS);
+	result = engine->SetDefaultNamespace("");
+
+	// Rand
+//	result = engine->RegisterObjectType("Rand", 0, asOBJ_REF | asOBJ_NOHANDLE);					ASSERT(result >= asSUCCESS);
+//	result = engine->RegisterGlobalProperty("Rand globalRand", &Rand::s_globalRand);			ASSERT(result >= asSUCCESS);
 }
 
 void RegisterCoreAPI_AngelScript(asIScriptEngine* engine)
@@ -279,46 +286,48 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine* engine)
 	RegisterVectormathFunctions_AngelScript(engine);
 	RegisterMathFunctions_AngelScript(engine);
 
+	int result = asSUCCESS;
+
 	// Transform
-	engine->RegisterObjectType("Transform", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterObjectMethod("Transform", "const Vector3& get_localPosition() const", asMETHODPR(Transform, GetLocalPosition, () const, const Vector3&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "void set_localPosition(const Vector3& in)", asMETHODPR(Transform, SetLocalPosition, (const Vector3&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "const Quat& get_localRotation() const", asMETHODPR(Transform, GetLocalRotation, () const, const Quat&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "void set_localRotation(const Quat& in)", asMETHODPR(Transform, SetLocalRotation, (const Quat&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "const Vector3& get_localScale() const", asMETHODPR(Transform, GetLocalScale, () const, const Vector3&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "void set_localScale(const Vector3& in)", asMETHODPR(Transform, SetLocalScale, (const Vector3&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "Vector3@ get_position()", asFUNCTION(Transform_GetPosition), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Transform", "void set_position(const Vector3& in)", asMETHODPR(Transform, SetPosition, (const Vector3&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "Quat& get_rotation() const", asFUNCTION(Transform_GetRotation), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Transform", "void set_rotation(const Quat& in)", asMETHODPR(Transform, SetRotation, (const Quat&), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Transform", "Vector3& get_scale() const", asFUNCTION(Transform_GetScale), asCALL_CDECL_OBJFIRST);
-	engine->RegisterObjectMethod("Transform", "void set_scale(const Vector3& in)", asMETHODPR(Transform, SetScale, (const Vector3&), void), asCALL_THISCALL);
+	result = engine->RegisterObjectType("Transform", 0, asOBJ_REF | asOBJ_NOHANDLE);																												ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "void set_localPosition(const Vector3& in) property", asMETHODPR(Transform, SetLocalPosition, (const Vector3&), void), asCALL_THISCALL);		ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "const Vector3& get_localPosition() const property", asMETHODPR(Transform, GetLocalPosition, () const, const Vector3&), asCALL_THISCALL);	ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "void set_localRotation(const Quat& in) property", asMETHODPR(Transform, SetLocalRotation, (const Quat&), void), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "const Quat& get_localRotation() const property", asMETHODPR(Transform, GetLocalRotation, () const, const Quat&), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "void set_localScale(const Vector3& in) property", asMETHODPR(Transform, SetLocalScale, (const Vector3&), void), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "const Vector3& get_localScale() const property", asMETHODPR(Transform, GetLocalScale, () const, const Vector3&), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "void set_position(const Vector3& in) property", asMETHODPR(Transform, SetPosition, (const Vector3&), void), asCALL_THISCALL);				ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "Vector3@ get_position() const property", asFUNCTION(Transform_GetPosition), asCALL_CDECL_OBJFIRST);											ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "void set_rotation(const Quat& in) property", asMETHODPR(Transform, SetRotation, (const Quat&), void), asCALL_THISCALL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "Quat& get_rotation() const property", asFUNCTION(Transform_GetRotation), asCALL_CDECL_OBJFIRST);											ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "void set_scale(const Vector3& in) property", asMETHODPR(Transform, SetScale, (const Vector3&), void), asCALL_THISCALL);						ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Transform", "Vector3& get_scale() const property", asFUNCTION(Transform_GetScale), asCALL_CDECL_OBJFIRST);												ASSERT(result >= asSUCCESS);
 
 	// Component
-	engine->RegisterEnum("EComponent");
-	engine->RegisterInterface("Component");
-	engine->RegisterObjectMethod("Component", "bool get_enabled() const", asMETHODPR(Component, IsEnabled, () const, bool), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Component", "void set_enabled(bool)", asMETHODPR(Component, SetEnabled, (bool), void), asCALL_THISCALL);
-	engine->RegisterObjectType("Object", 0, asOBJ_REF | asOBJ_NOCOUNT);
-	engine->RegisterInterfaceMethod("Component", "Object@ get_object()");
+	result = engine->RegisterEnum("EComponent");																													ASSERT(result >= asSUCCESS);
+	result = engine->RegisterInterface("Component");																												ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Component", "bool get_enabled() const property", asMETHODPR(Component, IsEnabled, () const, bool), asCALL_THISCALL);		ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Component", "void set_enabled(bool) property", asMETHODPR(Component, SetEnabled, (bool), void), asCALL_THISCALL);		ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectType("Object", 0, asOBJ_REF | asOBJ_NOCOUNT);																					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterInterfaceMethod("Component", "Object& get_object() const property");																	ASSERT(result >= asSUCCESS);
 
 	// Object
-	engine->RegisterObjectMethod("Object", "string GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);
-	engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "bool IsActiveSelf() const", asMETHODPR(Object, IsActiveSelf, () const, bool), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "bool IsActiveInHierarchy() const", asMETHODPR(Object, IsActiveInHierarchy, () const, bool), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "void RemoveComponent(Component@)", asMETHODPR(Object, RemoveComponent, (const Component*), void), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponent) const", asMETHODPR(Object, GetComponentByTypeId, (int) const, Component*), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "Transform& get_transform() const", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);
-	engine->RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHODPR(Object, GetParent, () const, Object*), asCALL_THISCALL);
+	result = engine->RegisterObjectMethod("Object", "string GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);																ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Object", "bool IsActiveSelf() const", asMETHODPR(Object, IsActiveSelf, () const, bool), asCALL_THISCALL);													ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Object", "bool IsActiveInHierarchy() const", asMETHODPR(Object, IsActiveInHierarchy, () const, bool), asCALL_THISCALL);										ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Object", "void RemoveComponent(Component@)", asMETHODPR(Object, RemoveComponent, (const Component*), void), asCALL_THISCALL);								ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponent) const", asMETHODPR(Object, GetComponentByTypeId, (int) const, Component*), asCALL_THISCALL);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Object", "Transform& get_transform() const property", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);								ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHODPR(Object, GetParent, () const, Object*), asCALL_THISCALL);													ASSERT(result >= asSUCCESS);
 
 	// Timer
-	engine->RegisterObjectType("ITimer", 0, asOBJ_REF | asOBJ_NOHANDLE);
-	engine->RegisterGlobalProperty("ITimer Timer", const_cast<Timer*>(Modules::Application->GetTimer()));
-	engine->RegisterObjectMethod("ITimer", "uint64 GetTimeMicroSec() const", asMETHODPR(Timer, GetTimeMicroSec, () const, uint64_t), asCALL_THISCALL);
-	engine->RegisterObjectMethod("ITimer", "uint GetTimeMilliSec() const", asMETHODPR(Timer, GetTimeMilliSec, () const, uint32_t), asCALL_THISCALL);
-	engine->RegisterObjectMethod("ITimer", "float GetTimeSec() const", asMETHODPR(Timer, GetTimeSec, () const, float), asCALL_THISCALL);
-	engine->RegisterObjectMethod("ITimer", "uint64 GetMicroDelta() const", asMETHODPR(Timer, GetMicroDelta, () const, uint64_t), asCALL_THISCALL);
-	engine->RegisterObjectMethod("ITimer", "uint GetMilliDelta() const", asMETHODPR(Timer, GetMilliDelta, () const, uint32_t), asCALL_THISCALL);
-	engine->RegisterObjectMethod("ITimer", "float GetSecDelta() const", asMETHODPR(Timer, GetSecDelta, () const, float), asCALL_THISCALL);
+	result = engine->RegisterObjectType("ITimer", 0, asOBJ_REF | asOBJ_NOHANDLE);																					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalProperty("ITimer Timer", const_cast<Timer*>(Modules::Application->GetTimer()));													ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ITimer", "uint64 GetTimeMicroSec() const", asMETHODPR(Timer, GetTimeMicroSec, () const, uint64_t), asCALL_THISCALL);		ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ITimer", "uint GetTimeMilliSec() const", asMETHODPR(Timer, GetTimeMilliSec, () const, uint32_t), asCALL_THISCALL);		ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ITimer", "float GetTimeSec() const", asMETHODPR(Timer, GetTimeSec, () const, float), asCALL_THISCALL);					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ITimer", "uint64 GetMicroDelta() const", asMETHODPR(Timer, GetMicroDelta, () const, uint64_t), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ITimer", "uint GetMilliDelta() const", asMETHODPR(Timer, GetMilliDelta, () const, uint32_t), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("ITimer", "float GetSecDelta() const", asMETHODPR(Timer, GetSecDelta, () const, float), asCALL_THISCALL);					ASSERT(result >= asSUCCESS);
 }
