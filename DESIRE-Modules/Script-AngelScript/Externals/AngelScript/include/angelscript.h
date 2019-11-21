@@ -1,6 +1,6 @@
 /*
    AngelCode Scripting Library
-   Copyright (c) 2003-2018 Andreas Jonsson
+   Copyright (c) 2003-2019 Andreas Jonsson
 
    This software is provided 'as-is', without any express or implied
    warranty. In no event will the authors be held liable for any
@@ -58,8 +58,8 @@ BEGIN_AS_NAMESPACE
 
 // AngelScript version
 
-#define ANGELSCRIPT_VERSION        23300
-#define ANGELSCRIPT_VERSION_STRING "2.33.0"
+#define ANGELSCRIPT_VERSION        23500
+#define ANGELSCRIPT_VERSION_STRING "2.35.0 WIP"
 
 // Data types
 
@@ -1015,7 +1015,7 @@ public:
 
 	// Miscellaneous
 	virtual asIScriptEngine *GetEngine() const = 0;
-	virtual int              CopyFrom(asIScriptObject *other) = 0;
+	virtual int              CopyFrom(const asIScriptObject *other) = 0;
 
 	// User data
 	virtual void *SetUserData(void *data, asPWORD type = 0) = 0;
@@ -1130,6 +1130,7 @@ public:
 	virtual bool             IsOverride() const = 0;
 	virtual bool             IsShared() const = 0;
 	virtual bool             IsExplicit() const = 0;
+	virtual bool             IsProperty() const = 0;
 	virtual asUINT           GetParamCount() const = 0;
 	virtual int              GetParam(asUINT index, int *typeId, asDWORD *flags = 0, const char **name = 0, const char **defaultArg = 0) const = 0;
 	virtual int              GetReturnTypeId(asDWORD *flags = 0) const = 0;
