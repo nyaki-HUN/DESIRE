@@ -21,7 +21,7 @@ LuaScriptComponent::~LuaScriptComponent()
 
 void LuaScriptComponent::CallByType(EBuiltinFuncType funcType)
 {
-	const char* functionNames[] =
+	const String functionNames[] =
 	{
 		"Update",
 		"Init",
@@ -36,9 +36,10 @@ int LuaScriptComponent::CallFromScript(lua_State* from_L)
 {
 	// argCount is the number of arguments to call the script function with (-2 because we need to exclude the instance and the function name)
 	const int argCount = lua_gettop(from_L) - 2;
-	const char* functionName = lua_tostring(from_L, -1 - argCount);
+	size_t size = 0;
+	const char* functionName = lua_tolstring(from_L, -1 - argCount, &size);
 
-	if(PrepareFunctionCall(functionName))
+	if(PrepareFunctionCall(String(functionName, size)))
 	{
 		// Push the args
 		const int argIdxOffsetFromTop = -argCount - 1;	// -1 because the function is pushed in PrepareFunctionCall()
@@ -62,11 +63,9 @@ int LuaScriptComponent::CallFromScript(lua_State* from_L)
 	return 0;
 }
 
-bool LuaScriptComponent::PrepareFunctionCall(const char* functionName)
+bool LuaScriptComponent::PrepareFunctionCall(const String& functionName)
 {
-	ASSERT(functionName != nullptr);
-
-	lua_getglobal(L, functionName);
+	lua_getglobal(L, functionName.Str());
 	if(!lua_isfunction(L, -1))
 	{
 		lua_pop(L, 1);

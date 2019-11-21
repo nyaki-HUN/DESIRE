@@ -63,10 +63,11 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 	SquirrelScriptComponent* scriptComp = Sqrat::Var<SquirrelScriptComponent*>(vm, -2 - argCount).value;
 	ASSERT(vm == scriptComp->vm);
 
-	const char* functionName = nullptr;
-	sq_getstring(vm, -1 - argCount, &functionName);
+	const SQChar* functionName = nullptr;
+	SQInteger size = 0;
+	sq_getstringandsize(vm, -1 - argCount, &functionName, &size);
 
-	if(scriptComp->PrepareFunctionCall(functionName))
+	if(scriptComp->PrepareFunctionCall(String(functionName, size)))
 	{
 		// Push the args
 		const SQInteger argIdxOffsetFromTop = -argCount - 3;	// -3 because the object, the function and the 'this' parameter are pushed in PrepareFunctionCall()
@@ -82,15 +83,13 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 	return 0;
 }
 
-bool SquirrelScriptComponent::PrepareFunctionCall(const char* functionName)
+bool SquirrelScriptComponent::PrepareFunctionCall(const String& functionName)
 {
-	ASSERT(functionName != nullptr);
-
 	// Save the stack size before the call
 	savedStackTop = sq_gettop(vm);
 
 	sq_pushobject(vm, scriptObject);
-	sq_pushstring(vm, functionName, -1);
+	sq_pushstring(vm, functionName.Str(), functionName.Length());
 	if(SQ_FAILED(sq_get(vm, -2)))
 	{
 		sq_settop(vm, savedStackTop);

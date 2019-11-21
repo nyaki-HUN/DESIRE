@@ -15,7 +15,7 @@ public:
 	int CallFromScript(lua_State* from_L);
 
 private:
-	bool PrepareFunctionCall(const char* functionName) override;
+	bool PrepareFunctionCall(const String& functionName) override;
 	void ExecuteFunctionCall() override;
 
 	bool AddFunctionCallArg(int arg) override;

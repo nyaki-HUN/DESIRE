@@ -12,7 +12,7 @@ public:
 	void CallByType(EBuiltinFuncType funcType) override;
 
 private:
-	bool PrepareFunctionCall(const char *functionName) override;
+	bool PrepareFunctionCall(const String& functionName) override;
 	void ExecuteFunctionCall() override;
 
 	bool AddFunctionCallArg(int arg) override;

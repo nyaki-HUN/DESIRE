@@ -14,12 +14,10 @@ extern asIStringFactory* GetStdStringFactorySingleton();
 AngelScriptComponent::AngelScriptComponent(Object& object)
 	: ScriptComponent(object)
 {
-
 }
 
 AngelScriptComponent::~AngelScriptComponent()
 {
-
 }
 
 void AngelScriptComponent::CallByType(EBuiltinFuncType funcType)
@@ -52,7 +50,7 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric* gen)
 		return;
 	}
 
-	if(scriptComp->PrepareFunctionCall(functionName->Str()))
+	if(scriptComp->PrepareFunctionCall(*functionName))
 	{
 		// Set the args
 		for(asUINT i = 1; i < (asUINT)gen->GetArgCount(); ++i)
@@ -115,12 +113,10 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric* gen)
 	}
 }
 
-bool AngelScriptComponent::PrepareFunctionCall(const char* functionName)
+bool AngelScriptComponent::PrepareFunctionCall(const String& functionName)
 {
-	ASSERT(functionName != nullptr);
-
 	const asITypeInfo* typeInfo = scriptObject->GetObjectType();
-	asIScriptFunction* func = typeInfo->GetMethodByName(functionName);
+	asIScriptFunction* func = typeInfo->GetMethodByName(functionName.Str());
 	if(func == nullptr)
 	{
 		return false;

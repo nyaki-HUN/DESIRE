@@ -18,7 +18,7 @@ public:
 	HSQOBJECT builtinFunctions[(size_t)EBuiltinFuncType::Num];
 
 private:
-	bool PrepareFunctionCall(const char* functionName) override;
+	bool PrepareFunctionCall(const String& functionName) override;
 	void ExecuteFunctionCall() override;
 
 	bool AddFunctionCallArg(int arg) override;

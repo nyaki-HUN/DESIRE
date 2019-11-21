@@ -12,7 +12,6 @@ NativeScriptComponent::NativeScriptComponent(Object& object, std::unique_ptr<ISc
 
 NativeScriptComponent::~NativeScriptComponent()
 {
-
 }
 
 void NativeScriptComponent::CallByType(EBuiltinFuncType funcType)
@@ -26,7 +25,7 @@ void NativeScriptComponent::CallByType(EBuiltinFuncType funcType)
 	};
 }
 
-bool NativeScriptComponent::PrepareFunctionCall(const char* functionName)
+bool NativeScriptComponent::PrepareFunctionCall(const String& functionName)
 {
 	functionToCall = script->GetFunctionToCall(functionName);
 	if(functionToCall == nullptr)

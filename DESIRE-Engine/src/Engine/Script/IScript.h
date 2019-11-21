@@ -4,6 +4,7 @@
 #include <array>
 
 class ScriptComponent;
+class String;
 
 class IScript
 {
@@ -43,7 +44,7 @@ public:
 	virtual void Kill() = 0;
 	virtual void Update() = 0;
 
-	virtual std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const char* functionName) = 0;
+	virtual std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const String& functionName) = 0;
 
 protected:
 	ScriptComponent* self = nullptr;
