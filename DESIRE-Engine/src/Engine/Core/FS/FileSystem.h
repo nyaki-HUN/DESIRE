@@ -23,16 +23,16 @@ public:
 
 	// Opens a file for reading
 	ReadFilePtr Open(const String& filename);
+	ReadFilePtr OpenNative(const String& filename);
 
 	// Creates a file for writing
-	WriteFilePtr CreateWriteFile(const String& filename);
+	WriteFilePtr CreateWriteFileNative(const String& filename);
 
 	void AddFileSource(std::unique_ptr<IFileSource> fileSource);
 
 	const String& GetAppDirectory() const;
 
 private:
-	ReadFilePtr OpenNative(const String& filename);
 	void Setup();
 
 	Array<std::unique_ptr<IFileSource>> fileSources;

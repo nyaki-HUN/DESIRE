@@ -13,7 +13,10 @@ void ConsoleOutputPolicy::Process(const Log::LogData& logData)
 
 FileOutputPolicy::FileOutputPolicy()
 {
-	logFile = FileSystem::Get()->CreateWriteFile("log.txt");
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
+	filenameWithPath += "log.txt";
+
+	logFile = FileSystem::Get()->CreateWriteFileNative(filenameWithPath);
 	ASSERT(logFile != nullptr);
 }
 

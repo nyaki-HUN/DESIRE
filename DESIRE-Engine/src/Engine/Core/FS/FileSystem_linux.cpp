@@ -104,7 +104,7 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 	return std::make_unique<LINUXFile>(fileDesc, fileStat.st_size, filename);
 }
 
-WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
+WriteFilePtr FileSystem::CreateWriteFileNative(const String& filename)
 {
 	// 0644 - RW for owner, R for group and others
 	int fileDesc = creat64(filename.Str(), 0644);

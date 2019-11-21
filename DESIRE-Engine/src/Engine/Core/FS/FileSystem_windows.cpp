@@ -109,7 +109,7 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 	return std::make_unique<WINDOWSFile>(hFile, finfo.EndOfFile.QuadPart, filename);
 }
 
-WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
+WriteFilePtr FileSystem::CreateWriteFileNative(const String& filename)
 {
 	HANDLE hFile = CreateFileA(filename.Str(), GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if(hFile == INVALID_HANDLE_VALUE)
@@ -123,24 +123,18 @@ WriteFilePtr FileSystem::CreateWriteFile(const String& filename)
 
 void FileSystem::Setup()
 {
-	char exePath[DESIRE_MAX_PATH_LEN] = {};
+	char moduleFilename[DESIRE_MAX_PATH_LEN] = {};
+	const DWORD len = GetModuleFileNameA(NULL, moduleFilename, DESIRE_MAX_PATH_LEN);
 
-	const DWORD len = GetModuleFileNameA(NULL, exePath, DESIRE_MAX_PATH_LEN);
-	if(len > 0 && len < DESIRE_MAX_PATH_LEN)
+	char exeFilenameWithPath[DESIRE_MAX_PATH_LEN] = {};
+	char* fileNameBegin = nullptr;
+	GetFullPathNameA(moduleFilename, DESIRE_MAX_PATH_LEN, exeFilenameWithPath, &fileNameBegin);
+	if(fileNameBegin != nullptr)
 	{
-		char* slash = std::strrchr(exePath, '\\');
-		if(slash != nullptr)
-		{
-			slash++;
-			*slash = '\0';
-		}
-	}
-	else
-	{
-		exePath[0] = '\0';
+		*fileNameBegin = '\0';
 	}
 
-	appDir = DynamicString(exePath, strlen(exePath));
+	appDir = DynamicString(exeFilenameWithPath, strlen(exeFilenameWithPath));
 }
 
 #endif	// #if DESIRE_PLATFORM_WINDOWS
