@@ -305,6 +305,8 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine* engine)
 	// Object
 	engine->RegisterObjectMethod("Object", "string GetObjectName() const", asFUNCTION((AngelScriptGenericAPI<Object>::MakeStringRvFromMemberFunc<&Object::GetObjectName>)), asCALL_GENERIC);
 	engine->RegisterObjectMethod("Object", "void SetActive(bool)", asMETHODPR(Object, SetActive, (bool), void), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "bool IsActiveSelf() const", asMETHODPR(Object, IsActiveSelf, () const, bool), asCALL_THISCALL);
+	engine->RegisterObjectMethod("Object", "bool IsActiveInHierarchy() const", asMETHODPR(Object, IsActiveInHierarchy, () const, bool), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "void RemoveComponent(Component@)", asMETHODPR(Object, RemoveComponent, (const Component*), void), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Component@ GetComponent(EComponent) const", asMETHODPR(Object, GetComponentByTypeId, (int) const, Component*), asCALL_THISCALL);
 	engine->RegisterObjectMethod("Object", "Transform& get_transform() const", asMETHODPR(Object, GetTransform, () const, Transform&), asCALL_THISCALL);

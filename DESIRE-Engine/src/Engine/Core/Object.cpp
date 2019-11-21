@@ -48,9 +48,25 @@ void Object::SetActive(bool active)
 	isActive = active;
 }
 
-bool Object::IsActive() const
+bool Object::IsActiveSelf() const
 {
 	return isActive;
+}
+
+bool Object::IsActiveInHierarchy() const
+{
+	const Object* otmp = this;
+	while(otmp != nullptr)
+	{
+		if(!otmp->IsActiveSelf())
+		{
+			return false;
+		}
+
+		otmp = otmp->parent;
+	}
+
+	return true;
 }
 
 void Object::SetParent(Object* newParent)
@@ -119,11 +135,37 @@ void Object::SetParent(Object* newParent)
 	MarkAllChildrenTransformDirty();
 }
 
+Object* Object::GetParent() const
+{
+	return parent;
+}
+
 Object* Object::CreateChildObject(const String& name)
 {
 	Object* obj = new Object(name);
 	obj->SetParent(this);
 	return obj;
+}
+
+const Array<Object*>& Object::GetChildren() const
+{
+	return children;
+}
+
+bool Object::HasObjectInParentHierarchy(const Object* obj) const
+{
+	const Object* otmp = parent;
+	while(otmp != nullptr)
+	{
+		if(otmp == obj)
+		{
+			return true;
+		}
+
+		otmp = otmp->parent;
+	}
+
+	return false;
 }
 
 void Object::RemoveComponent(const Component* component)
@@ -157,32 +199,6 @@ const Array<std::unique_ptr<Component>>& Object::GetComponents() const
 Transform& Object::GetTransform() const
 {
 	return *transform;
-}
-
-Object* Object::GetParent() const
-{
-	return parent;
-}
-
-const Array<Object*>& Object::GetChildren() const
-{
-	return children;
-}
-
-bool Object::HasObjectInParentHierarchy(const Object* obj) const
-{
-	const Object* otmp = parent;
-	while(otmp != nullptr)
-	{
-		if(otmp == obj)
-		{
-			return true;
-		}
-
-		otmp = otmp->parent;
-	}
-
-	return false;
 }
 
 void Object::MarkAllChildrenTransformDirty()

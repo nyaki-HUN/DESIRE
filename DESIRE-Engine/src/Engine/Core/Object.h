@@ -14,14 +14,19 @@ public:
 	Object(const String& name = "Object");
 	~Object();
 
-	const String& GetObjectName() const;
 	void SetObjectName(const String& name);
+	const String& GetObjectName() const;
 
 	void SetActive(bool active);
-	bool IsActive() const;
+	bool IsActiveSelf() const;
+	bool IsActiveInHierarchy() const;
 
 	void SetParent(Object* newParent);
+	Object* GetParent() const;
+
 	Object* CreateChildObject(const String& name);
+	const Array<Object*>& GetChildren() const;
+	bool HasObjectInParentHierarchy(const Object* obj) const;
 
 	template<class T, class... Args>
 	T& AddComponent(Args&&... args)
@@ -46,9 +51,6 @@ public:
 	const Array<std::unique_ptr<Component>>& GetComponents() const;
 
 	Transform& GetTransform() const;
-	Object* GetParent() const;
-	const Array<Object*>& GetChildren() const;
-	bool HasObjectInParentHierarchy(const Object* obj) const;
 
 	void MarkAllChildrenTransformDirty();
 
