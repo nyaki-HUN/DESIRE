@@ -26,6 +26,7 @@ void PhysicsComponent::CloneTo(Object& otherObject) const
 	otherComponent.SetMass(GetMass());
 	otherComponent.SetLinearDamping(GetLinearDamping());
 	otherComponent.SetAngularDamping(GetAngularDamping());
+	otherComponent.SetEnabled(IsEnabled());
 }
 
 void PhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)

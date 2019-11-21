@@ -1,17 +1,28 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/RenderComponent.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/math/AABB.h"
 
 RenderComponent::RenderComponent(Object& object)
 	: Component(object)
 	, aabb(std::make_unique<AABB>())
 {
-
 }
 
 RenderComponent::~RenderComponent()
 {
+}
 
+void RenderComponent::CloneTo(Object& otherObject) const
+{
+	RenderComponent& otherComponent = otherObject.AddComponent<RenderComponent>();
+	DESIRE_TODO("Implement CloneTo");
+//	otherComponent.mesh =
+//	otherComponent.material =
+//	otherComponent.aabb =
+	otherComponent.renderLayer = renderLayer;
+	otherComponent.isVisible = isVisible;
+	otherComponent.SetEnabled(IsEnabled());
 }
 
 void RenderComponent::SetLayer(int layer)
@@ -34,9 +45,9 @@ bool RenderComponent::IsVisible() const
 	return isVisible;
 }
 
-void RenderComponent::SetMaterial(Material* i_material)
+void RenderComponent::SetMaterial(Material* newMaterial)
 {
-	material = i_material;
+	material = newMaterial;
 }
 
 Material* RenderComponent::GetMaterial() const

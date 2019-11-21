@@ -16,6 +16,7 @@ ScriptComponent::~ScriptComponent()
 void ScriptComponent::CloneTo(Object& otherObject) const
 {
 	DESIRE_UNUSED(otherObject);
-	DESIRE_TODO("Implement");
+	DESIRE_TODO("Implement CloneTo");
 //	Modules::ScriptSystem->CreateScriptComponentOnObject(otherObject, );
+//	otherComponent.SetEnabled(IsEnabled());
 }

@@ -14,6 +14,8 @@ public:
 	RenderComponent(Object& object);
 	~RenderComponent() override;
 
+	void CloneTo(Object& otherObject) const override;
+
 	void SetLayer(int layer);
 	int GetLayer() const;
 
