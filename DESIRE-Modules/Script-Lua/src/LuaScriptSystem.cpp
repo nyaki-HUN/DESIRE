@@ -80,7 +80,7 @@ void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 	}
 
 	MemoryBuffer content = file->ReadFileContent();
-	luaL_loadbuffer(L, content.data, content.size, scriptName.Str());
+	luaL_loadbuffer(L, content.data, content.size - 1, scriptName.Str());
 	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
 	ASSERT(statusCode == LUA_OK);
 }

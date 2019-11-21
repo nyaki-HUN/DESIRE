@@ -139,7 +139,7 @@ void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM v
 		"	self = null;"
 		"	constructor(component) { self = component; }"
 		, scriptName.Str());
-	scriptSrc.Append(content.data, content.size);
+	scriptSrc.Append(content.data, content.size - 1);
 	scriptSrc += "}";
 
 	SQRESULT result = sq_compilebuffer(vm, scriptSrc.Str(), (SQInteger)scriptSrc.Length(), scriptName.Str(), SQTrue);
