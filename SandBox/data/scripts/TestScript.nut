@@ -53,7 +53,7 @@ function TestCallFromOtherScript(caller)
 
 function TestCallFromOtherScript2(arg1, arg2)
 {
-	print("TestCallFromOtherScript called with: " + arg1 + ", " + arg2);
+	print("TestCallFromOtherScript2 called with: " + arg1 + ", " + arg2);
 }
 
 function Function1()

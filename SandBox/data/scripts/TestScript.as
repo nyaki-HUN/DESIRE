@@ -53,7 +53,7 @@ void TestCallFromOtherScript(ScriptComponent@ caller)
 
 void TestCallFromOtherScript2(int arg1, float arg2)
 {
-	print("TestCallFromOtherScript called with: " + arg1 + ", " + arg2);
+	print("TestCallFromOtherScript2 called with: " + arg1 + ", " + arg2);
 }
 
 void Function1()

@@ -45,7 +45,7 @@ function TestCallFromOtherScript(caller)
 end
 
 function TestCallFromOtherScript2(arg1, arg2)
-	print("TestCallFromOtherScript called with: ", arg1, ", ", arg2);
+	print("TestCallFromOtherScript2 called with: ", arg1, ", ", arg2);
 end
 
 function Function1()
