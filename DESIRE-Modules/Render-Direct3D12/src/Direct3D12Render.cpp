@@ -756,6 +756,8 @@ void Direct3D12Render::SetFragmentShader(Shader* fragmentShader)
 
 void Direct3D12Render::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode filterMode, EAddressMode addressMode)
 {
+	DESIRE_UNUSED(samplerIdx);
+
 	ASSERT(samplerIdx < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
 //	TextureRenderDataD3D12* renderData = static_cast<TextureRenderDataD3D12*>(texture->renderData);
