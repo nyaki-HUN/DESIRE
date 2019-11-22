@@ -201,9 +201,9 @@ TEST_CASE("WritableString", "[Core]")
 		string.ToLower();
 		CHECK(string.Equals("string asd"));
 
-		DynamicString s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		DynamicString s = "123 ABCDEFGHIJKLMNOPQRSTUVWXYZ !@#";
 		s.ToLower();
-		CHECK(s.Equals("abcdefghijklmnopqrstuvwxyz"));
+		CHECK(s.Equals("123 abcdefghijklmnopqrstuvwxyz !@#"));
 	}
 
 	SECTION("ToUpper()")
@@ -211,9 +211,9 @@ TEST_CASE("WritableString", "[Core]")
 		string.ToUpper();
 		CHECK(string.Equals("STRING ASD"));
 
-		DynamicString s = "abcdefghijklmnopqrstuvwxyz";
+		DynamicString s = "123 abcdefghijklmnopqrstuvwxyz !@#";
 		s.ToUpper();
-		CHECK(s.Equals("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+		CHECK(s.Equals("123 ABCDEFGHIJKLMNOPQRSTUVWXYZ !@#"));
 	}
 
 	SECTION("Sprintf()")

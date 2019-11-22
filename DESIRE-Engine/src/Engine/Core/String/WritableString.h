@@ -2,7 +2,7 @@
 
 #include "Engine/Core/String/String.h"
 
-#include <cstdarg>		// for va_list
+#include <cstdarg>		// for std::va_list
 
 class WritableString : public String
 {
@@ -64,6 +64,6 @@ public:
 protected:
 	virtual bool Reserve(size_t numChars) = 0;
 
-	void Sprintf_internal(size_t pos, const char* format, va_list args);
+	void Sprintf_internal(size_t pos, const char* format, std::va_list args);
 	void Replace_Internal(size_t pos, size_t numChars, const String& replaceTo);
 };

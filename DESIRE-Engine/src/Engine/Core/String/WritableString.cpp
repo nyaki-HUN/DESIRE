@@ -1,8 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/WritableString.h"
 
-#include <cctype>	// for std::tolower() and std::toupper()
-
 void WritableString::Assign(const char* str, size_t numChars)
 {
 	ASSERT(str != nullptr);
@@ -256,7 +254,13 @@ void WritableString::ToLower()
 	char* ch = data;
 	while(*ch != '\0')
 	{
-		*ch = (char)std::tolower(*ch);
+		constexpr uint32_t rangeBegin = 'A';
+		constexpr uint32_t rangeSize = 'Z' - 'A';
+		if(static_cast<uint32_t>(*ch) - rangeBegin <= rangeSize)
+		{
+			*ch |= 0b00100000;	// Add 32 by setting the 6th bit
+		}
+
 		ch++;
 	}
 }
@@ -266,14 +270,20 @@ void WritableString::ToUpper()
 	char* ch = data;
 	while(*ch != '\0')
 	{
-		*ch = (char)std::toupper(*ch);
+		constexpr uint32_t rangeBegin = 'a';
+		constexpr uint32_t rangeSize = 'z' - 'a';
+		if(static_cast<uint32_t>(*ch) - rangeBegin <= rangeSize)
+		{
+			*ch &= 0b11011111;	// Subtract 32 by clearing the 6th bit
+		}
+
 		ch++;
 	}
 }
 
 void WritableString::Sprintf(const char* format, ...)
 {
-	va_list args;
+	std::va_list args;
 	va_start(args, format);
 	Sprintf_internal(0, format, args);
 	va_end(args);
@@ -281,17 +291,17 @@ void WritableString::Sprintf(const char* format, ...)
 
 void WritableString::SprintfAppend(const char* format, ...)
 {
-	va_list args;
+	std::va_list args;
 	va_start(args, format);
 	Sprintf_internal(size, format, args);
 	va_end(args);
 }
 
-void WritableString::Sprintf_internal(size_t pos, const char* format, va_list args)
+void WritableString::Sprintf_internal(size_t pos, const char* format, std::va_list args)
 {
 	ASSERT(format != nullptr);
 
-	va_list argsCopy;
+	std::va_list argsCopy;
 	va_copy(argsCopy, args);
 	const int requiredSize = vsnprintf(nullptr, 0, format, argsCopy);
 	va_end(argsCopy);
