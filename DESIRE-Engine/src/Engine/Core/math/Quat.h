@@ -70,7 +70,12 @@ public:
 		); 
 	}
 
-	inline Vector3 RotateVec(const Vector3& vec) const;
+	// Rotate a 3-D vector with this unit-length quaternion
+	inline Vector3 RotateVec(const Vector3& vec) const
+	{
+		const Vector3 t = SIMD::Mul(SIMD::Cross(*this, vec), 2.0f);
+		return SIMD::MulAdd(SIMD::Swizzle_WWWW(*this), t, vec + SIMD::Cross(*this, t));
+	}
 
 	inline void Normalize()									{ *this = Normalized(); }
 	inline Quat Normalized() const							{ return SIMD::Mul(*this, SIMD::InvSqrt(SIMD::Dot4(*this, *this))); }
@@ -164,41 +169,6 @@ inline Quat Quat::Conjugate() const
 	return SIMD::SetW(SIMD::Negate(*this), GetW());
 #else
 	return Quat(-GetX(), -GetY(), -GetZ(), GetW());
-#endif
-}
-
-// Rotate a 3-D vector with this unit-length quaternion
-inline Vector3 Quat::RotateVec(const Vector3& vec) const
-{
-#if defined(DESIRE_USE_SSE)
-	const __m128 tmp0 = SIMD::Swizzle_YZXW(*this);
-	__m128 tmp1 = SIMD::Swizzle_ZXYW(vec);
-	const __m128 tmp2 = SIMD::Swizzle_ZXYW(*this);
-	__m128 tmp3 = SIMD::Swizzle_YZXW(vec);
-	const __m128 wwww = SIMD::Swizzle_WWWW(*this);
-	__m128 qv = SIMD::Mul(wwww, vec);
-	qv = SIMD::MulAdd(tmp0, tmp1, qv);
-	qv = SIMD::MulSub(tmp2, tmp3, qv);
-	const __m128 product = SIMD::Mul(*this, vec);
-	__m128 qw = SIMD::MulAdd(_mm_ror_ps(*this, 1), _mm_ror_ps(vec, 1), product);
-	qw = SIMD::Add(_mm_ror_ps(product, 2), qw);
-	tmp1 = SIMD::Swizzle_ZXYW(qv);
-	tmp3 = SIMD::Swizzle_YZXW(qv);
-	__m128 res = SIMD::Mul(SIMD::Swizzle_XXXX(qw), *this);
-	res = SIMD::MulAdd(wwww, qv, res);
-	res = SIMD::MulAdd(tmp0, tmp1, res);
-	res = SIMD::MulSub(tmp2, tmp3, res);
-	return res;
-#else
-	const float tmpX = GetW() * vec.GetX()  +  GetY() * vec.GetZ()  -  GetZ() * vec.GetY();
-	const float tmpY = GetW() * vec.GetY()  +  GetZ() * vec.GetX()  -  GetX() * vec.GetZ();
-	const float tmpZ = GetW() * vec.GetZ()  +  GetX() * vec.GetY()  -  GetY() * vec.GetX();
-	const float tmpW = GetX() * vec.GetX()  +  GetY() * vec.GetY()  +  GetZ() * vec.GetZ();
-	return Vector3(
-		tmpW * GetX()  +  tmpX * GetW()  -  tmpY * GetZ()  +  tmpZ * GetY(),
-		tmpW * GetY()  +  tmpY * GetW()  -  tmpZ * GetX()  +  tmpX * GetZ(),
-		tmpW * GetZ()  +  tmpZ * GetW()  -  tmpX * GetY()  +  tmpY * GetX()
-	);
 #endif
 }
 

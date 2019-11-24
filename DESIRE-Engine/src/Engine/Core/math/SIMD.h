@@ -564,8 +564,7 @@ public:
 		return SIMD::Construct(
 			SIMD::GetY(a) * SIMD::GetZ(b) - SIMD::GetZ(a) * SIMD::GetY(b),
 			SIMD::GetZ(a) * SIMD::GetX(b) - SIMD::GetX(a) * SIMD::GetZ(b),
-			SIMD::GetX(a) * SIMD::GetY(b) - SIMD::GetY(a) * SIMD::GetX(b),
-			0.0f
+			SIMD::GetX(a) * SIMD::GetY(b) - SIMD::GetY(a) * SIMD::GetX(b)
 		);
 #endif
 	}
