@@ -32,8 +32,7 @@ public:
 	virtual void CloneTo(Object& otherObject) const = 0;
 	virtual int GetTypeId() const = 0;
 
-	virtual EditorComponent*		AsEditorComponent()			{ return nullptr; }
-	virtual const EditorComponent*	AsEditorComponent() const	{ return nullptr; }
+	virtual EditorComponent* AsEditorComponent() { return nullptr; }
 
 protected:
 	Object& object;
