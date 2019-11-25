@@ -5,12 +5,10 @@
 Component::Component(Object& object)
 	: object(object)
 {
-
 }
 
 Component::~Component()
 {
-
 }
 
 void Component::Destroy()
