@@ -11,6 +11,7 @@ public:																\
 	static constexpr int kTypeId = MakeFourCC(STR_ID);				\
 	int GetTypeId() const override final { return kTypeId; }
 
+class EditorComponent;
 class Object;
 
 class Component
@@ -21,15 +22,18 @@ protected:
 public:
 	virtual ~Component();
 
-	void Destroy() const;
+	void Destroy();
 
 	virtual void SetEnabled(bool value);
 	bool IsEnabled() const;
 
+	Object& GetObject() const;
+
 	virtual void CloneTo(Object& otherObject) const = 0;
 	virtual int GetTypeId() const = 0;
 
-	Object& GetObject() const;
+	virtual EditorComponent*		AsEditorComponent()			{ return nullptr; }
+	virtual const EditorComponent*	AsEditorComponent() const	{ return nullptr; }
 
 protected:
 	Object& object;

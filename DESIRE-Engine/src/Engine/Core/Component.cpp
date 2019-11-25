@@ -13,7 +13,7 @@ Component::~Component()
 
 }
 
-void Component::Destroy() const
+void Component::Destroy()
 {
 	object.RemoveComponent(this);
 }
