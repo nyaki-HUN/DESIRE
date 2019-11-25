@@ -38,7 +38,7 @@ public:
 	{
 		StackString<STACK_SIZE> string;
 
-		va_list args;
+		std::va_list args;
 		va_start(args, format);
 		string.Sprintf_internal(0, format, args);
 		va_end(args);
