@@ -12,8 +12,7 @@ public:
 
 	template<size_t SIZE>
 	String(const char(&str)[SIZE])
-		: data(const_cast<char*>(str))
-		, size(SIZE - 1)
+		: String(str, SIZE - 1)
 	{
 	}
 

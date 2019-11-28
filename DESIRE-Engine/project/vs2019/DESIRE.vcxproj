@@ -241,7 +241,6 @@
     <ClInclude Include="..\..\src\Engine\Utils\Enumerator.h" />
     <ClInclude Include="..\..\src\Engine\Utils\GuardedCallbackFactory.h" />
     <ClInclude Include="..\..\src\Engine\Utils\JsonDataTranslator.h" />
-    <ClInclude Include="..\..\src\Engine\Utils\StrUtils.h" />
     <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h" />
     <ClInclude Include="..\..\src\Engine\Utils\stl_utils.h" />
     <ClInclude Include="..\..\src\Engine\stdafx.h" />
@@ -334,7 +333,6 @@
     <ClCompile Include="..\..\src\Engine\Script\ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Sound\SoundSystem.cpp" />
-    <ClCompile Include="..\..\src\Engine\Utils\StrUtils.cpp" />
     <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp" />
     <ClCompile Include="..\..\src\Engine\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
