@@ -97,6 +97,9 @@
     <Filter Include="src\Engine\Utils">
       <UniqueIdentifier>{F2A765A9-DEA0-84FB-07D3-6980F32A6407}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Utils\Json">
+      <UniqueIdentifier>{DB7A0316-47E7-BE10-10DB-566E7C06E178}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\allocators.h">
@@ -498,7 +501,19 @@
     <ClInclude Include="..\..\src\Engine\Utils\GuardedCallbackFactory.h">
       <Filter>src\Engine\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Utils\JsonDataTranslator.h">
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonDataTranslator.h">
+      <Filter>src\Engine\Utils\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonObjectIterator.h">
+      <Filter>src\Engine\Utils\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonReader.h">
+      <Filter>src\Engine\Utils\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonWriter.h">
+      <Filter>src\Engine\Utils\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Utils\JsonReader.h">
       <Filter>src\Engine\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h">
@@ -772,6 +787,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Sound\SoundSystem.cpp">
       <Filter>src\Engine\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Utils\Json\JsonObjectIterator.cpp">
+      <Filter>src\Engine\Utils\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Utils\Json\JsonReader.cpp">
+      <Filter>src\Engine\Utils\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Utils\Json\JsonWriter.cpp">
+      <Filter>src\Engine\Utils\Json</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp">
       <Filter>src\Engine\Utils</Filter>

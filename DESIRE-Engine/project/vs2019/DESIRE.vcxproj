@@ -240,7 +240,11 @@
     <ClInclude Include="..\..\src\Engine\Sound\SoundSystem.h" />
     <ClInclude Include="..\..\src\Engine\Utils\Enumerator.h" />
     <ClInclude Include="..\..\src\Engine\Utils\GuardedCallbackFactory.h" />
-    <ClInclude Include="..\..\src\Engine\Utils\JsonDataTranslator.h" />
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonDataTranslator.h" />
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonObjectIterator.h" />
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonReader.h" />
+    <ClInclude Include="..\..\src\Engine\Utils\Json\JsonWriter.h" />
+    <ClInclude Include="..\..\src\Engine\Utils\JsonReader.h" />
     <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h" />
     <ClInclude Include="..\..\src\Engine\Utils\stl_utils.h" />
     <ClInclude Include="..\..\src\Engine\stdafx.h" />
@@ -333,6 +337,9 @@
     <ClCompile Include="..\..\src\Engine\Script\ScriptComponent.cpp" />
     <ClCompile Include="..\..\src\Engine\Script\ScriptSystem.cpp" />
     <ClCompile Include="..\..\src\Engine\Sound\SoundSystem.cpp" />
+    <ClCompile Include="..\..\src\Engine\Utils\Json\JsonObjectIterator.cpp" />
+    <ClCompile Include="..\..\src\Engine\Utils\Json\JsonReader.cpp" />
+    <ClCompile Include="..\..\src\Engine\Utils\Json\JsonWriter.cpp" />
     <ClCompile Include="..\..\src\Engine\Utils\TaskManager.cpp" />
     <ClCompile Include="..\..\src\Engine\stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
