@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/math/Vector4.h"
+#include "Engine/Core/Math/Vector4.h"
 
 #include <DirectXMath.h>
 

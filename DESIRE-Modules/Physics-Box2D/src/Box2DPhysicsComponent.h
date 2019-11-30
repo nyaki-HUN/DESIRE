@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Engine/Physics/PhysicsComponent.h"
+
 #include "Engine/Core/Container/Array.h"
-#include "Engine/Core/math/Vector2.h"
+#include "Engine/Core/Math/Vector2.h"
 
 #include "Box2D/Dynamics/b2Fixture.h"
 

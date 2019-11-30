@@ -1,14 +1,17 @@
 #include "API/AngelScriptAPI.h"
 
 #include "Engine/Modules.h"
+
 #include "Engine/Application/Application.h"
+
 #include "Engine/Core/Component.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/Timer.h"
-#include "Engine/Core/math/Matrix4.h"
-#include "Engine/Core/math/math.h"
-#include "Engine/Core/math/Rand.h"
-#include "Engine/Core/math/Transform.h"
+
+#include "Engine/Core/Math/Matrix4.h"
+#include "Engine/Core/Math/math.h"
+#include "Engine/Core/Math/Rand.h"
+#include "Engine/Core/Math/Transform.h"
 
 static Vector3* Vector3_Cross(const Vector3& vec0, const Vector3& vec1)	{ return new Vector3(vec0.Cross(vec1)); }
 static Vector3* Transform_GetPosition(const Transform& transform)		{ return new Vector3(transform.GetPosition()); }

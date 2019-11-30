@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Core/math/Vector3.h"
-#include "Engine/Core/math/Quat.h"
+#include "Engine/Core/Math/Quat.h"
+#include "Engine/Core/Math/Vector3.h"
 
 #include "foundation/PxVec3.h"
 #include "foundation/PxQuat.h"

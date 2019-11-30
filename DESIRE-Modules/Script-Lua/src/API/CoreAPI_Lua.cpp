@@ -1,14 +1,17 @@
 #include "API/LuaScriptAPI.h"
 
 #include "Engine/Modules.h"
+
 #include "Engine/Application/Application.h"
+
 #include "Engine/Core/Component.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/Timer.h"
-#include "Engine/Core/math/Matrix4.h"
-#include "Engine/Core/math/math.h"
-#include "Engine/Core/math/Rand.h"
-#include "Engine/Core/math/Transform.h"
+
+#include "Engine/Core/Math/Matrix4.h"
+#include "Engine/Core/Math/math.h"
+#include "Engine/Core/Math/Rand.h"
+#include "Engine/Core/Math/Transform.h"
 
 void RegisterVectormathFunctions_Lua(lua_State* L)
 {

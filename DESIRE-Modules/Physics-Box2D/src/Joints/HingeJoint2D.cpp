@@ -1,8 +1,8 @@
 #include "Joints/HingeJoint2D.h"
 #include "b2MathExt.h"
 
+#include "Engine/Core/Math/math.h"
 #include "Engine/Core/assert.h"
-#include "Engine/Core/math/math.h"
 
 #include "Box2D/Dynamics/b2Body.h"
 

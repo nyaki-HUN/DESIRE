@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Core/math/Vector2.h"
-#include "Engine/Core/math/Vector3.h"
+#include "Engine/Core/Math/Vector2.h"
+#include "Engine/Core/Math/Vector3.h"
 
 #include "Box2D/Common/b2Math.h"
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/math/Vector2.h"
+#include "Engine/Core/Math/Vector2.h"
 
 class Box2DPhysicsComponent;
 class b2Joint;
