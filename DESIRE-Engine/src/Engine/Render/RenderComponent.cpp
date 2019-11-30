@@ -1,7 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/RenderComponent.h"
+
+#include "Engine/Core/Math/AABB.h"
 #include "Engine/Core/Object.h"
-#include "Engine/Core/math/AABB.h"
 
 RenderComponent::RenderComponent(Object& object)
 	: Component(object)

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/math/SIMD.h"
+#include "Engine/Core/Math/SIMD.h"
 
 #include <cfloat>	// for FLT_MAX
 

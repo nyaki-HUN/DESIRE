@@ -1,6 +1,6 @@
 #include "Engine/stdafx.h"
-#include "Engine/Core/math/Transform.h"
-#include "Engine/Core/math/math.h"
+#include "Engine/Core/Math/Transform.h"
+#include "Engine/Core/Math/math.h"
 #include "Engine/Core/Object.h"
 
 Transform::Transform()

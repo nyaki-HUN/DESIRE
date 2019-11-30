@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Engine/Core/Container/Array.h"
-#include "Engine/Core/math/Vector2.h"
+#include "Engine/Core/Math/Vector2.h"
+
 #include "Engine/Input/Keyboard.h"
 #include "Engine/Input/Mouse.h"
 #include "Engine/Input/GameController.h"

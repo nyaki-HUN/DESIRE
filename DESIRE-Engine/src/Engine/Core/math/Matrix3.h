@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/math/Quat.h"
+#include "Engine/Core/Math/Quat.h"
 
 class Matrix3
 {

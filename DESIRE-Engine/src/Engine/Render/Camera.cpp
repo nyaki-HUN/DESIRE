@@ -1,6 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/Camera.h"
-#include "Engine/Core/math/math.h"
+
+#include "Engine/Core/Math/math.h"
 
 Camera::Camera()
 {

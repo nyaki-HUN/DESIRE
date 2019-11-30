@@ -2,7 +2,8 @@
 
 #include "Engine/Core/Component.h"
 #include "Engine/Core/Container/Array.h"
-#include "Engine/Core/math/Vector3.h"
+#include "Engine/Core/Math/Vector3.h"
+
 #include "Engine/Physics/PhysicsMaterial.h"
 
 #include <memory>
