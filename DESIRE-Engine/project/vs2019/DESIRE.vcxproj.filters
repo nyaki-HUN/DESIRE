@@ -52,6 +52,9 @@
     <Filter Include="src\Engine\Core\Log">
       <UniqueIdentifier>{7B9D34BE-E7FE-11CC-706C-587EDCCC488B}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Core\Math">
+      <UniqueIdentifier>{C39FC884-AF2E-524E-584D-664944BB62F4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Core\Memory">
       <UniqueIdentifier>{D254B4D9-BE4E-DD2B-A7BB-733C93544398}</UniqueIdentifier>
     </Filter>
@@ -60,9 +63,6 @@
     </Filter>
     <Filter Include="src\Engine\Core\WINDOWS">
       <UniqueIdentifier>{24B86BCE-90EF-B365-99F9-178905B0DA5E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Engine\Core\math">
-      <UniqueIdentifier>{E32BDA84-CFBA-634E-78D9-7749644774F4}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Engine\Input">
       <UniqueIdentifier>{915689A8-7D4F-A8FA-A681-8D7F92D98706}</UniqueIdentifier>
@@ -297,6 +297,39 @@
     <ClInclude Include="..\..\src\Engine\Core\Log\LoggerPolicies.h">
       <Filter>src\Engine\Core\Log</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\AABB.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Matrix3.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Matrix4.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Quat.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Rand.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\SIMD.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Transform.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Vector2.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Vector3.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\Vector4.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Engine\Core\Math\math.h">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\Memory\Allocator.h">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClInclude>
@@ -347,39 +380,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\assert.h">
       <Filter>src\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\AABB.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Matrix3.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Matrix4.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Quat.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Rand.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\SIMD.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Transform.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Vector2.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Vector3.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\Vector4.h">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Core\math\math.h">
-      <Filter>src\Engine\Core\math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Engine\Core\platform.h">
       <Filter>src\Engine\Core</Filter>
@@ -513,9 +513,6 @@
     <ClInclude Include="..\..\src\Engine\Utils\Json\JsonWriter.h">
       <Filter>src\Engine\Utils\Json</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Engine\Utils\JsonReader.h">
-      <Filter>src\Engine\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Engine\Utils\TaskManager.h">
       <Filter>src\Engine\Utils</Filter>
     </ClInclude>
@@ -617,6 +614,18 @@
     <ClCompile Include="..\..\src\Engine\Core\Log\LoggerPolicies_windows.cpp">
       <Filter>src\Engine\Core\Log</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Math\AABB.cpp">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Math\Rand.cpp">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Math\Transform.cpp">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Engine\Core\Math\math.cpp">
+      <Filter>src\Engine\Core\Math</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Memory\Allocator.cpp">
       <Filter>src\Engine\Core\Memory</Filter>
     </ClCompile>
@@ -664,18 +673,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Core\Timer.cpp">
       <Filter>src\Engine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\math\AABB.cpp">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\math\Rand.cpp">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\math\Transform.cpp">
-      <Filter>src\Engine\Core\math</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\Engine\Core\math\math.cpp">
-      <Filter>src\Engine\Core\math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Engine\Input\GameController.cpp">
       <Filter>src\Engine\Input</Filter>
