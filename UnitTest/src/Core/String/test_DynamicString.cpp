@@ -11,9 +11,6 @@ TEST_CASE("DynamicString", "[Core]")
 		DynamicString stringEmpty;
 		CHECK(stringEmpty.Equals(""));
 
-		DynamicString stringWithReservedSize(10);
-		CHECK(stringWithReservedSize.Equals(""));
-
 		// From char sequence
 		CHECK(strcmp(string.Str(), charSeq) == 0);
 		CHECK(string.Equals(charSeq));
@@ -54,6 +51,12 @@ TEST_CASE("DynamicString", "[Core]")
 //		DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
 	}
 
+	SECTION("Reset()")
+	{
+		string.Reset();
+		CHECK(string.Equals(""));
+	}
+
 	SECTION("Reserve()")
 	{
 		// TODO: Add test cases
@@ -65,9 +68,9 @@ TEST_CASE("WritableString", "[Core]")
 	const char charSeq[] = "String ASD";
 	DynamicString string = charSeq;
 
-	SECTION("Assign()")
+	SECTION("Set()")
 	{
-		string.Assign(charSeq, 4);
+		string.Set(charSeq, 4);
 		CHECK(string.Equals("Stri"));
 	}
 

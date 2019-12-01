@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/WritableString.h"
 
-void WritableString::Assign(const char* str, size_t numChars)
+void WritableString::Set(const char* str, size_t numChars)
 {
 	ASSERT(str != nullptr);
 	ASSERT(data != str);	// It's not allowed to copy from ourself

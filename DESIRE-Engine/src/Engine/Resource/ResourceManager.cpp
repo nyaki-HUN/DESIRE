@@ -41,7 +41,8 @@ std::shared_ptr<Mesh> ResourceManager::GetMesh(const String& filename)
 
 std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const String& defines)
 {
-	DynamicString shaderNameWithDefines(filename.Length() + 1 + defines.Length());
+	DynamicString shaderNameWithDefines;
+	shaderNameWithDefines.Reserve(filename.Length() + 1 + defines.Length());
 	shaderNameWithDefines += filename;
 	shaderNameWithDefines += "|";
 	shaderNameWithDefines += defines;

@@ -7,8 +7,8 @@
 class WritableString : public String
 {
 public:
-	// Assign a new value to the string, replacing its current contents
-	void Assign(const char* str, size_t numChars);
+	// Set a new value to the string, replacing its current contents
+	void Set(const char* str, size_t numChars);
 
 	// Erases the contents of the string, which becomes an empty string
 	void Clear();
