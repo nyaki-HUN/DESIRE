@@ -338,7 +338,7 @@ void OSWindow::GetClipboardString(WritableString& outString)
 			char* ptr = (char*)GlobalLock(stringHandle);
 			if(ptr != nullptr)
 			{
-				outString.Assign(ptr, strlen(ptr));
+				outString.Set(ptr, strlen(ptr));
 				GlobalUnlock(stringHandle);
 			}
 		}

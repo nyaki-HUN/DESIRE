@@ -1,6 +1,5 @@
 #include "API/AngelScriptAPI.h"
 
-#include "Engine/Modules.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/RenderComponent.h"
 

@@ -1,7 +1,5 @@
 #include "API/LuaScriptAPI.h"
 
-#include "Engine/Modules.h"
-
 #include "Engine/Application/Application.h"
 
 #include "Engine/Core/Component.h"

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Modules.h"
+
 #include "Engine/Core/String/String.h"
 
 #include "sqrat/sqratTable.h"

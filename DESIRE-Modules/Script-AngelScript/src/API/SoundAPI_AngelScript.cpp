@@ -1,6 +1,5 @@
 #include "API/AngelScriptAPI.h"
 
-#include "Engine/Modules.h"
 #include "Engine/Sound/SoundSystem.h"
 
 void RegisterSoundAPI_AngelScript(asIScriptEngine* engine)

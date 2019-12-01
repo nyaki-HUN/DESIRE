@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Engine/Core/math/Vector4.h"
+#include "Engine/Core/Math/Vector4.h"
 
 TEST_CASE("Vector4", "[Core][math]")
 {

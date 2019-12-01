@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
-#include "Engine/Core/math/math.h"
+#include "Engine/Core/Math/math.h"
 
 thread_local Allocator* MemorySystem::allocatorStack[kAllocatorStackSize] = {};
 thread_local size_t MemorySystem::allocatorStackIndex = 0;
