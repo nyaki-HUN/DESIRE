@@ -1,4 +1,4 @@
-// dear imgui, v1.74 WIP
+// dear imgui, v1.75 WIP
 // (widgets code)
 
 /*
@@ -549,7 +549,7 @@ bool ImGui::ButtonBehavior(const ImRect& bb, ImGuiID id, bool* out_hovered, bool
     if (g.NavActivateDownId == id)
     {
         bool nav_activated_by_code = (g.NavActivateId == id);
-        bool nav_activated_by_inputs = IsNavInputPressed(ImGuiNavInput_Activate, (flags & ImGuiButtonFlags_Repeat) ? ImGuiInputReadMode_Repeat : ImGuiInputReadMode_Pressed);
+        bool nav_activated_by_inputs = IsNavInputTest(ImGuiNavInput_Activate, (flags & ImGuiButtonFlags_Repeat) ? ImGuiInputReadMode_Repeat : ImGuiInputReadMode_Pressed);
         if (nav_activated_by_code || nav_activated_by_inputs)
             pressed = true;
         if (nav_activated_by_code || nav_activated_by_inputs || g.ActiveId == id)
@@ -768,13 +768,13 @@ bool ImGui::CollapseButton(ImGuiID id, const ImVec2& pos)
     RenderArrow(window->DrawList, bb.Min + g.Style.FramePadding, text_col, window->Collapsed ? ImGuiDir_Right : ImGuiDir_Down, 1.0f);
 
     // Switch to moving the window after mouse is moved beyond the initial drag threshold
-    if (IsItemActive() && IsMouseDragging())
+    if (IsItemActive() && IsMouseDragging(0))
         StartMouseMovingWindow(window);
 
     return pressed;
 }
 
-ImGuiID ImGui::GetScrollbarID(ImGuiWindow* window, ImGuiAxis axis)
+ImGuiID ImGui::GetWindowScrollbarID(ImGuiWindow* window, ImGuiAxis axis)
 {
     return window->GetIDNoKeepAlive(axis == ImGuiAxis_X ? "#SCROLLX" : "#SCROLLY");
 }
@@ -881,7 +881,7 @@ void ImGui::Scrollbar(ImGuiAxis axis)
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = g.CurrentWindow;
 
-    const ImGuiID id = GetScrollbarID(window, axis);
+    const ImGuiID id = GetWindowScrollbarID(window, axis);
     KeepAliveID(id);
 
     // Calculate scrollbar bounding box
@@ -1259,21 +1259,14 @@ void ImGui::SeparatorEx(ImGuiSeparatorFlags flags)
         // We don't provide our width to the layout so that it doesn't get feed back into AutoFit
         const ImRect bb(ImVec2(x1, window->DC.CursorPos.y), ImVec2(x2, window->DC.CursorPos.y + thickness_draw));
         ItemSize(ImVec2(0.0f, thickness_layout));
-        if (!ItemAdd(bb, 0))
+        const bool item_visible = ItemAdd(bb, 0);
+        if (item_visible)
         {
-            if (columns)
-            {
-                PopColumnsBackground();
-                columns->LineMinY = window->DC.CursorPos.y;
-            }
-            return;
+            // Draw
+            window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), GetColorU32(ImGuiCol_Separator));
+            if (g.LogEnabled)
+                LogRenderedText(&bb.Min, "--------------------------------");
         }
-
-        // Draw
-        window->DrawList->AddLine(bb.Min, ImVec2(bb.Max.x, bb.Min.y), GetColorU32(ImGuiCol_Separator));
-        if (g.LogEnabled)
-            LogRenderedText(&bb.Min, "--------------------------------");
-
         if (columns)
         {
             PopColumnsBackground();
@@ -2474,7 +2467,7 @@ bool ImGui::SliderBehaviorT(const ImRect& bb, ImGuiID id, ImGuiDataType data_typ
     return value_changed;
 }
 
-// For 32-bits and larger types, slider bounds are limited to half the natural type range.
+// For 32-bit and larger types, slider bounds are limited to half the natural type range.
 // So e.g. an integer Slider between INT_MAX-10 and INT_MAX will fail, but an integer Slider between INT_MAX/2-10 and INT_MAX/2 will be ok.
 // It would be possible to lift that limitation with some work but it doesn't seem to be worth it for sliders.
 bool ImGui::SliderBehavior(const ImRect& bb, ImGuiID id, ImGuiDataType data_type, void* p_v, const void* p_min, const void* p_max, const char* format, float power, ImGuiSliderFlags flags, ImRect* out_grab_bb)
@@ -3157,7 +3150,7 @@ namespace ImStb
 static int     STB_TEXTEDIT_STRINGLEN(const STB_TEXTEDIT_STRING* obj)                             { return obj->CurLenW; }
 static ImWchar STB_TEXTEDIT_GETCHAR(const STB_TEXTEDIT_STRING* obj, int idx)                      { return obj->TextW[idx]; }
 static float   STB_TEXTEDIT_GETWIDTH(STB_TEXTEDIT_STRING* obj, int line_start_idx, int char_idx)  { ImWchar c = obj->TextW[line_start_idx + char_idx]; if (c == '\n') return STB_TEXTEDIT_GETWIDTH_NEWLINE; ImGuiContext& g = *GImGui; return g.Font->GetCharAdvance(c) * (g.FontSize / g.Font->FontSize); }
-static int     STB_TEXTEDIT_KEYTOTEXT(int key)                                                    { return key >= 0x10000 ? 0 : key; }
+static int     STB_TEXTEDIT_KEYTOTEXT(int key)                                                    { return key >= 0x200000 ? 0 : key; }
 static ImWchar STB_TEXTEDIT_NEWLINE = '\n';
 static void    STB_TEXTEDIT_LAYOUTROW(StbTexteditRow* r, STB_TEXTEDIT_STRING* obj, int line_start_idx)
 {
@@ -3340,6 +3333,10 @@ static bool InputTextFilterCharacter(unsigned int* p_char, ImGuiInputTextFlags f
     if (c >= 0xE000 && c <= 0xF8FF)
         return false;
 
+    // Filter Unicode ranges we are not handling in this build.
+    if (c > IM_UNICODE_CODEPOINT_MAX)
+        return false;
+
     // Generic named filters
     if (flags & (ImGuiInputTextFlags_CharsDecimal | ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_CharsUppercase | ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_CharsScientific))
     {
@@ -3464,8 +3461,8 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
 
     const bool user_clicked = hovered && io.MouseClicked[0];
     const bool user_nav_input_start = (g.ActiveId != id) && ((g.NavInputId == id) || (g.NavActivateId == id && g.NavInputSource == ImGuiInputSource_NavKeyboard));
-    const bool user_scroll_finish = is_multiline && state != NULL && g.ActiveId == 0 && g.ActiveIdPreviousFrame == GetScrollbarID(draw_window, ImGuiAxis_Y);
-    const bool user_scroll_active = is_multiline && state != NULL && g.ActiveId == GetScrollbarID(draw_window, ImGuiAxis_Y);
+    const bool user_scroll_finish = is_multiline && state != NULL && g.ActiveId == 0 && g.ActiveIdPreviousFrame == GetWindowScrollbarID(draw_window, ImGuiAxis_Y);
+    const bool user_scroll_active = is_multiline && state != NULL && g.ActiveId == GetWindowScrollbarID(draw_window, ImGuiAxis_Y);
 
     bool clear_active_id = false;
     bool select_all = (g.ActiveId != id) && ((flags & ImGuiInputTextFlags_AutoSelectAll) != 0 || user_nav_input_start) && (!is_multiline);
@@ -3763,7 +3760,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                     s += ImTextCharFromUtf8(&c, s, NULL);
                     if (c == 0)
                         break;
-                    if (c >= 0x10000 || !InputTextFilterCharacter(&c, flags, callback, callback_user_data))
+                    if (!InputTextFilterCharacter(&c, flags, callback, callback_user_data))
                         continue;
                     clipboard_filtered[clipboard_filtered_len++] = (ImWchar)c;
                 }
@@ -3987,7 +3984,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             // In multi-line mode, we never exit the loop until all lines are counted, so add one extra to the searches_remaining counter.
             searches_remaining += is_multiline ? 1 : 0;
             int line_count = 0;
-            //for (const ImWchar* s = text_begin; (s = (const ImWchar*)wcschr((const wchar_t*)s, (wchar_t)'\n')) != NULL; s++)  // FIXME-OPT: Could use this when wchar_t are 16-bits
+            //for (const ImWchar* s = text_begin; (s = (const ImWchar*)wcschr((const wchar_t*)s, (wchar_t)'\n')) != NULL; s++)  // FIXME-OPT: Could use this when wchar_t are 16-bit
             for (const ImWchar* s = text_begin; *s != 0; s++)
                 if (*s == '\n')
                 {
@@ -4064,7 +4061,7 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
                     break;
                 if (rect_pos.y < clip_rect.y)
                 {
-                    //p = (const ImWchar*)wmemchr((const wchar_t*)p, '\n', text_selected_end - p);  // FIXME-OPT: Could use this when wchar_t are 16-bits
+                    //p = (const ImWchar*)wmemchr((const wchar_t*)p, '\n', text_selected_end - p);  // FIXME-OPT: Could use this when wchar_t are 16-bit
                     //p = p ? p + 1 : text_selected_end;
                     while (p < text_selected_end)
                         if (*p++ == '\n')
@@ -5269,7 +5266,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
     // - OpenOnDoubleClick .............. double-click anywhere to open
     // - OpenOnArrow .................... single-click on arrow to open
     // - OpenOnDoubleClick|OpenOnArrow .. single-click on arrow or double-click anywhere to open
-    ImGuiButtonFlags button_flags = ImGuiButtonFlags_NoKeyModifiers;
+    ImGuiButtonFlags button_flags = 0;
     if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
         button_flags |= ImGuiButtonFlags_AllowItemOverlap;
     if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
@@ -5277,23 +5274,31 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
     if (!is_leaf)
         button_flags |= ImGuiButtonFlags_PressedOnDragDropHold;
 
+    // We allow clicking on the arrow section with keyboard modifiers held, in order to easily 
+    // allow browsing a tree while preserving selection with code implementing multi-selection patterns.
+    // When clicking on the rest of the tree node we always disallow keyboard modifiers.
+    const float hit_padding_x = style.TouchExtraPadding.x;
+    const float arrow_hit_x1 = (text_pos.x - text_offset_x) - hit_padding_x;
+    const float arrow_hit_x2 = (text_pos.x - text_offset_x) + (g.FontSize + padding.x * 2.0f) + hit_padding_x;
+    if (window != g.HoveredWindow || !(g.IO.MousePos.x >= arrow_hit_x1 && g.IO.MousePos.x < arrow_hit_x2))
+        button_flags |= ImGuiButtonFlags_NoKeyModifiers;
+    
     bool selected = (flags & ImGuiTreeNodeFlags_Selected) != 0;
     const bool was_selected = selected;
 
     bool hovered, held;
     bool pressed = ButtonBehavior(interact_bb, id, &hovered, &held, button_flags);
-    bool toggled = false;
     if (!is_leaf)
     {
+        bool toggled = false;
         if (pressed)
         {
-            const float arrow_x1 = text_pos.x - text_offset_x;
-            const float arrow_x2 = arrow_x1 + g.FontSize + padding.x * 2.0f;
-            toggled = !(flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) || (g.NavActivateId == id);
+            if ((flags & (ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) == 0 || (g.NavActivateId == id))
+                toggled = true;
             if (flags & ImGuiTreeNodeFlags_OpenOnArrow)
-                toggled |= IsMouseHoveringRect(ImVec2(arrow_x1, interact_bb.Min.y), ImVec2(arrow_x2, interact_bb.Max.y)) && (!g.NavDisableMouseHover);
-            if (flags & ImGuiTreeNodeFlags_OpenOnDoubleClick)
-                toggled |= g.IO.MouseDoubleClicked[0];
+                toggled |= (g.IO.MousePos.x >= arrow_hit_x1 && g.IO.MousePos.x < arrow_hit_x2) && (!g.NavDisableMouseHover); // Lightweight equivalent of IsMouseHoveringRect() since ButtonBehavior() already did the job
+            if ((flags & ImGuiTreeNodeFlags_OpenOnDoubleClick) && g.IO.MouseDoubleClicked[0])
+                toggled = true;
             if (g.DragDropActive && is_open) // When using Drag and Drop "hold to open" we keep the node highlighted after opening, but never close it again.
                 toggled = false;
         }
@@ -5313,6 +5318,7 @@ bool ImGui::TreeNodeBehavior(ImGuiID id, ImGuiTreeNodeFlags flags, const char* l
         {
             is_open = !is_open;
             window->DC.StateStorage->SetInt(id, is_open);
+            window->DC.LastItemStatusFlags |= ImGuiItemStatusFlags_ToggledOpen;
         }
     }
     if (flags & ImGuiTreeNodeFlags_AllowItemOverlap)
@@ -6463,8 +6469,8 @@ void    ImGui::EndTabBar()
     ImGuiTabBar* tab_bar = g.CurrentTabBar;
     if (tab_bar == NULL)
     {
-        IM_ASSERT(tab_bar != NULL && "Mismatched BeginTabBar()/EndTabBar()!");
-        return; // FIXME-ERRORHANDLING
+        IM_ASSERT_USER_ERROR(tab_bar != NULL, "Mismatched BeginTabBar()/EndTabBar()!");
+        return;
     }
     if (tab_bar->WantLayout)
         TabBarLayout(tab_bar);
@@ -6860,8 +6866,8 @@ bool    ImGui::BeginTabItem(const char* label, bool* p_open, ImGuiTabItemFlags f
     ImGuiTabBar* tab_bar = g.CurrentTabBar;
     if (tab_bar == NULL)
     {
-        IM_ASSERT(tab_bar && "Needs to be called between BeginTabBar() and EndTabBar()!");
-        return false; // FIXME-ERRORHANDLING
+        IM_ASSERT_USER_ERROR(tab_bar, "BeginTabItem() Needs to be called between BeginTabBar() and EndTabBar()!");
+        return false;
     }
     bool ret = TabItemEx(tab_bar, label, p_open, flags);
     if (ret && !(flags & ImGuiTabItemFlags_NoPushId))
@@ -6914,6 +6920,12 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
         return false;
     }
 
+    // Store into ImGuiTabItemFlags_NoCloseButton, also honor ImGuiTabItemFlags_NoCloseButton passed by user (although not documented)
+    if (flags & ImGuiTabItemFlags_NoCloseButton)
+        p_open = NULL;
+    else if (p_open == NULL)
+        flags |= ImGuiTabItemFlags_NoCloseButton;
+
     // Calculate tab contents size
     ImVec2 size = TabItemCalcSize(label, p_open != NULL);
 
@@ -6930,9 +6942,6 @@ bool    ImGui::TabItemEx(ImGuiTabBar* tab_bar, const char* label, bool* p_open, 
     }
     tab_bar->LastTabItemIdx = (short)tab_bar->Tabs.index_from_ptr(tab);
     tab->ContentWidth = size.x;
-
-    if (p_open == NULL)
-        flags |= ImGuiTabItemFlags_NoCloseButton;
 
     const bool tab_bar_appearing = (tab_bar->PrevFrameVisible + 1 < g.FrameCount);
     const bool tab_bar_focused = (tab_bar->Flags & ImGuiTabBarFlags_IsFocused) != 0;
@@ -7395,8 +7404,8 @@ void ImGui::BeginColumns(const char* str_id, int columns_count, ImGuiColumnsFlag
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
 
-    IM_ASSERT(columns_count >= 1);
-    IM_ASSERT(window->DC.CurrentColumns == NULL); // Nested columns are currently not supported
+    IM_ASSERT(columns_count >= 1 && columns_count <= 64);   // Maximum 64 columns
+    IM_ASSERT(window->DC.CurrentColumns == NULL);           // Nested columns are currently not supported
 
     // Acquire storage for the columns set
     ImGuiID id = GetColumnsID(str_id, columns_count);
