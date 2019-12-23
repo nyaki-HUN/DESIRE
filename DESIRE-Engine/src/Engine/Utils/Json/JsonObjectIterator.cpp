@@ -5,7 +5,7 @@ JsonObjectIterator::JsonObjectIterator(const JsonReader& reader)
 	: iter(reader.json.MemberBegin())
 	, end(reader.json.MemberEnd())
 {
-	if(IsValid() && !iter->value.IsObject())
+	if(iter != end && !iter->value.IsObject())
 	{
 		Next();
 	}

@@ -28,6 +28,7 @@ public:
 	bool GetQuat(const String& name, Quat& value) const;
 
 	// Array types
+	bool GetInt32Array(const String& name, int32_t* values, size_t numValues) const;
 	bool GetFloatArray(const String& name, float* values, size_t numValues) const;
 
 	// Object type

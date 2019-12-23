@@ -15,15 +15,15 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	: PhysicsComponent(object)
 	, dynamic(dynamic)
 {
-	int *indices = nullptr;
-	float *vertices = nullptr;
+	int* indices = nullptr;
+	float* vertices = nullptr;
 
 	uint32_t numIndices = 0;
 	uint32_t numVertices = 0;
 
 	int stride = 3;
 
-	btCollisionShape *collisionShape = nullptr;
+	btCollisionShape* collisionShape = nullptr;
 	btVector3 localInertia(0.0f, 0.0f, 0.0f);
 
 	if(dynamic)
@@ -42,8 +42,8 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 		{
 			const btVector3 cmassVec = GetBtVector3(aabb.GetCenter());
 
-			btConvexHullShape *convexHullShape = new btConvexHullShape();
-			for(uint32_t i = 0; i < numIndices; i++)
+			btConvexHullShape* convexHullShape = new btConvexHullShape();
+			for(uint32_t i = 0; i < numIndices; ++i)
 			{
 				btVector3 v(vertices[indices[i] * stride], vertices[indices[i] * stride + 1], vertices[indices[i] * stride + 2]);
 				v -= cmassVec;
@@ -69,8 +69,8 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 		triangleIndexVertexArrays = new btTriangleIndexVertexArray();
 		triangleIndexVertexArrays->addIndexedMesh(mesh);
 
-		btBvhTriangleMeshShape *trimeshShape = new btBvhTriangleMeshShape(triangleIndexVertexArrays, true);
-		btTriangleInfoMap *triangleInfoMap = new btTriangleInfoMap();
+		btBvhTriangleMeshShape* trimeshShape = new btBvhTriangleMeshShape(triangleIndexVertexArrays, true);
+		btTriangleInfoMap* triangleInfoMap = new btTriangleInfoMap();
 		btGenerateInternalEdgeInfo(trimeshShape, triangleInfoMap);
 
 		collisionShape = trimeshShape;
@@ -83,7 +83,7 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	body = new btRigidBody(cInfo);
 	body->setUserPointer(this);
 
-	btDynamicsWorld *world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
+	btDynamicsWorld* world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
 	world->addRigidBody(body, 1 << (int)collisionLayer, Modules::Physics->GetMaskForCollisionLayer(collisionLayer));
 
 	if(dynamic)
@@ -100,20 +100,20 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 
 BulletPhysicsComponent::~BulletPhysicsComponent()
 {
-	btCollisionShape *collisionShape = body->getCollisionShape();
+	btCollisionShape* collisionShape = body->getCollisionShape();
 
-	btDynamicsWorld *world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
+	btDynamicsWorld* world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
 	world->removeRigidBody(body);
 	delete body;
 
 	if(!dynamic)
 	{
-		btBvhTriangleMeshShape *trimeshShape = static_cast<btBvhTriangleMeshShape*>(collisionShape);
-		btTriangleInfoMap *triangleInfoMap = trimeshShape->getTriangleInfoMap();
+		btBvhTriangleMeshShape* trimeshShape = static_cast<btBvhTriangleMeshShape*>(collisionShape);
+		btTriangleInfoMap* triangleInfoMap = trimeshShape->getTriangleInfoMap();
 		delete triangleInfoMap;
 		trimeshShape->setTriangleInfoMap(nullptr);
 	}
-	
+
 	delete collisionShape;
 	delete motionState;
 	delete triangleIndexVertexArrays;
@@ -143,7 +143,7 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisio
 		body->forceActivationState(ISLAND_SLEEPING);
 	}
 
-	btBroadphaseProxy *handle = body->getBroadphaseHandle();
+	btBroadphaseProxy* handle = body->getBroadphaseHandle();
 	handle->m_collisionFilterGroup = 1 << (int)collisionLayer;
 	handle->m_collisionFilterMask = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 }

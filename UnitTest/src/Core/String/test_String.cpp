@@ -19,7 +19,7 @@ TEST_CASE("String", "[Core]")
 
 		// From string literal (the pointer has to be the same)
 		String str("stringLiteral");
-		CHECK(str.Str() == (const char*)"stringLiteral");
+		CHECK(str.Str() == static_cast<const char*>("stringLiteral"));
 		CHECK(string.Str() == charSeq);
 	}
 

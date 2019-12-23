@@ -117,6 +117,22 @@ bool JsonReader::GetQuat(const String& name, Quat& value) const
 	return false;
 }
 
+bool JsonReader::GetInt32Array(const String& name, int32_t* values, size_t numValues) const
+{
+	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
+	if(iter != json.MemberEnd() && iter->value.IsArray() && iter->value.Size() == numValues)
+	{
+		for(uint32_t i = 0; i < numValues; ++i)
+		{
+			values[i] = iter->value[i].GetInt();
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 bool JsonReader::GetFloatArray(const String& name, float* values, size_t numValues) const
 {
 	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
