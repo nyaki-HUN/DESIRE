@@ -31,6 +31,16 @@ float Clamp(float x, float min, float max);
 // Clamp 'x' to the [0, 1] range
 float Clamp01(float x);
 
+inline float FloatsAreEqual(float a, float b, float epsilon = FLT_EPSILON)
+{
+	return std::abs(a - b) < epsilon;
+}
+
+inline float FloatIsZero(float x, float tolerance = FLT_EPSILON)
+{
+	return std::abs(x) < tolerance;
+}
+
 template<typename T>
 constexpr T DegToRad(T deg)
 {

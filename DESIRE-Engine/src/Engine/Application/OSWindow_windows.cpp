@@ -158,6 +158,7 @@ public:
 				case OSWindow::CURSOR_HAND:				cursors[currCursor] = LoadCursor(NULL, IDC_HAND); break;
 				case OSWindow::CURSOR_IBEAM:			cursors[currCursor] = LoadCursor(NULL, IDC_IBEAM); break;
 				case OSWindow::CURSOR_UP:				cursors[currCursor] = LoadCursor(NULL, IDC_UPARROW); break;
+				case OSWindow::CURSOR_NOT_ALLOWED:		cursors[currCursor] = LoadCursor(NULL, IDC_NO); break;
 				case OSWindow::NUM_CURSORS:				ASSERT(false); return;
 			}
 		}

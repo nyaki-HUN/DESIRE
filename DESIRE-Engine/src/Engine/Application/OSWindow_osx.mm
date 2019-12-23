@@ -75,14 +75,15 @@ void OSXWindow::SetCursor(ECursor cursor)
 		switch(cursor)
 		{
 			case CURSOR_ARROW:				impl->cursors[cursor] = [[NSCursor arrowCursor] retain]; break;
-			case CURSOR_MOVE:				impl->cursors[cursor] = [[NSCursor crosshairCursor] retain]; break;
-			case CURSOR_SIZE_BOTTOMLEFT:	impl->cursors[cursor] = [[NSCursor arrowCursor] retain]; break;			// OSX doesn't have it
-			case CURSOR_SIZE_BOTTOMRIGHT:	impl->cursors[cursor] = [[NSCursor arrowCursor] retain]; break;			// OSX doesn't have it
-			case CURSOR_SIZE_NS:			impl->cursors[cursor] = [[NSCursor resizeUpDownCursor]; break;
+			case CURSOR_MOVE:				impl->cursors[cursor] = [[NSCursor closedHandCursor] retain]; break;
+			case CURSOR_SIZE_BOTTOMLEFT:	impl->cursors[cursor] = [[NSCursor closedHandCursor] retain]; break;			// OSX doesn't have it
+			case CURSOR_SIZE_BOTTOMRIGHT:	impl->cursors[cursor] = [[NSCursor closedHandCursor] retain]; break;			// OSX doesn't have it
+			case CURSOR_SIZE_NS:			impl->cursors[cursor] = [[NSCursor resizeUpDownCursor] retain]; break;
 			case CURSOR_SIZE_WE:			impl->cursors[cursor] = [[NSCursor resizeLeftRightCursor] retain]; break;
 			case CURSOR_HAND:				impl->cursors[cursor] = [[NSCursor pointingHandCursor] retain]; break;
 			case CURSOR_IBEAM:				impl->cursors[cursor] = [[NSCursor IBeamCursor] retain]; break;
 			case CURSOR_UP:					impl->cursors[cursor] = [[NSCursor resizeUpCursor] retain]; break;
+			case CURSOR_NOT_ALLOWED:		impl->cursors[cursor] = [[NSCursor operationNotAllowedCursor] retain]; break;
 			case NUM_CURSORS:				ASSERT(false); return;
 		}
 	}

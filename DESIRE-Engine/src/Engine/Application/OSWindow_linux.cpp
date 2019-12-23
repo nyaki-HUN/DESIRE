@@ -175,11 +175,12 @@ void OSWindow::SetCursor(ECursor cursor)
 			case CURSOR_MOVE:				impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_fleur); break;
 			case CURSOR_SIZE_BOTTOMLEFT:	impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_bottom_left_corner); break;
 			case CURSOR_SIZE_BOTTOMRIGHT:	impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_bottom_right_corner); break;
-			case CURSOR_SIZE_NS:			impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_double_arrow); break;
+			case CURSOR_SIZE_NS:			impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_sb_v_double_arrow); break;
 			case CURSOR_SIZE_WE:			impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_sb_h_double_arrow); break;
 			case CURSOR_HAND:				impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_hand2); break;
 			case CURSOR_IBEAM:				impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_xterm); break;
 			case CURSOR_UP:					impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_center_ptr); break;
+			case CURSOR_NOT_ALLOWED:		impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_circle); break;
 			case NUM_CURSORS:				ASSERT(false); return;
 		}
 	}

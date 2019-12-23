@@ -171,6 +171,8 @@ void ImGuiImpl::EndFrame()
 		case ImGuiMouseCursor_ResizeEW:		window->SetCursor(OSWindow::CURSOR_SIZE_WE); break;
 		case ImGuiMouseCursor_ResizeNESW:	window->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMLEFT); break;
 		case ImGuiMouseCursor_ResizeNWSE:	window->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMRIGHT); break;
+		case ImGuiMouseCursor_Hand:			window->SetCursor(OSWindow::CURSOR_HAND); break;
+		case ImGuiMouseCursor_NotAllowed:	window->SetCursor(OSWindow::CURSOR_NO); break;
 	};
 
 	ImGui::Render();
