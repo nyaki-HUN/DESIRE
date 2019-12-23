@@ -3,6 +3,7 @@
 #include "Engine/Modules.h"
 #include "Engine/Application/Application.h"
 #include "Engine/Application/OSWindow.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/assert.h"
 #include "Engine/Core/Timer.h"
 #include "Engine/Input/Input.h"
@@ -19,6 +20,7 @@
 
 ImGuiImpl::ImGuiImpl()
 {
+	ImGui::SetAllocatorFunctions(ImGuiImpl::MallocWrapper, ImGuiImpl::FreeWrapper);
 }
 
 ImGuiImpl::~ImGuiImpl()
@@ -172,7 +174,7 @@ void ImGuiImpl::EndFrame()
 		case ImGuiMouseCursor_ResizeNESW:	window->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMLEFT); break;
 		case ImGuiMouseCursor_ResizeNWSE:	window->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMRIGHT); break;
 		case ImGuiMouseCursor_Hand:			window->SetCursor(OSWindow::CURSOR_HAND); break;
-		case ImGuiMouseCursor_NotAllowed:	window->SetCursor(OSWindow::CURSOR_NO); break;
+		case ImGuiMouseCursor_NotAllowed:	window->SetCursor(OSWindow::CURSOR_NOT_ALLOWED); break;
 	};
 
 	ImGui::Render();
@@ -244,4 +246,16 @@ void ImGuiImpl::DoRender(ImDrawData* drawData)
 	}
 
 	Modules::Render->SetScissor();
+}
+
+void* ImGuiImpl::MallocWrapper(size_t size, void* user_data)
+{
+	DESIRE_UNUSED(user_data);
+	return MemorySystem::Alloc(size);
+}
+
+void ImGuiImpl::FreeWrapper(void* ptr, void* user_data)
+{
+	DESIRE_UNUSED(user_data);
+	MemorySystem::Free(ptr);
 }
