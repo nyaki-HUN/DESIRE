@@ -19,15 +19,18 @@ void RegisterVectormathFunctions_Lua(sol::state_view& lua)
 		"x", sol::property(&Vector3::GetX, &Vector3::SetX),
 		"y", sol::property(&Vector3::GetY, &Vector3::SetY),
 		"z", sol::property(&Vector3::GetZ, &Vector3::SetZ),
-//		sol::meta_function::unary_minus, &Vector3::operator -,
+		"WithX", &Vector3::WithX,
+		"WithY", &Vector3::WithY,
+		"WithZ", &Vector3::WithZ,
+		sol::meta_function::unary_minus, sol::resolve<Vector3() const>(&Vector3::operator -),
 		sol::meta_function::addition, &Vector3::operator +,
-//		sol::meta_function::subtraction, &Vector3::operator -,
-//		.addFunction<Vector3, const Vector3&>("__mul", &Vector3::operator *)
+		sol::meta_function::subtraction, sol::resolve<Vector3(const Vector3 & vec) const>(&Vector3::operator -),
 		sol::meta_function::multiplication, sol::overload(
 			sol::resolve<Vector3(const Vector3&) const>(&Vector3::operator *),
 			sol::resolve<Vector3(float) const>(&Vector3::operator *)),
-//		.addFunction<Vector3, const Vector3&>("__div", &Vector3::operator /)
-//		.addFunction<Vector3, float>("__div", &Vector3::operator /)
+		sol::meta_function::division, sol::overload(
+			sol::resolve<Vector3(const Vector3&) const>(&Vector3::operator /),
+			sol::resolve<Vector3(float) const>(&Vector3::operator /)),
 		sol::meta_function::less_than, &Vector3::operator <,
 		sol::meta_function::less_than_or_equal_to, &Vector3::operator <=,
 		"GetMaxElem", &Vector3::GetMaxElem,
@@ -39,7 +42,6 @@ void RegisterVectormathFunctions_Lua(sol::state_view& lua)
 		"Normalize", &Vector3::Normalize,
 		"Normalized", &Vector3::Normalized,
 		"AbsPerElem", &Vector3::AbsPerElem,
-		
 		"MaxPerElem", &Vector3::MaxPerElem,
 		"MinPerElem", &Vector3::MinPerElem,
 		"Slerp", &Vector3::Slerp,

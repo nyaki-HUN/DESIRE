@@ -19,9 +19,7 @@ void RegisterRenderAPI_Lua(sol::state_view& lua)
 		"layer", sol::property(&RenderComponent::GetLayer, &RenderComponent::SetLayer)
 	);
 
-	lua.new_usertype<Object>("Object",
-		"GetRenderComponent", &Object::GetComponent<RenderComponent>
-	);
+	lua["Object"]["GetRenderComponent"] = &Object::GetComponent<RenderComponent>;
 
 	// Render
 	lua.new_usertype<Render>("IRender"

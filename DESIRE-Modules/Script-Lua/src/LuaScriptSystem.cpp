@@ -47,9 +47,7 @@ LuaScriptSystem::LuaScriptSystem()
 		"Call", &LuaScriptComponent::CallFromScript
 	);
 
-	lua.new_usertype<Object>("Object",
-		"GetScriptComponent", &Object::GetComponent<LuaScriptComponent>
-	);
+	lua["Object"]["GetScriptComponent"] = &Object::GetComponent<LuaScriptComponent>;
 }
 
 LuaScriptSystem::~LuaScriptSystem()
