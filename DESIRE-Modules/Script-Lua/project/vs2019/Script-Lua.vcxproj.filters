@@ -4,23 +4,23 @@
     <Filter Include="Externals">
       <UniqueIdentifier>{7B3ECCEB-E7A8-8062-30E7-31089C905EB7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Externals\LuaBridge">
-      <UniqueIdentifier>{590345BC-C564-22CA-4ED2-687CBA325989}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Externals\LuaBridge\Source">
-      <UniqueIdentifier>{39B3AE70-25C3-5A41-8E7C-BF5F7AAB49DA}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Externals\LuaBridge\Source\LuaBridge">
-      <UniqueIdentifier>{97FD9640-83E4-5838-2C35-BF5518FBD19E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Externals\LuaBridge\Source\LuaBridge\detail">
-      <UniqueIdentifier>{79E5A678-E54A-3AFF-6E23-DCD7DA872F6E}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Externals\lua">
       <UniqueIdentifier>{ACA4885C-1865-0493-E19F-4D104D1F496F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Externals\lua\src">
       <UniqueIdentifier>{C3D87E04-2FEF-7C9A-7866-08BCE4BB4D22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\sol">
+      <UniqueIdentifier>{B8C1885C-2482-0493-EDBC-4D10593C496F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\sol\include">
+      <UniqueIdentifier>{2B21B8E9-978D-73E4-6081-0B42CCAC954C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\sol\include\sol">
+      <UniqueIdentifier>{687C065E-D43E-3AE8-1DEF-C87489F012C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Externals\sol\include\sol\compatibility">
+      <UniqueIdentifier>{1150BE67-7DDF-7F52-86DB-606AF2E9BA5E}</UniqueIdentifier>
     </Filter>
     <Filter Include="src">
       <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
@@ -30,75 +30,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\List.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\LuaBridge.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Map.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedObject.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedPtr.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\UnorderedMap.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Vector.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\CFunctions.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\ClassInfo.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Config.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Constructor.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\FuncTraits.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Iterator.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaException.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaHelpers.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaRef.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Namespace.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Security.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Stack.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeList.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeTraits.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Userdata.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\dump.h">
-      <Filter>Externals\LuaBridge\Source\LuaBridge\detail</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Externals\lua\src\lapi.h">
       <Filter>Externals\lua\src</Filter>
     </ClInclude>
@@ -176,6 +107,327 @@
     </ClInclude>
     <ClInclude Include="..\..\Externals\lua\src\lzio.h">
       <Filter>Externals\lua\src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\as_args.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\as_returns.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\base_traits.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\bind_traits.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\bytecode.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\call.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\compat-5.3.c.h">
+      <Filter>Externals\sol\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\compat-5.3.h">
+      <Filter>Externals\sol\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\compat-5.4.h">
+      <Filter>Externals\sol\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\version.hpp">
+      <Filter>Externals\sol\include\sol\compatibility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\config.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\config_setup.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\coroutine.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\debug.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\demangle.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\deprecate.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\dump_handler.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\ebco.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\environment.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\error.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\error_handler.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\feature_test.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\forward.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\forward_detail.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_result.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_core.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_overloaded.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_stateful.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_stateless.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_templated.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\in_place.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\inheritance.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\load_result.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\lua_table.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\lua_value.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\make_reference.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\map.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\metatable.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\object.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\object_base.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\optional.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\optional_implementation.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\overload.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\pointer_like.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\policies.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\property.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\protect.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\protected_function.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\protected_function_result.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\protected_handler.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\proxy_base.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\raii.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\reference.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\resolve.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\sol.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_get.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_get_qualified.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_get_unqualified.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_qualified.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_unqualified.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_core.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_field.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_get.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_get_qualified.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_get_unqualified.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_guard.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_iterator.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_pop.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_probe.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_proxy.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_proxy_base.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_push.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_reference.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\state.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\state_handling.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\state_view.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\string_view.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\table.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\table_core.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\table_iterator.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\table_proxy.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\thread.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\tie.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\traits.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\trampoline.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\tuple.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\types.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\unicode.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\unique_usertype_traits.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\unsafe_function.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\unsafe_function_result.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\userdata.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_container.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_container_launch.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_core.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_proxy.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_storage.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_traits.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\variadic_args.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\variadic_results.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Externals\sol\include\sol\wrapper.hpp">
+      <Filter>Externals\sol\include\sol</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\API\LuaScriptAPI.h">
       <Filter>src\API</Filter>

@@ -7,13 +7,12 @@ project "Script-Lua"
 	includedirs
 	{
 		"../Externals/lua/src",
-		"../Externals/LuaBridge/Source"
+		"../Externals/sol/include"
 	}
 
 	files
 	{
-		"../Externals/lua/src/*.h",
-		"../Externals/lua/src/*.hpp",
-		"../Externals/lua/src/*.c",
-		"../Externals/LuaBridge/Source/**.h",
+		"../Externals/**.h",
+		"../Externals/**.hpp",
+		"../Externals/**.c",
 	}

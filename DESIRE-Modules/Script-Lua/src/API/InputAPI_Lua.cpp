@@ -2,7 +2,7 @@
 
 #include "Engine/Input/Input.h"
 
-void RegisterInputAPI_Lua(lua_State* L)
+void RegisterInputAPI_Lua(sol::state_view& lua)
 {
 	Input* input = Modules::Input.get();
 	if(input == nullptr)
@@ -11,9 +11,9 @@ void RegisterInputAPI_Lua(lua_State* L)
 	}
 
 	// Input
-	luabridge::getGlobalNamespace(L).beginClass<Input>("IInput")
-		.addFunction("GetOsMouseCursorPos", &Input::GetOsMouseCursorPos)
-		.endClass();
+	lua.new_usertype<Input>("IInput",
+		"GetOsMouseCursorPos", &Input::GetOsMouseCursorPos
+	);
 
-	luabridge::setGlobal(L, input, "Input");
+	lua.set("Input", input);
 }

@@ -5,7 +5,7 @@
 #include "Engine/Physics/Physics.h"
 #include "Engine/Physics/PhysicsComponent.h"
 
-void RegisterPhysicsAPI_Lua(lua_State* L)
+void RegisterPhysicsAPI_Lua(sol::state_view& lua)
 {
 	Physics* physics = Modules::Physics.get();
 	if(physics == nullptr)
@@ -14,18 +14,19 @@ void RegisterPhysicsAPI_Lua(lua_State* L)
 	}
 
 	// PhysicsComponent
-	luabridge::getGlobalNamespace(L).deriveClass<PhysicsComponent, Component>("PhysicsComponent")
-		.addProperty("mass", &PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
-		.endClass();
+	lua.new_usertype<PhysicsComponent>("PhysicsComponent",
+		sol::base_classes, sol::bases<Component>(),
+		"mass", sol::property(&PhysicsComponent::GetMass, &PhysicsComponent::SetMass)
+	);
 
-	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
-		.addFunction("GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>)
-		.endClass();
+	lua.new_usertype<Object>("Object",
+		"GetPhysicsComponent", &Object::GetComponent<PhysicsComponent>
+	);
 
 	// Physics
-	luabridge::getGlobalNamespace(L).beginClass<Physics>("IPhysics")
-		.addFunction("RaycastAny", &Physics::RaycastAny)
-		.endClass();
+	lua.new_usertype<Physics>("IPhysics",
+		"RaycastAny", &Physics::RaycastAny
+	);
 
-	luabridge::setGlobal(L, physics, "Physics");
+	lua.set("Physics", physics);
 }

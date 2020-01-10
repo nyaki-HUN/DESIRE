@@ -5,14 +5,14 @@
 #include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/String.h"
 
-#include "lua.hpp"
-#include "LuaBridge/LuaBridge.h"
+#include "sol/sol.hpp"
 
 LuaScriptComponent::LuaScriptComponent(Object& object, lua_State* L)
 	: ScriptComponent(object)
 	, L(L)
 {
-	luabridge::setGlobal(L, this, "self");
+	sol::state_view lua(L);
+	lua["self"] = this;
 }
 
 LuaScriptComponent::~LuaScriptComponent()
@@ -32,8 +32,10 @@ void LuaScriptComponent::CallByType(EBuiltinFuncType funcType)
 	Call(functionNames[(size_t)funcType]);
 }
 
-int LuaScriptComponent::CallFromScript(lua_State* from_L)
+int LuaScriptComponent::CallFromScript(sol::this_state ts)
 {
+	lua_State* from_L = ts;
+
 	// argCount is the number of arguments to call the script function with (-2 because we need to exclude the instance and the function name)
 	const int argCount = lua_gettop(from_L) - 2;
 	size_t size = 0;

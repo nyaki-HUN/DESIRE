@@ -2,7 +2,7 @@
 
 #include "Engine/Sound/SoundSystem.h"
 
-void RegisterSoundAPI_Lua(lua_State* L)
+void RegisterSoundAPI_Lua(sol::state_view& lua)
 {
 	SoundSystem* soundSystem = Modules::SoundSystem.get();
 	if(soundSystem == nullptr)
@@ -11,5 +11,4 @@ void RegisterSoundAPI_Lua(lua_State* L)
 	}
 
 	// SoundSystem
-//	luabridge::setGlobal(L, soundSystem, "SoundSystem");
 }

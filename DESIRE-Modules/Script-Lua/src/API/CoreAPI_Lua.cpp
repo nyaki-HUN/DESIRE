@@ -11,42 +11,45 @@
 #include "Engine/Core/Math/Rand.h"
 #include "Engine/Core/Math/Transform.h"
 
-void RegisterVectormathFunctions_Lua(lua_State* L)
+void RegisterVectormathFunctions_Lua(sol::state_view& lua)
 {
 	// Vector3
-	luabridge::getGlobalNamespace(L).beginClass<Vector3>("Vector3")
-		.addConstructor<void(*)(float, float, float)>()
-		.addProperty("x", &Vector3::GetX, &Vector3::SetX)
-		.addProperty("y", &Vector3::GetY, &Vector3::SetY)
-		.addProperty("z", &Vector3::GetZ, &Vector3::SetZ)
-		.addFunction<Vector3>("__unm", &Vector3::operator -)
-		.addFunction("__add", &Vector3::operator +)
-		.addFunction<Vector3, const Vector3&>("__sub", &Vector3::operator -)
+	sol::usertype<Vector3> type_Vector3 = lua.new_usertype<Vector3>("Vector3",
+		sol::constructors<Vector3(), Vector3(float, float, float), Vector3(float)>(),
+		"x", sol::property(&Vector3::GetX, &Vector3::SetX),
+		"y", sol::property(&Vector3::GetY, &Vector3::SetY),
+		"z", sol::property(&Vector3::GetZ, &Vector3::SetZ),
+//		sol::meta_function::unary_minus, &Vector3::operator -,
+		sol::meta_function::addition, &Vector3::operator +,
+//		sol::meta_function::subtraction, &Vector3::operator -,
 //		.addFunction<Vector3, const Vector3&>("__mul", &Vector3::operator *)
-		.addFunction<Vector3, float>("__mul", &Vector3::operator *)
+		sol::meta_function::multiplication, sol::overload(
+			sol::resolve<Vector3(const Vector3&) const>(&Vector3::operator *),
+			sol::resolve<Vector3(float) const>(&Vector3::operator *)),
 //		.addFunction<Vector3, const Vector3&>("__div", &Vector3::operator /)
-		.addFunction<Vector3, float>("__div", &Vector3::operator /)
-		.addFunction("__lt", &Vector3::operator <)
-		.addFunction("__le", &Vector3::operator <=)
-		.addFunction("GetMaxElem", &Vector3::GetMaxElem)
-		.addFunction("GetMinElem", &Vector3::GetMinElem)
-		.addFunction("Dot", &Vector3::Dot)
-		.addFunction("Cross", &Vector3::Cross)
-		.addFunction("LengthSqr", &Vector3::LengthSqr)
-		.addFunction("Length", &Vector3::Length)
-		.addFunction("Normalize", &Vector3::Normalize)
-		.addFunction("Normalized", &Vector3::Normalized)
-		.addFunction("AbsPerElem", &Vector3::AbsPerElem)
-		.addStaticFunction("MaxPerElem", &Vector3::MaxPerElem)
-		.addStaticFunction("MinPerElem", &Vector3::MinPerElem)
-		.addStaticFunction("Slerp", &Vector3::Slerp)
-		.addStaticFunction("Zero", &Vector3::Zero)
-		.addStaticFunction("One", &Vector3::One)
-		.addStaticFunction("AxisX", &Vector3::AxisX)
-		.addStaticFunction("AxisY", &Vector3::AxisY)
-		.addStaticFunction("AxisZ", &Vector3::AxisZ)
-		.endClass();
-
+//		.addFunction<Vector3, float>("__div", &Vector3::operator /)
+		sol::meta_function::less_than, &Vector3::operator <,
+		sol::meta_function::less_than_or_equal_to, &Vector3::operator <=,
+		"GetMaxElem", &Vector3::GetMaxElem,
+		"GetMinElem", &Vector3::GetMinElem,
+		"Dot", &Vector3::Dot,
+		"Cross", &Vector3::Cross,
+		"LengthSqr", &Vector3::LengthSqr,
+		"Length", &Vector3::Length,
+		"Normalize", &Vector3::Normalize,
+		"Normalized", &Vector3::Normalized,
+		"AbsPerElem", &Vector3::AbsPerElem,
+		
+		"MaxPerElem", &Vector3::MaxPerElem,
+		"MinPerElem", &Vector3::MinPerElem,
+		"Slerp", &Vector3::Slerp,
+		"Zero", &Vector3::Zero,
+		"One", &Vector3::One,
+		"AxisX", &Vector3::AxisX,
+		"AxisY", &Vector3::AxisY,
+		"AxisZ", &Vector3::AxisZ
+	);
+/*
 	// Vector4
 	luabridge::getGlobalNamespace(L).beginClass<Vector4>("Vector4")
 		.addConstructor<void(*)(float, float, float, float)>()
@@ -173,10 +176,12 @@ void RegisterVectormathFunctions_Lua(lua_State* L)
 		.addStaticFunction("CreateRotation", &Matrix4::CreateRotation)
 		.addStaticFunction("CreateScale", &Matrix4::CreateScale)
 		.endClass();
+*/
 }
 
-void RegisterMathFunctions_Lua(lua_State* L)
+void RegisterMathFunctions_Lua(sol::state_view& lua)
 {
+/*
 	luabridge::getGlobalNamespace(L)
 		// Trigonometric functions
 		.addFunction("cos", &std::cosf)
@@ -218,50 +223,50 @@ void RegisterMathFunctions_Lua(lua_State* L)
 		.endClass();
 
 	luabridge::setGlobal(L, &Rand::s_globalRand, "globalRand");
+*/
 }
 
-void RegisterCoreAPI_Lua(lua_State* L)
+void RegisterCoreAPI_Lua(sol::state_view& lua)
 {
-	RegisterVectormathFunctions_Lua(L);
-	RegisterMathFunctions_Lua(L);
+	RegisterVectormathFunctions_Lua(lua);
+	RegisterMathFunctions_Lua(lua);
 
 	// Transform
-	luabridge::getGlobalNamespace(L).beginClass<Transform>("Transform")
-		.addProperty("localPosition", &Transform::GetLocalPosition, &Transform::SetLocalPosition)
-		.addProperty("localRotation", &Transform::GetLocalRotation, &Transform::SetLocalRotation)
-		.addProperty("localScale", &Transform::GetLocalScale, &Transform::SetLocalScale)
-		.addProperty("position", &Transform::GetPosition, &Transform::SetPosition)
-		.addProperty("rotation", &Transform::GetRotation, &Transform::SetRotation)
-		.addProperty("scale", &Transform::GetScale, &Transform::SetScale)
-		.endClass();
+	lua.new_usertype<Transform>("Transform",
+		"localPosition", sol::property(&Transform::GetLocalPosition, &Transform::SetLocalPosition),
+		"localRotation", sol::property(&Transform::GetLocalRotation, &Transform::SetLocalRotation),
+		"localScale", sol::property(&Transform::GetLocalScale, &Transform::SetLocalScale),
+		"position", sol::property(&Transform::GetPosition, &Transform::SetPosition),
+		"rotation", sol::property(&Transform::GetRotation, &Transform::SetRotation),
+		"scale", sol::property(&Transform::GetScale, &Transform::SetScale)
+	);
 
 	// Component
-	luabridge::getGlobalNamespace(L).beginClass<Component>("Component")
-		.addProperty("enabled", &Component::IsEnabled, &Component::SetEnabled)
-		.addProperty<Object&, Object*>("object", &Component::GetObject)
-		.endClass();
+	lua.new_usertype<Component>("Component",
+		"enabled", sol::property(&Component::IsEnabled, &Component::SetEnabled),
+		"object", sol::property(&Component::GetObject)
+	);
 
 	// Object
-	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
-		.addFunction("GetObjectName", &Object::GetObjectName)
-		.addFunction("SetActive", &Object::SetActive)
-		.addFunction("IsActiveSelf", &Object::IsActiveSelf)
-		.addFunction("IsActiveInHierarchy", &Object::IsActiveInHierarchy)
-		.addFunction("RemoveComponent", &Object::RemoveComponent)
-		.addFunction("GetComponent", &Object::GetComponentByTypeId)
-		.addProperty<Transform&, Transform*>("transform", &Object::GetTransform)
-		.addFunction("GetParent", &Object::GetParent)
-		.endClass();
+	lua.new_usertype<Object>("Object",
+		"GetObjectName", &Object::GetObjectName,
+		"SetActive", &Object::SetActive,
+		"IsActiveSelf", &Object::IsActiveSelf,
+		"IsActiveInHierarchy", &Object::IsActiveInHierarchy,
+		"RemoveComponent", &Object::RemoveComponent,
+		"GetComponent", &Object::GetComponentByTypeId,
+		"transform", sol::property(&Object::GetTransform),
+		"GetParent", &Object::GetParent
+	);
 
 	// Timer
-	luabridge::getGlobalNamespace(L).beginClass<Timer>("ITimer")
-		.addFunction("GetTimeMicroSec", &Timer::GetTimeMicroSec)
-		.addFunction("GetTimeMilliSec", &Timer::GetTimeMilliSec)
-		.addFunction("GetTimeSec", &Timer::GetTimeSec)
-		.addFunction("GetMicroDelta", &Timer::GetMicroDelta)
-		.addFunction("GetMilliDelta", &Timer::GetMilliDelta)
-		.addFunction("GetSecDelta", &Timer::GetSecDelta)
-		.endClass();
+	lua.new_usertype<Timer>("ITimer",
+		"GetTimeMicroSec", &Timer::GetTimeMicroSec,
+		"GetTimeMilliSec", &Timer::GetTimeMilliSec,
+		"GetTimeSec", &Timer::GetTimeSec,
+		"GetMicroDelta", &Timer::GetMicroDelta,
+		"GetMilliDelta", &Timer::GetMilliDelta,
+		"GetSecDelta", &Timer::GetSecDelta);
 
-	luabridge::setGlobal(L, Modules::Application->GetTimer(), "Timer");
+	lua.set("Timer", Modules::Application->GetTimer());
 }

@@ -2,7 +2,7 @@
 
 #include "Engine/Script/ScriptComponent.h"
 
-struct lua_State;
+#include "sol/forward.hpp"
 
 class LuaScriptComponent : public ScriptComponent
 {
@@ -12,7 +12,7 @@ public:
 
 	void CallByType(EBuiltinFuncType funcType) override;
 
-	int CallFromScript(lua_State* from_L);
+	int CallFromScript(sol::this_state ts);
 
 private:
 	bool PrepareFunctionCall(const String& functionName) override;

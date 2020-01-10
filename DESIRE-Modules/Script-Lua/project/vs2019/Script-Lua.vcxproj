@@ -58,7 +58,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;DEBUG;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\lua\src;..\..\Externals\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\lua\src;..\..\Externals\sol\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -81,7 +81,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE;NDEBUG;_LIB;_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\lua\src;..\..\Externals\LuaBridge\Source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;..\..\include;..\..\..\..\DESIRE-Engine\src;..\..\Externals\lua\src;..\..\Externals\sol\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -103,29 +103,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\List.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\LuaBridge.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Map.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedObject.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\RefCountedPtr.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\UnorderedMap.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\Vector.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\CFunctions.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\ClassInfo.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Config.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Constructor.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\FuncTraits.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Iterator.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaException.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaHelpers.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\LuaRef.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Namespace.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Security.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Stack.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeList.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\TypeTraits.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\Userdata.h" />
-    <ClInclude Include="..\..\Externals\LuaBridge\Source\LuaBridge\detail\dump.h" />
     <ClInclude Include="..\..\Externals\lua\src\lapi.h" />
     <ClInclude Include="..\..\Externals\lua\src\lauxlib.h" />
     <ClInclude Include="..\..\Externals\lua\src\lcode.h" />
@@ -152,6 +129,113 @@
     <ClInclude Include="..\..\Externals\lua\src\lundump.h" />
     <ClInclude Include="..\..\Externals\lua\src\lvm.h" />
     <ClInclude Include="..\..\Externals\lua\src\lzio.h" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\as_args.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\as_returns.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\base_traits.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\bind_traits.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\bytecode.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\call.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\compat-5.3.c.h" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\compat-5.3.h" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\compat-5.4.h" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\compatibility\version.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\config.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\config_setup.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\coroutine.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\debug.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\demangle.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\deprecate.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\dump_handler.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\ebco.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\environment.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\error.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\error_handler.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\feature_test.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\forward.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\forward_detail.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_result.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_core.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_overloaded.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_stateful.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_stateless.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\function_types_templated.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\in_place.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\inheritance.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\load_result.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\lua_table.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\lua_value.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\make_reference.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\map.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\metatable.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\object.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\object_base.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\optional.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\optional_implementation.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\overload.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\pointer_like.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\policies.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\property.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\protect.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\protected_function.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\protected_function_result.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\protected_handler.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\proxy_base.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\raii.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\reference.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\resolve.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\sol.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_get.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_get_qualified.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_get_unqualified.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_qualified.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_check_unqualified.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_core.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_field.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_get.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_get_qualified.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_get_unqualified.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_guard.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_iterator.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_pop.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_probe.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_proxy.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_proxy_base.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_push.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\stack_reference.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\state.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\state_handling.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\state_view.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\string_view.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\table.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\table_core.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\table_iterator.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\table_proxy.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\thread.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\tie.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\traits.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\trampoline.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\tuple.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\types.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\unicode.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\unique_usertype_traits.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\unsafe_function.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\unsafe_function_result.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\userdata.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_container.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_container_launch.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_core.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_proxy.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_storage.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\usertype_traits.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\variadic_args.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\variadic_results.hpp" />
+    <ClInclude Include="..\..\Externals\sol\include\sol\wrapper.hpp" />
     <ClInclude Include="..\..\src\API\LuaScriptAPI.h" />
     <ClInclude Include="..\..\src\LuaScriptComponent.h" />
     <ClInclude Include="..\..\src\LuaScriptSystem.h" />

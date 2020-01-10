@@ -31,22 +31,25 @@ LuaScriptSystem::LuaScriptSystem()
 		lua_pop(L, 1);	// remove copy
 	}
 
-	RegisterCoreAPI_Lua(L);
-	RegisterInputAPI_Lua(L);
-	RegisterNetworkAPI_Lua(L);
-	RegisterPhysicsAPI_Lua(L);
-	RegisterRenderAPI_Lua(L);
-	RegisterSceneAPI_Lua(L);
-	RegisterSoundAPI_Lua(L);
+	sol::state_view lua(L);
+
+	RegisterCoreAPI_Lua(lua);
+	RegisterInputAPI_Lua(lua);
+	RegisterNetworkAPI_Lua(lua);
+	RegisterPhysicsAPI_Lua(lua);
+	RegisterRenderAPI_Lua(lua);
+	RegisterSceneAPI_Lua(lua);
+	RegisterSoundAPI_Lua(lua);
 
 	// ScriptComponent
-	luabridge::getGlobalNamespace(L).deriveClass<LuaScriptComponent, Component>("ScriptComponent")
-		.addFunction("Call", &LuaScriptComponent::CallFromScript)
-		.endClass();
+	lua.new_usertype<LuaScriptComponent>("ScriptComponent",
+		sol::base_classes, sol::bases<Component>(),
+		"Call", &LuaScriptComponent::CallFromScript
+	);
 
-	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
-		.addFunction("GetScriptComponent", &Object::GetComponent<LuaScriptComponent>)
-		.endClass();
+	lua.new_usertype<Object>("Object",
+		"GetScriptComponent", &Object::GetComponent<LuaScriptComponent>
+	);
 }
 
 LuaScriptSystem::~LuaScriptSystem()

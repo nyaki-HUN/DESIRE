@@ -5,7 +5,7 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Render/RenderComponent.h"
 
-void RegisterRenderAPI_Lua(lua_State* L)
+void RegisterRenderAPI_Lua(sol::state_view& lua)
 {
 	Render* render = Modules::Render.get();
 	if(render == nullptr)
@@ -14,17 +14,18 @@ void RegisterRenderAPI_Lua(lua_State* L)
 	}
 
 	// RenderComponent
-	luabridge::getGlobalNamespace(L).deriveClass<RenderComponent, Component>("RenderComponent")
-		.addProperty("layer", &RenderComponent::GetLayer, &RenderComponent::SetLayer)
-		.endClass();
+	lua.new_usertype<RenderComponent>("RenderComponent",
+		sol::base_classes, sol::bases<Component>(),
+		"layer", sol::property(&RenderComponent::GetLayer, &RenderComponent::SetLayer)
+	);
 
-	luabridge::getGlobalNamespace(L).beginClass<Object>("Object")
-		.addFunction("GetRenderComponent", &Object::GetComponent<RenderComponent>)
-		.endClass();
+	lua.new_usertype<Object>("Object",
+		"GetRenderComponent", &Object::GetComponent<RenderComponent>
+	);
 
 	// Render
-	luabridge::getGlobalNamespace(L).beginClass<Render>("IRender")
-		.endClass();
+	lua.new_usertype<Render>("IRender"
+	);
 
-	luabridge::setGlobal(L, render, "Render");
+	lua.set("Render", render);
 }

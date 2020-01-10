@@ -1,7 +1,5 @@
 #include "API/LuaScriptAPI.h"
 
-void RegisterNetworkAPI_Lua(lua_State* L)
+void RegisterNetworkAPI_Lua(sol::state_view& lua)
 {
-	// Network
-//	luabridge::setGlobal(L, Network::Get(), "Network");
 }
