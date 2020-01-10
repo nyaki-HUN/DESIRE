@@ -2,8 +2,6 @@
 
 #include "Engine/Modules.h"
 
-#include "Engine/Core/String/String.h"
-
 #include "sqrat/sqratTable.h"
 #include "sqrat/sqratClass.h"
 
@@ -15,15 +13,6 @@ void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterSceneAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterSoundAPI_Squirrel(Sqrat::RootTable& rootTable);
-
-template<>
-struct Sqrat::Var<const String&>
-{
-	static void push(HSQUIRRELVM vm, const String& value)
-	{
-		sq_pushstring(vm, value.Str(), value.Length());
-	}
-};
 
 template<class T>
 class SquirrelScriptAPI

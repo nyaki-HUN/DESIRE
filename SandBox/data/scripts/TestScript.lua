@@ -21,7 +21,7 @@ function Update()
 		end
 	end
 
-	local pos = Vector3(1, 2, 3);
+	local pos = Vector3.new(1, 2, 3);
 	local pos2 = pos;
 	pos2.x = 4;
 	pos = pos2 * 4;
@@ -37,7 +37,7 @@ function Update()
 	print("x = ", self.object.transform.position.x);
 
 	-- Static function test
-	local mat = Matrix4.CreateTranslation(Vector3(100.0, 2.0, 0.0));
+	local mat = Matrix4.CreateTranslation(Vector3.new(100.0, 2.0, 0.0));
 end
 
 function TestCallFromOtherScript(caller)

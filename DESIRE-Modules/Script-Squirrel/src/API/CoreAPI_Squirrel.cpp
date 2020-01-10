@@ -11,6 +11,15 @@
 #include "Engine/Core/Math/Rand.h"
 #include "Engine/Core/Math/Transform.h"
 
+template<>
+struct Sqrat::Var<const String&>
+{
+	static void push(HSQUIRRELVM vm, const String& string)
+	{
+		sq_pushstring(vm, string.Str(), string.Length());
+	}
+};
+
 void RegisterVectormathFunctions_Squirrel(Sqrat::RootTable& rootTable)
 {
 	HSQUIRRELVM vm = rootTable.GetVM();

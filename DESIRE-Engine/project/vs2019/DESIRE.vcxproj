@@ -118,6 +118,7 @@
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\filewritestream.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\fwd.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\clzll.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\diyfp.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\dtoa.h" />
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\ieee754.h" />

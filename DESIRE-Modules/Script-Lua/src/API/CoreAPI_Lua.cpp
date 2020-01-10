@@ -14,7 +14,7 @@
 void RegisterVectormathFunctions_Lua(sol::state_view& lua)
 {
 	// Vector3
-	sol::usertype<Vector3> type_Vector3 = lua.new_usertype<Vector3>("Vector3",
+	lua.new_usertype<Vector3>("Vector3",
 		sol::constructors<Vector3(), Vector3(float, float, float), Vector3(float)>(),
 		"x", sol::property(&Vector3::GetX, &Vector3::SetX),
 		"y", sol::property(&Vector3::GetY, &Vector3::SetY),
@@ -24,7 +24,7 @@ void RegisterVectormathFunctions_Lua(sol::state_view& lua)
 		"WithZ", &Vector3::WithZ,
 		sol::meta_function::unary_minus, sol::resolve<Vector3() const>(&Vector3::operator -),
 		sol::meta_function::addition, &Vector3::operator +,
-		sol::meta_function::subtraction, sol::resolve<Vector3(const Vector3 & vec) const>(&Vector3::operator -),
+		sol::meta_function::subtraction, sol::resolve<Vector3(const Vector3&) const>(&Vector3::operator -),
 		sol::meta_function::multiplication, sol::overload(
 			sol::resolve<Vector3(const Vector3&) const>(&Vector3::operator *),
 			sol::resolve<Vector3(float) const>(&Vector3::operator *)),
@@ -141,44 +141,47 @@ void RegisterVectormathFunctions_Lua(sol::state_view& lua)
 		.addStaticFunction("CreateRotation", &Matrix3::CreateRotation)
 		.addStaticFunction("CreateScale", &Matrix3::CreateScale)
 		.endClass();
-
+*/
 	// Matrix4
-	luabridge::getGlobalNamespace(L).beginClass<Matrix4>("Matrix4")
-		.addConstructor<void(*)(const Vector4&, const Vector4&, const Vector4&, const Vector4&)>()
+	lua.new_usertype<Matrix4>("Matrix4",
+		sol::constructors<Matrix4(), Matrix4(const Vector4&, const Vector4&, const Vector4&, const Vector4&)>(),
 //		.addConstructor<void(*)(const Matrix3&, const Vector3&)>()
 //		.addConstructor<void(*)(const Quat&, const Vector3&)>()
-		.addFunction("SetUpper3x3", &Matrix4::SetUpper3x3)
-		.addFunction("GetUpper3x3", &Matrix4::GetUpper3x3)
-		.addFunction("SetTranslation", &Matrix4::SetTranslation)
-		.addFunction("GetTranslation", &Matrix4::GetTranslation)
-		.addProperty("col0", &Matrix4::col0)
-		.addProperty("col1", &Matrix4::col1)
-		.addProperty("col2", &Matrix4::col2)
-		.addProperty("col3", &Matrix4::col3)
-		.addFunction("SetCol", &Matrix4::SetCol)
-		.addFunction("GetCol", &Matrix4::GetCol)
-		.addFunction("SetRow0", &Matrix4::SetRow0)
-		.addFunction("GetRow0", &Matrix4::GetRow0)
-		.addFunction<Matrix4>("__unm", &Matrix4::operator -)
-		.addFunction("__add", &Matrix4::operator +)
-		.addFunction<Matrix4, const Matrix4&>("__sub", &Matrix4::operator -)
-//		.addFunction("__mul", &SquirrelScriptAPI<Matrix4>::OpMulOverrides<float, const Vector4&, const Vector3&, const Matrix4&>)
-		.addFunction("AppendScale", &Matrix4::AppendScale)
-		.addFunction("PrependScale", &Matrix4::PrependScale)
-		.addFunction("Transpose", &Matrix4::Transpose)
-		.addFunction("Invert", &Matrix4::Invert)
-		.addFunction("AffineInvert", &Matrix4::AffineInvert)
-		.addFunction("OrthoInvert", &Matrix4::OrthoInvert)
-		.addFunction("CalculateDeterminant", &Matrix4::CalculateDeterminant)
-		.addStaticFunction("CreateTranslation", &Matrix4::CreateTranslation)
-		.addStaticFunction("CreateRotationX", &Matrix4::CreateRotationX)
-		.addStaticFunction("CreateRotationY", &Matrix4::CreateRotationY)
-		.addStaticFunction("CreateRotationZ", &Matrix4::CreateRotationZ)
-		.addStaticFunction("CreateRotationZYX", &Matrix4::CreateRotationZYX)
-		.addStaticFunction("CreateRotation", &Matrix4::CreateRotation)
-		.addStaticFunction("CreateScale", &Matrix4::CreateScale)
-		.endClass();
-*/
+		"SetUpper3x3", &Matrix4::SetUpper3x3,
+		"GetUpper3x3", &Matrix4::GetUpper3x3,
+		"SetTranslation", &Matrix4::SetTranslation,
+		"GetTranslation", &Matrix4::GetTranslation,
+		"col0", &Matrix4::col0,
+		"col1", &Matrix4::col1,
+		"col2", &Matrix4::col2,
+		"col3", &Matrix4::col3,
+		"SetCol", &Matrix4::SetCol,
+		"GetCol", &Matrix4::GetCol,
+		"SetRow0", &Matrix4::SetRow0,
+		"GetRow0", &Matrix4::GetRow0,
+		sol::meta_function::unary_minus, sol::resolve<Matrix4() const>(&Matrix4::operator -),
+		sol::meta_function::addition, &Matrix4::operator +,
+		sol::meta_function::subtraction, sol::resolve<Matrix4(const Matrix4&) const>(&Matrix4::operator -),
+//		sol::meta_function::multiplication, sol::overload(
+//			sol::resolve<Matrix4(float) const>(&Matrix4::operator *),
+//			sol::resolve<Vector4(const Vector4&) const>(&Matrix4::operator *),
+//			sol::resolve<Vector4(const Vector3&) const>(&Matrix4::operator *),
+//			sol::resolve<Matrix4(const Matrix4&) const>(&Matrix4::operator *)),
+		"AppendScale", &Matrix4::AppendScale,
+		"PrependScale", &Matrix4::PrependScale,
+		"Transpose", &Matrix4::Transpose,
+		"Invert", &Matrix4::Invert,
+		"AffineInvert", &Matrix4::AffineInvert,
+		"OrthoInvert", &Matrix4::OrthoInvert,
+		"CalculateDeterminant", &Matrix4::CalculateDeterminant,
+		"CreateTranslation", &Matrix4::CreateTranslation,
+		"CreateRotationX", &Matrix4::CreateRotationX,
+		"CreateRotationY", &Matrix4::CreateRotationY,
+		"CreateRotationZ", &Matrix4::CreateRotationZ,
+		"CreateRotationZYX", &Matrix4::CreateRotationZYX,
+		"CreateRotation", &Matrix4::CreateRotation,
+		"CreateScale", &Matrix4::CreateScale
+	);
 }
 
 void RegisterMathFunctions_Lua(sol::state_view& lua)

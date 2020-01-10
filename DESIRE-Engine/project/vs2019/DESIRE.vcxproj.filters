@@ -135,6 +135,9 @@
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\biginteger.h">
       <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\clzll.h">
+      <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\3rdparty\rapidjson\include\rapidjson\internal\diyfp.h">
       <Filter>3rdparty\rapidjson\include\rapidjson\internal</Filter>
     </ClInclude>
