@@ -45,102 +45,102 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 		"AxisY", &Vector3::AxisY,
 		"AxisZ", &Vector3::AxisZ
 	);
-/*
+
 	// Vector4
-	luabridge::getGlobalNamespace(L).beginClass<Vector4>("Vector4")
-		.addConstructor<void(*)(float, float, float, float)>()
-//		.addConstructor<void(*)(const Vector3&, float)>()
-		.addFunction("SetXYZ", &Vector4::SetXYZ)
-		.addFunction("GetXYZ", &Vector4::GetXYZ)
-		.addProperty("x", &Vector4::GetX, &Vector4::SetX)
-		.addProperty("y", &Vector4::GetY, &Vector4::SetY)
-		.addProperty("z", &Vector4::GetZ, &Vector4::SetZ)
-		.addProperty("w", &Vector4::GetW, &Vector4::SetW)
-		.addFunction<Vector4>("__unm", &Vector4::operator -)
-		.addFunction("__add", &Vector4::operator +)
-		.addFunction<Vector4, const Vector4&>("__sub", &Vector4::operator -)
-//		.addFunction<Vector4, const Vector4&>("__mul", &Vector4::operator *)
-		.addFunction<Vector4, float>("__mul", &Vector4::operator *)
-//		.addFunction<Vector4, const Vector4&>("__div", &Vector4::operator /)
-		.addFunction<Vector4, float>("__div", &Vector4::operator /)
-		.addFunction("GetMaxElem", &Vector4::GetMaxElem)
-		.addFunction("GetMinElem", &Vector4::GetMinElem)
-		.addFunction("Dot", &Vector4::Dot)
-		.addFunction("LengthSqr", &Vector4::LengthSqr)
-		.addFunction("Length", &Vector4::Length)
-		.addFunction("Normalize", &Vector4::Normalize)
-		.addFunction("Normalized", &Vector4::Normalized)
-		.addFunction("AbsPerElem", &Vector4::AbsPerElem)
-		.addStaticFunction("MaxPerElem", &Vector4::MaxPerElem)
-		.addStaticFunction("MinPerElem", &Vector4::MinPerElem)
-		.addStaticFunction("Slerp", &Vector4::Slerp)
-		.addStaticFunction("AxisX", &Vector4::AxisX)
-		.addStaticFunction("AxisY", &Vector4::AxisY)
-		.addStaticFunction("AxisZ", &Vector4::AxisZ)
-		.addStaticFunction("AxisZ", &Vector4::AxisW)
-		.endClass();
+	lua.new_usertype<Vector4>("Vector4",
+		sol::constructors<Vector4(), Vector4(float, float, float, float), Vector4(float), Vector4(const Vector3&, float), Vector4(const Vector3&)>(),
+		"SetXYZ", &Vector4::SetXYZ,
+		"GetXYZ", &Vector4::GetXYZ,
+		"x", &Vector4::GetX, &Vector4::SetX,
+		"y", &Vector4::GetY, &Vector4::SetY,
+		"z", &Vector4::GetZ, &Vector4::SetZ,
+		"w", &Vector4::GetW, &Vector4::SetW,
+		sol::meta_function::unary_minus, sol::resolve<Vector4() const>(&Vector4::operator -),
+		sol::meta_function::addition, &Vector4::operator +,
+		sol::meta_function::subtraction, sol::resolve<Vector4(const Vector4&) const>(&Vector4::operator -),
+		sol::meta_function::multiplication, sol::overload(
+			sol::resolve<Vector4(const Vector4&) const>(&Vector4::operator *),
+			sol::resolve<Vector4(float) const>(&Vector4::operator *)),
+		sol::meta_function::division, sol::overload(
+			sol::resolve<Vector4(const Vector4&) const>(&Vector4::operator /),
+			sol::resolve<Vector4(float) const>(&Vector4::operator /)),
+		"Dot", &Vector4::Dot,
+		"LengthSqr", &Vector4::LengthSqr,
+		"Length", &Vector4::Length,
+		"Normalize", &Vector4::Normalize,
+		"Normalized", &Vector4::Normalized,
+		"AbsPerElem", &Vector4::AbsPerElem,
+		"GetMaxElem", &Vector4::GetMaxElem,
+		"GetMinElem", &Vector4::GetMinElem,
+		"MaxPerElem", &Vector4::MaxPerElem,
+		"MinPerElem", &Vector4::MinPerElem,
+		"Slerp", &Vector4::Slerp,
+		"AxisX", &Vector4::AxisX,
+		"AxisY", &Vector4::AxisY,
+		"AxisZ", &Vector4::AxisZ,
+		"AxisZ", &Vector4::AxisW
+	);
 
 	// Quat
-	luabridge::getGlobalNamespace(L).beginClass<Quat>("Quat")
-		.addConstructor<void(*)(float, float, float, float)>()
-//		.addConstructor<void(*)(const Matrix3&)>()
-		.addFunction<Quat>("__unm", &Quat::operator -)
-		.addFunction("__add", &Quat::operator +)
-		.addFunction<Quat, const Quat&>("__sub", &Quat::operator -)
-		.addFunction("__mul", &Quat::operator *)
-		.addFunction("Dot", &Quat::Dot)
-		.addFunction("Norm", &Quat::Norm)
-		.addFunction("Length", &Quat::Length)
-		.addFunction("Conjugate", &Quat::Conjugate)
-		.addFunction("EulerAngles", &Quat::EulerAngles)
-		.addFunction("RotateVec", &Quat::RotateVec)
-		.addFunction("Normalize", &Quat::Normalize)
-		.addFunction("Normalized", &Quat::Normalized)
-		.addStaticFunction("Slerp", &Quat::Slerp)
-		.addStaticFunction("Squad", &Quat::Squad)
-		.addStaticFunction("Identity", &Quat::Identity)
-		.addStaticFunction("CreateRotation", &Quat::CreateRotation)
-		.addStaticFunction("CreateRotationX", &Quat::CreateRotationX)
-		.addStaticFunction("CreateRotationY", &Quat::CreateRotationY)
-		.addStaticFunction("CreateRotationZ", &Quat::CreateRotationZ)
-		.addStaticFunction("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles)
-		.addStaticFunction("CreateRotationFromTo", &Quat::CreateRotationFromTo)
-		.endClass();
+	lua.new_usertype<Quat>("Quat",
+		sol::constructors<Quat(), Quat(float, float, float, float), Quat(const Matrix3&)>(),
+		sol::meta_function::unary_minus, sol::resolve<Quat() const>(&Quat::operator -),
+		sol::meta_function::addition, &Quat::operator +,
+		sol::meta_function::subtraction, sol::resolve<Quat(const Quat&) const>(&Quat::operator -),
+		sol::meta_function::multiplication, &Quat::operator *,
+		"Dot", &Quat::Dot,
+		"Norm", &Quat::Norm,
+		"Length", &Quat::Length,
+		"Conjugate", &Quat::Conjugate,
+		"EulerAngles", &Quat::EulerAngles,
+		"RotateVec", &Quat::RotateVec,
+		"Normalize", &Quat::Normalize,
+		"Normalized", &Quat::Normalized,
+		"Slerp", &Quat::Slerp,
+		"Squad", &Quat::Squad,
+		"Identity", &Quat::Identity,
+		"CreateRotation", &Quat::CreateRotation,
+		"CreateRotationX", &Quat::CreateRotationX,
+		"CreateRotationY", &Quat::CreateRotationY,
+		"CreateRotationZ", &Quat::CreateRotationZ,
+		"CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles,
+		"CreateRotationFromTo", &Quat::CreateRotationFromTo
+	);
 
 	// Matrix3
-	luabridge::getGlobalNamespace(L).beginClass<Matrix3>("Matrix3")
-		.addConstructor<void(*)(const Vector3&, const Vector3&, const Vector3&)>()
-//		.addConstructor<void(*)(const Quat&)>()
-		.addProperty("col0", &Matrix3::col0)
-		.addProperty("col1", &Matrix3::col1)
-		.addProperty("col2", &Matrix3::col2)
-		.addFunction("SetCol", &Matrix3::SetCol)
-		.addFunction("GetCol", &Matrix3::GetCol)
-		.addFunction("SetRow0", &Matrix3::SetRow0)
-		.addFunction("GetRow0", &Matrix3::GetRow0)
-		.addFunction<Matrix3>("__unm", &Matrix3::operator -)
-		.addFunction("__add", &Matrix3::operator +)
-		.addFunction<Matrix3, const Matrix3&>("__sub", &Matrix3::operator -)
-//		.addFunction("__mul", &SquirrelScriptAPI<Matrix3>::OpMulOverrides<float, const Vector3&, const Matrix3&>)
-		.addFunction("AppendScale", &Matrix3::AppendScale)
-		.addFunction("PrependScale", &Matrix3::PrependScale)
-		.addFunction("Transpose", &Matrix3::Transpose)
-		.addFunction("Invert", &Matrix3::Invert)
-		.addFunction("CalculateDeterminant", &Matrix3::CalculateDeterminant)
-		.addStaticFunction("Identity", &Matrix3::Identity)
-		.addStaticFunction("CreateRotationX", &Matrix3::CreateRotationX)
-		.addStaticFunction("CreateRotationY", &Matrix3::CreateRotationY)
-		.addStaticFunction("CreateRotationZ", &Matrix3::CreateRotationZ)
-		.addStaticFunction("CreateRotationZYX", &Matrix3::CreateRotationZYX)
-		.addStaticFunction("CreateRotation", &Matrix3::CreateRotation)
-		.addStaticFunction("CreateScale", &Matrix3::CreateScale)
-		.endClass();
-*/
+	lua.new_usertype<Matrix3>("Matrix3",
+		sol::constructors<Matrix3(), Matrix3(const Vector3&, const Vector3&, const Vector3&), Matrix3(const Quat&)>(),
+		"col0", &Matrix3::col0,
+		"col1", &Matrix3::col1,
+		"col2", &Matrix3::col2,
+		"SetCol", &Matrix3::SetCol,
+		"GetCol", &Matrix3::GetCol,
+		"SetRow0", &Matrix3::SetRow0,
+		"GetRow0", &Matrix3::GetRow0,
+		sol::meta_function::unary_minus, sol::resolve<Matrix3() const>(&Matrix3::operator -),
+		sol::meta_function::addition, &Matrix3::operator +,
+		sol::meta_function::subtraction, sol::resolve<Matrix3(const Matrix3&) const>(&Matrix3::operator -),
+		sol::meta_function::multiplication, sol::overload(
+			sol::resolve<Matrix3(const Matrix3&) const>(&Matrix3::operator *),
+			sol::resolve<Vector3(const Vector3&) const>(&Matrix3::operator *),
+			sol::resolve<Matrix3(float) const>(&Matrix3::operator *)),
+		"AppendScale", &Matrix3::AppendScale,
+		"PrependScale", &Matrix3::PrependScale,
+		"Transpose", &Matrix3::Transpose,
+		"Invert", &Matrix3::Invert,
+		"CalculateDeterminant", &Matrix3::CalculateDeterminant,
+		"Identity", &Matrix3::Identity,
+		"CreateRotationX", &Matrix3::CreateRotationX,
+		"CreateRotationY", &Matrix3::CreateRotationY,
+		"CreateRotationZ", &Matrix3::CreateRotationZ,
+		"CreateRotationZYX", &Matrix3::CreateRotationZYX,
+		"CreateRotation", &Matrix3::CreateRotation,
+		"CreateScale", &Matrix3::CreateScale
+	);
+
 	// Matrix4
 	lua.new_usertype<Matrix4>("Matrix4",
-		sol::constructors<Matrix4(), Matrix4(const Vector4&, const Vector4&, const Vector4&, const Vector4&)>(),
-//		.addConstructor<void(*)(const Matrix3&, const Vector3&)>()
-//		.addConstructor<void(*)(const Quat&, const Vector3&)>()
+		sol::constructors<Matrix4(), Matrix4(const Vector4&, const Vector4&, const Vector4&, const Vector4&), Matrix4(const Matrix3&, const Vector3&), Matrix4(const Quat&, const Vector3&)>(),
 		"SetUpper3x3", &Matrix4::SetUpper3x3,
 		"GetUpper3x3", &Matrix4::GetUpper3x3,
 		"SetTranslation", &Matrix4::SetTranslation,
@@ -157,10 +157,10 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 		sol::meta_function::addition, &Matrix4::operator +,
 		sol::meta_function::subtraction, sol::resolve<Matrix4(const Matrix4&) const>(&Matrix4::operator -),
 		sol::meta_function::multiplication, sol::overload(
-			sol::resolve<Matrix4(float) const>(&Matrix4::operator *),
+			sol::resolve<Matrix4(const Matrix4&) const>(&Matrix4::operator *),
 			sol::resolve<Vector4(const Vector4&) const>(&Matrix4::operator *),
 			sol::resolve<Vector4(const Vector3&) const>(&Matrix4::operator *),
-			sol::resolve<Matrix4(const Matrix4&) const>(&Matrix4::operator *)),
+			sol::resolve<Matrix4(float) const>(&Matrix4::operator *)),
 		"AppendScale", &Matrix4::AppendScale,
 		"PrependScale", &Matrix4::PrependScale,
 		"Transpose", &Matrix4::Transpose,
@@ -197,36 +197,33 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	);
 	lua.set("s_globalRand", &Rand::s_globalRand);
 
-/*
 	// Math
-	luabridge::getGlobalNamespace(L).beginNamespace("Math")
-		.addFunction("Round32", &Math::Round32)
-		.addFunction("RoundUp", &Math::RoundUp)
-		.addFunction("Clamp", &Math::Clamp)
-		.addFunction("Clamp01", &Math::Clamp01)
-		.endNamespace();
+	lua.create_named_table("Math",
+		"Round32", &Math::Round32,
+		"RoundUp", &Math::RoundUp,
+		"Clamp", &Math::Clamp,
+		"Clamp01", &Math::Clamp01
+	);
 
-	luabridge::getGlobalNamespace(L)
-		// Trigonometric functions
-		.addFunction("cos", &std::cosf)
-		.addFunction("sin", &std::sinf)
-		.addFunction("tan", &std::tanf)
-		.addFunction("acos", &std::acosf)
-		.addFunction("asin", &std::asinf)
-		.addFunction("atan", &std::atanf)
-		.addFunction("atan2", &std::atan2f)
-		// Hyberbolic functions
-		.addFunction("cosh", &std::coshf)
-		.addFunction("sinh", &std::sinhf)
-		.addFunction("tanh", &std::tanhf)
-		// Exponential and logarithmic functions
-		.addFunction("log", &std::logf)
-		.addFunction("log10", &std::log10f)
-		// Power functions
-		.addFunction("pow", &std::powf)
-		.addFunction("sqrt", &std::sqrtf)
-		// Absolute value functions
-		.addFunction("fabsf", &std::fabsf)
-		.addFunction<int(*)(int)>("abs", &std::abs);
-*/
+	// Trigonometric functions
+	lua["cos"] = &std::cosf;
+	lua["sin"] = &std::sinf;
+	lua["tan"] = &std::tanf;
+	lua["acos"] = &std::acosf;
+	lua["asin"] = &std::asinf;
+	lua["atan"] = &std::atanf;
+	lua["atan2"] = &std::atan2f;
+	// Hyberbolic functions
+	lua["cosh"] = &std::coshf;
+	lua["sinh"] = &std::sinhf;
+	lua["tanh"] = &std::tanhf;
+	// Exponential and logarithmic functions
+	lua["log"] = &std::logf;
+	lua["log10"] = &std::log10f;
+	// Power functions
+	lua["pow"] = &std::powf;
+	lua["sqrt"] = &std::sqrtf;
+	// Absolute value functions
+	lua["fabsf"] = &std::fabsf;
+	lua["abs"] = sol::resolve<int(int)>(&std::abs);
 }
