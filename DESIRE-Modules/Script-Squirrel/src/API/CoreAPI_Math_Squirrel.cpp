@@ -17,13 +17,18 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 		.Prop("x", &Vector3::GetX, &Vector3::SetX)
 		.Prop("y", &Vector3::GetY, &Vector3::SetY)
 		.Prop("z", &Vector3::GetZ, &Vector3::SetZ)
+		.Func("WithX", &Vector3::WithX)
+		.Func("WithY", &Vector3::WithY)
+		.Func("WithZ", &Vector3::WithZ)
 		.Func<Vector3(Vector3::*)() const>("_unm", &Vector3::operator -)
 		.Func("_add", &Vector3::operator +)
 		.Func<Vector3(Vector3::*)(const Vector3&) const>("_sub", &Vector3::operator -)
-		.SquirrelFunc("_mul", &SquirrelScriptAPI<Vector3>::OpMulOverrides<const Vector3&, float>)
-		.SquirrelFunc("_div", &SquirrelScriptAPI<Vector3>::OpDivOverrides<const Vector3&, float>)
-		.Func("GetMaxElem", &Vector3::GetMaxElem)
-		.Func("GetMinElem", &Vector3::GetMinElem)
+		.SquirrelFunc("_mul", &SquirrelScriptAPI<Vector3>::OpMulOverrides<
+			const Vector3&,
+			float >)
+		.SquirrelFunc("_div", &SquirrelScriptAPI<Vector3>::OpDivOverrides<
+			const Vector3&,
+			float >)
 		.Func("Dot", &Vector3::Dot)
 		.Func("Cross", &Vector3::Cross)
 		.Func("LengthSqr", &Vector3::LengthSqr)
@@ -31,6 +36,8 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 		.Func("Normalize", &Vector3::Normalize)
 		.Func("Normalized", &Vector3::Normalized)
 		.Func("AbsPerElem", &Vector3::AbsPerElem)
+		.Func("GetMaxElem", &Vector3::GetMaxElem)
+		.Func("GetMinElem", &Vector3::GetMinElem)
 		.StaticFunc("MaxPerElem", &Vector3::MaxPerElem)
 		.StaticFunc("MinPerElem", &Vector3::MinPerElem)
 		.StaticFunc("Slerp", &Vector3::Slerp)
@@ -45,27 +52,36 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 	rootTable.Bind("Vector4", Sqrat::Class<Vector4>(vm, "Vector4")
 		.Ctor()
 		.Ctor<float, float, float, float>()
-		.Ctor<const Vector3&, float>()
 		.Ctor<float>()
+		.Ctor<const Vector3&, float>()
+//		.Ctor<const Vector3&>()
 		.Func("SetXYZ", &Vector4::SetXYZ)
 		.Func("GetXYZ", &Vector4::GetXYZ)
 		.Prop("x", &Vector4::GetX, &Vector4::SetX)
 		.Prop("y", &Vector4::GetY, &Vector4::SetY)
 		.Prop("z", &Vector4::GetZ, &Vector4::SetZ)
 		.Prop("w", &Vector4::GetW, &Vector4::SetW)
+		.Func("WithX", &Vector4::WithX)
+		.Func("WithY", &Vector4::WithY)
+		.Func("WithZ", &Vector4::WithZ)
+		.Func("WithW", &Vector4::WithW)
 		.Func<Vector4(Vector4::*)() const>("_unm", &Vector4::operator -)
 		.Func("_add", &Vector4::operator +)
 		.Func<Vector4(Vector4::*)(const Vector4&) const>("_sub", &Vector4::operator -)
-		.SquirrelFunc("_mul", &SquirrelScriptAPI<Vector4>::OpMulOverrides<const Vector4&, float>)
-		.SquirrelFunc("_div", &SquirrelScriptAPI<Vector4>::OpDivOverrides<const Vector4&, float>)
-		.Func("GetMaxElem", &Vector4::GetMaxElem)
-		.Func("GetMinElem", &Vector4::GetMinElem)
+		.SquirrelFunc("_mul", &SquirrelScriptAPI<Vector4>::OpMulOverrides<
+			const Vector4&,
+			float >)
+		.SquirrelFunc("_div", &SquirrelScriptAPI<Vector4>::OpDivOverrides<
+			const Vector4&,
+			float >)
 		.Func("Dot", &Vector4::Dot)
 		.Func("LengthSqr", &Vector4::LengthSqr)
 		.Func("Length", &Vector4::Length)
 		.Func("Normalize", &Vector4::Normalize)
 		.Func("Normalized", &Vector4::Normalized)
 		.Func("AbsPerElem", &Vector4::AbsPerElem)
+		.Func("GetMaxElem", &Vector4::GetMaxElem)
+		.Func("GetMinElem", &Vector4::GetMinElem)
 		.StaticFunc("MaxPerElem", &Vector4::MaxPerElem)
 		.StaticFunc("MinPerElem", &Vector4::MinPerElem)
 		.StaticFunc("Slerp", &Vector4::Slerp)
@@ -118,7 +134,10 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 		.Func<Matrix3(Matrix3::*)() const>("_unm", &Matrix3::operator -)
 		.Func("_add", &Matrix3::operator +)
 		.Func<Matrix3(Matrix3::*)(const Matrix3&) const>("_sub", &Matrix3::operator -)
-		.SquirrelFunc("_mul", &SquirrelScriptAPI<Matrix3>::OpMulOverrides<float, const Vector3&, const Matrix3&>)
+		.SquirrelFunc("_mul", &SquirrelScriptAPI<Matrix3>::OpMulOverrides<
+			const Matrix3&,
+			const Vector3&,
+			float >)
 		.Func("AppendScale", &Matrix3::AppendScale)
 		.Func("PrependScale", &Matrix3::PrependScale)
 		.Func("Transpose", &Matrix3::Transpose)
@@ -154,7 +173,11 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 		.Func<Matrix4(Matrix4::*)() const>("_unm", &Matrix4::operator -)
 		.Func("_add", &Matrix4::operator +)
 		.Func<Matrix4(Matrix4::*)(const Matrix4&) const>("_sub", &Matrix4::operator -)
-		.SquirrelFunc("_mul", &SquirrelScriptAPI<Matrix4>::OpMulOverrides<float, const Vector4&, const Vector3&, const Matrix4&>)
+		.SquirrelFunc("_mul", &SquirrelScriptAPI<Matrix4>::OpMulOverrides<
+			const Matrix4&,
+			const Vector4&,
+			const Vector3&,
+			float >)
 		.Func("AppendScale", &Matrix4::AppendScale)
 		.Func("PrependScale", &Matrix4::PrependScale)
 		.Func("Transpose", &Matrix4::Transpose)
@@ -219,5 +242,5 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 	rootTable.Func("sqrt", &std::sqrtf);
 	// Absolute value functions
 	rootTable.Func("fabsf", &std::fabsf);
-	rootTable.Func<int(*)(int)>("abs", &std::abs);
+	rootTable.Func<int(int)>("abs", &std::abs);
 }

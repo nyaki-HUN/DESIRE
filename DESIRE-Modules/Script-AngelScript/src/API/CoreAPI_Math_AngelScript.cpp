@@ -40,8 +40,6 @@ void RegisterCoreAPI_Math_AngelScript(asIScriptEngine* engine)
 	result = engine->RegisterObjectMethod("Vector3", "void subAssign(const Vector3& in)", asFUNCTION(AngelScriptAPI<Vector3>::OpSubAssign<const Vector3&>), asCALL_CDECL_OBJFIRST);																ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("Vector3", "void opMulAssign(float)", asFUNCTION(AngelScriptAPI<Vector3>::OpMulAssign<float>), asCALL_CDECL_OBJFIRST);																				ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("Vector3", "void opDivAssign(float)", asFUNCTION(AngelScriptAPI<Vector3>::OpDivAssign<float>), asCALL_CDECL_OBJFIRST);																				ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("Vector3", "float GetMaxElem() const", asMETHOD(Vector3, GetMaxElem), asCALL_THISCALL);																												ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("Vector3", "float GetMinElem() const", asMETHOD(Vector3, GetMinElem), asCALL_THISCALL);																												ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("Vector3", "float Dot(const Vector3& in) const", asMETHOD(Vector3, Dot), asCALL_THISCALL);																											ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("Vector3", "Vector3@ Cross(const Vector3& in) const", asFUNCTION(Vector3_Cross), asCALL_CDECL_OBJFIRST);																								ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("Vector3", "float LengthSqr() const", asMETHOD(Vector3, LengthSqr), asCALL_THISCALL);																													ASSERT(result >= asSUCCESS);
@@ -49,6 +47,8 @@ void RegisterCoreAPI_Math_AngelScript(asIScriptEngine* engine)
 	result = engine->RegisterObjectMethod("Vector3", "void Normalize()", asMETHOD(Vector3, Normalize), asCALL_THISCALL);																														ASSERT(result >= asSUCCESS);
 //	result = engine->RegisterObjectMethod("Vector3", "Vector3@ Normalized() const", asMETHOD(Vector3, Normalized), asCALL_THISCALL);																											ASSERT(result >= asSUCCESS);
 //	Vector3 AbsPerElem() const;																																																					ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Vector3", "float GetMaxElem() const", asMETHOD(Vector3, GetMaxElem), asCALL_THISCALL);																												ASSERT(result >= asSUCCESS);
+	result = engine->RegisterObjectMethod("Vector3", "float GetMinElem() const", asMETHOD(Vector3, GetMinElem), asCALL_THISCALL);																												ASSERT(result >= asSUCCESS);
 	result = engine->SetDefaultNamespace("Vector3");																																															ASSERT(result >= asSUCCESS);
 	result = engine->RegisterGlobalFunction("Vector3@ MaxPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<const Vector3&, const Vector3&, &Vector3::MaxPerElem>)), asCALL_GENERIC);		ASSERT(result >= asSUCCESS);
 	result = engine->RegisterGlobalFunction("Vector3@ MinPerElem(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Vector3>::StaticFunc<const Vector3&, const Vector3&, &Vector3::MinPerElem>)), asCALL_GENERIC);		ASSERT(result >= asSUCCESS);
