@@ -51,9 +51,9 @@ public:
 	inline Matrix3 operator -() const							{ return Matrix3(-col0, -col1, -col2); }
 	inline Matrix3 operator +(const Matrix3& mat) const			{ return Matrix3(col0 + mat.col0, col1 + mat.col1, col2 + mat.col2); }
 	inline Matrix3 operator -(const Matrix3& mat) const			{ return Matrix3(col0 - mat.col0, col1 - mat.col1, col2 - mat.col2); }
-	inline Matrix3 operator *(float scalar) const				{ return Matrix3(col0 * scalar, col1 * scalar, col2 * scalar); }
-	inline Vector3 operator *(const Vector3& vec) const;
 	inline Matrix3 operator *(const Matrix3& mat) const			{ return Matrix3(*this * mat.col0, *this * mat.col1, *this * mat.col2); }
+	inline Vector3 operator *(const Vector3& vec) const;
+	inline Matrix3 operator *(float scalar) const				{ return Matrix3(col0 * scalar, col1 * scalar, col2 * scalar); }
 
 	inline Matrix3& operator +=(const Matrix3& mat)				{ *this = *this + mat;		return *this; }
 	inline Matrix3& operator -=(const Matrix3& mat)				{ *this = *this - mat;		return *this; }

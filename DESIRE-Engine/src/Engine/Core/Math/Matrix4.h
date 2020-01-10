@@ -108,10 +108,10 @@ public:
 	inline Matrix4 operator -() const							{ return Matrix4(-col0, -col1, -col2, -col3); }
 	inline Matrix4 operator +(const Matrix4& mat) const			{ return Matrix4(col0 + mat.col0, col1 + mat.col1, col2 + mat.col2, col3 + mat.col3); }
 	inline Matrix4 operator -(const Matrix4& mat) const			{ return Matrix4(col0 - mat.col0, col1 - mat.col1, col2 - mat.col2, col3 - mat.col3); }
-	inline Matrix4 operator *(float scalar) const				{ return Matrix4(col0 * scalar, col1 * scalar, col2 * scalar, col3 * scalar); }
+	inline Matrix4 operator *(const Matrix4& mat) const			{ return Matrix4( *this * mat.col0, *this * mat.col1, *this * mat.col2, *this * mat.col3); }
 	inline Vector4 operator *(const Vector4& vec) const;
 	inline Vector4 operator *(const Vector3& vec) const;
-	inline Matrix4 operator *(const Matrix4& mat) const			{ return Matrix4( *this * mat.col0, *this * mat.col1, *this * mat.col2, *this * mat.col3); }
+	inline Matrix4 operator *(float scalar) const				{ return Matrix4(col0 * scalar, col1 * scalar, col2 * scalar, col3 * scalar); }
 
 	inline Matrix4& operator +=(const Matrix4& mat)				{ *this = *this + mat;		return *this; }
 	inline Matrix4& operator -=(const Matrix4& mat)				{ *this = *this - mat;		return *this; }
