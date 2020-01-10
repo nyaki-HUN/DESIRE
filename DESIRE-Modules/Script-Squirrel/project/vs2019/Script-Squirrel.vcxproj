@@ -156,7 +156,6 @@
     <ClCompile Include="..\..\src\API\InputAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\PhysicsAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\RenderAPI_Squirrel.cpp" />
-    <ClCompile Include="..\..\src\API\SceneAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\SoundAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\SquirrelScriptComponent.cpp" />
     <ClCompile Include="..\..\src\SquirrelScriptSystem.cpp" />

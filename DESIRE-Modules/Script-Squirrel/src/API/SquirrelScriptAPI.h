@@ -11,7 +11,6 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterInputAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable);
-void RegisterSceneAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterSoundAPI_Squirrel(Sqrat::RootTable& rootTable);
 
 template<class T>

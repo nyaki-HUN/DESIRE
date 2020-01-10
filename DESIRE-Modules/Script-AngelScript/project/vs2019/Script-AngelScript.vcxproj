@@ -193,7 +193,6 @@
     <ClCompile Include="..\..\src\API\InputAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\PhysicsAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\RenderAPI_AngelScript.cpp" />
-    <ClCompile Include="..\..\src\API\SceneAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp" />
     <ClCompile Include="..\..\src\AngelScriptComponent.cpp" />
     <ClCompile Include="..\..\src\AngelScriptSystem.cpp" />

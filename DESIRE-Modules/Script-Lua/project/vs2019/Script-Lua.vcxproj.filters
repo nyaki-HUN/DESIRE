@@ -539,9 +539,6 @@
     <ClCompile Include="..\..\src\API\RenderAPI_Lua.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\SceneAPI_Lua.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\API\SoundAPI_Lua.cpp">
       <Filter>src\API</Filter>
     </ClCompile>

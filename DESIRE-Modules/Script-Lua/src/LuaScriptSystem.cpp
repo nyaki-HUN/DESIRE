@@ -38,7 +38,6 @@ LuaScriptSystem::LuaScriptSystem()
 	RegisterInputAPI_Lua(lua);
 	RegisterPhysicsAPI_Lua(lua);
 	RegisterRenderAPI_Lua(lua);
-	RegisterSceneAPI_Lua(lua);
 	RegisterSoundAPI_Lua(lua);
 
 	// ScriptComponent

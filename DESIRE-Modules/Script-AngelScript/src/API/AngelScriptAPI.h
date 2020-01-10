@@ -27,7 +27,6 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine* engine);
 void RegisterInputAPI_AngelScript(asIScriptEngine* engine);
 void RegisterPhysicsAPI_AngelScript(asIScriptEngine* engine);
 void RegisterRenderAPI_AngelScript(asIScriptEngine* engine);
-void RegisterSceneAPI_AngelScript(asIScriptEngine* engine);
 void RegisterSoundAPI_AngelScript(asIScriptEngine* engine);
 
 template<class T>

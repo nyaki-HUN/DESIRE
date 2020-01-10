@@ -179,9 +179,6 @@
     <ClCompile Include="..\..\src\API\RenderAPI_Squirrel.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\SceneAPI_Squirrel.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\API\SoundAPI_Squirrel.cpp">
       <Filter>src\API</Filter>
     </ClCompile>

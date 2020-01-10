@@ -287,9 +287,6 @@
     <ClCompile Include="..\..\src\API\RenderAPI_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\SceneAPI_AngelScript.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\API\SoundAPI_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>

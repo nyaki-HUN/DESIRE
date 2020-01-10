@@ -40,7 +40,6 @@ SquirrelScriptSystem::SquirrelScriptSystem()
 	RegisterInputAPI_Squirrel(rootTable);
 	RegisterPhysicsAPI_Squirrel(rootTable);
 	RegisterRenderAPI_Squirrel(rootTable);
-	RegisterSceneAPI_Squirrel(rootTable);
 	RegisterSoundAPI_Squirrel(rootTable);
 
 	// ScriptComponent
