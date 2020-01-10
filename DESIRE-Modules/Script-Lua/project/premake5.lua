@@ -4,6 +4,8 @@ project "Script-Lua"
 
 	removeflags { "FatalCompileWarnings" }
 
+	buildoptions { "/bigobj" }
+
 	includedirs
 	{
 		"../Externals/lua/src",
