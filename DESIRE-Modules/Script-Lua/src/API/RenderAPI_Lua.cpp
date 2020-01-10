@@ -24,6 +24,5 @@ void RegisterRenderAPI_Lua(sol::state_view& lua)
 	// Render
 	lua.new_usertype<Render>("IRender"
 	);
-
 	lua.set("Render", render);
 }

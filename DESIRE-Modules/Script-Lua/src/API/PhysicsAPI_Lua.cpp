@@ -25,6 +25,5 @@ void RegisterPhysicsAPI_Lua(sol::state_view& lua)
 	lua.new_usertype<Physics>("IPhysics",
 		"RaycastAny", &Physics::RaycastAny
 	);
-
 	lua.set("Physics", physics);
 }
