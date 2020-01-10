@@ -275,10 +275,10 @@
     <ClCompile Include="..\..\src\API\CoreAPI_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\InputAPI_AngelScript.cpp">
+    <ClCompile Include="..\..\src\API\CoreAPI_Math_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\NetworkAPI_AngelScript.cpp">
+    <ClCompile Include="..\..\src\API\InputAPI_AngelScript.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\PhysicsAPI_AngelScript.cpp">

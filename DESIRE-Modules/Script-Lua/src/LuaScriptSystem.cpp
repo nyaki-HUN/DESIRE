@@ -33,9 +33,9 @@ LuaScriptSystem::LuaScriptSystem()
 
 	sol::state_view lua(L);
 
+	RegisterCoreAPI_Math_Lua(lua);
 	RegisterCoreAPI_Lua(lua);
 	RegisterInputAPI_Lua(lua);
-	RegisterNetworkAPI_Lua(lua);
 	RegisterPhysicsAPI_Lua(lua);
 	RegisterRenderAPI_Lua(lua);
 	RegisterSceneAPI_Lua(lua);

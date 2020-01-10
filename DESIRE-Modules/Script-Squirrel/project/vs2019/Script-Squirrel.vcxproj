@@ -151,9 +151,9 @@
     <ClCompile Include="..\..\Externals\squirrel\squirrel\sqstate.cpp" />
     <ClCompile Include="..\..\Externals\squirrel\squirrel\sqtable.cpp" />
     <ClCompile Include="..\..\Externals\squirrel\squirrel\sqvm.cpp" />
+    <ClCompile Include="..\..\src\API\CoreAPI_Math_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\CoreAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\InputAPI_Squirrel.cpp" />
-    <ClCompile Include="..\..\src\API\NetworkAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\PhysicsAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\RenderAPI_Squirrel.cpp" />
     <ClCompile Include="..\..\src\API\SceneAPI_Squirrel.cpp" />

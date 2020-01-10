@@ -527,10 +527,10 @@
     <ClCompile Include="..\..\src\API\CoreAPI_Lua.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\InputAPI_Lua.cpp">
+    <ClCompile Include="..\..\src\API\CoreAPI_Math_Lua.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\API\NetworkAPI_Lua.cpp">
+    <ClCompile Include="..\..\src\API\InputAPI_Lua.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\PhysicsAPI_Lua.cpp">

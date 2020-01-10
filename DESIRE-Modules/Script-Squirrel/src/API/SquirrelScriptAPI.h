@@ -6,9 +6,9 @@
 #include "sqrat/sqratClass.h"
 
 // Engine API register functions
+void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterInputAPI_Squirrel(Sqrat::RootTable& rootTable);
-void RegisterNetworkAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterSceneAPI_Squirrel(Sqrat::RootTable& rootTable);

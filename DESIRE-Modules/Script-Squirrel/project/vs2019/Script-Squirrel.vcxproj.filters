@@ -164,13 +164,13 @@
     <ClCompile Include="..\..\Externals\squirrel\squirrel\sqvm.cpp">
       <Filter>Externals\squirrel\squirrel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\API\CoreAPI_Math_Squirrel.cpp">
+      <Filter>src\API</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\src\API\CoreAPI_Squirrel.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\InputAPI_Squirrel.cpp">
-      <Filter>src\API</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\API\NetworkAPI_Squirrel.cpp">
       <Filter>src\API</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\API\PhysicsAPI_Squirrel.cpp">

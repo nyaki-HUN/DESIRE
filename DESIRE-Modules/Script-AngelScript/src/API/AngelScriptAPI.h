@@ -16,15 +16,15 @@ DESIRE_ENABLE_WARNINGS
 #define ANGELSCRIPT_API_REGISTER_COMPONENT(CLASS)																																				\
 	result = engine->RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeId);																				ASSERT(result >= asSUCCESS);	\
 	result = engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																					ASSERT(result >= asSUCCESS);	\
-	result = engine->RegisterObjectMethod(#CLASS, "Object& get_object() const property", asMETHODPR(Component, GetObject, () const, Object&), asCALL_THISCALL);	ASSERT(result >= asSUCCESS);	\
+	result = engine->RegisterObjectMethod(#CLASS, "Object& get_object() const property", asMETHOD(Component, GetObject), asCALL_THISCALL);						ASSERT(result >= asSUCCESS);	\
 	result = engine->RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);	ASSERT(result >= asSUCCESS);	\
 	result = engine->RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST);	ASSERT(result >= asSUCCESS)
 
 // API register functions
 void RegisterStdString(asIScriptEngine* engine);
+void RegisterCoreAPI_Math_AngelScript(asIScriptEngine* engine);
 void RegisterCoreAPI_AngelScript(asIScriptEngine* engine);
 void RegisterInputAPI_AngelScript(asIScriptEngine* engine);
-void RegisterNetworkAPI_AngelScript(asIScriptEngine* engine);
 void RegisterPhysicsAPI_AngelScript(asIScriptEngine* engine);
 void RegisterRenderAPI_AngelScript(asIScriptEngine* engine);
 void RegisterSceneAPI_AngelScript(asIScriptEngine* engine);
@@ -136,7 +136,7 @@ class AngelScriptGenericAPI
 {
 public:
 	template<const String& (T::*func)() const>
-	static void MakeStringRvFromMemberFunc(asIScriptGeneric* gen)
+	static void MakeStringRvFrom(asIScriptGeneric* gen)
 	{
 		ASSERT(gen->GetArgCount() == 0);
 		const T* self = static_cast<const T*>(gen->GetObject());

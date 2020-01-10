@@ -31,9 +31,9 @@ AngelScriptSystem::AngelScriptSystem()
 
 	// Register Script API
 	RegisterStdString(engine);
+	RegisterCoreAPI_Math_AngelScript(engine);
 	RegisterCoreAPI_AngelScript(engine);
 	RegisterInputAPI_AngelScript(engine);
-	RegisterNetworkAPI_AngelScript(engine);
 	RegisterPhysicsAPI_AngelScript(engine);
 	RegisterRenderAPI_AngelScript(engine);
 	RegisterSceneAPI_AngelScript(engine);
@@ -173,9 +173,9 @@ asIScriptContext* AngelScriptSystem::CreateScriptContext()
 	ASSERT(engine != nullptr);
 
 	asIScriptContext* ctx = engine->CreateContext();
-	int result = ctx->SetExceptionCallback(asMETHODPR(AngelScriptSystem, ExceptionCallback, (asIScriptContext*), void), this, asCALL_THISCALL);
+	int result = ctx->SetExceptionCallback(asMETHOD(AngelScriptSystem, ExceptionCallback), this, asCALL_THISCALL);
 	ASSERT(result == asSUCCESS);
-	result = ctx->SetLineCallback(asMETHODPR(AngelScriptSystem, LineCallback, (asIScriptContext*), void), this, asCALL_THISCALL);
+	result = ctx->SetLineCallback(asMETHOD(AngelScriptSystem, LineCallback), this, asCALL_THISCALL);
 	ASSERT(result == asSUCCESS);
 
 	return ctx;

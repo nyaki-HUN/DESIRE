@@ -270,8 +270,8 @@
     <ClCompile Include="..\..\Externals\lua\src\lvm.c" />
     <ClCompile Include="..\..\Externals\lua\src\lzio.c" />
     <ClCompile Include="..\..\src\API\CoreAPI_Lua.cpp" />
+    <ClCompile Include="..\..\src\API\CoreAPI_Math_Lua.cpp" />
     <ClCompile Include="..\..\src\API\InputAPI_Lua.cpp" />
-    <ClCompile Include="..\..\src\API\NetworkAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\PhysicsAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\RenderAPI_Lua.cpp" />
     <ClCompile Include="..\..\src\API\SceneAPI_Lua.cpp" />
