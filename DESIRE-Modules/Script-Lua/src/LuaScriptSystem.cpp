@@ -41,10 +41,8 @@ LuaScriptSystem::LuaScriptSystem()
 	RegisterSoundAPI_Lua(lua);
 
 	// ScriptComponent
-	lua.new_usertype<LuaScriptComponent>("ScriptComponent",
-		sol::base_classes, sol::bases<Component>(),
-		"Call", &LuaScriptComponent::CallFromScript
-	);
+	auto scriptComponent = lua.new_usertype<LuaScriptComponent>("ScriptComponent", sol::base_classes, sol::bases<Component>());
+	scriptComponent.set_function("Call", &LuaScriptComponent::CallFromScript);
 
 	lua["Object"]["GetScriptComponent"] = &Object::GetComponent<LuaScriptComponent>;
 }

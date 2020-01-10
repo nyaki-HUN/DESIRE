@@ -14,15 +14,12 @@ void RegisterRenderAPI_Lua(sol::state_view& lua)
 	}
 
 	// RenderComponent
-	lua.new_usertype<RenderComponent>("RenderComponent",
-		sol::base_classes, sol::bases<Component>(),
-		"layer", sol::property(&RenderComponent::GetLayer, &RenderComponent::SetLayer)
-	);
+	auto renderComponent = lua.new_usertype<RenderComponent>("RenderComponent", sol::base_classes, sol::bases<Component>());
+	renderComponent.set("layer", sol::property(&RenderComponent::GetLayer, &RenderComponent::SetLayer));
 
 	lua["Object"]["GetRenderComponent"] = &Object::GetComponent<RenderComponent>;
 
 	// Render
-	lua.new_usertype<Render>("IRender"
-	);
-	lua.set("Render", render);
+	auto irender = lua.new_usertype<Render>("IRender");
+	lua["Render"] = render;
 }

@@ -11,9 +11,7 @@ void RegisterInputAPI_Lua(sol::state_view& lua)
 	}
 
 	// Input
-	lua.new_usertype<Input>("IInput",
-		"GetOsMouseCursorPos", &Input::GetOsMouseCursorPos
-	);
-
-	lua.set("Input", input);
+	auto iinput = lua.new_usertype<Input>("IInput");
+	iinput.set_function("GetOsMouseCursorPos", &Input::GetOsMouseCursorPos);
+	lua["Input"] = input;
 }

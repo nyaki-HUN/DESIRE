@@ -11,7 +11,6 @@ void RegisterSoundAPI_Lua(sol::state_view& lua)
 	}
 
 	// SoundSystem
-	lua.new_usertype<SoundSystem>("ISoundSystem"
-	);
-	lua.set("SoundSystem", soundSystem);
+	auto isoundsystem = lua.new_usertype<SoundSystem>("ISoundSystem");
+	lua["SoundSystem"] = soundSystem;
 }
