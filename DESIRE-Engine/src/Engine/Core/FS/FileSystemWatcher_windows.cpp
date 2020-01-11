@@ -15,15 +15,16 @@ class FileSystemWatcherImpl
 public:
 	void RefreshWatch()
 	{
-		BOOL succeeded = ReadDirectoryChangesW(
+		BOOL succeeded = ReadDirectoryChangesExW(
 			dirHandle,
 			buffer,
 			sizeof(buffer),
 			TRUE,
-			FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_CREATION,
+			FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION,
 			nullptr,
 			&overlapped,
-			&FileSystemWatcherImpl::CompletionCallback);
+			&FileSystemWatcherImpl::CompletionCallback,
+			ReadDirectoryNotifyExtendedInformation);
 
 		isActive = (succeeded == TRUE);
 	}
@@ -40,11 +41,11 @@ public:
 		if(dwErrorCode == ERROR_SUCCESS)
 		{
 			char str[DESIRE_MAX_PATH_LEN];
-			FILE_NOTIFY_INFORMATION* notify = nullptr;
+			FILE_NOTIFY_EXTENDED_INFORMATION* notify = nullptr;
 			size_t offset = 0;
 			do
 			{
-				notify = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(watcher->impl->buffer + offset);
+				notify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(watcher->impl->buffer + offset);
 
 				// Convert filename to UTF-8
 				const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
@@ -64,7 +65,11 @@ public:
 						break;
 
 					case FILE_ACTION_MODIFIED:
-						watcher->actionCallback(FileSystemWatcher::EAction::Modified, filename);
+						// Don't call for empty files to filter out duplicated notifications about file writes
+						if(notify->FileSize.QuadPart != 0)
+						{
+							watcher->actionCallback(FileSystemWatcher::EAction::Modified, filename);
+						}
 						break;
 				}
 
