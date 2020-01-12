@@ -17,3 +17,7 @@ ipch/
 # Xcode and OS X
 xcuserdata
 .DS_Store
+
+# FastBuild files
+.fbcache/
+fbuild.fdb
