@@ -18,6 +18,7 @@ project "SandBox"
 		"Compression-LZ4",
 		"Compression-zlib",
 		"Compression-zstd",
+		"Network-curl",
 		"Physics-Box2D",
 		"Physics-Bullet",
 		"Physics-PhysX",

@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-zstd", "DESIRE-
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DESIRE", "DESIRE-Engine\project\vs2019\DESIRE.vcxproj", "{74923478-6D8D-4892-A013-C2B759A870EC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Network-curl", "DESIRE-Modules\Network-curl\project\vs2019\Network-curl.vcxproj", "{B908992D-EAFC-4E3E-9D31-651D2A8EBA3D}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Box2D", "DESIRE-Modules\Physics-Box2D\project\vs2019\Physics-Box2D.vcxproj", "{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics-Bullet", "DESIRE-Modules\Physics-Bullet\project\vs2019\Physics-Bullet.vcxproj", "{F4BCB217-F30B-4DE4-9F3C-F1B2013FA45C}"
@@ -67,6 +69,10 @@ Global
 		{74923478-6D8D-4892-A013-C2B759A870EC}.Debug|x64.Build.0 = Debug|x64
 		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.ActiveCfg = Release|x64
 		{74923478-6D8D-4892-A013-C2B759A870EC}.Release|x64.Build.0 = Release|x64
+		{B908992D-EAFC-4E3E-9D31-651D2A8EBA3D}.Debug|x64.ActiveCfg = Debug|x64
+		{B908992D-EAFC-4E3E-9D31-651D2A8EBA3D}.Debug|x64.Build.0 = Debug|x64
+		{B908992D-EAFC-4E3E-9D31-651D2A8EBA3D}.Release|x64.ActiveCfg = Release|x64
+		{B908992D-EAFC-4E3E-9D31-651D2A8EBA3D}.Release|x64.Build.0 = Release|x64
 		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Debug|x64.ActiveCfg = Debug|x64
 		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Debug|x64.Build.0 = Debug|x64
 		{051565BD-D2E6-46B0-851D-A3B5B3AE3BDB}.Release|x64.ActiveCfg = Release|x64
