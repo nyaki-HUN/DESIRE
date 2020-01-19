@@ -16,7 +16,7 @@ project "DESIRE"
 		"../3rdparty/**.h",
 	}
 
-	filter "system:not windows"
+	filter "action:not vs*"
 		removefiles
 		{
 			"../src/**/WINDOWS/**",

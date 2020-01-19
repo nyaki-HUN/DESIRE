@@ -13,9 +13,8 @@ project "UI-imgui"
 		"../Externals/imgui/**.cpp",
 	}
 
-	filter { "action:vs*" }
+	filter "action:vs*"
 		files
 		{
 			"../Externals/imgui/**.natvis",
 		}
-	filter {}

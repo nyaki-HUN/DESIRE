@@ -21,16 +21,18 @@ project "Script-AngelScript"
 		"../Externals/**.cpp",
 	}
 
-	filter "system:windows"
+	filter "action:vs*"
 		files
 		{
 			"../Externals/AngelScript/src/as_callfunc_x64_msvc_asm.asm"
 		}
 
-	filter { "system:windows", "files:../Externals/AngelScript/src/**.asm" }
+	filter { "action:vs*", "files:../Externals/AngelScript/src/**.asm" }
 		buildcommands "ml64.exe /c  /nologo /Fo%{cfg.objdir}/%{file.basename}.obj /W3 /Zi /Ta %{file.relpath}"
 		buildoutputs "%{cfg.objdir}/%{file.basename}.obj;%(Outputs)"
-	filter {}
 
-	configuration "Debug"
-		defines { "AS_DEBUG" }
+	filter "Debug"
+		defines
+		{
+			"AS_DEBUG",
+		}

@@ -26,17 +26,14 @@ project "Render-bgfx"
 		"../Externals/**/amalgamated.*",
 	}
 
-	filter { "system:windows" }
+	filter "action:vs*"
 		includedirs
 		{
 			"../Externals/bx/include/compat/msvc",
 		}
-	filter {}
 
-	configuration { "Debug" }
+	filter "Debug"
 		defines
 		{
 			"BX_CONFIG_DEBUG=1",
 		}
-
-	configuration {}	-- Reset configuration

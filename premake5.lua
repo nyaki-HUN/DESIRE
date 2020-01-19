@@ -28,9 +28,8 @@ filter { "system:windows", "action:vs*" }
 		"WIN32",
 		"_CRT_SECURE_NO_DEPRECATE",
 	}
-filter {}
 
-configuration { "Debug" }
+filter "Debug"
 	targetsuffix "_d"
 	defines
 	{
@@ -44,7 +43,7 @@ configuration { "Debug" }
 	exceptionhandling "SEH"
 	symbols "On"
 
-configuration { "Release" }
+filter "Release"
 	defines
 	{
 		"NDEBUG",
@@ -61,7 +60,7 @@ configuration { "Release" }
 	exceptionhandling "Off"
 	optimize "On"
 
-configuration {}	-- Reset configuration
+filter {}	-- Reset filter
 
 
 function AddCommonProjectConfig()

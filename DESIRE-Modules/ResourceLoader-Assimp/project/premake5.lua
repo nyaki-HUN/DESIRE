@@ -37,5 +37,5 @@ project "ResourceLoader-Assimp"
 		"../Externals/**.cpp",
 	}
 
-	filter "system:windows"
+	filter "action:vs*"
 		buildoptions { "/bigobj" }
