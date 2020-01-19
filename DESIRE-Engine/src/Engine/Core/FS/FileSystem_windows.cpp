@@ -127,11 +127,11 @@ void FileSystem::Setup()
 	const DWORD len = GetModuleFileNameA(NULL, moduleFilename, DESIRE_MAX_PATH_LEN);
 
 	char exeFilenameWithPath[DESIRE_MAX_PATH_LEN] = {};
-	char* fileNameBegin = nullptr;
-	GetFullPathNameA(moduleFilename, DESIRE_MAX_PATH_LEN, exeFilenameWithPath, &fileNameBegin);
-	if(fileNameBegin != nullptr)
+	char* filenameBegin = nullptr;
+	GetFullPathNameA(moduleFilename, DESIRE_MAX_PATH_LEN, exeFilenameWithPath, &filenameBegin);
+	if(filenameBegin != nullptr)
 	{
-		*fileNameBegin = '\0';
+		*filenameBegin = '\0';
 	}
 
 	appDir = DynamicString(exeFilenameWithPath, strlen(exeFilenameWithPath));

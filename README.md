@@ -29,17 +29,17 @@ Modules
 ### Compression
 
  * [Lizard](https://github.com/inikep/lizard) *(WIP)*
- * [LZ4](http://lz4.github.io/lz4) *(WIP)*
- * [zlib-ng](https://github.com/Dead2/zlib-ng)
- * [zstd](http://facebook.github.io/zstd)
+ * [LZ4](https://lz4.github.io/lz4) *(WIP)*
+ * [zlib](https://www.zlib.net)
+ * [zstd](https://facebook.github.io/zstd)
 
 ### Network
  * [curl](https://curl.haxx.se/) *(WIP)*
 
 ### Physics
 
-* [Box2D](http://box2d.org) *(WIP)*
-* [Bullet](http://bulletphysics.org) *(WIP)*
+* [Box2D](https://box2d.org) *(WIP)*
+* [Bullet](https://bulletphysics.org) *(WIP)*
 * [PhysX](https://developer.nvidia.com/physx-sdk) *(WIP)*
 
 ### Render

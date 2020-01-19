@@ -21,8 +21,8 @@ public:
 	int GetMaxCompressionLevel() const override;
 
 protected:
-	static void* CustomAlloc(void* opaque, uint32_t items, uint32_t size);
-	static void CustomFree(void* opaque, void* address);
+	static void* MallocWrapper(void* opaque, uint32_t items, uint32_t size);
+	static void FreeWrapper(void* opaque, void* address);
 	static void StreamInit(z_stream& stream);
 
 	const int windowBits;

@@ -120,13 +120,13 @@ int ZlibCompressionBase::GetMaxCompressionLevel() const
 	return Z_BEST_COMPRESSION;
 }
 
-void* ZlibCompressionBase::CustomAlloc(void* opaque, uint32_t items, uint32_t size)
+void* ZlibCompressionBase::MallocWrapper(void* opaque, uint32_t items, uint32_t size)
 {
 	DESIRE_UNUSED(opaque);
 	return MemorySystem::Alloc(static_cast<size_t>(items) * size);
 }
 
-void ZlibCompressionBase::CustomFree(void* opaque, void* address)
+void ZlibCompressionBase::FreeWrapper(void* opaque, void* address)
 {
 	DESIRE_UNUSED(opaque);
 	MemorySystem::Free(address);
@@ -134,6 +134,6 @@ void ZlibCompressionBase::CustomFree(void* opaque, void* address)
 
 void ZlibCompressionBase::StreamInit(z_stream& stream)
 {
-	stream.zalloc = &ZlibCompressionBase::CustomAlloc;
-	stream.zfree = &ZlibCompressionBase::CustomFree;
+	stream.zalloc = &ZlibCompressionBase::MallocWrapper;
+	stream.zfree = &ZlibCompressionBase::FreeWrapper;
 }
