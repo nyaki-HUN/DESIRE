@@ -41,10 +41,10 @@ public:
 
 private:
 	// Prevent copy and move
-	Transform(const Transform& other) = delete;
-	Transform(Transform&& other) = delete;
-	Transform& operator=(const Transform& other) = delete;
-	Transform& operator=(Transform&& other) = delete;
+	Transform(const Transform&) = delete;
+	Transform(Transform&&) = delete;
+	Transform& operator=(const Transform&) = delete;
+	Transform& operator=(Transform&&) = delete;
 
 	enum EFlags
 	{

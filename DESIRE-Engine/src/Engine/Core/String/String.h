@@ -73,8 +73,8 @@ protected:
 
 private:
 	// Prevent copy and move
-	String(const String& string) = delete;
-	String(String&& string) = delete;
-	String& operator =(const String& string) = delete;
-	String& operator =(String&& string) = delete;
+	String(const String&) = delete;
+	String(String&&) = delete;
+	String& operator =(const String&) = delete;
+	String& operator =(String&&) = delete;
 };

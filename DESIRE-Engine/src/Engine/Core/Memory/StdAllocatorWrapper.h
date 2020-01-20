@@ -39,8 +39,8 @@ public:
 
 private:
 	// Prevent copy and move
-	StdAllocatorWrapper(const StdAllocatorWrapper& other) = delete;
-	StdAllocatorWrapper(StdAllocatorWrapper&& other) = delete;
-	StdAllocatorWrapper& operator=(const StdAllocatorWrapper& other) = delete;
-	StdAllocatorWrapper& operator=(StdAllocatorWrapper&& other) = delete;
+	StdAllocatorWrapper(const StdAllocatorWrapper&) = delete;
+	StdAllocatorWrapper(StdAllocatorWrapper&&) = delete;
+	StdAllocatorWrapper& operator=(const StdAllocatorWrapper&) = delete;
+	StdAllocatorWrapper& operator=(StdAllocatorWrapper&&) = delete;
 };

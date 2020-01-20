@@ -25,8 +25,8 @@ protected:
 
 private:
 	// Prevent copy and move
-	Allocator(const Allocator& other) = delete;
-	Allocator(Allocator&& other) = delete;
-	Allocator& operator=(const Allocator& other) = delete;
-	Allocator& operator=(Allocator&& other) = delete;
+	Allocator(const Allocator&) = delete;
+	Allocator(Allocator&&) = delete;
+	Allocator& operator=(const Allocator&) = delete;
+	Allocator& operator=(Allocator&&) = delete;
 };
