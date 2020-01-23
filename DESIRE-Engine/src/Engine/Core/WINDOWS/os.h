@@ -1,8 +1,5 @@
 #pragma once
 
-//#define NTDDI_VERSION		NTDDI_WINXPSP2
-//#define _WIN32_WINNT		0x0501
-//#define WINVER			0x0501
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
