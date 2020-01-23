@@ -13,12 +13,12 @@ String::String(const char* str, size_t size)
 
 size_t String::Find(const String& search, size_t startIndex) const
 {
-	if(startIndex >= size || search.IsEmpty())
+	if(search.size == 0 || startIndex >= size)
 	{
 		return kInvalidPos;
 	}
 
-	const char* foundPtr = strstr(data + startIndex, search.Str());
+	const char* foundPtr = strstr(data + startIndex, search.data);
 	return (foundPtr != nullptr) ? foundPtr - data : kInvalidPos;
 }
 
@@ -35,12 +35,12 @@ size_t String::Find(char search, size_t startIndex) const
 
 size_t String::FindLast(const String& search) const
 {
-	const char* s = data + size - search.Length();
+	const char* s = data + size - search.size;
 	while(s >= data)
 	{
-		if(strncmp(s, search.Str(), search.Length()) == 0)
+		if(memcmp(s, search.data, search.size) == 0)
 		{
-			return (size_t)(s - data);
+			return static_cast<size_t>(s - data);
 		}
 
 		s--;
@@ -56,7 +56,7 @@ size_t String::FindLast(char search) const
 	{
 		if(*s == search)
 		{
-			return (size_t)(s - data);
+			return static_cast<size_t>(s - data);
 		}
 
 		s--;
@@ -103,7 +103,7 @@ size_t String::LengthUTF8() const
 
 bool String::IsEmpty() const
 {
-	return (Length() == 0);
+	return (size == 0);
 }
 
 int32_t String::AsInt32() const
@@ -195,22 +195,12 @@ int String::CompareIgnoreCase(const String& string) const
 
 bool String::Equals(const String& string) const
 {
-	if(Length() != string.Length())
-	{
-		return false;
-	}
-
-	return (memcmp(data, string.data, size) == 0);
+	return (size == string.size) ? (memcmp(data, string.data, size) == 0) : false;
 }
 
 bool String::EqualsIgnoreCase(const String& string) const
 {
-	if(Length() != string.Length())
-	{
-		return false;
-	}
-
-	return (CompareIgnoreCase(string) == 0);
+	return (size == string.size) ? (CompareIgnoreCase(string) == 0) : false;
 }
 
 bool String::StartsWith(const String& prefix) const
