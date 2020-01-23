@@ -200,7 +200,7 @@ bool String::Equals(const String& string) const
 		return false;
 	}
 
-	return memcmp(data, string.data, size) == 0;
+	return (memcmp(data, string.data, size) == 0);
 }
 
 bool String::EqualsIgnoreCase(const String& string) const
@@ -215,13 +215,12 @@ bool String::EqualsIgnoreCase(const String& string) const
 
 bool String::StartsWith(const String& prefix) const
 {
-	return StartsWith(prefix.Str(), prefix.Length());
-}
+	if(size >= prefix.size && prefix.size != 0)
+	{
+		return (memcmp(data, prefix.data, prefix.size) == 0);
+	}
 
-bool String::StartsWith(const char* prefix, size_t numChars) const
-{
-	ASSERT(prefix != nullptr);
-	return (numChars == 0) ? false : (strncmp(data, prefix, numChars) == 0);
+	return false;
 }
 
 bool String::StartsWith(char prefix) const
@@ -229,15 +228,14 @@ bool String::StartsWith(char prefix) const
 	return (data[0] == prefix);
 }
 
-bool String::EndsWith(const String& prefix) const
+bool String::EndsWith(const String& suffix) const
 {
-	return EndsWith(prefix.Str(), prefix.Length());
-}
+	if(size >= suffix.size && suffix.size != 0)
+	{
+		return (memcmp(&data[size - suffix.size], suffix.data, suffix.size) == 0);
+	}
 
-bool String::EndsWith(const char* suffix, size_t numChars) const
-{
-	ASSERT(suffix != nullptr);
-	return (numChars == 0 || size < numChars) ? false : (strncmp(&data[size - numChars], suffix, numChars) == 0);
+	return false;
 }
 
 bool String::EndsWith(char suffix) const

@@ -42,6 +42,11 @@ TEST_CASE("String", "[Core]")
 	SECTION("Length()")
 	{
 		CHECK(string.Length() == strlen(charSeq));
+		CHECK(string.Length() == sizeof(charSeq) - 1);
+
+		String stringWithNullSeparator = "Word0\0Word1";
+		CHECK(stringWithNullSeparator.Length() != strlen("Word0\0Word1"));
+		CHECK(stringWithNullSeparator.Length() == sizeof("Word0\0Word1") - 1);
 	}
 
 	SECTION("LengthUTF8()")
@@ -146,27 +151,32 @@ TEST_CASE("String", "[Core]")
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase(String("xXx")));
 		CHECK(s.Compare("XXX") == s.CompareIgnoreCase("xXx"));
 
-		// Special case when we put a null-character into the string
-		const_cast<char*>(string.Str())[3] = '\0';
-		REQUIRE(strcmp(string.Str(), "Str") == 0);
-		CHECK(string.Compare("Str") != 0);
+		String stringWithNullSeparator = "Word0\0Word1";
+		REQUIRE(strcmp(stringWithNullSeparator.Str(), "Word0") == 0);
+		CHECK(stringWithNullSeparator.Compare("Word0") != 0);
 	}
 
 	SECTION("StartsWith()")
 	{
-		CHECK(string.StartsWith(String("Str")));
-		CHECK(string.StartsWith("Str!!!", 3));
+		CHECK(string.StartsWith("Str"));
 		CHECK(string.StartsWith('S'));
 		CHECK(string.StartsWith(charSeq));
 		CHECK_FALSE(string.StartsWith(String::kEmptyString));
+
+		String stringWithNullSeparator = "Word0\0Word1";
+		CHECK(stringWithNullSeparator.StartsWith("Word0"));
+		CHECK(stringWithNullSeparator.StartsWith("Word0\0Word1"));
 	}
 
 	SECTION("EndsWith()")
 	{
-		CHECK(string.EndsWith(String(" ASD")));
-		CHECK(string.EndsWith(" ASD!!!", 4));
+		CHECK(string.EndsWith(" ASD"));
 		CHECK(string.EndsWith('D'));
 		CHECK(string.EndsWith(charSeq));
 		CHECK_FALSE(string.EndsWith(String::kEmptyString));
+
+		String stringWithNullSeparator = "Word0\0Word1";
+		CHECK(stringWithNullSeparator.EndsWith("Word1"));
+		CHECK(stringWithNullSeparator.EndsWith("Word0\0Word1"));
 	}
 }
