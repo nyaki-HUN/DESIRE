@@ -11,6 +11,21 @@ ZstdCompression::ZstdCompression()
 	compressionLevel = 19;
 }
 
+ZstdCompression::~ZstdCompression()
+{
+	if(compressContext != nullptr)
+	{
+		ZSTD_freeCCtx(compressContext);
+		compressContext = nullptr;
+	}
+
+	if(decompressContext != nullptr)
+	{
+		ZSTD_freeDCtx(decompressContext);
+		decompressContext = nullptr;
+	}
+}
+
 size_t ZstdCompression::GetMaxCompressionDataBufferSize(size_t dataSize) const
 {
 	return ZSTD_compressBound(dataSize);
@@ -18,7 +33,19 @@ size_t ZstdCompression::GetMaxCompressionDataBufferSize(size_t dataSize) const
 
 size_t ZstdCompression::CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize)
 {
-	return ZSTD_compress(compressedDataBuffer, compressedDataBufferSize, data, dataSize, compressionLevel);
+	if(compressContext == nullptr)
+	{
+		const ZSTD_customMem customMem =
+		{
+			&ZstdCompression::MallocWrapper,
+			&ZstdCompression::FreeWrapper,
+			this
+		};
+
+		compressContext = ZSTD_createCCtx_advanced(customMem);
+	}
+
+	return ZSTD_compressCCtx(compressContext, compressedDataBuffer, compressedDataBufferSize, data, dataSize, compressionLevel);
 }
 
 size_t ZstdCompression::GetMaxDecompressionDataBufferSize(const void* compressedData, size_t compressedDataSize) const
@@ -28,7 +55,19 @@ size_t ZstdCompression::GetMaxDecompressionDataBufferSize(const void* compressed
 
 size_t ZstdCompression::DecompressBuffer(void* dataBuffer, size_t dataBufferSize, const void* compressedData, size_t compressedDataSize)
 {
-	return ZSTD_decompress(dataBuffer, dataBufferSize, compressedData, compressedDataSize);
+	if(decompressContext == nullptr)
+	{
+		const ZSTD_customMem customMem =
+		{
+			&ZstdCompression::MallocWrapper,
+			&ZstdCompression::FreeWrapper,
+			this
+		};
+
+		decompressContext = ZSTD_createDCtx_advanced(customMem);
+	}
+
+	return ZSTD_decompressDCtx(decompressContext, dataBuffer, dataBufferSize, compressedData, compressedDataSize);
 }
 
 int ZstdCompression::GetMinCompressionLevel() const
@@ -41,13 +80,13 @@ int ZstdCompression::GetMaxCompressionLevel() const
 	return ZSTD_maxCLevel();
 }
 
-void* ZstdCompression::CustomAlloc(void* opaque, size_t size)
+void* ZstdCompression::MallocWrapper(void* opaque, size_t size)
 {
 	DESIRE_UNUSED(opaque);
 	return MemorySystem::Alloc(size);
 }
 
-void ZstdCompression::CustomFree(void* opaque, void* address)
+void ZstdCompression::FreeWrapper(void* opaque, void* address)
 {
 	DESIRE_UNUSED(opaque);
 	MemorySystem::Free(address);

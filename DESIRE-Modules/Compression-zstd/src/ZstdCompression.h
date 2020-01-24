@@ -2,6 +2,9 @@
 
 #include "Engine/Compression/Compression.h"
 
+typedef struct ZSTD_CCtx_s ZSTD_CCtx;
+typedef struct ZSTD_DCtx_s ZSTD_DCtx;
+
 class ZstdCompression : public Compression
 {
 public:
@@ -17,6 +20,9 @@ public:
 	int GetMaxCompressionLevel() const override;
 
 private:
-	static void* CustomAlloc(void *opaque, size_t size);
-	static void CustomFree(void *opaque, void *address);
+	static void* MallocWrapper(void *opaque, size_t size);
+	static void FreeWrapper(void *opaque, void *address);
+
+	ZSTD_CCtx* compressContext = nullptr;
+	ZSTD_DCtx* decompressContext = nullptr;
 };
