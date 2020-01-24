@@ -53,8 +53,8 @@ MemoryBuffer IReadFile::ReadFileContent()
 
 	const size_t dataSize = static_cast<size_t>(fileSize - position);
 	MemoryBuffer buffer = MemoryBuffer(dataSize + 1);
-	const size_t numBytesRead = ReadBuffer(buffer.data, dataSize);
+	const size_t numBytesRead = ReadBuffer(buffer.ptr.get(), dataSize);
 	ASSERT(numBytesRead == dataSize);
-	buffer.data[numBytesRead] = '\0';
+	buffer.ptr[numBytesRead] = '\0';
 	return buffer;
 }

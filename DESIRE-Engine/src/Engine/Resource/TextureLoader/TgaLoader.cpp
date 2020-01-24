@@ -65,12 +65,12 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 	const size_t numComponents = header.bitsPerPixel / 8u;
 	const size_t dataSize = (size_t)(header.width * header.height * numComponents);
 
-	uint8_t* data = (uint8_t*)malloc(dataSize);
+	std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(dataSize);
 	switch(header.imageType)
 	{
 		case TgaHeader::EImageType::TrueColor:
 		{
-			bytesRead = file->ReadBuffer(data, dataSize);
+			bytesRead = file->ReadBuffer(data.get(), dataSize);
 			ASSERT(bytesRead == dataSize);
 			break;
 		}
@@ -78,14 +78,13 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 		case TgaHeader::EImageType::RLE_TrueColor:
 		{
 			uint8_t rlePacket[5];
-			uint8_t* dataPtr = data;
+			uint8_t* dataPtr = data.get();
 			do
 			{
 				// Read the packed (header byte + color info)
 				bytesRead = file->ReadBuffer(rlePacket, numComponents + 1);
 				if(bytesRead != numComponents + 1)
 				{
-					free(data);
 					return nullptr;
 				}
 
@@ -111,7 +110,7 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 					file->ReadBuffer(dataPtr, numRawColor * numComponents);
 					dataPtr += numRawColor * numComponents;
 				}
-			} while(dataPtr < data + dataSize);
+			} while(dataPtr < data.get() + dataSize);
 			break;
 		}
 
@@ -133,12 +132,12 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 	if(!(header.descriptor & TgaHeader::DIRECTION_TOP_TO_BOTTOM))
 	{
 		// Flip the image horizontally
-		const size_t rowSize = (size_t)(header.width * numComponents);
-		void* tmp = malloc(rowSize);
+		const size_t rowSize = header.width * numComponents;
+		DESIRE_STACKALLOCATE_ARRAY(uint8_t, tmp, rowSize);
 		for(uint16_t i = 0; i < header.height / 2u; ++i)
 		{
-			uint8_t* src = data + i * rowSize;
-			uint8_t* dst = data + (header.height - i - 1) * rowSize;
+			uint8_t* src = data.get() + i * rowSize;
+			uint8_t* dst = data.get() + (header.height - i - 1) * rowSize;
 			memcpy(tmp, dst, rowSize);
 			memcpy(dst, src, rowSize);
 			memcpy(src, tmp, rowSize);
@@ -149,6 +148,7 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 	Texture::EFormat format = (numComponents == 3) ? Texture::EFormat::RGB8 : Texture::EFormat::RGBA8;
 
 	Texture* texture = new Texture(header.width, header.height, format);
-	texture->data = MemoryBuffer(data, dataSize);
+	texture->data.ptr = std::move(data);
+	texture->data.size = dataSize;
 	return texture;
 }

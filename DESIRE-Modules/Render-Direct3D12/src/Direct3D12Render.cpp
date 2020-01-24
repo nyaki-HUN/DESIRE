@@ -443,7 +443,7 @@ void Direct3D12Render::Bind(Shader* shader)
 	AppendShaderFilenameWithPath(filenameWithPath, shader->name);
 
 	ID3DBlob* errorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader->data.data		// pSrcData
+	HRESULT hr = D3DCompile(shader->data.ptr.get()	// pSrcData
 		, shader->data.size							// SrcDataSize
 		, filenameWithPath.Str()					// pSourceName
 		, defines									// pDefines
@@ -815,7 +815,7 @@ void Direct3D12Render::UpdateShaderParams(const Material* material, const Shader
 			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
 			if(offsetSizePair != nullptr)
 			{
-				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 			}
 		}
 
@@ -823,7 +823,7 @@ void Direct3D12Render::UpdateShaderParams(const Material* material, const Shader
 		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
@@ -831,21 +831,21 @@ void Direct3D12Render::UpdateShaderParams(const Material* material, const Shader
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
 		if(offsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("camPos");
 		if(offsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
@@ -863,12 +863,12 @@ void Direct3D12Render::UpdateShaderParams(const Material* material, const Shader
 				resolution[1] = activeWindow->GetHeight();
 			}
 
-			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		if(isChanged)
 		{
-//			deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, bufferData.buffer.data, 0, 0);
+//			deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, bufferData.data.ptr.get(), 0, 0);
 		}
 	}
 }

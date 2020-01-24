@@ -1,46 +1,27 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/MemoryBuffer.h"
 
-MemoryBuffer::MemoryBuffer(void* data, size_t size)
-	: data(static_cast<char*>(data))
+MemoryBuffer::MemoryBuffer(std::unique_ptr<uint8_t[]> data, size_t size)
+	: ptr(std::move(data))
 	, size(size)
 {
 }
 
 MemoryBuffer::MemoryBuffer(size_t size)
-	: data(static_cast<char*>(malloc(size)))
-	, size(size)
+	: MemoryBuffer(std::make_unique<uint8_t[]>(size), size)
 {
 }
 
-MemoryBuffer::MemoryBuffer(MemoryBuffer&& other)
+String MemoryBuffer::AsString() const
 {
-	data = other.data;
-	size = other.size;
-	other.data = nullptr;
-	other.size = 0;
-}
+	ASSERT(size != 0);
 
-MemoryBuffer::~MemoryBuffer()
-{
-	free(data);
-}
-
-MemoryBuffer& MemoryBuffer::operator =(MemoryBuffer&& other)
-{
-	free(data);
-
-	data = other.data;
-	size = other.size;
-	other.data = nullptr;
-	other.size = 0;
-
-	return *this;
+	return String(reinterpret_cast<const char*>(ptr.get()), size - 1);
 }
 
 MemoryBuffer MemoryBuffer::CreateFromDataCopy(const void* dataToCopy, size_t size)
 {
 	MemoryBuffer buffer(size);
-	memcpy(buffer.data, dataToCopy, size);
+	memcpy(buffer.ptr.get(), dataToCopy, size);
 	return buffer;
 }

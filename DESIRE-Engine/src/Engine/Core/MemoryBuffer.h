@@ -1,22 +1,19 @@
 #pragma once
 
+#include "Engine/Core/String/String.h"
+
+#include <memory>
+
 class MemoryBuffer
 {
 public:
-	MemoryBuffer(void* data = nullptr, size_t size = 0);
+	MemoryBuffer(std::unique_ptr<uint8_t[]> data = nullptr, size_t size = 0);
 	MemoryBuffer(size_t size);
-	MemoryBuffer(MemoryBuffer&& other);
-	~MemoryBuffer();
 
-	MemoryBuffer& operator =(MemoryBuffer&& other);
+	String AsString() const;
 
 	static MemoryBuffer CreateFromDataCopy(const void* dataToCopy, size_t size);
 
-	char* data;
+	std::unique_ptr<uint8_t[]> ptr;
 	size_t size;
-
-private:
-	// Prevent copy
-	MemoryBuffer(const MemoryBuffer& other) = delete;
-	MemoryBuffer& operator=(const MemoryBuffer& other) = delete;
 };

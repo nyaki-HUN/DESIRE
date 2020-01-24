@@ -618,16 +618,18 @@ void Direct3D11Render::Bind(Shader* shader)
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
 	AppendShaderFilenameWithPath(filenameWithPath, shader->name);
 
+	UINT compileFlags = 0;
+
 	ID3DBlob* errorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader->data.data		// pSrcData
+	HRESULT hr = D3DCompile(shader->data.ptr.get()	// pSrcData
 		, shader->data.size							// SrcDataSize
 		, filenameWithPath.Str()					// pSourceName
 		, defines									// pDefines
 		, D3D_COMPILE_STANDARD_FILE_INCLUDE			// pInclude
 		, "main"									// pEntrypoint
 		, isVertexShader ? "vs_5_0" : "ps_5_0"		// pTarget
-		, 0											// Flags1
-		, 0											// Flags2
+		, compileFlags								// D3DCOMPILE flags
+		, 0											// D3DCOMPILE_EFFECT flags
 		, &renderData->shaderCode					// ppCode
 		, &errorBlob);								// ppErrorMsgs
 	if(FAILED(hr))
@@ -688,7 +690,7 @@ void Direct3D11Render::Bind(Shader* shader)
 
 		// Create constant buffer data
 		ShaderRenderDataD3D11::ConstantBufferData& bufferData = renderData->constantBuffersData[i];
-		bufferData.buffer = MemoryBuffer(shaderBufferDesc.Size);
+		bufferData.data = MemoryBuffer(shaderBufferDesc.Size);
 
 		for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
 		{
@@ -736,7 +738,7 @@ void Direct3D11Render::Bind(Texture* texture)
 
 	TextureRenderDataD3D11* renderData = new TextureRenderDataD3D11();
 
-	const bool isRenderTarget = (texture->data.data == nullptr);
+	const bool isRenderTarget = (texture->data.ptr == nullptr);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = texture->width;
@@ -779,7 +781,7 @@ void Direct3D11Render::Bind(Texture* texture)
 		ASSERT(textureDesc.MipLevels * textureDesc.ArraySize == 1 && "TODO: Set initial data properly in the loop below");
 		for(size_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
 		{
-			subResourceData[i].pSysMem = texture->data.data;
+			subResourceData[i].pSysMem = texture->data.ptr.get();
 			subResourceData[i].SysMemPitch = (UINT)(texture->data.size / texture->height);
 			subResourceData[i].SysMemSlicePitch = 0;
 		}
@@ -1162,7 +1164,7 @@ void Direct3D11Render::UpdateShaderParams(const Material* material, const Shader
 			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
 			if(offsetSizePair != nullptr)
 			{
-				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 			}
 		}
 
@@ -1170,7 +1172,7 @@ void Direct3D11Render::UpdateShaderParams(const Material* material, const Shader
 		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
@@ -1178,27 +1180,27 @@ void Direct3D11Render::UpdateShaderParams(const Material* material, const Shader
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matView");
 		if(offsetSizePair != nullptr)
 		{
-			isChanged |= CheckAndUpdateShaderParam(&matView.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matView.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
 		if(offsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("camPos");
 		if(offsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
@@ -1216,12 +1218,12 @@ void Direct3D11Render::UpdateShaderParams(const Material* material, const Shader
 				resolution[1] = activeWindow->GetHeight();
 			}
 
-			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.buffer.data + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
 		}
 
 		if(isChanged)
 		{
-			deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, bufferData.buffer.data, 0, 0);
+			deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, bufferData.data.ptr.get(), 0, 0);
 		}
 	}
 }

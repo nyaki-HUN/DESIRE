@@ -425,7 +425,7 @@ void BgfxRender::Bind(Shader* shader)
 	const bgfx::Memory* shaderData = nullptr;
 	if(shader->defines.empty())
 	{
-		shaderData = bgfx::makeRef(shader->data.data, (uint32_t)shader->data.size);
+		shaderData = bgfx::makeRef(shader->data.ptr.get(), static_cast<uint32_t>(shader->data.size));
 	}
 	else
 	{
@@ -435,7 +435,7 @@ void BgfxRender::Bind(Shader* shader)
 			totalDefinesLength += 8 + define.Length() + 3;	// "#define ASD 1\n"
 		}
 
-		shaderData = bgfx::alloc((uint32_t)(totalDefinesLength + shader->data.size));
+		shaderData = bgfx::alloc(static_cast<uint32_t>(totalDefinesLength + shader->data.size));
 		uint8_t* ptr = shaderData->data;
 		for(const String& define : shader->defines)
 		{
@@ -446,7 +446,7 @@ void BgfxRender::Bind(Shader* shader)
 			memcpy(ptr, " 1\n", 3);
 			ptr += 3;
 		}
-		memcpy(ptr, shader->data.data, shader->data.size);
+		memcpy(ptr, shader->data.ptr.get(), shader->data.size);
 	}
 
 	renderData->shaderHandle = bgfx::createShader(shaderData);
@@ -494,7 +494,7 @@ void BgfxRender::Bind(Texture* texture)
 
 	TextureRenderDataBgfx* renderData = new TextureRenderDataBgfx();
 
-	const bool isRenderTarget = (texture->data.data == nullptr);
+	const bool isRenderTarget = (texture->data.ptr == nullptr);
 
 	if(isRenderTarget)
 	{
@@ -502,7 +502,7 @@ void BgfxRender::Bind(Texture* texture)
 	}
 	else
 	{
-		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.data, (uint32_t)texture->data.size));
+		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.ptr.get(), (uint32_t)texture->data.size));
 	}
 
 	texture->renderData = renderData;

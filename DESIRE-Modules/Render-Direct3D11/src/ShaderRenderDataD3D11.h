@@ -23,7 +23,7 @@ public:
 
 	struct ConstantBufferData
 	{
-		MemoryBuffer buffer;
+		MemoryBuffer data;
 		HashedStringMap<std::pair<uint32_t, uint32_t>> variableOffsetSizePairs;
 	};
 	std::vector<ConstantBufferData> constantBuffersData;

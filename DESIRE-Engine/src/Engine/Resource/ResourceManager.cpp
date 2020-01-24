@@ -223,7 +223,7 @@ void ResourceManager::CreateErrorTexture()
 	const uint16_t textureSize = 128;
 	errorTexture = std::make_shared<Texture>(textureSize, textureSize, Texture::EFormat::RGBA8);
 	errorTexture->data = MemoryBuffer(textureSize * textureSize * 4);
-	uint32_t* pixel = reinterpret_cast<uint32_t*>(errorTexture->data.data);
+	uint32_t* pixel = reinterpret_cast<uint32_t*>(errorTexture->data.ptr.get());
 	for(int i = 0; i < textureSize * textureSize; ++i)
 	{
 		*pixel = ((i % 26) < 14) ? 0xFFFF8000 : 0xFF000000;

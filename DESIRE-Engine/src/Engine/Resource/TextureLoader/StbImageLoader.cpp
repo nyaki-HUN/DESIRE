@@ -29,7 +29,7 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 		return static_cast<IReadFile*>(file)->IsEof() ? 1 : 0;
 	};
 
-	void* data = nullptr;
+	std::unique_ptr<uint8_t[]> data = nullptr;
 	Texture::EFormat format = Texture::EFormat::Unknown;
 
 	int width = 0;
@@ -39,12 +39,12 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 	file->Seek(0, IReadFile::ESeekOrigin::Begin);
 	if(isHDR)
 	{
-		data = stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 4);
+		data = std::unique_ptr<uint8_t[]>(reinterpret_cast<uint8_t*>(stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 4)));
 		format = Texture::EFormat::RGBA32F;
 	}
 	else
 	{
-		data = stbi_load_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0);
+		data = std::unique_ptr<uint8_t[]>(stbi_load_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0));
 
 		switch(numComponents)
 		{
@@ -59,11 +59,11 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 		width <= 0 || width > UINT16_MAX ||
 		height <= 0 || height > UINT16_MAX)
 	{
-		free(data);
 		return nullptr;
 	}
 
-	Texture* texture = new Texture((uint16_t)width, (uint16_t)height, format);
-	texture->data = MemoryBuffer(data, (size_t)(width * height * numComponents));
+	Texture* texture = new Texture(static_cast<uint16_t>(width), static_cast<uint16_t>(height), format);
+	texture->data.ptr = std::move(data);
+	texture->data.size = static_cast<size_t>(width * height * numComponents);
 	return texture;
 }
