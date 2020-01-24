@@ -20,7 +20,7 @@
 
 ImGuiImpl::ImGuiImpl()
 {
-	ImGui::SetAllocatorFunctions(ImGuiImpl::MallocWrapper, ImGuiImpl::FreeWrapper);
+	ImGui::SetAllocatorFunctions(&ImGuiImpl::MallocWrapper, &ImGuiImpl::FreeWrapper, this);
 }
 
 ImGuiImpl::~ImGuiImpl()
@@ -248,14 +248,14 @@ void ImGuiImpl::DoRender(ImDrawData* drawData)
 	Modules::Render->SetScissor();
 }
 
-void* ImGuiImpl::MallocWrapper(size_t size, void* user_data)
+void* ImGuiImpl::MallocWrapper(size_t size, void* userData)
 {
-	DESIRE_UNUSED(user_data);
+	DESIRE_UNUSED(userData);
 	return MemorySystem::Alloc(size);
 }
 
-void ImGuiImpl::FreeWrapper(void* ptr, void* user_data)
+void ImGuiImpl::FreeWrapper(void* ptr, void* userData)
 {
-	DESIRE_UNUSED(user_data);
+	DESIRE_UNUSED(userData);
 	MemorySystem::Free(ptr);
 }

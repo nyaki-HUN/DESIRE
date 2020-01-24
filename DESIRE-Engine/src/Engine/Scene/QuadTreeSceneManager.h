@@ -42,12 +42,8 @@ private:
 	QuadTreeLeaf* rootLeaf = nullptr;
 	Camera* activeCamera = nullptr;
 
-	RenderComponent** visibleDynamicComponents = nullptr;
-	RenderComponent** invisibleDynamicComponents = nullptr;
-	uint32_t numVisibleDynamicComponents = 0;
-	uint32_t numInvisibleDynamicComponents = 0;
-	uint32_t numAllocatedVisibleDynamicComponents;
-	uint32_t numAllocatedInvisibleDynamicComponents;
+	Array<RenderComponent*> visibleDynamicComponents;
+	Array<RenderComponent*> invisibleDynamicComponents;
 
 	Array<QuadTreeLeaf*> visibleLeafList;
 	Array<QuadTreeLeaf*> tmpLeafList;

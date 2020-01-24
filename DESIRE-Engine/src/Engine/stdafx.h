@@ -36,6 +36,8 @@
 #include <condition_variable>
 #include <future>
 
+// --------------------------------------------------------------------------------------------------------------------
+
 // SIMD intrinsics
 #if defined(DESIRE_USE_SSE)
 	// Includes used in vectormath_SSE.h
@@ -45,6 +47,11 @@
 		#include <pmmintrin.h>
 	#endif
 #endif
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Use stack memory to allocate an array with the give type and size
+#define DESIRE_STACKALLOCATE_ARRAY(T, NAME, SIZE)	T* NAME(reinterpret_cast<T*>(reinterpret_cast<size_t>(alloca(sizeof(T) * (SIZE)	+ alignof(T))) & ~(alignof(T) - 1)))
 
 // --------------------------------------------------------------------------------------------------------------------
 
