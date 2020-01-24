@@ -2,12 +2,13 @@
 #include "AngelScriptComponent.h"
 #include "API/AngelScriptAPI.h"
 
-#include "Engine/Core/Object.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/Log/Log.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/String/DynamicString.h"
 #include "Engine/Core/String/StackString.h"
-#include "Engine/Core/Log/Log.h"
+
 #include "Engine/Utils/Enumerator.h"
 
 #define CONTEXT_POOL_DEFAULT_SIZE	10
@@ -122,7 +123,13 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 		return nullptr;
 	}
 
-	MemoryBuffer content = file->ReadFileContent();
+	MemoryBuffer data = file->ReadFileContent();
+	if(data.size == 0)
+	{
+		LOG_ERROR("Could not compile script: %s", filename.Str());
+		return nullptr;
+	}
+
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"
@@ -131,7 +138,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 		"	%s(ScriptComponent @component) { @self = component; }"
 		, scriptName.Str()
 		, scriptName.Str());
-	scriptSrc.Append(content.data, content.size - 1);
+	scriptSrc += data.AsString();
 	scriptSrc += "}";
 
 	asIScriptModule* module = engine->GetModule(scriptName.Str(), asGM_ALWAYS_CREATE);

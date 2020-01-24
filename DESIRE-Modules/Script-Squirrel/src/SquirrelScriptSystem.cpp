@@ -130,7 +130,13 @@ void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM v
 		return;
 	}
 
-	MemoryBuffer content = file->ReadFileContent();
+	MemoryBuffer data = file->ReadFileContent();
+	if(data.size == 0)
+	{
+		LOG_ERROR("Could not compile script: %s", filename.Str());
+		return;
+	}
+
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"
@@ -138,7 +144,7 @@ void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM v
 		"	self = null;"
 		"	constructor(component) { self = component; }"
 		, scriptName.Str());
-	scriptSrc.Append(content.data, content.size - 1);
+	scriptSrc += data.AsString();
 	scriptSrc += "}";
 
 	SQRESULT result = sq_compilebuffer(vm, scriptSrc.Str(), (SQInteger)scriptSrc.Length(), scriptName.Str(), SQTrue);

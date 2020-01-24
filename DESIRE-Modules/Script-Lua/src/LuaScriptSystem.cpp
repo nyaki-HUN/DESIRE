@@ -79,8 +79,15 @@ void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 		return;
 	}
 
-	MemoryBuffer content = file->ReadFileContent();
-	luaL_loadbuffer(L, content.data, content.size - 1, scriptName.Str());
+	MemoryBuffer data = file->ReadFileContent();
+	if(data.size == 0)
+	{
+		LOG_ERROR("Could not compile script: %s", filename.Str());
+		return;
+	}
+
+	String content = data.AsString();
+	luaL_loadbuffer(L, content.Str(), content.Length(), scriptName.Str());
 	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
 	ASSERT(statusCode == LUA_OK);
 }
