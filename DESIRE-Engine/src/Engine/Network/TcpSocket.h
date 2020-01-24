@@ -4,20 +4,11 @@
 
 class String;
 
-class Socket
+class TcpSocket
 {
 public:
-	enum class EProtocol
-	{
-		TCP,
-		UDP
-	};
-
-	Socket();
-	~Socket();
-
-	bool Open(EProtocol protocol = EProtocol::TCP);
-	void Close();
+	TcpSocket();
+	~TcpSocket();
 
 	bool Connect(const String& address, uint16_t port);
 	int Send(const void* buffer, size_t size);
@@ -30,12 +21,12 @@ public:
 
 private:
 #if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_XBOXONE
-	static constexpr uintptr_t kInvalidSocketId = UINTPTR_MAX;
-
-	uintptr_t socketId = kInvalidSocketId;
+	typedef uintptr_t NativeSocket;
+	static constexpr NativeSocket kInvalidSocketId = UINTPTR_MAX;
 #else
-	static constexpr int kInvalidSocketId = -1;
-
-	int socketId = kInvalidSocketId;
+	typedef int NativeSocket;
+	static constexpr NativeSocket kInvalidSocketId = -1;
 #endif
+
+	NativeSocket socketId = kInvalidSocketId;
 };

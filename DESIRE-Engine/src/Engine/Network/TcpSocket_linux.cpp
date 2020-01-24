@@ -1,8 +1,8 @@
 #include "Engine/stdafx.h"
 
-#if DESIRE_PLATFORM_LINUX || DESIRE_PLATFORM_OSX
+#if DESIRE_PLATFORM_LINUX
 
-#include "Engine/Network/Socket.h"
+#include "Engine/Network/TcpSocket.h"
 #include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/String.h"
 
@@ -13,51 +13,27 @@
 #include <arpa/inet.h>
 #include <fcntl.h>
 
-Socket::Socket()
+TcpSocket::TcpSocket()
 {
+	socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+	if(socketId != kInvalidSocketId)
+	{
+		int optval = 1;
+		setsockopt(socketId, SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval));
+	}
 }
 
-Socket::~Socket()
-{
-	Close();
-}
-
-void Socket::Initialize()
-{
-}
-
-void Socket::Shutdown()
-{
-}
-
-bool Socket::Open(EProtocol protocol)
+TcpSocket::~TcpSocket()
 {
 	if(socketId != kInvalidSocketId)
 	{
-		return false;
+		close(socketId);
+		socketId = kInvalidSocketId;
 	}
-
-	switch(protocol)
-	{
-		case EProtocol::TCP:	socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); break;
-		case EProtocol::UDP:	socketId = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); break;
-	}
-
-	return (socketId != kInvalidSocketId);
 }
 
-void Socket::Close()
-{
-	if(socketId == kInvalidSocketId)
-	{
-		return;
-	}
-
-	close(socketId);
-	socketId = kInvalidSocketId;
-}
-
-bool Socket::Connect(const String& address, uint16_t port)
+bool TcpSocket::Connect(const String& address, uint16_t port)
 {
 	sockaddr_in addr;
 	addr.sin_family = AF_INET;
@@ -74,12 +50,12 @@ bool Socket::Connect(const String& address, uint16_t port)
 	return true;
 }
 
-int Socket::Send(const void* buffer, size_t size)
+int TcpSocket::Send(const void* buffer, size_t size)
 {
 	return send(socketId, buffer, size, 0);
 }
 
-void Socket::SetNoDelay(bool value)
+void TcpSocket::SetNoDelay(bool value)
 {
 	if(socketId == kInvalidSocketId)
 	{
@@ -90,7 +66,7 @@ void Socket::SetNoDelay(bool value)
 	setsockopt(socketId, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
 }
 
-void Socket::SetNonBlocking()
+void TcpSocket::SetNonBlocking()
 {
 	if(socketId == kInvalidSocketId)
 	{
@@ -99,6 +75,14 @@ void Socket::SetNonBlocking()
 
 	int flags = fcntl(socketId, F_GETFL, 0);
 	fcntl(socketId, F_SETFL, flags | O_NONBLOCK);
+}
+
+void TcpSocket::Initialize()
+{
+}
+
+void TcpSocket::Shutdown()
+{
 }
 
 #endif	// #if DESIRE_PLATFORM_LINUX

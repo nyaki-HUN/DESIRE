@@ -2,61 +2,27 @@
 
 #if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_XBOXONE
 
-#include "Engine/Network/Socket.h"
+#include "Engine/Network/TcpSocket.h"
 #include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/String.h"
 
 #include <WS2tcpip.h>
 
-Socket::Socket()
+TcpSocket::TcpSocket()
 {
+	socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
-Socket::~Socket()
-{
-	Close();
-}
-
-void Socket::Initialize()
-{
-	// Initialize Winsock2
-	WSADATA wsaData;
-	WSAStartup(MAKEWORD(2, 2), &wsaData);
-}
-
-void Socket::Shutdown()
-{
-	WSACleanup();
-}
-
-bool Socket::Open(EProtocol protocol)
+TcpSocket::~TcpSocket()
 {
 	if(socketId != kInvalidSocketId)
 	{
-		return false;
+		closesocket(socketId);
+		socketId = kInvalidSocketId;
 	}
-
-	switch(protocol)
-	{
-		case EProtocol::TCP:	socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP); break;
-		case EProtocol::UDP:	socketId = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); break;
-	}
-
-	return (socketId != kInvalidSocketId);
 }
 
-void Socket::Close()
-{
-	if(socketId == kInvalidSocketId)
-	{
-		return;
-	}
-
-	closesocket(socketId);
-	socketId = kInvalidSocketId;
-}
-
-bool Socket::Connect(const String& address, uint16_t port)
+bool TcpSocket::Connect(const String& address, uint16_t port)
 {
 	sockaddr_in addr;
 	addr.sin_family = AF_INET;
@@ -73,13 +39,13 @@ bool Socket::Connect(const String& address, uint16_t port)
 	return true;
 }
 
-int Socket::Send(const void* buffer, size_t size)
+int TcpSocket::Send(const void* buffer, size_t size)
 {
 	ASSERT(size <= INT_MAX);
 	return send(socketId, static_cast<const char*>(buffer), static_cast<int>(size), 0);
 }
 
-void Socket::SetNoDelay(bool value)
+void TcpSocket::SetNoDelay(bool value)
 {
 	if(socketId == kInvalidSocketId)
 	{
@@ -90,7 +56,7 @@ void Socket::SetNoDelay(bool value)
 	setsockopt(socketId, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&optval), sizeof(optval));
 }
 
-void Socket::SetNonBlocking()
+void TcpSocket::SetNonBlocking()
 {
 	if(socketId == kInvalidSocketId)
 	{
@@ -101,4 +67,16 @@ void Socket::SetNonBlocking()
 	ioctlsocket(socketId, FIONBIO, &mode);
 }
 
-#endif	// #if DESIRE_PLATFORM_WINDOWS
+void TcpSocket::Initialize()
+{
+	// Initialize Winsock2
+	WSADATA wsaData;
+	WSAStartup(MAKEWORD(2, 2), &wsaData);
+}
+
+void TcpSocket::Shutdown()
+{
+	WSACleanup();
+}
+
+#endif	// #if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_XBOXONE
