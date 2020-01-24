@@ -1,13 +1,18 @@
 #include "Engine/stdafx.h"
 #include "Engine/Resource/TextureLoader/StbImageLoader.h"
 #include "Engine/Resource/Texture.h"
+
 #include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 DESIRE_DISABLE_WARNINGS
 #define STBI_NO_TGA					// We have our own TGA loader
 #define STBI_NO_FAILURE_STRINGS
 #define STBI_NO_STDIO
 #define STB_IMAGE_IMPLEMENTATION
+#define STBI_MALLOC(sz)				MemorySystem::Alloc(sz)
+#define STBI_REALLOC(p,newsz)		MemorySystem::Realloc(p, newsz)
+#define STBI_FREE(p)				MemorySystem::Free(p)
 #include "stb/stb_image.h"
 DESIRE_ENABLE_WARNINGS
 
