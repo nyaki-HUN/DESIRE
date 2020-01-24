@@ -2,10 +2,11 @@
 #include "LuaScriptComponent.h"
 #include "API/LuaScriptAPI.h"
 
-#include "Engine/Core/Object.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Log/Log.h"
+#include "Engine/Core/Memory/MemorySystem.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/String/StackString.h"
 
 #include "lua.hpp"
@@ -13,6 +14,7 @@
 LuaScriptSystem::LuaScriptSystem()
 {
 	L = luaL_newstate();
+	lua_setallocf(L, &LuaScriptSystem::ReallocWrapper, this);
 
 	const luaL_Reg luaLibsToLoad[] =
 	{
@@ -81,4 +83,11 @@ void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 	luaL_loadbuffer(L, content.data, content.size - 1, scriptName.Str());
 	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
 	ASSERT(statusCode == LUA_OK);
+}
+
+void* LuaScriptSystem::ReallocWrapper(void* userData, void* ptr, size_t oldSize, size_t newSize)
+{
+	DESIRE_UNUSED(userData);
+	DESIRE_UNUSED(oldSize);
+	return MemorySystem::Realloc(ptr, newSize);
 }

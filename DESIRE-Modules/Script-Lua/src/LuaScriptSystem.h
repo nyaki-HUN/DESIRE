@@ -15,5 +15,7 @@ private:
 
 	static void CompileScript(const String& scriptName, lua_State* L);
 
+	static void* ReallocWrapper(void* userData, void* ptr, size_t oldSize, size_t newSize);
+
 	lua_State* L = nullptr;
 };
