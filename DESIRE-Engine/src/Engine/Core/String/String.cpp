@@ -3,9 +3,9 @@
 
 const String String::kEmptyString = "";
 
-String::String(const char* str, size_t size)
+String::String(const char* str, size_t numChars)
 	: data(const_cast<char*>(str))
-	, size(size)
+	, size(numChars)
 {
 	ASSERT(data != nullptr);
 	ASSERT(data[size] == '\0');

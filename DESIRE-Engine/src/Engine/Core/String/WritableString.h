@@ -33,13 +33,8 @@ public:
 	void ReplaceAllChar(char search, char replaceTo);
 
 	// Append characters
-	void Append(const char* str, size_t numChars);
-
-	WritableString& operator +=(const String& string)
-	{
-		Append(string.Str(), string.Length());
-		return *this;
-	}
+	void Append(const String& string);
+	WritableString& operator +=(const String& string)					{ Append(string); return *this; }
 
 	// Append numbers
 	WritableString& operator +=(int32_t number);

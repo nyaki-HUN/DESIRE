@@ -8,7 +8,7 @@ public:
 	static constexpr size_t kInvalidPos = (size_t)-1;
 	static const String kEmptyString;
 
-	String(const char* str, size_t size);
+	String(const char* str, size_t numChars);
 
 	template<size_t SIZE>
 	String(const char(&str)[SIZE])

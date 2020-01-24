@@ -151,17 +151,16 @@ void WritableString::ReplaceAllChar(char search, char replaceTo)
 	} while(foundPos != kInvalidPos);
 }
 
-void WritableString::Append(const char* str, size_t numChars)
+void WritableString::Append(const String& string)
 {
-	ASSERT(str != nullptr);
-
+	const size_t numChars = string.Length();
 	if(!Reserve(size + numChars))
 	{
 		ASSERT(false);
 		return;
 	}
 
-	memcpy(data + size, str, numChars);
+	memcpy(data + size, string.Str(), numChars);
 	size += numChars;
 	data[size] = '\0';
 }
@@ -172,7 +171,7 @@ WritableString& WritableString::operator +=(int32_t number)
 	const int len = snprintf(str, sizeof(str), "%d", number);
 	if(len > 0)
 	{
-		Append(str, len);
+		Append(String(str, len));
 	}
 	return *this;
 }
@@ -183,7 +182,7 @@ WritableString& WritableString::operator +=(uint32_t number)
 	const int len = snprintf(str, sizeof(str), "%u", number);
 	if(len > 0)
 	{
-		Append(str, len);
+		Append(String(str, len));
 	}
 	return *this;
 }
@@ -194,7 +193,7 @@ WritableString& WritableString::operator +=(int64_t number)
 	const int len = snprintf(str, sizeof(str), "%lld", number);
 	if(len > 0)
 	{
-		Append(str, len);
+		Append(String(str, len));
 	}
 	return *this;
 }
@@ -205,7 +204,7 @@ WritableString& WritableString::operator +=(uint64_t number)
 	const int len = snprintf(str, sizeof(str), "%llu", number);
 	if(len > 0)
 	{
-		Append(str, len);
+		Append(String(str, len));
 	}
 	return *this;
 }
@@ -216,7 +215,7 @@ WritableString& WritableString::operator +=(float number)
 	const int len = snprintf(str, sizeof(str), "%.3f", number);
 	if(len > 0)
 	{
-		Append(str, len);
+		Append(String(str, len));
 	}
 	return *this;
 }
