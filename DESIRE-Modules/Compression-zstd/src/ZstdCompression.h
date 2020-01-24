@@ -9,6 +9,7 @@ class ZstdCompression : public Compression
 {
 public:
 	ZstdCompression();
+	~ZstdCompression();
 
 	size_t GetMaxCompressionDataBufferSize(size_t dataSize) const override;
 	size_t CompressBuffer(void *compressedDataBuffer, size_t compressedDataBufferSize, const void *data, size_t dataSize) override;

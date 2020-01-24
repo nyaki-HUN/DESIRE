@@ -7,8 +7,8 @@
 #include "zstd.h"
 
 ZstdCompression::ZstdCompression()
+	: Compression(19)
 {
-	compressionLevel = 19;
 }
 
 ZstdCompression::~ZstdCompression()
@@ -72,7 +72,7 @@ size_t ZstdCompression::DecompressBuffer(void* dataBuffer, size_t dataBufferSize
 
 int ZstdCompression::GetMinCompressionLevel() const
 {
-	return 1;
+	return ZSTD_minCLevel();
 }
 
 int ZstdCompression::GetMaxCompressionLevel() const

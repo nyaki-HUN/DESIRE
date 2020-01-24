@@ -1,14 +1,13 @@
 #include "Engine/stdafx.h"
 #include "Engine/Compression/Compression.h"
 
-Compression::Compression()
+Compression::Compression(int defaultCompressionLevel)
+	: compressionLevel(defaultCompressionLevel)
 {
-
 }
 
 Compression::~Compression()
 {
-
 }
 
 void Compression::SetCompressionLevel(int level)
@@ -16,7 +15,7 @@ void Compression::SetCompressionLevel(int level)
 	const int minLevel = GetMinCompressionLevel();
 	const int maxLevel = GetMaxCompressionLevel();
 
-	compressionLevel = std::max(minLevel, std::min(level, maxLevel));
+	compressionLevel = std::clamp(level, minLevel, maxLevel);
 }
 
 int Compression::GetMinCompressionLevel() const

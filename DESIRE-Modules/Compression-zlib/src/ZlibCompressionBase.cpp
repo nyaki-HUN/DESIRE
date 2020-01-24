@@ -7,9 +7,9 @@
 #include "zlib.h"
 
 ZlibCompressionBase::ZlibCompressionBase(int windowBits)
-	: windowBits(windowBits)
+	: Compression(Z_DEFAULT_COMPRESSION)
+	, windowBits(windowBits)
 {
-	compressionLevel = Z_DEFAULT_COMPRESSION;
 }
 
 size_t ZlibCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) const

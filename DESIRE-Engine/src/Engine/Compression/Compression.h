@@ -3,7 +3,7 @@
 class Compression
 {
 protected:
-	Compression();
+	Compression(int defaultCompressionLevel);
 
 public:
 	virtual ~Compression();
