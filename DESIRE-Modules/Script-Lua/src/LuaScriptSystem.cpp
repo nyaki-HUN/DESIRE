@@ -81,16 +81,14 @@ void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 	}
 
 	MemoryBuffer data = file->ReadFileContent();
-	if(data.size == 0)
+	String content = data.AsString();
+	luaL_loadbuffer(L, content.Str(), content.Length(), scriptName.Str());
+	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
+	if(statusCode != LUA_OK)
 	{
 		LOG_ERROR("Could not compile script: %s", filename.Str());
 		return;
 	}
-
-	String content = data.AsString();
-	luaL_loadbuffer(L, content.Str(), content.Length(), scriptName.Str());
-	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
-	ASSERT(statusCode == LUA_OK);
 }
 
 int LuaScriptSystem::LuaPanicFunc(lua_State* L)

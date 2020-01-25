@@ -124,12 +124,6 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 	}
 
 	MemoryBuffer data = file->ReadFileContent();
-	if(data.size == 0)
-	{
-		LOG_ERROR("Could not compile script: %s", filename.Str());
-		return nullptr;
-	}
-
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"

@@ -131,12 +131,6 @@ void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM v
 	}
 
 	MemoryBuffer data = file->ReadFileContent();
-	if(data.size == 0)
-	{
-		LOG_ERROR("Could not compile script: %s", filename.Str());
-		return;
-	}
-
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"
