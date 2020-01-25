@@ -30,7 +30,7 @@ void* MemorySystem::Alloc(size_t size, size_t alignment)
 	ASSERT(allocatedMemory != nullptr && "Out of memory");
 
 	// Make room for the header and apply alignment
-	void* ptr = Align(OffsetVoidPtr<void>(allocatedMemory, kDefaultAlignment), alignment);
+	void* ptr = Align(OffsetVoidPtr<void>(allocatedMemory, sizeof(AllocationHeader)), alignment);
 
 	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
 	header->allocator = &allocator;
@@ -49,14 +49,14 @@ void* MemorySystem::Calloc(size_t num, size_t size)
 
 void* MemorySystem::Realloc(void* ptr, size_t size)
 {
-	if(ptr == nullptr)
-	{
-		return MemorySystem::Alloc(size);
-	}
-	else if(size == 0)
+	if(size == 0)
 	{
 		MemorySystem::Free(ptr);
 		return nullptr;
+	}
+	else if(ptr == nullptr)
+	{
+		return MemorySystem::Alloc(size);
 	}
 
 	const AllocationHeader oldHeader = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));

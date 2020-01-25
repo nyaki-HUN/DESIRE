@@ -13,8 +13,9 @@
 
 LuaScriptSystem::LuaScriptSystem()
 {
-	L = luaL_newstate();
+	L = lua_newstate(&LuaScriptSystem::ReallocWrapper, this);
 	lua_setallocf(L, &LuaScriptSystem::ReallocWrapper, this);
+	lua_atpanic(L, &LuaScriptSystem::LuaPanicFunc);
 
 	const luaL_Reg luaLibsToLoad[] =
 	{
@@ -90,6 +91,12 @@ void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 	luaL_loadbuffer(L, content.Str(), content.Length(), scriptName.Str());
 	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
 	ASSERT(statusCode == LUA_OK);
+}
+
+int LuaScriptSystem::LuaPanicFunc(lua_State* L)
+{
+	lua_writestringerror("PANIC: unprotected error in call to Lua API (%s)\n", lua_tostring(L, -1));
+	return 0;	// Return to Lua to abort
 }
 
 void* LuaScriptSystem::ReallocWrapper(void* userData, void* ptr, size_t oldSize, size_t newSize)
