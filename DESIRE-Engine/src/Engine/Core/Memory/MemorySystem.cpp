@@ -18,6 +18,15 @@ void operator delete[](void* ptr) noexcept									{ MemorySystem::Free(ptr); }
 void operator delete  (void* ptr, std::align_val_t /*alignment*/) noexcept	{ MemorySystem::Free(ptr); }
 void operator delete[](void* ptr, std::align_val_t /*alignment*/) noexcept	{ MemorySystem::Free(ptr); }
 
+// Helper functions
+static void* OffsetVoidPtr(const void* ptr, size_t offset)					{ return reinterpret_cast<void*>(reinterpret_cast<size_t>(ptr) + offset); }
+static void* OffsetVoidPtrBackwards(const void* ptr, size_t offset)			{ return reinterpret_cast<void*>(reinterpret_cast<size_t>(ptr) - offset); }
+template<typename T> static T* OffsetVoidPtr(const void* ptr)				{ return reinterpret_cast<T*>(OffsetVoidPtr(ptr, sizeof(T))); }
+template<typename T> static T* OffsetVoidPtrBackwards(const void* ptr)		{ return reinterpret_cast<T*>(OffsetVoidPtrBackwards(ptr, sizeof(T))); }
+
+static size_t Align(size_t value, size_t alignment)							{ alignment--; return (value + alignment) & ~alignment; }
+static void* Align(void* ptr, size_t alignment)								{ return reinterpret_cast<void*>(Align(reinterpret_cast<size_t>(ptr), alignment)); }
+
 void* MemorySystem::Alloc(size_t size, size_t alignment)
 {
 	ASSERT(size != 0);
@@ -30,9 +39,9 @@ void* MemorySystem::Alloc(size_t size, size_t alignment)
 	ASSERT(allocatedMemory != nullptr && "Out of memory");
 
 	// Make room for the header and apply alignment
-	void* ptr = Align(OffsetVoidPtr<void>(allocatedMemory, sizeof(AllocationHeader)), alignment);
+	void* ptr = Align(OffsetVoidPtr(allocatedMemory, sizeof(AllocationHeader)), alignment);
 
-	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
+	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr);
 	header->allocator = &allocator;
 	header->allocatedSize = Math::SafeSizeToUint32(totalSize);
 	header->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(allocatedMemory));
@@ -59,8 +68,8 @@ void* MemorySystem::Realloc(void* ptr, size_t size)
 		return MemorySystem::Alloc(size);
 	}
 
-	const AllocationHeader oldHeader = *OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-	void* oldAllocatedMemory = OffsetVoidPtrBackwards<void*>(ptr, oldHeader.offsetBetweenPtrAndAllocatedMemory);
+	const AllocationHeader oldHeader = *OffsetVoidPtrBackwards<AllocationHeader>(ptr);
+	void* oldAllocatedMemory = OffsetVoidPtrBackwards(ptr, oldHeader.offsetBetweenPtrAndAllocatedMemory);
 
 	ASSERT(oldHeader.offsetBetweenPtrAndAllocatedMemory == kDefaultAlignment && "Only default alignment is supported");
 	const size_t totalSize = size + kDefaultAlignment;
@@ -72,10 +81,10 @@ void* MemorySystem::Realloc(void* ptr, size_t size)
 	void* allocatedMemory = oldHeader.allocator->Realloc(oldAllocatedMemory, totalSize, oldHeader.allocatedSize);
 	ASSERT(allocatedMemory != nullptr && "Out of memory");
 
-	void* newPtr = OffsetVoidPtr<void*>(allocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
+	void* newPtr = OffsetVoidPtr(allocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
 
 	// Only need to update the size in the header because the allocator's Realloc() is responsible for copying all the contents of the memory
-	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(newPtr, sizeof(AllocationHeader));
+	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(newPtr);
 	header->allocatedSize = Math::SafeSizeToUint32(totalSize);
 
 	return newPtr;
@@ -88,8 +97,8 @@ void MemorySystem::Free(void* ptr)
 		return;
 	}
 
-	const AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr, sizeof(AllocationHeader));
-	void* allocatedMemory = OffsetVoidPtrBackwards<void*>(ptr, header->offsetBetweenPtrAndAllocatedMemory);
+	const AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr);
+	void* allocatedMemory = OffsetVoidPtrBackwards(ptr, header->offsetBetweenPtrAndAllocatedMemory);
 
 	header->allocator->Free(allocatedMemory, header->allocatedSize);
 }

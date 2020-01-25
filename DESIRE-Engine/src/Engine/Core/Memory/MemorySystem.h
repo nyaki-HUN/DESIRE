@@ -54,26 +54,3 @@ private:
 };
 
 #define DESIRE_ALLOCATOR_SCOPE(ALLOCATOR)	MemorySystem::AllocatorScope DESIRE_CONCAT_MACRO(allocatorScope, __COUNTER__)(ALLOCATOR)
-
-inline size_t Align(size_t value, size_t alignment)
-{
-	alignment--;
-	return (value + alignment) & ~alignment;
-}
-
-inline void* Align(void* ptr, size_t alignment)
-{
-	return reinterpret_cast<void*>(Align(reinterpret_cast<size_t>(ptr), alignment));
-}
-
-template<typename T>
-inline T* OffsetVoidPtr(const void* ptr, size_t offset)
-{
-	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) + offset);
-}
-
-template<typename T>
-inline T* OffsetVoidPtrBackwards(const void* ptr, size_t offset)
-{
-	return reinterpret_cast<T*>(reinterpret_cast<size_t>(ptr) - offset);
-}
