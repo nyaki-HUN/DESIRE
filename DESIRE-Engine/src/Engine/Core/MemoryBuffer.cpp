@@ -14,7 +14,12 @@ MemoryBuffer::MemoryBuffer(size_t size)
 
 String MemoryBuffer::AsString() const
 {
-	return (size != 0) ? String(reinterpret_cast<const char*>(ptr.get()), size - 1) : "";
+	if(size != 0)
+	{
+		return String(reinterpret_cast<const char*>(ptr.get()), size - 1);
+	}
+
+	return "";
 }
 
 MemoryBuffer MemoryBuffer::CreateFromDataCopy(const void* dataToCopy, size_t size)
