@@ -36,23 +36,31 @@ void* MemorySystem::Alloc(size_t size, size_t alignment)
 	const size_t totalSize = size + std::max(kDefaultAlignment, alignment);
 	Allocator& allocator = GetActiveAllocator();
 	void* allocatedMemory = allocator.Alloc(totalSize);
-	ASSERT(allocatedMemory != nullptr && "Out of memory");
+	if(allocatedMemory != nullptr)
+	{
+		// Make room for the header and apply alignment
+		void* ptr = Align(OffsetVoidPtr(allocatedMemory, sizeof(AllocationHeader)), alignment);
 
-	// Make room for the header and apply alignment
-	void* ptr = Align(OffsetVoidPtr(allocatedMemory, sizeof(AllocationHeader)), alignment);
+		AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr);
+		header->allocator = &allocator;
+		header->allocatedSize = Math::SafeSizeToUint32(totalSize);
+		header->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(allocatedMemory));
 
-	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr);
-	header->allocator = &allocator;
-	header->allocatedSize = Math::SafeSizeToUint32(totalSize);
-	header->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(allocatedMemory));
+		return ptr;
+	}
 
-	return ptr;
+	ASSERT(false && "Out of memory");
+	return nullptr;
 }
 
 void* MemorySystem::Calloc(size_t num, size_t size)
 {
 	void* ptr = MemorySystem::Alloc(num * size);
-	memset(ptr, 0, num * size);
+	if(ptr != nullptr)
+	{
+		memset(ptr, 0, num * size);
+	}
+
 	return ptr;
 }
 
@@ -69,6 +77,7 @@ void* MemorySystem::Realloc(void* ptr, size_t size)
 	}
 
 	const AllocationHeader oldHeader = *OffsetVoidPtrBackwards<AllocationHeader>(ptr);
+	ASSERT(oldHeader.offsetBetweenPtrAndAllocatedMemory != 0xFDFDFDFD && "Windows Debug Heap's NoMansLand buffer detected. The memory was not allocated by the MemorySystem");
 	void* oldAllocatedMemory = OffsetVoidPtrBackwards(ptr, oldHeader.offsetBetweenPtrAndAllocatedMemory);
 
 	ASSERT(oldHeader.offsetBetweenPtrAndAllocatedMemory == kDefaultAlignment && "Only default alignment is supported");
@@ -79,15 +88,20 @@ void* MemorySystem::Realloc(void* ptr, size_t size)
 	}
 
 	void* allocatedMemory = oldHeader.allocator->Realloc(oldAllocatedMemory, totalSize, oldHeader.allocatedSize);
-	ASSERT(allocatedMemory != nullptr && "Out of memory");
+	if(allocatedMemory != nullptr)
+	{
+		void* newPtr = OffsetVoidPtr(allocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
 
-	void* newPtr = OffsetVoidPtr(allocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
+		// Only need to update the size in the header because the allocator's Realloc() is responsible for copying all the contents of the memory
+		AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(newPtr);
+		header->allocatedSize = Math::SafeSizeToUint32(totalSize);
 
-	// Only need to update the size in the header because the allocator's Realloc() is responsible for copying all the contents of the memory
-	AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(newPtr);
-	header->allocatedSize = Math::SafeSizeToUint32(totalSize);
+		return newPtr;
+	}
 
-	return newPtr;
+	ASSERT(false && "Out of memory");
+	return nullptr;
+
 }
 
 void MemorySystem::Free(void* ptr)
@@ -98,6 +112,7 @@ void MemorySystem::Free(void* ptr)
 	}
 
 	const AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr);
+	ASSERT(header->offsetBetweenPtrAndAllocatedMemory != 0xFDFDFDFD && "Windows Debug Heap's NoMansLand buffer detected. The memory was not allocated by the MemorySystem");
 	void* allocatedMemory = OffsetVoidPtrBackwards(ptr, header->offsetBetweenPtrAndAllocatedMemory);
 
 	header->allocator->Free(allocatedMemory, header->allocatedSize);
