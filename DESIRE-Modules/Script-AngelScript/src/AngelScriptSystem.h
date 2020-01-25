@@ -31,6 +31,9 @@ private:
 	void ExceptionCallback(asIScriptContext* ctx);
 	void LineCallback(asIScriptContext* ctx);		// The line callback function is called by the VM for each statement that is executed
 
+	static void* MallocWrapper(size_t size);
+	static void FreeWrapper(void* ptr);
+
 	asIScriptEngine* engine = nullptr;
 	Array<asIScriptContext*> contextPool;
 };

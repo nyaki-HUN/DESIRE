@@ -5,6 +5,7 @@
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Log/Log.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/String/DynamicString.h"
 #include "Engine/Core/String/StackString.h"
@@ -15,6 +16,8 @@
 
 AngelScriptSystem::AngelScriptSystem()
 {
+	asSetGlobalMemoryFunctions(&AngelScriptSystem::MallocWrapper, &AngelScriptSystem::FreeWrapper);
+
 	engine = asCreateScriptEngine();
 	int result = engine->SetMessageCallback(asFUNCTION(MessageCallback), this, asCALL_CDECL);													ASSERT(result >= asSUCCESS);
 	result = engine->SetContextCallbacks(&AngelScriptSystem::RequestContextCallback, &AngelScriptSystem::ReturnContextCallback, this);			ASSERT(result >= asSUCCESS);
@@ -275,4 +278,14 @@ void AngelScriptSystem::LineCallback(asIScriptContext* ctx)
 			LOG_MESSAGE("%s:%s:%d,%d\n", scriptSection, func->GetDeclaration(), line, column);
 		}
 	}
+}
+
+void* AngelScriptSystem::MallocWrapper(size_t size)
+{
+	return MemorySystem::Alloc(size);
+}
+
+void AngelScriptSystem::FreeWrapper(void* ptr)
+{
+	MemorySystem::Free(ptr);
 }
