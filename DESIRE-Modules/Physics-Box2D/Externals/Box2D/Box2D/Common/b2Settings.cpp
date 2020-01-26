@@ -37,6 +37,7 @@ float b2_angularSleepTolerance	= (2.0f / 180.0f * b2_pi);
 
 b2Version b2_version = {2, 3, 2};
 
+/*
 // Memory allocators. Modify these to use your own allocator.
 void* b2Alloc(int32 size)
 {
@@ -47,6 +48,7 @@ void b2Free(void* mem)
 {
 	free(mem);
 }
+*/
 
 // You can modify this to use your logging facility.
 void b2Log(const char* string, ...)

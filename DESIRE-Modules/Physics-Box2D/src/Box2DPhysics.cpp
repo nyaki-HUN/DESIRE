@@ -5,8 +5,11 @@
 #include "RaycastCallbacks.h"
 
 #include "Engine/Core/assert.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Object.h"
+
 #include "Engine/Physics/PhysicsComponent.h"
+
 #include "Engine/Script/ScriptComponent.h"
 
 #include "Box2D/Dynamics/b2World.h"
@@ -25,6 +28,10 @@ static std::pair<b2Vec2, b2Vec2> GetValidRay(const Vector3& p1, const Vector3& p
 
 	return ray;
 }
+
+// Memory functions for Box2D
+void* b2Alloc(int32 size)	{ return MemorySystem::Alloc(size); }
+void b2Free(void* mem)		{ MemorySystem::Free(mem); }
 
 Box2DPhysics::Box2DPhysics()
 {
