@@ -119,7 +119,7 @@ private:
 // Multiply two quaternions
 inline Quat Quat::operator *(const Quat& quat) const
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 sign_wzyx = SIMD::Construct(0.0f, -0.0f, 0.0f, -0.0f);
 	const __m128 sign_zwxy = SIMD::Construct(0.0f, 0.0f, -0.0f, -0.0f);
 	const __m128 sign_yxwz = SIMD::Construct(-0.0f, 0.0f, 0.0f, -0.0f);
@@ -132,7 +132,7 @@ inline Quat Quat::operator *(const Quat& quat) const
 	__m128 result = SIMD::Add(w0_xyzw1, _mm_xor_ps(x0_wzyx1, sign_wzyx));
 	result = SIMD::Add(result, _mm_xor_ps(y0_zwxy1, sign_zwxy));
 	return SIMD::Add(result, _mm_xor_ps(z0_yxwz1, sign_yxwz));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 	const float32x4_t sign_wzyx = SIMD::Construct(1.0f, -1.0f, 1.0f, -1.0f);
 	const float32x4_t sign_zwxy = SIMD::Construct(1.0f, 1.0f, -1.0f, -1.0f);
 	const float32x4_t sign_yxwz = SIMD::Construct(-1.0f, 1.0f, 1.0f, -1.0f);
@@ -162,10 +162,10 @@ inline Quat Quat::operator *(const Quat& quat) const
 // Compute the conjugate of a quaternion
 inline Quat Quat::Conjugate() const
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 mask = SIMD::Construct(-0.0f, -0.0f, -0.0f, 0.0f);
 	return _mm_xor_ps(*this, mask);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 	return SIMD::SetW(SIMD::Negate(*this), GetW());
 #else
 	return Quat(-GetX(), -GetY(), -GetZ(), GetW());
@@ -175,7 +175,7 @@ inline Quat Quat::Conjugate() const
 // Spherical linear interpolation between two quaternions
 inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 cosAngle = SIMD::Dot4(unitQuat0, unitQuat1);
 	__m128 selectMask = _mm_cmpgt_ps(_mm_setzero_ps(), cosAngle);
 	cosAngle = SIMD::Blend(cosAngle, SIMD::Negate(cosAngle), selectMask);
@@ -285,7 +285,7 @@ inline Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3
 {
 	Quat result;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 cosAngle = SIMD::Dot3(unitVecFrom, unitVecTo);
 	const __m128 cosAngleX2Plus2 = SIMD::MulAdd(cosAngle, SIMD::Construct(2.0f), SIMD::Construct(2.0f));
 	const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);

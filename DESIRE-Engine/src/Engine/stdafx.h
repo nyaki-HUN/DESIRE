@@ -1,11 +1,6 @@
 #pragma once
 
-#include "Engine/Core/platform.h"
-#include "Engine/Core/assert.h"
-#include "Engine/Core/Log/Log.h"
-#include "Engine/Modules.h"
-
-// --------------------------------------------------------------------------------------------------------------------
+#include "Common.h"
 
 // STD library
 #include <stdint.h>
@@ -35,25 +30,6 @@
 #include <shared_mutex>
 #include <condition_variable>
 #include <future>
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// SIMD intrinsics
-#if defined(DESIRE_USE_SSE)
-	// Includes used in vectormath_SSE.h
-	#if defined(__SSE4_1__)
-		#include <smmintrin.h>
-	#else
-		#include <pmmintrin.h>
-	#endif
-#endif
-
-// --------------------------------------------------------------------------------------------------------------------
-
-// Use stack memory to allocate an array with the give type and size
-#define DESIRE_STACKALLOCATE_ARRAY(T, NAME, SIZE)	T* NAME(reinterpret_cast<T*>(reinterpret_cast<size_t>(alloca(sizeof(T) * (SIZE)	+ alignof(T))) & ~(alignof(T) - 1)))
-
-// --------------------------------------------------------------------------------------------------------------------
 
 #ifdef DESIRE_PLATFORM_WINDOWS
 // Enable some warnings which are turned off by default

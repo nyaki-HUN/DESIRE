@@ -125,7 +125,7 @@ inline Matrix3 operator *(float scalar, const Matrix3& mat)
 
 inline Matrix3::Matrix3(const Quat& unitQuat)
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 xyzw_2 = SIMD::Add(unitQuat, unitQuat);
 	const __m128 wwww = SIMD::Swizzle_WWWW(unitQuat);
 	const __m128 yzxw = SIMD::Swizzle_YZXW(unitQuat);
@@ -171,13 +171,13 @@ inline Matrix3::Matrix3(const Quat& unitQuat)
 
 inline Vector3 Matrix3::operator *(const Vector3& vec) const
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 result;
 	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
 	return result;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 	float32x4_t result;
 	const float32x2_t vecLow = vget_low_f32(vec);
 	result = vmulq_lane_f32(col0, vecLow, 0);
@@ -196,7 +196,7 @@ inline Vector3 Matrix3::operator *(const Vector3& vec) const
 
 inline void Matrix3::Transpose()
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
 	__m128 tmp1 = _mm_unpackhi_ps(col0, col2);
 	col0 = _mm_unpacklo_ps(tmp0, col1);
@@ -222,7 +222,7 @@ inline void Matrix3::Invert()
 	const Vector3 tmp0 = col1.Cross(col2);
 	const Vector3 tmp1 = col2.Cross(col0);
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 dot = SIMD::Dot3(tmp2, col2);
 	const __m128 invDet = _mm_rcp_ps(dot);
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
@@ -247,7 +247,7 @@ inline Matrix3 Matrix3::Matrix3::CreateRotationX(float radians)
 {
 	Vector3 vecY, vecZ;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
@@ -273,7 +273,7 @@ inline Matrix3 Matrix3::CreateRotationY(float radians)
 {
 	Vector3 vecX, vecZ;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
@@ -299,7 +299,7 @@ inline Matrix3 Matrix3::CreateRotationZ(float radians)
 {
 	Vector3 vecX, vecY;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
@@ -323,7 +323,7 @@ inline Matrix3 Matrix3::CreateRotationZ(float radians)
 
 inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 angles = SIMD::SetW(radiansXYZ, 0.0f);
 	__m128 s, c;
 	sincosf4(angles, &s, &c);
@@ -361,7 +361,7 @@ inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 
 inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 axis = unitVec;
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
@@ -404,7 +404,7 @@ inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 
 inline Quat::Quat(const Matrix3& rotMat)
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	/* four cases: */
 	/* trace > 0 */
 	/* else */

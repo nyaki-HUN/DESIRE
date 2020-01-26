@@ -67,44 +67,52 @@
 #endif
 
 // --------------------------------------------------------------------------------------------------------------------
-//	Macros
-// --------------------------------------------------------------------------------------------------------------------
 
-// Enable SSE on desktop as all 64-bit CPU has at least SSE2
-#if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_LINUX || DESIRE_PLATFORM_OSX
-	#define DESIRE_USE_SSE
+#if DESIRE_PLATFORM_TYPE_DESKTOP || DESIRE_PLATFORM_XBOXONE || DESIRE_PLATFORM_PS4
+	#define DESIRE_USE_SSE	1
+	#define DESIRE_USE_NEON	0
 
 	// Enable SSE 4.1
 	#if !defined(__SSE4_1__)
 		#define __SSE4_1__
 	#endif
+
+	// Header files for SIMD intrinsics:
+	//	<immintrin.h>	AVX			Intel(R) Architecture intrinsic functions
+	//	<wmmintrin.h>	AES			Intel(R) AES and PCLMULQDQ intrinsics
+	//	<ammintrin.h>	SSE4A		AMD-specific intrinsics
+	//
+	//	<nmmintrin.h>	SSE4.2
+	//	<smmintrin.h>	SSE4.1
+	//	<tmmintrin.h>	SSSE3
+	//	<pmmintrin.h>	SSE3
+	//	<emmintrin.h>	SSE2
+	//	<xmmintrin.h>	SSE
+	//	<mmintrin.h>	MMX
+
+	#if defined(__SSE4_1__)
+		#include <smmintrin.h>
+	#else
+		// We are safe to use SSE3 because an x64 CPU with no SSE3 support is the 'first-generation' 64-bit which
+		// isn't supported by Windows 8.1 x64 native due to the requirements for CMPXCHG16b, PrefetchW, and LAHF/SAHF
+		#include <pmmintrin.h>
+	#endif
+#elif DESIRE_PLATFORM_ANDROID || DESIRE_PLATFORM_IOS || DESIRE_PLATFORM_NX
+	#define DESIRE_USE_SSE	0
+	#define DESIRE_USE_NEON	1
+
+	#include <arm64_neon.h>
+#else
+	#define DESIRE_USE_SSE	0
+	#define DESIRE_USE_NEON	0
 #endif
 
-// Stringify and concat macro magic
-#define _DESIRE_STRINGIFY(STR)				#STR
-#define DESIRE_STRINGIFY(STR)				_DESIRE_STRINGIFY(STR)
-#define _DESIRE_CONCAT_MACRO(A, B)			A ## B
-#define DESIRE_CONCAT_MACRO(A, B)			_DESIRE_CONCAT_MACRO(A, B)
-
-// Macro for displaying compile time message with file and line number
-#define DESIRE_TODO(STR)					DESIRE_PRAGMA(message(__FILE__ "(" DESIRE_STRINGIFY(__LINE__) "): TODO - " STR))
-
-// For unused variables
-#define DESIRE_UNUSED(X)					((void)X)
-
-// Array sizeof which returns the number of elements in a static array
-template<typename T, size_t N>
-constexpr size_t DesireArraySizeHelper(T(&)[N])
-{
-	return N;
-}
-#define DESIRE_ASIZEOF(X)					DesireArraySizeHelper(X)
-
-// Compile-time check to make sure the array has the same number of elements as 'count'
-#define DESIRE_CHECK_ARRAY_SIZE(X, COUNT)	static_assert(DESIRE_ASIZEOF(X) == (size_t)COUNT, "Array size doesn't match the number of elements");
+// --------------------------------------------------------------------------------------------------------------------
 
 // The value of this macro represents the maximum length of a file name string
 #define DESIRE_MAX_PATH_LEN					512
+
+// --------------------------------------------------------------------------------------------------------------------
 
 #if defined(_MSC_VER)
 	#define DESIRE_ATTRIBUTE_PACKED
@@ -117,3 +125,5 @@ constexpr size_t DesireArraySizeHelper(T(&)[N])
 	#define DESIRE_DISABLE_WARNINGS
 	#define DESIRE_ENABLE_WARNINGS
 #endif
+
+// --------------------------------------------------------------------------------------------------------------------

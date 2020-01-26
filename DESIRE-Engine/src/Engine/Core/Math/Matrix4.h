@@ -202,14 +202,14 @@ inline Matrix4 operator *(float scalar, const Matrix4& mat)
 
 inline Vector4 Matrix4::operator *(const Vector4& vec) const
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 result;
 	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
 	result = SIMD::MulAdd(col3, SIMD::Swizzle_WWWW(vec), result);
 	return result;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 	float32x4_t result;
 	const float32x2_t vecLow = vget_low_f32(vec);
 	result = vmulq_lane_f32(col0, vecLow, 0);
@@ -230,13 +230,13 @@ inline Vector4 Matrix4::operator *(const Vector4& vec) const
 
 inline Vector4 Matrix4::operator *(const Vector3& vec) const
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 result;
 	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
 	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
 	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
 	return result;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 	float32x4_t result;
 	const float32x2_t vecLow = vget_low_f32(vec);
 	result = vmulq_lane_f32(col0, vecLow, 0);
@@ -256,7 +256,7 @@ inline Vector4 Matrix4::operator *(const Vector3& vec) const
 
 inline void Matrix4::Transpose()
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
 	__m128 tmp1 = _mm_unpacklo_ps(col1, col3);
 	__m128 tmp2 = _mm_unpackhi_ps(col0, col2);
@@ -279,7 +279,7 @@ inline void Matrix4::Transpose()
 
 inline void Matrix4::Invert()
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	// Calculating the minterms for the first line
 	__m128 tt2 = _mm_ror_ps(col2, 1);
 	__m128 Vc = SIMD::Mul(tt2, col3);									// V3' dot V4
@@ -411,7 +411,7 @@ inline void Matrix4::Invert()
 
 inline void Matrix4::AffineInvert()
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 inv0, inv1, inv2, inv3;
 	const __m128 tmp2 = col0.GetXYZ().Cross(col1.GetXYZ());
 	const __m128 tmp0 = col1.GetXYZ().Cross(col2.GetXYZ());
@@ -459,7 +459,7 @@ inline void Matrix4::OrthoInvert()
 {
 	Vector3 inv0, inv1, inv2, inv3;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
 	__m128 tmp1 = _mm_unpackhi_ps(col0, col2);
 	inv3 = SIMD::Negate(col3);
@@ -489,7 +489,7 @@ inline void Matrix4::OrthoInvert()
 
 inline float Matrix4::CalculateDeterminant() const
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	// Calculating the minterms for the first line
 	__m128 tt2 = _mm_ror_ps(col2, 1);
 	__m128 Vc = SIMD::Mul(tt2, col3);									// V3' dot V4
@@ -534,7 +534,7 @@ inline Matrix4 Matrix4::CreateRotationX(float radians)
 {
 	Vector4 vecY, vecZ;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
@@ -561,7 +561,7 @@ inline Matrix4 Matrix4::CreateRotationY(float radians)
 {
 	Vector4 vecX, vecZ;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
@@ -588,7 +588,7 @@ inline Matrix4 Matrix4::CreateRotationZ(float radians)
 {
 	Vector4 vecX, vecY;
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	const __m128 zero = _mm_setzero_ps();
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
@@ -613,7 +613,7 @@ inline Matrix4 Matrix4::CreateRotationZ(float radians)
 
 inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 angles = SIMD::SetW(radiansXYZ, 0.0f);
 	__m128 s, c;
 	sincosf4(angles, &s, &c);
@@ -653,7 +653,7 @@ inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 
 inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
 {
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	__m128 axis = unitVec;
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);

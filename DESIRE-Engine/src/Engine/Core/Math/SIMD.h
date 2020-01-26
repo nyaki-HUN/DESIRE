@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <cmath>
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	// --------------------------------------------------------------------------------------------------------------------
 	// Header files for SIMD intrinsics:
 	//	<immintrin.h>	AVX			Intel(R) Architecture intrinsic functions
@@ -30,7 +30,7 @@
 	#endif
 
 	typedef __m128	simd128_t;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 	#include <arm64_neon.h>
 
 	typedef float32x4_t	simd128_t;
@@ -71,9 +71,9 @@ public:
 	// Construct from x, y, z, and w elements
 	static inline simd128_t Construct(float x, float y, float z, float w = 0.0f)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_setr_ps(x, y, z, w);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return (float32x4_t) { x, y, z, w };
 #else
 		return simd128_t(x, y, z, w);
@@ -83,9 +83,9 @@ public:
 	// Construct by setting all elements to the same scalar value
 	static inline simd128_t Construct(float scalar)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_set_ps1(scalar);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vdupq_n_f32(scalar);
 #else
 		return SIMD::Construct(scalar, scalar, scalar, scalar);
@@ -95,9 +95,9 @@ public:
 	// Load x, y, z, and w elements from the first four elements of a float array
 	static inline simd128_t LoadXYZW(const float* fptr)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_loadu_ps(fptr);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vld1q_f32(fptr);
 #else
 		return SIMD::Construct(fptr[0], fptr[1], fptr[2], fptr[3]);
@@ -107,9 +107,9 @@ public:
 	// Store x, y, z, and w elements in the first four elements of a float array
 	static inline void StoreXYZW(simd128_t vec, float* fptr)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		_mm_storeu_ps(fptr, vec);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		vst1q_f32(fptr, vec);
 #else
 		memcpy(fptr, vec.f32, 4 * sizeof(float));
@@ -119,9 +119,9 @@ public:
 	// Set element
 	static inline simd128_t SetX(simd128_t vec, float x)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_move_ss(vec, _mm_set_ss(x));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vsetq_lane_f32(x, vec, 0);
 #else
 		vec.f32[0] = x;
@@ -131,7 +131,7 @@ public:
 
 	static inline simd128_t SetY(simd128_t vec, float y)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		const __m128 y000 = _mm_set_ss(y);
 	#if defined(__SSE4_1__)
 		return _mm_insert_ps(vec, y000, 0x10);
@@ -140,7 +140,7 @@ public:
 		yxzw = _mm_move_ss(yxzw, y000);
 		return SIMD::Swizzle_YXZW(yxzw);
 	#endif
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vsetq_lane_f32(y, vec, 1);
 #else
 		vec.f32[1] = y;
@@ -150,7 +150,7 @@ public:
 
 	static inline simd128_t SetZ(simd128_t vec, float z)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		const __m128 z000 = _mm_set_ss(z);
 	#if defined(__SSE4_1__)
 		return _mm_insert_ps(vec, z000, 0x20);
@@ -159,7 +159,7 @@ public:
 		zyxw = _mm_move_ss(zyxw, z000);
 		return SIMD::Swizzle_ZYXW(zyxw);
 	#endif
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vsetq_lane_f32(z, vec, 2);
 #else
 		vec.f32[2] = z;
@@ -169,7 +169,7 @@ public:
 
 	static inline simd128_t SetW(simd128_t vec, float w)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		const __m128 w000 = _mm_set_ss(w);
 	#if defined(__SSE4_1__)
 		return _mm_insert_ps(vec, w000, 0x30);
@@ -178,7 +178,7 @@ public:
 		wyzx = _mm_move_ss(wyzx, w000);
 		return SIMD::Swizzle_WYZX(wyzx);
 	#endif
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vsetq_lane_f32(w, vec, 3);
 #else
 		vec.f32[3] = w;
@@ -189,9 +189,9 @@ public:
 	// Get element
 	static inline float GetX(simd128_t vec)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_cvtss_f32(vec);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vgetq_lane_f32(vec, 0);
 #else
 		return vec.f32[0];
@@ -200,9 +200,9 @@ public:
 
 	static inline float GetY(simd128_t vec)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_cvtss_f32(SIMD::Swizzle_YYYY(vec));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vgetq_lane_f32(vec, 1);
 #else
 		return vec.f32[1];
@@ -211,9 +211,9 @@ public:
 
 	static inline float GetZ(simd128_t vec)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_cvtss_f32(SIMD::Swizzle_ZZZZ(vec));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vgetq_lane_f32(vec, 2);
 #else
 		return vec.f32[2];
@@ -222,9 +222,9 @@ public:
 
 	static inline float GetW(simd128_t vec)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_cvtss_f32(SIMD::Swizzle_WWWW(vec));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vgetq_lane_f32(vec, 3);
 #else
 		return vec.f32[3];
@@ -234,9 +234,9 @@ public:
 	// Operator overloads
 	static inline simd128_t Negate(simd128_t vec)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_xor_ps(vec, SIMD::Construct(-0.0f));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vnegq_f32(vec);
 #else
 		return SIMD::Construct(
@@ -250,9 +250,9 @@ public:
 
 	static inline simd128_t Add(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_add_ps(a, b);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vaddq_f32(a, b); 
 #else
 		return SIMD::Construct(
@@ -266,9 +266,9 @@ public:
 
 	static inline simd128_t Sub(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_sub_ps(a, b);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vsubq_f32(a, b);
 #else
 		return SIMD::Construct(
@@ -282,9 +282,9 @@ public:
 
 	static inline simd128_t Mul(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_mul_ps(a, b);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vmulq_f32(a, b);
 #else
 		return SIMD::Construct(
@@ -298,9 +298,9 @@ public:
 
 	static inline simd128_t Mul(simd128_t vec, float scalar)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return Mul(vec, SIMD::Construct(scalar));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vmulq_n_f32(vec, scalar);
 #else
 		return SIMD::Construct(
@@ -334,9 +334,9 @@ public:
 
 	static inline simd128_t Div(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_div_ps(a, b);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vdivq_f32(a, b);
 #else
 		return SIMD::Construct(
@@ -351,9 +351,9 @@ public:
 	// Comparison operators
 	static inline bool OpCmp_GT(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_movemask_ps(_mm_cmpgt_ps(a, b)) == 0xF;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcgtq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -370,9 +370,9 @@ public:
 
 	static inline bool OpCmp3_GT(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return (_mm_movemask_ps(_mm_cmpgt_ps(a, b)) & 0x7) == 0x7;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcgtq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -388,9 +388,9 @@ public:
 
 	static inline bool OpCmp_LT(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return (_mm_movemask_ps(_mm_cmplt_ps(a, b)) == 0xF);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcltq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -407,9 +407,9 @@ public:
 
 	static inline bool OpCmp3_LT(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return (_mm_movemask_ps(_mm_cmplt_ps(a, b)) & 0x7) == 0x7;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcltq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -425,9 +425,9 @@ public:
 
 	static inline bool OpCmp_GE(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return (_mm_movemask_ps(_mm_cmpge_ps(a, b)) == 0xF);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcgeq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -444,9 +444,9 @@ public:
 
 	static inline bool OpCmp3_GE(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return (_mm_movemask_ps(_mm_cmpge_ps(a, b)) & 0x7) == 0x7;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcgeq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -462,9 +462,9 @@ public:
 
 	static inline bool OpCmp_LE(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return (_mm_movemask_ps(_mm_cmple_ps(a, b)) == 0xF);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcleq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -481,9 +481,9 @@ public:
 
 	static inline bool OpCmp3_LE(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return (_mm_movemask_ps(_mm_cmple_ps(a, b)) & 0x7) == 0x7;
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		uint32x4_t mask = vcleq_f32(a, b);
 		uint8x8x2_t mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15 = vzip_u8(vget_low_u8(mask), vget_high_u8(mask));
 		uint16x4x2_t mask_0_8_4_12_1_9_5_13_2_10_6_14_3_11_7_15 = vzip_u16(mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[0], mask_0_8_1_9_2_10_3_11_4_12_5_13_6_14_7_15.val[1]);
@@ -500,7 +500,7 @@ public:
 	// Compute the dot product of two 3-D vectors
 	static inline simd128_t Dot3(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	#if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0x7F);
 	#else
@@ -510,7 +510,7 @@ public:
 		__m128 xy_z_xy_z = _mm_hadd_ps(ab, ab);
 		return _mm_hadd_ps(xy_z_xy_z, xy_z_xy_z);
 	#endif
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		float32x4_t ab = SIMD::Mul(a, b);
 		float32x2_t xy = vget_low_f32(ab);
 		float32x2_t xy_xy = vpadd_f32(xy, xy);
@@ -529,7 +529,7 @@ public:
 	// Compute the dot product of two 4-D vectors
 	static inline simd128_t Dot4(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	#if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0xFF);
 	#else
@@ -537,7 +537,7 @@ public:
 		__m128 xy_zw_xy_zw = _mm_hadd_ps(ab, ab);
 		return _mm_hadd_ps(xy_zw_xy_zw, xy_zw_xy_zw);
 	#endif
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		float32x4_t ab = SIMD::Mul(a, b);
 		float32x2_t xz_yw = vadd_f32(vget_low_f32(ab), vget_high_f32(ab));
 		float32x2_t xyzw_xyzw = vpadd_f32(xz_yw, xz_yw);
@@ -555,7 +555,7 @@ public:
 	// Compute cross product of two 3-D vectors
 	static inline simd128_t Cross(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE) || defined(__ARM_NEON__)
+#if DESIRE_USE_SSE || DESIRE_USE_NEON
 		simd128_t yzxA = SIMD::Swizzle_YZXY(a);
 		simd128_t yzxB = SIMD::Swizzle_YZXY(b);
 		simd128_t result = SIMD::MulSub(yzxA, b, SIMD::Mul(yzxB, a));
@@ -572,10 +572,10 @@ public:
 	// Compute the absolute value per element
 	static inline simd128_t AbsPerElem(simd128_t vec)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		const uint32_t mask = 0x7fffffff;
 		return _mm_and_ps(vec, SIMD::Construct(*reinterpret_cast<const float*>(&mask)));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vabsq_f32(vec);
 #else
 		return SIMD::Construct(
@@ -590,9 +590,9 @@ public:
 	// Maximum of two vectors per element
 	static inline simd128_t MaxPerElem(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_max_ps(a, b);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vmaxq_f32(a, b);
 #else
 		return SIMD::Construct(
@@ -607,9 +607,9 @@ public:
 	// Minimum of two vectors per element
 	static inline simd128_t MinPerElem(simd128_t a, simd128_t b)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_min_ps(a, b);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vminq_f32(a, b);
 #else
 		return SIMD::Construct(
@@ -638,12 +638,12 @@ public:
 	// Compute the inverse/reciprocal square root
 	static inline simd128_t InvSqrt(simd128_t vec)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		// Get an initial estimate then perform two Newton-Raphson iterations
 		const __m128 invSqrt = _mm_rsqrt_ps(vec);
 		const __m128 muls = SIMD::Mul(SIMD::Mul(vec, invSqrt), invSqrt);
 		return SIMD::Mul(SIMD::Mul(invSqrt, 0.5f), SIMD::Sub(SIMD::Construct(3.0f), muls));
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		// Get an initial estimate then perform two Newton-Raphson iterations
 		float32x4_t invSqrt = vrsqrteq_f32(vec);
 		invSqrt = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(invSqrt, invSqrt), vec), result);
@@ -658,13 +658,13 @@ public:
 	// Blend (select) elements from a and b using the mask
 	static inline simd128_t Blend(simd128_t a, simd128_t b, simd128_t mask)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	#if defined(__SSE4_1__)
 		return _mm_blendv_ps(a, b, mask);
 	#else
 		return _mm_or_ps(_mm_and_ps(mask, b), _mm_andnot_ps(mask, a));
 	#endif
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return vbslq_f32(reinterpret_cast<uint32x4_t>(mask), b, a);
 #else
 		return simd128_t(
@@ -679,9 +679,9 @@ public:
 	// Special blends for one single precision floating-point value
 	static inline simd128_t Blend_X(simd128_t to, simd128_t from)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_blend_ps(to, from, 0b0001);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return SIMD::Blend(to, from, (uint32x4_t) { 0xffffffff, 0, 0, 0 });
 #else
 		return SIMD::SetX(to, SIMD::GetX(from));
@@ -690,9 +690,9 @@ public:
 
 	static inline simd128_t Blend_Y(simd128_t to, simd128_t from)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_blend_ps(to, from, 0b0010);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return SIMD::Blend(to, from, (uint32x4_t) { 0, 0xffffffff, 0, 0 });
 #else
 		return SIMD::SetY(to, SIMD::GetY(from));
@@ -701,9 +701,9 @@ public:
 
 	static inline simd128_t Blend_Z(simd128_t to, simd128_t from)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_blend_ps(to, from, 0b0100);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return SIMD::Blend(to, from, (uint32x4_t) { 0, 0, 0xffffffff, 0 });
 #else
 		return SIMD::SetZ(to, SIMD::GetZ(from));
@@ -712,9 +712,9 @@ public:
 
 	static inline simd128_t Blend_W(simd128_t to, simd128_t from)
 	{
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 		return _mm_blend_ps(to, from, 0b1000);
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 		return SIMD::Blend(to, from, (uint32x4_t) { 0, 0, 0, 0xffffffff });
 #else
 		return SIMD::SetW(to, SIMD::GetW(from));
@@ -722,7 +722,7 @@ public:
 	}
 
 	// Swizzle
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(0, 0, 0, 0)); }
 	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return _mm_unpacklo_ps(vec, vec); }
 	static inline simd128_t Swizzle_XXZZ(simd128_t vec)		{ return _mm_moveldup_ps(vec); }
@@ -772,7 +772,7 @@ public:
 	static inline simd128_t Swizzle_WZZW(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 2, 2, 3)); }
 	static inline simd128_t Swizzle_WZWZ(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(2, 3, 2, 3)); }
 	static inline simd128_t Swizzle_WWWW(simd128_t vec)		{ return _mm_shuffle_ps(vec, vec, _MM_SHUFFLE(3, 3, 3, 3)); }
-#elif defined(__ARM_NEON__)
+#elif DESIRE_USE_NEON
 	static inline simd128_t Swizzle_XXXX(simd128_t vec)		{ return vdupq_laneq_f32(vec, 0); }
 	static inline simd128_t Swizzle_XXYY(simd128_t vec)		{ return vzip1q_f32(vec, vec); }
 	static inline simd128_t Swizzle_XXZZ(simd128_t vec)		{ return vtrn1q_f32(vec, vec); }
@@ -875,7 +875,7 @@ public:
 //	Helper functions
 // --------------------------------------------------------------------------------------------------------------------
 
-#if defined(DESIRE_USE_SSE)
+#if DESIRE_USE_SSE
 
 #define _mm_ror_ps(vec, i)	_mm_shuffle_ps(vec, vec, _MM_SHUFFLE((uint8_t)(i + 3) % 4,(uint8_t)(i + 2) % 4,(uint8_t)(i + 1) % 4,(uint8_t)(i + 0) % 4))
 
