@@ -1,14 +1,8 @@
+#include "stdafx_Box2D.h"
 #include "Joints/Joint2D.h"
 #include "Box2DPhysics.h"
 #include "Box2DPhysicsComponent.h"
 #include "b2MathExt.h"
-
-#include "Engine/Core/assert.h"
-
-#include "Engine/Modules.h"
-
-#include "box2d/b2_joint.h"
-#include "box2d/b2_world.h"
 
 Joint2D::Joint2D()
 {

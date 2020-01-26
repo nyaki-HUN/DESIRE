@@ -113,6 +113,10 @@ function AddModuleConfig()
 	{
 		"../../../DESIRE-Engine/src",
 	}
+
+	filter { 'files:../Externals/**.cpp' }
+		flags { 'NoPCH' }
+	filter {}	-- Reset filter
 end
 
 -- Solution and projects

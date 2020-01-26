@@ -1,3 +1,4 @@
+#include "stdafx_Box2D.h"
 #include "Joints/AnchoredJoint2D.h"
 
 AnchoredJoint2D::AnchoredJoint2D()

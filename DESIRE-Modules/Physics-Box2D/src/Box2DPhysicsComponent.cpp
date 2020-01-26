@@ -1,15 +1,11 @@
+#include "stdafx_Box2D.h"
 #include "Box2DPhysicsComponent.h"
 #include "Box2DColliderShape.h"
 #include "Box2DPhysics.h"
 #include "b2MathExt.h"
 
-#include "Engine/Modules.h"
-
-#include "Engine/Core/Object.h"
 #include "Engine/Core/Math/Transform.h"
-
-#include "box2d/b2_world.h"
-#include "box2d/b2_contact.h"
+#include "Engine/Core/Object.h"
 
 Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	: PhysicsComponent(object)

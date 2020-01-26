@@ -1,19 +1,16 @@
+#include "stdafx_Box2D.h"
 #include "Box2DPhysics.h"
 #include "Box2DPhysicsComponent.h"
 #include "ContactListener.h"
 #include "DestructorListener.h"
 #include "RaycastCallbacks.h"
 
-#include "Engine/Core/assert.h"
 #include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Object.h"
 
 #include "Engine/Physics/PhysicsComponent.h"
 
 #include "Engine/Script/ScriptComponent.h"
-
-#include "box2d/b2_world.h"
-#include "box2d/b2_contact.h"
 
 static std::pair<b2Vec2, b2Vec2> GetValidRay(const Vector3& p1, const Vector3& p2)
 {

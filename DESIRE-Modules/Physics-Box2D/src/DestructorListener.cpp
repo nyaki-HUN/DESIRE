@@ -1,7 +1,6 @@
+#include "stdafx_Box2D.h"
 #include "DestructorListener.h"
 #include "Joints/Joint2D.h"
-
-#include "box2d/b2_joint.h"
 
 void DestructorListener::SayGoodbye(b2Joint* joint)
 {

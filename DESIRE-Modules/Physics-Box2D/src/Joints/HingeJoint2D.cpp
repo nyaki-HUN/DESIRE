@@ -1,10 +1,8 @@
+#include "stdafx_Box2D.h"
 #include "Joints/HingeJoint2D.h"
 #include "b2MathExt.h"
 
-#include "Engine/Core/assert.h"
 #include "Engine/Core/Math/math.h"
-
-#include "box2d/b2_body.h"
 
 HingeJoint2D::HingeJoint2D()
 {

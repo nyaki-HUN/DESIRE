@@ -1,3 +1,4 @@
+#include "stdafx_Box2D.h"
 #include "Joints/SpringJoint2D.h"
 #include "b2MathExt.h"
 
