@@ -218,8 +218,6 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 	rootTable.Bind("Math", Sqrat::RootTable(vm)
 		.Func("Round32", &Math::Round32)
 		.Func("RoundUp", &Math::RoundUp)
-		.Func("Clamp", &Math::Clamp)
-		.Func("Clamp01", &Math::Clamp01)
 	);
 
 	// Trigonometric functions

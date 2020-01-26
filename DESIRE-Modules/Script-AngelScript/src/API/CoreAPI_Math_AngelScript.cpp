@@ -266,8 +266,6 @@ void RegisterCoreAPI_Math_AngelScript(asIScriptEngine* engine)
 	result = engine->SetDefaultNamespace("Math");																		ASSERT(result >= asSUCCESS);
 	result = engine->RegisterGlobalFunction("int Round32(float)", asFUNCTION(Math::Round32), asCALL_CDECL);				ASSERT(result >= asSUCCESS);
 	result = engine->RegisterGlobalFunction("int RoundUp(float, int)", asFUNCTION(Math::RoundUp), asCALL_CDECL);		ASSERT(result >= asSUCCESS);
-	result = engine->RegisterGlobalFunction("float Clamp(float, float, float)", asFUNCTION(Math::Clamp), asCALL_CDECL);	ASSERT(result >= asSUCCESS);
-	result = engine->RegisterGlobalFunction("float Clamp01(float)", asFUNCTION(Math::Clamp01), asCALL_CDECL);			ASSERT(result >= asSUCCESS);
 	result = engine->SetDefaultNamespace("");																			ASSERT(result >= asSUCCESS);
 
 	// Trigonometric functions

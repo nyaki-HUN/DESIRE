@@ -209,8 +209,6 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	auto math = lua.create_named_table("Math");
 	math.set_function("Round32", &Math::Round32);
 	math.set_function("RoundUp", &Math::RoundUp);
-	math.set_function("Clamp", &Math::Clamp);
-	math.set_function("Clamp01", &Math::Clamp01);
 
 	// Trigonometric functions
 	lua.set_function("cos", &std::cosf);

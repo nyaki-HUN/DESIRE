@@ -61,20 +61,4 @@ int IntSel(int condition, int x, int y)
 	return x + ((y - x) & mask);
 }
 
-float Clamp(float x, float min, float max)
-{
-	ASSERT(!isnan(x));
-#if defined(DESIRE_USE_SSE)
-	_mm_store_ss(&x, _mm_max_ss(_mm_min_ss(_mm_load_ss(&x), _mm_load_ss(&max)), _mm_load_ss(&min)));
-	return x;
-#else
-	return std::max(std::min(x, max), min);
-#endif
-}
-
-float Clamp01(float x)
-{
-	return Clamp(x, 0.0f, 1.0f);
-}
-
 }	// namespace Math

@@ -25,12 +25,6 @@ uint32_t IntPow(uint32_t a, uint32_t e);
 // Returns 'x' if cond >= 0 and 'y' otherwise
 inline int IntSel(int condition, int x, int y);
 
-// Clamp 'x' to the [min, max] range
-float Clamp(float x, float min, float max);
-
-// Clamp 'x' to the [0, 1] range
-float Clamp01(float x);
-
 inline float FloatsAreEqual(float a, float b, float epsilon = FLT_EPSILON)
 {
 	return std::abs(a - b) < epsilon;
