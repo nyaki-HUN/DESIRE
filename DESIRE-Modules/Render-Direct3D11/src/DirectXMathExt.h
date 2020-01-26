@@ -4,7 +4,7 @@
 
 #include <DirectXMath.h>
 
-#if (defined(DESIRE_USE_SSE) && defined(_XM_SSE_INTRINSICS_)) || (defined(__ARM_NEON__) && defined(_XM_ARM_NEON_INTRINSICS_))
+#if (DESIRE_USE_SSE && defined(_XM_SSE_INTRINSICS_)) || (DESIRE_USE_NEON && defined(_XM_ARM_NEON_INTRINSICS_))
 	#define USE_NATIVE_CONVERSION
 #endif
 

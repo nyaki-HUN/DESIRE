@@ -6,7 +6,7 @@
 #include "LinearMath/btVector3.h"
 #include "LinearMath/btQuaternion.h"
 
-#if (defined(DESIRE_USE_SSE) && defined(BT_USE_SSE)) || (defined(__ARM_NEON__) && defined(BT_USE_NEON))
+#if (DESIRE_USE_SSE && defined(BT_USE_SSE)) || (DESIRE_USE_NEON && defined(BT_USE_NEON))
 	#define USE_NATIVE_CONVERSION
 #endif
 
