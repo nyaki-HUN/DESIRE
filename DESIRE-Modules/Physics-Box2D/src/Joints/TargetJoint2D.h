@@ -2,13 +2,12 @@
 
 #include "Joints/Joint2D.h"
 
-#include "Box2D/Dynamics/Joints/b2MouseJoint.h"
+#include "box2d/b2_mouse_joint.h"
 
 class TargetJoint2D : public Joint2D
 {
 public:
 	TargetJoint2D();
-	~TargetJoint2D() override;
 
 	void SetAnchor(Vector2 value);
 	Vector2 GetAnchor() const;
@@ -25,7 +24,7 @@ public:
 	void SetTarget(Vector2 value);
 	Vector2 GetTarget() const;
 
-	void CreateJointOnComponent(Box2DPhysicsComponent *anchoredComponent);
+	void CreateJointOnComponent(Box2DPhysicsComponent* anchoredComponent);
 
 private:
 	void CreateJoint() override;

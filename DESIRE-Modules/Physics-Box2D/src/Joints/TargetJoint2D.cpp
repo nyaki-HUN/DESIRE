@@ -3,20 +3,15 @@
 #include "Box2DPhysicsComponent.h"
 #include "b2MathExt.h"
 
-#include "Engine/Modules.h"
-
 #include "Engine/Core/assert.h"
 
-#include "Box2D/Dynamics/b2Body.h"
+#include "Engine/Modules.h"
+
+#include "box2d/b2_body.h"
 
 TargetJoint2D::TargetJoint2D()
 {
 	jointDef.userData = this;
-}
-
-TargetJoint2D::~TargetJoint2D()
-{
-
 }
 
 void TargetJoint2D::SetAnchor(Vector2 value)
@@ -92,7 +87,7 @@ Vector2 TargetJoint2D::GetTarget() const
 	return result;
 }
 
-void TargetJoint2D::CreateJointOnComponent(Box2DPhysicsComponent *anchoredComponent)
+void TargetJoint2D::CreateJointOnComponent(Box2DPhysicsComponent* anchoredComponent)
 {
 	jointDef.bodyA = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorldBody();
 	// bodyB is the body what we want to move

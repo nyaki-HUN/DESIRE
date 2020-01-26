@@ -14,7 +14,7 @@
 
 #include <stdarg.h>
 
-// Define memory functions for Squirrel
+// Memory functions for Squirrel
 void* sq_vm_malloc(SQUnsignedInteger size)											{ return MemorySystem::Alloc(size); }
 void* sq_vm_realloc(void* p, SQUnsignedInteger /*oldSize*/, SQUnsignedInteger size)	{ return MemorySystem::Realloc(p, size); }
 void sq_vm_free(void* p, SQUnsignedInteger /*size*/)								{ MemorySystem::Free(p); }

@@ -2,13 +2,12 @@
 
 #include "Joints/AnchoredJoint2D.h"
 
-#include "Box2D/Dynamics/Joints/b2DistanceJoint.h"
+#include "box2d/b2_distance_joint.h"
 
 class SpringJoint2D : public AnchoredJoint2D
 {
 public:
 	SpringJoint2D();
-	~SpringJoint2D() override;
 
 	void SetDampingRatio(float value);
 	float GetDampingRatio() const;

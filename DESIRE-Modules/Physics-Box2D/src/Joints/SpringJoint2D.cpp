@@ -7,11 +7,6 @@ SpringJoint2D::SpringJoint2D()
 	jointDef.length = 1.0f;
 }
 
-SpringJoint2D::~SpringJoint2D()
-{
-
-}
-
 void SpringJoint2D::SetDampingRatio(float value)
 {
 	jointDef.dampingRatio = value;
