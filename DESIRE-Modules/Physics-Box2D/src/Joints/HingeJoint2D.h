@@ -2,7 +2,7 @@
 
 #include "Joints/AnchoredJoint2D.h"
 
-#include "Box2D/Dynamics/Joints/b2RevoluteJoint.h"
+#include "box2d/b2_revolute_joint.h"
 
 class HingeJoint2D : public AnchoredJoint2D
 {
@@ -14,7 +14,6 @@ public:
 	};
 
 	HingeJoint2D();
-	~HingeJoint2D() override;
 
 	void SetUseMotor(bool value);
 	bool GetUseMotor() const;
@@ -35,7 +34,7 @@ public:
 private:
 	void CreateJoint() override;
 
-	b2JointDef & GetJointDef() override;
+	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
 
 	b2RevoluteJointDef jointDef;

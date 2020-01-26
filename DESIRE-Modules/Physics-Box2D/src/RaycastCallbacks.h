@@ -1,10 +1,11 @@
 #pragma once
 
 #include "Engine/Core/Container/Array.h"
+
 #include "Engine/Physics/Collision.h"
 
-#include "Box2D/Dynamics/b2WorldCallbacks.h"
-#include "Box2D/Dynamics/b2Fixture.h"
+#include "box2d/b2_world_callbacks.h"
+#include "box2d/b2_fixture.h"
 
 class PhysicsComponent;
 
@@ -14,10 +15,9 @@ protected:
 	RaycastCallbackBase(int layerMask)
 		: layerMask(layerMask)
 	{
-
 	}
 
-	bool IsFilteredOut(const b2Fixture *fixture) const
+	bool IsFilteredOut(const b2Fixture* fixture) const
 	{
 		const b2Filter& filterData = fixture->GetFilterData();
 		return (filterData.categoryBits & layerMask) == 0;
@@ -32,10 +32,9 @@ public:
 	RaycastClosestCallback(int layerMask)
 		: RaycastCallbackBase(layerMask)
 	{
-
 	}
 
-	float32 ReportFixture(b2Fixture *fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) override
+	float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override
 	{
 		if(IsFilteredOut(fixture))
 		{
@@ -55,10 +54,9 @@ public:
 	RaycastAnyCallback(int layerMask)
 		: RaycastCallbackBase(layerMask)
 	{
-	
 	}
 
-	float32 ReportFixture(b2Fixture *fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) override
+	float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override
 	{
 		if(IsFilteredOut(fixture))
 		{
@@ -78,17 +76,16 @@ public:
 	RaycastAllCallback(int layerMask)
 		: RaycastCallbackBase(layerMask)
 	{
-
 	}
 
-	float32 ReportFixture(b2Fixture *fixture, const b2Vec2& point, const b2Vec2& normal, float32 fraction) override
+	float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override
 	{
 		if(IsFilteredOut(fixture))
 		{
 			return -1;		// Filter out the fixture
 		}
 
-		PhysicsComponent *component = static_cast<PhysicsComponent*>(fixture->GetUserData());
+		PhysicsComponent* component = static_cast<PhysicsComponent*>(fixture->GetUserData());
 		collisions.EmplaceAdd(component, Vector3(point.x, point.y, 0.0f), Vector3(normal.x, normal.y, 0.0f));
 		return 1.0f;		// The raycast should continue as if no hit occurred
 	}

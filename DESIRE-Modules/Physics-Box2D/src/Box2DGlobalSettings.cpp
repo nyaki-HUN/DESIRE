@@ -1,6 +1,6 @@
 #include "Box2DGlobalSettings.h"
 
-#include "Box2D/Common/b2Settings.h"
+#include "box2d/b2_settings.h"
 
 void Box2DGlobalSettings::SetLinearSlop(float value)
 {

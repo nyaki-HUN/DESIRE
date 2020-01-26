@@ -5,7 +5,7 @@
 #include "Engine/Core/Container/Array.h"
 #include "Engine/Core/Math/Vector2.h"
 
-#include "Box2D/Dynamics/b2Fixture.h"
+#include "box2d/b2_fixture.h"
 
 class Shape;
 
@@ -72,7 +72,7 @@ private:
 	void CreateFixtures();
 	void ReleaseFixtures();
 
-	b2Body *body = nullptr;
+	b2Body* body = nullptr;
 	Array<b2Fixture*> fixtures;
 	b2Filter filterData;
 	float density = 1.0f;

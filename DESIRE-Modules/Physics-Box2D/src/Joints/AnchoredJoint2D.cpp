@@ -2,15 +2,9 @@
 
 AnchoredJoint2D::AnchoredJoint2D()
 {
-
 }
 
-AnchoredJoint2D::~AnchoredJoint2D()
-{
-
-}
-
-void AnchoredJoint2D::SetConnectedComponent(Box2DPhysicsComponent *component)
+void AnchoredJoint2D::SetConnectedComponent(Box2DPhysicsComponent* component)
 {
 	if(anchoredComponent == connectedComponent)
 	{

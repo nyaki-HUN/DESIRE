@@ -1,19 +1,14 @@
 #include "Joints/SliderJoint2D.h"
 #include "b2MathExt.h"
 
-#include "Engine/Core/Math/math.h"
 #include "Engine/Core/assert.h"
+#include "Engine/Core/Math/math.h"
 
-#include "Box2D/Dynamics/b2Body.h"
+#include "box2d/b2_body.h"
 
 SliderJoint2D::SliderJoint2D()
 {
 	jointDef.userData = this;
-}
-
-SliderJoint2D::~SliderJoint2D()
-{
-
 }
 
 void SliderJoint2D::SetUseMotor(bool value)

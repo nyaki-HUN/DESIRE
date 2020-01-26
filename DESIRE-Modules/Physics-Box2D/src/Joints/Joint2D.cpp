@@ -3,16 +3,15 @@
 #include "Box2DPhysicsComponent.h"
 #include "b2MathExt.h"
 
-#include "Engine/Modules.h"
-
 #include "Engine/Core/assert.h"
 
-#include "Box2D/Dynamics/Joints/b2Joint.h"
-#include "Box2D/Dynamics/b2World.h"
+#include "Engine/Modules.h"
+
+#include "box2d/b2_joint.h"
+#include "box2d/b2_world.h"
 
 Joint2D::Joint2D()
 {
-
 }
 
 Joint2D::~Joint2D()
@@ -43,7 +42,7 @@ float Joint2D::GetReactionTorque(float timeStep) const
 	return joint->GetReactionTorque(timeStep);
 }
 
-void Joint2D::CreateJointBetween(Box2DPhysicsComponent *anchoredComponent, Box2DPhysicsComponent *connectedComponent)
+void Joint2D::CreateJointBetween(Box2DPhysicsComponent* anchoredComponent, Box2DPhysicsComponent* connectedComponent)
 {
 	if(anchoredComponent == nullptr)
 	{
@@ -70,7 +69,7 @@ void Joint2D::CreateJoint()
 		return;
 	}
 
-	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
+	b2World* world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 	joint = world->CreateJoint(&jointDef);
 }
 
@@ -78,7 +77,7 @@ void Joint2D::DestroyJoint()
 {
 	if(joint != nullptr)
 	{
-		b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
+		b2World* world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 		world->DestroyJoint(joint);
 		joint = nullptr;
 	}

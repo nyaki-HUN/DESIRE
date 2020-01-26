@@ -41,10 +41,10 @@ private:
 	void HandleCollisionBegins();
 	void HandleCollisionEnds();
 
-	b2World *world = nullptr;
-	b2ContactListener *contactListener = nullptr;
-	b2DestructionListener *destructorListener = nullptr;
-	b2Body *worldBody = nullptr;
+	b2World* world = nullptr;
+	b2ContactListener* contactListener = nullptr;
+	b2DestructionListener* destructorListener = nullptr;
+	b2Body* worldBody = nullptr;
 
 	float fixedUpdateTimeAccumulator = 0.0f;
 	int velocityIterations = 8;

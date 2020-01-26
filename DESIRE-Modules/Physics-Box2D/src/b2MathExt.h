@@ -3,7 +3,7 @@
 #include "Engine/Core/Math/Vector2.h"
 #include "Engine/Core/Math/Vector3.h"
 
-#include "Box2D/Common/b2Math.h"
+#include "box2d/b2_math.h"
 
 inline Vector2 GetVector2(const b2Vec2& vec)
 {

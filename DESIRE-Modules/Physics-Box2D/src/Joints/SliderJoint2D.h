@@ -2,7 +2,7 @@
 
 #include "Joints/AnchoredJoint2D.h"
 
-#include "Box2D/Dynamics/Joints/b2PrismaticJoint.h"
+#include "box2d/b2_prismatic_joint.h"
 
 class SliderJoint2D : public AnchoredJoint2D
 {
@@ -14,7 +14,6 @@ public:
 	};
 
 	SliderJoint2D();
-	~SliderJoint2D() override;
 
 	void SetUseMotor(bool value);
 	bool GetUseMotor() const;
@@ -35,7 +34,7 @@ public:
 private:
 	void CreateJoint() override;
 
-	b2JointDef & GetJointDef() override;
+	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
 
 	b2PrismaticJointDef jointDef;

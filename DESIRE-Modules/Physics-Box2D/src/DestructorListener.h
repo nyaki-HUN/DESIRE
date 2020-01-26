@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Box2D/Dynamics/b2WorldCallbacks.h"
+#include "box2d/b2_world_callbacks.h"
 
 class DestructorListener : public b2DestructionListener
 {
 public:
-	void SayGoodbye(b2Joint *joint) override;
-	void SayGoodbye(b2Fixture *fixture) override;
+	void SayGoodbye(b2Joint* joint) override;
+	void SayGoodbye(b2Fixture* fixture) override;
 };

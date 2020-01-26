@@ -4,7 +4,8 @@ project "Physics-Box2D"
 
 	includedirs
 	{
-		"../Externals/Box2D",
+		"../Externals/Box2D/include",
+		"../Externals/Box2D/src",
 	}
 
 	files

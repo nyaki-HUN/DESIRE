@@ -8,13 +8,13 @@
 #include "Engine/Core/Object.h"
 #include "Engine/Core/Math/Transform.h"
 
-#include "Box2D/Dynamics/b2World.h"
-#include "Box2D/Dynamics/Contacts/b2Contact.h"
+#include "box2d/b2_world.h"
+#include "box2d/b2_contact.h"
 
 Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	: PhysicsComponent(object)
 {
-	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
+	b2World* world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 
 	b2BodyDef bodyDef;
 	bodyDef.angularDamping = 0.05f;
@@ -29,7 +29,7 @@ Box2DPhysicsComponent::~Box2DPhysicsComponent()
 {
 	ReleaseFixtures();
 
-	b2World *world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
+	b2World* world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
 	world->DestroyBody(body);
 	body = nullptr;
 }
@@ -48,7 +48,7 @@ void Box2DPhysicsComponent::SetEnabled(bool value)
 void Box2DPhysicsComponent::CloneTo(Object& otherObject) const
 {
 	PhysicsComponent::CloneTo(otherObject);
-	Box2DPhysicsComponent *otherComponent = otherObject.GetComponent<Box2DPhysicsComponent>();
+	Box2DPhysicsComponent* otherComponent = otherObject.GetComponent<Box2DPhysicsComponent>();
 	otherComponent->SetDensity(density);
 }
 
@@ -59,7 +59,7 @@ void Box2DPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collision
 	filterData.categoryBits = 1 << (int)collisionLayer;
 	filterData.maskBits = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 
-	for(b2Fixture *fixture : fixtures)
+	for(b2Fixture* fixture : fixtures)
 	{
 		fixture->SetFilterData(filterData);
 	}
@@ -80,16 +80,16 @@ Array<PhysicsComponent*> Box2DPhysicsComponent::GetActiveCollidingComponents() c
 	Array<PhysicsComponent*> collisions;
 
 	int count = 0;
-	b2ContactEdge *contactEdge = body->GetContactList();
+	b2ContactEdge* contactEdge = body->GetContactList();
 	while(contactEdge != nullptr)
 	{
-		const b2Contact *contact = contactEdge->contact;
+		const b2Contact* contact = contactEdge->contact;
 		if(contact->IsTouching())
 		{
-			const b2Fixture *fixtureA = contact->GetFixtureA();
-			const b2Fixture *fixtureB = contact->GetFixtureB();
-			Box2DPhysicsComponent *componentA = static_cast<Box2DPhysicsComponent*>(fixtureA->GetUserData());
-			Box2DPhysicsComponent *componentB = static_cast<Box2DPhysicsComponent*>(fixtureB->GetUserData());
+			const b2Fixture* fixtureA = contact->GetFixtureA();
+			const b2Fixture* fixtureB = contact->GetFixtureB();
+			Box2DPhysicsComponent* componentA = static_cast<Box2DPhysicsComponent*>(fixtureA->GetUserData());
+			Box2DPhysicsComponent* componentB = static_cast<Box2DPhysicsComponent*>(fixtureB->GetUserData());
 			collisions.Add((this == componentA) ? componentB : componentA);
 		}
 
@@ -125,7 +125,7 @@ void Box2DPhysicsComponent::SetTrigger(bool value)
 {
 	isTrigger = value;
 
-	for(b2Fixture *fixture : fixtures)
+	for(b2Fixture* fixture : fixtures)
 	{
 		fixture->SetSensor(isTrigger);
 	}
@@ -160,7 +160,7 @@ void Box2DPhysicsComponent::SetDensity(float i_density)
 	density = i_density;
 
 	const float densityToSet = GetDensity();
-	for(b2Fixture *fixture : fixtures)
+	for(b2Fixture* fixture : fixtures)
 	{
 		fixture->SetDensity(densityToSet);
 	}
@@ -292,7 +292,7 @@ void Box2DPhysicsComponent::CreateFixtures()
 		return;
 	}
 
-	Box2DColliderShape *colliderShape = static_cast<Box2DColliderShape*>(shape.get());
+	Box2DColliderShape* colliderShape = static_cast<Box2DColliderShape*>(shape.get());
 	for(size_t i = 0; i < colliderShape->GetShapeCount(); ++i)
 	{
 		b2FixtureDef fixtureDef;
@@ -304,14 +304,14 @@ void Box2DPhysicsComponent::CreateFixtures()
 		fixtureDef.isSensor = isTrigger;
 		fixtureDef.filter = filterData;
 
-		b2Fixture *fixture = body->CreateFixture(&fixtureDef);
+		b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 		fixtures.Add(fixture);
 	}
 }
 
 void Box2DPhysicsComponent::ReleaseFixtures()
 {
-	for(b2Fixture *fixture : fixtures)
+	for(b2Fixture* fixture : fixtures)
 	{
 		body->DestroyFixture(fixture);
 	}
