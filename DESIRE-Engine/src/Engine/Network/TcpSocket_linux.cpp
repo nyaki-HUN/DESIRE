@@ -3,7 +3,6 @@
 #if DESIRE_PLATFORM_LINUX
 
 #include "Engine/Network/TcpSocket.h"
-#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/String.h"
 
 #include <sys/types.h>

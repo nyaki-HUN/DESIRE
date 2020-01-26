@@ -15,7 +15,7 @@ public:
 	static SQInteger CallFromScript(HSQUIRRELVM vm);
 
 	HSQOBJECT scriptObject;
-	HSQOBJECT builtinFunctions[(size_t)EBuiltinFuncType::Num];
+	HSQOBJECT builtinFunctions[(size_t)EBuiltinFuncType::Num] = {};
 
 private:
 	bool PrepareFunctionCall(const String& functionName) override;

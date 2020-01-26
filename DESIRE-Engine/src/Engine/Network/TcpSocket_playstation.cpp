@@ -3,7 +3,6 @@
 #if DESIRE_PLATFORM_PS4
 
 #include "Engine/Network/TcpSocket.h"
-#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/String.h"
 
 #include <sys/socket.h>

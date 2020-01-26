@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Engine/Core/platform.h"
-
 #include <stdint.h>
 #include <new>
 
