@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Catch/catch.hpp"
+#include "Engine/Common.h"
 
-// --------------------------------------------------------------------------------------------------------------------
+#include "Catch/catch.hpp"
 
 // STD library
 #include <stdint.h>

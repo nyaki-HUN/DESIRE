@@ -6,33 +6,8 @@
 #include <cmath>
 
 #if DESIRE_USE_SSE
-	// --------------------------------------------------------------------------------------------------------------------
-	// Header files for SIMD intrinsics:
-	//	<immintrin.h>	AVX			Intel(R) Architecture intrinsic functions
-	//	<wmmintrin.h>	AES			Intel(R) AES and PCLMULQDQ intrinsics
-	//	<ammintrin.h>	SSE4A		AMD-specific intrinsics
-	//
-	//	<nmmintrin.h>	SSE4.2
-	//	<smmintrin.h>	SSE4.1
-	//	<tmmintrin.h>	SSSE3
-	//	<pmmintrin.h>	SSE3
-	//	<emmintrin.h>	SSE2
-	//	<xmmintrin.h>	SSE
-	//	<mmintrin.h>	MMX
-	// --------------------------------------------------------------------------------------------------------------------
-
-	#if defined(__SSE4_1__)
-		#include <smmintrin.h>
-	#else
-		// We are safe to use SSE3 because an x64 CPU with no SSE3 support is the 'first-generation' 64-bit which
-		// isn't supported by Windows 8.1 x64 native due to the requirements for CMPXCHG16b, PrefetchW, and LAHF/SAHF
-		#include <pmmintrin.h>
-	#endif
-
 	typedef __m128	simd128_t;
 #elif DESIRE_USE_NEON
-	#include <arm64_neon.h>
-
 	typedef float32x4_t	simd128_t;
 #else
 	struct simd128_t

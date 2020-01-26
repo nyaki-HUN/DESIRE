@@ -8,7 +8,8 @@ MemoryBuffer::MemoryBuffer(std::unique_ptr<uint8_t[]> data, size_t size)
 }
 
 MemoryBuffer::MemoryBuffer(size_t size)
-	: MemoryBuffer(std::make_unique<uint8_t[]>(size), size)
+	: ptr(std::make_unique<uint8_t[]>(size))
+	, size(size)
 {
 }
 

@@ -1,7 +1,7 @@
 #include "ZlibCompressionBase.h"
 
-#include "Engine/Core/assert.h"
-#include "Engine/Core/Log/Log.h"
+#include "Engine/Common.h"
+
 #include "Engine/Core/Memory/MemorySystem.h"
 
 #include "zlib.h"
