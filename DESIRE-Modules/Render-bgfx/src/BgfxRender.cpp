@@ -7,9 +7,10 @@
 
 #include "Engine/Application/OSWindow.h"
 
+#include "Engine/Common.h"
+
 #include "Engine/Core/Math/Matrix4.h"
 #include "Engine/Core/String/StackString.h"
-#include "Engine/Core/assert.h"
 
 #include "Engine/Render/Material.h"
 #include "Engine/Render/RenderTarget.h"
