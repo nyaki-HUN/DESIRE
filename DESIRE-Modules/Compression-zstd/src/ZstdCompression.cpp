@@ -1,11 +1,7 @@
+#include "stdafx_zstd.h"
 #include "ZstdCompression.h"
 
-#include "Engine/Common.h"
-
 #include "Engine/Core/Memory/MemorySystem.h"
-
-#define ZSTD_STATIC_LINKING_ONLY
-#include "zstd.h"
 
 ZstdCompression::ZstdCompression()
 	: Compression(19)
