@@ -3,7 +3,6 @@
 #include "Engine/Physics/PhysicsComponent.h"
 
 class btRigidBody;
-class btCollisionShape;
 struct btDefaultMotionState;
 class btTriangleIndexVertexArray;
 

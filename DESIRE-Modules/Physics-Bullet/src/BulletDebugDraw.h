@@ -2,8 +2,6 @@
 
 #include "BulletVectormathExt.h"
 
-#include "Engine/Common.h"
-
 #include "Engine/Render/DebugDraw.h"
 
 #include "LinearMath/btIDebugDraw.h"
