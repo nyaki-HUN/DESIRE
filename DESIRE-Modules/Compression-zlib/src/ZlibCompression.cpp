@@ -1,15 +1,8 @@
+#include "stdafx_zlib.h"
 #include "ZlibCompression.h"
-
-#include "Engine/Core/Log/Log.h"
-
-#include "zlib.h"
 
 ZlibCompression::ZlibCompression()
 	: ZlibCompressionBase(MAX_WBITS)		// use zlib header
-{
-}
-
-ZlibCompression::~ZlibCompression()
 {
 }
 

@@ -1,10 +1,7 @@
+#include "stdafx_zlib.h"
 #include "ZlibCompressionBase.h"
 
-#include "Engine/Common.h"
-
 #include "Engine/Core/Memory/MemorySystem.h"
-
-#include "zlib.h"
 
 ZlibCompressionBase::ZlibCompressionBase(int windowBits)
 	: Compression(Z_DEFAULT_COMPRESSION)

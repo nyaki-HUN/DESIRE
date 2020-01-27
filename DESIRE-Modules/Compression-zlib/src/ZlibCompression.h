@@ -6,7 +6,6 @@ class ZlibCompression : public ZlibCompressionBase
 {
 public:
 	ZlibCompression();
-	~ZlibCompression() override;
 
 	size_t GetMaxCompressionDataBufferSize(size_t dataSize) const override;
 	size_t CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize) override;

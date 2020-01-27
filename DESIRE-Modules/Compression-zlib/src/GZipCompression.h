@@ -6,5 +6,4 @@ class GZipCompression : public ZlibCompressionBase
 {
 public:
 	GZipCompression();
-	~GZipCompression() override;
 };

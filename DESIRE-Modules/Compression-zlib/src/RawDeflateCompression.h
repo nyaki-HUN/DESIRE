@@ -6,5 +6,4 @@ class RawDeflateCompression : public ZlibCompressionBase
 {
 public:
 	RawDeflateCompression();
-	~RawDeflateCompression() override;
 };
