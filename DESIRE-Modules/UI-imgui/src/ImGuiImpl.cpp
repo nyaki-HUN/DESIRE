@@ -1,9 +1,8 @@
+#include "stdafx_imgui.h"
 #include "ImGuiImpl.h"
 
 #include "Engine/Application/Application.h"
 #include "Engine/Application/OSWindow.h"
-
-#include "Engine/Common.h"
 
 #include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Timer.h"
@@ -16,8 +15,6 @@
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
-
-#include "imgui.h"
 
 #include <algorithm>	// for std::max()
 
