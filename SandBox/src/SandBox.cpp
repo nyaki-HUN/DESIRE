@@ -7,7 +7,6 @@
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/FileSystemWatcher.h"
 #include "Engine/Core/FS/IReadFile.h"
-#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/StackString.h"
 #include "Engine/Input/Input.h"
 #include "Engine/Render/Render.h"
@@ -20,17 +19,13 @@
 
 enum EAction
 {
-	EXIT,
-	FIRE,
-	CAMERA_YAW,
-	CAMERA_PITCH
+	Exit,
+	Fire,
+	CameraYaw,
+	CameraPitch
 };
 
 SandBox::SandBox()
-{
-}
-
-SandBox::~SandBox()
 {
 }
 
@@ -83,20 +78,20 @@ void SandBox::Init()
 
 	for(const Keyboard& keyboard : Modules::Input->GetKeyboards())
 	{
-		inputMapping.MapButton(EAction::EXIT, keyboard, KEY_ESCAPE);
-		inputMapping.MapButton(EAction::FIRE, keyboard, KEY_SPACE);
+		inputMapping.MapButton(EAction::Exit, keyboard, KEY_ESCAPE);
+		inputMapping.MapButton(EAction::Fire, keyboard, KEY_SPACE);
 	}
 
 	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
-		inputMapping.MapButton(EAction::FIRE, mouse, Mouse::BUTTON_LEFT);
-		inputMapping.MapAxis(EAction::CAMERA_YAW, mouse, Mouse::MOUSE_X);
-		inputMapping.MapAxis(EAction::CAMERA_PITCH, mouse, Mouse::MOUSE_Y);
+		inputMapping.MapButton(EAction::Fire, mouse, Mouse::BUTTON_LEFT);
+		inputMapping.MapAxis(EAction::CameraYaw, mouse, Mouse::MOUSE_X);
+		inputMapping.MapAxis(EAction::CameraPitch, mouse, Mouse::MOUSE_Y);
 	}
 
 	for(const GameController& gamepad : Modules::Input->GetControllers())
 	{
-		inputMapping.MapButton(EAction::FIRE, gamepad, GameController::BTN_X);
+		inputMapping.MapButton(EAction::Fire, gamepad, GameController::BTN_X);
 	}
 
 	//////////
@@ -132,13 +127,13 @@ void SandBox::Kill()
 
 void SandBox::Update()
 {
-	if(inputMapping.WentDown(EAction::EXIT))
+	if(inputMapping.WentDown(EAction::Exit))
 	{
 		LOG_MESSAGE("!EXIT!");
 		return;
 	}
 
-	if(inputMapping.IsDown(EAction::FIRE))
+	if(inputMapping.IsDown(EAction::Fire))
 	{
 		LOG_MESSAGE("Fire is down");
 	}

@@ -14,10 +14,6 @@ SimpleRotateScript::SimpleRotateScript()
 {
 }
 
-SimpleRotateScript::~SimpleRotateScript()
-{
-}
-
 void SimpleRotateScript::Init()
 {
 }

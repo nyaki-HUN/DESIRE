@@ -6,7 +6,6 @@ class SimpleRotateScript : public IScript
 {
 public:
 	SimpleRotateScript();
-	~SimpleRotateScript();
 
 	void Init() override;
 	void Kill() override;
