@@ -1,13 +1,7 @@
+#include "stdafx_Assimp.h"
 #include "AssimpLoader.h"
 
-#include "Engine/Core/assert.h"
 #include "Engine/Core/FS/IReadFile.h"
-
-#include "assimp/Importer.hpp"
-#include "assimp/postprocess.h"
-#include "assimp/scene.h"
-#include "assimp/IOStream.hpp"
-#include "assimp/IOSystem.hpp"
 
 class AssimpIOStreamWrapper : public Assimp::IOStream
 {
@@ -17,22 +11,22 @@ public:
 	{
 	}
 
-	size_t Read(void* pvBuffer, size_t pSize, size_t pCount) override
+	size_t Read(void* pBuffer, size_t size, size_t count) override
 	{
-		return file->ReadBuffer(pvBuffer, pSize * pCount);
+		return file->ReadBuffer(pBuffer, size * count);
 	}
 
-	size_t Write(const void* pvBuffer, size_t pSize, size_t pCount) override
+	size_t Write(const void* pBuffer, size_t size, size_t count) override
 	{
-		(void)pvBuffer;
-		(void)pSize;
-		(void)pCount;
+		DESIRE_UNUSED(pBuffer);
+		DESIRE_UNUSED(size);
+		DESIRE_UNUSED(count);
 
 		ASSERT(false && "Not supported");
 		return 0;
 	}
 
-	aiReturn Seek(size_t pOffset, aiOrigin pOrigin) override
+	aiReturn Seek(size_t offset, aiOrigin origin) override
 	{
 		const IReadFile::ESeekOrigin mapping[] =
 		{
@@ -41,7 +35,7 @@ public:
 			IReadFile::ESeekOrigin::End,		// aiOrigin::aiOrigin_END
 		};
 
-		const bool result = file->Seek(static_cast<int64_t>(pOffset), mapping[pOrigin]);
+		const bool result = file->Seek(static_cast<int64_t>(offset), mapping[origin]);
 		return result ? aiReturn_SUCCESS : aiReturn_FAILURE;
 	}
 
@@ -74,7 +68,7 @@ public:
 
 	bool Exists(const char* pFile) const override
 	{
-		return (strcmp(pFile, DUMMY_FILENAME) == 0);
+		return (strcmp(pFile, kDummyFilename) == 0);
 	}
 
 	char getOsSeparator() const override
@@ -84,7 +78,7 @@ public:
 
 	Assimp::IOStream* Open(const char* pFile, const char* pMode) override
 	{
-		(void)pMode;
+		DESIRE_UNUSED(pMode);
 
 		if(!Exists(pFile))
 		{
@@ -99,27 +93,25 @@ public:
 		delete pFile;
 	}
 
-	static const char* DUMMY_FILENAME;
+	static constexpr char* kDummyFilename = "__DUMMY__";
 
 private:
 	const ReadFilePtr& file;
 };
-
-const char* AssimpIOSystemWrapper::DUMMY_FILENAME = "__DUMMY__";
 
 Mesh* AssimpLoader::Load(const ReadFilePtr& file)
 {
 	Assimp::Importer importer;
 	importer.SetIOHandler(new AssimpIOSystemWrapper(file));
 
-//	const aiScene* scene = importer.ReadFile(AssimpIOSystemWrapper::DUMMY_FILENAME, aiProcessPreset_TargetRealtime_Quality);
-	const aiScene* scene = importer.ReadFile(AssimpIOSystemWrapper::DUMMY_FILENAME, aiProcess_CalcTangentSpace);
+//	const aiScene* pScene = importer.ReadFile(AssimpIOSystemWrapper::kDummyFilename, aiProcessPreset_TargetRealtime_Quality);
+	const aiScene* pScene = importer.ReadFile(AssimpIOSystemWrapper::kDummyFilename, aiProcess_CalcTangentSpace);
 
-	if(scene != nullptr && scene->HasMeshes())
+	if(pScene != nullptr && pScene->HasMeshes())
 	{
-		for(uint32_t i = 0; i < scene->mNumMeshes; ++i)
+		for(uint32_t i = 0; i < pScene->mNumMeshes; ++i)
 		{
-			const aiMesh* mesh = scene->mMeshes[i];
+			const aiMesh* pMesh = pScene->mMeshes[i];
 		}
 	}
 

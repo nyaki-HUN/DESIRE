@@ -2,6 +2,9 @@ project "ResourceLoader-Assimp"
 	AddModuleConfig()
 	uuid "19E05838-5A9C-421F-9102-F3F5A1ED488A"
 
+	pchheader "stdafx_Assimp.h"
+	pchsource "../src/stdafx_Assimp.cpp"
+
 	removeflags { "FatalCompileWarnings" }
 	rtti "On"
 

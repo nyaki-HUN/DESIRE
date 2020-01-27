@@ -3,6 +3,9 @@ project "Script-AngelScript"
 	warnings "Extra"
 	uuid "AE7FBF83-FF16-4E32-9844-6CFB79B22929"
 
+	pchheader "stdafx_AngelScript.h"
+	pchsource "../src/stdafx_AngelScript.cpp"
+
 	exceptionhandling "On"
 
 	flags

@@ -1,3 +1,4 @@
+#include "stdafx_Direct3D12.h"
 #include "Direct3D12Render.h"
 #include "DirectXMathExt.h"
 #include "MeshRenderDataD3D12.h"
@@ -6,8 +7,6 @@
 #include "RenderTargetRenderDataD3D12.h"
 
 #include "Engine/Application/OSWindow.h"
-
-#include "Engine/Common.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/Math/Matrix4.h"
@@ -107,10 +106,6 @@ Direct3D12Render::Direct3D12Render()
 	matWorld = DirectX::XMMatrixIdentity();
 	matView = DirectX::XMMatrixIdentity();
 	matProj = DirectX::XMMatrixIdentity();
-}
-
-Direct3D12Render::~Direct3D12Render()
-{
 }
 
 void Direct3D12Render::Init(OSWindow* mainWindow)
@@ -905,5 +900,5 @@ DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* texture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[(size_t)texture->format];
+	return conversionTable[static_cast<size_t>(texture->format)];
 }

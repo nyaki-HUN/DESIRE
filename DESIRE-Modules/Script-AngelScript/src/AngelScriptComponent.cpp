@@ -1,21 +1,12 @@
+#include "stdafx_AngelScript.h"
 #include "AngelScriptComponent.h"
 
-#include "Engine/Common.h"
-
 #include "Engine/Core/String/String.h"
-
-DESIRE_DISABLE_WARNINGS
-#include "angelscript.h"
-DESIRE_ENABLE_WARNINGS
 
 extern asIStringFactory* GetStdStringFactorySingleton();
 
 AngelScriptComponent::AngelScriptComponent(Object& object)
 	: ScriptComponent(object)
-{
-}
-
-AngelScriptComponent::~AngelScriptComponent()
 {
 }
 

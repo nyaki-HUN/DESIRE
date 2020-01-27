@@ -1,3 +1,4 @@
+#include "stdafx_AngelScript.h"
 #include "API/AngelScriptAPI.h"
 
 #include "Engine/Core/Math/Matrix4.h"

@@ -1,12 +1,6 @@
 #pragma once
 
-#include "Engine/Common.h"
-
 #include "Engine/Core/String/String.h"
-
-DESIRE_DISABLE_WARNINGS
-#include "angelscript.h"
-DESIRE_ENABLE_WARNINGS
 
 #include <new>
 

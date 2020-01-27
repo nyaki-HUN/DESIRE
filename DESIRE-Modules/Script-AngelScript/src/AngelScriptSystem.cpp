@@ -1,3 +1,4 @@
+#include "stdafx_AngelScript.h"
 #include "AngelScriptSystem.h"
 #include "AngelScriptComponent.h"
 #include "API/AngelScriptAPI.h"

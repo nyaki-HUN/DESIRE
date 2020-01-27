@@ -3,8 +3,6 @@
 #include "Engine/Script/ScriptComponent.h"
 #include "Engine/Core/Container/Array.h"
 
-#include <stdint.h>
-
 class asIScriptContext;
 class asIScriptGeneric;
 class asIScriptObject;
@@ -13,7 +11,6 @@ class AngelScriptComponent : public ScriptComponent
 {
 public:
 	AngelScriptComponent(Object& object);
-	~AngelScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 
