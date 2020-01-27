@@ -12,7 +12,7 @@ class PhysXPhysicsComponent : public PhysicsComponent
 {
 public:
 	PhysXPhysicsComponent(Object& object);
-	~PhysXPhysicsComponent();
+	~PhysXPhysicsComponent() override;
 
 	void SetEnabled(bool value) override;
 
@@ -62,6 +62,6 @@ public:
 	void SetTransformFromGameObject() override;
 
 private:
-	physx::PxRigidBody *body = nullptr;
-	physx::PxRigidDynamic *dynamicBody = nullptr;
+	physx::PxRigidBody* body = nullptr;
+	physx::PxRigidDynamic* dynamicBody = nullptr;
 };

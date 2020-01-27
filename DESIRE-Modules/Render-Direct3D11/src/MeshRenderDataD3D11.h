@@ -1,13 +1,12 @@
 #pragma once
 
-#include <d3d11.h>
 #include <memory>
 
 class MeshRenderDataD3D11
 {
 public:
-	ID3D11Buffer *indexBuffer = nullptr;
-	ID3D11Buffer *vertexBuffer = nullptr;
+	ID3D11Buffer* indexBuffer = nullptr;
+	ID3D11Buffer* vertexBuffer = nullptr;
 
 	uint32_t indexOffset = 0;
 	uint32_t vertexOffset = 0;

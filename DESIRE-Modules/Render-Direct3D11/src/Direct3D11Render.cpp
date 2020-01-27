@@ -1,3 +1,4 @@
+#include "stdafx_Direct3D11.h"
 #include "Direct3D11Render.h"
 #include "DirectXMathExt.h"
 #include "MeshRenderDataD3D11.h"
@@ -6,8 +7,6 @@
 #include "RenderTargetRenderDataD3D11.h"
 
 #include "Engine/Application/OSWindow.h"
-
-#include "Engine/Common.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/Math/Matrix4.h"

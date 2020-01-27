@@ -2,6 +2,9 @@ project "Render-bgfx"
 	AddModuleConfig()
 	uuid "39620121-0C61-49D9-9BF4-B67638336D45"
 
+	pchheader "stdafx_bgfx.h"
+	pchsource "../src/stdafx_bgfx.cpp"
+
 	includedirs
 	{
 		"../Externals/bgfx/include",
@@ -25,6 +28,9 @@ project "Render-bgfx"
 	{
 		"../Externals/**/amalgamated.*",
 	}
+
+	filter { "files:../Externals/**.cc" }
+		flags { "NoPCH" }
 
 	filter "action:vs*"
 		includedirs

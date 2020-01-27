@@ -2,6 +2,9 @@ project "Network-curl"
 	AddModuleConfig()
 	uuid "B908992D-EAFC-4E3E-9D31-651D2A8EBA3D"
 
+	pchheader "stdafx_curl.h"
+	pchsource "../src/stdafx_curl.cpp"
+
 	removeflags { "FatalCompileWarnings" }
 
 	defines

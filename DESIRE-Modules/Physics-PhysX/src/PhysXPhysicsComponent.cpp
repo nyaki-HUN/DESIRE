@@ -1,25 +1,18 @@
+#include "stdafx_PhysX.h"
 #include "PhysXPhysicsComponent.h"
 #include "PhysXPhysics.h"
 #include "PxMathExt.h"
 
-#include "Engine/Modules.h"
-
 #include "Engine/Core/Math/Transform.h"
 #include "Engine/Core/Object.h"
-
-#include "PxRigidDynamic.h"
-#include "PxFiltering.h"
-#include "extensions/PxRigidBodyExt.h"
 
 PhysXPhysicsComponent::PhysXPhysicsComponent(Object& object)
 	: PhysicsComponent(object)
 {
-
 }
 
 PhysXPhysicsComponent::~PhysXPhysicsComponent()
 {
-
 }
 
 void PhysXPhysicsComponent::SetEnabled(bool value)

@@ -2,8 +2,6 @@
 
 #include "Engine/Core/HashedStringMap.h"
 
-#include "bgfx/bgfx.h"
-
 class ShaderRenderDataBgfx
 {
 public:

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "bgfx/bgfx.h"
-
 class TextureRenderDataBgfx
 {
 public:

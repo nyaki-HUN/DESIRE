@@ -1,11 +1,9 @@
+#include "stdafx_PhysX.h"
 #include "PhysXPhysics.h"
 #include "PhysXPhysicsComponent.h"
 #include "PxMathExt.h"
 
 #include "Engine/Core/Object.h"
-#include "Engine/Core/Log/Log.h"
-
-#include "PxPhysicsAPI.h"
 
 #if defined(_DEBUG)
 	#pragma comment(lib, "PhysX3DEBUG_x64.lib")
@@ -106,16 +104,16 @@ void PhysXPhysics::Update(float deltaTime)
 
 		// Instead of calling the UpdateComponents() function we update only the dynamic bodies that moved
 		physx::PxU32 numActiveActors = 0;
-		physx::PxActor **activeActors = scene->getActiveActors(numActiveActors);
+		physx::PxActor** activeActors = scene->getActiveActors(numActiveActors);
 		for(physx::PxU32 i = 0; i < numActiveActors; ++i)
 		{
-			PhysXPhysicsComponent *component = static_cast<PhysXPhysicsComponent*>(activeActors[i]->userData);
+			PhysXPhysicsComponent* component = static_cast<PhysXPhysicsComponent*>(activeActors[i]->userData);
 			component->SetTransformFromGameObject();
 		}
 	}
 
 	// We still need to update all kinematic bodies
-	for(PhysicsComponent *component : components)
+	for(PhysicsComponent* component : components)
 	{
 		if(component->GetBodyType() == PhysicsComponent::EBodyType::Kinematic)
 		{

@@ -1,3 +1,4 @@
+#include "stdafx_bgfx.h"
 #include "BgfxRender.h"
 #include "MeshRenderDataBgfx.h"
 #include "ShaderRenderDataBgfx.h"
@@ -6,8 +7,6 @@
 #include "Embedded_shaders/vs_screenSpaceQuad.bin.h"
 
 #include "Engine/Application/OSWindow.h"
-
-#include "Engine/Common.h"
 
 #include "Engine/Core/Math/Matrix4.h"
 #include "Engine/Core/String/StackString.h"
@@ -20,7 +19,6 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 
-#include "bgfx/platform.h"
 #include "bgfx/embedded_shader.h"
 #include "bgfx/../../src/config.h"
 
@@ -40,11 +38,6 @@ BgfxRender::BgfxRender()
 	screenSpaceQuadMeshVertexDecl.begin();
 	screenSpaceQuadMeshVertexDecl.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float);
 	screenSpaceQuadMeshVertexDecl.end();
-}
-
-BgfxRender::~BgfxRender()
-{
-
 }
 
 void BgfxRender::Init(OSWindow* mainWindow)
@@ -809,7 +802,7 @@ bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[(size_t)texture->format];
+	return conversionTable[static_cast<size_t>(texture->format)];
 }
 
 void BgfxRender::BindEmbeddedShader(Shader* shader, const char* name)
