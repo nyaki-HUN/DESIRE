@@ -1,9 +1,6 @@
 #include "stdafx.h"
-#include "Engine/Core/assert.h"
-#if defined(ASSERT)
-	#undef ASSERT		// Need to undefine to bypass ASSERT in HashedStringMap::Insert() function
-	#define ASSERT(COND)	((void)0)
-#endif
+#undef ASSERT		// Need to undefine to bypass ASSERT in HashedStringMap::Insert() function
+#define ASSERT(COND)	((void)0)
 #include "Engine/Core/HashedStringMap.h"
 
 TEST_CASE("HashedStringMap", "[Core]")

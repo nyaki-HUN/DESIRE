@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/Core/assert.h"
 #include "Engine/Core/HashedString.h"
 #include "Engine/Core/Container/Array.h"
 
