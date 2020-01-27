@@ -1,14 +1,11 @@
+#include "stdafx_Bullet.h"
 #include "BulletVehicleRaycaster.h"
 
 #include "Engine/Physics/Physics.h"
 
-#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
-#include "BulletDynamics/Dynamics/btRigidBody.h"
-
-BulletVehicleRaycaster::BulletVehicleRaycaster(btDynamicsWorld *world)
+BulletVehicleRaycaster::BulletVehicleRaycaster(btDynamicsWorld* world)
 	: dynamicsWorld(world)
 {
-
 }
 
 void* BulletVehicleRaycaster::castRay(const btVector3& from, const btVector3& to, btVehicleRaycasterResult& result)
@@ -21,7 +18,7 @@ void* BulletVehicleRaycaster::castRay(const btVector3& from, const btVector3& to
 
 	if(rayCallback.hasHit())
 	{
-		const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObject);
+		const btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
 		if(body != nullptr && body->hasContactResponse())
 		{
 			result.m_hitPointInWorld = rayCallback.m_hitPointWorld;

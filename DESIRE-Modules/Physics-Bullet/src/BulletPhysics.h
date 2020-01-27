@@ -30,13 +30,13 @@ public:
 	btDynamicsWorld* GetWorld() const;
 
 private:
-	static void SimulationTickCallback(btDynamicsWorld *world, float timeStep);
+	static void SimulationTickCallback(btDynamicsWorld* world, float timeStep);
 
-	btDiscreteDynamicsWorld *dynamicsWorld = nullptr;
-	btDefaultCollisionConfiguration *collisionConfiguration = nullptr;
-	btCollisionDispatcher *dispatcher = nullptr;
-	btAxisSweep3 *broadphase = nullptr;
-	btSequentialImpulseConstraintSolver *constraintSolver = nullptr;
+	btDiscreteDynamicsWorld* dynamicsWorld = nullptr;
+	btDefaultCollisionConfiguration* collisionConfiguration = nullptr;
+	btCollisionDispatcher* dispatcher = nullptr;
+	btAxisSweep3* broadphase = nullptr;
+	btSequentialImpulseConstraintSolver* constraintSolver = nullptr;
 
-	BulletDebugDraw *bulletDebugDraw = nullptr;
+	BulletDebugDraw* bulletDebugDraw = nullptr;
 };

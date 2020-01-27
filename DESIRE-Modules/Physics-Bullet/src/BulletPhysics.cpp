@@ -1,13 +1,12 @@
+#include "stdafx_Bullet.h"
 #include "BulletPhysics.h"
 #include "BulletPhysicsComponent.h"
 #include "BulletDebugDraw.h"
 #include "BulletVectormathExt.h"
 
-#include "Engine/Core/assert.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Script/ScriptComponent.h"
 
-#include "btBulletDynamicsCommon.h"
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 #include <algorithm>		// for std::min
@@ -33,7 +32,7 @@ BulletPhysics::BulletPhysics()
 	solverInfo.m_solverMode |= SOLVER_ENABLE_FRICTION_DIRECTION_CACHING;
 	solverInfo.m_numIterations = 4;
 
-	class DebugDraw *debugDraw = nullptr;
+	class DebugDraw* debugDraw = nullptr;
 	if(debugDraw != nullptr)
 	{
 		bulletDebugDraw = new BulletDebugDraw(*debugDraw);
@@ -67,7 +66,7 @@ void BulletPhysics::Update(float deltaTime)
 
 PhysicsComponent& BulletPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
-	BulletPhysicsComponent& component = object.AddComponent<BulletPhysicsComponent>( true);
+	BulletPhysicsComponent& component = object.AddComponent<BulletPhysicsComponent>(true);
 	return component;
 }
 
@@ -96,8 +95,8 @@ Collision BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, in
 	Collision collision;
 	if(rayCallback.hasHit())
 	{
-		const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObject);
-		PhysicsComponent *component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
+		const btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
+		PhysicsComponent* component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
 		collision = Collision(component, GetVector3(rayCallback.m_hitPointWorld), GetVector3(rayCallback.m_hitNormalWorld));
 	}
 
@@ -128,8 +127,8 @@ Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2,
 		collisions.Reserve(count);
 		for(int i = 0; i < count; ++i)
 		{
-			const btRigidBody *body = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
-			PhysicsComponent *component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
+			const btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
+			PhysicsComponent* component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
 			collisions.EmplaceAdd(component, GetVector3(rayCallback.m_hitPointWorld[i]), GetVector3(rayCallback.m_hitNormalWorld[i]));
 		}
 	}
@@ -142,20 +141,20 @@ btDynamicsWorld* BulletPhysics::GetWorld() const
 	return dynamicsWorld;
 }
 
-void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeStep)
+void BulletPhysics::SimulationTickCallback(btDynamicsWorld* world, float timeStep)
 {
 	DESIRE_UNUSED(timeStep);
 
-	BulletPhysics *physics = static_cast<BulletPhysics*>(world->getWorldUserInfo());
+	BulletPhysics* physics = static_cast<BulletPhysics*>(world->getWorldUserInfo());
 
 	const int numManifolds = physics->dispatcher->getNumManifolds();
 	for(int manifoldIdx = 0; manifoldIdx < numManifolds; ++manifoldIdx)
 	{
 		Collision collision;
 
-		const btPersistentManifold *manifold = physics->dispatcher->getManifoldByIndexInternal(manifoldIdx);
-		const btRigidBody *body0 = static_cast<const btRigidBody*>(manifold->getBody0());
-		const btRigidBody *body1 = static_cast<const btRigidBody*>(manifold->getBody1());
+		const btPersistentManifold* manifold = physics->dispatcher->getManifoldByIndexInternal(manifoldIdx);
+		const btRigidBody* body0 = static_cast<const btRigidBody*>(manifold->getBody0());
+		const btRigidBody* body1 = static_cast<const btRigidBody*>(manifold->getBody1());
 		collision.pointCount = std::min(manifold->getNumContacts(), Collision::kMaxContactPoints);
 		for(int i = 0; i < collision.pointCount; ++i)
 		{
@@ -170,7 +169,7 @@ void BulletPhysics::SimulationTickCallback(btDynamicsWorld *world, float timeSte
 		collision.component = static_cast<BulletPhysicsComponent*>(body0->getUserPointer());;
 		collision.incomingComponent = static_cast<BulletPhysicsComponent*>(body1->getUserPointer());;
 
-		ScriptComponent *scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
+		ScriptComponent* scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
 		if(scriptComponent != nullptr)
 		{
 			scriptComponent->Call("OnCollisionEnter", &collision);

@@ -1,3 +1,4 @@
+#include "stdafx_Bullet.h"
 #include "BulletPhysicsComponent.h"
 #include "BulletPhysics.h"
 #include "BulletVectormathExt.h"
@@ -8,7 +9,6 @@
 #include "Engine/Core/Math/Transform.h"
 #include "Engine/Core/Object.h"
 
-#include "btBulletDynamicsCommon.h"
 #include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
 
 BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)

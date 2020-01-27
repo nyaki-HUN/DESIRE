@@ -36,12 +36,12 @@ public:
 		debugDraw.AddPoint(GetVector3(PointOnB), 0.1f, GetVector3(color));
 	}
 
-	void reportErrorWarning(const char *warningString) override
+	void reportErrorWarning(const char* warningString) override
 	{
 		LOG_ERROR("Bullet Error: %s", warningString);
 	}
 
-	void draw3dText(const btVector3& location, const char *textString) override
+	void draw3dText(const btVector3& location, const char* textString) override
 	{
 		debugDraw.AddText(GetVector3(location), textString);
 	}
