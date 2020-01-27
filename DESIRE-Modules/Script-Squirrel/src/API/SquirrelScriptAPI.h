@@ -1,10 +1,5 @@
 #pragma once
 
-#include "Engine/Modules.h"
-
-#include "sqrat/sqratTable.h"
-#include "sqrat/sqratClass.h"
-
 // Engine API register functions
 void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable);

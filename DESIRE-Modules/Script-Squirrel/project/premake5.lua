@@ -2,6 +2,9 @@ project "Script-Squirrel"
 	AddModuleConfig()
 	uuid "05885A51-71F1-4606-A989-2AA3C69EEA91"
 
+	pchheader "stdafx_Squirrel.h"
+	pchsource "../src/stdafx_Squirrel.cpp"
+
 	defines
 	{
 		"SQ_EXCLUDE_DEFAULT_MEMFUNCTIONS",

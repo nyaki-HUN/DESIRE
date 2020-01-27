@@ -1,16 +1,13 @@
+#include "stdafx_Lua.h"
 #include "LuaScriptSystem.h"
 #include "LuaScriptComponent.h"
 #include "API/LuaScriptAPI.h"
-
-#include "Engine/Common.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/String/StackString.h"
-
-#include "lua.hpp"
 
 LuaScriptSystem::LuaScriptSystem()
 {

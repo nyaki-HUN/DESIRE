@@ -1,8 +1,7 @@
+#include "stdafx_Squirrel.h"
 #include "SquirrelScriptSystem.h"
 #include "SquirrelScriptComponent.h"
 #include "API/SquirrelScriptAPI.h"
-
-#include "Engine/Common.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
@@ -172,7 +171,7 @@ void SquirrelScriptSystem::PrintCallback(HSQUIRRELVM vm, const SQChar* format, .
 {
 	DESIRE_UNUSED(vm);
 
-	Log::LogData logData;
+	LogData logData;
 	logData.file = __FILE__;
 	logData.line = __LINE__;
 	logData.logType = "DBG";
@@ -189,7 +188,7 @@ void SquirrelScriptSystem::ErrorCallback(HSQUIRRELVM vm, const SQChar* format, .
 {
 	DESIRE_UNUSED(vm);
 
-	Log::LogData logData;
+	LogData logData;
 	logData.file = __FILE__;
 	logData.line = __LINE__;
 	logData.logType = "ERR";

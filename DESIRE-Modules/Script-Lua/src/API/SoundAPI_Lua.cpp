@@ -1,3 +1,4 @@
+#include "stdafx_Lua.h"
 #include "API/LuaScriptAPI.h"
 
 #include "Engine/Sound/SoundSystem.h"

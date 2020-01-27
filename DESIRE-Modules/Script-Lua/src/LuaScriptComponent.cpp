@@ -1,10 +1,7 @@
+#include "stdafx_Lua.h"
 #include "LuaScriptComponent.h"
 
-#include "Engine/Common.h"
-
 #include "Engine/Core/String/String.h"
-
-#include "sol/sol.hpp"
 
 LuaScriptComponent::LuaScriptComponent(Object& object, lua_State* L)
 	: ScriptComponent(object)
@@ -12,10 +9,6 @@ LuaScriptComponent::LuaScriptComponent(Object& object, lua_State* L)
 {
 	sol::state_view lua(L);
 	lua["self"] = this;
-}
-
-LuaScriptComponent::~LuaScriptComponent()
-{
 }
 
 void LuaScriptComponent::CallByType(EBuiltinFuncType funcType)
@@ -28,7 +21,7 @@ void LuaScriptComponent::CallByType(EBuiltinFuncType funcType)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(functionNames, EBuiltinFuncType::Num);
 
-	Call(functionNames[(size_t)funcType]);
+	Call(functionNames[static_cast<size_t>(funcType)]);
 }
 
 int LuaScriptComponent::CallFromScript(sol::this_state ts)

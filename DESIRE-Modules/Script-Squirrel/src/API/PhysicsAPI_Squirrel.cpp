@@ -1,3 +1,4 @@
+#include "stdafx_Squirrel.h"
 #include "API/SquirrelScriptAPI.h"
 
 #include "Engine/Core/Object.h"

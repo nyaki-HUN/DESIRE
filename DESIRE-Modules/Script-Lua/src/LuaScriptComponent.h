@@ -2,13 +2,10 @@
 
 #include "Engine/Script/ScriptComponent.h"
 
-#include "sol/forward.hpp"
-
 class LuaScriptComponent : public ScriptComponent
 {
 public:
 	LuaScriptComponent(Object& object, lua_State* L);
-	~LuaScriptComponent() override;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 

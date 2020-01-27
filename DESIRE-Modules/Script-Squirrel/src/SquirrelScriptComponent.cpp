@@ -1,11 +1,8 @@
+#include "stdafx_Squirrel.h"
 #include "SquirrelScriptComponent.h"
 
-#include "Engine/Core/assert.h"
-#include "Engine/Core/Log/Log.h"
 #include "Engine/Core/String/String.h"
 #include "Engine/Utils/Enumerator.h"
-
-#include "sqrat/sqratTypes.h"
 
 SquirrelScriptComponent::SquirrelScriptComponent(Object& object, HSQUIRRELVM vm)
 	: ScriptComponent(object)
