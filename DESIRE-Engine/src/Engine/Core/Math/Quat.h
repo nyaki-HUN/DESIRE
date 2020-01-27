@@ -74,7 +74,7 @@ public:
 	inline Vector3 RotateVec(const Vector3& vec) const
 	{
 		const Vector3 t = SIMD::Mul(SIMD::Cross(*this, vec), 2.0f);
-		return SIMD::MulAdd(SIMD::Swizzle_WWWW(*this), t, vec + SIMD::Cross(*this, t));
+		return SIMD::MulAdd(SIMD::Swizzle_WWWW(*this), t, SIMD::Add(vec, SIMD::Cross(*this, t)));
 	}
 
 	inline void Normalize()									{ *this = Normalized(); }
