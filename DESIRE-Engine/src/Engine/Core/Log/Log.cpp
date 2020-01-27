@@ -5,7 +5,7 @@
 
 Log::LogFunction_t Log::userDefinedLogFunction = nullptr;
 
-void Log::LogWithData(const Log::LogData& logData)
+void Log::LogWithData(const LogData& logData)
 {
 	if(userDefinedLogFunction != nullptr)
 	{
@@ -32,7 +32,7 @@ void Log::LogWithData(const Log::LogData& logData)
 
 void Log::LogWithFormat(const char* file, int line, const char* logType, const char* format, ...)
 {
-	Log::LogData logData;
+	LogData logData;
 	logData.file = file;
 	logData.line = line;
 	logData.logType = logType;

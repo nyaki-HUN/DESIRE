@@ -38,7 +38,7 @@ ConsoleWindowOutputPolicy::ConsoleWindowOutputPolicy()
 	freopen_s(&file, "CONOUT$", "w", stderr);
 }
 
-void ConsoleWindowOutputPolicy::Process(const Log::LogData& logData)
+void ConsoleWindowOutputPolicy::Process(const LogData& logData)
 {
 	bool hasToRestoreColor = true;
 	switch(logData.logType[0])
@@ -49,11 +49,11 @@ void ConsoleWindowOutputPolicy::Process(const Log::LogData& logData)
 		default:	hasToRestoreColor = false;
 	}
 
-	char logLine[Log::kMaxMessageLength];
-	int len = snprintf(logLine, Log::kMaxMessageLength, "[%s] %s\n", logData.logType, logData.message);
+	char logLine[LogData::kMaxMessageLength];
+	int len = snprintf(logLine, LogData::kMaxMessageLength, "[%s] %s\n", logData.logType, logData.message);
 	if(len > 0)
 	{
-		const size_t numCharsToWrite = std::min((size_t)len, Log::kMaxMessageLength);
+		const size_t numCharsToWrite = std::min((size_t)len, LogData::kMaxMessageLength);
 		WriteConsoleA(GetStdHandle(STD_OUTPUT_HANDLE), logLine, (DWORD)numCharsToWrite, nullptr, nullptr);
 	}
 
@@ -63,14 +63,14 @@ void ConsoleWindowOutputPolicy::Process(const Log::LogData& logData)
 	}
 }
 
-void VisualStudioOutputPolicy::Process(const Log::LogData& logData)
+void VisualStudioOutputPolicy::Process(const LogData& logData)
 {
 	// VisualStudio is using the "file(line): message" format for clickable messages
-	wchar_t logLine[Log::kMaxMessageLength];
-	swprintf(logLine, Log::kMaxMessageLength, L"%S(%d): [%S] ", logData.file, logData.line, logData.logType);
+	wchar_t logLine[LogData::kMaxMessageLength];
+	swprintf(logLine, LogData::kMaxMessageLength, L"%S(%d): [%S] ", logData.file, logData.line, logData.logType);
 	size_t len = wcslen(logLine);
-	ASSERT(len + 2 < Log::kMaxMessageLength);
-	len += MultiByteToWideChar(CP_UTF8, 0, logData.message, -1, &logLine[len], (int)(Log::kMaxMessageLength - (len + 2)));
+	ASSERT(len + 2 < LogData::kMaxMessageLength);
+	len += MultiByteToWideChar(CP_UTF8, 0, logData.message, -1, &logLine[len], static_cast<int>(LogData::kMaxMessageLength - (len + 2)));
 	logLine[len - 1] = L'\n';
 	logLine[len] = L'\0';
 

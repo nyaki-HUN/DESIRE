@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Core/Log/Log.h"
+struct LogData;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	This is a very generic logger class which passes on the task of filtering, formatting and outputting messages to
@@ -14,7 +14,7 @@ public:
 	Logger() {}
 	~Logger() {}
 
-	inline void Log(const Log::LogData& logData)
+	inline void Log(const LogData& logData)
 	{
 		if(filterPolicy.Filter(logData))
 		{

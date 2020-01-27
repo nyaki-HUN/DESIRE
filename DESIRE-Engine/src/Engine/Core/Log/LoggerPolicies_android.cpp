@@ -6,7 +6,7 @@
 
 #include <android/log.h>
 
-void LogCatOutputPolicy::Process(const Log::LogData& logData)
+void LogCatOutputPolicy::Process(const LogData& logData)
 {
 	android_LogPriority prio = ANDROID_LOG_DEBUG;
 	switch(logData.logType[0])

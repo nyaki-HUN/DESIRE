@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Engine/Core/assert.h"
-
 #include <functional>
 
 #if defined(NEW_ARRAY)
@@ -12,7 +10,6 @@ class Array
 public:
 	Array()
 	{
-
 	}
 
 	Array(const Array& otherArray)

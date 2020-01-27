@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Engine/Core/assert.h"
-
 #include <atomic>
 #include <utility>		// for std::move()
 

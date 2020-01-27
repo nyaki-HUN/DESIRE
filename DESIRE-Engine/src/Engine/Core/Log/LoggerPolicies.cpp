@@ -5,7 +5,7 @@
 #include "Engine/Core/FS/IWriteFile.h"
 #include "Engine/Core/String/StackString.h"
 
-void ConsoleOutputPolicy::Process(const Log::LogData& logData)
+void ConsoleOutputPolicy::Process(const LogData& logData)
 {
 	printf("[%s] %s\n", logData.logType, logData.message);
 	fflush(0);
@@ -20,7 +20,7 @@ FileOutputPolicy::FileOutputPolicy()
 	ASSERT(logFile != nullptr);
 }
 
-void FileOutputPolicy::Process(const Log::LogData& logData)
+void FileOutputPolicy::Process(const LogData& logData)
 {
 	if(logFile == nullptr)
 	{
@@ -31,7 +31,7 @@ void FileOutputPolicy::Process(const Log::LogData& logData)
 	tm timeInfo;
 	Time::GetLocalTime(std::chrono::system_clock::to_time_t(now), &timeInfo);
 
-	StackString<Log::kMaxMessageLength> strLogLine;
+	StackString<LogData::kMaxMessageLength> strLogLine;
 	strLogLine.Sprintf("%02d:%02d:%02d [%s] %s\n", timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec, logData.logType, logData.message);
 
 	logFile->WriteBuffer(strLogLine.Str(), strLogLine.Length());

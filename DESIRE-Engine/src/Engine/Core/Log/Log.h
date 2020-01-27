@@ -1,26 +1,26 @@
 #pragma once
 
+struct LogData
+{
+	static constexpr size_t kMaxMessageLength = 2048;
+
+	const char* file;
+	int line;
+	const char* logType;
+	char message[kMaxMessageLength];
+};
+
 class Log
 {
 public:
-	static constexpr size_t kMaxMessageLength = 2048;
+	typedef void(*LogFunction_t)(const LogData& logData);
 
-	struct LogData
-	{
-		const char* file;
-		int line;
-		const char* logType;
-		char message[kMaxMessageLength];
-	};
-
-	typedef void(*LogFunction_t)(const Log::LogData& logData);
-
-	static void LogWithData(const Log::LogData& logData);
+	static void LogWithData(const LogData& logData);
 	static void LogWithFormat(const char* file, int line, const char* logType, const char* format, ...);
 	static void SetUserDefinedLogFunction(LogFunction_t func);
 
 private:
-	static Log::LogFunction_t userDefinedLogFunction;
+	static LogFunction_t userDefinedLogFunction;
 };
 
 // Log helper macros
