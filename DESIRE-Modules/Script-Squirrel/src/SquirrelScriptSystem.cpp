@@ -12,8 +12,6 @@
 
 #include "Engine/Utils/Enumerator.h"
 
-#include <stdarg.h>
-
 // Memory functions for Squirrel
 void* sq_vm_malloc(SQUnsignedInteger size)											{ return MemorySystem::Alloc(size); }
 void* sq_vm_realloc(void* p, SQUnsignedInteger /*oldSize*/, SQUnsignedInteger size)	{ return MemorySystem::Realloc(p, size); }

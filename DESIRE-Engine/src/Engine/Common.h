@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <new>
 #include <utility>		// std::move()
 
 // Thread support

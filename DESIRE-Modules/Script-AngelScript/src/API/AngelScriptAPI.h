@@ -2,8 +2,6 @@
 
 #include "Engine/Core/String/String.h"
 
-#include <new>
-
 // Template function for registering a class derived from Component
 #define ANGELSCRIPT_API_REGISTER_COMPONENT(CLASS)																																				\
 	result = engine->RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeId);																				ASSERT(result >= asSUCCESS);	\

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdint.h>			// for int64_t
 #include <type_traits>		// std::underlying_type
 
 // --------------------------------------------------------------------------------------------------------------------

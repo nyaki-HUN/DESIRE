@@ -9,8 +9,6 @@
 
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
-#include <algorithm>		// for std::min
-
 BulletPhysics::BulletPhysics()
 {
 	collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();

@@ -1,10 +1,5 @@
 #pragma once
 
-#include "Engine/Core/platform.h"
-
-#include <stdint.h>
-#include <cmath>
-
 #if DESIRE_USE_SSE
 	typedef __m128	simd128_t;
 #elif DESIRE_USE_NEON

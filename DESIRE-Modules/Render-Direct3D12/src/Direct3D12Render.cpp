@@ -22,7 +22,6 @@
 
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
-#include <algorithm>	// for std::min()
 
 #define DX_RELEASE(ptr)		\
 	if(ptr != nullptr)		\

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Engine/Core/Container/LockFreeRingBuffer.h"
 
-#include <thread>
-
 TEST_CASE("LockFreeRingBuffer", "[Core]")
 {
 	LockFreeRingBuffer<int, 10> ringBuffer;
