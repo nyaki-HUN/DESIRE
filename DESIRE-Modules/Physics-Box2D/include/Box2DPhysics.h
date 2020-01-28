@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/Physics/Physics.h"
-#include "Engine/Core/Container/Array.h"
 
 class b2World;
 class b2ContactListener;

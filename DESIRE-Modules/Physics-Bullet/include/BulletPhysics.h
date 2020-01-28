@@ -32,11 +32,11 @@ public:
 private:
 	static void SimulationTickCallback(btDynamicsWorld* world, float timeStep);
 
-	btDiscreteDynamicsWorld* dynamicsWorld = nullptr;
-	btDefaultCollisionConfiguration* collisionConfiguration = nullptr;
-	btCollisionDispatcher* dispatcher = nullptr;
-	btAxisSweep3* broadphase = nullptr;
-	btSequentialImpulseConstraintSolver* constraintSolver = nullptr;
+	std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
+	std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
+	std::unique_ptr<btCollisionDispatcher> dispatcher;
+	std::unique_ptr<btAxisSweep3> broadphase;
+	std::unique_ptr<btSequentialImpulseConstraintSolver> constraintSolver;
 
-	BulletDebugDraw* bulletDebugDraw = nullptr;
+	std::unique_ptr<BulletDebugDraw> bulletDebugDraw;
 };

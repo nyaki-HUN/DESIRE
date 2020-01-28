@@ -2,8 +2,6 @@
 
 #include "Engine/Physics/Physics.h"
 
-#include <memory>
-
 namespace physx
 {
 	class PxFoundation;

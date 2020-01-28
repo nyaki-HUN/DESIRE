@@ -19,7 +19,6 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 
-#include "bgfx/embedded_shader.h"
 #include "bgfx/../../src/config.h"
 
 static const bgfx::EmbeddedShader s_embeddedShaders[] =

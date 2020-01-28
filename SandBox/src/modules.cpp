@@ -10,12 +10,12 @@ const Factory<Application>::Func_t Application::s_applicationFactory =
 // --------------------------------------------------------------------------------------------------------------------
 #include "Engine/Compression/CompressionManager.h"
 
-//#include "Compression-Lizard/src/LizardCompression.h"
-//#include "Compression-LZ4/src/LZ4Compression.h"
-#include "Compression-zlib/src/GZipCompression.h"
-#include "Compression-zlib/src/ZlibCompression.h"
-#include "Compression-zlib/src/RawDeflateCompression.h"
-#include "Compression-zstd/src/ZstdCompression.h"
+//#include "Compression-Lizard/include/LizardCompression.h"
+//#include "Compression-LZ4/include/LZ4Compression.h"
+#include "Compression-zlib/include/GZipCompression.h"
+#include "Compression-zlib/include/ZlibCompression.h"
+#include "Compression-zlib/include/RawDeflateCompression.h"
+#include "Compression-zstd/include/ZstdCompression.h"
 const HashedStringMap<Factory<Compression>::Func_t> CompressionManager::s_compressionFactories =
 {
 //	{ "lizard", &Factory<Compression>::Create<LizardCompression> },
@@ -29,9 +29,9 @@ const HashedStringMap<Factory<Compression>::Func_t> CompressionManager::s_compre
 // --------------------------------------------------------------------------------------------------------------------
 //	Physics
 // --------------------------------------------------------------------------------------------------------------------
-#include "Physics-Box2D/src/Box2DPhysics.h"
-#include "Physics-Bullet/src/BulletPhysics.h"
-//#include "Physics-PhysX/src/PhysXPhysics.h"
+#include "Physics-Box2D/include/Box2DPhysics.h"
+#include "Physics-Bullet/include/BulletPhysics.h"
+#include "Physics-PhysX/include/PhysXPhysics.h"
 const Factory<Physics>::Func_t Application::s_physicsFactory =
 	&Factory<Physics>::Create<Box2DPhysics>;
 //	&Factory<Physics>::Create<BulletPhysics>;
@@ -40,9 +40,9 @@ const Factory<Physics>::Func_t Application::s_physicsFactory =
 // --------------------------------------------------------------------------------------------------------------------
 //	Render
 // --------------------------------------------------------------------------------------------------------------------
-#include "Render-bgfx/src/BgfxRender.h"
-#include "Render-Direct3D11/src/Direct3D11Render.h"
-#include "Render-Direct3D12/src/Direct3D12Render.h"
+#include "Render-bgfx/include/BgfxRender.h"
+#include "Render-Direct3D11/include/Direct3D11Render.h"
+#include "Render-Direct3D12/include/Direct3D12Render.h"
 const Factory<Render>::Func_t Application::s_renderFactory =
 //	&Factory<Render>::Create<BgfxRender>;
 //	&Factory<Render>::Create<Direct3D11Render>;
@@ -53,7 +53,7 @@ const Factory<Render>::Func_t Application::s_renderFactory =
 // --------------------------------------------------------------------------------------------------------------------
 #include "Engine/Resource/ResourceManager.h"
 
-#include "ResourceLoader-Assimp/src/AssimpLoader.h"
+#include "ResourceLoader-Assimp/include/AssimpLoader.h"
 const Array<ResourceManager::MeshLoaderFunc_t> ResourceManager::s_meshLoaders =
 {
 	&AssimpLoader::Load,
@@ -76,9 +76,9 @@ const Array<ResourceManager::TextureLoaderFunc_t> ResourceManager::s_textureLoad
 // --------------------------------------------------------------------------------------------------------------------
 //	Script System
 // --------------------------------------------------------------------------------------------------------------------
-#include "Script-AngelScript/src/AngelScriptSystem.h"
-#include "Script-Lua/src/LuaScriptSystem.h"
-#include "Script-Squirrel/src/SquirrelScriptSystem.h"
+#include "Script-AngelScript/include/AngelScriptSystem.h"
+#include "Script-Lua/include/LuaScriptSystem.h"
+#include "Script-Squirrel/include/SquirrelScriptSystem.h"
 const Factory<ScriptSystem>::Func_t Application::s_scriptSystemFactory =
 //	&Factory<ScriptSystem>::Create<AngelScriptSystem>;
 //	&Factory<ScriptSystem>::Create<LuaScriptSystem>;

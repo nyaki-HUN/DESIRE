@@ -4,3 +4,4 @@
 
 #include "bgfx/bgfx.h"
 #include "bgfx/platform.h"
+#include "bgfx/embedded_shader.h"

@@ -13,14 +13,14 @@
 
 BulletPhysics::BulletPhysics()
 {
-	collisionConfiguration = new btDefaultCollisionConfiguration();
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
+	dispatcher = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
 
 	btVector3 worldMin(-1000.0f, -1000.0f, -1000.0f);
 	btVector3 worldMax(1000.0f, 1000.0f, 1000.0f);
-	broadphase = new btAxisSweep3(worldMin, worldMax);
-	constraintSolver = new btSequentialImpulseConstraintSolver();
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, constraintSolver, collisionConfiguration);
+	broadphase = std::make_unique<btAxisSweep3>(worldMin, worldMax);
+	constraintSolver = std::make_unique<btSequentialImpulseConstraintSolver>();
+	dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), constraintSolver.get(), collisionConfiguration.get());
 	dynamicsWorld->setGravity(btVector3(0.0f, -10.0f, 0.0f));
 	dynamicsWorld->setInternalTickCallback(BulletPhysics::SimulationTickCallback, this);
 
@@ -35,21 +35,22 @@ BulletPhysics::BulletPhysics()
 	class DebugDraw* debugDraw = nullptr;
 	if(debugDraw != nullptr)
 	{
-		bulletDebugDraw = new BulletDebugDraw(*debugDraw);
+		bulletDebugDraw = std::make_unique<BulletDebugDraw>(*debugDraw);
 		bulletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
 	}
-	dynamicsWorld->setDebugDrawer(bulletDebugDraw);
+	dynamicsWorld->setDebugDrawer(bulletDebugDraw.get());
 }
 
 BulletPhysics::~BulletPhysics()
 {
-	delete bulletDebugDraw;
+	bulletDebugDraw = nullptr;
+	dynamicsWorld->setDebugDrawer(nullptr);
 
-	delete dynamicsWorld;
-	delete constraintSolver;
-	delete broadphase;
-	delete dispatcher;
-	delete collisionConfiguration;
+	dynamicsWorld = nullptr;
+	constraintSolver = nullptr;
+	broadphase = nullptr;
+	dispatcher = nullptr;
+	collisionConfiguration = nullptr;
 }
 
 void BulletPhysics::Update(float deltaTime)
@@ -138,7 +139,7 @@ Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2,
 
 btDynamicsWorld* BulletPhysics::GetWorld() const
 {
-	return dynamicsWorld;
+	return dynamicsWorld.get();
 }
 
 void BulletPhysics::SimulationTickCallback(btDynamicsWorld* world, float timeStep)
