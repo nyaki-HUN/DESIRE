@@ -16,8 +16,6 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 
-#include <algorithm>	// for std::max()
-
 ImGuiImpl::ImGuiImpl()
 {
 	ImGui::SetAllocatorFunctions(&ImGuiImpl::MallocWrapper, &ImGuiImpl::FreeWrapper, this);
