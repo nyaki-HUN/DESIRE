@@ -4,6 +4,9 @@ project "SandBox"
 	kind "WindowedApp"
 	targetdir("../")
 
+	pchheader "stdafx.h"
+	pchsource "../src/stdafx.cpp"
+
 	includedirs
 	{
 		"../../DESIRE-Engine/src",

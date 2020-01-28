@@ -1,7 +1,7 @@
+#include "stdafx.h"
 #include "SandBox.h"
 #include "SimpleRotateScript.h"
 
-#include "Engine/Common.h"
 #include "Engine/Compression/FileSourceZip.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/FS/FileSystem.h"

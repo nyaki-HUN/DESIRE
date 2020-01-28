@@ -4,7 +4,6 @@
 #include "Engine/Core/Container/Array.h"
 #include "Engine/Core/String/DynamicString.h"
 
-#include <memory>
 #include <map>
 
 class Mesh;

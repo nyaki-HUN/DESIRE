@@ -2,8 +2,6 @@
 
 #include "Engine/Core/String/String.h"
 
-#include <memory>
-
 class MemoryBuffer
 {
 public:

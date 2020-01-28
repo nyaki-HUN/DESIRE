@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 class IReadFile;
 typedef std::unique_ptr<IReadFile> ReadFilePtr;
 

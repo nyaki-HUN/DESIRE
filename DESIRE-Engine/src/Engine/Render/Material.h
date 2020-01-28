@@ -4,9 +4,6 @@
 #include "Engine/Core/HashedString.h"
 #include "Engine/Render/Render.h"
 
-#include <memory>
-#include <functional>
-
 class Shader;
 class Texture;
 

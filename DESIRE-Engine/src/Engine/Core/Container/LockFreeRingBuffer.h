@@ -1,8 +1,5 @@
 #pragma once
 
-#include <atomic>
-#include <utility>		// for std::move()
-
 // --------------------------------------------------------------------------------------------------------------------
 //	LockFreeRingBuffer is a one producer and one consumer queue without locks.
 //	Note that the number of element slots in the buffer is actually (SIZE - 1).

@@ -2,8 +2,6 @@
 
 #include "Engine/Core/String/String.h"
 
-#include <cstdarg>		// for std::va_list
-
 class WritableString : public String
 {
 public:

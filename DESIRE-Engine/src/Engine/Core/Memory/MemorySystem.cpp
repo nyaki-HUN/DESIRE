@@ -3,6 +3,8 @@
 #include "Engine/Core/Memory/LinearAllocator.h"
 #include "Engine/Core/Math/math.h"
 
+#include <new>
+
 thread_local Allocator* MemorySystem::allocatorStack[kAllocatorStackSize] = {};
 thread_local size_t MemorySystem::allocatorStackIndex = 0;
 

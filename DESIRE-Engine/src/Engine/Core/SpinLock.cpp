@@ -1,9 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/SpinLock.h"
 
-#include <emmintrin.h>	// for _mm_pause()
-#include <thread>
-
 void SpinLock::Lock()
 {
 	// Loop until we acquire the lock

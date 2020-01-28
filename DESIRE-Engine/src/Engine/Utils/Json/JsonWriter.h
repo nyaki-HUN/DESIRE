@@ -2,8 +2,6 @@
 
 #include "../3rdparty/rapidjson/include/rapidjson/prettywriter.h"
 
-#include <stdint.h>
-
 class Quat;
 class String;
 class Vector3;

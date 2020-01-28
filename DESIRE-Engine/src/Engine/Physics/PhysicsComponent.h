@@ -6,8 +6,6 @@
 
 #include "Engine/Physics/PhysicsMaterial.h"
 
-#include <memory>
-
 class ColliderShape;
 enum class EPhysicsCollisionLayer;
 

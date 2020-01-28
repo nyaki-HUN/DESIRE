@@ -2,8 +2,6 @@
 
 #include "Engine/Core/Math/SIMD.h"
 
-#include <cfloat>	// for FLT_MAX
-
 class Vector3
 {
 public:

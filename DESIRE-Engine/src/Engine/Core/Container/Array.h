@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 #if defined(NEW_ARRAY)
 
 template<typename T>

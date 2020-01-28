@@ -1,9 +1,7 @@
 #pragma once
 
-#include <mutex>
 #include <deque>
 #include <queue>		// for std::priority_queue
-#include <functional>
 
 class TaskManager
 {

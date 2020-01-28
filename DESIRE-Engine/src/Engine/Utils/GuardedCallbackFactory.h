@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 // --------------------------------------------------------------------------------------------------------------------
 //	GuardedCallbackFactory is a utility class template that creates callbacks which are guaranteed to be called only
 //	when their factory is not destroyed.
@@ -15,9 +13,8 @@ class GuardedCallbackFactory
 {
 public:
 	GuardedCallbackFactory()
-		: guard(std::make_shared<uint8_t>((uint8_t)42))		// 42 - "Answer to the Ultimate Question of Life, the Universe, and Everything"
+		: guard(std::make_shared<uint8_t>(static_cast<uint8_t>(42)))		// 42 - "Answer to the Ultimate Question of Life, the Universe, and Everything"
 	{
-
 	}
 
 	// Inner class for storing the original callback function
@@ -28,7 +25,6 @@ public:
 			: func(std::move(func))
 			, guard(guard)
 		{
-
 		}
 
 	public:

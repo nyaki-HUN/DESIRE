@@ -3,8 +3,6 @@
 #include "Engine/Core/FS/FilePtr_fwd.h"
 #include "Engine/Core/FS/IReadFile.h"
 
-#include <memory>
-
 class MemoryFile : public IReadFile
 {
 public:

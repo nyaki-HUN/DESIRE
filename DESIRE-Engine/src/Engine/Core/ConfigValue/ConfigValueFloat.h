@@ -2,8 +2,6 @@
 
 #include "Engine/Core/ConfigValue/IConfigValue.h"
 
-#include <cfloat>		// for FLT_MAX
-
 class ConfigValueFloat : public IConfigValue
 {
 public:

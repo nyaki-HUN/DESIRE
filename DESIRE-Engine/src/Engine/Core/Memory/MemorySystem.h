@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-#include <new>
-
 class Allocator;
 
 class MemorySystem

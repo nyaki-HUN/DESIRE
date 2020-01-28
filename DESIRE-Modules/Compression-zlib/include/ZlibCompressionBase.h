@@ -2,8 +2,6 @@
 
 #include "Engine/Compression/Compression.h"
 
-#include <stdint.h>
-
 typedef struct z_stream_s z_stream;
 
 class ZlibCompressionBase : public Compression

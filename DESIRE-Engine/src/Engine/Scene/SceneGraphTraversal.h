@@ -2,8 +2,6 @@
 
 #include "Engine/Core/Object.h"
 
-#include <functional>
-
 // --------------------------------------------------------------------------------------------------------------------
 //	Recursive depth-first scene graph traversal which uses the 'visitFunc' for traversed nodes.
 //	Return false from 'visitFunc' if you don't want to go deeper

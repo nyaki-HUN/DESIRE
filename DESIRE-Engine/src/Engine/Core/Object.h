@@ -3,8 +3,6 @@
 #include "Engine/Core/Container/Array.h"
 #include "Engine/Core/String/StackString.h"
 
-#include <memory>
-
 class Component;
 class Transform;
 

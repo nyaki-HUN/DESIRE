@@ -3,8 +3,6 @@
 #include "Engine/Core/platform.h"	// for DESIRE_DISABLE_WARNINGS and DESIRE_ENABLE_WARNINGS
 #include "Engine/Core/String/String.h"
 
-#include <stdint.h>
-
 // --------------------------------------------------------------------------------------------------------------------
 //	HashedString is a helper class for creating compile-time hash values from string literals.
 //	Use the HashedString::CreateFromDynamicString() function to create hashes run-time.
@@ -31,7 +29,6 @@ public:
 	explicit constexpr HashedString(uint64_t hash)
 		: hash(hash)
 	{
-
 	}
 
 	inline bool operator ==(HashedString other) const

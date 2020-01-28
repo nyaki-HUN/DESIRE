@@ -2,8 +2,6 @@
 
 #include "Engine/Core/Container/Array.h"
 
-#include <memory>
-
 class Mesh
 {
 public:

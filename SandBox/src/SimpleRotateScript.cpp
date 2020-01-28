@@ -1,8 +1,7 @@
+#include "stdafx.h"
 #include "SimpleRotateScript.h"
 
 #include "Engine/Application/Application.h"
-
-#include "Engine/Common.h"
 
 #include "Engine/Core/Math/Transform.h"
 #include "Engine/Core/Object.h"

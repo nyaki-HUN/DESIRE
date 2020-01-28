@@ -2,8 +2,6 @@
 
 #include "Engine/Core/ConfigValue/IConfigValue.h"
 
-#include <stdint.h>		// for INT32_MIN and INT32_MAX
-
 class ConfigValueInt : public IConfigValue
 {
 public:
