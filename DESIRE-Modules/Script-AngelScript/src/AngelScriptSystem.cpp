@@ -1,26 +1,24 @@
 #include "stdafx_AngelScript.h"
 #include "AngelScriptSystem.h"
 #include "AngelScriptComponent.h"
+#include "AngelScriptCallbacks.h"
 #include "API/AngelScriptAPI.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
-#include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/String/DynamicString.h"
 #include "Engine/Core/String/StackString.h"
 
 #include "Engine/Utils/Enumerator.h"
 
-#define CONTEXT_POOL_DEFAULT_SIZE	10
-
 AngelScriptSystem::AngelScriptSystem()
 {
-	asSetGlobalMemoryFunctions(&AngelScriptSystem::MallocWrapper, &AngelScriptSystem::FreeWrapper);
+	asSetGlobalMemoryFunctions(&AngelScriptCallbacks::MallocWrapper, &AngelScriptCallbacks::FreeWrapper);
 
 	engine = asCreateScriptEngine();
-	int result = engine->SetMessageCallback(asFUNCTION(MessageCallback), this, asCALL_CDECL);													ASSERT(result >= asSUCCESS);
-	result = engine->SetContextCallbacks(&AngelScriptSystem::RequestContextCallback, &AngelScriptSystem::ReturnContextCallback, this);			ASSERT(result >= asSUCCESS);
+	int result = engine->SetMessageCallback(asFUNCTION(AngelScriptCallbacks::MessageCallback), this, asCALL_CDECL);								ASSERT(result >= asSUCCESS);
+	result = engine->SetContextCallbacks(&AngelScriptCallbacks::RequestContextCallback, &AngelScriptCallbacks::ReturnContextCallback, this);	ASSERT(result >= asSUCCESS);
 
 	result = engine->SetEngineProperty(asEEngineProp::asEP_REQUIRE_ENUM_SCOPE, false);															ASSERT(result >= asSUCCESS);
 	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_GLOBAL_VARS, true);															ASSERT(result >= asSUCCESS);
@@ -42,7 +40,7 @@ AngelScriptSystem::AngelScriptSystem()
 	RegisterRenderAPI_AngelScript(engine);
 	RegisterSoundAPI_AngelScript(engine);
 
-	result = engine->RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptSystem::PrintCallback), asCALL_GENERIC);		ASSERT(result >= asSUCCESS);
+	result = engine->RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptCallbacks::PrintCallback), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
 
 	// ScriptComponent
 	ANGELSCRIPT_API_REGISTER_COMPONENT(ScriptComponent);
@@ -52,13 +50,6 @@ AngelScriptSystem::AngelScriptSystem()
 	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);					ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);			ASSERT(result >= asSUCCESS);
 	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
-
-	// Init context pool
-	contextPool.Reserve(CONTEXT_POOL_DEFAULT_SIZE);
-	for(int i = 0; i < CONTEXT_POOL_DEFAULT_SIZE; i++)
-	{
-		contextPool.Add(CreateScriptContext());
-	}
 }
 
 AngelScriptSystem::~AngelScriptSystem()
@@ -171,19 +162,6 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 	return module;
 }
 
-asIScriptContext* AngelScriptSystem::CreateScriptContext()
-{
-	ASSERT(engine != nullptr);
-
-	asIScriptContext* ctx = engine->CreateContext();
-	int result = ctx->SetExceptionCallback(asMETHOD(AngelScriptSystem, ExceptionCallback), this, asCALL_THISCALL);
-	ASSERT(result == asSUCCESS);
-	result = ctx->SetLineCallback(asMETHOD(AngelScriptSystem, LineCallback), this, asCALL_THISCALL);
-	ASSERT(result == asSUCCESS);
-
-	return ctx;
-}
-
 bool AngelScriptSystem::IsBreakpoint(const char* scriptSection, int line, asIScriptFunction* function) const
 {
 	DESIRE_UNUSED(scriptSection);
@@ -192,100 +170,4 @@ bool AngelScriptSystem::IsBreakpoint(const char* scriptSection, int line, asIScr
 
 	DESIRE_TODO("Add debugging functionality");
 	return false;
-}
-
-void AngelScriptSystem::PrintCallback(asIScriptGeneric* gen)
-{
-	const std::string* message = static_cast<const std::string*>(gen->GetArgObject(0));
-	LOG_DEBUG("%s", message->c_str());
-}
-
-void AngelScriptSystem::MessageCallback(const asSMessageInfo* msg, void* thisPtr)
-{
-	DESIRE_UNUSED(thisPtr);
-
-	switch(msg->type)
-	{
-		case asMSGTYPE_ERROR:
-			LOG_ERROR("%s(%d, %d): %s", msg->section, msg->row, msg->col, msg->message);
-			break;
-		case asMSGTYPE_WARNING:
-			LOG_WARNING("%s(%d, %d): %s", msg->section, msg->row, msg->col, msg->message);
-			break;
-		case asMSGTYPE_INFORMATION:
-			LOG_MESSAGE("%s(%d, %d): %s", msg->section, msg->row, msg->col, msg->message);
-			break;
-	}
-}
-
-asIScriptContext* AngelScriptSystem::RequestContextCallback(asIScriptEngine* engine, void* thisPtr)
-{
-	DESIRE_UNUSED(engine);
-
-	AngelScriptSystem* scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
-
-	asIScriptContext* ctx = nullptr;
-	if(scriptSystem->contextPool.IsEmpty())
-	{
-		ctx = scriptSystem->CreateScriptContext();
-	}
-	else
-	{
-		ctx = scriptSystem->contextPool.GetLast();
-		scriptSystem->contextPool.RemoveLast();
-	}
-
-	return ctx;
-}
-
-void AngelScriptSystem::ReturnContextCallback(asIScriptEngine* engine, asIScriptContext* ctx, void* thisPtr)
-{
-	DESIRE_UNUSED(engine);
-
-	ctx->Unprepare();
-
-	AngelScriptSystem* scriptSystem = static_cast<AngelScriptSystem*>(thisPtr);
-	scriptSystem->contextPool.Add(ctx);
-}
-
-void AngelScriptSystem::ExceptionCallback(asIScriptContext* ctx)
-{
-	LOG_ERROR("Exception: %s", ctx->GetExceptionString());
-	const asIScriptFunction* function = ctx->GetExceptionFunction();
-	LOG_ERROR("module: %s", function->GetModuleName());
-	LOG_ERROR("func: %s", function->GetDeclaration());
-//	LOG_ERROR("section: %s", function->GetScriptSectionName());
-	LOG_ERROR("line: %d", ctx->GetExceptionLineNumber());
-}
-
-void AngelScriptSystem::LineCallback(asIScriptContext* ctx)
-{
-	// Determine if we have reached a break point
-	int column;
-	const char* scriptSection;
-	int line = ctx->GetLineNumber(0, &column, &scriptSection);
-	asIScriptFunction* function = ctx->GetFunction();
-	if(IsBreakpoint(scriptSection, line, function))
-	{
-		// A breakpoint has been reached so the execution of the script should be suspended
-		ctx->Suspend();
-
-		// Show the call stack
-		for(asUINT i = 0; i < ctx->GetCallstackSize(); ++i)
-		{
-			asIScriptFunction* func = ctx->GetFunction(i);
-			line = ctx->GetLineNumber(i, &column, &scriptSection);
-			LOG_MESSAGE("%s:%s:%d,%d\n", scriptSection, func->GetDeclaration(), line, column);
-		}
-	}
-}
-
-void* AngelScriptSystem::MallocWrapper(size_t size)
-{
-	return MemorySystem::Alloc(size);
-}
-
-void AngelScriptSystem::FreeWrapper(void* ptr)
-{
-	MemorySystem::Free(ptr);
 }
