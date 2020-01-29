@@ -16,21 +16,21 @@ SquirrelScriptSystem::SquirrelScriptSystem()
 {
 	// Create a VM with initial stack size 1024 
 	vm = sq_open(1024);
-	sq_setprintfunc(vm, &Callbacks::PrintCallback, &Callbacks::ErrorCallback);
+	sq_setprintfunc(vm, &SquirrelCallbacks::PrintCallback, &SquirrelCallbacks::ErrorCallback);
 
 #if defined(DESIRE_DISTRIBUTION)
 	sq_enabledebuginfo(vm, SQFalse);
 #else
 	sq_enabledebuginfo(vm, SQTrue);
-	sq_setnativedebughook(vm, &Callbacks::DebugHookCallback);
+	sq_setnativedebughook(vm, &SquirrelCallbacks::DebugHookCallback);
 #endif
 
 	sq_pushroottable(vm);
 
 	// Set error handlers
-	sq_newclosure(vm, Callbacks::RuntimeErrorHandler, 0);
+	sq_newclosure(vm, &SquirrelCallbacks::RuntimeErrorHandler, 0);
 	sq_seterrorhandler(vm);
-	sq_setcompilererrorhandler(vm, &Callbacks::CompilerErrorCallback);
+	sq_setcompilererrorhandler(vm, &SquirrelCallbacks::CompilerErrorCallback);
 	sq_pop(vm, 1);
 
 	// Register Script API

@@ -1,19 +1,19 @@
 #include "stdafx_Lua.h"
 #include "LuaScriptSystem.h"
 #include "LuaScriptComponent.h"
+#include "LuaCallbacks.h"
 #include "API/LuaScriptAPI.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
-#include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/String/StackString.h"
 
 LuaScriptSystem::LuaScriptSystem()
 {
-	L = lua_newstate(&LuaScriptSystem::ReallocWrapper, this);
-	lua_setallocf(L, &LuaScriptSystem::ReallocWrapper, this);
-	lua_atpanic(L, &LuaScriptSystem::LuaPanicFunc);
+	L = lua_newstate(&LuaCallbacks::ReallocWrapper, this);
+	lua_setallocf(L, &LuaCallbacks::ReallocWrapper, this);
+	lua_atpanic(L, &LuaCallbacks::LuaPanicFunc);
 
 	const luaL_Reg luaLibsToLoad[] =
 	{
@@ -87,17 +87,4 @@ void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 		LOG_ERROR("Could not compile script: %s", filename.Str());
 		return;
 	}
-}
-
-int LuaScriptSystem::LuaPanicFunc(lua_State* L)
-{
-	lua_writestringerror("PANIC: unprotected error in call to Lua API (%s)\n", lua_tostring(L, -1));
-	return 0;	// Return to Lua to abort
-}
-
-void* LuaScriptSystem::ReallocWrapper(void* userData, void* ptr, size_t oldSize, size_t newSize)
-{
-	DESIRE_UNUSED(userData);
-	DESIRE_UNUSED(oldSize);
-	return MemorySystem::Realloc(ptr, newSize);
 }
