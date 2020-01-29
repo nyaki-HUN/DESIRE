@@ -1,7 +1,26 @@
 #include "stdafx_Squirrel.h"
-#include "Callbacks.h"
+#include "SquirrelCallbacks.h"
 
-void Callbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...)
+#include "Engine/Core/Memory/MemorySystem.h"
+
+void* sq_vm_malloc(SQUnsignedInteger size)
+{
+	return MemorySystem::Alloc(size);
+}
+
+void* sq_vm_realloc(void* p, SQUnsignedInteger oldSize, SQUnsignedInteger size)
+{
+	DESIRE_UNUSED(oldSize);
+	return MemorySystem::Realloc(p, size);
+}
+
+void sq_vm_free(void* p, SQUnsignedInteger size)
+{
+	DESIRE_UNUSED(size);
+	MemorySystem::Free(p);
+}
+
+void SquirrelCallbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 {
 	DESIRE_UNUSED(vm);
 
@@ -18,7 +37,7 @@ void Callbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 	Log::LogWithData(logData);
 }
 
-void Callbacks::ErrorCallback(HSQUIRRELVM vm, const SQChar* format, ...)
+void SquirrelCallbacks::ErrorCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 {
 	DESIRE_UNUSED(vm);
 
@@ -35,14 +54,14 @@ void Callbacks::ErrorCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 	Log::LogWithData(logData);
 }
 
-void Callbacks::CompilerErrorCallback(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source, SQInteger line, SQInteger column)
+void SquirrelCallbacks::CompilerErrorCallback(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source, SQInteger line, SQInteger column)
 {
 	DESIRE_UNUSED(vm);
 
 	LOG_ERROR("%s(%d, %d): %s", source, line, column, desc);
 }
 
-void Callbacks::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar* sourcename, SQInteger line, const SQChar* funcname)
+void SquirrelCallbacks::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar* sourcename, SQInteger line, const SQChar* funcname)
 {
 	DESIRE_UNUSED(vm);
 	DESIRE_UNUSED(type);
@@ -53,7 +72,7 @@ void Callbacks::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar* 
 	DESIRE_TODO("Squirrel debugging");
 }
 
-SQInteger Callbacks::RuntimeErrorHandler(HSQUIRRELVM vm)
+SQInteger SquirrelCallbacks::RuntimeErrorHandler(HSQUIRRELVM vm)
 {
 	const SQChar* errorStr = 0;
 	if(sq_gettop(vm) >= 1)

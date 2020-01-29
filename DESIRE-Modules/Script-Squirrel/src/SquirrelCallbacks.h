@@ -1,6 +1,6 @@
 #pragma once
 
-class Callbacks
+class SquirrelCallbacks
 {
 public:
 	static void PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...);
