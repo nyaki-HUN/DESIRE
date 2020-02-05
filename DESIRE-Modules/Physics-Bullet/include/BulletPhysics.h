@@ -30,8 +30,6 @@ public:
 	btDynamicsWorld* GetWorld() const;
 
 private:
-	static void SimulationTickCallback(btDynamicsWorld* world, float timeStep);
-
 	std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
 	std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
 	std::unique_ptr<btCollisionDispatcher> dispatcher;
@@ -39,4 +37,6 @@ private:
 	std::unique_ptr<btSequentialImpulseConstraintSolver> constraintSolver;
 
 	std::unique_ptr<BulletDebugDraw> bulletDebugDraw;
+
+	friend class BulletCallbacks;
 };

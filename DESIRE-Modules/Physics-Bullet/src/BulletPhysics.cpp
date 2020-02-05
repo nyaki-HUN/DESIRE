@@ -1,16 +1,18 @@
 #include "stdafx_Bullet.h"
 #include "BulletPhysics.h"
 #include "BulletPhysicsComponent.h"
+#include "BulletCallbacks.h"
 #include "BulletDebugDraw.h"
-#include "BulletVectormathExt.h"
 
 #include "Engine/Core/Object.h"
-#include "Engine/Script/ScriptComponent.h"
 
 #include "BulletCollision/NarrowPhaseCollision/btRaycastCallback.h"
 
 BulletPhysics::BulletPhysics()
 {
+	btAlignedAllocSetCustom(&BulletCallbacks::MallocWrapper, &BulletCallbacks::FreeWrapper);
+	btAlignedAllocSetCustomAligned(&BulletCallbacks::AlignedMallocWrapper, &BulletCallbacks::FreeWrapper);
+
 	collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
 	dispatcher = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
 
@@ -20,7 +22,7 @@ BulletPhysics::BulletPhysics()
 	constraintSolver = std::make_unique<btSequentialImpulseConstraintSolver>();
 	dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), constraintSolver.get(), collisionConfiguration.get());
 	dynamicsWorld->setGravity(btVector3(0.0f, -10.0f, 0.0f));
-	dynamicsWorld->setInternalTickCallback(BulletPhysics::SimulationTickCallback, this);
+	dynamicsWorld->setInternalTickCallback(&BulletCallbacks::SimulationTickCallback, this);
 
 	btDispatcherInfo& dispatchInfo = dynamicsWorld->getDispatchInfo();
 	dispatchInfo.m_useContinuous = true;
@@ -138,47 +140,4 @@ Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2,
 btDynamicsWorld* BulletPhysics::GetWorld() const
 {
 	return dynamicsWorld.get();
-}
-
-void BulletPhysics::SimulationTickCallback(btDynamicsWorld* world, float timeStep)
-{
-	DESIRE_UNUSED(timeStep);
-
-	BulletPhysics* physics = static_cast<BulletPhysics*>(world->getWorldUserInfo());
-
-	const int numManifolds = physics->dispatcher->getNumManifolds();
-	for(int manifoldIdx = 0; manifoldIdx < numManifolds; ++manifoldIdx)
-	{
-		Collision collision;
-
-		const btPersistentManifold* manifold = physics->dispatcher->getManifoldByIndexInternal(manifoldIdx);
-		const btRigidBody* body0 = static_cast<const btRigidBody*>(manifold->getBody0());
-		const btRigidBody* body1 = static_cast<const btRigidBody*>(manifold->getBody1());
-		collision.pointCount = std::min(manifold->getNumContacts(), Collision::kMaxContactPoints);
-		for(int i = 0; i < collision.pointCount; ++i)
-		{
-			const btManifoldPoint& pt = manifold->getContactPoint(i);
-			if(pt.getDistance() < 0.0f)
-			{
-				collision.contactPoints[i] = GetVector3(pt.getPositionWorldOnB());
-				collision.contactNormals[i] = GetVector3(pt.m_normalWorldOnB);
-			}
-		}
-
-		collision.component = static_cast<BulletPhysicsComponent*>(body0->getUserPointer());;
-		collision.incomingComponent = static_cast<BulletPhysicsComponent*>(body1->getUserPointer());;
-
-		ScriptComponent* scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-		if(scriptComponent != nullptr)
-		{
-			scriptComponent->Call("OnCollisionEnter", &collision);
-		}
-
-		scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-		if(scriptComponent != nullptr)
-		{
-			std::swap(collision.component, collision.incomingComponent);
-			scriptComponent->Call("OnCollisionEnter", &collision);
-		}
-	}
 }
