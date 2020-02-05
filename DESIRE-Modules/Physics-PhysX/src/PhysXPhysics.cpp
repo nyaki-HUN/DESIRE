@@ -1,6 +1,7 @@
 #include "stdafx_PhysX.h"
 #include "PhysXPhysics.h"
 #include "PhysXPhysicsComponent.h"
+#include "PhysXCustomAllocator.h"
 #include "PxMathExt.h"
 
 #include "Engine/Core/Object.h"
@@ -19,7 +20,7 @@
 
 PhysXPhysics::PhysXPhysics()
 {
-	allocator = std::make_unique<physx::PxDefaultAllocator>();
+	allocator = std::make_unique<PhysXCustomAllocator>();
 	errorCallback = std::make_unique<physx::PxDefaultErrorCallback>();
 
 	foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, *allocator.get(), *errorCallback.get());
