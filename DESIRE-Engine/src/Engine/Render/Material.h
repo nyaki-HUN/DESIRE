@@ -36,6 +36,7 @@ public:
 	const Array<TextureInfo>& GetTextures() const;
 
 	void AddShaderParam(HashedString name, std::function<void(void*)>&& func);
+	void RemoveAllShaderParams();
 	const Array<ShaderParam>& Material::GetShaderParams() const;
 
 	std::shared_ptr<Shader> vertexShader;

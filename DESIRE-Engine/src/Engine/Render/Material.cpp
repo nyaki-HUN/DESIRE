@@ -55,6 +55,11 @@ void Material::AddShaderParam(HashedString name, std::function<void(void*)>&& fu
 	shaderParams.EmplaceAdd(name, std::move(func));
 }
 
+void Material::RemoveAllShaderParams()
+{
+	shaderParams.Clear();
+}
+
 const Array<Material::ShaderParam>& Material::GetShaderParams() const
 {
 	return shaderParams;
