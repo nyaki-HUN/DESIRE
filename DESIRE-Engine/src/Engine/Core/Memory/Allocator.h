@@ -14,12 +14,12 @@ public:
 	virtual void* Realloc(void* ptr, size_t newSize, size_t oldSize);
 	virtual void Free(void* ptr, size_t size) = 0;
 
-	size_t GetAllocatedBytes() const;
+	uint64_t GetAllocatedBytes() const;
 
 	static Allocator& GetDefaultAllocator();
 
 protected:
-	std::atomic<size_t> allocatedBytes = 0;
+	std::atomic<uint64_t> allocatedBytes = 0;
 
 private:
 	// Prevent copy and move
