@@ -218,7 +218,7 @@ public:
 
 		count = std::min(count, size - idx);
 		DestructElements(idx, count);
-		memmove(data + idx, data + idx + count, size - idx - count);
+		memmove(data + idx, data + idx + count, sizeof(T) * (size - idx - count));
 		size -= count;
 	}
 
