@@ -209,7 +209,7 @@ public:
 
 		DestructElements(idx, 1);
 		size--;
-		memmove(data + idx, data + idx + 1, size - idx);
+		memmove(data + idx, data + idx + 1, sizeof(T) * (size - idx));
 	}
 
 	void RemoveRangeAt(size_t idx, size_t count)
