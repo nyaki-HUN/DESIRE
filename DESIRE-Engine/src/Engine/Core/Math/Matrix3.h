@@ -245,78 +245,33 @@ inline void Matrix3::Invert()
 
 inline Matrix3 Matrix3::Matrix3::CreateRotationX(float radians)
 {
-	Vector3 vecY, vecZ;
-
-#if DESIRE_USE_SSE
-	const __m128 zero = _mm_setzero_ps();
-	__m128 s, c;
-	sincosf4(SIMD::Construct(radians), &s, &c);
-	vecY = SIMD::Blend_Y(zero, c);
-	vecY = SIMD::Blend_Z(vecY, s);
-	vecZ = SIMD::Blend_Y(zero, SIMD::Negate(s));
-	vecZ = SIMD::Blend_Z(vecZ, c);
-#else
 	const float s = std::sin(radians);
 	const float c = std::cos(radians);
-	vecY = Vector3(0.0f, c, s);
-	vecZ = Vector3(0.0f, -s, c);
-#endif
-
 	return Matrix3(
 		Vector3::AxisX(),
-		vecY,
-		vecZ
+		Vector3(0.0f, c, s),
+		Vector3(0.0f, -s, c)
 	);
 }
 
 inline Matrix3 Matrix3::CreateRotationY(float radians)
 {
-	Vector3 vecX, vecZ;
-
-#if DESIRE_USE_SSE
-	const __m128 zero = _mm_setzero_ps();
-	__m128 s, c;
-	sincosf4(SIMD::Construct(radians), &s, &c);
-	vecX = SIMD::Blend_X(zero, c);
-	vecX = SIMD::Blend_Z(vecX, SIMD::Negate(s));
-	vecZ = SIMD::Blend_X(zero, s);
-	vecZ = SIMD::Blend_Z(vecZ, c);
-#else
 	const float s = std::sin(radians);
 	const float c = std::cos(radians);
-	vecX = Vector3(c, 0.0f, -s);
-	vecZ = Vector3(s, 0.0f, c);
-#endif
-
 	return Matrix3(
-		vecX,
+		Vector3(c, 0.0f, -s),
 		Vector3::AxisY(),
-		vecZ
+		Vector3(s, 0.0f, c)
 	);
 }
 
 inline Matrix3 Matrix3::CreateRotationZ(float radians)
 {
-	Vector3 vecX, vecY;
-
-#if DESIRE_USE_SSE
-	const __m128 zero = _mm_setzero_ps();
-	__m128 s, c;
-	sincosf4(SIMD::Construct(radians), &s, &c);
-	vecX = SIMD::Blend_X(zero, c);
-	vecX = SIMD::Blend_Y(vecX, s);
-	vecY = SIMD::Blend_X(zero, SIMD::Negate(s));
-	vecY = SIMD::Blend_Y(vecY, c);
-#else
 	const float s = std::sin(radians);
 	const float c = std::cos(radians);
-	vecX = Vector3(c, s, 0.0f);
-	vecY = Vector3(-s, c, 0.0f);
-#endif
-
 	return Matrix3(
-		vecX,
-		vecY,
+		Vector3(c, s, 0.0f),
+		Vector3(-s, c, 0.0f),
 		Vector3::AxisZ()
 	);
 }
@@ -362,14 +317,13 @@ inline Matrix3 Matrix3::CreateRotationZYX(const Vector3& radiansXYZ)
 inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 {
 #if DESIRE_USE_SSE
-	__m128 axis = unitVec;
 	__m128 s, c;
 	sincosf4(SIMD::Construct(radians), &s, &c);
-	const __m128 xxxx = SIMD::Swizzle_XXXX(axis);
-	const __m128 yyyy = SIMD::Swizzle_YYYY(axis);
-	const __m128 zzzz = SIMD::Swizzle_ZZZZ(axis);
+	const __m128 xxxx = SIMD::Swizzle_XXXX(unitVec);
+	const __m128 yyyy = SIMD::Swizzle_YYYY(unitVec);
+	const __m128 zzzz = SIMD::Swizzle_ZZZZ(unitVec);
 	const __m128 oneMinusC = SIMD::Sub(SIMD::Construct(1.0f), c);
-	const __m128 axisS = SIMD::Mul(axis, s);
+	const __m128 axisS = SIMD::Mul(unitVec, s);
 	const __m128 negAxisS = SIMD::Negate(axisS);
 	__m128 tmp0 = SIMD::Blend_Z(SIMD::Swizzle_XZXX(axisS), SIMD::Swizzle_YYYY(negAxisS));
 	__m128 tmp1 = SIMD::Blend_X(SIMD::Swizzle_XXXX(axisS), SIMD::Swizzle_ZZZZ(negAxisS));
@@ -378,9 +332,9 @@ inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 	tmp1 = SIMD::Blend_Y(tmp1, c);
 	tmp2 = SIMD::Blend_Z(tmp2, c);
 	return Matrix3(
-		SIMD::MulAdd(SIMD::Mul(axis, xxxx), oneMinusC, tmp0),
-		SIMD::MulAdd(SIMD::Mul(axis, yyyy), oneMinusC, tmp1),
-		SIMD::MulAdd(SIMD::Mul(axis, zzzz), oneMinusC, tmp2)
+		SIMD::MulAdd(SIMD::Mul(unitVec, xxxx), oneMinusC, tmp0),
+		SIMD::MulAdd(SIMD::Mul(unitVec, yyyy), oneMinusC, tmp1),
+		SIMD::MulAdd(SIMD::Mul(unitVec, zzzz), oneMinusC, tmp2)
 	);
 #else
 	const float s = std::sin(radians);
@@ -388,14 +342,14 @@ inline Matrix3 Matrix3::CreateRotation(float radians, const Vector3& unitVec)
 	const float x = unitVec.GetX();
 	const float y = unitVec.GetY();
 	const float z = unitVec.GetZ();
-	const float xy = x * y;
-	const float yz = y * z;
-	const float zx = z * x;
 	const float oneMinusC = (1.0f - c);
+	const float xyC = x * y * oneMinusC;
+	const float yzC = y * z * oneMinusC;
+	const float zxC = z * x * oneMinusC;
 	return Matrix3(
-		Vector3(((x * x) * oneMinusC) + c, (xy * oneMinusC) + (z * s), (zx * oneMinusC) - (y * s)),
-		Vector3((xy * oneMinusC) - (z * s), ((y * y) * oneMinusC) + c, (yz * oneMinusC) + (x * s)),
-		Vector3((zx * oneMinusC) + (y * s), (yz * oneMinusC) - (x * s), ((z * z) * oneMinusC) + c)
+		Vector3((x * x * oneMinusC) + c, xyC + (z * s), zxC - (y * s)),
+		Vector3(xyC - z * s, (y * y * oneMinusC) + c, yzC + (x * s)),
+		Vector3(zxC + (y * s), yzC - (x * s), (z * z * oneMinusC) + c)
 	);
 #endif
 }
