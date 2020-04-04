@@ -80,10 +80,12 @@ void ImGuiImpl::Init()
 	material->vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
 	material->fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
 
+	// Setup fonts
+	io.Fonts->AddFontDefault();
+
 	// Setup font texture
 	unsigned char* textureData = nullptr;
 	int width, height;
-	io.Fonts->AddFontDefault();
 	io.Fonts->GetTexDataAsRGBA32(&textureData, &width, &height);
 
 	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8);
