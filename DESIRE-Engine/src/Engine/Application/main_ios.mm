@@ -4,16 +4,16 @@
 
 #import <UIKit/UIKit.h>
 
-#if defined(DESIRE_DISTRIBUTION)
+#if DESIRE_PUBLIC_BUILD
 	#include <unistd.h>
 	#include <sys/syscall.h>
 	#include <sys/types.h>
 	#include <sys/sysctl.h>
-#endif
+#endif	// #if DESIRE_PUBLIC_BUILD
 
 int main(int argc, char *argv[])
 {
-#if defined(DESIRE_DISTRIBUTION)
+#if DESIRE_PUBLIC_BUILD
 	// Anti-hacking code to prevent the debugger from attaching our process
 	syscall(SYS_ptrace, 31/*PT_DENY_ATTACH*/, 0, 0, 0);
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 		int *ptr = nullptr;
 		*ptr = 0;
 	}
-#endif
+#endif	// #if DESIRE_PUBLIC_BUILD
 
 	NSAutoreleasePool *pool = [NSAutoreleasePool new];
 	int result = UIApplicationMain(argc, argv, @"AppDelegate", @"AppDelegate");

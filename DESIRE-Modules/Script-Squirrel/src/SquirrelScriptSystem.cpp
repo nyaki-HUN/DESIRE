@@ -18,7 +18,7 @@ SquirrelScriptSystem::SquirrelScriptSystem()
 	vm = sq_open(1024);
 	sq_setprintfunc(vm, &SquirrelCallbacks::PrintCallback, &SquirrelCallbacks::ErrorCallback);
 
-#if defined(DESIRE_DISTRIBUTION)
+#if DESIRE_PUBLIC_BUILD
 	sq_enabledebuginfo(vm, SQFalse);
 #else
 	sq_enabledebuginfo(vm, SQTrue);

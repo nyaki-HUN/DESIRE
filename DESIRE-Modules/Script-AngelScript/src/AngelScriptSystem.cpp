@@ -25,7 +25,7 @@ AngelScriptSystem::AngelScriptSystem()
 	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE, true);											ASSERT(result >= asSUCCESS);
 	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_EMPTY_LIST_ELEMENTS, true);													ASSERT(result >= asSUCCESS);
 
-#if defined(DESIRE_DISTRIBUTION)
+#if DESIRE_PUBLIC_BUILD
 	result = engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, true);														ASSERT(result >= asSUCCESS);
 #else
 	result = engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, false);														ASSERT(result >= asSUCCESS);
