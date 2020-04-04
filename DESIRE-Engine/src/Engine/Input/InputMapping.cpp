@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Input/InputMapping.h"
+
 #include "Engine/Input/Input.h"
 
 InputMapping::InputMapping()

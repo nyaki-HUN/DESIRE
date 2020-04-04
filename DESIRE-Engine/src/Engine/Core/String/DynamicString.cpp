@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/DynamicString.h"
+
 #include "Engine/Core/Memory/MemorySystem.h"
 
 static char emptyData[1] = { '\0' };

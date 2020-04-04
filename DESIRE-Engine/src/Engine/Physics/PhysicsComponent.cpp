@@ -1,7 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Physics/PhysicsComponent.h"
-#include "Engine/Physics/Physics.h"
+
 #include "Engine/Physics/ColliderShape.h"
+#include "Engine/Physics/Physics.h"
 
 PhysicsComponent::PhysicsComponent(Object& object)
 	: Component(object)

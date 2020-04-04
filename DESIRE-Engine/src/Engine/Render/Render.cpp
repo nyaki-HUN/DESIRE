@@ -1,6 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/Render.h"
+
 #include "Engine/Render/Material.h"
+
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
@@ -12,7 +14,6 @@ Render::Render()
 
 Render::~Render()
 {
-
 }
 
 void Render::RenderMesh(Mesh* mesh, Material* material)

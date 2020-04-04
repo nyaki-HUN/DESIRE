@@ -1,8 +1,8 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Log/LoggerPolicies.h"
 
 #if DESIRE_PLATFORM_WINDOWS
 
-#include "Engine/Core/Log/LoggerPolicies.h"
 #include "Engine/Core/WINDOWS/os.h"
 
 ConsoleWindowOutputPolicy::ConsoleWindowOutputPolicy()

@@ -1,6 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/View.h"
+
 #include "Engine/Render/RenderTarget.h"
+
 #include "Engine/Resource/Texture.h"
 
 View::View(uint16_t renderTextureWidth, uint16_t renderTextureHeight)
@@ -12,7 +14,6 @@ View::View(uint16_t renderTextureWidth, uint16_t renderTextureHeight)
 
 View::~View()
 {
-
 }
 
 void View::SetSize(uint16_t newWidth, uint16_t newHeight)

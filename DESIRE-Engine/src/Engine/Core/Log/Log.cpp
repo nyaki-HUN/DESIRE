@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Log/Log.h"
+
 #include "Engine/Core/Log/Logger.h"
 #include "Engine/Core/Log/LoggerPolicies.h"
 

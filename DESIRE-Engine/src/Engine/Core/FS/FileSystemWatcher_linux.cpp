@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/FS/FileSystemWatcher.h"
 
 #if DESIRE_PLATFORM_LINUX
-
-#include "Engine/Core/FS/FileSystemWatcher.h"
 
 #include <sys/inotify.h>
 #include <unistd.h>

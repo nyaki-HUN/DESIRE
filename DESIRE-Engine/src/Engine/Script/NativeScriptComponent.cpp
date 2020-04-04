@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Script/NativeScriptComponent.h"
+
 #include "Engine/Core/String/String.h"
 
 NativeScriptComponent::NativeScriptComponent(Object& object, std::unique_ptr<IScript>&& i_script)

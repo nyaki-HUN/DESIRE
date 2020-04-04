@@ -1,14 +1,21 @@
 #include "Engine/stdafx.h"
 #include "Engine/Application/Application.h"
+
 #include "Engine/Application/CoreAppEvent.h"
 #include "Engine/Application/OSWindow.h"
+
 #include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Timer.h"
+
 #include "Engine/Input/Input.h"
+
 #include "Engine/Physics/Physics.h"
+
 #include "Engine/Render/Render.h"
 #include "Engine/Resource/ResourceManager.h"
+
 #include "Engine/Script/ScriptSystem.h"
+
 #include "Engine/Sound/SoundSystem.h"
 
 bool Application::s_isMainLoopRunning = false;

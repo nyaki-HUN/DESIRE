@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Application/OSWindow.h"
 
 #if DESIRE_PLATFORM_OSX
-
-#include "Engine/Application/OSWindow.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	OSWindowImpl

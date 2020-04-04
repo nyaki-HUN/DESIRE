@@ -1,8 +1,8 @@
 #include "Engine/stdafx.h"
+#include "Engine/Network/TcpSocket.h"
 
 #if DESIRE_PLATFORM_WINDOWS || DESIRE_PLATFORM_XBOXONE
 
-#include "Engine/Network/TcpSocket.h"
 #include "Engine/Core/String/String.h"
 
 #include <WS2tcpip.h>

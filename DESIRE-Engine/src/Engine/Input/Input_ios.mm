@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Input/Input.h"
 
 #if DESIRE_PLATFORM_IOS
-
-#include "Engine/Input/Input.h"
 
 #import <CoreMotion/CoreMotion.h>
 

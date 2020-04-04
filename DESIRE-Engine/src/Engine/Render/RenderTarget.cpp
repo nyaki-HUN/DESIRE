@@ -1,6 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/RenderTarget.h"
+
 #include "Engine/Render/Render.h"
+
 #include "Engine/Resource/Texture.h"
 
 RenderTarget::RenderTarget(uint16_t width, uint16_t height)

@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 #if DESIRE_PLATFORM_OSX
-
-#include "Engine/Core/Memory/MemorySystem.h"
 
 #include <malloc/malloc.h>
 

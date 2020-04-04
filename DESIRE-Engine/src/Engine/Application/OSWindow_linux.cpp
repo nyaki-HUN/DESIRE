@@ -1,10 +1,11 @@
 #include "Engine/stdafx.h"
+#include "Engine/Application/OSWindow.h"
 
 #if DESIRE_PLATFORM_LINUX
 
-#include "Engine/Application/OSWindow.h"
 #include "Engine/Application/Application.h"
 #include "Engine/Application/EAppEventType.h"
+
 #include "Engine/Core/String/WritableString.h"
 
 #include <X11/Xlib.h>

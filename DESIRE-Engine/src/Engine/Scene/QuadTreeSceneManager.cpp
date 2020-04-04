@@ -1,12 +1,13 @@
 #include "Engine/stdafx.h"
 #include "Engine/Scene/QuadTreeSceneManager.h"
-#include "Engine/Scene/QuadTreeLeaf.h"
 
 #include "Engine/Core/Math/AABB.h"
 
 #include "Engine/Render/Camera.h"
 #include "Engine/Render/DebugDraw.h"
 #include "Engine/Render/RenderComponent.h"
+
+#include "Engine/Scene/QuadTreeLeaf.h"
 
 QuadTreeSceneManager::QuadTreeSceneManager()
 	: rootLeaf(new QuadTreeLeaf(0))

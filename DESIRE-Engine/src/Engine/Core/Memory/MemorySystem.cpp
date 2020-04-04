@@ -1,7 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/MemorySystem.h"
-#include "Engine/Core/Memory/LinearAllocator.h"
+
 #include "Engine/Core/Math/math.h"
+#include "Engine/Core/Memory/LinearAllocator.h"
 
 thread_local Allocator* MemorySystem::allocatorStack[kAllocatorStackSize] = {};
 thread_local size_t MemorySystem::allocatorStackIndex = 0;
@@ -29,27 +30,30 @@ static void* Align(void* ptr, size_t alignment)								{ return reinterpret_cast
 
 void* MemorySystem::Alloc(size_t size, size_t alignment)
 {
-	ASSERT(size != 0);
 	ASSERT(Math::IsPowerOfTwo(alignment));
 	static_assert(kDefaultAlignment >= sizeof(AllocationHeader));
 
-	const size_t totalSize = size + std::max(kDefaultAlignment, alignment);
-	Allocator& allocator = GetActiveAllocator();
-	void* allocatedMemory = allocator.Alloc(totalSize);
-	if(allocatedMemory != nullptr)
+	if(size != 0)
 	{
-		// Make room for the header and apply alignment
-		void* ptr = Align(OffsetVoidPtr(allocatedMemory, sizeof(AllocationHeader)), alignment);
+		const size_t totalSize = size + std::max(kDefaultAlignment, alignment);
+		Allocator& allocator = GetActiveAllocator();
+		void* allocatedMemory = allocator.Alloc(totalSize);
+		if(allocatedMemory != nullptr)
+		{
+			// Make room for the header and apply alignment
+			void* ptr = Align(OffsetVoidPtr(allocatedMemory, sizeof(AllocationHeader)), alignment);
 
-		AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr);
-		header->allocator = &allocator;
-		header->allocatedSize = Math::SafeSizeToUint32(totalSize);
-		header->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(allocatedMemory));
+			AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(ptr);
+			header->allocator = &allocator;
+			header->allocatedSize = Math::SafeSizeToUint32(totalSize);
+			header->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(ptr) - reinterpret_cast<size_t>(allocatedMemory));
 
-		return ptr;
+			return ptr;
+		}
+
+		ASSERT(false && "Out of memory");
 	}
 
-	ASSERT(false && "Out of memory");
 	return nullptr;
 }
 
@@ -101,7 +105,6 @@ void* MemorySystem::Realloc(void* ptr, size_t size)
 
 	ASSERT(false && "Out of memory");
 	return nullptr;
-
 }
 
 void MemorySystem::Free(void* ptr)

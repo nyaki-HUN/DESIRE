@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Input/Input.h"
 
 #if DESIRE_PLATFORM_OSX
-
-#include "Engine/Input/Input.h"
 
 #include <Carbon/Carbon.h>
 

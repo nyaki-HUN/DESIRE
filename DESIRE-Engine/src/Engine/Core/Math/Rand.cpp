@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Math/Rand.h"
+
 #include "Engine/Core/Math/math.h"
 
 Rand Rand::s_globalRand;

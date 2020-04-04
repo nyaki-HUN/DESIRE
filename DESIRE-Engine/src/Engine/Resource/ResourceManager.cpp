@@ -1,12 +1,15 @@
 #include "Engine/stdafx.h"
 #include "Engine/Resource/ResourceManager.h"
-#include "Engine/Resource/Mesh.h"
-#include "Engine/Resource/Shader.h"
-#include "Engine/Resource/Texture.h"
+
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/StackString.h"
+
 #include "Engine/Render/Render.h"
+
+#include "Engine/Resource/Mesh.h"
+#include "Engine/Resource/Shader.h"
+#include "Engine/Resource/Texture.h"
 
 ResourceManager::ResourceManager()
 {

@@ -1,8 +1,8 @@
 #include "Engine/stdafx.h"
+#include "Engine/Input/Input.h"
 
 #if DESIRE_PLATFORM_LINUX
 
-#include "Engine/Input/Input.h"
 #include "Engine/Application/OSWindow.h"
 
 #include <X11/Xlib.h>

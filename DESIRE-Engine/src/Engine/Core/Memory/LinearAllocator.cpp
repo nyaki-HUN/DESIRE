@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
+
 #include "Engine/Core/Memory/MemorySystem.h"
 
 LinearAllocator::LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator)

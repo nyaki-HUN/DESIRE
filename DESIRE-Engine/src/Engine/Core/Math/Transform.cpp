@@ -1,11 +1,11 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Math/Transform.h"
+
 #include "Engine/Core/Math/math.h"
 #include "Engine/Core/Object.h"
 
 Transform::Transform()
 {
-
 }
 
 void Transform::SetLocalPosition(const Vector3& position)

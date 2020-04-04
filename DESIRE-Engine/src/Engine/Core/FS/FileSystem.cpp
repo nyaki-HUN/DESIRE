@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/FS/FileSystem.h"
+
 #include "Engine/Core/FS/IFileSource.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/StackString.h"
@@ -23,6 +24,11 @@ FileSystem* FileSystem::Get()
 
 ReadFilePtr FileSystem::Open(const String& filename)
 {
+	if(filename.IsEmpty())
+	{
+		return nullptr;
+	}
+
 	for(std::unique_ptr<IFileSource>& fileSource : fileSources)
 	{
 		ReadFilePtr file = fileSource->OpenFile(filename);

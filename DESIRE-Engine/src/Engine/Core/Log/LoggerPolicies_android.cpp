@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Log/LoggerPolicies.h"
 
 #if DESIRE_PLATFORM_ANDROID
-
-#include "Engine/Core/Log/LoggerPolicies.h"
 
 #include <android/log.h>
 

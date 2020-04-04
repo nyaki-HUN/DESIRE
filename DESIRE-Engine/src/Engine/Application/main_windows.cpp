@@ -3,6 +3,7 @@
 #if DESIRE_PLATFORM_WINDOWS
 
 #include "Engine/Application/Application.h"
+
 #include "Engine/Core/WINDOWS/os.h"
 
 #include <crtdbg.h>

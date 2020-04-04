@@ -1,8 +1,8 @@
 #include "Engine/stdafx.h"
+#include "Engine/Application/OSWindow.h"
 
 #if DESIRE_PLATFORM_ANDROID
 
-#include "Engine/Application/OSWindow.h"
 #include "Engine/Core/String/WritableString.h"
 
 #include <android_native_app_glue.h>

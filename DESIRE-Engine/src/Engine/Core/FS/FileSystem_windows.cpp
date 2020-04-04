@@ -1,8 +1,8 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/FS/FileSystem.h"
 
 #if DESIRE_PLATFORM_WINDOWS
 
-#include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/FS/IWriteFile.h"
 #include "Engine/Core/WINDOWS/os.h"

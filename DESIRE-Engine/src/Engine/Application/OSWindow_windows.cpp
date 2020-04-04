@@ -1,7 +1,9 @@
 #include "Engine/stdafx.h"
 #include "Engine/Application/OSWindow.h"
+
 #include "Engine/Application/Application.h"
 #include "Engine/Application/EAppEventType.h"
+
 #include "Engine/Core/String/WritableString.h"
 #include "Engine/Core/WINDOWS/os.h"
 

@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Physics/Physics.h"
+
 #include "Engine/Physics/PhysicsComponent.h"
 
 Physics::Physics()
@@ -17,7 +18,6 @@ Physics::Physics()
 
 Physics::~Physics()
 {
-
 }
 
 void Physics::OnPhysicsComponentCreated(PhysicsComponent* component)

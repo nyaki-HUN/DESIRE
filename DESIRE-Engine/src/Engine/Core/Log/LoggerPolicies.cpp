@@ -1,9 +1,10 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Log/LoggerPolicies.h"
-#include "Engine/Core/Time.h"
+
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IWriteFile.h"
 #include "Engine/Core/String/StackString.h"
+#include "Engine/Core/Time.h"
 
 void ConsoleOutputPolicy::Process(const LogData& logData)
 {

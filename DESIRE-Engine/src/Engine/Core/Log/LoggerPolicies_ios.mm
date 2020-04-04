@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Log/LoggerPolicies.h"
 
 #if DESIRE_PLATFORM_IOS
-
-#include "Engine/Core/Log/LoggerPolicies.h"
 
 #import <Foundation/Foundation.h>
 

@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Script/ScriptComponent.h"
+
 #include "Engine/Script/ScriptSystem.h"
 
 ScriptComponent::ScriptComponent(Object& object)

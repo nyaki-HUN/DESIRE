@@ -1,8 +1,7 @@
 #include "Engine/stdafx.h"
+#include "Engine/Core/Memory/MemorySystem.h"
 
 #if DESIRE_PLATFORM_WINDOWS
-
-#include "Engine/Core/Memory/MemorySystem.h"
 
 void* MemorySystem::SystemAlloc(size_t size)
 {
