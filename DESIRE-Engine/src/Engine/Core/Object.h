@@ -9,7 +9,7 @@ class Transform;
 class Object
 {
 public:
-	Object(const String& name = "Object");
+	Object();
 	~Object();
 
 	void SetObjectName(const String& name);

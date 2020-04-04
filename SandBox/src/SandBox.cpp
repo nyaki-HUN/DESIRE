@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SandBox.h"
+
 #include "SimpleRotateScript.h"
 
 #include "Engine/Compression/FileSourceZip.h"
@@ -14,7 +15,7 @@
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Script/ScriptComponent.h"
 
-#include "UI-imgui/src/ImGuiImpl.h"
+#include "UI-imgui/include/ImGuiImpl.h"
 #include "UI-imgui/Externals/imgui/imgui.h"
 
 enum EAction
@@ -50,7 +51,7 @@ void SandBox::Init()
 
 	//////////
 
-	scriptedObject = new Object("Obj_1");
+	scriptedObject = new Object();
 	Modules::ScriptSystem->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
 	ScriptComponent* scriptComp = scriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
@@ -66,7 +67,7 @@ void SandBox::Init()
 
 	REGISTER_NATIVE_SCRIPT(SimpleRotateScript);
 
-	cubeObj = new Object("Obj_2");
+	cubeObj = new Object();
 	Modules::ScriptSystem->CreateScriptComponentOnObject(*cubeObj, "SimpleRotateScript");
 
 	//////////

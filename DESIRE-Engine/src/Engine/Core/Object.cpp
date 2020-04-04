@@ -7,8 +7,7 @@
 static Transform preallocatedTransforms[MAX_TRANSFORMS];
 static size_t numTransforms = 0;
 
-Object::Object(const String& name)
-	: objectName(name)
+Object::Object()
 {
 	SetTransform();
 }
@@ -142,7 +141,8 @@ Object* Object::GetParent() const
 
 Object* Object::CreateChildObject(const String& name)
 {
-	Object* obj = new Object(name);
+	Object* obj = new Object();
+	obj->SetObjectName(name);
 	obj->SetParent(this);
 	return obj;
 }
