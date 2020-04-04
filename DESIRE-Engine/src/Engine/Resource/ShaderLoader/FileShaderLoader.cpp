@@ -25,7 +25,7 @@ Shader* FileShaderLoader::Load(const ReadFilePtr& file)
 	}
 
 	Shader* shader = new Shader(name);
-	shader->data = file->ReadFileContent();
+	shader->data = file->ReadAllContents();
 
 	return shader;
 }
