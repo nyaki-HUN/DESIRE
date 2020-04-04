@@ -6,7 +6,6 @@
 #include "LuaCallbacks.h"
 
 #include "Engine/Core/FS/FileSystem.h"
-#include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/String/StackString.h"
 
@@ -72,14 +71,7 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object&
 void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.lua", scriptName.Str());
-	ReadFilePtr file = FileSystem::Get()->Open(filename);
-	if(file == nullptr)
-	{
-		LOG_ERROR("Could not load script: %s", filename.Str());
-		return;
-	}
-
-	MemoryBuffer data = file->ReadFileContent();
+	MemoryBuffer data = FileSystem::Get()->LoadFileContents(filename);
 	String content = data.AsString();
 	luaL_loadbuffer(L, content.Str(), content.Length(), scriptName.Str());
 	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);

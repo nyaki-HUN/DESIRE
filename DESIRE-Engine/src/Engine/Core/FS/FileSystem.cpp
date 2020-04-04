@@ -44,6 +44,17 @@ ReadFilePtr FileSystem::Open(const String& filename)
 	return OpenNative(filenameWithPath);
 }
 
+MemoryBuffer FileSystem::LoadFileContents(const String& filename)
+{
+	ReadFilePtr file = Open(filename);
+	if(file != nullptr)
+	{
+		return file->ReadAllContents();
+	}
+
+	return MemoryBuffer();
+}
+
 void FileSystem::AddFileSource(std::unique_ptr<IFileSource> fileSource)
 {
 	fileSources.Add(std::move(fileSource));

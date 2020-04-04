@@ -26,8 +26,8 @@ public:
 
 	virtual void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback);
 	virtual size_t ReadBuffer(void* buffer, size_t size) = 0;
-	size_t ReadString(char** str);
-	MemoryBuffer ReadFileContent();
+	size_t ReadString(WritableString& out);
+	MemoryBuffer ReadAllContents();
 
 	template<typename T>
 	bool Read(T& val)

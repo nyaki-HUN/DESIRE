@@ -2,6 +2,7 @@
 
 #include "Engine/Core/FS/FilePtr_fwd.h"
 #include "Engine/Core/Container/Array.h"
+#include "Engine/Core/MemoryBuffer.h"
 #include "Engine/Core/String/DynamicString.h"
 
 class IFileSource;
@@ -27,6 +28,8 @@ public:
 
 	// Creates a file for writing
 	WriteFilePtr CreateWriteFileNative(const String& filename);
+
+	MemoryBuffer LoadFileContents(const String& filename);
 
 	void AddFileSource(std::unique_ptr<IFileSource> fileSource);
 

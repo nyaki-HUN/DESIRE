@@ -6,7 +6,6 @@
 #include "API/AngelScriptAPI.h"
 
 #include "Engine/Core/FS/FileSystem.h"
-#include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Object.h"
 #include "Engine/Core/String/DynamicString.h"
 #include "Engine/Core/String/StackString.h"
@@ -111,14 +110,7 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIScriptEngine* engine)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.as", scriptName.Str());
-	ReadFilePtr file = FileSystem::Get()->Open(filename);
-	if(file == nullptr)
-	{
-		LOG_ERROR("Could not load script: %s", filename.Str());
-		return nullptr;
-	}
-
-	MemoryBuffer data = file->ReadFileContent();
+	MemoryBuffer data = FileSystem::Get()->LoadFileContents(filename);
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"

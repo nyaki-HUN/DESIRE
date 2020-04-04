@@ -29,32 +29,31 @@ void IReadFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()>
 	callback();
 }
 
-size_t IReadFile::ReadString(char** str)
+size_t IReadFile::ReadString(WritableString& out)
 {
-	ASSERT(str != nullptr);
-
 	uint16_t len;
 	if(!Read(len) || len == 0)
 	{
-		*str = nullptr;
+		out.Clear();
 		return 0;
 	}
 
-	*str = static_cast<char*>(malloc(len));
-	return ReadBuffer(*str, len);
+	ASSERT(false);
+	// TODO
+	return 0;
 }
 
-MemoryBuffer IReadFile::ReadFileContent()
+MemoryBuffer IReadFile::ReadAllContents()
 {
-	if(IsEof())
+	if(!IsEof())
 	{
-		return MemoryBuffer();
+		const size_t dataSize = static_cast<size_t>(fileSize - position);
+		MemoryBuffer buffer = MemoryBuffer(dataSize + 1);
+		const size_t numBytesRead = ReadBuffer(buffer.ptr.get(), dataSize);
+		ASSERT(numBytesRead == dataSize);
+		buffer.ptr[numBytesRead] = '\0';
+		return buffer;
 	}
 
-	const size_t dataSize = static_cast<size_t>(fileSize - position);
-	MemoryBuffer buffer = MemoryBuffer(dataSize + 1);
-	const size_t numBytesRead = ReadBuffer(buffer.ptr.get(), dataSize);
-	ASSERT(numBytesRead == dataSize);
-	buffer.ptr[numBytesRead] = '\0';
-	return buffer;
+	return MemoryBuffer();
 }
