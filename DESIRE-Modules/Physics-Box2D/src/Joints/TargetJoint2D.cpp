@@ -1,8 +1,9 @@
 #include "stdafx_Box2D.h"
 #include "Joints/TargetJoint2D.h"
+
+#include "b2MathExt.h"
 #include "Box2DPhysics.h"
 #include "Box2DPhysicsComponent.h"
-#include "b2MathExt.h"
 
 TargetJoint2D::TargetJoint2D()
 {

@@ -1,8 +1,9 @@
 #include "stdafx_Squirrel.h"
 #include "SquirrelScriptSystem.h"
+
+#include "API/SquirrelScriptAPI.h"
 #include "SquirrelScriptComponent.h"
 #include "SquirrelCallbacks.h"
-#include "API/SquirrelScriptAPI.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"

@@ -1,5 +1,6 @@
 #include "stdafx_AngelScript.h"
 #include "AngelScriptCallbacks.h"
+
 #include "AngelScriptSystem.h"
 
 #include "Engine/Core/Memory/MemorySystem.h"

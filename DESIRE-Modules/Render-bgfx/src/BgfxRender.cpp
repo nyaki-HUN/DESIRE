@@ -1,10 +1,11 @@
 #include "stdafx_bgfx.h"
 #include "BgfxRender.h"
-#include "MeshRenderDataBgfx.h"
-#include "ShaderRenderDataBgfx.h"
-#include "RenderTargetRenderDataBgfx.h"
-#include "TextureRenderDataBgfx.h"
+
 #include "Embedded_shaders/vs_screenSpaceQuad.bin.h"
+#include "MeshRenderDataBgfx.h"
+#include "RenderTargetRenderDataBgfx.h"
+#include "ShaderRenderDataBgfx.h"
+#include "TextureRenderDataBgfx.h"
 
 #include "Engine/Application/OSWindow.h"
 

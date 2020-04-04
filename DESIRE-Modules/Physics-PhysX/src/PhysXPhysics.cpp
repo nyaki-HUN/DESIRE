@@ -1,7 +1,8 @@
 #include "stdafx_PhysX.h"
 #include "PhysXPhysics.h"
-#include "PhysXPhysicsComponent.h"
+
 #include "PhysXCustomAllocator.h"
+#include "PhysXPhysicsComponent.h"
 #include "PxMathExt.h"
 
 #include "Engine/Core/Object.h"

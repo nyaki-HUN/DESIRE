@@ -1,5 +1,6 @@
 #include "stdafx_Box2D.h"
 #include "ContactListener.h"
+
 #include "Box2DPhysics.h"
 
 void ContactListener::BeginContact(b2Contact* contact)

@@ -1,5 +1,6 @@
 #include "stdafx_Box2D.h"
 #include "Joints/SliderJoint2D.h"
+
 #include "b2MathExt.h"
 
 SliderJoint2D::SliderJoint2D()

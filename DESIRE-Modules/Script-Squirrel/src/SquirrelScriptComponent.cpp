@@ -2,6 +2,7 @@
 #include "SquirrelScriptComponent.h"
 
 #include "Engine/Core/String/String.h"
+
 #include "Engine/Utils/Enumerator.h"
 
 SquirrelScriptComponent::SquirrelScriptComponent(Object& object, HSQUIRRELVM vm)

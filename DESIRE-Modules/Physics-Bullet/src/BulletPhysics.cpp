@@ -1,8 +1,9 @@
 #include "stdafx_Bullet.h"
 #include "BulletPhysics.h"
-#include "BulletPhysicsComponent.h"
+
 #include "BulletCallbacks.h"
 #include "BulletDebugDraw.h"
+#include "BulletPhysicsComponent.h"
 
 #include "Engine/Core/Object.h"
 

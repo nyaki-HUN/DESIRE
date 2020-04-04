@@ -4,8 +4,11 @@
 #include "Engine/Application/Application.h"
 #include "Engine/Application/OSWindow.h"
 
+#include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Timer.h"
+#include "Engine/Core/String/StackString.h"
 
 #include "Engine/Input/Input.h"
 

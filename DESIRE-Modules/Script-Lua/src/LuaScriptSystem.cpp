@@ -1,8 +1,9 @@
 #include "stdafx_Lua.h"
 #include "LuaScriptSystem.h"
+
+#include "API/LuaScriptAPI.h"
 #include "LuaScriptComponent.h"
 #include "LuaCallbacks.h"
-#include "API/LuaScriptAPI.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
