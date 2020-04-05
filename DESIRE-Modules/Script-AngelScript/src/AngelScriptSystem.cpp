@@ -110,7 +110,7 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIScriptEngine* engine)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.as", scriptName.Str());
-	MemoryBuffer data = FileSystem::Get()->LoadFileContents(filename);
+	DynamicString data = FileSystem::Get()->LoadTextFile(filename);
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"
@@ -119,7 +119,7 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 		"	%s(ScriptComponent @component) { @self = component; }"
 		, scriptName.Str()
 		, scriptName.Str());
-	scriptSrc += data.AsString();
+	scriptSrc += data;
 	scriptSrc += "}";
 
 	asIScriptModule* module = engine->GetModule(scriptName.Str(), asGM_ALWAYS_CREATE);

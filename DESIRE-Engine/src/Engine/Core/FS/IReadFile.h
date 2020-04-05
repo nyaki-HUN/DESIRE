@@ -26,17 +26,19 @@ public:
 
 	virtual void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback);
 	virtual size_t ReadBuffer(void* buffer, size_t size) = 0;
-	size_t ReadString(WritableString& out);
-	MemoryBuffer ReadAllContents();
+	bool ReadString(WritableString& out);
 
 	template<typename T>
 	bool Read(T& val)
 	{
 		static_assert(std::is_pod<T>::value);
 
-		size_t numBytesRead = ReadBuffer(&val, sizeof(T));
+		const size_t numBytesRead = ReadBuffer(&val, sizeof(T));
 		return numBytesRead == sizeof(T);
 	}
+
+	DynamicString ReadAllAsText();
+	MemoryBuffer ReadAllAsBinary();
 
 protected:
 	int64_t fileSize;

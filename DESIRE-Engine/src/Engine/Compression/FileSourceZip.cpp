@@ -237,7 +237,7 @@ void FileSourceZip::ProcessLocalHeaders()
 
 	// Read filename
 	StackString<DESIRE_MAX_PATH_LEN> filename;
-	zipFile->ReadBuffer(filename.GetCharBufferWithSize(header.filenameLength), header.filenameLength);
+	zipFile->ReadBuffer(filename.AsCharBufferWithSize(header.filenameLength), header.filenameLength);
 
 	// Skip if directory
 	if(filename.EndsWith('/'))

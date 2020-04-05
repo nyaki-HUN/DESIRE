@@ -29,29 +29,52 @@ void IReadFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()>
 	callback();
 }
 
-size_t IReadFile::ReadString(WritableString& out)
+bool IReadFile::ReadString(WritableString& out)
 {
-	uint16_t len;
-	if(!Read(len) || len == 0)
+	out.Clear();
+
+	uint16_t numChars = 0;
+	if(Read(numChars))
 	{
-		out.Clear();
-		return 0;
+		if(numChars == 0)
+		{
+			return true;
+		}
+
+		char* str = out.AsCharBufferWithSize(numChars);
+		if(str != nullptr)
+		{
+			const size_t numBytesRead = ReadBuffer(str, numChars * sizeof(char));
+			return numBytesRead == numChars * sizeof(char);
+		}
 	}
 
-	ASSERT(false);
-	// TODO
-	return 0;
+	return false;
 }
 
-MemoryBuffer IReadFile::ReadAllContents()
+DynamicString IReadFile::ReadAllAsText()
+{
+	DynamicString string;
+
+	if(!IsEof())
+	{
+		const size_t dataSize = static_cast<size_t>(fileSize - position);
+		char* data = string.AsCharBufferWithSize(dataSize);
+		const size_t numBytesRead = ReadBuffer(data, dataSize);
+		ASSERT(numBytesRead == dataSize);
+	}
+
+	return string;
+}
+
+MemoryBuffer IReadFile::ReadAllAsBinary()
 {
 	if(!IsEof())
 	{
 		const size_t dataSize = static_cast<size_t>(fileSize - position);
-		MemoryBuffer buffer = MemoryBuffer(dataSize + 1);
+		MemoryBuffer buffer = MemoryBuffer(dataSize);
 		const size_t numBytesRead = ReadBuffer(buffer.ptr.get(), dataSize);
 		ASSERT(numBytesRead == dataSize);
-		buffer.ptr[numBytesRead] = '\0';
 		return buffer;
 	}
 

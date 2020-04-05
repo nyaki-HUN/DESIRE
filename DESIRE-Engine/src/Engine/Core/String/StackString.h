@@ -22,17 +22,6 @@ public:
 
 	StackString<STACK_SIZE>& operator =(const String& string)	{ Set(string.Str(), string.Length()); return *this; }
 
-	char* GetCharBufferWithSize(size_t newSize)
-	{
-		if(newSize < STACK_SIZE)
-		{
-			size = newSize;
-			return charBuffer;
-		}
-
-		return nullptr;
-	}
-
 	// Create formatted string from variable argument list
 	static StackString<STACK_SIZE> Format(const char* format, ...)
 	{

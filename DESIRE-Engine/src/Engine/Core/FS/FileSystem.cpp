@@ -44,12 +44,23 @@ ReadFilePtr FileSystem::Open(const String& filename)
 	return OpenNative(filenameWithPath);
 }
 
-MemoryBuffer FileSystem::LoadFileContents(const String& filename)
+DynamicString FileSystem::LoadTextFile(const String& filename)
 {
 	ReadFilePtr file = Open(filename);
 	if(file != nullptr)
 	{
-		return file->ReadAllContents();
+		return file->ReadAllAsText();
+	}
+
+	return DynamicString();
+}
+
+MemoryBuffer FileSystem::LoadBinaryFile(const String& filename)
+{
+	ReadFilePtr file = Open(filename);
+	if(file != nullptr)
+	{
+		return file->ReadAllAsBinary();
 	}
 
 	return MemoryBuffer();

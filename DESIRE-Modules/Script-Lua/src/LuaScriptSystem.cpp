@@ -71,9 +71,8 @@ ScriptComponent* LuaScriptSystem::CreateScriptComponentOnObject_Internal(Object&
 void LuaScriptSystem::CompileScript(const String& scriptName, lua_State* L)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.lua", scriptName.Str());
-	MemoryBuffer data = FileSystem::Get()->LoadFileContents(filename);
-	String content = data.AsString();
-	luaL_loadbuffer(L, content.Str(), content.Length(), scriptName.Str());
+	DynamicString data = FileSystem::Get()->LoadTextFile(filename);
+	luaL_loadbuffer(L, data.Str(), data.Length(), scriptName.Str());
 	const int statusCode = lua_pcall(L, 0, LUA_MULTRET, 0);
 	if(statusCode != LUA_OK)
 	{

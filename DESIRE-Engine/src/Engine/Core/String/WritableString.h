@@ -50,6 +50,8 @@ public:
 	// Convert the string to uppercase (in place)
 	void ToUpper();
 
+	char* AsCharBufferWithSize(size_t newSize);
+
 	// Write formatted data into the string from variable argument list
 	void Sprintf(const char* format, ...);
 	void SprintfAppend(const char* format, ...);

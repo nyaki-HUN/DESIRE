@@ -26,10 +26,11 @@ public:
 	ReadFilePtr Open(const String& filename);
 	ReadFilePtr OpenNative(const String& filename);
 
+	DynamicString LoadTextFile(const String& filename);
+	MemoryBuffer LoadBinaryFile(const String& filename);
+
 	// Creates a file for writing
 	WriteFilePtr CreateWriteFileNative(const String& filename);
-
-	MemoryBuffer LoadFileContents(const String& filename);
 
 	void AddFileSource(std::unique_ptr<IFileSource> fileSource);
 

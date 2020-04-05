@@ -123,7 +123,7 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM vm)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.nut", scriptName.Str());
-	MemoryBuffer data = FileSystem::Get()->LoadFileContents(filename);
+	DynamicString data = FileSystem::Get()->LoadTextFile(filename);
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"
@@ -131,7 +131,7 @@ void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM v
 		"	self = null;"
 		"	constructor(component) { self = component; }"
 		, scriptName.Str());
-	scriptSrc += data.AsString();
+	scriptSrc += data;
 	scriptSrc += "}";
 
 	SQRESULT result = sq_compilebuffer(vm, scriptSrc.Str(), (SQInteger)scriptSrc.Length(), scriptName.Str(), SQTrue);

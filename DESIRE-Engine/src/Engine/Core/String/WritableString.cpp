@@ -280,6 +280,17 @@ void WritableString::ToUpper()
 	}
 }
 
+char* WritableString::AsCharBufferWithSize(size_t newSize)
+{
+	if(Reserve(newSize))
+	{
+		size = newSize;
+		return data;
+	}
+
+	return nullptr;
+}
+
 void WritableString::Sprintf(const char* format, ...)
 {
 	std::va_list args;
