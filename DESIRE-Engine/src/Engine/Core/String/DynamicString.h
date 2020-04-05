@@ -26,6 +26,7 @@ public:
 	// Resets the string to an empty string and deallocates its memory
 	void Reset();
 
+	// Requests the string capacity to be (at least) as big to hold numChars characters. Returns true on success
 	bool Reserve(size_t numChars) override;
 
 private:

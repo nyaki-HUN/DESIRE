@@ -56,9 +56,10 @@ public:
 	void Sprintf(const char* format, ...);
 	void SprintfAppend(const char* format, ...);
 
-protected:
+	// Requests the string capacity to be (at least) as big to hold numChars characters. Returns true on success
 	virtual bool Reserve(size_t numChars) = 0;
 
+protected:
 	void Sprintf_internal(size_t pos, const char* format, std::va_list args);
 	void Replace_Internal(size_t pos, size_t numChars, const String& replaceTo);
 };
