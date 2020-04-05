@@ -219,6 +219,17 @@ TEST_CASE("WritableString", "[Core]")
 		CHECK(s.Equals("123 ABCDEFGHIJKLMNOPQRSTUVWXYZ !@#"));
 	}
 
+	SECTION("AsCharBufferWithSize()")
+	{
+		char* str = string.AsCharBufferWithSize(6);
+		str[0] = 'X';
+		CHECK(string.Equals("Xtring"));
+
+		str = string.AsCharBufferWithSize(10);
+		memcpy(str, "1234567", 7);
+		CHECK(string.Equals("1234567ASD"));
+	}
+
 	SECTION("Sprintf()")
 	{
 		DynamicString s;

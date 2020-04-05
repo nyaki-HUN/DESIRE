@@ -285,6 +285,7 @@ char* WritableString::AsCharBufferWithSize(size_t newSize)
 	if(Reserve(newSize))
 	{
 		size = newSize;
+		data[size] = '\0';
 		return data;
 	}
 
