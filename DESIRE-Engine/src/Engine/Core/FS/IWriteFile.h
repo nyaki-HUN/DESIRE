@@ -1,5 +1,7 @@
 #pragma once
 
+class String;
+
 class IWriteFile
 {
 public:
@@ -7,7 +9,7 @@ public:
 	virtual ~IWriteFile();
 
 	virtual size_t WriteBuffer(const void* buffer, size_t size) = 0;
-	bool WriteString(const char* str, size_t len = SIZE_MAX);
+	bool WriteString(const String& string);
 
 	template<typename T>
 	bool Write(const T& val)
