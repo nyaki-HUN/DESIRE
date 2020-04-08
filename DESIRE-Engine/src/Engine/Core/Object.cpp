@@ -3,13 +3,16 @@
 #include "Engine/Core/Component.h"
 #include "Engine/Core/Math/Transform.h"
 
-#define MAX_TRANSFORMS	10000
-static Transform preallocatedTransforms[MAX_TRANSFORMS];
+static const uint32_t kMaxNumTransforms = 10000;
+static Transform preallocatedTransforms[kMaxNumTransforms];
 static size_t numTransforms = 0;
 
 Object::Object()
 {
-	SetTransform();
+	ASSERT(numTransforms < kMaxNumTransforms);
+	transform = &preallocatedTransforms[numTransforms++];
+	transform->owner = this;
+	transform->ResetToIdentity();
 }
 
 Object::~Object()
@@ -29,7 +32,6 @@ Object::~Object()
 
 	transform->parent = nullptr;
 	transform->owner = nullptr;
-	transform->ResetToIdentity();
 }
 
 void Object::SetObjectName(const String& name)
@@ -246,13 +248,6 @@ void Object::RemoveChild_Internal(Object* child)
 
 	children.Remove(child);
 	child->transform->parent = nullptr;
-}
-
-void Object::SetTransform()
-{
-	ASSERT(numTransforms < MAX_TRANSFORMS);
-	transform = &preallocatedTransforms[numTransforms++];
-	transform->owner = this;
 }
 
 void Object::RefreshParentPointerInTransforms(Transform* firstTransform, size_t transformCount)

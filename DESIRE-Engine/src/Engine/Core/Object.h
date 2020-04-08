@@ -59,8 +59,6 @@ private:
 	void AddChild_Internal(Object* child);
 	void RemoveChild_Internal(Object* child);
 
-	void SetTransform();
-
 	static void RefreshParentPointerInTransforms(Transform* firstTransform, size_t transformCount);
 
 	Array<std::unique_ptr<Component>> components;
