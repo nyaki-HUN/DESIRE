@@ -20,7 +20,8 @@ public:
 	StackString(const String& string)					: StackString(string.Str(), string.Length()) {}
 	StackString(const StackString<STACK_SIZE>& string)	: StackString(string.Str(), string.Length()) {}
 
-	StackString<STACK_SIZE>& operator =(const String& string)	{ Set(string.Str(), string.Length()); return *this; }
+	StackString<STACK_SIZE>& operator =(const String& string)					{ Set(string.Str(), string.Length()); return *this; }
+	StackString<STACK_SIZE>& operator =(const StackString<STACK_SIZE>& string)	{ Set(string.Str(), string.Length()); return *this; }
 
 	// Create formatted string from variable argument list
 	static StackString<STACK_SIZE> Format(const char* format, ...)
