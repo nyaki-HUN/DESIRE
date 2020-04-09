@@ -84,15 +84,15 @@ public:
 
 				if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
 				{
-					mouse.HandleButton(Mouse::BUTTON_MIDDLE, true);
+					mouse.HandleButton(Mouse::Button_Middle, true);
 				}
 				else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
 				{
-					mouse.HandleButton(Mouse::BUTTON_RIGHT, true);
+					mouse.HandleButton(Mouse::Button_Right, true);
 				}
 				else if(button == kEventMouseButtonPrimary)
 				{
-					mouse.HandleButton(Mouse::BUTTON_LEFT, true);
+					mouse.HandleButton(Mouse::Button_Left, true);
 				}
 				break;
 			}
@@ -106,15 +106,15 @@ public:
 
 				if(button == kEventMouseButtonTertiary || (button == kEventMouseButtonPrimary && (modifiers & optionKey)))
 				{
-					mouse.HandleButton(Mouse::BUTTON_MIDDLE, false);
+					mouse.HandleButton(Mouse::Button_Middle, false);
 				}
 				else if(button == kEventMouseButtonSecondary || (button == kEventMouseButtonPrimary && (modifiers & controlKey)))
 				{
-					mouse.HandleButton(Mouse::BUTTON_RIGHT, false);
+					mouse.HandleButton(Mouse::Button_Right, false);
 				}
 				else if(button == kEventMouseButtonPrimary)
 				{
-					mouse.HandleButton(Mouse::BUTTON_LEFT, false);
+					mouse.HandleButton(Mouse::Button_Left, false);
 				}
 				break;
 			}
@@ -124,8 +124,8 @@ public:
 			{
 				HIPoint delta = { 0.0f, 0.0f };
 				GetEventParameter(event, kEventParamMouseDelta, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &delta);
-				mouse.HandleAxis(Mouse::MOUSE_X, delta.x);
-				mouse.HandleAxis(Mouse::MOUSE_Y, delta.y);
+				mouse.HandleAxis(Mouse::Axis_X, delta.x);
+				mouse.HandleAxis(Mouse::Axis_Y, delta.y);
 
 				HIPoint location = { 0.0f, 0.0f };
 				GetEventParameter(event, kEventParamMouseLocation, typeHIPoint, nullptr, sizeof(HIPoint), nullptr, &location);
@@ -142,11 +142,11 @@ public:
 
 				if(wheelAxis == kEventMouseWheelAxisY)
 				{
-					mouse.HandleAxis(Mouse::WHEEL, (float)wheelDelta);
+					mouse.HandleAxis(Mouse::Wheel, (float)wheelDelta);
 				}
 				else if(wheelAxis == kEventMouseWheelAxisX)
 				{
-					mouse.HandleAxis(Mouse::WHEEL_HORIZONTAL, (float)wheelDelta);
+					mouse.HandleAxis(Mouse::Wheel_Horizontal, (float)wheelDelta);
 				}
 				break;
 			}
@@ -325,7 +325,6 @@ void Input::Kill_internal()
 
 void Input::Update_internal()
 {
-
 }
 
 #endif	// #if DESIRE_PLATFORM_OSX

@@ -50,7 +50,7 @@ public:
 			char* typingCharacters = Modules::Input->typingCharacters;
 			const size_t len = strlen(typingCharacters);
 			const size_t bufferLen = strlen(buffer);
-			if(len + bufferLen + 1 < Input::MAX_NUM_TYPING_CHARACTERS)
+			if(len + bufferLen + 1 < Input::kMaxNumTypingCharacters)
 			{
 				memcpy(&typingCharacters[len], buffer, bufferLen);
 				typingCharacters[len + bufferLen + 1] = '\0';
@@ -70,21 +70,21 @@ public:
 
 		switch(event.xbutton.button)
 		{
-			case Button1:	mouse.HandleButton(Mouse::BUTTON_LEFT, isDown); break;
-			case Button2:	mouse.HandleButton(Mouse::BUTTON_MIDDLE, isDown); break;
-			case Button3:	mouse.HandleButton(Mouse::BUTTON_RIGHT, isDown); break;
+			case Button1:	mouse.HandleButton(Mouse::Button_Left, isDown); break;
+			case Button2:	mouse.HandleButton(Mouse::Button_Middle, isDown); break;
+			case Button3:	mouse.HandleButton(Mouse::Button_Right, isDown); break;
 
 			case Button4:
 				if(isDown)
 				{
-					mouse.HandleAxis(Mouse::WHEEL, 1.0f);
+					mouse.HandleAxis(Mouse::Wheel, 1.0f);
 				}
 				break;
 
 			case Button5:
 				if(isDown)
 				{
-					mouse.HandleAxis(Mouse::WHEEL, -1.0f);
+					mouse.HandleAxis(Mouse::Wheel, -1.0f);
 				}
 				break;
 		}
@@ -95,8 +95,8 @@ public:
 		const XEvent& event = *static_cast<const XEvent*>(param);
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 
-		mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)event.xmotion.x);
-		mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)event.xmotion.y);
+		mouse.HandleAxisAbsolute(Mouse::Axis_X, (float)event.xmotion.x);
+		mouse.HandleAxisAbsolute(Mouse::Axis_Y, (float)event.xmotion.y);
 
 		Modules::Input->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
 	}
@@ -162,7 +162,6 @@ void Input::Kill_internal()
 
 void Input::Update_internal()
 {
-
 }
 
 #endif	// #if DESIRE_PLATFORM_LINUX

@@ -40,14 +40,14 @@ public:
 				if(rawData.data.mouse.usFlags == MOUSE_MOVE_RELATIVE)
 				{
 					// Mouse movement data is relative to the last mouse position
-					mouse.HandleAxis(Mouse::MOUSE_X, (float)rawData.data.mouse.lLastX);
-					mouse.HandleAxis(Mouse::MOUSE_Y, (float)rawData.data.mouse.lLastY);
+					mouse.HandleAxis(Mouse::Axis_X, (float)rawData.data.mouse.lLastX);
+					mouse.HandleAxis(Mouse::Axis_Y, (float)rawData.data.mouse.lLastY);
 				}
 				else if(rawData.data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE)
 				{
 					// Mouse movement data is based on absolute position
-					mouse.HandleAxisAbsolute(Mouse::MOUSE_X, (float)rawData.data.mouse.lLastX);
-					mouse.HandleAxisAbsolute(Mouse::MOUSE_Y, (float)rawData.data.mouse.lLastY);
+					mouse.HandleAxisAbsolute(Mouse::Axis_X, (float)rawData.data.mouse.lLastX);
+					mouse.HandleAxisAbsolute(Mouse::Axis_Y, (float)rawData.data.mouse.lLastY);
 				}
 
 				if(rawData.data.mouse.usFlags & MOUSE_VIRTUAL_DESKTOP)
@@ -63,51 +63,51 @@ public:
 				// Left button
 				if(rawData.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_DOWN)
 				{
-					mouse.HandleButton(Mouse::BUTTON_LEFT, true);
+					mouse.HandleButton(Mouse::Button_Left, true);
 				}
 				else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_LEFT_BUTTON_UP)
 				{
-					mouse.HandleButton(Mouse::BUTTON_LEFT, false);
+					mouse.HandleButton(Mouse::Button_Left, false);
 				}
 
 				// Right button
 				if(rawData.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_DOWN)
 				{
-					mouse.HandleButton(Mouse::BUTTON_RIGHT, true);
+					mouse.HandleButton(Mouse::Button_Right, true);
 				}
 				else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_RIGHT_BUTTON_UP)
 				{
-					mouse.HandleButton(Mouse::BUTTON_RIGHT, false);
+					mouse.HandleButton(Mouse::Button_Right, false);
 				}
 
 				// Middle button
 				if(rawData.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_DOWN)
 				{
-					mouse.HandleButton(Mouse::BUTTON_MIDDLE, true);
+					mouse.HandleButton(Mouse::Button_Middle, true);
 				}
 				else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_MIDDLE_BUTTON_UP)
 				{
-					mouse.HandleButton(Mouse::BUTTON_MIDDLE, false);
+					mouse.HandleButton(Mouse::Button_Middle, false);
 				}
 
 				// Button 4
 				if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_4_DOWN)
 				{
-					mouse.HandleButton(Mouse::BUTTON_4, true);
+					mouse.HandleButton(Mouse::Button_4, true);
 				}
 				else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_4_UP)
 				{
-					mouse.HandleButton(Mouse::BUTTON_4, false);
+					mouse.HandleButton(Mouse::Button_4, false);
 				}
 
 				// Button 5
 				if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_5_DOWN)
 				{
-					mouse.HandleButton(Mouse::BUTTON_5, true);
+					mouse.HandleButton(Mouse::Button_5, true);
 				}
 				else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_BUTTON_5_UP)
 				{
-					mouse.HandleButton(Mouse::BUTTON_5, false);
+					mouse.HandleButton(Mouse::Button_5, false);
 				}
 
 				// Wheel and (vertical and horizontal)
@@ -117,7 +117,7 @@ public:
 				}
 				else if(rawData.data.mouse.usButtonFlags & RI_MOUSE_HWHEEL)
 				{
-					mouse.HandleAxis(Mouse::WHEEL_HORIZONTAL, (int16_t)rawData.data.mouse.usButtonData / (float)WHEEL_DELTA);
+					mouse.HandleAxis(Mouse::Wheel_Horizontal, (int16_t)rawData.data.mouse.usButtonData / (float)WHEEL_DELTA);
 				}
 			}
 			else if(rawData.header.dwType == RIM_TYPEKEYBOARD)
@@ -233,7 +233,6 @@ void Input::Kill_internal()
 
 void Input::Update_internal()
 {
-
 }
 
 #endif	// #if DESIRE_PLATFORM_WINDOWS

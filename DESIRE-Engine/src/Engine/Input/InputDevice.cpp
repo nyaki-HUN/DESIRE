@@ -19,7 +19,7 @@ bool InputDevice::IsDown(int buttonId) const
 	}
 
 	const uint8_t buttonState = (reinterpret_cast<const uint8_t*>(this) + offsetOfButtonStatesInDerivedClass)[buttonId];
-	return (buttonState & InputDevice::BUTTON_STATE_DOWN_FLAG) != 0;
+	return (buttonState & InputDevice::kButtonStateDownFlag) != 0;
 }
 
 bool InputDevice::WentDown(int buttonId) const
@@ -36,7 +36,7 @@ uint8_t InputDevice::GetPressedCount(int buttonId) const
 	}
 
 	const uint8_t buttonState = (reinterpret_cast<const uint8_t*>(this) + offsetOfButtonStatesInDerivedClass)[buttonId];
-	return static_cast<uint8_t>(buttonState & ~InputDevice::BUTTON_STATE_DOWN_FLAG);
+	return static_cast<uint8_t>(buttonState & ~InputDevice::kButtonStateDownFlag);
 }
 
 float InputDevice::GetAxisPos(int axisId) const
@@ -69,7 +69,7 @@ void InputDevice::Update()
 	for(uint16_t i = 0; i < numButtonStates; ++i)
 	{
 		uint8_t& buttonState = (reinterpret_cast<uint8_t*>(this) + offsetOfButtonStatesInDerivedClass)[i];
-		buttonState &= InputDevice::BUTTON_STATE_DOWN_FLAG;
+		buttonState &= InputDevice::kButtonStateDownFlag;
 	}
 
 	// Reset axis deltas
@@ -102,16 +102,16 @@ void InputDevice::HandleButton(int buttonId, bool isDown)
 	uint8_t& buttonState = (reinterpret_cast<uint8_t*>(this) + offsetOfButtonStatesInDerivedClass)[buttonId];
 	if(isDown)
 	{
-		if((buttonState & InputDevice::BUTTON_STATE_DOWN_FLAG) == 0)
+		if((buttonState & InputDevice::kButtonStateDownFlag) == 0)
 		{
 			buttonState++;
 		}
 
-		buttonState |= InputDevice::BUTTON_STATE_DOWN_FLAG;
+		buttonState |= InputDevice::kButtonStateDownFlag;
 	}
 	else
 	{
-		buttonState &= ~InputDevice::BUTTON_STATE_DOWN_FLAG;
+		buttonState &= ~InputDevice::kButtonStateDownFlag;
 	}
 }
 

@@ -7,31 +7,31 @@ class Mouse : public InputDevice
 	Mouse(void* handle);
 
 public:
-	enum EButtonId
+	enum EButton
 	{
-		BUTTON_1,
-		BUTTON_LEFT = BUTTON_1,
-		BUTTON_2,
-		BUTTON_RIGHT = BUTTON_2,
-		BUTTON_3,
-		BUTTON_MIDDLE = BUTTON_3,
-		BUTTON_4,
-		BUTTON_5,
-		NUM_BUTTONS
+		Button_1,
+		Button_Left = Button_1,
+		Button_2,
+		Button_Right = Button_2,
+		Button_3,
+		Button_Middle = Button_3,
+		Button_4,
+		Button_5,
+		Num_Buttons
 	};
 
-	enum EAxisId
+	enum EAxis
 	{
-		MOUSE_X,
-		MOUSE_Y,
+		Axis_X,
+		Axis_Y,
 		Wheel,
-		WHEEL_HORIZONTAL,
-		NUM_AXES
+		Wheel_Horizontal,
+		Num_Axis
 	};
 
 private:
-	uint8_t buttons[NUM_BUTTONS] = {};
-	AxisState axes[NUM_AXES] = {};
+	uint8_t buttons[Num_Buttons] = {};
+	AxisState axes[Num_Axis] = {};
 
 	friend class Input;
 	friend class InputImpl;
