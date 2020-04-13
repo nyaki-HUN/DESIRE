@@ -59,14 +59,14 @@ void JsonWriter::AddString(const String& name, const String& value)
 
 void JsonWriter::AddVector3(const String& name, const Vector3& value)
 {
-	float elements[3];
+	float elements[3] = {};
 	value.StoreXYZ(elements);
 	AddFloatArray(name, elements, 3);
 }
 
 void JsonWriter::AddQuat(const String& name, const Quat& value)
 {
-	float elements[4];
+	float elements[4] = {};
 	value.StoreXYZW(elements);
 	AddFloatArray(name, elements, 4);
 }
@@ -89,6 +89,22 @@ void JsonWriter::AddFloatArray(const String& name, const float* values, size_t n
 	for(size_t i = 0; i < numValues; ++i)
 	{
 		writer.Double(values[i]);
+	}
+	writer.EndArray();
+}
+
+void JsonWriter::AddVector3Array(const String& name, const Vector3* values, size_t numValues)
+{
+	writer.Key(name.Str(), static_cast<rapidjson::SizeType>(name.Length()));
+	writer.StartArray();
+	for(size_t i = 0; i < numValues; ++i)
+	{
+		float elements[3] = {};
+		values[i].StoreXYZ(elements);
+		for(size_t j = 0; j < 3; ++j)
+		{
+			writer.Double(elements[j]);
+		}
 	}
 	writer.EndArray();
 }

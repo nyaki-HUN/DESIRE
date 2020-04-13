@@ -149,6 +149,22 @@ bool JsonReader::GetFloatArray(const String& name, float* values, size_t numValu
 	return false;
 }
 
+bool JsonReader::GetVector3Array(const String& name, Vector3* values, size_t numValues) const
+{
+	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
+	if(iter != json.MemberEnd() && iter->value.IsArray() && iter->value.Size() == numValues * 3)
+	{
+		for(uint32_t i = 0; i < numValues; ++i)
+		{
+			values[i] = Vector3(iter->value[i * 3 + 0].GetFloat(), iter->value[i * 3 + 1].GetFloat(), iter->value[i * 3 + 2].GetFloat());
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
 JsonReader JsonReader::GetObject(const String& name) const
 {
 	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));

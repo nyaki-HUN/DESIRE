@@ -28,6 +28,7 @@ public:
 	// Array types
 	void AddInt32Array(const String& name, const int32_t* values, size_t numValues);
 	void AddFloatArray(const String& name, const float* values, size_t numValues);
+	void AddVector3Array(const String& name, const Vector3* values, size_t numValues);
 
 	// Object type
 	void StartObject(const String& name);

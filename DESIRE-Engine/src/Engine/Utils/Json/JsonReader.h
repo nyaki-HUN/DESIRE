@@ -28,6 +28,7 @@ public:
 	// Array types
 	bool GetInt32Array(const String& name, int32_t* values, size_t numValues) const;
 	bool GetFloatArray(const String& name, float* values, size_t numValues) const;
+	bool GetVector3Array(const String& name, Vector3* values, size_t numValues) const;
 
 	// Object type
 	JsonReader GetObject(const String& name) const;
