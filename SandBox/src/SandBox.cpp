@@ -85,9 +85,9 @@ void SandBox::Init()
 
 	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
-		inputMapping.MapButton(EAction::Fire, mouse, Mouse::BUTTON_LEFT);
-		inputMapping.MapAxis(EAction::CameraYaw, mouse, Mouse::MOUSE_X);
-		inputMapping.MapAxis(EAction::CameraPitch, mouse, Mouse::MOUSE_Y);
+		inputMapping.MapButton(EAction::Fire, mouse, Mouse::Button_Left);
+		inputMapping.MapAxis(EAction::CameraYaw, mouse, Mouse::Axis_X);
+		inputMapping.MapAxis(EAction::CameraPitch, mouse, Mouse::Axis_Y);
 	}
 
 	for(const GameController& gamepad : Modules::Input->GetControllers())

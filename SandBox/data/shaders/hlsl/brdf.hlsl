@@ -14,8 +14,8 @@ float pow5(float x)
 float D_GGX(float NoH, float linearRoughness)
 {
 	float a = NoH * linearRoughness;
-	float k = linearRoughness / (1 - NoH * NoH + a * a);
-	return k * k * (1 / PI);
+	float k = linearRoughness / (1.0 - NoH * NoH + a * a);
+	return k * k * (1.0 / PI);
 }
 
 // Visibility function (specular V term)
@@ -30,8 +30,8 @@ float V_SmithGGXCorrelated(float NoV, float NoL, float linearRoughness)
 // Fresnel (specular F term)
 float3 F_Schlick(float VoH, float3 f0)
 {
-	float f = pow5(1 - VoH);
-	return f + f0 * (1 - f);
+	float f = pow5(1.0 - VoH);
+	return lerp(f, 1.0, f0);
 }
 
 float F_Schlick(float VoH, float f0, float f90)
@@ -55,7 +55,7 @@ float Fd_Burley(float NoV, float NoL, float LoH, float linearRoughness)
 // Lambertian
 float Fd_Lambert()
 {
-	return 1 / PI;
+	return 1.0 / PI;
 }
 
 //------------------------------------------------------------------------------
@@ -71,16 +71,15 @@ float3 Irradiance_SphericalHarmonics(float3 n)
 			float3(-0.188884931542396, -0.277402551592231, -0.377844212327557) * n.x;
 }
 
-// Karis 2014, "Physically Based Material on Mobile"
-float2 PrefilteredDFG_Karis(float roughness, float NoV)
+// EnvBRDFApprox ( https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile )
+float2 EnvBRDFApprox(float3 specularColor, float roughness, float NoV)
 {
 	float4 c0 = { -1.0, -0.0275, -0.572,  0.022 };
 	float4 c1 = {  1.0,  0.0425,  1.040, -0.040 };
-
 	float4 r = roughness * c0 + c1;
 	float a004 = min(r.x * r.x, exp2(-9.28 * NoV)) * r.x + r.y;
-
-	return float2(-1.04, 1.04) * a004 + r.zw;
+	float AB = float2(-1.04, 1.04) * a004 + r.zw;
+	return specularColor * AB.x + AB.y;
 }
 
 //------------------------------------------------------------------------------
@@ -140,8 +139,7 @@ float3 BRDF()
 		}
 	}
 	indirectSpecular = lerp(indirectSpecular, 1, roughness);
-	float2 dfg = PrefilteredDFG_Karis(roughness, NoV);
-	float3 specularColor = f0 * dfg.x + dfg.y;
+	float3 specularColor = EnvBRDFApprox(f0, roughness, NoV);
 
 	// Diffuse indirect
 	float3 indirectDiffuse = max(Irradiance_SphericalHarmonics(n), 0) * Fd_Lambert();

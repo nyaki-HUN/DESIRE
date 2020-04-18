@@ -47,8 +47,8 @@ const Factory<Physics>::Func_t Application::s_physicsFactory =
 #include "Render-Direct3D12/include/Direct3D12Render.h"
 const Factory<Render>::Func_t Application::s_renderFactory =
 //	&Factory<Render>::Create<BgfxRender>;
-//	&Factory<Render>::Create<Direct3D11Render>;
-	&Factory<Render>::Create<Direct3D12Render>;
+	&Factory<Render>::Create<Direct3D11Render>;
+//	&Factory<Render>::Create<Direct3D12Render>;
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Resource

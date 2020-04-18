@@ -45,8 +45,12 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 	file->Seek(0, IReadFile::ESeekOrigin::Begin);
 	if(isHDR)
 	{
-		data = std::unique_ptr<uint8_t[]>(reinterpret_cast<uint8_t*>(stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 4)));
-		format = Texture::EFormat::RGBA32F;
+		data = std::unique_ptr<uint8_t[]>(reinterpret_cast<uint8_t*>(stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0)));
+		switch(numComponents)
+		{
+			case 3:	format = Texture::EFormat::RGB32F; break;
+			case 4: format = Texture::EFormat::RGBA32F; break;
+		}
 	}
 	else
 	{
