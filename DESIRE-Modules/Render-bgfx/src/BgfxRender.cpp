@@ -795,6 +795,7 @@ bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
 		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8
 		bgfx::TextureFormat::RGB8,			// Texture::EFormat::RGB8
 		bgfx::TextureFormat::RGBA8,			// Texture::EFormat::RGBA8
+		bgfx::TextureFormat::Unknown,		// Texture::EFormat::RGB32F
 		bgfx::TextureFormat::RGBA32F,		// Texture::EFormat::RGBA32F
 		bgfx::TextureFormat::D16,			// Texture::EFormat::D16
 		bgfx::TextureFormat::D24S8,			// Texture::EFormat::D24_S8

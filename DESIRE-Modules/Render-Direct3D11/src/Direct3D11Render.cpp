@@ -636,7 +636,7 @@ void Direct3D11Render::Bind(Shader* shader)
 	{
 		if(errorBlob != nullptr)
 		{
-			LOG_ERROR("Shader compile error: %s", (char*)errorBlob->GetBufferPointer());
+			LOG_ERROR("Shader compile error:\n%s", (char*)errorBlob->GetBufferPointer());
 			DX_RELEASE(errorBlob);
 		}
 
@@ -1471,6 +1471,7 @@ DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture* texture)
 		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
+		DXGI_FORMAT_R32G32B32_FLOAT,			// Texture::EFormat::RGB32F
 		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
 		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
 		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8

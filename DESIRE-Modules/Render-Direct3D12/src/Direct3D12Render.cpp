@@ -893,6 +893,7 @@ DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* texture)
 		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
+		DXGI_FORMAT_R32G32B32_FLOAT,			// Texture::EFormat::RGB32F
 		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
 		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
 		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
