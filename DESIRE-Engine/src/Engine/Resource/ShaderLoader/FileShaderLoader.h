@@ -7,5 +7,5 @@ class Shader;
 class FileShaderLoader
 {
 public:
-	static Shader* Load(const ReadFilePtr& file);
+	static std::unique_ptr<Shader> Load(const ReadFilePtr& file);
 };

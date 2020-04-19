@@ -17,7 +17,7 @@ DESIRE_DISABLE_WARNINGS
 #include "stb/stb_image.h"
 DESIRE_ENABLE_WARNINGS
 
-Texture* StbImageLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& file)
 {
 	stbi_io_callbacks callbacks;
 	callbacks.read = [](void* file, char* data, int size)
@@ -72,7 +72,7 @@ Texture* StbImageLoader::Load(const ReadFilePtr& file)
 		return nullptr;
 	}
 
-	Texture* texture = new Texture(static_cast<uint16_t>(width), static_cast<uint16_t>(height), format);
+	std::unique_ptr<Texture> texture = std::make_unique<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), format);
 	texture->data.ptr = std::move(data);
 	texture->data.size = static_cast<size_t>(width * height * numComponents);
 	return texture;

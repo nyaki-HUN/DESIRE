@@ -162,10 +162,10 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 	{
 		for(MeshLoaderFunc_t loaderFunc : s_meshLoaders)
 		{
-			Mesh* mesh = loaderFunc(file);
+			std::unique_ptr<Mesh> mesh = loaderFunc(file);
 			if(mesh != nullptr)
 			{
-				return std::shared_ptr<Mesh>(mesh);
+				return std::move(mesh);
 			}
 
 			file->Seek(0, IReadFile::ESeekOrigin::Begin);
@@ -186,10 +186,10 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 	{
 		for(ShaderLoaderFunc_t loaderFunc : s_shaderLoaders)
 		{
-			Shader* shader = loaderFunc(file);
+			std::unique_ptr<Shader> shader = loaderFunc(file);
 			if(shader != nullptr)
 			{
-				return std::shared_ptr<Shader>(shader);
+				return std::move(shader);
 			}
 
 			file->Seek(0, IReadFile::ESeekOrigin::Begin);
@@ -207,10 +207,10 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 	{
 		for(TextureLoaderFunc_t loaderFunc : s_textureLoaders)
 		{
-			Texture* texture = loaderFunc(file);
+			std::unique_ptr<Texture> texture = loaderFunc(file);
 			if(texture != nullptr)
 			{
-				return std::shared_ptr<Texture>(texture);
+				return std::move(texture);
 			}
 
 			file->Seek(0, IReadFile::ESeekOrigin::Begin);

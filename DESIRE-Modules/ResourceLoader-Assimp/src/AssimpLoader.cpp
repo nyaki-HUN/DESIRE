@@ -3,6 +3,8 @@
 
 #include "Engine/Core/FS/IReadFile.h"
 
+#include "Engine/Resource/Mesh.h"
+
 class AssimpIOStreamWrapper : public Assimp::IOStream
 {
 public:
@@ -99,7 +101,7 @@ private:
 	const ReadFilePtr& file;
 };
 
-Mesh* AssimpLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Mesh> AssimpLoader::Load(const ReadFilePtr& file)
 {
 	Assimp::Importer importer;
 	importer.SetIOHandler(new AssimpIOSystemWrapper(file));

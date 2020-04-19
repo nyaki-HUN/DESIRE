@@ -50,7 +50,7 @@ struct TgaHeader
 	#include <PopPack.h>
 #endif	// #if DESIRE_PLATFORM_WINDOWS
 
-Texture* TgaLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 {
 	TgaHeader header;
 	size_t bytesRead = file->ReadBuffer(&header, sizeof(header));
@@ -149,7 +149,7 @@ Texture* TgaLoader::Load(const ReadFilePtr& file)
 
 	Texture::EFormat format = (numComponents == 3) ? Texture::EFormat::RGB8 : Texture::EFormat::RGBA8;
 
-	Texture* texture = new Texture(header.width, header.height, format);
+	std::unique_ptr<Texture> texture = std::make_unique<Texture>(header.width, header.height, format);
 	texture->data.ptr = std::move(data);
 	texture->data.size = dataSize;
 	return texture;

@@ -24,9 +24,9 @@ public:
 	void ReloadShader(const String& filename);
 	void ReloadTexture(const String& filename);
 
-	typedef Mesh*(*MeshLoaderFunc_t)(const ReadFilePtr&);
-	typedef Shader*(*ShaderLoaderFunc_t)(const ReadFilePtr&);
-	typedef Texture*(*TextureLoaderFunc_t)(const ReadFilePtr&);
+	typedef std::unique_ptr<Mesh>(*MeshLoaderFunc_t)(const ReadFilePtr&);
+	typedef std::unique_ptr<Shader>(*ShaderLoaderFunc_t)(const ReadFilePtr&);
+	typedef std::unique_ptr<Texture>(*TextureLoaderFunc_t)(const ReadFilePtr&);
 
 private:
 	std::shared_ptr<Mesh> LoadMesh(const String& filename);

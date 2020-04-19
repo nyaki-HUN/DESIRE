@@ -6,7 +6,7 @@
 
 #include "Engine/Resource/Shader.h"
 
-Shader* FileShaderLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Shader> FileShaderLoader::Load(const ReadFilePtr& file)
 {
 	StackString<DESIRE_MAX_PATH_LEN> name = file->GetFilename();
 
@@ -24,7 +24,7 @@ Shader* FileShaderLoader::Load(const ReadFilePtr& file)
 		name.RemoveFrom(0, pos + 1);
 	}
 
-	Shader* shader = new Shader(name);
+	std::unique_ptr<Shader> shader = std::make_unique<Shader>(name);
 	shader->data = file->ReadAllAsBinary();
 
 	return shader;
