@@ -35,10 +35,10 @@ public:
 		return *this;
 	}
 
-	void Insert(HashedString key, const T& value)
+	T* Insert(HashedString key, const T& value)
 	{
 		ASSERT(Find(key) == nullptr && "An other value is already added with this key");
-		elements.BinaryFindOrInsert(KeyValuePair(key, value));
+		return &elements.BinaryFindOrInsert(KeyValuePair(key, value)).value;
 	}
 
 	T* Find(HashedString key)
