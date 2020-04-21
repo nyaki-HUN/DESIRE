@@ -376,7 +376,7 @@ inline Quat::Quat(const Matrix3& rotMat)
 	const __m128 diagSum = SIMD::Add(SIMD::Add(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
 	const __m128 diagDiff = SIMD::Sub(SIMD::Sub(xx_yy_zz_xx, yy_zz_xx_yy), zz_xx_yy_zz);
 	const __m128 radicand = SIMD::Add(SIMD::Blend_W(diagDiff, diagSum), SIMD::Construct(1.0f));
-	const __m128 invSqrt = SIMD::InvSqrt(radicand);
+	const __m128 scale = SIMD::Mul(SIMD::InvSqrt(radicand), 0.5f);
 
 	__m128 zy_xz_yx = SIMD::Blend_Z(rotMat.col0, rotMat.col1);					// zy_xz_yx = 00 01 12 03
 	zy_xz_yx = SIMD::Swizzle_ZZYX(zy_xz_yx);									// zy_xz_yx = 12 12 01 00
@@ -387,8 +387,6 @@ inline Quat::Quat(const Matrix3& rotMat)
 
 	const __m128 sum = SIMD::Add(zy_xz_yx, yz_zx_xy);
 	const __m128 diff = SIMD::Sub(zy_xz_yx, yz_zx_xy);
-
-	const __m128 scale = SIMD::Mul(invSqrt, 0.5f);
 
 	__m128 res0 = SIMD::Blend_W(SIMD::Swizzle_XZYX(sum), SIMD::Swizzle_XXXX(diff));
 	__m128 res1 = SIMD::Blend_W(SIMD::Swizzle_ZXXX(sum), SIMD::Swizzle_YYYY(diff));

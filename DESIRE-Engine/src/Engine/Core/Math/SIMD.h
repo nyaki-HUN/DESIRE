@@ -605,23 +605,34 @@ public:
 		return SIMD::MinPerElem(xz_yw_xz_yw, SIMD::Swizzle_YXWZ(xz_yw_xz_yw));
 	}
 
+	// Compute the square root
+	static inline simd128_t Sqrt(simd128_t vec)
+	{
+#if DESIRE_USE_SSE
+		return _mm_sqrt_ps(vec);
+#elif DESIRE_USE_NEON
+		return SIMD::Mul(vec, SIMD::InvSqrt(vec));
+#else
+		return SIMD::Construct(
+			std::sqrt(SIMD::GetX(vec)),
+			std::sqrt(SIMD::GetY(vec)),
+			std::sqrt(SIMD::GetZ(vec)),
+			std::sqrt(SIMD::GetW(vec))
+		);
+#endif
+	}
+
 	// Compute the inverse/reciprocal square root
 	static inline simd128_t InvSqrt(simd128_t vec)
 	{
-#if DESIRE_USE_SSE
+#if DESIRE_USE_NEON
 		// Get an initial estimate then perform two Newton-Raphson iterations
-		const __m128 invSqrt = _mm_rsqrt_ps(vec);
-		const __m128 muls = SIMD::Mul(SIMD::Mul(vec, invSqrt), invSqrt);
-		return SIMD::Mul(SIMD::Mul(invSqrt, 0.5f), SIMD::Sub(SIMD::Construct(3.0f), muls));
-#elif DESIRE_USE_NEON
-		// Get an initial estimate then perform two Newton-Raphson iterations
-		float32x4_t invSqrt = vrsqrteq_f32(vec);
-		invSqrt = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(invSqrt, invSqrt), vec), result);
-		invSqrt = SIMD::Mul(vrsqrtsq_f32(SIMD::Mul(invSqrt, invSqrt), vec), result);
+		const float32x4_t invSqrt = vrsqrteq_f32(vec);
+		invSqrt = SIMD::Mul(invSqrt, vrsqrtsq_f32(SIMD::Mul(vec, invSqrt), invSqrt));
+		invSqrt = SIMD::Mul(invSqrt, vrsqrtsq_f32(SIMD::Mul(vec, invSqrt), invSqrt));
 		return invSqrt;
 #else
-		const float result = 1.0f / std::sqrt(SIMD::GetX(vec));
-		return SIMD::Construct(result);
+		return SIMD::Div(SIMD::Construct(1.0f), SIMD::Sqrt(vec));
 #endif
 	}
 
