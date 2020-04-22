@@ -16,15 +16,13 @@ int RoundUp(float x, int roundFactor)
 	return (int)std::ceil(x / roundFactor) * roundFactor;
 }
 
-float FastInvSqrt(float x)
+float Sqrt(float x)
 {
-	const float halfX = x * 0.5f;
-	uint32_t tmp = *(uint32_t*)&x;		// get bits for floating value
-	tmp = 0x5f3759df - (tmp >> 1);		// initial guess for Newton's method
-	float y = *(float*)&tmp;			// convert bits back to float
-	// Newton steps (repeating increases accuracy)
-	y = y * (1.5f - halfX * y * y);		// 1st iteration
-	return y;
+#if DESIRE_USE_SSE
+	return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ps1(x)));
+#else
+	return std::sqrt(x);
+#endif
 }
 
 bool IsPowerOfTwo(size_t x)

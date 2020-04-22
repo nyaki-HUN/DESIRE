@@ -113,7 +113,6 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	quat.set_function("CreateRotationY", &Quat::CreateRotationY);
 	quat.set_function("CreateRotationZ", &Quat::CreateRotationZ);
 	quat.set_function("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles);
-	quat.set_function("CreateRotationFromTo", &Quat::CreateRotationFromTo);
 
 	// Matrix3
 	auto matrix3 = lua.new_usertype<Matrix3>("Matrix3", sol::constructors<

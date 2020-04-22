@@ -269,7 +269,7 @@ public:
 	static inline simd128_t Mul(simd128_t vec, float scalar)
 	{
 #if DESIRE_USE_SSE
-		return Mul(vec, SIMD::Construct(scalar));
+		return _mm_mul_ps(vec, SIMD::Construct(scalar));
 #elif DESIRE_USE_NEON
 		return vmulq_n_f32(vec, scalar);
 #else
@@ -285,7 +285,7 @@ public:
 	// Per component multiplication and addition of the three inputs: c + (a * b)
 	static inline simd128_t MulAdd(simd128_t a, simd128_t b, simd128_t c)
 	{
-#if defined(__ARM_NEON__)
+#if DESIRE_USE_NEON
 		return vfmaq_f32(c, a, b);
 #else
 		return SIMD::Add(c, SIMD::Mul(a, b));
@@ -295,7 +295,7 @@ public:
 	// Per component multiplication and subtraction of the three inputs: c - (a * b)
 	static inline simd128_t MulSub(simd128_t a, simd128_t b, simd128_t c)
 	{
-#if defined(__ARM_NEON__)
+#if DESIRE_USE_NEON
 		return vfmsq_f32(c, a, b);
 #else
 		return SIMD::Sub(c, SIMD::Mul(a, b));

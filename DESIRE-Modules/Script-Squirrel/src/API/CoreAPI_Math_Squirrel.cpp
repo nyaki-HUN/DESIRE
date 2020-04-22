@@ -117,7 +117,6 @@ void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable)
 		.StaticFunc("CreateRotationY", &Quat::CreateRotationY)
 		.StaticFunc("CreateRotationZ", &Quat::CreateRotationZ)
 		.StaticFunc("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles)
-		.StaticFunc("CreateRotationFromTo", &Quat::CreateRotationFromTo)
 	);
 
 	// Matrix3

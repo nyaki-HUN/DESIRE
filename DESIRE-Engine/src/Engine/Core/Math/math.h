@@ -11,7 +11,7 @@ constexpr float Pi_4 = Pi / 4.0f;
 int Round32(float x);
 int RoundUp(float x, int roundFactor);
 
-float FastInvSqrt(float x);
+float Sqrt(float x);
 
 bool IsPowerOfTwo(size_t x);
 uint32_t SafeSizeToUint32(size_t value);

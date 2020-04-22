@@ -142,7 +142,6 @@ void RegisterCoreAPI_Math_AngelScript(asIScriptEngine* engine)
 	result = engine->RegisterGlobalFunction("Quat@ CreateRotationY(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, &Quat::CreateRotationY>)), asCALL_GENERIC);																									ASSERT(result >= asSUCCESS);
 	result = engine->RegisterGlobalFunction("Quat@ CreateRotationZ(float)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<float, &Quat::CreateRotationZ>)), asCALL_GENERIC);																									ASSERT(result >= asSUCCESS);
 	result = engine->RegisterGlobalFunction("Quat@ CreateRotationFromEulerAngles(const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<const Vector3&, &Quat::CreateRotationFromEulerAngles>)), asCALL_GENERIC);													ASSERT(result >= asSUCCESS);
-	result = engine->RegisterGlobalFunction("Quat@ CreateRotationFromTo(const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptGenericAPI<Quat>::StaticFunc<const Vector3&, const Vector3&, &Quat::CreateRotationFromTo>)), asCALL_GENERIC);								ASSERT(result >= asSUCCESS);
 	result = engine->SetDefaultNamespace("");																																																										ASSERT(result >= asSUCCESS);
 
 	// Matrix3

@@ -106,10 +106,6 @@ public:
 	// Construct a quaternion to rotate using Euler angles for each axis
 	static inline Quat CreateRotationFromEulerAngles(const Vector3& radiansXYZ);
 
-	// Construct a quaternion to rotate between two unit-length 3-D vectors
-	// NOTE: The result is unpredictable if unitVec0 and unitVec1 point in opposite directions.
-	static inline Quat CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo);
-
 private:
 	simd128_t vec128;
 };
@@ -278,27 +274,4 @@ inline Quat Quat::CreateRotationFromEulerAngles(const Vector3& radiansXYZ)
 		cX * cYsZ - sX * sYcZ,
 		cX * cYcZ + sX * sYsZ
 	);
-}
-
-// Construct a quaternion to rotate between two unit-length 3-D vectors
-inline Quat Quat::CreateRotationFromTo(const Vector3& unitVecFrom, const Vector3& unitVecTo)
-{
-	Quat result;
-
-#if DESIRE_USE_SSE
-	const __m128 cosAngle = SIMD::Dot3(unitVecFrom, unitVecTo);
-	const __m128 cosAngleX2Plus2 = SIMD::MulAdd(cosAngle, SIMD::Construct(2.0f), SIMD::Construct(2.0f));
-	const __m128 recipCosHalfAngleX2 = _mm_rsqrt_ps(cosAngleX2Plus2);
-	const __m128 cosHalfAngleX2 = SIMD::Mul(recipCosHalfAngleX2, cosAngleX2Plus2);
-	const __m128 res = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
-	result = SIMD::Blend_W(res, SIMD::Mul(cosHalfAngleX2, 0.5f));
-#else
-	const float cosAngle = unitVecFrom.Dot(unitVecTo);
-	const float cosHalfAngleX2 = std::sqrt(2.0f * (1.0f + cosAngle));
-	const float recipCosHalfAngleX2 = (1.0f / cosHalfAngleX2);
-	result = SIMD::Mul(unitVecFrom.Cross(unitVecTo), recipCosHalfAngleX2);
-	result.SetW(cosHalfAngleX2 * 0.5f);
-#endif
-
-	return result;
 }
