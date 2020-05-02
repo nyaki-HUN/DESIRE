@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-present, Yann Collet, Facebook, Inc.
+ * Copyright (c) 2016-2020, Yann Collet, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under both the BSD-style license (found in the
@@ -56,6 +56,10 @@ typedef ZSTD_ErrorCode ERR_enum;
 ERR_STATIC unsigned ERR_isError(size_t code) { return (code > ERROR(maxCode)); }
 
 ERR_STATIC ERR_enum ERR_getErrorCode(size_t code) { if (!ERR_isError(code)) return (ERR_enum)0; return (ERR_enum) (0-code); }
+
+/* check and forward error code */
+#define CHECK_V_F(e, f) size_t const e = f; if (ERR_isError(e)) return e
+#define CHECK_F(f)   { CHECK_V_F(_var_err__, f); }
 
 
 /*-****************************************

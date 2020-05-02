@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2016-present, Yann Collet, Facebook, Inc.
+ * Copyright (c) 2016-2020, Yann Collet, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under both the BSD-style license (found in the
  * LICENSE file in the root directory of this source tree) and the GPLv2 (found
  * in the COPYING file in the root directory of this source tree).
+ * You may select, at your option, one of the above-listed licenses.
  */
 
 #include "zstd_ldm.h"
@@ -49,9 +50,9 @@ size_t ZSTD_ldm_getTableSize(ldmParams_t params)
 {
     size_t const ldmHSize = ((size_t)1) << params.hashLog;
     size_t const ldmBucketSizeLog = MIN(params.bucketSizeLog, params.hashLog);
-    size_t const ldmBucketSize =
-        ((size_t)1) << (params.hashLog - ldmBucketSizeLog);
-    size_t const totalSize = ldmBucketSize + ldmHSize * sizeof(ldmEntry_t);
+    size_t const ldmBucketSize = ((size_t)1) << (params.hashLog - ldmBucketSizeLog);
+    size_t const totalSize = ZSTD_cwksp_alloc_size(ldmBucketSize)
+                           + ZSTD_cwksp_alloc_size(ldmHSize * sizeof(ldmEntry_t));
     return params.enableLdm ? totalSize : 0;
 }
 
@@ -221,6 +222,17 @@ static U64 ZSTD_ldm_fillLdmHashTable(ldmState_t* state,
         ++cur;
     }
     return rollingHash;
+}
+
+void ZSTD_ldm_fillHashTable(
+            ldmState_t* state, const BYTE* ip,
+            const BYTE* iend, ldmParams_t const* params)
+{
+    U64 startingHash = ZSTD_rollingHash_compute(ip, params->minMatchLength);
+    ZSTD_ldm_fillLdmHashTable(
+        state, startingHash, ip, iend - params->minMatchLength, state->window.base,
+        params->hashLog - params->bucketSizeLog,
+        *params);
 }
 
 
@@ -447,7 +459,7 @@ size_t ZSTD_ldm_generateSequences(
         if (ZSTD_window_needOverflowCorrection(ldmState->window, chunkEnd)) {
             U32 const ldmHSize = 1U << params->hashLog;
             U32 const correction = ZSTD_window_correctOverflow(
-                &ldmState->window, /* cycleLog */ 0, maxDist, src);
+                &ldmState->window, /* cycleLog */ 0, maxDist, chunkStart);
             ZSTD_ldm_reduceTable(ldmState->hashTable, ldmHSize, correction);
         }
         /* 2. We enforce the maximum offset allowed.
@@ -458,7 +470,7 @@ size_t ZSTD_ldm_generateSequences(
          *       * Try invalidation after the sequence generation and test the
          *         the offset against maxDist directly.
          */
-        ZSTD_window_enforceMaxDist(&ldmState->window, chunkEnd, maxDist, NULL, NULL);
+        ZSTD_window_enforceMaxDist(&ldmState->window, chunkEnd, maxDist, &ldmState->loadedDictEnd, NULL);
         /* 3. Generate the sequences for the chunk, and get newLeftoverSize. */
         newLeftoverSize = ZSTD_ldm_generateSequences_internal(
             ldmState, sequences, params, chunkStart, chunkSize);
@@ -566,7 +578,6 @@ size_t ZSTD_ldm_blockCompress(rawSeqStore_t* rawSeqStore,
         if (sequence.offset == 0)
             break;
 
-        assert(sequence.offset <= (1U << cParams->windowLog));
         assert(ip + sequence.litLength + sequence.matchLength <= iend);
 
         /* Fill tables for block compressor */
@@ -583,7 +594,7 @@ size_t ZSTD_ldm_blockCompress(rawSeqStore_t* rawSeqStore,
                 rep[i] = rep[i-1];
             rep[0] = sequence.offset;
             /* Store the sequence */
-            ZSTD_storeSeq(seqStore, newLitLength, ip - newLitLength,
+            ZSTD_storeSeq(seqStore, newLitLength, ip - newLitLength, iend,
                           sequence.offset + ZSTD_REP_MOVE,
                           sequence.matchLength - MINMATCH);
             ip += sequence.matchLength;
