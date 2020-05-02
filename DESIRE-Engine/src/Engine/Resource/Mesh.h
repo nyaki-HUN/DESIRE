@@ -34,13 +34,13 @@ public:
 		Num
 	};
 
-	struct VertexDecl
+	struct VertexLayout
 	{
 		EAttrib attrib = EAttrib::Num;
 		EAttribType type = EAttribType::Num;
 		uint8_t count = 0;
 
-		VertexDecl(EAttrib attrib, int count, EAttribType type);
+		VertexLayout(EAttrib attrib, int count, EAttribType type);
 		uint32_t GetSizeInBytes() const;
 	};
 
@@ -50,7 +50,7 @@ public:
 	uint32_t GetSizeOfIndices() const;
 	uint32_t GetSizeOfVertices() const;
 
-	void CalculateStrideFromVertexDecl();
+	void CalculateStrideFromVertexLayout();
 
 	// Render engine specific data set at bind
 	void* renderData;
@@ -63,7 +63,7 @@ public:
 	std::unique_ptr<float[]> vertices;
 	uint32_t numVertices;
 	uint32_t stride;
-	Array<VertexDecl> vertexDecl;
+	Array<VertexLayout> vertexLayout;
 
 	const EType type;
 };

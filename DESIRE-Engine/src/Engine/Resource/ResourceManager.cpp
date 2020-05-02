@@ -111,7 +111,7 @@ void ResourceManager::ReloadMesh(const String& filename)
 		mesh->vertices = std::move(newMesh->vertices);
 		mesh->numVertices = newMesh->numVertices;
 		mesh->stride = newMesh->stride;
-		mesh->vertexDecl = std::move(newMesh->vertexDecl);
+		mesh->vertexLayout = std::move(newMesh->vertexLayout);
 	}
 }
 

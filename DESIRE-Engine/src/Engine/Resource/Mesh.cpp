@@ -3,7 +3,7 @@
 
 #include "Engine/Render/Render.h"
 
-Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
+Mesh::VertexLayout::VertexLayout(EAttrib attrib, int count, EAttribType type)
 	: attrib(attrib)
 	, type(type)
 	, count(static_cast<uint8_t>(count))
@@ -13,7 +13,7 @@ Mesh::VertexDecl::VertexDecl(EAttrib attrib, int count, EAttribType type)
 	ASSERT(0 < count && count <= 4);
 }
 
-uint32_t Mesh::VertexDecl::GetSizeInBytes() const
+uint32_t Mesh::VertexLayout::GetSizeInBytes() const
 {
 	const uint32_t sizePerAttribType[] =
 	{
@@ -53,10 +53,10 @@ uint32_t Mesh::GetSizeOfVertices() const
 	return numVertices * stride;
 }
 
-void Mesh::CalculateStrideFromVertexDecl()
+void Mesh::CalculateStrideFromVertexLayout()
 {
 	stride = 0;
-	for(const VertexDecl& decl : vertexDecl)
+	for(const VertexLayout& decl : vertexLayout)
 	{
 		stride += decl.GetSizeInBytes();
 	}

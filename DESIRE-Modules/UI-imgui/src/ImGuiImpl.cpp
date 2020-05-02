@@ -61,11 +61,11 @@ void ImGuiImpl::Init()
 
 	// Dynamic mesh for the draw list
 	mesh = std::make_unique<DynamicMesh>();
-	mesh->vertexDecl.Reserve(3);
-	mesh->vertexDecl.EmplaceAdd(Mesh::EAttrib::Position, 2, Mesh::EAttribType::Float);
-	mesh->vertexDecl.EmplaceAdd(Mesh::EAttrib::Texcoord0, 2, Mesh::EAttribType::Float);
-	mesh->vertexDecl.EmplaceAdd(Mesh::EAttrib::Color, 4, Mesh::EAttribType::Uint8);
-	mesh->CalculateStrideFromVertexDecl();
+	mesh->vertexLayout.Reserve(3);
+	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Position, 2, Mesh::EAttribType::Float);
+	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Texcoord0, 2, Mesh::EAttribType::Float);
+	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Color, 4, Mesh::EAttribType::Uint8);
+	mesh->CalculateStrideFromVertexLayout();
 	mesh->maxNumOfIndices = 30000;
 	mesh->maxNumOfVertices = 20000;
 
