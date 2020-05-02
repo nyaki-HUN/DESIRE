@@ -31,12 +31,10 @@
 #include <functional>
 #include <utility>
 #include <cmath>
-#if defined(SOL_CXX17_FEATURES) && SOL_CXX17_FEATURES
 #include <optional>
 #if defined(SOL_STD_VARIANT) && SOL_STD_VARIANT
 #include <variant>
 #endif // SOL_STD_VARIANT
-#endif // SOL_CXX17_FEATURES
 
 namespace sol { namespace stack {
 	namespace stack_detail {
@@ -181,7 +179,7 @@ namespace sol { namespace stack {
 				return success;
 #endif // Strings are Numbers
 			}
-			else if constexpr(meta::any_same_v<T, type, this_state, this_main_state, this_environment, variadic_args>) {
+			else if constexpr (meta::any_same_v<T, type, this_state, this_main_state, this_environment, variadic_args>) {
 				(void)L;
 				(void)index;
 				(void)handler;
@@ -223,11 +221,12 @@ namespace sol { namespace stack {
 				handler(L, index, type::userdata, indextype, "unrecognized userdata (not pushed by sol?)");
 				return false;
 			}
-			else if constexpr (meta::any_same_v<T, lua_nil_t, 
+			else if constexpr (meta::any_same_v<T,
+				                   lua_nil_t,
 #if defined(SOL_CXX_17_FEATURES) && SOL_CXX_17_FEATURES
-				std::nullopt_t,
+				                   std::nullopt_t,
 #endif
-			nullopt_t>) {
+				                   nullopt_t>) {
 				bool success = lua_isnil(L, index);
 				if (success) {
 					tracking.use(1);
@@ -271,7 +270,7 @@ namespace sol { namespace stack {
 				}
 				return true;
 			}
-			else if constexpr(meta::is_specialization_of_v<T, basic_environment>) {
+			else if constexpr (meta::is_specialization_of_v<T, basic_environment>) {
 				tracking.use(1);
 				if (lua_getmetatable(L, index) == 0) {
 					return true;
@@ -304,6 +303,47 @@ namespace sol { namespace stack {
 					return false;
 				}
 				return true;
+			}
+			else if constexpr (std::is_same_v<T, luaL_Stream*> || std::is_same_v<T, luaL_Stream>) {
+				if (lua_getmetatable(L, index) == 0) {
+					type t = type_of(L, index);
+					handler(L, index, expected, t, "value is not a valid luaL_Stream (has no metatable/is not a valid value)");
+					return false;
+				}
+				luaL_getmetatable(L, LUA_FILEHANDLE);
+				if (type_of(L, index) != type::table) {
+					type t = type_of(L, index);
+					lua_pop(L, 1);
+					handler(L,
+						index,
+						expected,
+						t,
+						"value is not a valid luaL_Stream (there is no metatable for luaL_Stream -- did you forget to "
+						"my_lua_state.open_libraries(sol::lib::state) or equivalent?)");
+					return false;
+				}
+				int is_stream_table = lua_compare(L, -1, -2, LUA_OPEQ);
+				lua_pop(L, 2);
+				if (is_stream_table == 0) {
+					type t = type_of(L, index);
+					handler(L, index, expected, t, "value is not a valid luaL_Stream (incorrect metatable)");
+					return false;
+				}
+				return true;
+			}
+			else if constexpr (meta::is_optional_v<T>) {
+				using ValueType = typename T::value_type;
+				(void)handler;
+				type t = type_of(L, index);
+				if (t == type::none) {
+					tracking.use(0);
+					return true;
+				}
+				if (t == type::lua_nil) {
+					tracking.use(1);
+					return true;
+				}
+				return stack::unqualified_check<ValueType>(L, index, no_panic, tracking);
 			}
 			else if constexpr (expected == type::userdata) {
 				if constexpr (meta::any_same_v<T, userdata_value> || meta::is_specialization_of_v<T, basic_userdata>) {
@@ -435,7 +475,9 @@ namespace sol { namespace stack {
 
 		template <typename U, typename Handler>
 		static bool check(types<U>, lua_State* L, int index, type indextype, Handler&& handler, record& tracking) {
-			if constexpr (std::is_same_v<T, lightuserdata_value> || std::is_same_v<T, userdata_value> || std::is_same_v<T, userdata> || std::is_same_v<T, lightuserdata>) {
+			if constexpr (
+				std::is_same_v<T,
+				     lightuserdata_value> || std::is_same_v<T, userdata_value> || std::is_same_v<T, userdata> || std::is_same_v<T, lightuserdata>) {
 				tracking.use(1);
 				if (indextype != type::userdata) {
 					handler(L, index, type::userdata, indextype, "value is not a valid userdata");
@@ -469,9 +511,9 @@ namespace sol { namespace stack {
 				bool success = false;
 				bool has_derived = derive<T>::value || weak_derive<T>::value;
 				if (has_derived) {
-	#if defined(SOL_SAFE_STACK_CHECK) && SOL_SAFE_STACK_CHECK
+#if defined(SOL_SAFE_STACK_CHECK) && SOL_SAFE_STACK_CHECK
 					luaL_checkstack(L, 1, detail::not_enough_stack_space_string);
-	#endif // make sure stack doesn't overflow
+#endif // make sure stack doesn't overflow
 					auto pn = stack::pop_n(L, 1);
 					lua_pushstring(L, &detail::base_class_check_key()[0]);
 					lua_rawget(L, metatableindex);
@@ -525,42 +567,6 @@ namespace sol { namespace stack {
 		}
 	};
 
-	template <typename T>
-	struct unqualified_checker<optional<T>, type::poly> {
-		template <typename Handler>
-		static bool check(lua_State* L, int index, Handler&&, record& tracking) {
-			type t = type_of(L, index);
-			if (t == type::none) {
-				tracking.use(0);
-				return true;
-			}
-			if (t == type::lua_nil) {
-				tracking.use(1);
-				return true;
-			}
-			return stack::unqualified_check<T>(L, index, no_panic, tracking);
-		}
-	};
-
-#if defined(SOL_CXX17_FEATURES) && SOL_CXX17_FEATURES
-
-	template <typename T>
-	struct unqualified_checker<std::optional<T>, type::poly> {
-		template <typename Handler>
-		static bool check(lua_State* L, int index, Handler&&, record& tracking) {
-			type t = type_of(L, index);
-			if (t == type::none) {
-				tracking.use(0);
-				return true;
-			}
-			if (t == type::lua_nil) {
-				tracking.use(1);
-				return true;
-			}
-			return stack::check<T>(L, index, no_panic, tracking);
-		}
-	};
-
 #if defined(SOL_STD_VARIANT) && SOL_STD_VARIANT
 
 	template <typename... Tn>
@@ -600,7 +606,6 @@ namespace sol { namespace stack {
 
 #endif // SOL_STD_VARIANT
 
-#endif // SOL_CXX17_FEATURES
-}}     // namespace sol::stack
+}} // namespace sol::stack
 
 #endif // SOL_STACK_CHECK_UNQUALIFIED_HPP

@@ -332,11 +332,11 @@ namespace sol {
 
 		template <typename F, bool is_index, bool is_variable, bool checked, int boost, bool clean_stack, typename = void>
 		struct agnostic_lua_call_wrapper {
-			using wrap = wrapper<meta::unqualified_t<F>>;
-
 			template <typename Fx, typename... Args>
 			static int call(lua_State* L, Fx&& f, Args&&... args) {
-				if constexpr (is_lua_reference_v<meta::unqualified_t<Fx>>) {
+				using uFx = meta::unqualified_t<Fx>;
+				static constexpr bool is_ref = is_lua_reference_v<uFx>;
+				if constexpr (is_ref) {
 					if constexpr (is_index) {
 						return stack::push(L, std::forward<Fx>(f), std::forward<Args>(args)...);
 					}
@@ -346,10 +346,11 @@ namespace sol {
 					}
 				}
 				else {
+					using wrap = wrapper<uFx>;
 					using traits_type = typename wrap::traits_type;
 					using fp_t = typename traits_type::function_pointer_type;
 					constexpr bool is_function_pointer_convertible
-					     = std::is_class_v<meta::unqualified_t<F>> && std::is_convertible_v<std::decay_t<Fx>, fp_t>;
+					     = std::is_class_v<uFx> && std::is_convertible_v<std::decay_t<Fx>, fp_t>;
 					if constexpr (is_function_pointer_convertible) {
 						fp_t fx = f;
 						return agnostic_lua_call_wrapper<fp_t, is_index, is_variable, checked, boost, clean_stack>{}.call(
@@ -462,6 +463,7 @@ namespace sol {
 					using object_type = typename wrap::object_type;
 					if constexpr (sizeof...(Args) < 1) {
 						using Ta = meta::conditional_t<std::is_void_v<T>, object_type, T>;
+						static_assert(std::is_base_of_v<object_type, Ta>, "It seems like you might have accidentally bound a class type with a member function method that does not correspond to the class. For example, there could be a small type in your new_usertype<T>(...) binding, where you specify one class \"T\" but then bind member methods from a complete unrelated class. Check things over!");
 #if defined(SOL_SAFE_USERTYPE) && SOL_SAFE_USERTYPE
 						auto maybeo = stack::check_get<Ta*>(L, 1);
 						if (!maybeo || maybeo.value() == nullptr) {
@@ -491,6 +493,7 @@ namespace sol {
 					if constexpr (is_index) {
 						if constexpr (sizeof...(Args) < 1) {
 							using Ta = meta::conditional_t<std::is_void_v<T>, object_type, T>;
+							static_assert(std::is_base_of_v<object_type, Ta>, "It seems like you might have accidentally bound a class type with a member function method that does not correspond to the class. For example, there could be a small type in your new_usertype<T>(...) binding, where you specify one class \"T\" but then bind member methods from a complete unrelated class. Check things over!");
 #if defined(SOL_SAFE_USERTYPE) && SOL_SAFE_USERTYPE
 							auto maybeo = stack::check_get<Ta*>(L, 1);
 							if (!maybeo || maybeo.value() == nullptr) {
@@ -867,8 +870,7 @@ namespace sol {
 			if constexpr (meta::is_specialization_of_v<uFx, yielding_t>) {
 				using real_fx = meta::unqualified_t<decltype(std::forward<Fx>(fx).func)>;
 				lua_call_wrapper<T, real_fx, is_index, is_variable, checked, boost, clean_stack> lcw{};
-				int nr = lcw.call(L, std::forward<Fx>(fx).func, std::forward<Args>(args)...);
-				return lua_yield(L, nr);
+				return lcw.call(L, std::forward<Fx>(fx).func, std::forward<Args>(args)...);
 			}
 			else {
 				lua_call_wrapper<T, uFx, is_index, is_variable, checked, boost, clean_stack> lcw{};
@@ -880,7 +882,14 @@ namespace sol {
 		     bool clean_stack = true>
 		inline int call_user(lua_State* L) {
 			auto& fx = stack::unqualified_get<user<F>>(L, upvalue_index(start));
-			return call_wrapped<T, is_index, is_variable, 0, checked, clean_stack>(L, fx);
+			using uFx = meta::unqualified_t<F>;
+			int nr = call_wrapped<T, is_index, is_variable, 0, checked, clean_stack>(L, fx);
+			if constexpr (meta::is_specialization_of_v<uFx, yielding_t>) {
+				return lua_yield(L, nr);
+			}
+			else {
+				return nr;
+			}
 		}
 
 		template <typename T, typename = void>
