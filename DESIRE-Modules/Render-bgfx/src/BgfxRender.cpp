@@ -35,9 +35,9 @@ BgfxRender::BgfxRender()
 		uniform = BGFX_INVALID_HANDLE;
 	}
 
-	screenSpaceQuadMeshVertexDecl.begin();
-	screenSpaceQuadMeshVertexDecl.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float);
-	screenSpaceQuadMeshVertexDecl.end();
+	screenSpaceQuadVertexLayout.begin();
+	screenSpaceQuadVertexLayout.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float);
+	screenSpaceQuadVertexLayout.end();
 }
 
 void BgfxRender::Init(OSWindow* mainWindow)
@@ -356,13 +356,13 @@ void BgfxRender::Bind(Mesh* mesh)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
 
-	renderData->vertexDecl.begin();
-	for(Mesh::VertexDecl& decl : mesh->vertexDecl)
+	renderData->vertexLayout.begin();
+	for(Mesh::VertexLayout& layout : mesh->vertexLayout)
 	{
-		const bool isNormalized = (decl.type == Mesh::EAttribType::Uint8);
-		renderData->vertexDecl.add(s_attribConversionTable[(size_t)decl.attrib], decl.count, s_attribTypeConversionTable[(size_t)decl.type], isNormalized);
+		const bool isNormalized = (layout.type == Mesh::EAttribType::Uint8);
+		renderData->vertexLayout.add(s_attribConversionTable[(size_t)layout.attrib], layout.count, s_attribTypeConversionTable[(size_t)layout.type], isNormalized);
 	}
-	renderData->vertexDecl.end();
+	renderData->vertexLayout.end();
 
 	switch(mesh->type)
 	{
@@ -377,7 +377,7 @@ void BgfxRender::Bind(Mesh* mesh)
 			if(mesh->numVertices != 0)
 			{
 				const bgfx::Memory* vertexData = bgfx::makeRef(mesh->vertices.get(), mesh->GetSizeOfVertices());
-				renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
+				renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexLayout, BGFX_BUFFER_NONE);
 			}
 			break;
 		}
@@ -395,7 +395,7 @@ void BgfxRender::Bind(Mesh* mesh)
 			if(dynamicMesh->maxNumOfVertices != 0)
 			{
 				const bgfx::Memory* vertexData = bgfx::copy(dynamicMesh->vertices.get(), dynamicMesh->GetMaxSizeOfVertices());
-				renderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, renderData->vertexDecl, BGFX_BUFFER_NONE);
+				renderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, renderData->vertexLayout, BGFX_BUFFER_NONE);
 			}
 			break;
 		}
@@ -680,7 +680,7 @@ void BgfxRender::SetScreenSpaceQuadMesh()
 {
 	bgfx::TransientIndexBuffer indexBuffer;
 	bgfx::TransientVertexBuffer vertexBuffer;
-	if(bgfx::allocTransientBuffers(&vertexBuffer, screenSpaceQuadMeshVertexDecl, 4, &indexBuffer, 6))
+	if(bgfx::allocTransientBuffers(&vertexBuffer, screenSpaceQuadVertexLayout, 4, &indexBuffer, 6))
 	{
 		// Vertices
 		const float vertices[] =

@@ -73,7 +73,7 @@ private:
 	uint32_t blendFactor = 0;
 	uint32_t clearColor = 0x000000FF;
 
-	bgfx::VertexDecl screenSpaceQuadMeshVertexDecl;
+	bgfx::VertexLayout screenSpaceQuadVertexLayout;
 
 	bool initialized = false;
 };

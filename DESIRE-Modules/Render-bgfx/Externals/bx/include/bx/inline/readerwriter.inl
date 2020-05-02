@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2020 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
@@ -239,7 +239,7 @@ namespace bx
 
 		if (0 < morecore)
 		{
-			morecore = BX_ALIGN_MASK(morecore, 0xfff);
+			morecore = alignUp(morecore, 0x1000);
 			m_data = (uint8_t*)m_memBlock->more(morecore);
 			m_size = m_memBlock->getSize();
 		}

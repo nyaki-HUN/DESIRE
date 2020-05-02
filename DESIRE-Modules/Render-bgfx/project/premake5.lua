@@ -5,6 +5,8 @@ project "Render-bgfx"
 	pchheader "stdafx_bgfx.h"
 	pchsource "../src/stdafx_bgfx.cpp"
 
+	removeflags { "FatalCompileWarnings" }
+
 	includedirs
 	{
 		"../Externals/bgfx/include",
