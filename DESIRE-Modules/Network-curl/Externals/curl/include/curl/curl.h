@@ -37,6 +37,15 @@
 #include "curlver.h"         /* libcurl version defines   */
 #include "system.h"          /* determine things run-time */
 
+/*
+ * Define CURL_WIN32 when build target is Win32 API
+ */
+
+#if (defined(_WIN32) || defined(__WIN32__) || defined(WIN32)) &&        \
+  !defined(__SYMBIAN32__)
+#define CURL_WIN32
+#endif
+
 #include <stdio.h>
 #include <limits.h>
 
@@ -49,7 +58,7 @@
 #include <sys/types.h>
 #include <time.h>
 
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__CYGWIN__)
+#if defined(CURL_WIN32) && !defined(_WIN32_WCE) && !defined(__CYGWIN__)
 #if !(defined(_WINSOCKAPI_) || defined(_WINSOCK_H) || \
       defined(__LWIP_OPT_H__) || defined(LWIP_HDR_OPT_H))
 /* The check above prevents the winsock2 inclusion if winsock.h already was
@@ -70,11 +79,11 @@
 #include <sys/select.h>
 #endif
 
-#if !defined(WIN32) && !defined(_WIN32_WCE)
+#if !defined(CURL_WIN32) && !defined(_WIN32_WCE)
 #include <sys/socket.h>
 #endif
 
-#if !defined(WIN32) && !defined(__WATCOMC__) && !defined(__VXWORKS__)
+#if !defined(CURL_WIN32) && !defined(__WATCOMC__) && !defined(__VXWORKS__)
 #include <sys/time.h>
 #endif
 
@@ -105,7 +114,7 @@ typedef void CURLSH;
 
 #ifdef CURL_STATICLIB
 #  define CURL_EXTERN
-#elif defined(WIN32) || defined(__SYMBIAN32__) || \
+#elif defined(CURL_WIN32) || defined(__SYMBIAN32__) || \
      (__has_declspec_attribute(dllexport) && \
       __has_declspec_attribute(dllimport))
 #  if defined(BUILDING_LIBCURL)
@@ -121,7 +130,7 @@ typedef void CURLSH;
 
 #ifndef curl_socket_typedef
 /* socket typedef */
-#if defined(WIN32) && !defined(__LWIP_OPT_H__) && !defined(LWIP_HDR_OPT_H)
+#if defined(CURL_WIN32) && !defined(__LWIP_OPT_H__) && !defined(LWIP_HDR_OPT_H)
 typedef SOCKET curl_socket_t;
 #define CURL_SOCKET_BAD INVALID_SOCKET
 #else
@@ -824,6 +833,11 @@ typedef enum {
    if possible. The OpenSSL backend has this ability. */
 #define CURLSSLOPT_NO_PARTIALCHAIN (1<<2)
 
+/* - REVOKE_BEST_EFFORT tells libcurl to ignore certificate revocation offline
+   checks and ignore missing revocation list for those SSL backends where such
+   behavior is present. */
+#define CURLSSLOPT_REVOKE_BEST_EFFORT (1<<3)
+
 /* The default connection attempt delay in milliseconds for happy eyeballs.
    CURLOPT_HAPPY_EYEBALLS_TIMEOUT_MS.3 and happy-eyeballs-timeout-ms.d document
    this value, keep them in sync. */
@@ -923,6 +937,7 @@ typedef enum {
 #define CURLPROTO_GOPHER (1<<25)
 #define CURLPROTO_SMB    (1<<26)
 #define CURLPROTO_SMBS   (1<<27)
+#define CURLPROTO_MQTT   (1<<28)
 #define CURLPROTO_ALL    (~0) /* enable everything */
 
 /* long may be 32 or 64 bits, but we should never depend on anything else
@@ -1937,6 +1952,9 @@ typedef enum {
   /* SASL authorisation identity */
   CURLOPT(CURLOPT_SASL_AUTHZID, CURLOPTTYPE_STRINGPOINT, 289),
 
+  /* allow RCPT TO command to fail for some recipients */
+  CURLOPT(CURLOPT_MAIL_RCPT_ALLLOWFAILS, CURLOPTTYPE_LONG, 290),
+
   CURLOPT_LASTENTRY /* the last unused */
 } CURLoption;
 
@@ -2416,7 +2434,7 @@ CURL_EXTERN CURLcode curl_global_init(long flags);
  * initialize libcurl and set user defined memory management callback
  * functions.  Users can implement memory management routines to check for
  * memory leaks, check for mis-use of the curl library etc.  User registered
- * callback routines with be invoked by this library instead of the system
+ * callback routines will be invoked by this library instead of the system
  * memory management routines like malloc, free etc.
  */
 CURL_EXTERN CURLcode curl_global_init_mem(long flags,
@@ -2712,6 +2730,7 @@ typedef enum {
   CURLVERSION_FOURTH,
   CURLVERSION_FIFTH,
   CURLVERSION_SIXTH,
+  CURLVERSION_SEVENTH,
   CURLVERSION_LAST /* never actually use this */
 } CURLversion;
 
@@ -2720,7 +2739,7 @@ typedef enum {
    meant to be a built-in version number for what kind of struct the caller
    expects. If the struct ever changes, we redefine the NOW to another enum
    from above. */
-#define CURLVERSION_NOW CURLVERSION_SIXTH
+#define CURLVERSION_NOW CURLVERSION_SEVENTH
 
 typedef struct {
   CURLversion age;          /* age of the returned struct */
@@ -2759,6 +2778,13 @@ typedef struct {
   const char *nghttp2_version; /* human readable string. */
   const char *quic_version;    /* human readable quic (+ HTTP/3) library +
                                   version or NULL */
+
+  /* These fields were added in CURLVERSION_SEVENTH */
+  const char *cainfo;          /* the built-in default CURLOPT_CAINFO, might
+                                  be NULL */
+  const char *capath;          /* the built-in default CURLOPT_CAPATH, might
+                                  be NULL */
+
 } curl_version_info_data;
 
 #define CURL_VERSION_IPV6         (1<<0)  /* IPv6-enabled */
@@ -2792,8 +2818,6 @@ typedef struct {
 #define CURL_VERSION_BROTLI       (1<<23) /* Brotli features are present. */
 #define CURL_VERSION_ALTSVC       (1<<24) /* Alt-Svc handling built-in */
 #define CURL_VERSION_HTTP3        (1<<25) /* HTTP3 support built-in */
-
-#define CURL_VERSION_ESNI         (1<<26) /* ESNI support */
 
  /*
  * NAME curl_version_info()

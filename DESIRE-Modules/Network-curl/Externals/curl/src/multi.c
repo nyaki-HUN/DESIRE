@@ -47,6 +47,7 @@
 #include "http_proxy.h"
 #include "http2.h"
 #include "socketpair.h"
+#include "socks.h"
 /* The last 3 #include files should be in this order */
 #include "curl_printf.h"
 #include "curl_memory.h"
@@ -78,7 +79,6 @@ static CURLMcode add_next_timeout(struct curltime now,
 static CURLMcode multi_timeout(struct Curl_multi *multi,
                                long *timeout_ms);
 static void process_pending_handles(struct Curl_multi *multi);
-static void detach_connnection(struct Curl_easy *data);
 
 #ifdef DEBUGBUILD
 static const char * const statename[]={
@@ -111,7 +111,7 @@ static void Curl_init_completed(struct Curl_easy *data)
 
   /* Important: reset the conn pointer so that we don't point to memory
      that could be freed anytime */
-  detach_connnection(data);
+  Curl_detach_connnection(data);
   Curl_expire_clear(data); /* stop all timers */
 }
 
@@ -370,6 +370,7 @@ struct Curl_multi *Curl_multi_handle(int hashsize, /* socket hash */
   /* -1 means it not set by user, use the default value */
   multi->maxconnects = -1;
   multi->max_concurrent_streams = 100;
+  multi->ipv6_works = Curl_ipv6works(NULL);
 
 #ifdef ENABLE_WAKEUP
   if(Curl_socketpair(AF_UNIX, SOCK_STREAM, 0, multi->wakeup_pair) < 0) {
@@ -504,6 +505,7 @@ CURLMcode curl_multi_add_handle(struct Curl_multi *multi,
      easy handle is added */
   memset(&multi->timer_lastcall, 0, sizeof(multi->timer_lastcall));
 
+  CONNCACHE_LOCK(data);
   /* The closure handle only ever has default timeouts set. To improve the
      state somewhat we clone the timeouts from each added handle so that the
      closure handle always has the same timeouts as the most recently added
@@ -513,6 +515,7 @@ CURLMcode curl_multi_add_handle(struct Curl_multi *multi,
     data->set.server_response_timeout;
   data->state.conn_cache->closure_handle->set.no_signal =
     data->set.no_signal;
+  CONNCACHE_UNLOCK(data);
 
   Curl_update_timer(multi);
   return CURLM_OK;
@@ -587,11 +590,14 @@ static CURLcode multi_done(struct Curl_easy *data,
 
   process_pending_handles(data->multi); /* connection / multiplex */
 
-  CONN_LOCK(data);
-  detach_connnection(data);
+  CONNCACHE_LOCK(data);
+  Curl_detach_connnection(data);
   if(CONN_INUSE(conn)) {
     /* Stop if still used. */
-    CONN_UNLOCK(data);
+    /* conn->data must not remain pointing to this transfer since it is going
+       away! Find another to own it! */
+    conn->data = conn->easyq.head->ptr;
+    CONNCACHE_UNLOCK(data);
     DEBUGF(infof(data, "Connection still in use %zu, "
                  "no more multi_done now!\n",
                  conn->easyq.size));
@@ -642,7 +648,8 @@ static CURLcode multi_done(struct Curl_easy *data,
        || (premature && !(conn->handler->flags & PROTOPT_STREAM))) {
     CURLcode res2;
     connclose(conn, "disconnecting");
-    CONN_UNLOCK(data);
+    Curl_conncache_remove_conn(data, conn, FALSE);
+    CONNCACHE_UNLOCK(data);
     res2 = Curl_disconnect(data, conn, premature);
 
     /* If we had an error already, make sure we return that one. But
@@ -661,7 +668,7 @@ static CURLcode multi_done(struct Curl_easy *data,
               conn->bits.conn_to_host ? conn->conn_to_host.dispname :
               conn->host.dispname);
     /* the connection is no longer in use by this transfer */
-    CONN_UNLOCK(data);
+    CONNCACHE_UNLOCK(data);
     if(Curl_conncache_return_conn(data, conn)) {
       /* remember the most recently used connection */
       data->state.lastconnect = conn;
@@ -695,6 +702,10 @@ CURLMcode curl_multi_remove_handle(struct Curl_multi *multi,
   if(!data->multi)
     return CURLM_OK; /* it is already removed so let's say it is fine! */
 
+  /* Prevent users from trying to remove an easy handle from the wrong multi */
+  if(data->multi != multi)
+    return CURLM_BAD_EASY_HANDLE;
+
   if(multi->in_callback)
     return CURLM_RECURSIVE_API_CALL;
 
@@ -726,8 +737,8 @@ CURLMcode curl_multi_remove_handle(struct Curl_multi *multi,
        we don't leave a half-baked one around */
     if(easy_owns_conn) {
 
-      /* multi_done() clears the conn->data field to lose the association
-         between the easy handle and the connection
+      /* multi_done() clears the association between the easy handle and the
+         connection.
 
          Note that this ignores the return code simply because there's
          nothing really useful to do with it anyway! */
@@ -769,8 +780,7 @@ CURLMcode curl_multi_remove_handle(struct Curl_multi *multi,
                                 vanish with this handle */
 
   /* Remove the association between the connection and the handle */
-  if(data->conn)
-    detach_connnection(data);
+  Curl_detach_connnection(data);
 
 #ifdef USE_LIBPSL
   /* Remove the PSL association. */
@@ -819,9 +829,13 @@ bool Curl_multiplex_wanted(const struct Curl_multi *multi)
   return (multi && (multi->multiplexing));
 }
 
-/* This is the only function that should clear data->conn. This will
-   occasionally be called with the pointer already cleared. */
-static void detach_connnection(struct Curl_easy *data)
+/*
+ * Curl_detach_connnection() removes the given transfer from the connection.
+ *
+ * This is the only function that should clear data->conn. This will
+ * occasionally be called with the data->conn pointer already cleared.
+ */
+void Curl_detach_connnection(struct Curl_easy *data)
 {
   struct connectdata *conn = data->conn;
   if(conn)
@@ -829,7 +843,11 @@ static void detach_connnection(struct Curl_easy *data)
   data->conn = NULL;
 }
 
-/* This is the only function that should assign data->conn */
+/*
+ * Curl_attach_connnection() attaches this transfer to this connection.
+ *
+ * This is the only function that should assign data->conn
+ */
 void Curl_attach_connnection(struct Curl_easy *data,
                              struct connectdata *conn)
 {
@@ -851,6 +869,9 @@ static int waitconnect_getsock(struct connectdata *conn,
   if(CONNECT_FIRSTSOCKET_PROXY_SSL())
     return Curl_ssl_getsock(conn, sock);
 #endif
+
+  if(SOCKS_STATE(conn->cnnct.state))
+    return Curl_SOCKS_getsock(conn, sock, FIRSTSOCKET);
 
   for(i = 0; i<2; i++) {
     if(conn->tempsock[i] != CURL_SOCKET_BAD) {
@@ -1186,14 +1207,16 @@ static CURLMcode Curl_multi_wait(struct Curl_multi *multi,
       if(use_wakeup && multi->wakeup_pair[0] != CURL_SOCKET_BAD) {
         if(ufds[curlfds + extra_nfds].revents & POLLIN) {
           char buf[64];
+          ssize_t nread;
           while(1) {
             /* the reading socket is non-blocking, try to read
                data from it until it receives an error (except EINTR).
                In normal cases it will get EAGAIN or EWOULDBLOCK
                when there is no more data, breaking the loop. */
-            if(sread(multi->wakeup_pair[0], buf, sizeof(buf)) < 0) {
+            nread = sread(multi->wakeup_pair[0], buf, sizeof(buf));
+            if(nread <= 0) {
 #ifndef USE_WINSOCK
-              if(EINTR == SOCKERRNO)
+              if(nread < 0 && EINTR == SOCKERRNO)
                 continue;
 #endif
               break;
@@ -1525,19 +1548,6 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
        (HTTP/2), or the full connection for older protocols */
     bool stream_error = FALSE;
     rc = CURLM_OK;
-
-    DEBUGASSERT((data->mstate <= CURLM_STATE_CONNECT) ||
-                (data->mstate >= CURLM_STATE_DONE) ||
-                data->conn);
-    if(!data->conn &&
-       data->mstate > CURLM_STATE_CONNECT &&
-       data->mstate < CURLM_STATE_DONE) {
-      /* In all these states, the code will blindly access 'data->conn'
-         so this is precaution that it isn't NULL. And it silences static
-         analyzers. */
-      failf(data, "In state %d with no conn, bail out!\n", data->mstate);
-      return CURLM_INTERNAL_ERROR;
-    }
 
     if(multi_ischanged(multi, TRUE)) {
       DEBUGF(infof(data, "multi changed, check CONNECT_PEND queue!\n"));
@@ -2187,8 +2197,13 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
           }
         }
       }
-      else if(comeback)
-        rc = CURLM_CALL_MULTI_PERFORM;
+      else if(comeback) {
+        /* This avoids CURLM_CALL_MULTI_PERFORM so that a very fast transfer
+           won't get stuck on this transfer at the expense of other concurrent
+           transfers */
+        Curl_expire(data, 0, EXPIRE_RUN_NOW);
+        rc = CURLM_OK;
+      }
       break;
     }
 
@@ -2216,8 +2231,7 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
          * access free'd data, if the connection is free'd and the handle
          * removed before we perform the processing in CURLM_STATE_COMPLETED
          */
-        if(data->conn)
-          detach_connnection(data);
+        Curl_detach_connnection(data);
       }
 
 #ifndef CURL_DISABLE_FTP
@@ -2269,7 +2283,10 @@ static CURLMcode multi_runsingle(struct Curl_multi *multi,
             /* This is where we make sure that the conn pointer is reset.
                We don't have to do this in every case block above where a
                failure is detected */
-            detach_connnection(data);
+            Curl_detach_connnection(data);
+
+            /* remove connection from cache */
+            Curl_conncache_remove_conn(data, conn, TRUE);
 
             /* disconnect properly */
             Curl_disconnect(data, conn, dead_connection);

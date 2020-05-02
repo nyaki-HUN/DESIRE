@@ -114,6 +114,7 @@ bool curl_win32_idn_to_ascii(const char *in, char **out);
 #include "http_ntlm.h"
 #include "curl_rtmp.h"
 #include "gopher.h"
+#include "mqtt.h"
 #include "http_proxy.h"
 #include "conncache.h"
 #include "multihandle.h"
@@ -128,7 +129,6 @@ bool curl_win32_idn_to_ascii(const char *in, char **out);
 #include "memdebug.h"
 
 static void conn_free(struct connectdata *conn);
-static void free_idnconverted_hostname(struct hostname *host);
 static unsigned int get_protocol_family(unsigned int protocol);
 
 /* Some parts of the code (e.g. chunked encoding) assume this buffer has at
@@ -231,6 +231,10 @@ static const struct Curl_handler * const protocols[] = {
 
 #ifndef CURL_DISABLE_GOPHER
   &Curl_handler_gopher,
+#endif
+
+#ifdef CURL_ENABLE_MQTT
+  &Curl_handler_mqtt,
 #endif
 
 #ifdef USE_LIBRTMP
@@ -380,7 +384,7 @@ CURLcode Curl_close(struct Curl_easy **datap)
   Curl_safefree(data->state.ulbuf);
   Curl_flush_cookies(data, TRUE);
 #ifdef USE_ALTSVC
-  Curl_altsvc_save(data->asi, data->set.str[STRING_ALTSVC]);
+  Curl_altsvc_save(data, data->asi, data->set.str[STRING_ALTSVC]);
   Curl_altsvc_cleanup(data->asi);
   data->asi = NULL;
 #endif
@@ -680,9 +684,7 @@ static void conn_reset_all_postponed_data(struct connectdata *conn)
 
 static void conn_shutdown(struct connectdata *conn)
 {
-  if(!conn)
-    return;
-
+  DEBUGASSERT(conn);
   infof(conn->data, "Closing connection %ld\n", conn->connection_id);
   DEBUGASSERT(conn->data);
 
@@ -703,25 +705,19 @@ static void conn_shutdown(struct connectdata *conn)
     Curl_closesocket(conn, conn->tempsock[0]);
   if(CURL_SOCKET_BAD != conn->tempsock[1])
     Curl_closesocket(conn, conn->tempsock[1]);
-
-  /* unlink ourselves. this should be called last since other shutdown
-     procedures need a valid conn->data and this may clear it. */
-  Curl_conncache_remove_conn(conn->data, conn, TRUE);
 }
 
 static void conn_free(struct connectdata *conn)
 {
-  if(!conn)
-    return;
+  DEBUGASSERT(conn);
 
-  free_idnconverted_hostname(&conn->host);
-  free_idnconverted_hostname(&conn->conn_to_host);
-  free_idnconverted_hostname(&conn->http_proxy.host);
-  free_idnconverted_hostname(&conn->socks_proxy.host);
+  Curl_free_idnconverted_hostname(&conn->host);
+  Curl_free_idnconverted_hostname(&conn->conn_to_host);
+  Curl_free_idnconverted_hostname(&conn->http_proxy.host);
+  Curl_free_idnconverted_hostname(&conn->socks_proxy.host);
 
   Curl_safefree(conn->user);
   Curl_safefree(conn->passwd);
-  Curl_safefree(conn->oauth_bearer);
   Curl_safefree(conn->sasl_authzid);
   Curl_safefree(conn->options);
   Curl_safefree(conn->http_proxy.user);
@@ -780,13 +776,17 @@ static void conn_free(struct connectdata *conn)
 CURLcode Curl_disconnect(struct Curl_easy *data,
                          struct connectdata *conn, bool dead_connection)
 {
-  if(!conn)
-    return CURLE_OK; /* this is closed and fine already */
+  /* there must be a connection to close */
+  DEBUGASSERT(conn);
 
-  if(!data) {
-    DEBUGF(infof(data, "DISCONNECT without easy handle, ignoring\n"));
-    return CURLE_OK;
-  }
+  /* it must be removed from the connection cache */
+  DEBUGASSERT(!conn->bundle);
+
+  /* there must be an associated transfer */
+  DEBUGASSERT(data);
+
+  /* the transfer must be detached from the connection */
+  DEBUGASSERT(!data->conn);
 
   /*
    * If this connection isn't marked to force-close, leave it open if there
@@ -802,16 +802,11 @@ CURLcode Curl_disconnect(struct Curl_easy *data,
     conn->dns_entry = NULL;
   }
 
-  Curl_hostcache_prune(data); /* kill old DNS cache entries */
-
-#if !defined(CURL_DISABLE_HTTP) && defined(USE_NTLM)
   /* Cleanup NTLM connection-related data */
   Curl_http_auth_cleanup_ntlm(conn);
-#endif
-#if !defined(CURL_DISABLE_HTTP) && defined(USE_SPNEGO)
+
   /* Cleanup NEGOTIATE connection-related data */
   Curl_http_auth_cleanup_negotiate(conn);
-#endif
 
   /* the protocol specific disconnect handler and conn_shutdown need a transfer
      for the connection! */
@@ -883,9 +878,37 @@ proxy_info_matches(const struct proxy_info* data,
 
   return FALSE;
 }
+
+static bool
+socks_proxy_info_matches(const struct proxy_info* data,
+                         const struct proxy_info* needle)
+{
+  if(!proxy_info_matches(data, needle))
+    return FALSE;
+
+  /* the user information is case-sensitive
+     or at least it is not defined as case-insensitive
+     see https://tools.ietf.org/html/rfc3986#section-3.2.1 */
+  if((data->user == NULL) != (needle->user == NULL))
+    return FALSE;
+  /* curl_strequal does a case insentive comparison, so do not use it here! */
+  if(data->user &&
+     needle->user &&
+     strcmp(data->user, needle->user) != 0)
+    return FALSE;
+  if((data->passwd == NULL) != (needle->passwd == NULL))
+    return FALSE;
+  /* curl_strequal does a case insentive comparison, so do not use it here! */
+  if(data->passwd &&
+     needle->passwd &&
+     strcmp(data->passwd, needle->passwd) != 0)
+    return FALSE;
+  return TRUE;
+}
 #else
 /* disabled, won't get called */
 #define proxy_info_matches(x,y) FALSE
+#define socks_proxy_info_matches(x,y) FALSE
 #endif
 
 /* A connection has to have been idle for a shorter time than 'maxage_conn' to
@@ -980,8 +1003,12 @@ static int call_extract_if_dead(struct connectdata *conn, void *param)
 static void prune_dead_connections(struct Curl_easy *data)
 {
   struct curltime now = Curl_now();
-  timediff_t elapsed =
+  timediff_t elapsed;
+
+  CONNCACHE_LOCK(data);
+  elapsed =
     Curl_timediff(now, data->state.conn_cache->last_cleanup);
+  CONNCACHE_UNLOCK(data);
 
   if(elapsed >= 1000L) {
     struct prunedead prune;
@@ -989,10 +1016,17 @@ static void prune_dead_connections(struct Curl_easy *data)
     prune.extracted = NULL;
     while(Curl_conncache_foreach(data, data->state.conn_cache, &prune,
                                  call_extract_if_dead)) {
+      /* unlocked */
+
+      /* remove connection from cache */
+      Curl_conncache_remove_conn(data, prune.extracted, TRUE);
+
       /* disconnect it */
       (void)Curl_disconnect(data, prune.extracted, /* dead_connection */TRUE);
     }
+    CONNCACHE_LOCK(data);
     data->state.conn_cache->last_cleanup = now;
+    CONNCACHE_UNLOCK(data);
   }
 }
 
@@ -1052,7 +1086,7 @@ ConnectionExists(struct Curl_easy *data,
         if(data->set.pipewait) {
           infof(data, "Server doesn't support multiplex yet, wait\n");
           *waitpipe = TRUE;
-          Curl_conncache_unlock(data);
+          CONNCACHE_UNLOCK(data);
           return FALSE; /* no re-use */
         }
 
@@ -1144,8 +1178,9 @@ ConnectionExists(struct Curl_easy *data,
          needle->bits.socksproxy != check->bits.socksproxy)
         continue;
 
-      if(needle->bits.socksproxy && !proxy_info_matches(&needle->socks_proxy,
-                                                        &check->socks_proxy))
+      if(needle->bits.socksproxy &&
+        !socks_proxy_info_matches(&needle->socks_proxy,
+                                  &check->socks_proxy))
         continue;
 
       if(needle->bits.conn_to_host != check->bits.conn_to_host)
@@ -1184,6 +1219,8 @@ ConnectionExists(struct Curl_easy *data,
           }
         }
       }
+
+      DEBUGASSERT(!check->data || GOOD_EASY_HANDLE(check->data));
 
       if(!canmultiplex && check->data)
         /* this request can't be multiplexed but the checked connection is
@@ -1239,7 +1276,7 @@ ConnectionExists(struct Curl_easy *data,
              needle->conn_to_port == check->conn_to_port) &&
            strcasecompare(needle->host.name, check->host.name) &&
            needle->remote_port == check->remote_port) {
-          /* The schemes match or the the protocol family is the same and the
+          /* The schemes match or the protocol family is the same and the
              previous connection was TLS upgraded, and the hostname and host
              port match */
           if(needle->handler->flags & PROTOPT_SSL) {
@@ -1373,11 +1410,12 @@ ConnectionExists(struct Curl_easy *data,
   if(chosen) {
     /* mark it as used before releasing the lock */
     chosen->data = data; /* own it! */
-    Curl_conncache_unlock(data);
+    Curl_attach_connnection(data, chosen);
+    CONNCACHE_UNLOCK(data);
     *usethis = chosen;
     return TRUE; /* yes, we found one to use! */
   }
-  Curl_conncache_unlock(data);
+  CONNCACHE_UNLOCK(data);
 
   if(foundPendingCandidate && data->set.pipewait) {
     infof(data,
@@ -1407,9 +1445,13 @@ void Curl_verboseconnect(struct connectdata *conn)
 /*
  * Helpers for IDNA conversions.
  */
-static bool is_ASCII_name(const char *hostname)
+bool Curl_is_ASCII_name(const char *hostname)
 {
+  /* get an UNSIGNED local version of the pointer */
   const unsigned char *ch = (const unsigned char *)hostname;
+
+  if(!hostname) /* bad input, consider it ASCII! */
+    return TRUE;
 
   while(*ch) {
     if(*ch++ & 0x80)
@@ -1435,8 +1477,8 @@ static void strip_trailing_dot(struct hostname *host)
 /*
  * Perform any necessary IDN conversion of hostname
  */
-static CURLcode idnconvert_hostname(struct connectdata *conn,
-                                    struct hostname *host)
+CURLcode Curl_idnconvert_hostname(struct connectdata *conn,
+                                  struct hostname *host)
 {
   struct Curl_easy *data = conn->data;
 
@@ -1451,7 +1493,7 @@ static CURLcode idnconvert_hostname(struct connectdata *conn,
   host->dispname = host->name;
 
   /* Check name for non-ASCII and convert hostname to ACE form if we can */
-  if(!is_ASCII_name(host->name)) {
+  if(!Curl_is_ASCII_name(host->name)) {
 #ifdef USE_LIBIDN2
     if(idn2_check_version(IDN2_VERSION)) {
       char *ace_hostname = NULL;
@@ -1484,7 +1526,9 @@ static CURLcode idnconvert_hostname(struct connectdata *conn,
       host->name = host->encalloc;
     }
     else {
-      failf(data, "Failed to convert %s to ACE;\n", host->name);
+      char buffer[STRERROR_LEN];
+      failf(data, "Failed to convert %s to ACE; %s\n", host->name,
+            Curl_winapi_strerror(GetLastError(), buffer, sizeof(buffer)));
       return CURLE_URL_MALFORMAT;
     }
 #else
@@ -1497,7 +1541,7 @@ static CURLcode idnconvert_hostname(struct connectdata *conn,
 /*
  * Frees data allocated by idnconvert_hostname()
  */
-static void free_idnconverted_hostname(struct hostname *host)
+void Curl_free_idnconverted_hostname(struct hostname *host)
 {
 #if defined(USE_LIBIDN2)
   if(host->encalloc) {
@@ -1622,7 +1666,8 @@ static struct connectdata *allocate_conn(struct Curl_easy *data)
 
 #if !defined(CURL_DISABLE_HTTP) && defined(USE_NTLM) && \
     defined(NTLM_WB_ENABLED)
-  conn->ntlm_auth_hlpr_socket = CURL_SOCKET_BAD;
+  conn->ntlm.ntlm_auth_hlpr_socket = CURL_SOCKET_BAD;
+  conn->proxyntlm.ntlm_auth_hlpr_socket = CURL_SOCKET_BAD;
 #endif
 
   /* Initialize the easy handle list */
@@ -3004,7 +3049,14 @@ static CURLcode parse_connect_to_slist(struct Curl_easy *data,
 
 #ifdef USE_ALTSVC
   if(data->asi && !host && (port == -1) &&
-     (conn->handler->protocol == CURLPROTO_HTTPS)) {
+     ((conn->handler->protocol == CURLPROTO_HTTPS) ||
+#ifdef CURLDEBUG
+      /* allow debug builds to circumvent the HTTPS restriction */
+      getenv("CURL_ALTSVC_HTTP")
+#else
+      0
+#endif
+       )) {
     /* no connect_to match, try alt-svc! */
     enum alpnid srcalpnid;
     bool hit;
@@ -3201,8 +3253,8 @@ static CURLcode resolve_server(struct Curl_easy *data,
 static void reuse_conn(struct connectdata *old_conn,
                        struct connectdata *conn)
 {
-  free_idnconverted_hostname(&old_conn->http_proxy.host);
-  free_idnconverted_hostname(&old_conn->socks_proxy.host);
+  Curl_free_idnconverted_hostname(&old_conn->http_proxy.host);
+  Curl_free_idnconverted_hostname(&old_conn->socks_proxy.host);
 
   free(old_conn->http_proxy.host.rawalloc);
   free(old_conn->socks_proxy.host.rawalloc);
@@ -3246,8 +3298,8 @@ static void reuse_conn(struct connectdata *old_conn,
 
   /* host can change, when doing keepalive with a proxy or if the case is
      different this time etc */
-  free_idnconverted_hostname(&conn->host);
-  free_idnconverted_hostname(&conn->conn_to_host);
+  Curl_free_idnconverted_hostname(&conn->host);
+  Curl_free_idnconverted_hostname(&conn->conn_to_host);
   Curl_safefree(conn->host.rawalloc);
   Curl_safefree(conn->conn_to_host.rawalloc);
   conn->host = old_conn->host;
@@ -3343,14 +3395,6 @@ static CURLcode create_conn(struct Curl_easy *data,
   if(result)
     goto out;
 
-  if(data->set.str[STRING_BEARER]) {
-    conn->oauth_bearer = strdup(data->set.str[STRING_BEARER]);
-    if(!conn->oauth_bearer) {
-      result = CURLE_OUT_OF_MEMORY;
-      goto out;
-    }
-  }
-
   if(data->set.str[STRING_SASL_AUTHZID]) {
     conn->sasl_authzid = strdup(data->set.str[STRING_SASL_AUTHZID]);
     if(!conn->sasl_authzid) {
@@ -3414,21 +3458,21 @@ static CURLcode create_conn(struct Curl_easy *data,
   /*************************************************************
    * IDN-convert the hostnames
    *************************************************************/
-  result = idnconvert_hostname(conn, &conn->host);
+  result = Curl_idnconvert_hostname(conn, &conn->host);
   if(result)
     goto out;
   if(conn->bits.conn_to_host) {
-    result = idnconvert_hostname(conn, &conn->conn_to_host);
+    result = Curl_idnconvert_hostname(conn, &conn->conn_to_host);
     if(result)
       goto out;
   }
   if(conn->bits.httpproxy) {
-    result = idnconvert_hostname(conn, &conn->http_proxy.host);
+    result = Curl_idnconvert_hostname(conn, &conn->http_proxy.host);
     if(result)
       goto out;
   }
   if(conn->bits.socksproxy) {
-    result = idnconvert_hostname(conn, &conn->socks_proxy.host);
+    result = Curl_idnconvert_hostname(conn, &conn->socks_proxy.host);
     if(result)
       goto out;
   }
@@ -3489,6 +3533,7 @@ static CURLcode create_conn(struct Curl_easy *data,
     if(!result) {
       conn->bits.tcpconnect[FIRSTSOCKET] = TRUE; /* we are "connected */
 
+      Curl_attach_connnection(data, conn);
       result = Curl_conncache_add_conn(data->state.conn_cache, conn);
       if(result)
         goto out;
@@ -3503,7 +3548,6 @@ static CURLcode create_conn(struct Curl_easy *data,
         (void)conn->handler->done(conn, result, FALSE);
         goto out;
       }
-      Curl_attach_connnection(data, conn);
       Curl_setup_transfer(data, -1, -1, FALSE, -1);
     }
 
@@ -3653,7 +3697,7 @@ static CURLcode create_conn(struct Curl_easy *data,
 
         /* The bundle is full. Extract the oldest connection. */
         conn_candidate = Curl_conncache_extract_bundle(data, bundle);
-        Curl_conncache_unlock(data);
+        CONNCACHE_UNLOCK(data);
 
         if(conn_candidate)
           (void)Curl_disconnect(data, conn_candidate,
@@ -3665,7 +3709,7 @@ static CURLcode create_conn(struct Curl_easy *data,
         }
       }
       else
-        Curl_conncache_unlock(data);
+        CONNCACHE_UNLOCK(data);
 
     }
 
@@ -3699,6 +3743,8 @@ static CURLcode create_conn(struct Curl_easy *data,
        * This is a brand new connection, so let's store it in the connection
        * cache of ours!
        */
+      Curl_attach_connnection(data, conn);
+
       result = Curl_conncache_add_conn(data->state.conn_cache, conn);
       if(result)
         goto out;
@@ -3853,7 +3899,7 @@ CURLcode Curl_connect(struct Curl_easy *data,
   result = create_conn(data, &conn, asyncp);
 
   if(!result) {
-    if(CONN_INUSE(conn))
+    if(CONN_INUSE(conn) > 1)
       /* multiplexed */
       *protocol_done = TRUE;
     else if(!*asyncp) {
@@ -3870,11 +3916,10 @@ CURLcode Curl_connect(struct Curl_easy *data,
   else if(result && conn) {
     /* We're not allowed to return failure with memory left allocated in the
        connectdata struct, free those here */
+    Curl_detach_connnection(data);
+    Curl_conncache_remove_conn(data, conn, TRUE);
     Curl_disconnect(data, conn, TRUE);
   }
-  else if(!result && !data->conn)
-    /* FILE: transfers already have the connection attached */
-    Curl_attach_connnection(data, conn);
 
   return result;
 }
