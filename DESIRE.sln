@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 16
+# Visual Studio Version 16
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SandBox", "SandBox\project\vs2019\SandBox.vcxproj", "{97C50FE7-F697-4ABD-8212-7195BB4F410F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Compression-LZ4", "DESIRE-Modules\Compression-LZ4\project\vs2019\Compression-LZ4.vcxproj", "{83295281-AF7D-4CBD-B089-92DFE9016E28}"
