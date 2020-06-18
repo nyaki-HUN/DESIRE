@@ -18,6 +18,8 @@
 
 #include "Engine/Sound/SoundSystem.h"
 
+#include "Engine/UI/UI.h"
+
 bool Application::s_isMainLoopRunning = false;
 int Application::s_returnValue = 0;
 
@@ -73,9 +75,11 @@ int Application::Start(int argc, const char* const* argv)
 
 	Modules::Render->Init(Modules::Application->mainWindow.get());
 	Modules::Input->Init(Modules::Application->mainWindow.get());
+	Modules::UI->Init();
 
 	Modules::Application->Run();
 
+	Modules::UI->Kill();
 	Modules::Input->Kill();
 	Modules::Render->Kill();
 
@@ -132,6 +136,7 @@ Application::CreationParams Application::GetCreationParams(int argc, const char*
 void Application::CreateModules()
 {
 	Modules::Input = std::make_unique<Input>();
+	Modules::ResourceManager = std::make_unique<ResourceManager>();
 
 	if(s_physicsFactory != nullptr)
 	{
@@ -143,8 +148,6 @@ void Application::CreateModules()
 		Modules::Render = s_renderFactory();
 	}
 
-	Modules::ResourceManager = std::make_unique<ResourceManager>();
-
 	if(s_soundSystemFactory != nullptr)
 	{
 		Modules::SoundSystem = s_soundSystemFactory();
@@ -154,14 +157,20 @@ void Application::CreateModules()
 	{
 		Modules::ScriptSystem = s_scriptSystemFactory();
 	}
+
+	if(s_uiFactory != nullptr)
+	{
+		Modules::UI = s_uiFactory();
+	}
 }
 
 void Application::DestroyModules()
 {
+	Modules::UI = nullptr;
 	Modules::ScriptSystem = nullptr;
 	Modules::SoundSystem = nullptr;
-	Modules::ResourceManager = nullptr;
 	Modules::Render = nullptr;
 	Modules::Physics = nullptr;
+	Modules::ResourceManager = nullptr;
 	Modules::Input = nullptr;
 }

@@ -3,7 +3,6 @@
 #include "Engine/Application/Application.h"
 #include "Engine/Input/InputMapping.h"
 
-class ImGuiImpl;
 class FileSystemWatcher;
 class Object;
 
@@ -17,11 +16,12 @@ public:
 	void Update() override;
 
 private:
-	std::unique_ptr<ImGuiImpl> UI;
 	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
 
 	Object* scriptedObject = nullptr;
 	Object* cubeObj = nullptr;
 
 	InputMapping inputMapping;
+
+	float sliderValue = 0.0f;
 };

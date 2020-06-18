@@ -10,6 +10,7 @@ class Render;
 class ScriptSystem;
 class SoundSystem;
 class Timer;
+class UI;
 enum class EAppEventType;
 
 class Application
@@ -36,27 +37,9 @@ public:
 	static void Stop(int returnValue = 0);
 
 protected:
-	enum EOrientation
-	{
-		ORIENTATION_PORTRAIT			= 0x01,
-		ORIENTATION_PORTRAIT_REVERSE	= 0x02,
-		ORIENTATION_LANDSCAPE_LEFT		= 0x04,
-		ORIENTATION_LANDSCAPE_RIGHT		= 0x08,
-		ORIENTATION_ALL					= ORIENTATION_PORTRAIT | ORIENTATION_PORTRAIT_REVERSE | ORIENTATION_LANDSCAPE_LEFT | ORIENTATION_LANDSCAPE_RIGHT
-	};
-
 	struct CreationParams
 	{
-		CreationParams()
-			: defaultOrientation(ORIENTATION_PORTRAIT)
-			, supportedOrientations(ORIENTATION_ALL)
-		{
-
-		}
-
 		OSWindowCreationParams windowParams;
-		EOrientation defaultOrientation;
-		uint8_t supportedOrientations;
 	};
 
 	std::unique_ptr<Timer> timer;
@@ -76,6 +59,7 @@ private:
 	static const Factory<Render>::Func_t s_renderFactory;
 	static const Factory<ScriptSystem>::Func_t s_scriptSystemFactory;
 	static const Factory<SoundSystem>::Func_t s_soundSystemFactory;
+	static const Factory<UI>::Func_t s_uiFactory;
 
 	static bool s_isMainLoopRunning;
 	static int s_returnValue;

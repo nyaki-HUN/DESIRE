@@ -9,6 +9,7 @@ class Render;
 class ResourceManager;
 class ScriptSystem;
 class SoundSystem;
+class UI;
 
 class Modules
 {
@@ -20,4 +21,5 @@ public:
 	static std::unique_ptr<ResourceManager> ResourceManager;
 	static std::unique_ptr<ScriptSystem> ScriptSystem;
 	static std::unique_ptr<SoundSystem> SoundSystem;
+	static std::unique_ptr<UI> UI;
 };

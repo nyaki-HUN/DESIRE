@@ -15,8 +15,7 @@
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Script/ScriptComponent.h"
 
-#include "UI-imgui/include/ImGuiImpl.h"
-#include "UI-imgui/Externals/imgui/imgui.h"
+#include "Engine/UI/UI.h"
 
 enum EAction
 {
@@ -32,9 +31,6 @@ SandBox::SandBox()
 
 void SandBox::Init()
 {
-	UI = std::make_unique<ImGuiImpl>();
-	UI->Init();
-
 	ReadFilePtr zipFile = FileSystem::Get()->Open("data/zip.zip");
 	if(zipFile != nullptr)
 	{
@@ -122,8 +118,6 @@ void SandBox::Kill()
 {
 	delete scriptedObject;
 	scriptedObject = nullptr;
-
-	UI->Kill();
 }
 
 void SandBox::Update()
@@ -141,14 +135,24 @@ void SandBox::Update()
 
 	FileSystemWatcher::UpdateAll();
 
+	Modules::UI->BeginFrame(mainWindow.get());
+
+//	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
+	Modules::UI->BeginWindow("Test Window");
+	Modules::UI->Text("Text");
+	if(Modules::UI->Button("Reset Slider"))
+	{
+		sliderValue = 0.0f;
+	}
+	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
+	Modules::UI->EndWindow();
+
+	Modules::UI->EndFrame();
+
+	// Render
 	Modules::Render->BeginFrame(mainWindow.get());
-	UI->NewFrame(mainWindow.get());
 
-	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Another Window");
-	ImGui::Text("Hello");
-	ImGui::End();
+	Modules::UI->Render();
 
-	UI->EndFrame();
 	Modules::Render->EndFrame();
 }
