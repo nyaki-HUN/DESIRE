@@ -56,7 +56,7 @@ void Input::Update()
 		gamepad.Update();
 	}
 
-	memset(typingCharacters, 0, kMaxNumTypingCharacters);
+	typingCharacters.Clear();
 }
 
 void Input::Reset()
