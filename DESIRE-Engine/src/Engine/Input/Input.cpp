@@ -159,7 +159,7 @@ const InputDevice* Input::GetInputDeviceByHandle(const void* handle) const
 	return nullptr;
 }
 
-const char* Input::GetTypingCharacters() const
+const String& Input::GetTypingCharacters() const
 {
 	return typingCharacters;
 }

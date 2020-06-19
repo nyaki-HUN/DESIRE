@@ -141,10 +141,10 @@ void ImGuiUI::BeginFrame(OSWindow* pWindow)
 		}
 	}
 
-	const char* typedCharacters = Modules::Input->GetTypingCharacters();
-	for(int i = 0; typedCharacters[i] != '\0'; ++i)
+	const String& typedCharacters = Modules::Input->GetTypingCharacters();
+	for(size_t i = 0; typedCharacters.Length(); ++i)
 	{
-		io.AddInputCharacter(typedCharacters[i]);
+		io.AddInputCharacter(typedCharacters.Str()[i]);
 	}
 
 	// Mouse

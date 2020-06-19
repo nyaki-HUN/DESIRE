@@ -158,13 +158,7 @@ public:
 			return;
 		}
 
-		char* typingCharacters = Modules::Input->typingCharacters;
-		size_t len = strlen(typingCharacters);
-		if(len + 1 < Input::kMaxNumTypingCharacters)
-		{
-			typingCharacters[len] = ch;
-			typingCharacters[len + 1] = '\0';
-		}
+		Modules::Input->typingCharacters.AppendChar(ch);
 	}
 };
 

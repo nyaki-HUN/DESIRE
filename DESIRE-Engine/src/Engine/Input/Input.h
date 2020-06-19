@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Container/Array.h"
 #include "Engine/Core/Math/Vector2.h"
+#include "Engine/Core/String/StackString.h"
 
 #include "Engine/Input/Keyboard.h"
 #include "Engine/Input/Mouse.h"
@@ -12,8 +13,6 @@ class OSWindow;
 class Input
 {
 public:
-	static constexpr int kMaxNumTypingCharacters = 8;
-
 	typedef void(*HotkeyCallback_t)(void* userData);
 
 	enum EModifierType
@@ -43,8 +42,8 @@ public:
 
 	const InputDevice* GetInputDeviceByHandle(const void* handle) const;
 
-	// Returns a string from the characters typed since the last frame (maximized by MAX_NUM_TYPING_CHARACTERS)
-	const char* GetTypingCharacters() const;
+	// Returns a string from the characters typed since the last frame
+	const String& GetTypingCharacters() const;
 
 	const Vector2& GetOsMouseCursorPos() const;
 
@@ -70,7 +69,8 @@ private:
 	Array<Mouse> mouses;
 	Array<GameController> gameControllers;
 
-	char typingCharacters[kMaxNumTypingCharacters] = {};
+	static constexpr size_t kMaxNumTypingCharacters = 8;
+	StackString<kMaxNumTypingCharacters> typingCharacters;
 
 	Vector2 mouseCursorPos = Vector2::Zero();
 

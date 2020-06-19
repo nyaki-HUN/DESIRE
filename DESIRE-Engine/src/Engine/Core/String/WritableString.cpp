@@ -165,6 +165,19 @@ void WritableString::Append(const String& string)
 	data[size] = '\0';
 }
 
+void WritableString::AppendChar(char ch)
+{
+	if(!Reserve(size + 1))
+	{
+		ASSERT(false);
+		return;
+	}
+
+	data[size] = ch;
+	size++;
+	data[size] = '\0';
+}
+
 WritableString& WritableString::operator +=(int32_t number)
 {
 	char str[10 + 2];

@@ -32,6 +32,7 @@ public:
 
 	// Append characters
 	void Append(const String& string);
+	void AppendChar(char ch);
 	WritableString& operator +=(const String& string)					{ Append(string); return *this; }
 
 	// Append numbers

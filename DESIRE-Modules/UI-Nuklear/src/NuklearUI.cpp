@@ -98,10 +98,10 @@ void NuklearUI::BeginFrame(OSWindow* pWindow)
 		ctx->input.keyboard.keys[NK_KEY_SCROLL_END].down += keyboard.IsDown(KEY_END);
 		ctx->input.keyboard.keys[NK_KEY_SCROLL_END].clicked += keyboard.GetPressedCount(KEY_END);
 
-		ctx->input.keyboard.keys[NK_KEY_SCROLL_DOWN].down += keyboard.GetPressedCount(KEY_PGDOWN);
+		ctx->input.keyboard.keys[NK_KEY_SCROLL_DOWN].down += keyboard.IsDown(KEY_PGDOWN);
 		ctx->input.keyboard.keys[NK_KEY_SCROLL_DOWN].clicked += keyboard.GetPressedCount(KEY_PGDOWN);
 
-		ctx->input.keyboard.keys[NK_KEY_SCROLL_UP].down += keyboard.GetPressedCount(KEY_PGUP);
+		ctx->input.keyboard.keys[NK_KEY_SCROLL_UP].down += keyboard.IsDown(KEY_PGUP);
 		ctx->input.keyboard.keys[NK_KEY_SCROLL_UP].clicked += keyboard.GetPressedCount(KEY_PGUP);
 
 		if(keyCtrl)
@@ -129,7 +129,6 @@ void NuklearUI::BeginFrame(OSWindow* pWindow)
 
 			ctx->input.keyboard.keys[NK_KEY_TEXT_WORD_RIGHT].down += keyboard.IsDown(KEY_RIGHT);
 			ctx->input.keyboard.keys[NK_KEY_TEXT_WORD_RIGHT].clicked += keyboard.GetPressedCount(KEY_RIGHT);
-
 		}
 		else
 		{
@@ -147,10 +146,10 @@ void NuklearUI::BeginFrame(OSWindow* pWindow)
 		}
 	}
 
-	const char* typedCharacters = Modules::Input->GetTypingCharacters();
-	for(int i = 0; typedCharacters[i] != '\0'; ++i)
+	const String& typedCharacters = Modules::Input->GetTypingCharacters();
+	for(size_t i = 0; typedCharacters.Length(); ++i)
 	{
-		nk_input_unicode(ctx.get(), typedCharacters[i]);
+		nk_input_unicode(ctx.get(), typedCharacters.Str()[i]);
 	}
 
 	// Mouse
