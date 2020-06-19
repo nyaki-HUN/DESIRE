@@ -39,6 +39,6 @@ public:
 private:
 	bool RadioButton(const String& label, bool isActive) override;
 
-	nk_context* ctx = nullptr;
+	std::unique_ptr<nk_context> ctx;
 	std::unique_ptr<nk_allocator> allocator;
 };

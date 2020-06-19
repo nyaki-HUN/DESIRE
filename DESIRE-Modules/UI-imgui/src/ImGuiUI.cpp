@@ -9,8 +9,8 @@
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Math/Vector3.h"
-#include "Engine/Core/Timer.h"
 #include "Engine/Core/String/String.h"
+#include "Engine/Core/Timer.h"
 
 #include "Engine/Input/Input.h"
 
@@ -21,11 +21,6 @@
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
-
-static ImVec2 GetImVec2(const Vector2& vec)
-{
-	return ImVec2(vec.GetX(), vec.GetY());
-}
 
 ImGuiUI::ImGuiUI()
 {
@@ -278,7 +273,7 @@ void ImGuiUI::Text(const String& label)
 
 bool ImGuiUI::Button(const String& label, const Vector2& size)
 {
-	return ImGui::Button(label.Str(), GetImVec2(size));
+	return ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
 }
 
 bool ImGuiUI::RadioButton(const String& label, bool isActive)
