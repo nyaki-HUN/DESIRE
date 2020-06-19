@@ -95,5 +95,7 @@ const Factory<SoundSystem>::Func_t Application::s_soundSystemFactory = nullptr;
 //	UI
 // --------------------------------------------------------------------------------------------------------------------
 #include "UI-imgui/include/ImGuiUI.h"
+#include "UI-Nuklear/include/NuklearUI.h"
 const Factory<UI>::Func_t Application::s_uiFactory =
 	&Factory<UI>::Create<ImGuiUI>;
+//	&Factory<UI>::Create<NuklearUI>;

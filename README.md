@@ -61,6 +61,7 @@ Modules
 ### UI
 
  * [imgui](https://github.com/ocornut/imgui)
+ * [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear)
 
 Contact
 -------

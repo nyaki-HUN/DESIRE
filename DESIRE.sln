@@ -35,6 +35,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Script-Lua", "DESIRE-Module
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Script-Squirrel", "DESIRE-Modules\Script-Squirrel\project\vs2019\Script-Squirrel.vcxproj", "{05885A51-71F1-4606-A989-2AA3C69EEA91}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UI-Nuklear", "DESIRE-Modules\UI-Nuklear\project\vs2019\UI-Nuklear.vcxproj", "{0D3BCC89-786D-4025-AE4B-604C0B57413B}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UI-imgui", "DESIRE-Modules\UI-imgui\project\vs2019\UI-imgui.vcxproj", "{9791305E-BF1B-486C-8405-CFF7B54C98FE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\project\vs2019\UnitTest.vcxproj", "{157414AA-AF20-4A4C-BA53-CD8CC77C4775}"
@@ -113,6 +115,10 @@ Global
 		{05885A51-71F1-4606-A989-2AA3C69EEA91}.Debug|x64.Build.0 = Debug|x64
 		{05885A51-71F1-4606-A989-2AA3C69EEA91}.Release|x64.ActiveCfg = Release|x64
 		{05885A51-71F1-4606-A989-2AA3C69EEA91}.Release|x64.Build.0 = Release|x64
+		{0D3BCC89-786D-4025-AE4B-604C0B57413B}.Debug|x64.ActiveCfg = Debug|x64
+		{0D3BCC89-786D-4025-AE4B-604C0B57413B}.Debug|x64.Build.0 = Debug|x64
+		{0D3BCC89-786D-4025-AE4B-604C0B57413B}.Release|x64.ActiveCfg = Release|x64
+		{0D3BCC89-786D-4025-AE4B-604C0B57413B}.Release|x64.Build.0 = Release|x64
 		{9791305E-BF1B-486C-8405-CFF7B54C98FE}.Debug|x64.ActiveCfg = Debug|x64
 		{9791305E-BF1B-486C-8405-CFF7B54C98FE}.Debug|x64.Build.0 = Debug|x64
 		{9791305E-BF1B-486C-8405-CFF7B54C98FE}.Release|x64.ActiveCfg = Release|x64

@@ -33,6 +33,7 @@ project "SandBox"
 		"Script-Lua",
 		"Script-Squirrel",
 		"UI-imgui",
+		"UI-Nuklear",
 
 		"d3d11",
 		"d3d12",

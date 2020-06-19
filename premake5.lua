@@ -156,3 +156,4 @@ solution "DESIRE"
 
 	-- UI modules
 	include "DESIRE-Modules/UI-imgui/project/premake5.lua"
+	include "DESIRE-Modules/UI-Nuklear/project/premake5.lua"
