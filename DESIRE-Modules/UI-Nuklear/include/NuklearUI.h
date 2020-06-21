@@ -2,8 +2,15 @@
 
 #include "Engine/UI/UI.h"
 
+class DynamicMesh;
+class Material;
+class Texture;
+
 struct nk_allocator;
+struct nk_buffer;
 struct nk_context;
+struct nk_convert_config;
+struct nk_font_atlas;
 
 class NuklearUI : public UI
 {
@@ -41,4 +48,11 @@ private:
 
 	std::unique_ptr<nk_context> ctx;
 	std::unique_ptr<nk_allocator> allocator;
+	std::unique_ptr<nk_buffer> cmdBuffer;
+	std::unique_ptr<nk_font_atlas> fontAtlas;
+	std::unique_ptr<nk_convert_config> convertConfig;
+
+	std::unique_ptr<DynamicMesh> mesh;
+	std::unique_ptr<Material> material;
+	std::shared_ptr<Texture> fontTexture;
 };
