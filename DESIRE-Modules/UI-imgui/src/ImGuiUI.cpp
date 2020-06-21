@@ -24,6 +24,7 @@
 
 ImGuiUI::ImGuiUI()
 {
+	ImGui::SetAllocatorFunctions(&ImGuiCallbacks::MallocWrapper, &ImGuiCallbacks::FreeWrapper, this);
 }
 
 ImGuiUI::~ImGuiUI()
@@ -32,8 +33,6 @@ ImGuiUI::~ImGuiUI()
 
 void ImGuiUI::Init()
 {
-	ImGui::SetAllocatorFunctions(&ImGuiCallbacks::MallocWrapper, &ImGuiCallbacks::FreeWrapper, this);
-
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	ASSERT(io.UserData == nullptr && "ImGui is already initialized");
@@ -71,15 +70,15 @@ void ImGuiUI::Init()
 	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Texcoord0, 2, Mesh::EAttribType::Float);
 	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Color, 4, Mesh::EAttribType::Uint8);
 	mesh->CalculateStrideFromVertexLayout();
-	mesh->maxNumOfIndices = 30000;
-	mesh->maxNumOfVertices = 20000;
+	mesh->maxNumOfIndices = 128 * 1024;
+	mesh->maxNumOfVertices = 256 * 1024;
 
-	mesh->indices = std::make_unique<uint16_t[]>(mesh->GetMaxSizeOfIndices());
-	mesh->vertices = std::make_unique<float[]>(mesh->GetMaxSizeOfVertices());
-	memset(mesh->indices.get(), 0, mesh->GetMaxSizeOfIndices());
-	memset(mesh->vertices.get(), 0, mesh->GetMaxSizeOfVertices());
+	mesh->indices = std::make_unique<uint16_t[]>(mesh->maxNumOfIndices);
+	mesh->vertices = std::make_unique<float[]>(mesh->maxNumOfVertices);
+	memset(mesh->indices.get(), 0, mesh->GetTotalBytesOfIndexData());
+	memset(mesh->vertices.get(), 0, mesh->GetTotalBytesOfVertexData());
 
-	ASSERT(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
+	static_assert(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
 	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
 
 	// Setup material
@@ -91,12 +90,12 @@ void ImGuiUI::Init()
 	io.Fonts->AddFontDefault();
 
 	// Setup font texture
-	unsigned char* textureData = nullptr;
-	int width, height;
-	io.Fonts->GetTexDataAsRGBA32(&textureData, &width, &height);
-
+	uint8_t* pTextureData = nullptr;
+	int width = 0;
+	int height = 0;
+	io.Fonts->GetTexDataAsRGBA32(&pTextureData, &width, &height);
 	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8);
-	fontTexture->data = MemoryBuffer::CreateFromDataCopy(textureData, width * height * 4u);
+	fontTexture->data = MemoryBuffer::CreateFromDataCopy(pTextureData, width * height * 4u);
 	material->AddTexture(fontTexture);
 	io.Fonts->TexID = &fontTexture;
 
@@ -109,9 +108,9 @@ void ImGuiUI::Kill()
 {
 	ImGui::DestroyContext();
 
-	mesh = nullptr;
-	material = nullptr;
 	fontTexture = nullptr;
+	material = nullptr;
+	mesh = nullptr;
 }
 
 void ImGuiUI::BeginFrame(OSWindow* pWindow)
@@ -232,8 +231,13 @@ void ImGuiUI::Render()
 
 		for(const ImDrawCmd& cmd : pDrawList->CmdBuffer)
 		{
-			const uint16_t clipX = std::max<uint16_t>(0, static_cast<uint16_t>(cmd.ClipRect.x));
-			const uint16_t clipY = std::max<uint16_t>(0, static_cast<uint16_t>(cmd.ClipRect.y));
+			if(cmd.ElemCount == 0)
+			{
+				continue;
+			}
+
+			const uint16_t clipX = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.x));
+			const uint16_t clipY = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.y));
 			Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(cmd.ClipRect.z - clipX), static_cast<uint16_t>(cmd.ClipRect.w - clipY));
 
 			if(cmd.UserCallback)

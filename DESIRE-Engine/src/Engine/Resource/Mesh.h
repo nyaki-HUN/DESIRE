@@ -47,22 +47,22 @@ public:
 	Mesh(EType meshType = EType::Static);
 	~Mesh();
 
-	uint32_t GetSizeOfIndices() const;
-	uint32_t GetSizeOfVertices() const;
+	uint32_t GetBytesOfIndexData() const	{ return numIndices * sizeof(uint16_t); }
+	uint32_t GetBytesOfVertexData() const	{ return numVertices * stride; }
 
 	void CalculateStrideFromVertexLayout();
 
 	// Render engine specific data set at bind
-	void* renderData;
+	void* renderData = nullptr;
 
 	// Index data
 	std::unique_ptr<uint16_t[]> indices;
-	uint32_t numIndices;
+	uint32_t numIndices = 0;
 
 	// Vertex data
 	std::unique_ptr<float[]> vertices;
-	uint32_t numVertices;
-	uint32_t stride;
+	uint32_t numVertices = 0;
+	uint32_t stride = 0;
 	Array<VertexLayout> vertexLayout;
 
 	const EType type;
@@ -73,32 +73,18 @@ class DynamicMesh : public Mesh
 public:
 	DynamicMesh()
 		: Mesh(Mesh::EType::Dynamic)
-		, maxNumOfIndices(0)
-		, maxNumOfVertices(0)
-		, indexOffset(0)
-		, vertexOffset(0)
-		, isIndexDataUpdateRequired(false)
-		, isVertexDataUpdateRequired(false)
 	{
-
 	}
 
-	uint32_t GetMaxSizeOfIndices() const
-	{
-		return maxNumOfIndices * sizeof(uint16_t);
-	}
+	uint32_t GetTotalBytesOfIndexData() const	{ return maxNumOfIndices * sizeof(uint16_t); }
+	uint32_t GetTotalBytesOfVertexData() const	{ return maxNumOfVertices * stride; }
 
-	uint32_t GetMaxSizeOfVertices() const
-	{
-		return maxNumOfVertices * stride;
-	}
+	uint32_t maxNumOfIndices = 0;
+	uint32_t maxNumOfVertices = 0;
 
-	uint32_t maxNumOfIndices;
-	uint32_t maxNumOfVertices;
+	uint32_t indexOffset = 0;
+	uint32_t vertexOffset = 0;
 
-	uint32_t indexOffset;
-	uint32_t vertexOffset;
-
-	bool isIndexDataUpdateRequired;
-	bool isVertexDataUpdateRequired;
+	bool isIndexDataUpdateRequired = false;
+	bool isVertexDataUpdateRequired = false;
 };

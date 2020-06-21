@@ -26,12 +26,7 @@ uint32_t Mesh::VertexLayout::GetSizeInBytes() const
 }
 
 Mesh::Mesh(EType meshType)
-	: renderData(nullptr)
-	, indices(nullptr)
-	, numIndices(0)
-	, vertices(nullptr)
-	, numVertices(0)
-	, type(meshType)
+	: type(meshType)
 {
 }
 
@@ -41,16 +36,6 @@ Mesh::~Mesh()
 	{
 		Modules::Render->Unbind(this);
 	}
-}
-
-uint32_t Mesh::GetSizeOfIndices() const
-{
-	return numIndices * sizeof(uint16_t);
-}
-
-uint32_t Mesh::GetSizeOfVertices() const
-{
-	return numVertices * stride;
 }
 
 void Mesh::CalculateStrideFromVertexLayout()

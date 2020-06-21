@@ -153,9 +153,9 @@ void BgfxRender::SetView(View* view)
 			Bind(rt);
 		}
 
-		RenderTargetRenderDataBgfx* renderData = static_cast<RenderTargetRenderDataBgfx*>(rt->renderData);
-		ASSERT(renderData->id < BGFX_CONFIG_MAX_VIEWS);
-		activeViewId = renderData->id;
+		RenderTargetRenderDataBgfx* pRenderData = static_cast<RenderTargetRenderDataBgfx*>(rt->renderData);
+		ASSERT(pRenderData->id < BGFX_CONFIG_MAX_VIEWS);
+		activeViewId = pRenderData->id;
 		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
 
 		bgfx::setViewClear(activeViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColor, 1.0f, 0);
@@ -331,7 +331,7 @@ void BgfxRender::Bind(Mesh* mesh)
 		return;
 	}
 
-	MeshRenderDataBgfx* renderData = new MeshRenderDataBgfx();
+	MeshRenderDataBgfx* pRenderData = new MeshRenderDataBgfx();
 
 	static const bgfx::Attrib::Enum s_attribConversionTable[] =
 	{
@@ -356,13 +356,13 @@ void BgfxRender::Bind(Mesh* mesh)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
 
-	renderData->vertexLayout.begin();
+	pRenderData->vertexLayout.begin();
 	for(Mesh::VertexLayout& layout : mesh->vertexLayout)
 	{
 		const bool isNormalized = (layout.type == Mesh::EAttribType::Uint8);
-		renderData->vertexLayout.add(s_attribConversionTable[(size_t)layout.attrib], layout.count, s_attribTypeConversionTable[(size_t)layout.type], isNormalized);
+		pRenderData->vertexLayout.add(s_attribConversionTable[(size_t)layout.attrib], layout.count, s_attribTypeConversionTable[(size_t)layout.type], isNormalized);
 	}
-	renderData->vertexLayout.end();
+	pRenderData->vertexLayout.end();
 
 	switch(mesh->type)
 	{
@@ -370,14 +370,14 @@ void BgfxRender::Bind(Mesh* mesh)
 		{
 			if(mesh->numIndices != 0)
 			{
-				const bgfx::Memory* indexData = bgfx::makeRef(mesh->indices.get(), mesh->GetSizeOfIndices());
-				renderData->indexBuffer = bgfx::createIndexBuffer(indexData, BGFX_BUFFER_NONE);
+				const bgfx::Memory* pIndexData = bgfx::makeRef(mesh->indices.get(), mesh->GetBytesOfIndexData());
+				pRenderData->indexBuffer = bgfx::createIndexBuffer(pIndexData, BGFX_BUFFER_NONE);
 			}
 
 			if(mesh->numVertices != 0)
 			{
-				const bgfx::Memory* vertexData = bgfx::makeRef(mesh->vertices.get(), mesh->GetSizeOfVertices());
-				renderData->vertexBuffer = bgfx::createVertexBuffer(vertexData, renderData->vertexLayout, BGFX_BUFFER_NONE);
+				const bgfx::Memory* pVertexData = bgfx::makeRef(mesh->vertices.get(), mesh->GetBytesOfVertexData());
+				pRenderData->vertexBuffer = bgfx::createVertexBuffer(pVertexData, pRenderData->vertexLayout, BGFX_BUFFER_NONE);
 			}
 			break;
 		}
@@ -388,20 +388,20 @@ void BgfxRender::Bind(Mesh* mesh)
 
 			if(dynamicMesh->maxNumOfIndices != 0)
 			{
-				const bgfx::Memory* indexData = bgfx::copy(dynamicMesh->indices.get(), dynamicMesh->GetMaxSizeOfIndices());
-				renderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(indexData, BGFX_BUFFER_NONE);
+				const bgfx::Memory* indexData = bgfx::copy(dynamicMesh->indices.get(), dynamicMesh->GetTotalBytesOfIndexData());
+				pRenderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(indexData, BGFX_BUFFER_NONE);
 			}
 
 			if(dynamicMesh->maxNumOfVertices != 0)
 			{
-				const bgfx::Memory* vertexData = bgfx::copy(dynamicMesh->vertices.get(), dynamicMesh->GetMaxSizeOfVertices());
-				renderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, renderData->vertexLayout, BGFX_BUFFER_NONE);
+				const bgfx::Memory* vertexData = bgfx::copy(dynamicMesh->vertices.get(), dynamicMesh->GetTotalBytesOfVertexData());
+				pRenderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(vertexData, pRenderData->vertexLayout, BGFX_BUFFER_NONE);
 			}
 			break;
 		}
 	}
 
-	mesh->renderData = renderData;
+	mesh->renderData = pRenderData;
 }
 
 void BgfxRender::Bind(Shader* shader)
@@ -414,7 +414,7 @@ void BgfxRender::Bind(Shader* shader)
 		return;
 	}
 
-	ShaderRenderDataBgfx* renderData = new ShaderRenderDataBgfx();
+	ShaderRenderDataBgfx* pRenderData = new ShaderRenderDataBgfx();
 
 	const bgfx::Memory* shaderData = nullptr;
 	if(shader->defines.empty())
@@ -443,13 +443,13 @@ void BgfxRender::Bind(Shader* shader)
 		memcpy(ptr, shader->data.ptr.get(), shader->data.size);
 	}
 
-	renderData->shaderHandle = bgfx::createShader(shaderData);
-	ASSERT(bgfx::isValid(renderData->shaderHandle));
-	bgfx::setName(renderData->shaderHandle, shader->name.Str());
+	pRenderData->shaderHandle = bgfx::createShader(shaderData);
+	ASSERT(bgfx::isValid(pRenderData->shaderHandle));
+	bgfx::setName(pRenderData->shaderHandle, shader->name.Str());
 
-	const uint16_t uniformCount = bgfx::getShaderUniforms(renderData->shaderHandle, nullptr, 0);
+	const uint16_t uniformCount = bgfx::getShaderUniforms(pRenderData->shaderHandle, nullptr, 0);
 	bgfx::UniformHandle* uniforms = static_cast<bgfx::UniformHandle*>(alloca(uniformCount * sizeof(bgfx::UniformHandle)));
-	bgfx::getShaderUniforms(renderData->shaderHandle, uniforms, uniformCount);
+	bgfx::getShaderUniforms(pRenderData->shaderHandle, uniforms, uniformCount);
 	for(uint16_t i = 0; i < uniformCount; ++i)
 	{
 		bool isSampler = false;
@@ -470,10 +470,10 @@ void BgfxRender::Bind(Shader* shader)
 
 		bgfx::UniformInfo info;
 		bgfx::getUniformInfo(uniforms[i], info);
-		renderData->uniforms.Insert(HashedString::CreateFromString(info.name), uniforms[i]);
+		pRenderData->uniforms.Insert(HashedString::CreateFromString(info.name), uniforms[i]);
 	}
 
-	shader->renderData = renderData;
+	shader->renderData = pRenderData;
 }
 
 void BgfxRender::Bind(Texture* texture)
@@ -486,20 +486,20 @@ void BgfxRender::Bind(Texture* texture)
 		return;
 	}
 
-	TextureRenderDataBgfx* renderData = new TextureRenderDataBgfx();
+	TextureRenderDataBgfx* pRenderData = new TextureRenderDataBgfx();
 
 	const bool isRenderTarget = (texture->data.ptr == nullptr);
 
 	if(isRenderTarget)
 	{
-		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_RT);
+		pRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_RT);
 	}
 	else
 	{
-		renderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.ptr.get(), (uint32_t)texture->data.size));
+		pRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.ptr.get(), (uint32_t)texture->data.size));
 	}
 
-	texture->renderData = renderData;
+	texture->renderData = pRenderData;
 }
 
 void BgfxRender::Bind(RenderTarget* renderTarget)
@@ -512,7 +512,7 @@ void BgfxRender::Bind(RenderTarget* renderTarget)
 		return;
 	}
 
-	RenderTargetRenderDataBgfx* renderData = new RenderTargetRenderDataBgfx();
+	RenderTargetRenderDataBgfx* pRenderData = new RenderTargetRenderDataBgfx();
 
 	bgfx::TextureHandle renderTargetTextures[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
@@ -527,10 +527,10 @@ void BgfxRender::Bind(RenderTarget* renderTarget)
 		renderTargetTextures[i] = textureRenderData->textureHandle;
 	}
 
-	renderData->frameBuffer = bgfx::createFrameBuffer(textureCount, renderTargetTextures);
-	bgfx::setViewFrameBuffer(renderData->id, renderData->frameBuffer);
+	pRenderData->frameBuffer = bgfx::createFrameBuffer(textureCount, renderTargetTextures);
+	bgfx::setViewFrameBuffer(pRenderData->id, pRenderData->frameBuffer);
 
-	renderTarget->renderData = renderData;
+	renderTarget->renderData = pRenderData;
 }
 
 void BgfxRender::Unbind(Mesh* mesh)
@@ -541,22 +541,22 @@ void BgfxRender::Unbind(Mesh* mesh)
 		return;
 	}
 
-	MeshRenderDataBgfx* renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
+	MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
 
 	switch(mesh->type)
 	{
 		case Mesh::EType::Static:
-			bgfx::destroy(renderData->indexBuffer);
-			bgfx::destroy(renderData->vertexBuffer);
+			bgfx::destroy(pRenderData->indexBuffer);
+			bgfx::destroy(pRenderData->vertexBuffer);
 			break;
 
 		case Mesh::EType::Dynamic:
-			bgfx::destroy(renderData->dynamicIndexBuffer);
-			bgfx::destroy(renderData->dynamicVertexBuffer);
+			bgfx::destroy(pRenderData->dynamicIndexBuffer);
+			bgfx::destroy(pRenderData->dynamicVertexBuffer);
 			break;
 	}
 
-	delete renderData;
+	delete pRenderData;
 	mesh->renderData = nullptr;
 }
 
@@ -568,10 +568,10 @@ void BgfxRender::Unbind(Shader* shader)
 		return;
 	}
 
-	ShaderRenderDataBgfx* renderData = static_cast<ShaderRenderDataBgfx*>(shader->renderData);
-	bgfx::destroy(renderData->shaderHandle);
+	ShaderRenderDataBgfx* pRenderData = static_cast<ShaderRenderDataBgfx*>(shader->renderData);
+	bgfx::destroy(pRenderData->shaderHandle);
 
-	delete renderData;
+	delete pRenderData;
 	shader->renderData = nullptr;
 
 	if(activeVertexShader == shader)
@@ -592,10 +592,10 @@ void BgfxRender::Unbind(Texture* texture)
 		return;
 	}
 
-	TextureRenderDataBgfx* renderData = static_cast<TextureRenderDataBgfx*>(texture->renderData);
-	bgfx::destroy(renderData->textureHandle);
+	TextureRenderDataBgfx* pRenderData = static_cast<TextureRenderDataBgfx*>(texture->renderData);
+	bgfx::destroy(pRenderData->textureHandle);
 
-	delete renderData;
+	delete pRenderData;
 	texture->renderData = nullptr;
 }
 
@@ -607,9 +607,9 @@ void BgfxRender::Unbind(RenderTarget* renderTarget)
 		return;
 	}
 
-	RenderTargetRenderDataBgfx* renderData = static_cast<RenderTargetRenderDataBgfx*>(renderTarget->renderData);
+	RenderTargetRenderDataBgfx* pRenderData = static_cast<RenderTargetRenderDataBgfx*>(renderTarget->renderData);
 
-	bgfx::destroy(renderData->frameBuffer);
+	bgfx::destroy(pRenderData->frameBuffer);
 
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
 	for(uint8_t i = 0; i < textureCount; ++i)
@@ -617,34 +617,34 @@ void BgfxRender::Unbind(RenderTarget* renderTarget)
 		Unbind(renderTarget->GetTexture(i).get());
 	}
 
-	delete renderData;
+	delete pRenderData;
 	renderTarget->renderData = nullptr;
 }
 
-void BgfxRender::UpdateDynamicMesh(DynamicMesh* mesh)
+void BgfxRender::UpdateDynamicMesh(DynamicMesh* pMesh)
 {
-	ASSERT(mesh != nullptr);
+	ASSERT(pMesh != nullptr);
 
-	if(mesh->renderData == nullptr)
+	if(pMesh->renderData == nullptr)
 	{
 		// Not yet bound
-		mesh->isIndexDataUpdateRequired = false;
-		mesh->isVertexDataUpdateRequired = false;
+		pMesh->isIndexDataUpdateRequired = false;
+		pMesh->isVertexDataUpdateRequired = false;
 		return;
 	}
 
-	MeshRenderDataBgfx* renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
+	MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(pMesh->renderData);
 
-	if(mesh->isIndexDataUpdateRequired)
+	if(pMesh->isIndexDataUpdateRequired)
 	{
-		bgfx::update(renderData->dynamicIndexBuffer, 0, bgfx::copy(mesh->indices.get(), mesh->GetSizeOfIndices()));
-		mesh->isIndexDataUpdateRequired = false;
+		bgfx::update(pRenderData->dynamicIndexBuffer, 0, bgfx::copy(pMesh->indices.get(), pMesh->GetBytesOfIndexData()));
+		pMesh->isIndexDataUpdateRequired = false;
 	}
 
-	if(mesh->isVertexDataUpdateRequired)
+	if(pMesh->isVertexDataUpdateRequired)
 	{
-		bgfx::update(renderData->dynamicVertexBuffer, 0, bgfx::copy(mesh->vertices.get(), mesh->GetSizeOfVertices()));
-		mesh->isVertexDataUpdateRequired = false;
+		bgfx::update(pRenderData->dynamicVertexBuffer, 0, bgfx::copy(pMesh->vertices.get(), pMesh->GetBytesOfVertexData()));
+		pMesh->isVertexDataUpdateRequired = false;
 	}
 }
 
@@ -655,22 +655,22 @@ void BgfxRender::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 
 void BgfxRender::SetMesh(Mesh* mesh)
 {
-	MeshRenderDataBgfx* renderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
+	MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(mesh->renderData);
 
 	switch(mesh->type)
 	{
 		case Mesh::EType::Static:
 		{
-			bgfx::setIndexBuffer(renderData->indexBuffer, renderData->indexOffset, mesh->numIndices);
-			bgfx::setVertexBuffer(0, renderData->vertexBuffer, renderData->vertexOffset, mesh->numVertices);
+			bgfx::setIndexBuffer(pRenderData->indexBuffer, pRenderData->indexOffset, mesh->numIndices);
+			bgfx::setVertexBuffer(0, pRenderData->vertexBuffer, pRenderData->vertexOffset, mesh->numVertices);
 			break;
 		}
 
 		case Mesh::EType::Dynamic:
 		{
 			const DynamicMesh* dynamicMesh = static_cast<const DynamicMesh*>(mesh);
-			bgfx::setIndexBuffer(renderData->dynamicIndexBuffer, dynamicMesh->indexOffset + renderData->indexOffset, mesh->numIndices);
-			bgfx::setVertexBuffer(0, renderData->dynamicVertexBuffer, dynamicMesh->vertexOffset + renderData->vertexOffset, mesh->numVertices);
+			bgfx::setIndexBuffer(pRenderData->dynamicIndexBuffer, dynamicMesh->indexOffset + pRenderData->indexOffset, mesh->numIndices);
+			bgfx::setVertexBuffer(0, pRenderData->dynamicVertexBuffer, dynamicMesh->vertexOffset + pRenderData->vertexOffset, mesh->numVertices);
 			break;
 		}
 	}
@@ -736,9 +736,9 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode fi
 		case EAddressMode::Border:			flags |= BGFX_SAMPLER_U_BORDER | BGFX_SAMPLER_V_BORDER | BGFX_SAMPLER_W_BORDER; break;
 	}
 
-	const TextureRenderDataBgfx* renderData = static_cast<const TextureRenderDataBgfx*>(texture->renderData);
+	const TextureRenderDataBgfx* pRenderData = static_cast<const TextureRenderDataBgfx*>(texture->renderData);
 
-	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], renderData->textureHandle, flags);
+	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], pRenderData->textureHandle, flags);
 }
 
 void BgfxRender::UpdateShaderParams(const Material* material)
@@ -816,9 +816,9 @@ void BgfxRender::BindEmbeddedShader(Shader* shader, const char* name)
 		return;
 	}
 
-	ShaderRenderDataBgfx* renderData = new ShaderRenderDataBgfx();
-	renderData->shaderHandle = bgfx::createEmbeddedShader(s_embeddedShaders, bgfx::getRendererType(), "vs_screenSpaceQuad");
-	ASSERT(bgfx::isValid(renderData->shaderHandle));
+	ShaderRenderDataBgfx* pRenderData = new ShaderRenderDataBgfx();
+	pRenderData->shaderHandle = bgfx::createEmbeddedShader(s_embeddedShaders, bgfx::getRendererType(), "vs_screenSpaceQuad");
+	ASSERT(bgfx::isValid(pRenderData->shaderHandle));
 
-	shader->renderData = renderData;
+	shader->renderData = pRenderData;
 }
