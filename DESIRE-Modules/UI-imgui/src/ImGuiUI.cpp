@@ -72,9 +72,8 @@ void ImGuiUI::Init()
 	mesh->CalculateStrideFromVertexLayout();
 	mesh->maxNumOfIndices = 128 * 1024;
 	mesh->maxNumOfVertices = 256 * 1024;
-
 	mesh->indices = std::make_unique<uint16_t[]>(mesh->maxNumOfIndices);
-	mesh->vertices = std::make_unique<float[]>(mesh->maxNumOfVertices);
+	mesh->vertices = std::make_unique<float[]>(mesh->GetTotalBytesOfVertexData() / sizeof(float));
 	memset(mesh->indices.get(), 0, mesh->GetTotalBytesOfIndexData());
 	memset(mesh->vertices.get(), 0, mesh->GetTotalBytesOfVertexData());
 
