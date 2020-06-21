@@ -218,7 +218,7 @@ void ImGuiUI::Render()
 
 		for(const ImDrawCmd& cmd : pDrawList->CmdBuffer)
 		{
-			if(cmd.ElemCount == 0)
+			if(cmd.ElemCount == 0 && cmd.UserCallback == nullptr)
 			{
 				continue;
 			}
@@ -230,15 +230,16 @@ void ImGuiUI::Render()
 			if(cmd.UserCallback)
 			{
 				cmd.UserCallback(pDrawList, &cmd);
-				continue;
 			}
+			else
+			{
+				material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
-			mesh->numIndices = cmd.ElemCount;
-			material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
+				mesh->numIndices = cmd.ElemCount;
+				Modules::Render->RenderMesh(mesh.get(), material.get());
 
-			Modules::Render->RenderMesh(mesh.get(), material.get());
-
-			mesh->indexOffset += mesh->numIndices;
+				mesh->indexOffset += mesh->numIndices;
+			}
 		}
 
 		mesh->vertexOffset += mesh->numVertices;
