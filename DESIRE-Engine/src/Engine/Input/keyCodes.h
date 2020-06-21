@@ -1,6 +1,20 @@
 #pragma once
 
-#define SCANCODE_E0_MASK	0x80
+enum class EKeyModifier
+{
+	None			= 0x00,
+	Ctrl			= 0x01,
+	Shift			= 0x02,
+	Alt				= 0x04,
+	DontCare		= 0xFF,
+
+	Ctrl_Shift		= Ctrl | Shift,
+	Ctrl_Alt		= Ctrl | Alt,
+	Shift_Alt		= Shift | Alt,
+	Ctrl_Shift_Alt	= Ctrl | Shift | Alt,
+};
+
+static constexpr uint8_t kScanCode_E0_Mask = 0x80;
 
 // Keyboard (scan codes)
 enum EKeyCode
@@ -93,21 +107,21 @@ enum EKeyCode
 	KEY_F11				= 0x57,
 	KEY_F12				= 0x58,
 	// Escaped scan codes
-	KEY_NUMPADENTER		= 0x1C | SCANCODE_E0_MASK,	// Enter on numeric keypad
-	KEY_RCONTROL		= 0x1D | SCANCODE_E0_MASK,
-	KEY_NUMPADSLASH		= 0x35 | SCANCODE_E0_MASK,	// / on numeric keypad
-	KEY_RALT			= 0x38 | SCANCODE_E0_MASK,	// Right Alt
-	KEY_HOME			= 0x47 | SCANCODE_E0_MASK,	// Home on arrow keypad
-	KEY_UP				= 0x48 | SCANCODE_E0_MASK,	// UpArrow on arrow keypad
-	KEY_PGUP			= 0x49 | SCANCODE_E0_MASK,	// PgUp on arrow keypad
-	KEY_LEFT			= 0x4B | SCANCODE_E0_MASK,	// LeftArrow on arrow keypad
-	KEY_RIGHT			= 0x4D | SCANCODE_E0_MASK,	// RightArrow on arrow keypad
-	KEY_END				= 0x4F | SCANCODE_E0_MASK,	// End on arrow keypad
-	KEY_DOWN			= 0x50 | SCANCODE_E0_MASK,	// DownArrow on arrow keypad
-	KEY_PGDOWN			= 0x51 | SCANCODE_E0_MASK,	// PgDn on arrow keypad
-	KEY_INSERT			= 0x52 | SCANCODE_E0_MASK,	// Insert on arrow keypad
-	KEY_DELETE			= 0x53 | SCANCODE_E0_MASK,	// Delete on arrow keypad
-	KEY_LWIN			= 0x5B | SCANCODE_E0_MASK,	// Left Windows key
-	KEY_RWIN			= 0x5C | SCANCODE_E0_MASK,	// Right Windows key
-	KEY_APPS			= 0x5D | SCANCODE_E0_MASK,	// AppMenu key
+	KEY_NUMPADENTER		= 0x1C | kScanCode_E0_Mask,	// Enter on numeric keypad
+	KEY_RCONTROL		= 0x1D | kScanCode_E0_Mask,
+	KEY_NUMPADSLASH		= 0x35 | kScanCode_E0_Mask,	// / on numeric keypad
+	KEY_RALT			= 0x38 | kScanCode_E0_Mask,	// Right Alt
+	KEY_HOME			= 0x47 | kScanCode_E0_Mask,	// Home on arrow keypad
+	KEY_UP				= 0x48 | kScanCode_E0_Mask,	// UpArrow on arrow keypad
+	KEY_PGUP			= 0x49 | kScanCode_E0_Mask,	// PgUp on arrow keypad
+	KEY_LEFT			= 0x4B | kScanCode_E0_Mask,	// LeftArrow on arrow keypad
+	KEY_RIGHT			= 0x4D | kScanCode_E0_Mask,	// RightArrow on arrow keypad
+	KEY_END				= 0x4F | kScanCode_E0_Mask,	// End on arrow keypad
+	KEY_DOWN			= 0x50 | kScanCode_E0_Mask,	// DownArrow on arrow keypad
+	KEY_PGDOWN			= 0x51 | kScanCode_E0_Mask,	// PgDn on arrow keypad
+	KEY_INSERT			= 0x52 | kScanCode_E0_Mask,	// Insert on arrow keypad
+	KEY_DELETE			= 0x53 | kScanCode_E0_Mask,	// Delete on arrow keypad
+	KEY_LWIN			= 0x5B | kScanCode_E0_Mask,	// Left Windows key
+	KEY_RWIN			= 0x5C | kScanCode_E0_Mask,	// Right Windows key
+	KEY_APPS			= 0x5D | kScanCode_E0_Mask,	// AppMenu key
 };

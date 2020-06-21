@@ -7,7 +7,7 @@ protected:
 
 public:
 	bool IsDown(int buttonId) const;
-	bool WentDown(int buttonId) const;
+	bool WasPressed(int buttonId) const;
 
 	// Returns how many times the button went down since the last frame
 	uint8_t GetPressedCount(int buttonId) const;

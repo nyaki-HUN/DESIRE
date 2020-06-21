@@ -121,26 +121,17 @@ void ImGuiUI::BeginFrame(OSWindow* pWindow)
 	io.ImeWindowHandle = pWindow->GetHandle();
 
 	// Keyboard
-	io.KeyCtrl = false;
-	io.KeyShift = false;
-	io.KeyAlt = false;
-	io.KeySuper = false;
-	memset(io.KeysDown, 0, sizeof(io.KeysDown));
-	for(const Keyboard& keyboard : Modules::Input->GetKeyboards())
+	io.KeyCtrl = Modules::Input->IsKeyDown(KEY_LCONTROL) || Modules::Input->IsKeyDown(KEY_RCONTROL);
+	io.KeyShift = Modules::Input->IsKeyDown(KEY_LSHIFT) || Modules::Input->IsKeyDown(KEY_RSHIFT);
+	io.KeyAlt = Modules::Input->IsKeyDown(KEY_LALT) || Modules::Input->IsKeyDown(KEY_RALT);
+	io.KeySuper = Modules::Input->IsKeyDown(KEY_LWIN) || Modules::Input->IsKeyDown(KEY_RWIN);
+	for(int keyCode : io.KeyMap)
 	{
-		io.KeyCtrl |= keyboard.IsDown(KEY_LCONTROL) || keyboard.IsDown(KEY_RCONTROL);
-		io.KeyShift |= keyboard.IsDown(KEY_LSHIFT) || keyboard.IsDown(KEY_RSHIFT);
-		io.KeyAlt |= keyboard.IsDown(KEY_LALT) || keyboard.IsDown(KEY_RALT);
-		io.KeySuper |= keyboard.IsDown(KEY_LWIN) || keyboard.IsDown(KEY_RWIN);
-
-		for(int keyCode : io.KeyMap)
-		{
-			io.KeysDown[keyCode] |= keyboard.IsDown(keyCode);
-		}
+		io.KeysDown[keyCode] = Modules::Input->IsKeyDown(static_cast<EKeyCode>(keyCode));
 	}
 
 	const String& typedCharacters = Modules::Input->GetTypingCharacters();
-	for(size_t i = 0; typedCharacters.Length(); ++i)
+	for(size_t i = 0; i < typedCharacters.Length(); ++i)
 	{
 		io.AddInputCharacter(typedCharacters.Str()[i]);
 	}
@@ -148,18 +139,15 @@ void ImGuiUI::BeginFrame(OSWindow* pWindow)
 	// Mouse
 	const Vector2& mousePos = Modules::Input->GetOsMouseCursorPos();
 	io.MousePos = ImVec2(mousePos.GetX(), mousePos.GetY());
-
-	memset(io.MouseDown, 0, sizeof(io.MouseDown));
+	io.MouseDown[ImGuiMouseButton_Left] = Modules::Input->IsMouseButtonDown(Mouse::EButton::Button_Left);
+	io.MouseDown[ImGuiMouseButton_Right] = Modules::Input->IsMouseButtonDown(Mouse::EButton::Button_Right);
+	io.MouseDown[ImGuiMouseButton_Middle] = Modules::Input->IsMouseButtonDown(Mouse::EButton::Button_Middle);
 	io.MouseWheel = 0.0f;
 	io.MouseWheelH = 0.0f;
 	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
 		io.MouseWheel += mouse.GetAxisDelta(Mouse::Wheel);
-
-		for(int i = 0; i < (int)DESIRE_ASIZEOF(io.MouseDown); ++i)
-		{
-			io.MouseDown[i] |= mouse.IsDown(i);
-		}
+		io.MouseWheelH += mouse.GetAxisDelta(Mouse::Wheel_Horizontal);
 	}
 
 	ImGui::NewFrame();

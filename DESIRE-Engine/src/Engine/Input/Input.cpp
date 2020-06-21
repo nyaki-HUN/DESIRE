@@ -28,19 +28,18 @@ void Input::Update()
 {
 	Update_internal();
 
+	// Handle hotkeys
+	for(const Hotkey& hotkey : hotkeys)
+	{
+		if(WasKeyPressed(hotkey.keyCode, hotkey.modifier))
+		{
+			hotkey.callback(hotkey.userData);
+		}
+	}
+
 	// Keyboard
 	for(Keyboard& keyboard : keyboards)
 	{
-		// Handle hotkeys
-		const uint8_t modifiers = keyboard.GetModifierMask();
-		for(const Hotkey& hotkey : hotkeys)
-		{
-			if(keyboard.WentDown(hotkey.keyCode) && (hotkey.modifiers == MODIFIER_DONT_CARE || hotkey.modifiers == modifiers))
-			{
-				hotkey.callback(hotkey.userData);
-			}
-		}
-
 		keyboard.Update();
 	}
 
@@ -80,13 +79,13 @@ void Input::Reset()
 	}
 }
 
-bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void* userData)
+bool Input::RegisterHotkey(EKeyCode keyCode, EKeyModifier modifier, HotkeyCallback_t callback, void* userData)
 {
 	ASSERT(callback != nullptr);
 
 	for(const Hotkey& hotkey : hotkeys)
 	{
-		if(hotkey.keyCode == keyCode && hotkey.modifiers == modifiers)
+		if(hotkey.keyCode == keyCode && hotkey.modifier == modifier)
 		{
 			return false;
 		}
@@ -94,7 +93,7 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 
 	Hotkey hotkey;
 	hotkey.keyCode = keyCode;
-	hotkey.modifiers = modifiers;
+	hotkey.modifier = modifier;
 	hotkey.callback = callback;
 	hotkey.userData = userData;
 	hotkeys.Add(hotkey);
@@ -102,11 +101,11 @@ bool Input::RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t
 	return true;
 }
 
-void Input::UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers)
+void Input::UnregisterHotkey(EKeyCode keyCode, EKeyModifier modifier)
 {
-	const size_t idx = hotkeys.SpecializedFind([keyCode, modifiers](const Hotkey& hotkey)
+	const size_t idx = hotkeys.SpecializedFind([keyCode, modifier](const Hotkey& hotkey)
 	{
-		return (hotkey.keyCode == keyCode && hotkey.modifiers == modifiers);
+		return (hotkey.keyCode == keyCode && hotkey.modifier == modifier);
 	});
 
 	if(idx != SIZE_MAX)
@@ -159,9 +158,61 @@ const InputDevice* Input::GetInputDeviceByHandle(const void* handle) const
 	return nullptr;
 }
 
+bool Input::IsKeyDown(EKeyCode keyCode, EKeyModifier modifier) const
+{
+	for(const Keyboard& keyboard : keyboards)
+	{
+		if(keyboard.IsDown(keyCode) && (modifier == EKeyModifier::DontCare || modifier == keyboard.GetActiveKeyModifier()))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Input::WasKeyPressed(EKeyCode keyCode, EKeyModifier modifier) const
+{
+	for(const Keyboard& keyboard : keyboards)
+	{
+		if(keyboard.WasPressed(keyCode) && (modifier == EKeyModifier::DontCare || modifier == keyboard.GetActiveKeyModifier()))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 const String& Input::GetTypingCharacters() const
 {
 	return typingCharacters;
+}
+
+bool Input::IsMouseButtonDown(Mouse::EButton button) const
+{
+	for(const Mouse& mouse : mouses)
+	{
+		if(mouse.IsDown(button))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Input::WasMouseButtonPressed(Mouse::EButton button) const
+{
+	for(const Mouse& mouse : mouses)
+	{
+		if(mouse.WasPressed(button))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 const Vector2& Input::GetOsMouseCursorPos() const

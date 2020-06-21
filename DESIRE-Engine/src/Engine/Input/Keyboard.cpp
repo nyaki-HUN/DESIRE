@@ -8,24 +8,31 @@ Keyboard::Keyboard(void* handle)
 {
 }
 
-uint8_t Keyboard::GetModifierMask() const
+EKeyModifier Keyboard::GetActiveKeyModifier() const
 {
-	uint8_t modifiers = 0;
-	if(IsDown(KEY_LCONTROL) || IsDown(KEY_RCONTROL))
+	const bool isCtrl = IsDown(KEY_LCONTROL) || IsDown(KEY_RCONTROL);
+	const bool isShift= IsDown(KEY_LSHIFT) || IsDown(KEY_RSHIFT);
+	const bool isAlt = IsDown(KEY_LALT) || IsDown(KEY_RALT);
+
+	if(isCtrl)
 	{
-		modifiers |= Input::MODIFIER_CTRL;
+		if(isShift)
+		{
+			return isAlt ? EKeyModifier::Ctrl_Shift_Alt : EKeyModifier::Ctrl_Shift;
+		}
+		else
+		{
+			return isAlt ? EKeyModifier::Ctrl_Alt : EKeyModifier::Ctrl;
+		}
 	}
-	if(IsDown(KEY_LSHIFT) || IsDown(KEY_RSHIFT))
+	else if(isShift)
 	{
-		modifiers |= Input::MODIFIER_SHIFT;
+		return isAlt ? EKeyModifier::Shift_Alt : EKeyModifier::Shift;
 	}
-	if(IsDown(KEY_LALT) || IsDown(KEY_RALT))
+	else if(isAlt)
 	{
-		modifiers |= Input::MODIFIER_ALT;
+		return EKeyModifier::Alt;
 	}
-	if(IsDown(KEY_LWIN) || IsDown(KEY_RWIN))
-	{
-		modifiers |= Input::MODIFIER_COMMAND;
-	}
-	return modifiers;
+
+	return EKeyModifier::None;
 }

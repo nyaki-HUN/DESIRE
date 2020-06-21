@@ -17,7 +17,7 @@ public:
 	void Unmap(int userActionId);
 
 	bool IsDown(int userActionId) const;
-	bool WentDown(int userActionId) const;
+	bool WasPressed(int userActionId) const;
 
 	// Returns how many times the action was triggered since the last frame
 	uint8_t GetPressedCount(int userActionId) const;

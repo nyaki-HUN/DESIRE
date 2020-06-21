@@ -122,7 +122,7 @@ void SandBox::Kill()
 
 void SandBox::Update()
 {
-	if(inputMapping.WentDown(EAction::Exit))
+	if(inputMapping.WasPressed(EAction::Exit))
 	{
 		LOG_MESSAGE("!EXIT!");
 		return;

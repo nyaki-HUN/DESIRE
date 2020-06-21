@@ -15,16 +15,6 @@ class Input
 public:
 	typedef void(*HotkeyCallback_t)(void* userData);
 
-	enum EModifierType
-	{
-		MODIFIER_NONE		= 0x00,
-		MODIFIER_CTRL		= 0x01,
-		MODIFIER_SHIFT		= 0x02,
-		MODIFIER_ALT		= 0x04,
-		MODIFIER_COMMAND	= 0x08,
-		MODIFIER_DONT_CARE	= 0xff,
-	};
-
 	Input();
 	~Input();
 
@@ -33,8 +23,8 @@ public:
 	void Update();
 	void Reset();
 
-	bool RegisterHotkey(EKeyCode keyCode, uint8_t modifiers, HotkeyCallback_t callback, void* userData = nullptr);
-	void UnregisterHotkey(EKeyCode keyCode, uint8_t modifiers);
+	bool RegisterHotkey(EKeyCode keyCode, EKeyModifier modifier, HotkeyCallback_t callback, void* userData = nullptr);
+	void UnregisterHotkey(EKeyCode keyCode, EKeyModifier modifier);
 
 	const Array<Keyboard>& GetKeyboards() const;
 	const Array<Mouse>& GetMouses() const;
@@ -42,8 +32,16 @@ public:
 
 	const InputDevice* GetInputDeviceByHandle(const void* handle) const;
 
+	// Keyboard
+	bool IsKeyDown(EKeyCode keyCode, EKeyModifier modifierType = EKeyModifier::DontCare) const;
+	bool WasKeyPressed(EKeyCode keyCode, EKeyModifier modifierType = EKeyModifier::DontCare) const;
+
 	// Returns a string from the characters typed since the last frame
 	const String& GetTypingCharacters() const;
+
+	// Mouse
+	bool IsMouseButtonDown(Mouse::EButton button) const;
+	bool WasMouseButtonPressed(Mouse::EButton button) const;
 
 	const Vector2& GetOsMouseCursorPos() const;
 
@@ -58,7 +56,7 @@ private:
 	struct Hotkey
 	{
 		EKeyCode keyCode;
-		uint8_t modifiers;
+		EKeyModifier modifier;
 		HotkeyCallback_t callback;
 		void* userData;
 	};

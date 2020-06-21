@@ -22,7 +22,7 @@ bool InputDevice::IsDown(int buttonId) const
 	return (buttonState & InputDevice::kButtonStateDownFlag) != 0;
 }
 
-bool InputDevice::WentDown(int buttonId) const
+bool InputDevice::WasPressed(int buttonId) const
 {
 	return GetPressedCount(buttonId) != 0;
 }

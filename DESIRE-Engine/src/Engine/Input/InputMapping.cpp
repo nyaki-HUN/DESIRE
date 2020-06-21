@@ -72,7 +72,7 @@ bool InputMapping::IsDown(int userActionId) const
 	return GetFloatState(userActionId) > 0.0f;
 }
 
-bool InputMapping::WentDown(int userActionId) const
+bool InputMapping::WasPressed(int userActionId) const
 {
 	const size_t idx = userActions.SpecializedFind([userActionId](const UserAction& userAction)
 	{
@@ -84,7 +84,7 @@ bool InputMapping::WentDown(int userActionId) const
 		for(const MappedInput& button : userActions[idx].mappedButtons)
 		{
 			const InputDevice* inputDevice = Modules::Input->GetInputDeviceByHandle(button.inputDeviceHandle);
-			if(inputDevice != nullptr && inputDevice->WentDown(button.id))
+			if(inputDevice != nullptr && inputDevice->WasPressed(button.id))
 			{
 				return true;
 			}

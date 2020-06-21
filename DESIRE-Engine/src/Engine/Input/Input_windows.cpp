@@ -132,7 +132,7 @@ public:
 				uint8_t scanCode = (uint8_t)rawData.data.keyboard.MakeCode;
 				if(rawData.data.keyboard.Flags & RI_KEY_E0)
 				{
-					scanCode |= SCANCODE_E0_MASK;
+					scanCode |= kScanCode_E0_Mask;
 				}
 
 				keyboard.HandleButton(scanCode, !(rawData.data.keyboard.Flags & RI_KEY_BREAK));
