@@ -281,17 +281,17 @@ void Direct3D11Render::SetView(View* view)
 			Bind(rt);
 		}
 
-		RenderTargetRenderDataD3D11* renderData = static_cast<RenderTargetRenderDataD3D11*>(rt->renderData);
-		deviceCtx->OMSetRenderTargets((UINT)renderData->renderTargetViews.size(), renderData->renderTargetViews.data(), renderData->depthStencilView);
+		RenderTargetRenderDataD3D11* pRenderData = static_cast<RenderTargetRenderDataD3D11*>(rt->renderData);
+		deviceCtx->OMSetRenderTargets(static_cast<UINT>(pRenderData->renderTargetViews.size()), pRenderData->renderTargetViews.data(), pRenderData->depthStencilView);
 		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
 
-		for(ID3D11RenderTargetView* renderTargetView : renderData->renderTargetViews)
+		for(ID3D11RenderTargetView* renderTargetView : pRenderData->renderTargetViews)
 		{
 			deviceCtx->ClearRenderTargetView(renderTargetView, clearColor);
 		}
-		if(renderData->depthStencilView != nullptr)
+		if(pRenderData->depthStencilView != nullptr)
 		{
-			deviceCtx->ClearDepthStencilView(renderData->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+			deviceCtx->ClearDepthStencilView(pRenderData->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 		}
 	}
 	else
@@ -480,7 +480,7 @@ void Direct3D11Render::Bind(Mesh* mesh)
 		return;
 	}
 
-	MeshRenderDataD3D11* renderData = new MeshRenderDataD3D11();
+	MeshRenderDataD3D11* pRenderData = new MeshRenderDataD3D11();
 
 	static const D3D11_INPUT_ELEMENT_DESC attribConversionTable[] =
 	{
@@ -517,12 +517,12 @@ void Direct3D11Render::Bind(Mesh* mesh)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(attribTypeConversionTable, Mesh::EAttribType::Num);
 
-	renderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexLayout.Size());
+	pRenderData->vertexElementDesc = std::make_unique<D3D11_INPUT_ELEMENT_DESC[]>(mesh->vertexLayout.Size());
 	for(size_t i = 0; i < mesh->vertexLayout.Size(); ++i)
 	{
 		const Mesh::VertexLayout& layout = mesh->vertexLayout[i];
 
-		D3D11_INPUT_ELEMENT_DESC& elementDesc = renderData->vertexElementDesc[i];
+		D3D11_INPUT_ELEMENT_DESC& elementDesc = pRenderData->vertexElementDesc[i];
 		elementDesc = attribConversionTable[static_cast<size_t>(layout.attrib)];
 		elementDesc.Format = attribTypeConversionTable[static_cast<size_t>(layout.type)][layout.count - 1];
 	}
@@ -543,19 +543,19 @@ void Direct3D11Render::Bind(Mesh* mesh)
 
 			if(mesh->numIndices != 0)
 			{
-				bufferDesc.ByteWidth = mesh->GetSizeOfIndices();
+				bufferDesc.ByteWidth = mesh->GetBytesOfIndexData();
 				bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &renderData->indexBuffer);
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pRenderData->indexBuffer);
 				DX_CHECK_HRESULT(hr);
 			}
 
 			if(mesh->numVertices != 0)
 			{
-				bufferDesc.ByteWidth = mesh->GetSizeOfVertices();
+				bufferDesc.ByteWidth = mesh->GetBytesOfVertexData();
 				bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &renderData->vertexBuffer);
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pRenderData->vertexBuffer);
 				DX_CHECK_HRESULT(hr);
 			}
 			break;
@@ -569,26 +569,26 @@ void Direct3D11Render::Bind(Mesh* mesh)
 			DynamicMesh* dynamicMesh = static_cast<DynamicMesh*>(mesh);
 			if(dynamicMesh->maxNumOfIndices != 0)
 			{
-				bufferDesc.ByteWidth = dynamicMesh->GetMaxSizeOfIndices();
+				bufferDesc.ByteWidth = dynamicMesh->GetTotalBytesOfIndexData();
 				bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &renderData->indexBuffer);
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pRenderData->indexBuffer);
 				DX_CHECK_HRESULT(hr);
 			}
 
 			if(dynamicMesh->maxNumOfVertices != 0)
 			{
-				bufferDesc.ByteWidth = dynamicMesh->GetMaxSizeOfVertices();
+				bufferDesc.ByteWidth = dynamicMesh->GetTotalBytesOfVertexData();
 				bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &renderData->vertexBuffer);
+				HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pRenderData->vertexBuffer);
 				DX_CHECK_HRESULT(hr);
 			}
 			break;
 		}
 	}
 
-	mesh->renderData = renderData;
+	mesh->renderData = pRenderData;
 }
 
 void Direct3D11Render::Bind(Shader* shader)
@@ -603,7 +603,7 @@ void Direct3D11Render::Bind(Shader* shader)
 
 	const bool isVertexShader = shader->name.StartsWith("vs_");
 
-	ShaderRenderDataD3D11* renderData = new ShaderRenderDataD3D11();
+	ShaderRenderDataD3D11* pRenderData = new ShaderRenderDataD3D11();
 
 	D3D_SHADER_MACRO defines[32] = {};
 	ASSERT(shader->defines.size() < DESIRE_ASIZEOF(defines));
@@ -631,7 +631,7 @@ void Direct3D11Render::Bind(Shader* shader)
 		, isVertexShader ? "vs_5_0" : "ps_5_0"		// pTarget
 		, compileFlags								// D3DCOMPILE flags
 		, 0											// D3DCOMPILE_EFFECT flags
-		, &renderData->shaderCode					// ppCode
+		, &pRenderData->shaderCode					// ppCode
 		, &errorBlob);								// ppErrorMsgs
 	if(FAILED(hr))
 	{
@@ -641,42 +641,42 @@ void Direct3D11Render::Bind(Shader* shader)
 			DX_RELEASE(errorBlob);
 		}
 
-		delete renderData;
+		delete pRenderData;
 		shader->renderData = isVertexShader ? errorVertexShader->renderData : errorPixelShader->renderData;
 		return;
 	}
 
 	if(isVertexShader)
 	{
-		hr = d3dDevice->CreateVertexShader(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
+		hr = d3dDevice->CreateVertexShader(pRenderData->shaderCode->GetBufferPointer(), pRenderData->shaderCode->GetBufferSize(), nullptr, &pRenderData->vertexShader);
 	}
 	else
 	{
-		hr = d3dDevice->CreatePixelShader(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), nullptr, &renderData->pixelShader);
+		hr = d3dDevice->CreatePixelShader(pRenderData->shaderCode->GetBufferPointer(), pRenderData->shaderCode->GetBufferSize(), nullptr, &pRenderData->pixelShader);
 	}
 	DX_CHECK_HRESULT(hr);
 
-	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)shader->name.Length(), shader->name.Str());
+	pRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)shader->name.Length(), shader->name.Str());
 
-	ID3D11ShaderReflection* reflection = nullptr;
-	hr = D3DReflect(renderData->shaderCode->GetBufferPointer(), renderData->shaderCode->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&reflection);
+	ID3D11ShaderReflection* pReflection = nullptr;
+	hr = D3DReflect(pRenderData->shaderCode->GetBufferPointer(), pRenderData->shaderCode->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pReflection);
 	if(FAILED(hr))
 	{
 		LOG_ERROR("D3DReflect failed 0x%08x\n", (uint32_t)hr);
 	}
 
 	D3D11_SHADER_DESC shaderDesc;
-	hr = reflection->GetDesc(&shaderDesc);
+	hr = pReflection->GetDesc(&shaderDesc);
 	if(FAILED(hr))
 	{
 		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
 	}
 
-	renderData->constantBuffers.resize(shaderDesc.ConstantBuffers);
-	renderData->constantBuffersData.resize(shaderDesc.ConstantBuffers);
+	pRenderData->constantBuffers.resize(shaderDesc.ConstantBuffers);
+	pRenderData->constantBuffersData.resize(shaderDesc.ConstantBuffers);
 	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		ID3D11ShaderReflectionConstantBuffer* cbuffer = reflection->GetConstantBufferByIndex(i);
+		ID3D11ShaderReflectionConstantBuffer* cbuffer = pReflection->GetConstantBufferByIndex(i);
 		D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
 		hr = cbuffer->GetDesc(&shaderBufferDesc);
 		DX_CHECK_HRESULT(hr);
@@ -686,11 +686,11 @@ void Direct3D11Render::Bind(Shader* shader)
 		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = d3dDevice->CreateBuffer(&bufferDesc, nullptr, &renderData->constantBuffers[i]);
+		hr = d3dDevice->CreateBuffer(&bufferDesc, nullptr, &pRenderData->constantBuffers[i]);
 		DX_CHECK_HRESULT(hr);
 
 		// Create constant buffer data
-		ShaderRenderDataD3D11::ConstantBufferData& bufferData = renderData->constantBuffersData[i];
+		ShaderRenderDataD3D11::ConstantBufferData& bufferData = pRenderData->constantBuffersData[i];
 		bufferData.data = MemoryBuffer(shaderBufferDesc.Size);
 
 		for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
@@ -722,9 +722,9 @@ void Direct3D11Render::Bind(Shader* shader)
 		}
 	}
 
-	DX_RELEASE(reflection);
+	DX_RELEASE(pReflection);
 
-	shader->renderData = renderData;
+	shader->renderData = pRenderData;
 }
 
 void Direct3D11Render::Bind(Texture* texture)
@@ -737,7 +737,7 @@ void Direct3D11Render::Bind(Texture* texture)
 		return;
 	}
 
-	TextureRenderDataD3D11* renderData = new TextureRenderDataD3D11();
+	TextureRenderDataD3D11* pRenderData = new TextureRenderDataD3D11();
 
 	const bool isRenderTarget = (texture->data.ptr == nullptr);
 
@@ -773,7 +773,7 @@ void Direct3D11Render::Bind(Texture* texture)
 
 	if(isRenderTarget)
 	{
-		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &renderData->texture2D);
+		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &pRenderData->texture2D);
 		DX_CHECK_HRESULT(hr);
 	}
 	else
@@ -787,7 +787,7 @@ void Direct3D11Render::Bind(Texture* texture)
 			subResourceData[i].SysMemSlicePitch = 0;
 		}
 
-		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &renderData->texture2D);
+		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &pRenderData->texture2D);
 		DX_CHECK_HRESULT(hr);
 	}
 
@@ -797,11 +797,11 @@ void Direct3D11Render::Bind(Texture* texture)
 		srvDesc.Format = textureDesc.Format;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
-		HRESULT hr = d3dDevice->CreateShaderResourceView(renderData->texture2D, &srvDesc, &renderData->textureSRV);
+		HRESULT hr = d3dDevice->CreateShaderResourceView(pRenderData->texture2D, &srvDesc, &pRenderData->textureSRV);
 		DX_CHECK_HRESULT(hr);
 	}
 
-	texture->renderData = renderData;
+	texture->renderData = pRenderData;
 }
 
 void Direct3D11Render::Bind(RenderTarget* renderTarget)
@@ -814,10 +814,10 @@ void Direct3D11Render::Bind(RenderTarget* renderTarget)
 		return;
 	}
 
-	RenderTargetRenderDataD3D11* renderData = new RenderTargetRenderDataD3D11();
+	RenderTargetRenderDataD3D11* pRenderData = new RenderTargetRenderDataD3D11();
 
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
-	renderData->renderTargetViews.reserve(textureCount);
+	pRenderData->renderTargetViews.reserve(textureCount);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
 		// Bind texture
@@ -829,9 +829,9 @@ void Direct3D11Render::Bind(RenderTarget* renderTarget)
 
 		if(texture->IsDepthFormat())
 		{
-			ASSERT(renderData->depthStencilView == nullptr && "RenderTargets can have only 1 depth attachment");
+			ASSERT(pRenderData->depthStencilView == nullptr && "RenderTargets can have only 1 depth attachment");
 
-			HRESULT hr = d3dDevice->CreateDepthStencilView(textureRenderData->texture2D, nullptr, &renderData->depthStencilView);
+			HRESULT hr = d3dDevice->CreateDepthStencilView(textureRenderData->texture2D, nullptr, &pRenderData->depthStencilView);
 			DX_CHECK_HRESULT(hr);
 		}
 		else
@@ -844,11 +844,11 @@ void Direct3D11Render::Bind(RenderTarget* renderTarget)
 			HRESULT hr = d3dDevice->CreateRenderTargetView(textureRenderData->texture2D, &renderTargetViewDesc, &renderTargetView);
 			DX_CHECK_HRESULT(hr);
 
-			renderData->renderTargetViews.push_back(renderTargetView);
+			pRenderData->renderTargetViews.push_back(renderTargetView);
 		}
 	}
 
-	renderTarget->renderData = renderData;
+	renderTarget->renderData = pRenderData;
 }
 
 void Direct3D11Render::Unbind(Mesh* mesh)
@@ -859,11 +859,11 @@ void Direct3D11Render::Unbind(Mesh* mesh)
 		return;
 	}
 
-	MeshRenderDataD3D11* renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
-	DX_RELEASE(renderData->indexBuffer);
-	DX_RELEASE(renderData->vertexBuffer);
+	MeshRenderDataD3D11* pRenderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+	DX_RELEASE(pRenderData->indexBuffer);
+	DX_RELEASE(pRenderData->vertexBuffer);
 
-	delete renderData;
+	delete pRenderData;
 	mesh->renderData = nullptr;
 
 	if(activeMesh == mesh)
@@ -888,18 +888,18 @@ void Direct3D11Render::Unbind(Shader* shader)
 		return;
 	}
 
-	ShaderRenderDataD3D11* renderData = static_cast<ShaderRenderDataD3D11*>(shader->renderData);
-	DX_RELEASE(renderData->ptr);
-	DX_RELEASE(renderData->shaderCode);
+	ShaderRenderDataD3D11* pRenderData = static_cast<ShaderRenderDataD3D11*>(shader->renderData);
+	DX_RELEASE(pRenderData->ptr);
+	DX_RELEASE(pRenderData->shaderCode);
 
-	for(ID3D11Buffer* buffer : renderData->constantBuffers)
+	for(ID3D11Buffer* buffer : pRenderData->constantBuffers)
 	{
 		DX_RELEASE(buffer)
 	}
-	renderData->constantBuffers.clear();
-	renderData->constantBuffersData.clear();
+	pRenderData->constantBuffers.clear();
+	pRenderData->constantBuffersData.clear();
 
-	delete renderData;
+	delete pRenderData;
 	shader->renderData = nullptr;
 
 	if(activeVertexShader == shader)
@@ -920,11 +920,11 @@ void Direct3D11Render::Unbind(Texture* texture)
 		return;
 	}
 
-	TextureRenderDataD3D11* renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
-	DX_RELEASE(renderData->textureSRV);
-	DX_RELEASE(renderData->texture2D);
+	TextureRenderDataD3D11* pRenderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
+	DX_RELEASE(pRenderData->textureSRV);
+	DX_RELEASE(pRenderData->texture2D);
 
-	delete renderData;
+	delete pRenderData;
 	texture->renderData = nullptr;
 }
 
@@ -936,15 +936,15 @@ void Direct3D11Render::Unbind(RenderTarget* renderTarget)
 		return;
 	}
 
-	RenderTargetRenderDataD3D11* renderData = static_cast<RenderTargetRenderDataD3D11*>(renderTarget->renderData);
+	RenderTargetRenderDataD3D11* pRenderData = static_cast<RenderTargetRenderDataD3D11*>(renderTarget->renderData);
 
-	for(ID3D11RenderTargetView* renderTargetView : renderData->renderTargetViews)
+	for(ID3D11RenderTargetView* renderTargetView : pRenderData->renderTargetViews)
 	{
 		DX_RELEASE(renderTargetView);
 	}
-	renderData->renderTargetViews.clear();
+	pRenderData->renderTargetViews.clear();
 
-	DX_RELEASE(renderData->depthStencilView);
+	DX_RELEASE(pRenderData->depthStencilView);
 
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
 	for(uint8_t i = 0; i < textureCount; ++i)
@@ -952,7 +952,7 @@ void Direct3D11Render::Unbind(RenderTarget* renderTarget)
 		Unbind(renderTarget->GetTexture(i).get());
 	}
 
-	delete renderData;
+	delete pRenderData;
 	renderTarget->renderData = nullptr;
 }
 
@@ -968,17 +968,17 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh* mesh)
 		return;
 	}
 
-	MeshRenderDataD3D11* renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+	MeshRenderDataD3D11* pRenderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
 	if(mesh->isIndexDataUpdateRequired)
 	{
-		UpdateD3D11Resource(renderData->indexBuffer, mesh->indices.get(), mesh->GetSizeOfIndices());
+		UpdateD3D11Resource(pRenderData->indexBuffer, mesh->indices.get(), mesh->GetBytesOfIndexData());
 		mesh->isIndexDataUpdateRequired = false;
 	}
 
 	if(mesh->isVertexDataUpdateRequired)
 	{
-		UpdateD3D11Resource(renderData->vertexBuffer, mesh->vertices.get(), mesh->GetSizeOfVertices());
+		UpdateD3D11Resource(pRenderData->vertexBuffer, mesh->vertices.get(), mesh->GetBytesOfVertexData());
 		mesh->isVertexDataUpdateRequired = false;
 	}
 }
@@ -1024,10 +1024,10 @@ void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 
 void Direct3D11Render::SetMesh(Mesh* mesh)
 {
-	MeshRenderDataD3D11* renderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
+	MeshRenderDataD3D11* pRenderData = static_cast<MeshRenderDataD3D11*>(mesh->renderData);
 
-	uint32_t indexByteOffset = renderData->indexOffset * sizeof(uint16_t);
-	uint32_t vertexByteOffset = renderData->vertexOffset * mesh->stride;
+	uint32_t indexByteOffset = pRenderData->indexOffset * sizeof(uint16_t);
+	uint32_t vertexByteOffset = pRenderData->vertexOffset * mesh->stride;
 
 	switch(mesh->type)
 	{
@@ -1050,8 +1050,8 @@ void Direct3D11Render::SetMesh(Mesh* mesh)
 		}
 	}
 
-	deviceCtx->IASetIndexBuffer(renderData->indexBuffer, DXGI_FORMAT_R16_UINT, indexByteOffset);
-	deviceCtx->IASetVertexBuffers(0, 1, &renderData->vertexBuffer, &mesh->stride, &vertexByteOffset);
+	deviceCtx->IASetIndexBuffer(pRenderData->indexBuffer, DXGI_FORMAT_R16_UINT, indexByteOffset);
+	deviceCtx->IASetVertexBuffers(0, 1, &pRenderData->vertexBuffer, &mesh->stride, &vertexByteOffset);
 
 	if(activeMesh == nullptr)
 	{
@@ -1110,10 +1110,10 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterM
 {
 	ASSERT(samplerIdx < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
-	TextureRenderDataD3D11* renderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
+	TextureRenderDataD3D11* pRenderData = static_cast<TextureRenderDataD3D11*>(texture->renderData);
 
-	deviceCtx->VSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
-	deviceCtx->PSSetShaderResources(samplerIdx, 1, &renderData->textureSRV);
+	deviceCtx->VSSetShaderResources(samplerIdx, 1, &pRenderData->textureSRV);
+	deviceCtx->PSSetShaderResources(samplerIdx, 1, &pRenderData->textureSRV);
 
 	static const D3D11_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
 	{
