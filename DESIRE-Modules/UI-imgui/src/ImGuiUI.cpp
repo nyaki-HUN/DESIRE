@@ -248,8 +248,10 @@ void ImGuiUI::Render()
 	Modules::Render->SetScissor();
 }
 
-void ImGuiUI::BeginWindow(const String& label)
+void ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize)
 {
+	ImGui::SetNextWindowPos(ImVec2(initialPos.GetX(), initialPos.GetY()), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(initialSize.GetX(), initialSize.GetY()), ImGuiCond_FirstUseEver);
 	ImGui::Begin(label.Str());
 }
 

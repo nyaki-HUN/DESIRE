@@ -19,7 +19,7 @@ public:
 	virtual void Render() = 0;
 
 	// Window
-	virtual void BeginWindow(const String& label) = 0;
+	virtual void BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize) = 0;
 	virtual void EndWindow() = 0;
 
 	// Widgets

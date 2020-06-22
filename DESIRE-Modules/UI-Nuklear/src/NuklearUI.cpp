@@ -159,16 +159,26 @@ void NuklearUI::BeginFrame(OSWindow* pWindow)
 	const String& typedCharacters = Modules::Input->GetTypingCharacters();
 	for(size_t i = 0; i < typedCharacters.Length(); ++i)
 	{
-		nk_input_unicode(ctx.get(), typedCharacters.Str()[i]);
+		nk_input_char(ctx.get(), typedCharacters.Str()[i]);
 	}
 
 	// Mouse
 	const Vector2& mousePos = Modules::Input->GetOsMouseCursorPos();
 	const int x = static_cast<int>(mousePos.GetX());
 	const int y = static_cast<int>(mousePos.GetY());
+	nk_input_motion(ctx.get(), x, y);
 	nk_input_button(ctx.get(), NK_BUTTON_LEFT, x, y, Modules::Input->IsMouseButtonDown(Mouse::Button_Left));
 	nk_input_button(ctx.get(), NK_BUTTON_MIDDLE, x, y, Modules::Input->IsMouseButtonDown(Mouse::Button_Middle));
 	nk_input_button(ctx.get(), NK_BUTTON_RIGHT, x, y, Modules::Input->IsMouseButtonDown(Mouse::Button_Right));
+
+	float mouseWheel = 0.0f;
+	float mouseWheelH = 0.0f;
+	for(const Mouse& mouse : Modules::Input->GetMouses())
+	{
+		mouseWheel += mouse.GetAxisDelta(Mouse::Wheel);
+		mouseWheelH += mouse.GetAxisDelta(Mouse::Wheel_Horizontal);
+	}
+	nk_input_scroll(ctx.get(), nk_vec2(mouseWheelH, mouseWheel));
 
 	nk_input_end(ctx.get());
 }
@@ -184,14 +194,14 @@ void NuklearUI::Render()
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-	mesh->numIndices = 0;
-	mesh->numVertices = 0;
 	nk_buffer indexBuffer;
 	nk_buffer vertexBuffer;
 	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->maxNumOfIndices);
 	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->maxNumOfVertices);
 	nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
 
+	mesh->numIndices = static_cast<uint32_t>(indexBuffer.allocated / sizeof(nk_draw_index));
+	mesh->numVertices = static_cast<uint32_t>(vertexBuffer.allocated / mesh->stride);
 	mesh->isIndexDataUpdateRequired = true;
 	mesh->isVertexDataUpdateRequired = true;
 	Modules::Render->UpdateDynamicMesh(mesh.get());
@@ -225,10 +235,10 @@ void NuklearUI::Render()
 	nk_buffer_clear(cmdBuffer.get());
 }
 
-void NuklearUI::BeginWindow(const String& label)
+void NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize)
 {
 	nk_flags flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE;
-	nk_begin(ctx.get(), label.Str(), nk_rect(50, 50, 800, 600), flags);
+	nk_begin(ctx.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), flags);
 }
 
 void NuklearUI::EndWindow()

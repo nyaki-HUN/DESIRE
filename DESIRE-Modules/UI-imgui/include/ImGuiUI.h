@@ -20,7 +20,7 @@ public:
 	void Render() override;
 
 	// Window
-	void BeginWindow(const String& label) override;
+	void BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize) override;
 	void EndWindow() override;
 
 	// Widgets
