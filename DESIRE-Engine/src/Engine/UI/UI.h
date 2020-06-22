@@ -14,8 +14,7 @@ public:
 	virtual void Init() = 0;
 	virtual void Kill() = 0;
 
-	virtual void BeginFrame(OSWindow* window) = 0;
-	virtual void EndFrame() = 0;
+	virtual void NewFrame(OSWindow* pWindow) = 0;
 	virtual void Render() = 0;
 
 	// Window

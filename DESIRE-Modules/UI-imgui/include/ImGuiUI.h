@@ -15,8 +15,7 @@ public:
 	void Init() override;
 	void Kill() override;
 
-	void BeginFrame(OSWindow* pWindow) override;
-	void EndFrame() override;
+	void NewFrame(OSWindow* pWindow) override;
 	void Render() override;
 
 	// Window

@@ -112,7 +112,7 @@ void ImGuiUI::Kill()
 	mesh = nullptr;
 }
 
-void ImGuiUI::BeginFrame(OSWindow* pWindow)
+void ImGuiUI::NewFrame(OSWindow* pWindow)
 {
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(pWindow->GetWidth(), pWindow->GetHeight());
@@ -150,13 +150,6 @@ void ImGuiUI::BeginFrame(OSWindow* pWindow)
 		io.MouseWheelH += mouse.GetAxisDelta(Mouse::Wheel_Horizontal);
 	}
 
-	ImGui::NewFrame();
-}
-
-void ImGuiUI::EndFrame()
-{
-	ImGuiIO& io = ImGui::GetIO();
-	OSWindow* pWindow = static_cast<OSWindow*>(io.UserData);
 	switch(ImGui::GetMouseCursor())
 	{
 		case ImGuiMouseCursor_Arrow:		pWindow->SetCursor(OSWindow::CURSOR_ARROW); break;
@@ -170,11 +163,13 @@ void ImGuiUI::EndFrame()
 		case ImGuiMouseCursor_NotAllowed:	pWindow->SetCursor(OSWindow::CURSOR_NOT_ALLOWED); break;
 	};
 
-	ImGui::Render();
+	ImGui::NewFrame();
 }
 
 void ImGuiUI::Render()
 {
+	ImGui::Render();
+
 	ImDrawData* pDrawData = ImGui::GetDrawData();
 	if(pDrawData == nullptr)
 	{

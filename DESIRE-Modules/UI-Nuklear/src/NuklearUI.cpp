@@ -119,7 +119,7 @@ void NuklearUI::Kill()
 	mesh = nullptr;
 }
 
-void NuklearUI::BeginFrame(OSWindow* pWindow)
+void NuklearUI::NewFrame(OSWindow* pWindow)
 {
 	ctx->delta_time_seconds = Modules::Application->GetTimer()->GetSecDelta();
 
@@ -181,10 +181,6 @@ void NuklearUI::BeginFrame(OSWindow* pWindow)
 	nk_input_scroll(ctx.get(), nk_vec2(mouseWheelH, mouseWheel));
 
 	nk_input_end(ctx.get());
-}
-
-void NuklearUI::EndFrame()
-{
 }
 
 void NuklearUI::Render()

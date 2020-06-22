@@ -135,10 +135,9 @@ void SandBox::Update()
 
 	FileSystemWatcher::UpdateAll();
 
-	Modules::UI->BeginFrame(mainWindow.get());
+	Modules::UI->NewFrame(mainWindow.get());
 
-//	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
-	Modules::UI->BeginWindow("Test Window");
+	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(300, 500));
 	Modules::UI->Text("Text");
 	if(Modules::UI->Button("Reset Slider"))
 	{
@@ -146,8 +145,6 @@ void SandBox::Update()
 	}
 	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
 	Modules::UI->EndWindow();
-
-	Modules::UI->EndFrame();
 
 	// Render
 	Modules::Render->BeginFrame(mainWindow.get());
