@@ -26,16 +26,17 @@ public:
 	virtual void Text(const String& label) = 0;
 	virtual bool Button(const String& label, const Vector2& size = Vector2::Zero()) = 0;
 	virtual bool Checkbox(const String& label, bool& isChecked) = 0;
+	virtual bool RadioButtonOption(const String& label, bool isActive) = 0;
 
 	template<typename T>
 	bool RadioButton(const String& label, T& value, T buttonValue)
 	{
-		const bool pressed = RadioButton(label, value == buttonValue);
-		if(pressed)
+		if(RadioButtonOption(label, value == buttonValue))
 		{
 			value = buttonValue;
+			return true;
 		}
-		return pressed;
+		return false;
 	}
 
 	virtual bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) = 0;
@@ -46,7 +47,4 @@ public:
 
 	// Layout
 	virtual void SameLine() = 0;
-
-private:
-	virtual bool RadioButton(const String& label, bool isActive) = 0;
 };

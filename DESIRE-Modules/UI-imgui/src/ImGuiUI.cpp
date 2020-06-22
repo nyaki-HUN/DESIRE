@@ -268,9 +268,14 @@ bool ImGuiUI::Button(const String& label, const Vector2& size)
 	return ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
 }
 
-bool ImGuiUI::RadioButton(const String& label, bool isActive)
+bool ImGuiUI::Checkbox(const String& label, bool& isChecked)
 {
-	return ImGui::RadioButton(label.Str(), isActive);
+	return ImGui::Checkbox(label.Str(), &isChecked);
+}
+
+bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
+{
+	return ImGui::RadioButton(label.Str(), isActive) && !isActive;
 }
 
 bool ImGuiUI::InputField(const String& label, float& value)
@@ -299,11 +304,6 @@ bool ImGuiUI::Slider(const String& label, int32_t& value, int32_t minValue, int3
 bool ImGuiUI::Slider(const String& label, float& value, float minValue, float maxValue)
 {
 	return ImGui::SliderFloat(label.Str(), &value, minValue, maxValue);
-}
-
-bool ImGuiUI::Checkbox(const String& label, bool& isChecked)
-{
-	return ImGui::Checkbox(label.Str(), &isChecked);
 }
 
 void ImGuiUI::SameLine()

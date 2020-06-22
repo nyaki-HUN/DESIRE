@@ -27,6 +27,7 @@ public:
 	void Text(const String& label) override;
 	bool Button(const String& label, const Vector2& size = Vector2::Zero()) override;
 	bool Checkbox(const String& label, bool& isChecked) override;
+	bool RadioButtonOption(const String& label, bool isActive) override;
 
 	bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) override;
 	bool Slider(const String& label, float& value, float minValue, float maxValue) override;
@@ -38,8 +39,6 @@ public:
 	void SameLine() override;
 
 private:
-	bool RadioButton(const String& label, bool isActive) override;
-
 	std::unique_ptr<DynamicMesh> mesh;
 	std::unique_ptr<Material> material;
 	std::shared_ptr<Texture> fontTexture;

@@ -184,14 +184,13 @@ void NuklearUI::Render()
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-
-	{
-		nk_buffer ibuf;
-		nk_buffer vbuf;
-		nk_buffer_init_fixed(&ibuf, mesh->indices.get(), mesh->maxNumOfIndices);
-		nk_buffer_init_fixed(&vbuf, mesh->vertices.get(), mesh->maxNumOfVertices);
-		nk_convert(ctx.get(), cmdBuffer.get(), &vbuf, &ibuf, convertConfig.get());
-	}
+	mesh->numIndices = 0;
+	mesh->numVertices = 0;
+	nk_buffer indexBuffer;
+	nk_buffer vertexBuffer;
+	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->maxNumOfIndices);
+	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->maxNumOfVertices);
+	nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
 
 	mesh->isIndexDataUpdateRequired = true;
 	mesh->isVertexDataUpdateRequired = true;
@@ -212,9 +211,9 @@ void NuklearUI::Render()
 		const uint16_t clipY = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.y));
 		Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(pCmd->clip_rect.w), static_cast<uint16_t>(pCmd->clip_rect.h));
 
-		mesh->numIndices = pCmd->elem_count;
 		material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
 
+		mesh->numIndices = pCmd->elem_count;
 		Modules::Render->RenderMesh(mesh.get(), material.get());
 
 		mesh->indexOffset += mesh->numIndices;
@@ -239,16 +238,30 @@ void NuklearUI::EndWindow()
 
 void NuklearUI::Text(const String& label)
 {
+	nk_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), NK_TEXT_LEFT);
 }
 
 bool NuklearUI::Button(const String& label, const Vector2& size)
 {
-	return nk_button_label(ctx.get(), label.Str());
+	return nk_button_text(ctx.get(), label.Str(), static_cast<int>(label.Length()));
 }
 
-bool NuklearUI::RadioButton(const String& label, bool isActive)
+bool NuklearUI::Checkbox(const String& label, bool& isChecked)
 {
+	int active = isChecked ? 1 : 0;
+	if(nk_checkbox_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), &active))
+	{
+		isChecked = (active != 0);
+		return true;
+	}
+
 	return false;
+}
+
+bool NuklearUI::RadioButtonOption(const String& label, bool isActive)
+{
+	int active = isActive ? 1 : 0;
+	return nk_radio_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), &active) && active;
 }
 
 bool NuklearUI::InputField(const String& label, float& value)
@@ -263,17 +276,12 @@ bool NuklearUI::InputField(const String& label, Vector3& value)
 
 bool NuklearUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
 {
-	return false;
+	return nk_slider_int(ctx.get(), minValue, &value, maxValue, 1);
 }
 
 bool NuklearUI::Slider(const String& label, float& value, float minValue, float maxValue)
 {
-	return false;
-}
-
-bool NuklearUI::Checkbox(const String& label, bool& isChecked)
-{
-	return false;
+	return nk_slider_float(ctx.get(), minValue, &value, maxValue, 0.1f);
 }
 
 void NuklearUI::SameLine()
