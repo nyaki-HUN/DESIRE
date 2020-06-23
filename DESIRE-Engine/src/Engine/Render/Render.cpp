@@ -16,48 +16,40 @@ Render::~Render()
 {
 }
 
-void Render::RenderMesh(Mesh* mesh, Material* material)
+void Render::RenderMesh(Mesh* pMesh, Material* pMaterial)
 {
-	ASSERT(mesh != nullptr);
-	ASSERT(material != nullptr);
-
-	if(material->vertexShader == nullptr || material->fragmentShader == nullptr)
+	if(pMaterial == nullptr || pMaterial->vertexShader == nullptr || pMaterial->fragmentShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
 	}
 
-	if(mesh->renderData == nullptr)
+	if(pMesh != nullptr && pMesh->pRenderData == nullptr)
 	{
-		Bind(mesh);
-	}
-	else if(mesh->type == Mesh::EType::Dynamic)
-	{
-		UpdateDynamicMesh(static_cast<DynamicMesh*>(mesh));
+		Bind(pMesh);
 	}
 
-	SetMesh(mesh);
-	SetMaterial(material);
-	UpdateShaderParams(material);
+	SetMesh(pMesh);
+	SetMaterial(pMaterial);
+	UpdateShaderParams(pMaterial);
 
 	DoRender();
 }
 
-void Render::RenderScreenSpaceQuad(Material* material)
+void Render::RenderScreenSpaceQuad(Material* pMaterial)
 {
-	ASSERT(material != nullptr);
 	ASSERT(screenSpaceQuadVertexShader->renderData != nullptr && "Shader needs to be bound by the render module");
 
-	if(material->vertexShader != nullptr || material->fragmentShader == nullptr)
+	if(pMaterial == nullptr || pMaterial->vertexShader == nullptr || pMaterial->fragmentShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
 	}
 
 	SetScreenSpaceQuadMesh();
-	SetMaterial(material);
+	SetMaterial(pMaterial);
 	SetVertexShader(screenSpaceQuadVertexShader.get());
-	UpdateShaderParams(material);
+	UpdateShaderParams(pMaterial);
 
 	DoRender();
 }
@@ -75,33 +67,33 @@ void Render::SetDefaultRenderStates()
 	SetCullMode(ECullMode::CCW);
 }
 
-void Render::SetMaterial(Material* material)
+void Render::SetMaterial(Material* pMaterial)
 {
 	// Vertex shader
-	if(material->vertexShader != nullptr)
+	if(pMaterial->vertexShader != nullptr)
 	{
-		if(material->vertexShader->renderData == nullptr)
+		if(pMaterial->vertexShader->renderData == nullptr)
 		{
-			Bind(material->vertexShader.get());
+			Bind(pMaterial->vertexShader.get());
 		}
 
-		SetVertexShader(material->vertexShader.get());
+		SetVertexShader(pMaterial->vertexShader.get());
 	}
 
 	// Fragment shader
-	if(material->fragmentShader != nullptr)
+	if(pMaterial->fragmentShader != nullptr)
 	{
-		if(material->fragmentShader->renderData == nullptr)
+		if(pMaterial->fragmentShader->renderData == nullptr)
 		{
-			Bind(material->fragmentShader.get());
+			Bind(pMaterial->fragmentShader.get());
 		}
 
-		SetFragmentShader(material->fragmentShader.get());
+		SetFragmentShader(pMaterial->fragmentShader.get());
 	}
 
 	// Textures
 	uint8_t samplerIdx = 0;
-	for(const Material::TextureInfo& textureInfo : material->GetTextures())
+	for(const Material::TextureInfo& textureInfo : pMaterial->GetTextures())
 	{
 		if(textureInfo.texture->renderData == nullptr)
 		{

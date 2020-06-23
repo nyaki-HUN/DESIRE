@@ -108,7 +108,11 @@ Direct3D12Render::Direct3D12Render()
 	matProj = DirectX::XMMatrixIdentity();
 }
 
-void Direct3D12Render::Init(OSWindow* mainWindow)
+Direct3D12Render::~Direct3D12Render()
+{
+}
+
+void Direct3D12Render::Init(OSWindow* pMainWindow)
 {
 	HRESULT hr;
 
@@ -148,8 +152,8 @@ void Direct3D12Render::Init(OSWindow* mainWindow)
 
 	// Ccreate swap chain
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-	swapChainDesc.Width = mainWindow->GetWidth();
-	swapChainDesc.Height = mainWindow->GetHeight();
+	swapChainDesc.Width = pMainWindow->GetWidth();
+	swapChainDesc.Height = pMainWindow->GetHeight();
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.Stereo = FALSE;
 	swapChainDesc.SampleDesc.Count = 1;
@@ -159,7 +163,7 @@ void Direct3D12Render::Init(OSWindow* mainWindow)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 
-	hr = factory->CreateSwapChainForHwnd(commandQueue, (HWND)mainWindow->GetHandle(), &swapChainDesc, nullptr, nullptr, &swapChain);
+	hr = factory->CreateSwapChainForHwnd(commandQueue, static_cast<HWND>(pMainWindow->GetHandle()), &swapChainDesc, nullptr, nullptr, &swapChain);
 	ASSERT(SUCCEEDED(hr));
 
 	Bind(screenSpaceQuadVertexShader.get());
@@ -167,24 +171,24 @@ void Direct3D12Render::Init(OSWindow* mainWindow)
 	Bind(errorPixelShader.get());
 }
 
-void Direct3D12Render::UpdateRenderWindow(OSWindow* window)
+void Direct3D12Render::UpdateRenderWindow(OSWindow* pWindow)
 {
 	if(!initialized)
 	{
 		return;
 	}
 
-	swapChain->ResizeBuffers(0, window->GetWidth(), window->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	swapChain->ResizeBuffers(0, pWindow->GetWidth(), pWindow->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 }
 
 void Direct3D12Render::Kill()
 {
 	initialized = false;
 
-	activeWindow = nullptr;
-	activeMesh = nullptr;
-	activeVertexShader = nullptr;
-	activeFragmentShader = nullptr;
+	pActiveWindow = nullptr;
+	pActiveMesh = nullptr;
+	pActiveVertexShader = nullptr;
+	pActiveFragmentShader = nullptr;
 
 	Unbind(errorVertexShader.get());
 	Unbind(errorPixelShader.get());
@@ -198,10 +202,10 @@ void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, c
 	outString += ".hlsl";
 }
 
-void Direct3D12Render::BeginFrame(OSWindow* window)
+void Direct3D12Render::BeginFrame(OSWindow* pWindow)
 {
-	activeWindow = window;
-	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
+	pActiveWindow = pWindow;
+	SetViewport(0, 0, pWindow->GetWidth(), pWindow->GetHeight());
 }
 
 void Direct3D12Render::EndFrame()
@@ -209,30 +213,30 @@ void Direct3D12Render::EndFrame()
 	swapChain->Present(1, 0);
 }
 
-void Direct3D12Render::SetView(View* view)
+void Direct3D12Render::SetView(View* pView)
 {
-	if(view == activeView)
+	if(pView == pActiveView)
 	{
 		return;
 	}
 
-	if(view != nullptr)
+	if(pView != nullptr)
 	{
-		RenderTarget* rt = view->GetRenderTarget();
+		RenderTarget* rt = pView->GetRenderTarget();
 		if(rt->renderData == nullptr)
 		{
 			Bind(rt);
 		}
 
 //		RenderTargetRenderDataD3D12* pRenderData = static_cast<RenderTargetRenderDataD3D12*>(rt->renderData);
-		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
+		SetViewport(pView->GetPosX(), pView->GetPosY(), pView->GetWidth(), pView->GetHeight());
 	}
 	else
 	{
-		SetViewport(0, 0, activeWindow->GetWidth(), activeWindow->GetHeight());
+		SetViewport(0, 0, pActiveWindow->GetWidth(), pActiveWindow->GetHeight());
 	}
 
-	activeView = view;
+	pActiveView = pView;
 }
 
 void Direct3D12Render::SetWorldMatrix(const Matrix4& matrix)
@@ -395,11 +399,11 @@ void Direct3D12Render::SetBlendModeDisabled()
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
-void Direct3D12Render::Bind(Mesh* mesh)
+void Direct3D12Render::Bind(Mesh* pMesh)
 {
-	ASSERT(mesh != nullptr);
+	ASSERT(pMesh != nullptr);
 
-	if(mesh->renderData != nullptr)
+	if(pMesh->pRenderData != nullptr)
 	{
 		// Already bound
 		return;
@@ -407,27 +411,27 @@ void Direct3D12Render::Bind(Mesh* mesh)
 
 	MeshRenderDataD3D12* pRenderData = new MeshRenderDataD3D12();
 
-	mesh->renderData = pRenderData;
+	pMesh->pRenderData = pRenderData;
 }
 
-void Direct3D12Render::Bind(Shader* shader)
+void Direct3D12Render::Bind(Shader* pShader)
 {
-	ASSERT(shader != nullptr);
+	ASSERT(pShader != nullptr);
 
-	if(shader->renderData != nullptr)
+	if(pShader->renderData != nullptr)
 	{
 		// Already bound
 		return;
 	}
 
-	const bool isVertexShader = shader->name.StartsWith("vs_");
+	const bool isVertexShader = pShader->name.StartsWith("vs_");
 
 	ShaderRenderDataD3D12* pRenderData = new ShaderRenderDataD3D12();
 
 	D3D_SHADER_MACRO defines[32] = {};
-	ASSERT(shader->defines.size() < DESIRE_ASIZEOF(defines));
+	ASSERT(pShader->defines.size() < DESIRE_ASIZEOF(defines));
 	D3D_SHADER_MACRO* definePtr = &defines[0];
-	for(const String& define : shader->defines)
+	for(const String& define : pShader->defines)
 	{
 		definePtr->Name = define.Str();
 		definePtr->Definition = "1";
@@ -435,30 +439,32 @@ void Direct3D12Render::Bind(Shader* shader)
 	}
 
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
-	AppendShaderFilenameWithPath(filenameWithPath, shader->name);
+	AppendShaderFilenameWithPath(filenameWithPath, pShader->name);
 
-	ID3DBlob* errorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader->data.ptr.get()	// pSrcData
-		, shader->data.size							// SrcDataSize
+	UINT compileFlags = 0;
+
+	ID3DBlob* pErrorBlob = nullptr;
+	HRESULT hr = D3DCompile(pShader->data.ptr.get()	// pSrcData
+		, pShader->data.size						// SrcDataSize
 		, filenameWithPath.Str()					// pSourceName
 		, defines									// pDefines
 		, D3D_COMPILE_STANDARD_FILE_INCLUDE			// pInclude
 		, "main"									// pEntrypoint
 		, isVertexShader ? "vs_5_0" : "ps_5_0"		// pTarget
-		, 0											// Flags1
-		, 0											// Flags2
+		, compileFlags								// D3DCOMPILE flags
+		, 0											// D3DCOMPILE_EFFECT flags
 		, &pRenderData->shaderCode					// ppCode
-		, &errorBlob);								// ppErrorMsgs
+		, &pErrorBlob);								// ppErrorMsgs
 	if(FAILED(hr))
 	{
-		if(errorBlob != nullptr)
+		if(pErrorBlob != nullptr)
 		{
-			LOG_ERROR("Shader compile error: %s", (char*)errorBlob->GetBufferPointer());
-			DX_RELEASE(errorBlob);
+			LOG_ERROR("Shader compile error:\n%s", static_cast<char*>(pErrorBlob->GetBufferPointer()));
+			DX_RELEASE(pErrorBlob);
 		}
 
 		delete pRenderData;
-		shader->renderData = isVertexShader ? errorVertexShader->renderData : errorPixelShader->renderData;
+		pShader->renderData = isVertexShader ? errorVertexShader->renderData : errorPixelShader->renderData;
 		return;
 	}
 
@@ -472,7 +478,7 @@ void Direct3D12Render::Bind(Shader* shader)
 	}
 	ASSERT(SUCCEEDED(hr));
 
-//	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)shader->name.Length(), shader->name.Str());
+//	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)pShader->name.Length(), pShader->name.Str());
 
 	ID3D12ShaderReflection* pReflection = nullptr;
 	hr = D3DReflect(pRenderData->shaderCode->GetBufferPointer(), pRenderData->shaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
@@ -540,7 +546,7 @@ void Direct3D12Render::Bind(Shader* shader)
 
 	DX_RELEASE(pReflection);
 
-	shader->renderData = pRenderData;
+	pShader->renderData = pRenderData;
 }
 
 void Direct3D12Render::Bind(Texture* texture)
@@ -573,53 +579,53 @@ void Direct3D12Render::Bind(RenderTarget* renderTarget)
 	renderTarget->renderData = pRenderData;
 }
 
-void Direct3D12Render::Unbind(Mesh* mesh)
+void Direct3D12Render::Unbind(Mesh* pMesh)
 {
-	if(mesh == nullptr || mesh->renderData == nullptr)
+	if(pMesh == nullptr || pMesh->pRenderData == nullptr)
 	{
 		// Not yet bound
 		return;
 	}
 
-	MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(mesh->renderData);
+	MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
 
 	delete pRenderData;
-	mesh->renderData = nullptr;
+	pMesh->pRenderData = nullptr;
 
-	if(activeMesh == mesh)
+	if(pActiveMesh == pMesh)
 	{
-		activeMesh = nullptr;
+		pActiveMesh = nullptr;
 	}
 }
 
-void Direct3D12Render::Unbind(Shader* shader)
+void Direct3D12Render::Unbind(Shader* pShader)
 {
-	if(shader == nullptr || shader->renderData == nullptr)
+	if(pShader == nullptr || pShader->renderData == nullptr)
 	{
 		// Not yet bound
 		return;
 	}
 
-	if((shader->renderData == errorVertexShader->renderData || shader->renderData == errorPixelShader->renderData) &&
-		shader != errorVertexShader.get() &&
-		shader != errorPixelShader.get())
+	if((pShader->renderData == errorVertexShader->renderData || pShader->renderData == errorPixelShader->renderData) &&
+		pShader != errorVertexShader.get() &&
+		pShader != errorPixelShader.get())
 	{
-		shader->renderData = nullptr;
+		pShader->renderData = nullptr;
 		return;
 	}
 
-	ShaderRenderDataD3D12* pRenderData = static_cast<ShaderRenderDataD3D12*>(shader->renderData);
+	ShaderRenderDataD3D12* pRenderData = static_cast<ShaderRenderDataD3D12*>(pShader->renderData);
 
 	delete pRenderData;
-	shader->renderData = nullptr;
+	pShader->renderData = nullptr;
 
-	if(activeVertexShader == shader)
+	if(pActiveVertexShader == pShader)
 	{
-		activeVertexShader = nullptr;
+		pActiveVertexShader = nullptr;
 	}
-	if(activeFragmentShader == shader)
+	if(pActiveFragmentShader == pShader)
 	{
-		activeFragmentShader = nullptr;
+		pActiveFragmentShader = nullptr;
 	}
 }
 
@@ -657,48 +663,23 @@ void Direct3D12Render::Unbind(RenderTarget* renderTarget)
 	renderTarget->renderData = nullptr;
 }
 
-void Direct3D12Render::UpdateDynamicMesh(DynamicMesh* mesh)
-{
-	ASSERT(mesh != nullptr);
-
-	if(mesh->renderData == nullptr)
-	{
-		// Not yet bound
-		mesh->isIndexDataUpdateRequired = false;
-		mesh->isVertexDataUpdateRequired = false;
-		return;
-	}
-
-//	MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(mesh->renderData);
-
-	if(mesh->isIndexDataUpdateRequired)
-	{
-		mesh->isIndexDataUpdateRequired = false;
-	}
-
-	if(mesh->isVertexDataUpdateRequired)
-	{
-		mesh->isVertexDataUpdateRequired = false;
-	}
-}
-
 void Direct3D12Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
 	const D3D12_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
 }
 
-void Direct3D12Render::SetMesh(Mesh* mesh)
+void Direct3D12Render::SetMesh(Mesh* pMesh)
 {
-	MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(mesh->renderData);
+	MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
 
 	uint32_t indexByteOffset = pRenderData->indexOffset * sizeof(uint16_t);
-	uint32_t vertexByteOffset = pRenderData->vertexOffset * mesh->stride;
+	uint32_t vertexByteOffset = pRenderData->vertexOffset * pMesh->stride;
 
-	switch(mesh->type)
+	switch(pMesh->type)
 	{
 		case Mesh::EType::Static:
 		{
-			if(activeMesh == mesh)
+			if(pActiveMesh == pMesh)
 			{
 				// No need to set the buffers again
 				return;
@@ -708,48 +689,48 @@ void Direct3D12Render::SetMesh(Mesh* mesh)
 
 		case Mesh::EType::Dynamic:
 		{
-			const DynamicMesh* dynamicMesh = static_cast<const DynamicMesh*>(mesh);
+			const DynamicMesh* dynamicMesh = static_cast<const DynamicMesh*>(pMesh);
 			indexByteOffset += dynamicMesh->indexOffset * sizeof(uint16_t);
-			vertexByteOffset += dynamicMesh->vertexOffset * mesh->stride;
+			vertexByteOffset += dynamicMesh->vertexOffset * pMesh->stride;
 			break;
 		}
 	}
 
-	activeMesh = mesh;
+	pActiveMesh = pMesh;
 }
 
 void Direct3D12Render::SetScreenSpaceQuadMesh()
 {
-	if(activeMesh == nullptr)
+	if(pActiveMesh == nullptr)
 	{
 		return;
 	}
 
-	activeMesh = nullptr;
+	pActiveMesh = nullptr;
 }
 
-void Direct3D12Render::SetVertexShader(Shader* vertexShader)
+void Direct3D12Render::SetVertexShader(Shader* pVertexShader)
 {
-	if(activeVertexShader == vertexShader)
+	if(pActiveVertexShader == pVertexShader)
 	{
 		return;
 	}
 
 //	const ShaderRenderDataD3D12* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader->renderData);
 
-	activeVertexShader = vertexShader;
+	pActiveVertexShader = pVertexShader;
 }
 
-void Direct3D12Render::SetFragmentShader(Shader* fragmentShader)
+void Direct3D12Render::SetFragmentShader(Shader* pFragmentShader)
 {
-	if(activeFragmentShader == fragmentShader)
+	if(pActiveFragmentShader == pFragmentShader)
 	{
 		return;
 	}
 
 //	const ShaderRenderDataD3D12* shaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader->renderData);
 
-	activeFragmentShader = fragmentShader;
+	pActiveFragmentShader = pFragmentShader;
 }
 
 void Direct3D12Render::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode filterMode, EAddressMode addressMode)
@@ -787,83 +768,89 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterM
 	DESIRE_UNUSED(texture);
 }
 
-void Direct3D12Render::UpdateShaderParams(const Material* material)
+void Direct3D12Render::UpdateShaderParams(const Material* pMaterial)
 {
-	const ShaderRenderDataD3D12* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(activeVertexShader->renderData);
-	UpdateShaderParams(material, vertexShaderRenderData);
+	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveVertexShader->renderData);
+	UpdateShaderParams(pMaterial, pVertexShaderRenderData);
 
-	const ShaderRenderDataD3D12* fragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(activeFragmentShader->renderData);
-	UpdateShaderParams(material, fragmentShaderRenderData);
+	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveFragmentShader->renderData);
+	UpdateShaderParams(pMaterial, pFragmentShaderRenderData);
 }
 
-void Direct3D12Render::UpdateShaderParams(const Material* material, const ShaderRenderDataD3D12* shaderRenderData)
+void Direct3D12Render::UpdateShaderParams(const Material* pMaterial, const ShaderRenderDataD3D12* pShaderRenderData)
 {
-	const std::pair<uint32_t, uint32_t>* offsetSizePair = nullptr;
+	const std::pair<uint32_t, uint32_t>* pOffsetSizePair = nullptr;
 
-	for(size_t i = 0; i < shaderRenderData->constantBuffers.size(); ++i)
+	for(size_t i = 0; i < pShaderRenderData->constantBuffers.size(); ++i)
 	{
 		bool isChanged = false;
-		const ShaderRenderDataD3D12::ConstantBufferData& bufferData = shaderRenderData->constantBuffersData[i];
+		const ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->constantBuffersData[i];
 
-		for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
+		for(const Material::ShaderParam& shaderParam : pMaterial->GetShaderParams())
 		{
-			offsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
-			if(offsetSizePair != nullptr)
+			pOffsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
+			if(pOffsetSizePair != nullptr)
 			{
-				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
+				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 			}
 		}
 
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldView");
-		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
+		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldView");
+		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
-		if(offsetSizePair != nullptr && offsetSizePair->second == sizeof(DirectX::XMMATRIX))
+		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
+		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
-		if(offsetSizePair != nullptr)
+		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matView");
+		if(pOffsetSizePair != nullptr)
+		{
+			isChanged |= CheckAndUpdateShaderParam(&matView.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+		}
+
+		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
+		if(pOffsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("camPos");
-		if(offsetSizePair != nullptr)
+		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("camPos");
+		if(pOffsetSizePair != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		offsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
-		if(offsetSizePair != nullptr && offsetSizePair->second == 2 * sizeof(float))
+		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
+		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == 2 * sizeof(float))
 		{
 			float resolution[2];
-			if(activeView != nullptr)
+			if(pActiveView != nullptr)
 			{
-				resolution[0] = activeView->GetWidth();
-				resolution[1] = activeView->GetHeight();
+				resolution[0] = pActiveView->GetWidth();
+				resolution[1] = pActiveView->GetHeight();
 			}
 			else
 			{
-				resolution[0] = activeWindow->GetWidth();
-				resolution[1] = activeWindow->GetHeight();
+				resolution[0] = pActiveWindow->GetWidth();
+				resolution[1] = pActiveWindow->GetHeight();
 			}
 
-			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.data.ptr.get() + offsetSizePair->first, offsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
 		if(isChanged)
 		{
-//			deviceCtx->UpdateSubresource(shaderRenderData->constantBuffers[i], 0, nullptr, bufferData.data.ptr.get(), 0, 0);
+//			deviceCtx->UpdateSubresource(pShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.data.ptr.get(), 0, 0);
 		}
 	}
 }
@@ -884,7 +871,7 @@ void Direct3D12Render::DoRender()
 
 }
 
-DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* texture)
+DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* pTexture)
 {
 	const DXGI_FORMAT conversionTable[] =
 	{
@@ -901,5 +888,5 @@ DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* texture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[static_cast<size_t>(texture->format)];
+	return conversionTable[static_cast<size_t>(pTexture->format)];
 }

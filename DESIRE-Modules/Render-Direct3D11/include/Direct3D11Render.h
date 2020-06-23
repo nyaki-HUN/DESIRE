@@ -15,16 +15,16 @@ public:
 	Direct3D11Render();
 	~Direct3D11Render() override;
 
-	void Init(OSWindow* mainWindow) override;
-	void UpdateRenderWindow(OSWindow* window) override;
+	void Init(OSWindow* pMainWindow) override;
+	void UpdateRenderWindow(OSWindow* pWindow) override;
 	void Kill() override;
 
 	void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const override;
 
-	void BeginFrame(OSWindow* window) override;
+	void BeginFrame(OSWindow* pWindow) override;
 	void EndFrame() override;
 
-	void SetView(View* view) override;
+	void SetView(View* pView) override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
@@ -33,47 +33,45 @@ public:
 	void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
 	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
 	void SetDepthWriteEnabled(bool enabled) override;
-	void SetDepthTest(EDepthTest deptTest) override;
+	void SetDepthTest(EDepthTest depthTest) override;
 	void SetCullMode(ECullMode cullMode) override;
 	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
 	void SetBlendModeDisabled() override;
 
-	void Bind(Mesh* mesh) override;
-	void Bind(Shader* shader) override;
-	void Bind(Texture* texture) override;
-	void Bind(RenderTarget* renderTarget) override;
+	void Bind(Mesh* pMesh) override;
+	void Bind(Shader* pShader) override;
+	void Bind(Texture* pTexture) override;
+	void Bind(RenderTarget* pRenderTarget) override;
 
-	void Unbind(Mesh* mesh) override;
-	void Unbind(Shader* shader) override;
-	void Unbind(Texture* texture) override;
-	void Unbind(RenderTarget* renderTarget) override;
-
-	void UpdateDynamicMesh(DynamicMesh* mesh) override;
+	void Unbind(Mesh* pMesh) override;
+	void Unbind(Shader* pShader) override;
+	void Unbind(Texture* pTexture) override;
+	void Unbind(RenderTarget* pRenderTarget) override;
 
 private:
 	void CreateBackBuffer(uint32_t width, uint32_t height);
 
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
-	void SetMesh(Mesh* mesh) override;
+	void SetMesh(Mesh* pMesh) override;
 	void SetScreenSpaceQuadMesh() override;
-	void SetVertexShader(Shader* vertexShader) override;
-	void SetFragmentShader(Shader* fragmentShader) override;
-	void SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode filterMode, EAddressMode addressMode) override;
-	void UpdateShaderParams(const Material* material) override;
-	void UpdateShaderParams(const Material* material, const ShaderRenderDataD3D11* shaderRenderData);
-	static bool CheckAndUpdateShaderParam(const void* value, void* valueInConstantBuffer, uint32_t size);
+	void SetVertexShader(Shader* pVertexShader) override;
+	void SetFragmentShader(Shader* pFragmentShader) override;
+	void SetTexture(uint8_t samplerIdx, Texture* pTexture, EFilterMode filterMode, EAddressMode addressMode) override;
+	void UpdateShaderParams(const Material* pMaterial) override;
+	void UpdateShaderParams(const Material* pMaterial, const ShaderRenderDataD3D11* pShaderRenderData);
+	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
 	void DoRender() override;
 
-	void UpdateD3D11Resource(ID3D11Resource* resource, const void* data, size_t size);
+	void UpdateD3D11Resource(ID3D11Resource* pResource, const void* pData, size_t size);
 	void SetDepthStencilState();
 	void SetRasterizerState();
 	void SetBlendState();
 	void SetInputLayout();
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 
-	static DXGI_FORMAT GetTextureFormat(const Texture* texture);
+	static DXGI_FORMAT GetTextureFormat(const Texture* pTexture);
 
 	ID3D11Device* d3dDevice = nullptr;
 	ID3D11DeviceContext* deviceCtx = nullptr;
@@ -85,16 +83,16 @@ private:
 	D3D11_RASTERIZER_DESC rasterizerDesc = {};
 	D3D11_BLEND_DESC blendDesc = {};
 
-	const ID3D11DepthStencilState* activeDepthStencilState = nullptr;
-	const ID3D11RasterizerState* activeRasterizerState = nullptr;
-	const ID3D11BlendState* activeBlendState = nullptr;
-	const ID3D11InputLayout* activeInputLayout = nullptr;
+	const ID3D11DepthStencilState* pActiveDepthStencilState = nullptr;
+	const ID3D11RasterizerState* pActiveRasterizerState = nullptr;
+	const ID3D11BlendState* pActiveBlendState = nullptr;
+	const ID3D11InputLayout* pActiveInputLayout = nullptr;
 	const ID3D11SamplerState* activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
-	const OSWindow* activeWindow = nullptr;
-	const View* activeView = nullptr;
-	const Mesh* activeMesh = nullptr;
-	const Shader* activeVertexShader = nullptr;
-	const Shader* activeFragmentShader = nullptr;
+	const OSWindow* pActiveWindow = nullptr;
+	const View* pActiveView = nullptr;
+	const Mesh* pActiveMesh = nullptr;
+	const Shader* pActiveVertexShader = nullptr;
+	const Shader* pActiveFragmentShader = nullptr;
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

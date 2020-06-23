@@ -104,14 +104,7 @@ void ResourceManager::ReloadMesh(const String& filename)
 	if(newMesh != nullptr)
 	{
 		std::shared_ptr<Mesh> mesh = it->second.lock();
-		Modules::Render->Unbind(mesh.get());
-
-		mesh->indices = std::move(newMesh->indices);
-		mesh->numIndices = newMesh->numIndices;
-		mesh->vertices = std::move(newMesh->vertices);
-		mesh->numVertices = newMesh->numVertices;
-		mesh->stride = newMesh->stride;
-		mesh->vertexLayout = std::move(newMesh->vertexLayout);
+		mesh = std::move(newMesh);
 	}
 }
 
@@ -173,7 +166,7 @@ std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
 	}
 
 	LOG_ERROR("Failed to load mesh from: %s", filename.Str());
-	return std::make_shared<Mesh>();
+	return nullptr;
 }
 
 std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)

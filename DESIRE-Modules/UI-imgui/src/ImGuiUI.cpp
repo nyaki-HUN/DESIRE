@@ -64,19 +64,13 @@ void ImGuiUI::Init()
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
 	// Dynamic mesh for the draw list
-	mesh = std::make_unique<DynamicMesh>();
-	mesh->vertexLayout.Reserve(3);
-	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Position, 2, Mesh::EAttribType::Float);
-	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Texcoord0, 2, Mesh::EAttribType::Float);
-	mesh->vertexLayout.EmplaceAdd(Mesh::EAttrib::Color, 4, Mesh::EAttribType::Uint8);
-	mesh->CalculateStrideFromVertexLayout();
-	mesh->maxNumOfIndices = 128 * 1024;
-	mesh->maxNumOfVertices = 256 * 1024;
-	mesh->indices = std::make_unique<uint16_t[]>(mesh->maxNumOfIndices);
-	mesh->vertices = std::make_unique<float[]>(mesh->GetTotalBytesOfVertexData() / sizeof(float));
-	memset(mesh->indices.get(), 0, mesh->GetTotalBytesOfIndexData());
-	memset(mesh->vertices.get(), 0, mesh->GetTotalBytesOfVertexData());
-
+	const std::initializer_list<Mesh::VertexLayout> vertexLayout =
+	{
+		{ Mesh::EAttrib::Position,	2, Mesh::EAttribType::Float },
+		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
+		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
+	};
+	mesh = std::make_unique<DynamicMesh>(128 * 1024, 256 * 1024, vertexLayout);
 	static_assert(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
 	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
 
@@ -200,9 +194,8 @@ void ImGuiUI::Render()
 		memcpy(reinterpret_cast<uint8_t*>(mesh->vertices.get()) + mesh->numVertices * mesh->stride, pDrawList->VtxBuffer.Data, pDrawList->VtxBuffer.size() * mesh->stride);
 		mesh->numVertices += static_cast<uint32_t>(pDrawList->VtxBuffer.size());
 	}
-	mesh->isIndexDataUpdateRequired = true;
-	mesh->isVertexDataUpdateRequired = true;
-	Modules::Render->UpdateDynamicMesh(mesh.get());
+	mesh->isIndicesDirty = true;
+	mesh->isVerticesDirty = true;
 
 	mesh->indexOffset = 0;
 	mesh->vertexOffset = 0;

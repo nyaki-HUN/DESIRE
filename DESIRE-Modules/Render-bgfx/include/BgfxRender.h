@@ -12,8 +12,8 @@ class BgfxRender : public Render
 public:
 	BgfxRender();
 
-	void Init(OSWindow* mainWindow) override;
-	void UpdateRenderWindow(OSWindow* window) override;
+	void Init(OSWindow* pMainWindow) override;
+	void UpdateRenderWindow(OSWindow* pWindow) override;
 	void Kill() override;
 
 	void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const override;
@@ -35,37 +35,35 @@ public:
 	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
 	void SetBlendModeDisabled() override;
 
-	void Bind(Mesh* mesh) override;
-	void Bind(Shader* shader) override;
-	void Bind(Texture* texture) override;
-	void Bind(RenderTarget* renderTarget) override;
+	void Bind(Mesh* pMesh) override;
+	void Bind(Shader* pShader) override;
+	void Bind(Texture* pTexture) override;
+	void Bind(RenderTarget* pRenderTarget) override;
 
-	void Unbind(Mesh* mesh) override;
-	void Unbind(Shader* shader) override;
-	void Unbind(Texture* texture) override;
-	void Unbind(RenderTarget* renderTarget) override;
-
-	void UpdateDynamicMesh(DynamicMesh* mesh) override;
+	void Unbind(Mesh* pMesh) override;
+	void Unbind(Shader* pShader) override;
+	void Unbind(Texture* pTexture) override;
+	void Unbind(RenderTarget* pRenderTarget) override;
 
 private:
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
-	void SetMesh(Mesh* mesh) override;
+	void SetMesh(Mesh* pMesh) override;
 	void SetScreenSpaceQuadMesh() override;
-	void SetVertexShader(Shader* vertexShader) override;
-	void SetFragmentShader(Shader* fragmentShader) override;
-	void SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode filterMode, EAddressMode addressMode) override;
-	void UpdateShaderParams(const Material* material) override;
+	void SetVertexShader(Shader* pVertexShader) override;
+	void SetFragmentShader(Shader* pFragmentShader) override;
+	void SetTexture(uint8_t samplerIdx, Texture* pTexture, EFilterMode filterMode, EAddressMode addressMode) override;
+	void UpdateShaderParams(const Material* pMaterial) override;
 
 	void DoRender() override;
 
-	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture* texture);
-	static void BindEmbeddedShader(Shader* shader, const char* name);
+	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture* pTexture);
+	static void BindEmbeddedShader(Shader* pShader);
 
 	bgfx::UniformHandle samplerUniforms[8];
 	bgfx::ViewId activeViewId = 0;
-	const Shader* activeVertexShader = nullptr;
-	const Shader* activeFragmentShader = nullptr;
+	const Shader* pActiveVertexShader = nullptr;
+	const Shader* pActiveFragmentShader = nullptr;
 
 	std::unordered_map<std::pair<uint64_t, uint64_t>, bgfx::ProgramHandle, stl_utils::hash_pair<uint64_t, uint64_t>> shaderProgramCache;
 

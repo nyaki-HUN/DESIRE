@@ -9,5 +9,5 @@ public:
 	uint32_t indexOffset = 0;
 	uint32_t vertexOffset = 0;
 
-	std::unique_ptr<D3D11_INPUT_ELEMENT_DESC[]> vertexElementDesc;
+	uint64_t vertexLayoutKey = 0;
 };
