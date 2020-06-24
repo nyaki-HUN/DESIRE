@@ -246,7 +246,7 @@ void ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const 
 {
 	ImGui::SetNextWindowPos(ImVec2(initialPos.GetX(), initialPos.GetY()), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(initialSize.GetX(), initialSize.GetY()), ImGuiCond_FirstUseEver);
-	ImGui::Begin(label.Str());
+	ImGui::Begin(label.Str(), nullptr, ImGuiWindowFlags_None);
 }
 
 void ImGuiUI::EndWindow()
@@ -276,14 +276,14 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 
 bool ImGuiUI::InputField(const String& label, float& value)
 {
-	return ImGui::InputFloat(label.Str(), &value, 0.01f, 0.5f);
+	return ImGui::InputFloat(label.Str(), &value, 0.01f, 0.5f, "%.3f", ImGuiInputTextFlags_None);
 }
 
 bool ImGuiUI::InputField(const String& label, Vector3& value)
 {
 	float elements[3];
 	value.StoreXYZ(elements);
-	if(ImGui::InputFloat3(label.Str(), elements))
+	if(ImGui::InputFloat3(label.Str(), elements, "%.3f", ImGuiInputTextFlags_None))
 	{
 		value.LoadXYZ(elements);
 		return true;
@@ -300,6 +300,16 @@ bool ImGuiUI::Slider(const String& label, int32_t& value, int32_t minValue, int3
 bool ImGuiUI::Slider(const String& label, float& value, float minValue, float maxValue)
 {
 	return ImGui::SliderFloat(label.Str(), &value, minValue, maxValue);
+}
+
+bool ImGuiUI::ColorPicker(const String& label, float(&color)[3])
+{
+	return ImGui::ColorPicker3(label.Str(), color, ImGuiColorEditFlags_None);
+}
+
+bool ImGuiUI::ColorPicker(const String& label, float(&color)[4])
+{
+	return ImGui::ColorPicker4(label.Str(), color, ImGuiColorEditFlags_None);
 }
 
 void ImGuiUI::SameLine()

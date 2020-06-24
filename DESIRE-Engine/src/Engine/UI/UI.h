@@ -44,6 +44,9 @@ public:
 	virtual bool InputField(const String& label, float& value) = 0;
 	virtual bool InputField(const String& label, Vector3& value) = 0;
 
+	virtual bool ColorPicker(const String& label, float(&color)[3]) = 0;
+	virtual bool ColorPicker(const String& label, float(&color)[4]) = 0;
+
 	// Layout
 	virtual void SameLine() = 0;
 };

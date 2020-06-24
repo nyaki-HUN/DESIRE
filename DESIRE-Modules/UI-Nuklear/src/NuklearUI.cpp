@@ -276,6 +276,20 @@ bool NuklearUI::Slider(const String& label, float& value, float minValue, float 
 	return nk_slider_float(ctx.get(), minValue, &value, maxValue, 0.1f);
 }
 
+bool NuklearUI::ColorPicker(const String& label, float(&color)[3])
+{
+	nk_colorf nkColor;
+	memcpy(&nkColor, color, 3 * sizeof(float));
+	int rv = nk_color_pick(ctx.get(), &nkColor, NK_RGB);
+	memcpy(color, &nkColor, 3 * sizeof(float));
+	return (rv != 0);
+}
+
+bool NuklearUI::ColorPicker(const String& label, float(&color)[4])
+{
+	return nk_color_pick(ctx.get(), reinterpret_cast<nk_colorf*>(color), NK_RGBA);
+}
+
 void NuklearUI::SameLine()
 {
 }
