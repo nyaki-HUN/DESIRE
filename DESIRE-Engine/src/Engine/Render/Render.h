@@ -88,7 +88,7 @@ public:
 	virtual void BeginFrame(OSWindow* pWindow) = 0;
 	virtual void EndFrame() = 0;
 
-	void RenderMesh(Mesh* pMesh, Material* pMaterial);
+	void RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset = 0, uint32_t vertexOffset = 0, uint32_t numIndices = UINT32_MAX, uint32_t numVertices = UINT32_MAX);
 	void RenderScreenSpaceQuad(Material* pMaterial);
 
 	// Sets the current view that the rendering will happen on. (Use nullptr to set the default view which is using the frame buffer)
@@ -125,6 +125,11 @@ protected:
 
 	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 
+	const OSWindow* pActiveWindow = nullptr;
+	const Mesh* pActiveMesh = nullptr;
+	const Shader* pActiveVertexShader = nullptr;
+	const Shader* pActiveFragmentShader = nullptr;
+
 	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
 
 private:
@@ -137,5 +142,5 @@ private:
 	virtual void UpdateShaderParams(const Material* pMaterial) = 0;
 
 	// Submit draw command
-	virtual void DoRender() = 0;
+	virtual void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) = 0;
 };

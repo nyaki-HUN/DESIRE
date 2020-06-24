@@ -81,9 +81,6 @@ public:
 	const uint32_t maxNumOfIndices;
 	const uint32_t maxNumOfVertices;
 
-	uint32_t indexOffset = 0;
-	uint32_t vertexOffset = 0;
-
 	bool isIndicesDirty = false;
 	bool isVerticesDirty = false;
 };

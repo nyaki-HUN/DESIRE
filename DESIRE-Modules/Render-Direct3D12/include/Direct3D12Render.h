@@ -59,7 +59,7 @@ private:
 	void UpdateShaderParams(const Material* pMaterial, const ShaderRenderDataD3D12* pShaderRenderData);
 	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
-	void DoRender() override;
+	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	static DXGI_FORMAT GetTextureFormat(const Texture* pTexture);
 
@@ -71,11 +71,7 @@ private:
 	D3D12_RASTERIZER_DESC rasterizerDesc = {};
 	D3D12_BLEND_DESC blendDesc = {};
 
-	const OSWindow* pActiveWindow = nullptr;
 	const View* pActiveView = nullptr;
-	const Mesh* pActiveMesh = nullptr;
-	const Shader* pActiveVertexShader = nullptr;
-	const Shader* pActiveFragmentShader = nullptr;
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

@@ -16,32 +16,58 @@ Render::~Render()
 {
 }
 
-void Render::RenderMesh(Mesh* pMesh, Material* pMaterial)
+void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
+	if(pMesh == nullptr)
+	{
+		ASSERT(false && "Invalid mesh");
+		return;
+	}
+
 	if(pMaterial == nullptr || pMaterial->vertexShader == nullptr || pMaterial->fragmentShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
 	}
 
-	if(pMesh != nullptr)
+	if(numIndices == UINT32_MAX)
 	{
-		if(pMesh->pRenderData == nullptr)
-		{
-			Bind(pMesh);
-		}
-		else if(pMesh->type == Mesh::EType::Dynamic)
-		{
-			DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
-			UpdateDynamicMesh(*pDynamicMesh);
-		}
+		// Use all the indices
+		numIndices = pMesh->numIndices - indexOffset;
 	}
 
-	SetMesh(pMesh);
+	if(numVertices == UINT32_MAX)
+	{
+		// Use all the vertices
+		numVertices = pMesh->numVertices - vertexOffset;
+	}
+
+	if(indexOffset + numIndices > pMesh->numIndices ||
+		vertexOffset + vertexOffset > pMesh->numVertices)
+	{
+		return;
+	}
+
+	if(pMesh->pRenderData == nullptr)
+	{
+		Bind(pMesh);
+	}
+	else if(pMesh->type == Mesh::EType::Dynamic)
+	{
+		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
+		UpdateDynamicMesh(*pDynamicMesh);
+	}
+
+	if(pActiveMesh != pMesh)
+	{
+		SetMesh(pMesh);
+		pActiveMesh = pMesh;
+	}
+
 	SetMaterial(pMaterial);
 	UpdateShaderParams(pMaterial);
 
-	DoRender();
+	DoRender(indexOffset, vertexOffset, numIndices, numVertices);
 }
 
 void Render::RenderScreenSpaceQuad(Material* pMaterial)
@@ -54,12 +80,17 @@ void Render::RenderScreenSpaceQuad(Material* pMaterial)
 		return;
 	}
 
-	SetMesh(nullptr);
+	if(pActiveMesh != nullptr)
+	{
+		SetMesh(nullptr);
+		pActiveMesh = nullptr;
+	}
+
 	SetMaterial(pMaterial);
 	SetVertexShader(screenSpaceQuadVertexShader.get());
 	UpdateShaderParams(pMaterial);
 
-	DoRender();
+	DoRender(0, 0, 0, 4);
 }
 
 void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)

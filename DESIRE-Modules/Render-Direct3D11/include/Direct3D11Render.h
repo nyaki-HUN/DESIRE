@@ -62,7 +62,7 @@ private:
 	void UpdateShaderParams(const Material* pMaterial, const ShaderRenderDataD3D11* pShaderRenderData);
 	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
-	void DoRender() override;
+	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	void UpdateD3D11Resource(ID3D11Resource* pResource, const void* pData, size_t size);
 	void SetDepthStencilState();
@@ -88,11 +88,7 @@ private:
 	const ID3D11BlendState* pActiveBlendState = nullptr;
 	const ID3D11InputLayout* pActiveInputLayout = nullptr;
 	const ID3D11SamplerState* activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
-	const OSWindow* pActiveWindow = nullptr;
 	const View* pActiveView = nullptr;
-	const Mesh* pActiveMesh = nullptr;
-	const Shader* pActiveVertexShader = nullptr;
-	const Shader* pActiveFragmentShader = nullptr;
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

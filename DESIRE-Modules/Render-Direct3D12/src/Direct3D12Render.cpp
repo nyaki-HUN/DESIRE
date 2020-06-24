@@ -670,11 +670,6 @@ void Direct3D12Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 
 void Direct3D12Render::SetMesh(Mesh* pMesh)
 {
-	if(pActiveMesh == pMesh)
-	{
-		return;
-	}
-
 	if(pMesh != nullptr)
 	{
 //		MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
@@ -682,8 +677,6 @@ void Direct3D12Render::SetMesh(Mesh* pMesh)
 	else
 	{
 	}
-
-	pActiveMesh = pMesh;
 }
 
 void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
@@ -854,9 +847,18 @@ bool Direct3D12Render::CheckAndUpdateShaderParam(const void* value, void* valueI
 	return true;
 }
 
-void Direct3D12Render::DoRender()
+void Direct3D12Render::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
+	DESIRE_UNUSED(indexOffset);
+	DESIRE_UNUSED(vertexOffset);
+	DESIRE_UNUSED(numVertices);
 
+	if(numIndices != 0)
+	{
+	}
+	else
+	{
+	}
 }
 
 DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* pTexture)

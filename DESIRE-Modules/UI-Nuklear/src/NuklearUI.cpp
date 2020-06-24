@@ -209,12 +209,8 @@ void NuklearUI::Render()
 
 		material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
 
-		mesh->indexOffset = indexOffset;
-		mesh->vertexOffset = 0;
-		mesh->numIndices = pCmd->elem_count;
-		Modules::Render->RenderMesh(mesh.get(), material.get());
-
-		indexOffset += mesh->numIndices;
+		Modules::Render->RenderMesh(mesh.get(), material.get(), indexOffset, 0, pCmd->elem_count);
+		indexOffset += pCmd->elem_count;
 	}
 
 	Modules::Render->SetScissor();

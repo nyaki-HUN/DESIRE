@@ -224,10 +224,7 @@ void ImGuiUI::Render()
 			{
 				material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
-				mesh->indexOffset = cmd.IdxOffset + indexOffset;
-				mesh->vertexOffset = cmd.VtxOffset + vertexOffset;
-				mesh->numIndices = cmd.ElemCount;
-				Modules::Render->RenderMesh(mesh.get(), material.get());
+				Modules::Render->RenderMesh(mesh.get(), material.get(), cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
 			}
 		}
 

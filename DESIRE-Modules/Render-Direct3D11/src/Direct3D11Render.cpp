@@ -962,11 +962,6 @@ void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 
 void Direct3D11Render::SetMesh(Mesh* pMesh)
 {
-	if(pActiveMesh == pMesh)
-	{
-		return;
-	}
-
 	if(pMesh != nullptr)
 	{
 		MeshRenderDataD3D11* pRenderData = static_cast<MeshRenderDataD3D11*>(pMesh->pRenderData);
@@ -988,8 +983,6 @@ void Direct3D11Render::SetMesh(Mesh* pMesh)
 
 		deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	}
-
-	pActiveMesh = pMesh;
 }
 
 void Direct3D11Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
@@ -1173,36 +1166,20 @@ bool Direct3D11Render::CheckAndUpdateShaderParam(const void* value, void* valueI
 	return true;
 }
 
-void Direct3D11Render::DoRender()
+void Direct3D11Render::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
 	SetDepthStencilState();
 	SetRasterizerState();
 	SetBlendState();
 	SetInputLayout();
 
-	if(pActiveMesh != nullptr)
+	if(numIndices != 0)
 	{
-		uint32_t indexOffset = 0;
-		uint32_t vertexOffset = 0;
-		if(pActiveMesh->type == Mesh::EType::Dynamic)
-		{
-			const DynamicMesh* pDynamicMesh = static_cast<const DynamicMesh*>(pActiveMesh);
-			indexOffset = pDynamicMesh->indexOffset;
-			vertexOffset = pDynamicMesh->vertexOffset;
-		}
-
-		if(pActiveMesh->numIndices != 0)
-		{
-			deviceCtx->DrawIndexed(pActiveMesh->numIndices, indexOffset, vertexOffset);
-		}
-		else
-		{
-			deviceCtx->Draw(pActiveMesh->numVertices, vertexOffset);
-		}
+		deviceCtx->DrawIndexed(numIndices, indexOffset, vertexOffset);
 	}
 	else
 	{
-		deviceCtx->Draw(4, 0);
+		deviceCtx->Draw(numVertices, vertexOffset);
 	}
 }
 
