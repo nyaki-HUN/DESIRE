@@ -51,11 +51,6 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, 
 	if(pMesh->pRenderData == nullptr)
 	{
 		Bind(pMesh);
-		if(pMesh->pRenderData == nullptr)
-		{
-			// Still not bound, skip it
-			return;
-		}
 	}
 	else if(pMesh->GetType() == Mesh::EType::Dynamic)
 	{
@@ -79,7 +74,7 @@ void Render::RenderScreenSpaceQuad(Material* pMaterial)
 {
 	ASSERT(screenSpaceQuadVertexShader->renderData != nullptr && "Shader needs to be bound by the render module");
 
-	if(pMaterial == nullptr || pMaterial->vertexShader == nullptr || pMaterial->fragmentShader == nullptr)
+	if(pMaterial == nullptr || pMaterial->fragmentShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
