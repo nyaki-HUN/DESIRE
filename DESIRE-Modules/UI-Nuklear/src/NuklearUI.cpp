@@ -120,8 +120,8 @@ void NuklearUI::NewFrame(OSWindow* pWindow)
 	nk_input_begin(ctx.get());
 
 	// Keyboard
-	nk_input_key(ctx.get(), NK_KEY_SHIFT, Modules::Input->IsKeyDown(KEY_LSHIFT) || Modules::Input->IsKeyDown(KEY_RSHIFT));
-	nk_input_key(ctx.get(), NK_KEY_CTRL, Modules::Input->IsKeyDown(KEY_LCONTROL) || Modules::Input->IsKeyDown(KEY_RCONTROL));
+	nk_input_key(ctx.get(), NK_KEY_SHIFT, Modules::Input->IsKeyDown(KEY_LSHIFT, EKeyModifier::DontCare) || Modules::Input->IsKeyDown(KEY_RSHIFT, EKeyModifier::DontCare));
+	nk_input_key(ctx.get(), NK_KEY_CTRL, Modules::Input->IsKeyDown(KEY_LCONTROL, EKeyModifier::DontCare) || Modules::Input->IsKeyDown(KEY_RCONTROL, EKeyModifier::DontCare));
 	nk_input_key(ctx.get(), NK_KEY_DEL, Modules::Input->IsKeyDown(KEY_DELETE));
 	nk_input_key(ctx.get(), NK_KEY_ENTER, Modules::Input->IsKeyDown(KEY_RETURN) || Modules::Input->IsKeyDown(KEY_NUMPADENTER));
 	nk_input_key(ctx.get(), NK_KEY_TAB, Modules::Input->IsKeyDown(KEY_TAB));
@@ -129,24 +129,24 @@ void NuklearUI::NewFrame(OSWindow* pWindow)
 	nk_input_key(ctx.get(), NK_KEY_COPY, Modules::Input->IsKeyDown(KEY_C, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_CUT, Modules::Input->IsKeyDown(KEY_X, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_PASTE, Modules::Input->IsKeyDown(KEY_V, EKeyModifier::Ctrl));
-	nk_input_key(ctx.get(), NK_KEY_UP, Modules::Input->IsKeyDown(KEY_UP, EKeyModifier::None));
-	nk_input_key(ctx.get(), NK_KEY_DOWN, Modules::Input->IsKeyDown(KEY_DOWN, EKeyModifier::None));
-	nk_input_key(ctx.get(), NK_KEY_LEFT, Modules::Input->IsKeyDown(KEY_LEFT, EKeyModifier::None));
-	nk_input_key(ctx.get(), NK_KEY_RIGHT, Modules::Input->IsKeyDown(KEY_RIGHT, EKeyModifier::None));
+	nk_input_key(ctx.get(), NK_KEY_UP, Modules::Input->IsKeyDown(KEY_UP));
+	nk_input_key(ctx.get(), NK_KEY_DOWN, Modules::Input->IsKeyDown(KEY_DOWN));
+	nk_input_key(ctx.get(), NK_KEY_LEFT, Modules::Input->IsKeyDown(KEY_LEFT));
+	nk_input_key(ctx.get(), NK_KEY_RIGHT, Modules::Input->IsKeyDown(KEY_RIGHT));
 //	nk_input_key(ctx.get(), NK_KEY_TEXT_INSERT_MODE, Modules::Input->IsKeyDown());
 //	nk_input_key(ctx.get(), NK_KEY_TEXT_REPLACE_MODE, Modules::Input->IsKeyDown());
 //	nk_input_key(ctx.get(), NK_KEY_TEXT_RESET_MODE, Modules::Input->IsKeyDown());
-	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_START, Modules::Input->IsKeyDown(KEY_HOME, EKeyModifier::None));
-	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_END, Modules::Input->IsKeyDown(KEY_END, EKeyModifier::None));
-	nk_input_key(ctx.get(), NK_KEY_TEXT_START, Modules::Input->IsKeyDown(KEY_HOME, EKeyModifier::Ctrl));
-	nk_input_key(ctx.get(), NK_KEY_TEXT_END, Modules::Input->IsKeyDown(KEY_HOME, EKeyModifier::Ctrl));
+//	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_START, Modules::Input->IsKeyDown(KEY_HOME));
+//	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_END, Modules::Input->IsKeyDown(KEY_END));
+	nk_input_key(ctx.get(), NK_KEY_TEXT_START, Modules::Input->IsKeyDown(KEY_HOME));
+	nk_input_key(ctx.get(), NK_KEY_TEXT_END, Modules::Input->IsKeyDown(KEY_HOME));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_UNDO, Modules::Input->IsKeyDown(KEY_Z, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_REDO, Modules::Input->IsKeyDown(KEY_Y, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_SELECT_ALL, Modules::Input->IsKeyDown(KEY_A, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_WORD_LEFT, Modules::Input->IsKeyDown(KEY_LEFT, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_WORD_RIGHT, Modules::Input->IsKeyDown(KEY_RIGHT, EKeyModifier::Ctrl));
-	nk_input_key(ctx.get(), NK_KEY_SCROLL_START, Modules::Input->IsKeyDown(KEY_HOME));
-	nk_input_key(ctx.get(), NK_KEY_SCROLL_END, Modules::Input->IsKeyDown(KEY_END));
+	nk_input_key(ctx.get(), NK_KEY_SCROLL_START, Modules::Input->IsKeyDown(KEY_HOME, EKeyModifier::Ctrl));
+	nk_input_key(ctx.get(), NK_KEY_SCROLL_END, Modules::Input->IsKeyDown(KEY_END, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_SCROLL_DOWN, Modules::Input->IsKeyDown(KEY_PGDOWN));
 	nk_input_key(ctx.get(), NK_KEY_SCROLL_UP, Modules::Input->IsKeyDown(KEY_PGUP));
 

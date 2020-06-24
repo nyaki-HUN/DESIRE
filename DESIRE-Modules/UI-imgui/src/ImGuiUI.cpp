@@ -115,13 +115,13 @@ void ImGuiUI::NewFrame(OSWindow* pWindow)
 	io.ImeWindowHandle = pWindow->GetHandle();
 
 	// Keyboard
-	io.KeyCtrl = Modules::Input->IsKeyDown(KEY_LCONTROL) || Modules::Input->IsKeyDown(KEY_RCONTROL);
-	io.KeyShift = Modules::Input->IsKeyDown(KEY_LSHIFT) || Modules::Input->IsKeyDown(KEY_RSHIFT);
-	io.KeyAlt = Modules::Input->IsKeyDown(KEY_LALT) || Modules::Input->IsKeyDown(KEY_RALT);
-	io.KeySuper = Modules::Input->IsKeyDown(KEY_LWIN) || Modules::Input->IsKeyDown(KEY_RWIN);
+	io.KeyCtrl = Modules::Input->IsKeyDown(KEY_LCONTROL, EKeyModifier::DontCare) || Modules::Input->IsKeyDown(KEY_RCONTROL, EKeyModifier::DontCare);
+	io.KeyShift = Modules::Input->IsKeyDown(KEY_LSHIFT, EKeyModifier::DontCare) || Modules::Input->IsKeyDown(KEY_RSHIFT, EKeyModifier::DontCare);
+	io.KeyAlt = Modules::Input->IsKeyDown(KEY_LALT, EKeyModifier::DontCare) || Modules::Input->IsKeyDown(KEY_RALT, EKeyModifier::DontCare);
+	io.KeySuper = Modules::Input->IsKeyDown(KEY_LWIN, EKeyModifier::DontCare) || Modules::Input->IsKeyDown(KEY_RWIN, EKeyModifier::DontCare);
 	for(int keyCode : io.KeyMap)
 	{
-		io.KeysDown[keyCode] = Modules::Input->IsKeyDown(static_cast<EKeyCode>(keyCode));
+		io.KeysDown[keyCode] = Modules::Input->IsKeyDown(static_cast<EKeyCode>(keyCode), EKeyModifier::DontCare);
 	}
 
 	const String& typedCharacters = Modules::Input->GetTypingCharacters();

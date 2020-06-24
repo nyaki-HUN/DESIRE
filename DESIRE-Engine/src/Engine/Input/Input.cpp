@@ -28,15 +28,6 @@ void Input::Update()
 {
 	Update_internal();
 
-	// Handle hotkeys
-	for(const Hotkey& hotkey : hotkeys)
-	{
-		if(WasKeyPressed(hotkey.keyCode, hotkey.modifier))
-		{
-			hotkey.callback(hotkey.userData);
-		}
-	}
-
 	// Keyboard
 	for(Keyboard& keyboard : keyboards)
 	{
@@ -76,41 +67,6 @@ void Input::Reset()
 	for(GameController& gamepad : gameControllers)
 	{
 		gamepad.Reset();
-	}
-}
-
-bool Input::RegisterHotkey(EKeyCode keyCode, EKeyModifier modifier, HotkeyCallback_t callback, void* userData)
-{
-	ASSERT(callback != nullptr);
-
-	for(const Hotkey& hotkey : hotkeys)
-	{
-		if(hotkey.keyCode == keyCode && hotkey.modifier == modifier)
-		{
-			return false;
-		}
-	}
-
-	Hotkey hotkey;
-	hotkey.keyCode = keyCode;
-	hotkey.modifier = modifier;
-	hotkey.callback = callback;
-	hotkey.userData = userData;
-	hotkeys.Add(hotkey);
-
-	return true;
-}
-
-void Input::UnregisterHotkey(EKeyCode keyCode, EKeyModifier modifier)
-{
-	const size_t idx = hotkeys.SpecializedFind([keyCode, modifier](const Hotkey& hotkey)
-	{
-		return (hotkey.keyCode == keyCode && hotkey.modifier == modifier);
-	});
-
-	if(idx != SIZE_MAX)
-	{
-		hotkeys.RemoveFastAt(idx);
 	}
 }
 
