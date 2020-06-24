@@ -645,8 +645,8 @@ void BgfxRender::SetMesh(Mesh* pMesh)
 			case Mesh::EType::Dynamic:
 			{
 				DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
-				bgfx::setIndexBuffer(pRenderData->dynamicIndexBuffer, pDynamicMesh->indexOffset + pRenderData->indexOffset, pMesh->numIndices);
-				bgfx::setVertexBuffer(0, pRenderData->dynamicVertexBuffer, pDynamicMesh->vertexOffset + pRenderData->vertexOffset, pMesh->numVertices);
+				bgfx::setIndexBuffer(pRenderData->dynamicIndexBuffer, pRenderData->indexOffset + pDynamicMesh->indexOffset, pMesh->numIndices);
+				bgfx::setVertexBuffer(0, pRenderData->dynamicVertexBuffer, pRenderData->vertexOffset + pDynamicMesh->vertexOffset, pMesh->numVertices);
 				break;
 			}
 		}

@@ -136,10 +136,10 @@ void NuklearUI::NewFrame(OSWindow* pWindow)
 //	nk_input_key(ctx.get(), NK_KEY_TEXT_INSERT_MODE, Modules::Input->IsKeyDown());
 //	nk_input_key(ctx.get(), NK_KEY_TEXT_REPLACE_MODE, Modules::Input->IsKeyDown());
 //	nk_input_key(ctx.get(), NK_KEY_TEXT_RESET_MODE, Modules::Input->IsKeyDown());
-	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_START, Modules::Input->IsKeyDown(KEY_HOME));
-	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_END, Modules::Input->IsKeyDown(KEY_END));
-//	nk_input_key(ctx.get(), NK_KEY_TEXT_START, Modules::Input->IsKeyDown());
-//	nk_input_key(ctx.get(), NK_KEY_TEXT_END, Modules::Input->IsKeyDown());
+	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_START, Modules::Input->IsKeyDown(KEY_HOME, EKeyModifier::None));
+	nk_input_key(ctx.get(), NK_KEY_TEXT_LINE_END, Modules::Input->IsKeyDown(KEY_END, EKeyModifier::None));
+	nk_input_key(ctx.get(), NK_KEY_TEXT_START, Modules::Input->IsKeyDown(KEY_HOME, EKeyModifier::Ctrl));
+	nk_input_key(ctx.get(), NK_KEY_TEXT_END, Modules::Input->IsKeyDown(KEY_HOME, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_UNDO, Modules::Input->IsKeyDown(KEY_Z, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_REDO, Modules::Input->IsKeyDown(KEY_Y, EKeyModifier::Ctrl));
 	nk_input_key(ctx.get(), NK_KEY_TEXT_SELECT_ALL, Modules::Input->IsKeyDown(KEY_A, EKeyModifier::Ctrl));
@@ -194,8 +194,7 @@ void NuklearUI::Render()
 	mesh->isIndicesDirty = true;
 	mesh->isVerticesDirty = true;
 
-	mesh->indexOffset = 0;
-	mesh->vertexOffset = 0;
+	uint32_t indexOffset = 0;
 	const nk_draw_command* pCmd = nullptr;
 	nk_draw_foreach(pCmd, ctx.get(), cmdBuffer.get())
 	{
@@ -210,10 +209,12 @@ void NuklearUI::Render()
 
 		material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
 
+		mesh->indexOffset = indexOffset;
+		mesh->vertexOffset = 0;
 		mesh->numIndices = pCmd->elem_count;
 		Modules::Render->RenderMesh(mesh.get(), material.get());
 
-		mesh->indexOffset += mesh->numIndices;
+		indexOffset += mesh->numIndices;
 	}
 
 	Modules::Render->SetScissor();
