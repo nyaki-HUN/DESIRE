@@ -365,41 +365,28 @@ void BgfxRender::Bind(Mesh* pMesh)
 	}
 	pRenderData->vertexLayout.end();
 
-	switch(pMesh->type)
+	const bgfx::Memory* pIndexData = (pMesh->numIndices != 0) ? bgfx::copy(pMesh->indices.get(), pMesh->GetSizeOfIndexData()) : nullptr;
+	const bgfx::Memory* pVertexData = bgfx::copy(pMesh->vertices.get(), pMesh->GetSizeOfVertexData());
+
+	switch(pMesh->GetType())
 	{
 		case Mesh::EType::Static:
-		{
-			if(pMesh->numIndices != 0)
+			if(pIndexData != nullptr)
 			{
-				const bgfx::Memory* pIndexData = bgfx::makeRef(pMesh->indices.get(), pMesh->GetBytesOfIndexData());
 				pRenderData->indexBuffer = bgfx::createIndexBuffer(pIndexData, BGFX_BUFFER_NONE);
 			}
 
-			if(pMesh->numVertices != 0)
-			{
-				const bgfx::Memory* pVertexData = bgfx::makeRef(pMesh->vertices.get(), pMesh->GetBytesOfVertexData());
-				pRenderData->vertexBuffer = bgfx::createVertexBuffer(pVertexData, pRenderData->vertexLayout, BGFX_BUFFER_NONE);
-			}
+			pRenderData->vertexBuffer = bgfx::createVertexBuffer(pVertexData, pRenderData->vertexLayout, BGFX_BUFFER_NONE);
 			break;
-		}
 
 		case Mesh::EType::Dynamic:
-		{
-			DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
-
-			if(pDynamicMesh->maxNumOfIndices != 0)
+			if(pIndexData != nullptr)
 			{
-				const bgfx::Memory* pIndexData = bgfx::copy(pDynamicMesh->indices.get(), pDynamicMesh->GetTotalBytesOfIndexData());
 				pRenderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pIndexData, BGFX_BUFFER_NONE);
 			}
 
-			if(pDynamicMesh->maxNumOfVertices != 0)
-			{
-				const bgfx::Memory* pVertexData = bgfx::copy(pDynamicMesh->vertices.get(), pDynamicMesh->GetTotalBytesOfVertexData());
-				pRenderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(pVertexData, pRenderData->vertexLayout, BGFX_BUFFER_NONE);
-			}
+			pRenderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(pVertexData, pRenderData->vertexLayout, BGFX_BUFFER_NONE);
 			break;
-		}
 	}
 
 	pMesh->pRenderData = pRenderData;
@@ -534,17 +521,17 @@ void BgfxRender::Bind(RenderTarget* renderTarget)
 	renderTarget->renderData = pRenderData;
 }
 
-void BgfxRender::Unbind(Mesh* mesh)
+void BgfxRender::Unbind(Mesh* pMesh)
 {
-	if(mesh == nullptr || mesh->pRenderData == nullptr)
+	if(pMesh == nullptr || pMesh->pRenderData == nullptr)
 	{
 		// Not yet bound
 		return;
 	}
 
-	MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(mesh->pRenderData);
+	MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(pMesh->pRenderData);
 
-	switch(mesh->type)
+	switch(pMesh->GetType())
 	{
 		case Mesh::EType::Static:
 			bgfx::destroy(pRenderData->indexBuffer);
@@ -558,46 +545,46 @@ void BgfxRender::Unbind(Mesh* mesh)
 	}
 
 	delete pRenderData;
-	mesh->pRenderData = nullptr;
+	pMesh->pRenderData = nullptr;
 }
 
-void BgfxRender::Unbind(Shader* shader)
+void BgfxRender::Unbind(Shader* pShader)
 {
-	if(shader == nullptr || shader->renderData == nullptr)
+	if(pShader == nullptr || pShader->renderData == nullptr)
 	{
 		// Not yet bound
 		return;
 	}
 
-	ShaderRenderDataBgfx* pRenderData = static_cast<ShaderRenderDataBgfx*>(shader->renderData);
+	ShaderRenderDataBgfx* pRenderData = static_cast<ShaderRenderDataBgfx*>(pShader->renderData);
 	bgfx::destroy(pRenderData->shaderHandle);
 
 	delete pRenderData;
-	shader->renderData = nullptr;
+	pShader->renderData = nullptr;
 
-	if(pActiveVertexShader == shader)
+	if(pActiveVertexShader == pShader)
 	{
 		pActiveVertexShader = nullptr;
 	}
-	if(pActiveFragmentShader == shader)
+	if(pActiveFragmentShader == pShader)
 	{
 		pActiveFragmentShader = nullptr;
 	}
 }
 
-void BgfxRender::Unbind(Texture* texture)
+void BgfxRender::Unbind(Texture* pTexture)
 {
-	if(texture == nullptr || texture->renderData == nullptr)
+	if(pTexture == nullptr || pTexture->renderData == nullptr)
 	{
 		// Not yet bound
 		return;
 	}
 
-	TextureRenderDataBgfx* pRenderData = static_cast<TextureRenderDataBgfx*>(texture->renderData);
+	TextureRenderDataBgfx* pRenderData = static_cast<TextureRenderDataBgfx*>(pTexture->renderData);
 	bgfx::destroy(pRenderData->textureHandle);
 
 	delete pRenderData;
-	texture->renderData = nullptr;
+	pTexture->renderData = nullptr;
 }
 
 void BgfxRender::Unbind(RenderTarget* renderTarget)
@@ -639,13 +626,13 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 
 	if(dynamicMesh.isIndicesDirty)
 	{
-		bgfx::update(pRenderData->dynamicIndexBuffer, 0, bgfx::copy(dynamicMesh.indices.get(), dynamicMesh.GetTotalBytesOfIndexData()));
+		bgfx::update(pRenderData->dynamicIndexBuffer, 0, bgfx::copy(dynamicMesh.indices.get(), dynamicMesh.GetSizeOfIndexData()));
 		dynamicMesh.isIndicesDirty = false;
 	}
 
 	if(dynamicMesh.isVerticesDirty)
 	{
-		bgfx::update(pRenderData->dynamicVertexBuffer, 0, bgfx::copy(dynamicMesh.vertices.get(), dynamicMesh.GetTotalBytesOfVertexData()));
+		bgfx::update(pRenderData->dynamicVertexBuffer, 0, bgfx::copy(dynamicMesh.vertices.get(), dynamicMesh.GetSizeOfVertexData()));
 		dynamicMesh.isVerticesDirty = false;
 	}
 }
@@ -730,7 +717,7 @@ void BgfxRender::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t 
 	{
 		MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(pActiveMesh->pRenderData);
 
-		switch(pActiveMesh->type)
+		switch(pActiveMesh->GetType())
 		{
 			case Mesh::EType::Static:
 			{

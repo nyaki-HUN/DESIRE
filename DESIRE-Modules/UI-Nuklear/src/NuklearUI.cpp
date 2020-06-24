@@ -45,7 +45,7 @@ void NuklearUI::Init()
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	mesh = std::make_unique<DynamicMesh>(128 * 1024, 256 * 1024, vertexLayout);
+	mesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
 	static_assert(sizeof(nk_draw_index) == sizeof(uint16_t), "Conversion is required for index buffer");
 
 	static const nk_draw_vertex_layout_element s_nkVertexLayout[] =
@@ -186,11 +186,9 @@ void NuklearUI::Render()
 	// Update mesh with packed buffers for contiguous indices and vertices
 	nk_buffer indexBuffer;
 	nk_buffer vertexBuffer;
-	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->maxNumOfIndices);
-	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->maxNumOfVertices);
+	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->numIndices);
+	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->numVertices);
 	nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
-	mesh->numIndices = static_cast<uint32_t>(indexBuffer.allocated / sizeof(nk_draw_index));
-	mesh->numVertices = static_cast<uint32_t>(vertexBuffer.allocated / mesh->stride);
 	mesh->isIndicesDirty = true;
 	mesh->isVerticesDirty = true;
 
@@ -203,11 +201,11 @@ void NuklearUI::Render()
 			continue;
 		}
 
+		material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
+
 		const uint16_t clipX = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.x));
 		const uint16_t clipY = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.y));
 		Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(pCmd->clip_rect.w), static_cast<uint16_t>(pCmd->clip_rect.h));
-
-		material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
 
 		Modules::Render->RenderMesh(mesh.get(), material.get(), indexOffset, 0, pCmd->elem_count);
 		indexOffset += pCmd->elem_count;

@@ -25,14 +25,27 @@ uint32_t Mesh::VertexLayout::GetSizeInBytes() const
 	return count * sizePerAttribType[(size_t)type];
 }
 
-Mesh::Mesh(EType meshType, std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList)
-	: type(meshType)
-	, vertexLayout(vertexLayoutInitList)
+Mesh::Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount)
+	: vertexLayout(vertexLayoutInitList)
+	, numIndices(indexCount)
+	, numVertices(vertexCount)
 {
 	stride = 0;
 	for(const VertexLayout& decl : vertexLayout)
 	{
 		stride += decl.GetSizeInBytes();
+	}
+
+	if(numIndices != 0)
+	{
+		indices = std::make_unique<uint16_t[]>(numIndices);
+		memset(indices.get(), 0, GetSizeOfIndexData());
+	}
+
+	if(numVertices != 0)
+	{
+		vertices = std::make_unique<float[]>(numVertices * stride / sizeof(float));
+		memset(vertices.get(), 0, GetSizeOfVertexData());
 	}
 }
 
@@ -44,19 +57,22 @@ Mesh::~Mesh()
 	}
 }
 
+uint32_t Mesh::GetSizeOfIndexData() const
+{
+	return numIndices * sizeof(uint16_t); 
+}
+
+uint32_t Mesh::GetSizeOfVertexData() const
+{
+	return numVertices * stride; 
+}
+
+Mesh::EType Mesh::GetType() const
+{
+	return type;
+}
+
 const Array<Mesh::VertexLayout>& Mesh::GetVertexLayout() const
 {
 	return vertexLayout;
-}
-
-DynamicMesh::DynamicMesh(uint32_t indexCount, uint32_t vertexCount, std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList)
-	: Mesh(Mesh::EType::Dynamic, vertexLayoutInitList)
-	, maxNumOfIndices(indexCount)
-	, maxNumOfVertices(vertexCount)
-{
-	indices = std::make_unique<uint16_t[]>(maxNumOfIndices);
-	memset(indices.get(), 0, GetTotalBytesOfIndexData());
-
-	vertices = std::make_unique<float[]>(maxNumOfVertices * stride / sizeof(float));
-	memset(vertices.get(), 0, GetTotalBytesOfVertexData());
 }

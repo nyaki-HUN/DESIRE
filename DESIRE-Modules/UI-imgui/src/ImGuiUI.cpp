@@ -70,7 +70,7 @@ void ImGuiUI::Init()
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	mesh = std::make_unique<DynamicMesh>(128 * 1024, 256 * 1024, vertexLayout);
+	mesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
 	static_assert(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
 	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
 
@@ -175,24 +175,23 @@ void ImGuiUI::Render()
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-	ASSERT(static_cast<uint32_t>(pDrawData->TotalIdxCount) <= mesh->maxNumOfIndices);
-	ASSERT(static_cast<uint32_t>(pDrawData->TotalVtxCount) <= mesh->maxNumOfVertices);
-	mesh->numIndices = 0;
-	mesh->numVertices = 0;
-	for(int i = 0; i < pDrawData->CmdListsCount; ++i)
+	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > mesh->numIndices ||
+		static_cast<uint32_t>(pDrawData->TotalVtxCount) > mesh->numVertices)
+	{
+		// Skip rendering if we have too many indices or vertices
+		ASSERT(false && "DynamicMesh is too small");
+		return;
+	}
+
+	ImDrawIdx* pIndex = mesh->indices.get();
+	ImDrawVert* pVertex = reinterpret_cast<ImDrawVert*>(mesh->vertices.get());
+	for(int i = 0; i < pDrawData->CmdListsCount; i++)
 	{
 		const ImDrawList* pDrawList = pDrawData->CmdLists[i];
-		if(mesh->numIndices + pDrawList->IdxBuffer.size() > mesh->maxNumOfIndices ||
-			mesh->numVertices + pDrawList->VtxBuffer.size() > mesh->maxNumOfVertices)
-		{
-			break;
-		}
-
-		memcpy(&mesh->indices[mesh->numIndices], pDrawList->IdxBuffer.Data, pDrawList->IdxBuffer.size() * sizeof(ImDrawIdx));
-		mesh->numIndices += static_cast<uint32_t>(pDrawList->IdxBuffer.size());
-
-		memcpy(reinterpret_cast<uint8_t*>(mesh->vertices.get()) + mesh->numVertices * mesh->stride, pDrawList->VtxBuffer.Data, pDrawList->VtxBuffer.size() * mesh->stride);
-		mesh->numVertices += static_cast<uint32_t>(pDrawList->VtxBuffer.size());
+		memcpy(pIndex, pDrawList->IdxBuffer.Data, pDrawList->IdxBuffer.Size * sizeof(ImDrawIdx));
+		memcpy(pVertex, pDrawList->VtxBuffer.Data, pDrawList->VtxBuffer.Size * sizeof(ImDrawVert));
+		pIndex += pDrawList->IdxBuffer.Size;
+		pVertex += pDrawList->VtxBuffer.Size;
 	}
 	mesh->isIndicesDirty = true;
 	mesh->isVerticesDirty = true;
@@ -203,26 +202,34 @@ void ImGuiUI::Render()
 	for(int i = 0; i < pDrawData->CmdListsCount; ++i)
 	{
 		const ImDrawList* pDrawList = pDrawData->CmdLists[i];
-		mesh->numVertices = static_cast<uint32_t>(pDrawList->VtxBuffer.size());
-
 		for(const ImDrawCmd& cmd : pDrawList->CmdBuffer)
 		{
-			if(cmd.ElemCount == 0 && cmd.UserCallback == nullptr)
+			if(cmd.UserCallback != nullptr)
 			{
-				continue;
-			}
-
-			const uint16_t clipX = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.x));
-			const uint16_t clipY = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.y));
-			Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(cmd.ClipRect.z - clipX), static_cast<uint16_t>(cmd.ClipRect.w - clipY));
-
-			if(cmd.UserCallback)
-			{
-				cmd.UserCallback(pDrawList, &cmd);
+				if(cmd.UserCallback == ImDrawCallback_ResetRenderState)
+				{
+					//  Special callback value used by the user to request the renderer to reset render state
+					Modules::Render->SetDepthWriteEnabled(false);
+					Modules::Render->SetCullMode(Render::ECullMode::None);
+					Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
+				}
+				else
+				{
+					cmd.UserCallback(pDrawList, &cmd);
+				}
 			}
 			else
 			{
+				if(cmd.ElemCount == 0)
+				{
+					continue;
+				}
+
 				material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
+
+				const uint16_t clipX = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.x));
+				const uint16_t clipY = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.y));
+				Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(cmd.ClipRect.z - clipX), static_cast<uint16_t>(cmd.ClipRect.w - clipY));
 
 				Modules::Render->RenderMesh(mesh.get(), material.get(), cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
 			}

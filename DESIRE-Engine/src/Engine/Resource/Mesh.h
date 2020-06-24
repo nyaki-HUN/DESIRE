@@ -44,12 +44,13 @@ public:
 		uint32_t GetSizeInBytes() const;
 	};
 
-	Mesh(EType meshType, std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList);
+	Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount = 0, uint32_t vertexCount = 0);
 	~Mesh();
 
-	uint32_t GetBytesOfIndexData() const	{ return numIndices * sizeof(uint16_t); }
-	uint32_t GetBytesOfVertexData() const	{ return numVertices * stride; }
+	uint32_t GetSizeOfIndexData() const;
+	uint32_t GetSizeOfVertexData() const;
 
+	EType GetType() const;
 	const Array<VertexLayout>& GetVertexLayout() const;
 
 	// Render engine specific data set at bind
@@ -64,7 +65,8 @@ public:
 	uint32_t numVertices = 0;
 	uint32_t stride = 0;
 
-	const EType type;
+protected:
+	EType type = EType::Static;
 
 private:
 	Array<VertexLayout> vertexLayout;
@@ -73,13 +75,11 @@ private:
 class DynamicMesh : public Mesh
 {
 public:
-	DynamicMesh(uint32_t indexCount, uint32_t vertexCount, std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList);
-
-	uint32_t GetTotalBytesOfIndexData() const	{ return maxNumOfIndices * sizeof(uint16_t); }
-	uint32_t GetTotalBytesOfVertexData() const	{ return maxNumOfVertices * stride; }
-
-	const uint32_t maxNumOfIndices;
-	const uint32_t maxNumOfVertices;
+	DynamicMesh::DynamicMesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount)
+		: Mesh(vertexLayoutInitList, indexCount, vertexCount)
+	{
+		type = Mesh::EType::Dynamic;
+	}
 
 	bool isIndicesDirty = false;
 	bool isVerticesDirty = false;

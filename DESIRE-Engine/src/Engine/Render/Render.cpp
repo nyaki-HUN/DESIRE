@@ -43,7 +43,7 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, 
 	}
 
 	if(indexOffset + numIndices > pMesh->numIndices ||
-		vertexOffset + vertexOffset > pMesh->numVertices)
+		vertexOffset + numVertices > pMesh->numVertices)
 	{
 		return;
 	}
@@ -51,8 +51,13 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, 
 	if(pMesh->pRenderData == nullptr)
 	{
 		Bind(pMesh);
+		if(pMesh->pRenderData == nullptr)
+		{
+			// Still not bound, skip it
+			return;
+		}
 	}
-	else if(pMesh->type == Mesh::EType::Dynamic)
+	else if(pMesh->GetType() == Mesh::EType::Dynamic)
 	{
 		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
 		UpdateDynamicMesh(*pDynamicMesh);
