@@ -629,68 +629,76 @@ void BgfxRender::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t he
 
 void BgfxRender::SetMesh(Mesh* pMesh)
 {
-	MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(pMesh->pRenderData);
-
-	switch(pMesh->type)
+	if(pMesh != nullptr)
 	{
-		case Mesh::EType::Static:
-		{
-			bgfx::setIndexBuffer(pRenderData->indexBuffer, pRenderData->indexOffset, pMesh->numIndices);
-			bgfx::setVertexBuffer(0, pRenderData->vertexBuffer, pRenderData->vertexOffset, pMesh->numVertices);
-			break;
-		}
+		MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(pMesh->pRenderData);
 
-		case Mesh::EType::Dynamic:
+		switch(pMesh->type)
 		{
-			DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
-			if(pDynamicMesh->isIndicesDirty)
+			case Mesh::EType::Static:
 			{
-				bgfx::update(pRenderData->dynamicIndexBuffer, 0, bgfx::copy(pDynamicMesh->indices.get(), pDynamicMesh->GetTotalBytesOfIndexData()));
-				pDynamicMesh->isIndicesDirty = false;
+				bgfx::setIndexBuffer(pRenderData->indexBuffer, pRenderData->indexOffset, pMesh->numIndices);
+				bgfx::setVertexBuffer(0, pRenderData->vertexBuffer, pRenderData->vertexOffset, pMesh->numVertices);
+				break;
 			}
 
-			if(pDynamicMesh->isVerticesDirty)
+			case Mesh::EType::Dynamic:
 			{
-				bgfx::update(pRenderData->dynamicVertexBuffer, 0, bgfx::copy(pDynamicMesh->vertices.get(), pDynamicMesh->GetTotalBytesOfVertexData()));
-				pDynamicMesh->isVerticesDirty = false;
+				DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
+				bgfx::setIndexBuffer(pRenderData->dynamicIndexBuffer, pDynamicMesh->indexOffset + pRenderData->indexOffset, pMesh->numIndices);
+				bgfx::setVertexBuffer(0, pRenderData->dynamicVertexBuffer, pDynamicMesh->vertexOffset + pRenderData->vertexOffset, pMesh->numVertices);
+				break;
 			}
-
-			bgfx::setIndexBuffer(pRenderData->dynamicIndexBuffer, pDynamicMesh->indexOffset + pRenderData->indexOffset, pMesh->numIndices);
-			bgfx::setVertexBuffer(0, pRenderData->dynamicVertexBuffer, pDynamicMesh->vertexOffset + pRenderData->vertexOffset, pMesh->numVertices);
-			break;
 		}
+	}
+	else
+	{
+		// Set screen space quad
+		bgfx::TransientIndexBuffer indexBuffer;
+		bgfx::TransientVertexBuffer vertexBuffer;
+		if(bgfx::allocTransientBuffers(&vertexBuffer, screenSpaceQuadVertexLayout, 4, &indexBuffer, 6))
+		{
+			// Vertices
+			const float vertices[] =
+			{
+				-1.0f,	 1.0f,
+				1.0f,	 1.0f,
+				-1.0f,	-1.0f,
+				1.0f,	-1.0f
+			};
+			memcpy(vertexBuffer.data, vertices, sizeof(vertices));
+
+			// Indices
+			uint16_t* pIndices = reinterpret_cast<uint16_t*>(indexBuffer.data);
+			pIndices[0] = 0;
+			pIndices[1] = 1;
+			pIndices[2] = 2;
+
+			pIndices[3] = 3;
+			pIndices[4] = 2;
+			pIndices[5] = 1;
+		}
+
+		bgfx::setIndexBuffer(&indexBuffer);
+		bgfx::setVertexBuffer(0, &vertexBuffer);
 	}
 }
 
-void BgfxRender::SetScreenSpaceQuadMesh()
+void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 {
-	bgfx::TransientIndexBuffer indexBuffer;
-	bgfx::TransientVertexBuffer vertexBuffer;
-	if(bgfx::allocTransientBuffers(&vertexBuffer, screenSpaceQuadVertexLayout, 4, &indexBuffer, 6))
+	MeshRenderDataBgfx* pRenderData = static_cast<MeshRenderDataBgfx*>(dynamicMesh.pRenderData);
+
+	if(dynamicMesh.isIndicesDirty)
 	{
-		// Vertices
-		const float vertices[] =
-		{
-			-1.0f,	 1.0f,
-			1.0f,	 1.0f,
-			-1.0f,	-1.0f,
-			1.0f,	-1.0f,
-		};
-		memcpy(vertexBuffer.data, vertices, sizeof(vertices));
-
-		// Indices
-		uint16_t* indices = (uint16_t*)indexBuffer.data;
-		indices[0] = 0;
-		indices[1] = 1;
-		indices[2] = 2;
-
-		indices[3] = 3;
-		indices[4] = 2;
-		indices[5] = 1;
+		bgfx::update(pRenderData->dynamicIndexBuffer, 0, bgfx::copy(dynamicMesh.indices.get(), dynamicMesh.GetTotalBytesOfIndexData()));
+		dynamicMesh.isIndicesDirty = false;
 	}
 
-	bgfx::setIndexBuffer(&indexBuffer);
-	bgfx::setVertexBuffer(0, &vertexBuffer);
+	if(dynamicMesh.isVerticesDirty)
+	{
+		bgfx::update(pRenderData->dynamicVertexBuffer, 0, bgfx::copy(dynamicMesh.vertices.get(), dynamicMesh.GetTotalBytesOfVertexData()));
+		dynamicMesh.isVerticesDirty = false;
+	}
 }
 
 void BgfxRender::SetVertexShader(Shader* vertexShader)

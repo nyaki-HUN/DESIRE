@@ -54,7 +54,7 @@ private:
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void SetMesh(Mesh* pMesh) override;
-	void SetScreenSpaceQuadMesh() override;
+	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
 	void SetVertexShader(Shader* pVertexShader) override;
 	void SetFragmentShader(Shader* pFragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, Texture* pTexture, EFilterMode filterMode, EAddressMode addressMode) override;

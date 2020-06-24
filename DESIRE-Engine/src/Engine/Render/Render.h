@@ -129,7 +129,7 @@ protected:
 
 private:
 	virtual void SetMesh(Mesh* pMesh) = 0;
-	virtual void SetScreenSpaceQuadMesh() = 0;
+	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
 	void SetMaterial(Material* pMaterial);
 	virtual void SetVertexShader(Shader* pVertexShader) = 0;
 	virtual void SetFragmentShader(Shader* pFragmentShader) = 0;

@@ -670,43 +670,31 @@ void Direct3D12Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 
 void Direct3D12Render::SetMesh(Mesh* pMesh)
 {
-	MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
-
-	uint32_t indexByteOffset = pRenderData->indexOffset * sizeof(uint16_t);
-	uint32_t vertexByteOffset = pRenderData->vertexOffset * pMesh->stride;
-
-	switch(pMesh->type)
+	if(pActiveMesh == pMesh)
 	{
-		case Mesh::EType::Static:
-		{
-			if(pActiveMesh == pMesh)
-			{
-				// No need to set the buffers again
-				return;
-			}
-			break;
-		}
+		return;
+	}
 
-		case Mesh::EType::Dynamic:
-		{
-			const DynamicMesh* dynamicMesh = static_cast<const DynamicMesh*>(pMesh);
-			indexByteOffset += dynamicMesh->indexOffset * sizeof(uint16_t);
-			vertexByteOffset += dynamicMesh->vertexOffset * pMesh->stride;
-			break;
-		}
+	if(pMesh != nullptr)
+	{
+//		MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
+	}
+	else
+	{
 	}
 
 	pActiveMesh = pMesh;
 }
 
-void Direct3D12Render::SetScreenSpaceQuadMesh()
+void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 {
-	if(pActiveMesh == nullptr)
+	if(dynamicMesh.isIndicesDirty)
 	{
-		return;
 	}
 
-	pActiveMesh = nullptr;
+	if(dynamicMesh.isVerticesDirty)
+	{
+	}
 }
 
 void Direct3D12Render::SetVertexShader(Shader* pVertexShader)

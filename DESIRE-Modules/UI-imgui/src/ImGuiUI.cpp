@@ -179,16 +179,16 @@ void ImGuiUI::Render()
 	ASSERT(static_cast<uint32_t>(pDrawData->TotalVtxCount) <= mesh->maxNumOfVertices);
 	mesh->numIndices = 0;
 	mesh->numVertices = 0;
-	for(int cmdIdx = 0; cmdIdx < pDrawData->CmdListsCount; ++cmdIdx)
+	for(int i = 0; i < pDrawData->CmdListsCount; ++i)
 	{
-		const ImDrawList* pDrawList = pDrawData->CmdLists[cmdIdx];
+		const ImDrawList* pDrawList = pDrawData->CmdLists[i];
 		if(mesh->numIndices + pDrawList->IdxBuffer.size() > mesh->maxNumOfIndices ||
 			mesh->numVertices + pDrawList->VtxBuffer.size() > mesh->maxNumOfVertices)
 		{
 			break;
 		}
 
-		memcpy(&mesh->indices[mesh->numIndices], pDrawList->IdxBuffer.Data, pDrawList->IdxBuffer.size() * sizeof(uint16_t));
+		memcpy(&mesh->indices[mesh->numIndices], pDrawList->IdxBuffer.Data, pDrawList->IdxBuffer.size() * sizeof(ImDrawIdx));
 		mesh->numIndices += static_cast<uint32_t>(pDrawList->IdxBuffer.size());
 
 		memcpy(reinterpret_cast<uint8_t*>(mesh->vertices.get()) + mesh->numVertices * mesh->stride, pDrawList->VtxBuffer.Data, pDrawList->VtxBuffer.size() * mesh->stride);
@@ -197,11 +197,12 @@ void ImGuiUI::Render()
 	mesh->isIndicesDirty = true;
 	mesh->isVerticesDirty = true;
 
-	mesh->indexOffset = 0;
-	mesh->vertexOffset = 0;
-	for(int cmdIdx = 0; cmdIdx < pDrawData->CmdListsCount; ++cmdIdx)
+	// Because we merged all buffers into a single one, we maintain our own offset into them
+	uint32_t indexOffset = 0;
+	uint32_t vertexOffset = 0;
+	for(int i = 0; i < pDrawData->CmdListsCount; ++i)
 	{
-		const ImDrawList* pDrawList = pDrawData->CmdLists[cmdIdx];
+		const ImDrawList* pDrawList = pDrawData->CmdLists[i];
 		mesh->numVertices = static_cast<uint32_t>(pDrawList->VtxBuffer.size());
 
 		for(const ImDrawCmd& cmd : pDrawList->CmdBuffer)
@@ -223,14 +224,15 @@ void ImGuiUI::Render()
 			{
 				material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
+				mesh->indexOffset = cmd.IdxOffset + indexOffset;
+				mesh->vertexOffset = cmd.VtxOffset + vertexOffset;
 				mesh->numIndices = cmd.ElemCount;
 				Modules::Render->RenderMesh(mesh.get(), material.get());
-
-				mesh->indexOffset += mesh->numIndices;
 			}
 		}
 
-		mesh->vertexOffset += mesh->numVertices;
+		indexOffset += pDrawList->IdxBuffer.Size;
+		vertexOffset += pDrawList->VtxBuffer.Size;
 	}
 
 	Modules::Render->SetScissor();

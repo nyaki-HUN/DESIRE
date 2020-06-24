@@ -962,68 +962,51 @@ void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint1
 
 void Direct3D11Render::SetMesh(Mesh* pMesh)
 {
-	MeshRenderDataD3D11* pRenderData = static_cast<MeshRenderDataD3D11*>(pMesh->pRenderData);
-
-	uint32_t indexByteOffset = pRenderData->indexOffset * sizeof(uint16_t);
-	uint32_t vertexByteOffset = pRenderData->vertexOffset * pMesh->stride;
-
-	switch(pMesh->type)
+	if(pActiveMesh == pMesh)
 	{
-		case Mesh::EType::Static:
-		{
-			if(pActiveMesh == pMesh)
-			{
-				// No need to set the buffers again
-				return;
-			}
-			break;
-		}
-
-		case Mesh::EType::Dynamic:
-		{
-			DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
-			if(pDynamicMesh->isIndicesDirty)
-			{
-				UpdateD3D11Resource(pRenderData->indexBuffer, pDynamicMesh->indices.get(), pDynamicMesh->GetTotalBytesOfIndexData());
-				pDynamicMesh->isIndicesDirty = false;
-			}
-
-			if(pDynamicMesh->isVerticesDirty)
-			{
-				UpdateD3D11Resource(pRenderData->vertexBuffer, pDynamicMesh->vertices.get(), pDynamicMesh->GetTotalBytesOfVertexData());
-				pDynamicMesh->isVerticesDirty = false;
-			}
-
-			indexByteOffset += (pDynamicMesh->indexOffset + pRenderData->indexOffset) * sizeof(uint16_t);
-			vertexByteOffset += (pDynamicMesh->vertexOffset + pRenderData->vertexOffset) * pMesh->stride;
-			break;
-		}
+		return;
 	}
 
-	deviceCtx->IASetIndexBuffer(pRenderData->indexBuffer, DXGI_FORMAT_R16_UINT, indexByteOffset);
-	deviceCtx->IASetVertexBuffers(0, 1, &pRenderData->vertexBuffer, &pMesh->stride, &vertexByteOffset);
-
-	if(pActiveMesh == nullptr)
+	if(pMesh != nullptr)
 	{
-		deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		MeshRenderDataD3D11* pRenderData = static_cast<MeshRenderDataD3D11*>(pMesh->pRenderData);
+		const uint32_t indexByteOffset = pRenderData->indexOffset * sizeof(uint16_t);
+		const uint32_t vertexByteOffset = pRenderData->vertexOffset * pMesh->stride;
+		deviceCtx->IASetIndexBuffer(pRenderData->indexBuffer, DXGI_FORMAT_R16_UINT, indexByteOffset);
+		deviceCtx->IASetVertexBuffers(0, 1, &pRenderData->vertexBuffer, &pMesh->stride, &vertexByteOffset);
+
+		if(pActiveMesh == nullptr)
+		{
+			deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		}
+	}
+	else
+	{
+		// Set screen space quad
+		deviceCtx->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+		deviceCtx->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+
+		deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	}
 
 	pActiveMesh = pMesh;
 }
 
-void Direct3D11Render::SetScreenSpaceQuadMesh()
+void Direct3D11Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 {
-	if(pActiveMesh == nullptr)
+	MeshRenderDataD3D11* pRenderData = static_cast<MeshRenderDataD3D11*>(dynamicMesh.pRenderData);
+
+	if(dynamicMesh.isIndicesDirty)
 	{
-		return;
+		UpdateD3D11Resource(pRenderData->indexBuffer, dynamicMesh.indices.get(), dynamicMesh.GetTotalBytesOfIndexData());
+		dynamicMesh.isIndicesDirty = false;
 	}
 
-	deviceCtx->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-	deviceCtx->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-
-	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-	pActiveMesh = nullptr;
+	if(dynamicMesh.isVerticesDirty)
+	{
+		UpdateD3D11Resource(pRenderData->vertexBuffer, dynamicMesh.vertices.get(), dynamicMesh.GetTotalBytesOfVertexData());
+		dynamicMesh.isVerticesDirty = false;
+	}
 }
 
 void Direct3D11Render::SetVertexShader(Shader* vertexShader)
@@ -1199,13 +1182,22 @@ void Direct3D11Render::DoRender()
 
 	if(pActiveMesh != nullptr)
 	{
+		uint32_t indexOffset = 0;
+		uint32_t vertexOffset = 0;
+		if(pActiveMesh->type == Mesh::EType::Dynamic)
+		{
+			const DynamicMesh* pDynamicMesh = static_cast<const DynamicMesh*>(pActiveMesh);
+			indexOffset = pDynamicMesh->indexOffset;
+			vertexOffset = pDynamicMesh->vertexOffset;
+		}
+
 		if(pActiveMesh->numIndices != 0)
 		{
-			deviceCtx->DrawIndexed(pActiveMesh->numIndices, 0, 0);
+			deviceCtx->DrawIndexed(pActiveMesh->numIndices, indexOffset, vertexOffset);
 		}
 		else
 		{
-			deviceCtx->Draw(pActiveMesh->numVertices, 0);
+			deviceCtx->Draw(pActiveMesh->numVertices, vertexOffset);
 		}
 	}
 	else

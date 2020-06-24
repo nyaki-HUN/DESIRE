@@ -24,9 +24,17 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial)
 		return;
 	}
 
-	if(pMesh != nullptr && pMesh->pRenderData == nullptr)
+	if(pMesh != nullptr)
 	{
-		Bind(pMesh);
+		if(pMesh->pRenderData == nullptr)
+		{
+			Bind(pMesh);
+		}
+		else if(pMesh->type == Mesh::EType::Dynamic)
+		{
+			DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
+			UpdateDynamicMesh(*pDynamicMesh);
+		}
 	}
 
 	SetMesh(pMesh);
@@ -46,7 +54,7 @@ void Render::RenderScreenSpaceQuad(Material* pMaterial)
 		return;
 	}
 
-	SetScreenSpaceQuadMesh();
+	SetMesh(nullptr);
 	SetMaterial(pMaterial);
 	SetVertexShader(screenSpaceQuadVertexShader.get());
 	UpdateShaderParams(pMaterial);
