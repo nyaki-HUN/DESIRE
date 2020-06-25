@@ -138,12 +138,17 @@ void SandBox::Update()
 	Modules::UI->NewFrame(mainWindow.get());
 
 	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(300, 500));
+
 	Modules::UI->Text("Text");
+	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
 	if(Modules::UI->Button("Reset Slider"))
 	{
 		sliderValue = 0.0f;
 	}
-	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
+
+	float color[4];
+	Modules::UI->ColorPicker("ColorPicker", color);
+
 	Modules::UI->EndWindow();
 
 	// Render

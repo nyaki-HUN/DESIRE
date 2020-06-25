@@ -188,7 +188,14 @@ void NuklearUI::Render()
 	nk_buffer vertexBuffer;
 	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->numIndices);
 	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->numVertices);
-	nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
+	nk_flags result = nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
+	if(result != NK_CONVERT_SUCCESS)
+	{
+		// Skip rendering
+		ASSERT(false && "nk_convert failed");
+		return;
+	}
+
 	mesh->isIndicesDirty = true;
 	mesh->isVerticesDirty = true;
 
@@ -203,9 +210,11 @@ void NuklearUI::Render()
 
 		material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
 
-		const uint16_t clipX = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.x));
-		const uint16_t clipY = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.y));
-		Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(pCmd->clip_rect.w), static_cast<uint16_t>(pCmd->clip_rect.h));
+		const uint16_t x = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.x));
+		const uint16_t y = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.y));
+		const uint16_t w = static_cast<uint16_t>(std::min<float>(pCmd->clip_rect.w, UINT16_MAX));
+		const uint16_t h = static_cast<uint16_t>(std::min<float>(pCmd->clip_rect.h, UINT16_MAX));
+		Modules::Render->SetScissor(x, y, w, h);
 
 		Modules::Render->RenderMesh(mesh.get(), material.get(), indexOffset, 0, pCmd->elem_count);
 		indexOffset += pCmd->elem_count;

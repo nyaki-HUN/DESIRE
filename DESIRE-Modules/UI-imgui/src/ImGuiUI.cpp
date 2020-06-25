@@ -227,9 +227,11 @@ void ImGuiUI::Render()
 
 				material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
-				const uint16_t clipX = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.x));
-				const uint16_t clipY = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.y));
-				Modules::Render->SetScissor(clipX, clipY, static_cast<uint16_t>(cmd.ClipRect.z - clipX), static_cast<uint16_t>(cmd.ClipRect.w - clipY));
+				const uint16_t x = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.x));
+				const uint16_t y = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.y));
+				const uint16_t w = static_cast<uint16_t>(std::min<float>(cmd.ClipRect.z - cmd.ClipRect.x, UINT16_MAX));
+				const uint16_t h = static_cast<uint16_t>(std::min<float>(cmd.ClipRect.w - cmd.ClipRect.y, UINT16_MAX));
+				Modules::Render->SetScissor(x, y, w, h);
 
 				Modules::Render->RenderMesh(mesh.get(), material.get(), cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
 			}
