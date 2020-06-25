@@ -59,7 +59,7 @@ void NuklearUI::Init()
 	convertConfig = std::make_unique<nk_convert_config>();
 	convertConfig->vertex_layout = s_nkVertexLayout;
 	convertConfig->vertex_size = mesh->stride;
-	convertConfig->vertex_alignment = MemorySystem::kDefaultAlignment;
+	convertConfig->vertex_alignment = NK_ALIGNOF(float);
 	convertConfig->global_alpha = 1.0f;
 	convertConfig->shape_AA = NK_ANTI_ALIASING_ON;
 	convertConfig->line_AA = NK_ANTI_ALIASING_ON;

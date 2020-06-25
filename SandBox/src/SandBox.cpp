@@ -146,7 +146,6 @@ void SandBox::Update()
 		sliderValue = 0.0f;
 	}
 
-	float color[4];
 	Modules::UI->ColorPicker("ColorPicker", color);
 
 	Modules::UI->EndWindow();

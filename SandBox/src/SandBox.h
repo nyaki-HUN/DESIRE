@@ -24,4 +24,5 @@ private:
 	InputMapping inputMapping;
 
 	float sliderValue = 0.0f;
+	float color[4] = {};
 };
