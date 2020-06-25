@@ -34,8 +34,8 @@ public:
 	bool InputField(const String& label, float& value) override;
 	bool InputField(const String& label, Vector3& value) override;
 
-	bool ColorPicker(const String& label, float(&color)[3]) override;
-	bool ColorPicker(const String& label, float(&color)[4]) override;
+	bool ColorPicker(const String& label, float(&colorRGB)[3]) override;
+	bool ColorPicker(const String& label, float(&colorRGBA)[4]) override;
 
 	// Layout
 	void SameLine() override;

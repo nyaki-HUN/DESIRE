@@ -302,14 +302,14 @@ bool ImGuiUI::Slider(const String& label, float& value, float minValue, float ma
 	return ImGui::SliderFloat(label.Str(), &value, minValue, maxValue);
 }
 
-bool ImGuiUI::ColorPicker(const String& label, float(&color)[3])
+bool ImGuiUI::ColorPicker(const String& label, float(&colorRGB)[3])
 {
-	return ImGui::ColorPicker3(label.Str(), color, ImGuiColorEditFlags_None);
+	return ImGui::ColorPicker3(label.Str(), colorRGB, ImGuiColorEditFlags_None);
 }
 
-bool ImGuiUI::ColorPicker(const String& label, float(&color)[4])
+bool ImGuiUI::ColorPicker(const String& label, float(&colorRGBA)[4])
 {
-	return ImGui::ColorPicker4(label.Str(), color, ImGuiColorEditFlags_None);
+	return ImGui::ColorPicker4(label.Str(), colorRGBA, ImGuiColorEditFlags_None);
 }
 
 void ImGuiUI::SameLine()

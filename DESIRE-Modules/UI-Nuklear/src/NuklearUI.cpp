@@ -52,7 +52,7 @@ void NuklearUI::Init()
 	{
 		{ NK_VERTEX_POSITION, NK_FORMAT_FLOAT, 0 },
 		{ NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, 2 * sizeof(float) },
-		{ NK_VERTEX_COLOR, NK_FORMAT_RGBA32, 4 * sizeof(float) },
+		{ NK_VERTEX_COLOR, NK_FORMAT_R8G8B8A8, 4 * sizeof(float) },
 		{ NK_VERTEX_LAYOUT_END }
 	};
 
@@ -276,18 +276,18 @@ bool NuklearUI::Slider(const String& label, float& value, float minValue, float 
 	return nk_slider_float(ctx.get(), minValue, &value, maxValue, 0.1f);
 }
 
-bool NuklearUI::ColorPicker(const String& label, float(&color)[3])
+bool NuklearUI::ColorPicker(const String& label, float(&colorRGB)[3])
 {
 	nk_colorf nkColor;
-	memcpy(&nkColor, color, 3 * sizeof(float));
+	memcpy(&nkColor, colorRGB, 3 * sizeof(float));
 	int rv = nk_color_pick(ctx.get(), &nkColor, NK_RGB);
-	memcpy(color, &nkColor, 3 * sizeof(float));
+	memcpy(colorRGB, &nkColor, 3 * sizeof(float));
 	return (rv != 0);
 }
 
-bool NuklearUI::ColorPicker(const String& label, float(&color)[4])
+bool NuklearUI::ColorPicker(const String& label, float(&colorRGBA)[4])
 {
-	return nk_color_pick(ctx.get(), reinterpret_cast<nk_colorf*>(color), NK_RGBA);
+	return nk_color_pick(ctx.get(), reinterpret_cast<nk_colorf*>(colorRGBA), NK_RGBA);
 }
 
 void NuklearUI::SameLine()
