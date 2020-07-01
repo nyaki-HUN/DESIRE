@@ -302,49 +302,82 @@ void OSWindow::SetCursor(ECursor cursor)
 
 bool OSWindow::SetClipboardString(const String& string)
 {
-	const size_t size = string.Length() + 1;
-	HANDLE stringHandle = GlobalAlloc(GMEM_MOVEABLE, size);
-	if(stringHandle == nullptr)
+	bool success = false;
+
+	if(OpenClipboard(impl->hWnd))
 	{
-		return false;
+		EmptyClipboard();
+
+		if(!string.IsEmpty())
+		{
+			const int wsize = MultiByteToWideChar(CP_UTF8, 0, string.Str(), static_cast<int>(string.Length()), nullptr, 0);
+			HGLOBAL stringHandle = GlobalAlloc(GMEM_MOVEABLE, static_cast<SIZE_T>(wsize + 1) * sizeof(wchar_t));
+			if(stringHandle != nullptr)
+			{
+				wchar_t* pWideStr = static_cast<wchar_t*>(GlobalLock(stringHandle));
+				if(pWideStr != nullptr)
+				{
+					MultiByteToWideChar(CP_UTF8, 0, string.Str(), static_cast<int>(string.Length()), pWideStr, wsize);
+					pWideStr[wsize] = '\0';
+					GlobalUnlock(stringHandle);
+
+					if(SetClipboardData(CF_UNICODETEXT, stringHandle))
+					{
+						success = true;
+					}
+					else
+					{
+						GlobalFree(stringHandle);
+					}
+				}
+			}
+		}
+
+		CloseClipboard();
 	}
 
-	void* ptr = GlobalLock(stringHandle);
-	if(ptr == nullptr)
-	{
-		return false;
-	}
-
-	memcpy(ptr, string.Str(), size);
-	GlobalUnlock(stringHandle);
-
-	if(!OpenClipboard(impl->hWnd))
-	{
-		GlobalFree(stringHandle);
-		return false;
-	}
-	EmptyClipboard();
-	SetClipboardData(CF_TEXT, stringHandle);
-	CloseClipboard();
-	return true;
+	return success;
 }
 
-void OSWindow::GetClipboardString(WritableString& outString)
+void OSWindow::GetClipboardString(WritableString& outString) const
 {
 	outString.Clear();
 
-	if(IsClipboardFormatAvailable(CF_TEXT) && OpenClipboard(impl->hWnd))
+	if(OpenClipboard(impl->hWnd))
 	{
-		HGLOBAL stringHandle = GetClipboardData(CF_TEXT);
-		if(stringHandle != nullptr)
+		if(IsClipboardFormatAvailable(CF_UNICODETEXT))
 		{
-			char* ptr = (char*)GlobalLock(stringHandle);
-			if(ptr != nullptr)
+			HGLOBAL stringHandle = GetClipboardData(CF_UNICODETEXT);
+			if(stringHandle != nullptr)
 			{
-				outString.Set(ptr, strlen(ptr));
-				GlobalUnlock(stringHandle);
+				const wchar_t* pWideStr = static_cast<const wchar_t*>(GlobalLock(stringHandle));
+				if(pWideStr != nullptr)
+				{
+					int size = WideCharToMultiByte(CP_UTF8, 0, pWideStr, -1, nullptr, 0, nullptr, nullptr);
+					char* pStr = outString.AsCharBufferWithSize(size);
+					if(pStr != nullptr)
+					{
+						WideCharToMultiByte(CP_UTF8, 0, pWideStr, -1, pStr, size, nullptr, nullptr);
+					}
+
+					GlobalUnlock(stringHandle);
+				}
 			}
 		}
+		else if(IsClipboardFormatAvailable(CF_TEXT))
+		{
+			HGLOBAL stringHandle = GetClipboardData(CF_TEXT);
+			if(stringHandle != nullptr)
+			{
+				const char* pStr = static_cast<const char*>(GlobalLock(stringHandle));
+				if(pStr != nullptr)
+				{
+					outString.Set(pStr, strlen(pStr));
+					GlobalUnlock(stringHandle);
+				}
+			}
+		}
+
 		CloseClipboard();
 	}
 }
