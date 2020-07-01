@@ -81,8 +81,7 @@ void NuklearUI::Init()
 	int width = 0;
 	int height = 0;
 	const void* pTextureData = nk_font_atlas_bake(fontAtlas.get(), &width, &height, NK_FONT_ATLAS_RGBA32);
-	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8);
-	fontTexture->data = MemoryBuffer::CreateFromDataCopy(pTextureData, width * height * 4u);
+	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
 	material->AddTexture(fontTexture);
 
 	nk_font_atlas_end(fontAtlas.get(), nk_handle_ptr(&fontTexture), &convertConfig->null);
@@ -272,6 +271,9 @@ bool NuklearUI::InputField(const String& label, float& value)
 
 bool NuklearUI::InputField(const String& label, Vector3& value)
 {
+	float elements[3];
+	value.StoreXYZ(elements);
+
 	return false;
 }
 

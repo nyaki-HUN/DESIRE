@@ -54,7 +54,6 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 {
 	TgaHeader header;
 	size_t bytesRead = file->ReadBuffer(&header, sizeof(header));
-
 	if(bytesRead != sizeof(header) ||
 		header.colorMapType != 0 ||
 		(header.imageType != TgaHeader::EImageType::TrueColor && header.imageType != TgaHeader::EImageType::RLE_TrueColor) ||
@@ -64,8 +63,8 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 		return nullptr;
 	}
 
-	const size_t numComponents = header.bitsPerPixel / 8u;
-	const size_t dataSize = (size_t)(header.width * header.height * numComponents);
+	const size_t numComponents = header.bitsPerPixel / 8;
+	const size_t dataSize = numComponents * header.width * header.height;
 
 	std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(dataSize);
 	switch(header.imageType)
@@ -80,7 +79,7 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 		case TgaHeader::EImageType::RLE_TrueColor:
 		{
 			uint8_t rlePacket[5];
-			uint8_t* dataPtr = data.get();
+			uint8_t* pData = data.get();
 			do
 			{
 				// Read the packed (header byte + color info)
@@ -91,8 +90,8 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 				}
 
 				// Write color information
-				memcpy(dataPtr, &rlePacket[1], numComponents);
-				dataPtr += numComponents;
+				memcpy(pData, &rlePacket[1], numComponents);
+				pData += numComponents;
 
 				const uint8_t packetHeader = rlePacket[0];
 				if(packetHeader & 0x80)		// Check the type of the packet
@@ -101,18 +100,18 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 					const int numRepeat = (packetHeader & ~0x80);
 					for(int i = 0; i < numRepeat; i++)
 					{
-						memcpy(dataPtr, &rlePacket[1], numComponents);
-						dataPtr += numComponents;
+						memcpy(pData, &rlePacket[1], numComponents);
+						pData += numComponents;
 					}
 				}
 				else
 				{
 					// RAW packet
 					const size_t numRawColor = packetHeader;
-					file->ReadBuffer(dataPtr, numRawColor * numComponents);
-					dataPtr += numRawColor * numComponents;
+					file->ReadBuffer(pData, numRawColor * numComponents);
+					pData += numRawColor * numComponents;
 				}
-			} while(dataPtr < data.get() + dataSize);
+			} while(pData < data.get() + dataSize);
 			break;
 		}
 
@@ -135,22 +134,17 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 	{
 		// Flip the image horizontally
 		const size_t rowSize = header.width * numComponents;
-		DESIRE_STACKALLOCATE_ARRAY(uint8_t, tmp, rowSize);
-		for(uint16_t i = 0; i < header.height / 2u; ++i)
+		DESIRE_STACKALLOCATE_ARRAY(uint8_t, pTmp, rowSize);
+		for(uint16_t i = 0; i < header.height / 2; ++i)
 		{
-			uint8_t* src = data.get() + i * rowSize;
-			uint8_t* dst = data.get() + (header.height - i - 1) * rowSize;
-			memcpy(tmp, dst, rowSize);
-			memcpy(dst, src, rowSize);
-			memcpy(src, tmp, rowSize);
+			uint8_t* pSrc = &data[i * rowSize];
+			uint8_t* pDst = &data[(header.height - i - 1) * rowSize];
+			memcpy(pTmp, pDst, rowSize);
+			memcpy(pDst, pSrc, rowSize);
+			memcpy(pSrc, pTmp, rowSize);
 		}
-		free(tmp);
 	}
 
-	Texture::EFormat format = (numComponents == 3) ? Texture::EFormat::RGB8 : Texture::EFormat::RGBA8;
-
-	std::unique_ptr<Texture> texture = std::make_unique<Texture>(header.width, header.height, format);
-	texture->data.ptr = std::move(data);
-	texture->data.size = dataSize;
-	return texture;
+	const Texture::EFormat format = (numComponents == 3) ? Texture::EFormat::RGB8 : Texture::EFormat::RGBA8;
+	return std::make_unique<Texture>(header.width, header.height, format, std::move(data));
 }

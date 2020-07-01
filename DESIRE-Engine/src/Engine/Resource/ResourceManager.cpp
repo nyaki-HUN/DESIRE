@@ -125,7 +125,7 @@ void ResourceManager::ReloadTexture(const String& filename)
 		ASSERT(texture->width == newTexture->width);
 		ASSERT(texture->height == newTexture->height);
 		ASSERT(texture->format == newTexture->format);
-		ASSERT(texture->numMipMaps == newTexture->numMipMaps);
+		ASSERT(texture->numMipLevels == newTexture->numMipLevels);
 		texture->data = std::move(newTexture->data);
 	}
 }
@@ -216,13 +216,12 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 
 void ResourceManager::CreateErrorTexture()
 {
-	const uint16_t textureSize = 128;
-	errorTexture = std::make_shared<Texture>(textureSize, textureSize, Texture::EFormat::RGBA8);
-	errorTexture->data = MemoryBuffer(textureSize * textureSize * 4);
-	uint32_t* pixel = reinterpret_cast<uint32_t*>(errorTexture->data.ptr.get());
-	for(int i = 0; i < textureSize * textureSize; ++i)
+	constexpr uint16_t kTextureSize = 128;
+	errorTexture = std::make_shared<Texture>(kTextureSize, kTextureSize, Texture::EFormat::RGBA8);
+	uint32_t* pPixel = reinterpret_cast<uint32_t*>(errorTexture->data.get());
+	for(uint16_t i = 0; i < kTextureSize * kTextureSize; ++i)
 	{
-		*pixel = ((i % 26) < 14) ? 0xFFFF8000 : 0xFF000000;
-		pixel++;
+		*pPixel = ((i % 26) < 14) ? 0xFFFF8000 : 0xFF000000;
+		pPixel++;
 	}
 }

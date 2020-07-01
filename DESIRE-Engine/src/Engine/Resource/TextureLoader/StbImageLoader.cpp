@@ -20,23 +20,24 @@ DESIRE_ENABLE_WARNINGS
 std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& file)
 {
 	stbi_io_callbacks callbacks;
-	callbacks.read = [](void* file, char* data, int size)
+	callbacks.read = [](void* pFile, char* pData, int size)
 	{
-		return (int)static_cast<IReadFile*>(file)->ReadBuffer(data, (size_t)size);
+		const size_t numBytesRead = static_cast<IReadFile*>(pFile)->ReadBuffer(pData, static_cast<size_t>(size));
+		return static_cast<int>(numBytesRead);
 	};
 
-	callbacks.skip = [](void* file, int n)
+	callbacks.skip = [](void* pFile, int n)
 	{
-		static_cast<IReadFile*>(file)->Seek(n);
+		static_cast<IReadFile*>(pFile)->Seek(n);
 	};
 
-	callbacks.eof = [](void* file)
+	callbacks.eof = [](void* pFile)
 	{
-		return static_cast<IReadFile*>(file)->IsEof() ? 1 : 0;
+		return static_cast<IReadFile*>(pFile)->IsEof() ? 1 : 0;
 	};
 
 	std::unique_ptr<uint8_t[]> data = nullptr;
-	Texture::EFormat format = Texture::EFormat::Unknown;
+	Texture::EFormat format = Texture::EFormat::RGBA8;
 
 	int width = 0;
 	int height = 0;
@@ -48,32 +49,28 @@ std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& file)
 		data = std::unique_ptr<uint8_t[]>(reinterpret_cast<uint8_t*>(stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0)));
 		switch(numComponents)
 		{
-			case 3:	format = Texture::EFormat::RGB32F; break;
-			case 4: format = Texture::EFormat::RGBA32F; break;
+			case 3:		format = Texture::EFormat::RGB32F; break;
+			case 4:		format = Texture::EFormat::RGBA32F; break;
+			default:	return nullptr;
 		}
 	}
 	else
 	{
 		data = std::unique_ptr<uint8_t[]>(stbi_load_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0));
-
 		switch(numComponents)
 		{
-			case 1:	format = Texture::EFormat::R8; break;		// greyscale
-			case 2: format = Texture::EFormat::RG8; break;		// greyscale with alpha
-			case 3: format = Texture::EFormat::RGB8; break;
-			case 4: format = Texture::EFormat::RGBA8; break;
+			case 1:		format = Texture::EFormat::R8; break;		// greyscale
+			case 2:		format = Texture::EFormat::RG8; break;		// greyscale with alpha
+			case 3:		format = Texture::EFormat::RGB8; break;
+			case 4:		format = Texture::EFormat::RGBA8; break;
+			default:	return nullptr;
 		}
 	}
 
-	if(format == Texture::EFormat::Unknown ||
-		width <= 0 || width > UINT16_MAX ||
-		height <= 0 || height > UINT16_MAX)
+	if(width <= 0 || height <= 0 || width > UINT16_MAX || height > UINT16_MAX)
 	{
 		return nullptr;
 	}
 
-	std::unique_ptr<Texture> texture = std::make_unique<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), format);
-	texture->data.ptr = std::move(data);
-	texture->data.size = static_cast<size_t>(width * height * numComponents);
-	return texture;
+	return std::make_unique<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), format, std::move(data));
 }

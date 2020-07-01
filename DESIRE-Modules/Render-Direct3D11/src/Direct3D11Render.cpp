@@ -676,12 +676,12 @@ void Direct3D11Render::Bind(Texture* texture)
 
 	TextureRenderDataD3D11* pRenderData = new TextureRenderDataD3D11();
 
-	const bool isRenderTarget = (texture->data.ptr == nullptr);
+	const bool isRenderTarget = (texture->data == nullptr);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = texture->width;
 	textureDesc.Height = texture->height;
-	textureDesc.MipLevels = texture->numMipMaps + 1;
+	textureDesc.MipLevels = texture->numMipLevels;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = GetTextureFormat(texture);
 	textureDesc.SampleDesc.Count = 1;
@@ -693,7 +693,7 @@ void Direct3D11Render::Bind(Texture* texture)
 	else if(isRenderTarget)
 	{
 		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		if(texture->numMipMaps > 0)
+		if(texture->numMipLevels > 1)
 		{
 			textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		}
@@ -717,11 +717,11 @@ void Direct3D11Render::Bind(Texture* texture)
 	{
 		std::unique_ptr<D3D11_SUBRESOURCE_DATA[]> subResourceData = std::make_unique<D3D11_SUBRESOURCE_DATA[]>(textureDesc.MipLevels * textureDesc.ArraySize);
 		ASSERT(textureDesc.MipLevels * textureDesc.ArraySize == 1 && "TODO: Set initial data properly in the loop below");
-		for(size_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
+		for(uint32_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
 		{
-			subResourceData[i].pSysMem = texture->data.ptr.get();
-			subResourceData[i].SysMemPitch = (UINT)(texture->data.size / texture->height);
-			subResourceData[i].SysMemSlicePitch = 0;
+			subResourceData[i].pSysMem = texture->data.get();
+			subResourceData[i].SysMemPitch = texture->width * texture->GetBytesPerPixel();
+			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * texture->height;
 		}
 
 		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &pRenderData->texture2D);
@@ -1392,7 +1392,6 @@ DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture* pTexture)
 {
 	const DXGI_FORMAT conversionTable[] =
 	{
-		DXGI_FORMAT_UNKNOWN,					// Texture::EFormat::Unknown
 		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
 		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8

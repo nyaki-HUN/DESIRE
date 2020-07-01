@@ -476,15 +476,15 @@ void BgfxRender::Bind(Texture* texture)
 
 	TextureRenderDataBgfx* pRenderData = new TextureRenderDataBgfx();
 
-	const bool isRenderTarget = (texture->data.ptr == nullptr);
+	const bool isRenderTarget = (texture->data == nullptr);
 
 	if(isRenderTarget)
 	{
-		pRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_RT);
+		pRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipLevels > 1), 1, GetTextureFormat(texture), BGFX_TEXTURE_RT);
 	}
 	else
 	{
-		pRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipMaps != 0), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.ptr.get(), (uint32_t)texture->data.size));
+		pRenderData->textureHandle = bgfx::createTexture2D(texture->width, texture->height, (texture->numMipLevels > 1), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture->data.get(), texture->GetDataSize()));
 	}
 
 	texture->renderData = pRenderData;
@@ -773,7 +773,6 @@ bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
 {
 	const bgfx::TextureFormat::Enum conversionTable[] =
 	{
-		bgfx::TextureFormat::Unknown,		// Texture::EFormat::Unknown
 		bgfx::TextureFormat::R8,			// Texture::EFormat::R8
 		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8
 		bgfx::TextureFormat::RGB8,			// Texture::EFormat::RGB8

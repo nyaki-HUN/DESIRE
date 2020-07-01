@@ -865,7 +865,6 @@ DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* pTexture)
 {
 	const DXGI_FORMAT conversionTable[] =
 	{
-		DXGI_FORMAT_UNKNOWN,					// Texture::EFormat::Unknown
 		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
 		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
 		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8

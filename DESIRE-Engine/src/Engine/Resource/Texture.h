@@ -7,8 +7,6 @@ class Texture
 public:
 	enum class EFormat
 	{
-		Unknown,
-
 		R8,
 		RG8,
 		RGB8,
@@ -23,10 +21,13 @@ public:
 		D32
 	};
 
-	Texture(uint16_t width, uint16_t height, EFormat format, uint8_t numMipMaps = 0);
+	Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> data, uint8_t numMipLevels = 1);
+	Texture(uint16_t width, uint16_t height, EFormat format, const void* pDataToCopy = nullptr, uint8_t numMipLevels = 1);
 	~Texture();
 
 	bool IsDepthFormat() const;
+	uint32_t GetDataSize() const;
+	uint8_t GetBytesPerPixel() const;
 
 	// Render engine specific data set at bind
 	void* renderData = nullptr;
@@ -34,7 +35,6 @@ public:
 	const uint16_t width;
 	const uint16_t height;
 	const EFormat format;
-	const uint8_t numMipMaps;
-
-	MemoryBuffer data;
+	const uint8_t numMipLevels;
+	std::unique_ptr<uint8_t[]> data;
 };

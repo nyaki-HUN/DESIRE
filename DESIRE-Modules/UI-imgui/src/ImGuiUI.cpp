@@ -87,8 +87,7 @@ void ImGuiUI::Init()
 	int width = 0;
 	int height = 0;
 	io.Fonts->GetTexDataAsRGBA32(&pTextureData, &width, &height);
-	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8);
-	fontTexture->data = MemoryBuffer::CreateFromDataCopy(pTextureData, width * height * 4u);
+	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
 	material->AddTexture(fontTexture);
 	io.Fonts->TexID = &fontTexture;
 
