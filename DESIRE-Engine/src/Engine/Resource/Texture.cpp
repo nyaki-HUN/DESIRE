@@ -17,10 +17,10 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pD
 	, height(height)
 	, format(format)
 	, numMipLevels(numMipLevels)
-	, data(std::make_unique<uint8_t[]>(GetDataSize()))
 {
 	if(pDataToCopy != nullptr)
 	{
+		data = std::make_unique<uint8_t[]>(GetDataSize());
 		memcpy(data.get(), pDataToCopy, GetDataSize());
 	}
 }
@@ -42,23 +42,5 @@ bool Texture::IsDepthFormat() const
 
 uint32_t Texture::GetDataSize() const
 {
-	return static_cast<uint32_t>(width) * height * GetBytesPerPixel();
-}
-
-uint8_t Texture::GetBytesPerPixel() const
-{
-	switch(format)
-	{
-		case EFormat::R8:			return 1;
-		case EFormat::RG8:			return 2;
-		case EFormat::RGB8:			return 3;
-		case EFormat::RGBA8:		return 4;
-		case EFormat::RGB32F:		return 3 * 4;
-		case EFormat::RGBA32F:		return 4 * 4;
-		case EFormat::D16:			return 2;
-		case EFormat::D24_S8:		return 4;
-		case EFormat::D32:			return 4;
-	}
-
-	return 0;
+	return static_cast<uint32_t>(width) * height * GetBytesPerPixel(format);
 }

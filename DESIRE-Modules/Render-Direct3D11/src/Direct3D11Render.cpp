@@ -720,7 +720,7 @@ void Direct3D11Render::Bind(Texture* texture)
 		for(uint32_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
 		{
 			subResourceData[i].pSysMem = texture->data.get();
-			subResourceData[i].SysMemPitch = texture->width * texture->GetBytesPerPixel();
+			subResourceData[i].SysMemPitch = texture->width * Texture::GetBytesPerPixel(texture->format);
 			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * texture->height;
 		}
 

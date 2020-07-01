@@ -27,7 +27,23 @@ public:
 
 	bool IsDepthFormat() const;
 	uint32_t GetDataSize() const;
-	uint8_t GetBytesPerPixel() const;
+
+	static constexpr uint8_t GetBytesPerPixel(EFormat format)
+	{
+		switch(format)
+		{
+			case EFormat::R8:			return 1;
+			case EFormat::RG8:			return 2;
+			case EFormat::RGB8:			return 3;
+			case EFormat::RGBA8:		return 4;
+			case EFormat::RGB32F:		return 3 * 4;
+			case EFormat::RGBA32F:		return 4 * 4;
+			case EFormat::D16:			return 2;
+			case EFormat::D24_S8:		return 4;
+			case EFormat::D32:			return 4;
+		}
+		return 0;
+	}
 
 	// Render engine specific data set at bind
 	void* renderData = nullptr;
