@@ -21,7 +21,7 @@ public:
 		D32
 	};
 
-	Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> data, uint8_t numMipLevels = 1);
+	Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> dataToMove, uint8_t numMipLevels = 1);
 	Texture(uint16_t width, uint16_t height, EFormat format, const void* pDataToCopy = nullptr, uint8_t numMipLevels = 1);
 	~Texture();
 

@@ -3,13 +3,14 @@
 
 #include "Engine/Render/Render.h"
 
-Texture::Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> data, uint8_t numMipLevels)
+Texture::Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> dataToMove, uint8_t numMipLevels)
 	: width(width)
 	, height(height)
 	, format(format)
 	, numMipLevels(numMipLevels)
-	, data(std::move(data))
+	, data(std::move(dataToMove))
 {
+	ASSERT(data != nullptr);
 }
 
 Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pDataToCopy, uint8_t numMipLevels)
