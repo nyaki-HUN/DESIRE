@@ -146,6 +146,11 @@ void SandBox::Update()
 		sliderValue = 0.0f;
 	}
 
+	Modules::UI->Text("InputFloat");
+	Modules::UI->InputField("InputFloat", sliderValue);
+	Modules::UI->Text("InputText");
+	Modules::UI->InputField("InputText", textValue);
+
 	Modules::UI->ColorPicker("ColorPicker", color);
 
 	Modules::UI->EndWindow();

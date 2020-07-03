@@ -33,10 +33,10 @@ ImGuiUI::~ImGuiUI()
 
 void ImGuiUI::Init()
 {
+	ASSERT(ImGui::GetCurrentContext() == nullptr && "ImGui is already initialized");
+
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
-	ASSERT(io.UserData == nullptr && "ImGui is already initialized");
-
 	io.KeyMap[ImGuiKey_Tab] = KEY_TAB;
 	io.KeyMap[ImGuiKey_LeftArrow] = KEY_LEFT;
 	io.KeyMap[ImGuiKey_RightArrow] = KEY_RIGHT;
@@ -110,7 +110,6 @@ void ImGuiUI::NewFrame(OSWindow* pWindow)
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(pWindow->GetWidth(), pWindow->GetHeight());
 	io.DeltaTime = std::max(FLT_MIN, Modules::Application->GetTimer()->GetSecDelta());		// imgui needs a positive delta time
-	io.UserData = pWindow;
 	io.ImeWindowHandle = pWindow->GetHandle();
 
 	// Keyboard
@@ -265,6 +264,19 @@ bool ImGuiUI::Button(const String& label, const Vector2& size)
 	return ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
 }
 
+bool ImGuiUI::ArrowButton(const String& label, EArrowDir dir)
+{
+	switch(dir)
+	{
+		case EArrowDir::Left:	return ImGui::ArrowButton(label.Str(), ImGuiDir_Left);
+		case EArrowDir::Right:	return ImGui::ArrowButton(label.Str(), ImGuiDir_Right);
+		case EArrowDir::Up:		return ImGui::ArrowButton(label.Str(), ImGuiDir_Up);
+		case EArrowDir::Down:	return ImGui::ArrowButton(label.Str(), ImGuiDir_Down);
+	}
+
+	return false;
+}
+
 bool ImGuiUI::Checkbox(const String& label, bool& isChecked)
 {
 	return ImGui::Checkbox(label.Str(), &isChecked);
@@ -273,6 +285,13 @@ bool ImGuiUI::Checkbox(const String& label, bool& isChecked)
 bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 {
 	return ImGui::RadioButton(label.Str(), isActive) && !isActive;
+}
+
+bool ImGuiUI::InputField(const String& label, WritableString& value)
+{
+	char* pStr = value.AsCharBufferWithSize(32);
+	memset(pStr, 0, 32);
+	return ImGui::InputText(label.Str(), pStr, 32, ImGuiInputTextFlags_None, nullptr, nullptr);
 }
 
 bool ImGuiUI::InputField(const String& label, float& value)
@@ -305,12 +324,12 @@ bool ImGuiUI::Slider(const String& label, float& value, float minValue, float ma
 
 bool ImGuiUI::ColorPicker(const String& label, float(&colorRGB)[3])
 {
-	return ImGui::ColorPicker3(label.Str(), colorRGB, ImGuiColorEditFlags_None);
+	return ImGui::ColorEdit3(label.Str(), colorRGB, ImGuiColorEditFlags_None);
 }
 
 bool ImGuiUI::ColorPicker(const String& label, float(&colorRGBA)[4])
 {
-	return ImGui::ColorPicker4(label.Str(), colorRGBA, ImGuiColorEditFlags_None);
+	return ImGui::ColorEdit4(label.Str(), colorRGBA, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 }
 
 void ImGuiUI::SameLine()

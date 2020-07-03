@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Engine/Application/Application.h"
+
+#include "Engine/Core/String/DynamicString.h"
+
 #include "Engine/Input/InputMapping.h"
 
 class FileSystemWatcher;
@@ -23,6 +26,7 @@ private:
 
 	InputMapping inputMapping;
 
+	DynamicString textValue;
 	float sliderValue = 0.0f;
-	float color[4] = {};
+	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 };

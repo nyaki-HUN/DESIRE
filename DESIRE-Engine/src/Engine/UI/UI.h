@@ -5,10 +5,19 @@
 class OSWindow;
 class String;
 class Vector3;
+class WritableString;
 
 class UI
 {
 public:
+	enum class EArrowDir
+	{
+		Left,
+		Right,
+		Up,
+		Down
+	};
+
 	virtual ~UI() {};
 
 	virtual void Init() = 0;
@@ -24,6 +33,7 @@ public:
 	// Widgets
 	virtual void Text(const String& label) = 0;
 	virtual bool Button(const String& label, const Vector2& size = Vector2::Zero()) = 0;
+	virtual bool ArrowButton(const String& label, EArrowDir dir) = 0;
 	virtual bool Checkbox(const String& label, bool& isChecked) = 0;
 	virtual bool RadioButtonOption(const String& label, bool isActive) = 0;
 
@@ -41,6 +51,7 @@ public:
 	virtual bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) = 0;
 	virtual bool Slider(const String& label, float& value, float minValue, float maxValue) = 0;
 
+	virtual bool InputField(const String& label, WritableString& value) = 0;
 	virtual bool InputField(const String& label, float& value) = 0;
 	virtual bool InputField(const String& label, Vector3& value) = 0;
 

@@ -26,7 +26,7 @@ NuklearUI::NuklearUI()
 {
 	allocator->alloc = &NuklearCallbacks::MallocWrapper;
 	allocator->free = &NuklearCallbacks::FreeWrapper;
-	allocator->userdata = nk_handle_ptr(this);
+	allocator->userdata = nk_handle_ptr(nullptr);
 }
 
 NuklearUI::~NuklearUI()
@@ -37,6 +37,10 @@ void NuklearUI::Init()
 {
 	ctx = std::make_unique<nk_context>();
 	nk_init(ctx.get(), allocator.get(), nullptr);
+	ctx->clip.copy = &NuklearCallbacks::ClipboardCopy;
+	ctx->clip.paste = &NuklearCallbacks::ClipboardPaste;
+	ctx->clip.userdata = nk_handle_ptr(nullptr);
+	ctx->button_behavior = NK_BUTTON_REPEATER;
 
 	// Dynamic mesh for the draw list
 	const std::initializer_list<Mesh::VertexLayout> vertexLayout =
@@ -114,6 +118,7 @@ void NuklearUI::Kill()
 
 void NuklearUI::NewFrame(OSWindow* pWindow)
 {
+	ctx->clip.userdata = nk_handle_ptr(pWindow);
 	ctx->delta_time_seconds = Modules::Application->GetTimer()->GetSecDelta();
 
 	nk_input_begin(ctx.get());
@@ -243,7 +248,23 @@ void NuklearUI::Text(const String& label)
 
 bool NuklearUI::Button(const String& label, const Vector2& size)
 {
+	nk_button_set_behavior(ctx.get(), NK_BUTTON_DEFAULT);
 	return nk_button_text(ctx.get(), label.Str(), static_cast<int>(label.Length()));
+}
+
+bool NuklearUI::ArrowButton(const String& label, EArrowDir dir)
+{
+    DESIRE_UNUSED(label);
+
+	switch(dir)
+	{
+		case EArrowDir::Left:	return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_LEFT);
+		case EArrowDir::Right:	return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_RIGHT);
+		case EArrowDir::Up:		return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_UP);
+		case EArrowDir::Down:	return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_DOWN);
+	}
+
+	return false;
 }
 
 bool NuklearUI::Checkbox(const String& label, bool& isChecked)
@@ -262,6 +283,23 @@ bool NuklearUI::RadioButtonOption(const String& label, bool isActive)
 {
 	int active = isActive ? 1 : 0;
 	return nk_radio_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), &active) && active;
+}
+
+bool NuklearUI::InputField(const String& label, WritableString& value)
+{
+	constexpr int kMaxSize = 255;
+	StackString<255 + 1> string = value;
+
+	int len = static_cast<int>(value.Length());
+	const nk_flags result = nk_edit_string(ctx.get(), NK_EDIT_FIELD | NK_EDIT_AUTO_SELECT, string.AsCharBufferWithSize(kMaxSize), &len, kMaxSize, nk_filter_default);
+	string.TruncateAt(len);
+	if(result == NK_EDIT_ACTIVE && !value.Equals(string))
+	{
+		value = string;
+		return true;
+	}
+
+	return false;
 }
 
 bool NuklearUI::InputField(const String& label, float& value)
@@ -289,16 +327,67 @@ bool NuklearUI::Slider(const String& label, float& value, float minValue, float 
 
 bool NuklearUI::ColorPicker(const String& label, float(&colorRGB)[3])
 {
-	nk_colorf nkColor;
-	memcpy(&nkColor, colorRGB, 3 * sizeof(float));
-	int rv = nk_color_pick(ctx.get(), &nkColor, NK_RGB);
-	memcpy(colorRGB, &nkColor, 3 * sizeof(float));
-	return (rv != 0);
+	bool result = false;
+
+	nk_color color = nk_rgb_fv(colorRGB);
+	if(nk_combo_begin_color(ctx.get(), color, nk_vec2(200, 400)))
+	{
+		nk_layout_row_dynamic(ctx.get(), 120, 1);
+
+		nk_colorf colorf;
+		memcpy(&colorf, colorRGB, 3 * sizeof(float));
+		if(nk_color_pick(ctx.get(), &colorf, NK_RGB) != 0)
+		{
+			result = true;
+			memcpy(colorRGB, &colorf, 3 * sizeof(float));
+			color = nk_rgb_fv(colorRGB);
+		}
+
+		nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
+		const nk_color origColor = color;
+		color.r = (nk_byte)nk_propertyi(ctx.get(), "#R", 0, color.r, 255, 1, 1);
+		color.g = (nk_byte)nk_propertyi(ctx.get(), "#G", 0, color.g, 255, 1, 1);
+		color.b = (nk_byte)nk_propertyi(ctx.get(), "#B", 0, color.b, 255, 1, 1);
+		if(memcmp(&color, &origColor, sizeof(nk_color)) != 0)
+		{
+			colorf = nk_color_cf(color);
+			memcpy(colorRGB, &colorf, 3 * sizeof(float));
+			result = true;
+		}
+
+		nk_combo_end(ctx.get());
+	}
+
+	return result;
 }
 
 bool NuklearUI::ColorPicker(const String& label, float(&colorRGBA)[4])
 {
-	return nk_color_pick(ctx.get(), reinterpret_cast<nk_colorf*>(colorRGBA), NK_RGBA);
+	bool result = false;
+
+	nk_color color = nk_rgba_fv(colorRGBA);
+	if(nk_combo_begin_color(ctx.get(), color, nk_vec2(200, 400)))
+	{
+		nk_layout_row_dynamic(ctx.get(), 120, 1);
+
+		result |= (nk_color_pick(ctx.get(), reinterpret_cast<nk_colorf*>(colorRGBA), NK_RGBA) != 0);
+
+		nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
+		const nk_color origColor = color;
+		color.r = (nk_byte)nk_propertyi(ctx.get(), "#R", 0, color.r, 255, 1, 1);
+		color.g = (nk_byte)nk_propertyi(ctx.get(), "#G", 0, color.g, 255, 1, 1);
+		color.b = (nk_byte)nk_propertyi(ctx.get(), "#B", 0, color.b, 255, 1, 1);
+		color.a = (nk_byte)nk_propertyi(ctx.get(), "#A", 0, color.a, 255, 1, 1);
+		if(memcmp(&color, &origColor, sizeof(nk_color)) != 0)
+		{
+			nk_color_fv(colorRGBA, color);
+			result = true;
+		}
+
+		nk_combo_end(ctx.get());
+	}
+
+	return result;
 }
 
 void NuklearUI::SameLine()
