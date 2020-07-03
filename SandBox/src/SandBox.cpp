@@ -140,11 +140,16 @@ void SandBox::Update()
 	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(300, 500));
 
 	Modules::UI->Text("Text");
+	Modules::UI->Button("Button");
+
+	Modules::UI->ArrowButton("ArrowButton", UI::EArrowDir::Left);
+	Modules::UI->Checkbox("Checkbox", isCheckboxChecked);
+
+	Modules::UI->RadioButton("RadioButton - A", radioButtonOption, ERadioButtonOption::A);
+	Modules::UI->RadioButton("RadioButton - B", radioButtonOption, ERadioButtonOption::B);
+	Modules::UI->RadioButton("RadioButton - C", radioButtonOption, ERadioButtonOption::C);
+
 	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
-	if(Modules::UI->Button("Reset Slider"))
-	{
-		sliderValue = 0.0f;
-	}
 
 	Modules::UI->Text("InputFloat");
 	Modules::UI->InputField("InputFloat", sliderValue);

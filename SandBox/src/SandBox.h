@@ -19,6 +19,14 @@ public:
 	void Update() override;
 
 private:
+	enum class ERadioButtonOption
+	{
+		None,
+		A,
+		B,
+		C
+	};
+
 	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
 
 	Object* scriptedObject = nullptr;
@@ -26,7 +34,9 @@ private:
 
 	InputMapping inputMapping;
 
-	DynamicString textValue;
+	bool isCheckboxChecked = false;
+	ERadioButtonOption radioButtonOption = ERadioButtonOption::None;
 	float sliderValue = 0.0f;
+	DynamicString textValue;
 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 };
