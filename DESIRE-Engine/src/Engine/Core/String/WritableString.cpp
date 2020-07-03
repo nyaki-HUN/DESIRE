@@ -1,31 +1,15 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/String/WritableString.h"
 
-void WritableString::Set(const char* str, size_t numChars)
-{
-	ASSERT(str != nullptr);
-	ASSERT(data != str);	// It's not allowed to copy from ourself
-
-	if(!Reserve(numChars))
-	{
-		ASSERT(false);
-		return;
-	}
-
-	memcpy(data, str, numChars);
-	size = numChars;
-	data[size] = '\0';
-}
-
 void WritableString::Clear()
 {
 	size = 0;
 	data[size] = '\0';
 }
 
-void WritableString::Insert(size_t startIndex, const char* str, size_t numChars)
+void WritableString::Insert(size_t startIndex, const char* pStr, size_t numChars)
 {
-	ASSERT(str != nullptr);
+	ASSERT(pStr != nullptr);
 
 	if(startIndex > size)
 	{
@@ -39,7 +23,7 @@ void WritableString::Insert(size_t startIndex, const char* str, size_t numChars)
 	}
 
 	memmove(data + startIndex + numChars, data + startIndex, size - startIndex + 1);
-	memcpy(data + startIndex, str, numChars);
+	memcpy(data + startIndex, pStr, numChars);
 	size += numChars;
 }
 
@@ -233,6 +217,34 @@ WritableString& WritableString::operator +=(float number)
 	return *this;
 }
 
+WritableString& WritableString::operator =(const String& string)
+{
+	Set(string.Str(), string.Length());
+	return *this;
+}
+
+WritableString& WritableString::operator =(const WritableString& string)
+{
+	Set(string.Str(), string.Length());
+	return *this;
+}
+
+void WritableString::Set(const char* pStr, size_t numChars)
+{
+	ASSERT(pStr != nullptr);
+	ASSERT(data != pStr);	// It's not allowed to copy from ourself
+
+	if(!Reserve(numChars))
+	{
+		ASSERT(false);
+		return;
+	}
+
+	memcpy(data, pStr, numChars);
+	size = numChars;
+	data[size] = '\0';
+}
+
 void WritableString::Trim()
 {
 	auto IsWhiteSpace = [](char c)
@@ -305,29 +317,29 @@ char* WritableString::AsCharBufferWithSize(size_t newSize)
 	return nullptr;
 }
 
-void WritableString::Sprintf(const char* format, ...)
+void WritableString::Sprintf(const char* pFormatStr, ...)
 {
 	std::va_list args;
-	va_start(args, format);
-	Sprintf_internal(0, format, args);
+	va_start(args, pFormatStr);
+	Sprintf_internal(0, pFormatStr, args);
 	va_end(args);
 }
 
-void WritableString::SprintfAppend(const char* format, ...)
+void WritableString::SprintfAppend(const char* pFormatStr, ...)
 {
 	std::va_list args;
-	va_start(args, format);
-	Sprintf_internal(size, format, args);
+	va_start(args, pFormatStr);
+	Sprintf_internal(size, pFormatStr, args);
 	va_end(args);
 }
 
-void WritableString::Sprintf_internal(size_t pos, const char* format, std::va_list args)
+void WritableString::Sprintf_internal(size_t pos, const char* pFormatStr, std::va_list args)
 {
-	ASSERT(format != nullptr);
+	ASSERT(pFormatStr != nullptr);
 
 	std::va_list argsCopy;
 	va_copy(argsCopy, args);
-	const int requiredSize = vsnprintf(nullptr, 0, format, argsCopy);
+	const int requiredSize = vsnprintf(nullptr, 0, pFormatStr, argsCopy);
 	va_end(argsCopy);
 
 	if(requiredSize <= 0)
@@ -339,7 +351,7 @@ void WritableString::Sprintf_internal(size_t pos, const char* format, std::va_li
 	if(Reserve(newSize))
 	{
 		size = newSize;
-		vsnprintf(data + pos, requiredSize + 1, format, args);
+		vsnprintf(data + pos, requiredSize + 1, pFormatStr, args);
 	}
 }
 
