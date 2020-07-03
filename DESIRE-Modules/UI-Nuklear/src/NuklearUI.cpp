@@ -21,6 +21,8 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 
+static constexpr int cDefaultRowHeight = 25;
+
 NuklearUI::NuklearUI()
 	: allocator(std::make_unique<nk_allocator>())
 {
@@ -234,6 +236,7 @@ void NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, cons
 {
 	nk_flags flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE;
 	nk_begin(ctx.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), flags);
+	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
 }
 
 void NuklearUI::EndWindow()
