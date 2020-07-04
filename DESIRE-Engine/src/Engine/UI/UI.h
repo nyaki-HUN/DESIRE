@@ -50,7 +50,7 @@ public:
 	}
 
 	virtual bool ValueSpinner(const String& label, int32_t& value, int32_t step = 1, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX) = 0;
-	virtual bool ValueSpinner(const String& label, float& value, float step = 0.1f, float minValue = -FLT_MAX, float maxValue = FLT_MAX) = 0;
+	virtual bool ValueSpinner(const String& label, float& value, float step = 0.01f, float minValue = -FLT_MAX, float maxValue = FLT_MAX) = 0;
 
 	virtual bool ValueEdit(const String& label, Vector3& value) = 0;
 
