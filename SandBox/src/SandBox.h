@@ -21,7 +21,6 @@ public:
 private:
 	enum class ERadioButtonOption
 	{
-		None,
 		A,
 		B,
 		C
@@ -35,8 +34,9 @@ private:
 	InputMapping inputMapping;
 
 	bool isCheckboxChecked = false;
-	ERadioButtonOption radioButtonOption = ERadioButtonOption::None;
+	ERadioButtonOption radioButtonOption = ERadioButtonOption::A;
 	float sliderValue = 0.0f;
+	int32_t spinnerValue = 0;
 	DynamicString textValue;
 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 };

@@ -30,17 +30,17 @@ public:
 
 	// Widgets
 	void Text(const String& label) override;
+	bool TextInput(const String& label, WritableString& value) override;
 	bool Button(const String& label, const Vector2& size = Vector2::Zero()) override;
 	bool ArrowButton(const String& label, EArrowDir dir) override;
 	bool Checkbox(const String& label, bool& isChecked) override;
 	bool RadioButtonOption(const String& label, bool isActive) override;
 
+	bool ValueSpinner(const String& label, int32_t& value, int32_t step = 1, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX) override;
+	bool ValueSpinner(const String& label, float& value, float step = 0.1f, float minValue = -FLT_MAX, float maxValue = FLT_MAX) override;
+
 	bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) override;
 	bool Slider(const String& label, float& value, float minValue, float maxValue) override;
-
-	bool InputField(const String& label, WritableString& value) override;
-	bool InputField(const String& label, float& value) override;
-	bool InputField(const String& label, Vector3& value) override;
 
 	bool ColorPicker(const String& label, float(&colorRGB)[3]) override;
 	bool ColorPicker(const String& label, float(&colorRGBA)[4]) override;

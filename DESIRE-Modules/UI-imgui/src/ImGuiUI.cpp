@@ -259,6 +259,18 @@ void ImGuiUI::Text(const String& label)
 	ImGui::TextUnformatted(label.Str(), label.Str() + label.Length());
 }
 
+bool ImGuiUI::TextInput(const String& label, WritableString& value)
+{
+	constexpr int kMaxSize = 255;
+	StackString<kMaxSize> string = value;
+	if(ImGui::InputText(label.Str(), string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_None, nullptr, nullptr))
+	{
+		value = string;
+		return true;
+	}
+	return false;
+}
+
 bool ImGuiUI::Button(const String& label, const Vector2& size)
 {
 	return ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
@@ -287,28 +299,23 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 	return ImGui::RadioButton(label.Str(), isActive) && !isActive;
 }
 
-bool ImGuiUI::InputField(const String& label, WritableString& value)
+bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t step, int32_t minValue, int32_t maxValue)
 {
-	char* pStr = value.AsCharBufferWithSize(32);
-	memset(pStr, 0, 32);
-	return ImGui::InputText(label.Str(), pStr, 32, ImGuiInputTextFlags_None, nullptr, nullptr);
-}
-
-bool ImGuiUI::InputField(const String& label, float& value)
-{
-	return ImGui::InputFloat(label.Str(), &value, 0.01f, 0.5f, "%.3f", ImGuiInputTextFlags_None);
-}
-
-bool ImGuiUI::InputField(const String& label, Vector3& value)
-{
-	float elements[3];
-	value.StoreXYZ(elements);
-	if(ImGui::InputFloat3(label.Str(), elements, "%.3f", ImGuiInputTextFlags_None))
+	if(ImGui::DragInt(label.Str(), &value, static_cast<float>(step), minValue, maxValue, "%d"))
 	{
-		value.LoadXYZ(elements);
+		value = std::clamp(value, minValue, maxValue);	//  Manually input values aren't clamped and can go off-bounds
 		return true;
 	}
+	return false;
+}
 
+bool ImGuiUI::ValueSpinner(const String& label, float& value, float step, float minValue, float maxValue)
+{
+	if(ImGui::DragFloat(label.Str(), &value, step, minValue, maxValue, "%.3f"))
+	{
+		value = std::clamp(value, minValue, maxValue);	//  Manually input values aren't clamped and can go off-bounds
+		return true;
+	}
 	return false;
 }
 

@@ -21,7 +21,7 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 
-static constexpr int cDefaultRowHeight = 25;
+constexpr int cDefaultRowHeight = 25;
 
 NuklearUI::NuklearUI()
 	: allocator(std::make_unique<nk_allocator>())
@@ -249,6 +249,22 @@ void NuklearUI::Text(const String& label)
 	nk_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), NK_TEXT_LEFT);
 }
 
+bool NuklearUI::TextInput(const String& label, WritableString& value)
+{
+	constexpr int kMaxSize = 255;
+	StackString<kMaxSize> string = value;
+	int len = static_cast<int>(value.Length());
+	const nk_flags result = nk_edit_string(ctx.get(), NK_EDIT_FIELD | NK_EDIT_AUTO_SELECT, string.AsCharBufferWithSize(kMaxSize - 1), &len, kMaxSize, nk_filter_default);
+	string.TruncateAt(len);
+	if(result == NK_EDIT_ACTIVE && !value.Equals(string))
+	{
+		value = string;
+		return true;
+	}
+
+	return false;
+}
+
 bool NuklearUI::Button(const String& label, const Vector2& size)
 {
 	nk_button_set_behavior(ctx.get(), NK_BUTTON_DEFAULT);
@@ -288,33 +304,27 @@ bool NuklearUI::RadioButtonOption(const String& label, bool isActive)
 	return nk_radio_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), &active) && active;
 }
 
-bool NuklearUI::InputField(const String& label, WritableString& value)
+bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t step, int32_t minValue, int32_t maxValue)
 {
-	constexpr int kMaxSize = 255;
-	StackString<255 + 1> string = value;
-
-	int len = static_cast<int>(value.Length());
-	const nk_flags result = nk_edit_string(ctx.get(), NK_EDIT_FIELD | NK_EDIT_AUTO_SELECT, string.AsCharBufferWithSize(kMaxSize), &len, kMaxSize, nk_filter_default);
-	string.TruncateAt(len);
-	if(result == NK_EDIT_ACTIVE && !value.Equals(string))
+	int32_t newValue = value;
+	nk_property_int(ctx.get(), label.Str(), minValue, &newValue, maxValue, step, static_cast<float>(step));
+	if(value != newValue)
 	{
-		value = string;
+		value = newValue;
 		return true;
 	}
-
 	return false;
 }
 
-bool NuklearUI::InputField(const String& label, float& value)
+bool NuklearUI::ValueSpinner(const String& label, float& value, float step, float minValue, float maxValue)
 {
-	return false;
-}
-
-bool NuklearUI::InputField(const String& label, Vector3& value)
-{
-	float elements[3];
-	value.StoreXYZ(elements);
-
+	float newValue = value;
+	nk_property_float(ctx.get(), label.Str(), minValue, &newValue, maxValue, step, step);
+	if(value != newValue)
+	{
+		value = newValue;
+		return true;
+	}
 	return false;
 }
 

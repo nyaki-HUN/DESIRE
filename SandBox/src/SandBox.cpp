@@ -140,6 +140,7 @@ void SandBox::Update()
 	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(300, 500));
 
 	Modules::UI->Text("Text");
+	Modules::UI->TextInput("InputField", textValue);
 	Modules::UI->Button("Button");
 
 	Modules::UI->ArrowButton("ArrowButton", UI::EArrowDir::Left);
@@ -151,10 +152,8 @@ void SandBox::Update()
 
 	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
 
-	Modules::UI->Text("InputFloat");
-	Modules::UI->InputField("InputFloat", sliderValue);
-	Modules::UI->Text("InputText");
-	Modules::UI->InputField("InputText", textValue);
+	Modules::UI->Text("Spinner");
+	Modules::UI->ValueSpinner("SpinnerInt", spinnerValue);
 
 	Modules::UI->ColorPicker("ColorPicker", color);
 
