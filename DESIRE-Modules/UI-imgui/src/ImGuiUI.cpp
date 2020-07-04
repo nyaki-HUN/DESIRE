@@ -319,6 +319,18 @@ bool ImGuiUI::ValueSpinner(const String& label, float& value, float step, float 
 	return false;
 }
 
+bool ImGuiUI::ValueEdit(const String& label, Vector3& value)
+{
+	float elements[3];
+	value.StoreXYZ(elements);
+	if(ImGui::InputFloat3(label.Str(), elements, "%.3f", ImGuiInputTextFlags_None))
+	{
+		value.LoadXYZ(elements);
+		return true;
+	}
+	return false;
+}
+
 bool ImGuiUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
 {
 	return ImGui::SliderInt(label.Str(), &value, minValue, maxValue);

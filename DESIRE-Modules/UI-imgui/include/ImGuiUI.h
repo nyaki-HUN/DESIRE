@@ -33,6 +33,8 @@ public:
 	bool ValueSpinner(const String& label, int32_t& value, int32_t step = 1, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX) override;
 	bool ValueSpinner(const String& label, float& value, float step = 0.1f, float minValue = -FLT_MAX, float maxValue = FLT_MAX) override;
 
+	bool ValueEdit(const String& label, Vector3& value);
+
 	bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) override;
 	bool Slider(const String& label, float& value, float minValue, float maxValue) override;
 

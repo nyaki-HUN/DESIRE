@@ -316,6 +316,26 @@ bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t step, 
 	return false;
 }
 
+bool NuklearUI::ValueEdit(const String& label, Vector3& value)
+{
+	bool sizeChanged = false;
+	float elements[3];
+	value.StoreXYZ(elements);
+
+	Text(label);
+	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 3);
+	sizeChanged |= ValueSpinner("#X", elements[0]);
+	sizeChanged |= ValueSpinner("#Y", elements[1]);
+	sizeChanged |= ValueSpinner("#Z", elements[2]);
+	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
+	if(sizeChanged)
+	{
+		value.LoadXYZ(elements);
+		return true;
+	}
+	return false;
+}
+
 bool NuklearUI::ValueSpinner(const String& label, float& value, float step, float minValue, float maxValue)
 {
 	float newValue = value;
