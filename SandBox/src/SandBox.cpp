@@ -4,14 +4,20 @@
 #include "SimpleRotateScript.h"
 
 #include "Engine/Compression/FileSourceZip.h"
+
 #include "Engine/Core/Object.h"
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/FileSystemWatcher.h"
 #include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/Math/Vector3.h"
 #include "Engine/Core/String/StackString.h"
+
 #include "Engine/Input/Input.h"
+
 #include "Engine/Render/Render.h"
+
 #include "Engine/Resource/ResourceManager.h"
+
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Script/ScriptComponent.h"
 
@@ -137,6 +143,15 @@ void SandBox::Update()
 
 	Modules::UI->NewFrame(mainWindow.get());
 
+	// Variables for UI testing
+	static bool isCheckboxChecked = false;
+	static ERadioButtonOption radioButtonOption = ERadioButtonOption::A;
+	static float sliderValue = 0.0f;
+	static int32_t spinnerValue = 0;
+	static Vector3 vec3 = Vector3::Zero();
+	static DynamicString textValue;
+	static 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+
 	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(300, 500));
 
 	Modules::UI->Text("Text");
@@ -152,8 +167,9 @@ void SandBox::Update()
 
 	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
 
-	Modules::UI->Text("Spinner");
-	Modules::UI->ValueSpinner("SpinnerInt", spinnerValue);
+	Modules::UI->ValueSpinner("ValueSpinner", spinnerValue);
+
+	Modules::UI->ValueEdit("ValueEdit", vec3);
 
 	Modules::UI->ColorPicker("ColorPicker", color);
 
