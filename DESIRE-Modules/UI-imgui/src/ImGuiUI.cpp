@@ -313,7 +313,7 @@ bool ImGuiUI::ValueSpinner(const String& label, float& value, float step, float 
 {
 	if(ImGui::DragFloat(label.Str(), &value, step, minValue, maxValue, "%.3f"))
 	{
-		value = std::clamp(value, minValue, maxValue);	//  Manually input values aren't clamped and can go off-bounds
+		value = std::clamp(value, minValue, maxValue);	//  Manually input values aren't clamped and can go off-bounds, so we do it here
 		return true;
 	}
 	return false;
@@ -338,7 +338,12 @@ bool ImGuiUI::Slider(const String& label, int32_t& value, int32_t minValue, int3
 
 bool ImGuiUI::Slider(const String& label, float& value, float minValue, float maxValue)
 {
-	return ImGui::SliderFloat(label.Str(), &value, minValue, maxValue);
+	if(ImGui::SliderFloat(label.Str(), &value, minValue, maxValue, "%.3f"))
+	{
+		value = std::clamp(value, minValue, maxValue);	//  Manually input values aren't clamped and can go off-bounds, so we do it here
+		return true;
+	}
+	return false;
 }
 
 bool ImGuiUI::ColorPicker(const String& label, float(&colorRGB)[3])
