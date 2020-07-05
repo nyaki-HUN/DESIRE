@@ -316,6 +316,18 @@ bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t step, 
 	return false;
 }
 
+bool NuklearUI::ValueSpinner(const String& label, float& value, float step, float minValue, float maxValue)
+{
+	float newValue = value;
+	nk_property_float(ctx.get(), label.Str(), minValue, &newValue, maxValue, step, step);
+	if(value != newValue)
+	{
+		value = newValue;
+		return true;
+	}
+	return false;
+}
+
 bool NuklearUI::ValueEdit(const String& label, Vector3& value)
 {
 	bool sizeChanged = false;
@@ -336,18 +348,6 @@ bool NuklearUI::ValueEdit(const String& label, Vector3& value)
 	return false;
 }
 
-bool NuklearUI::ValueSpinner(const String& label, float& value, float step, float minValue, float maxValue)
-{
-	float newValue = value;
-	nk_property_float(ctx.get(), label.Str(), minValue, &newValue, maxValue, step, step);
-	if(value != newValue)
-	{
-		value = newValue;
-		return true;
-	}
-	return false;
-}
-
 bool NuklearUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
 {
 	return nk_slider_int(ctx.get(), minValue, &value, maxValue, 1);
@@ -355,7 +355,9 @@ bool NuklearUI::Slider(const String& label, int32_t& value, int32_t minValue, in
 
 bool NuklearUI::Slider(const String& label, float& value, float minValue, float maxValue)
 {
-	return nk_slider_float(ctx.get(), minValue, &value, maxValue, 0.1f);
+	const struct nk_rect bounds = nk_layout_widget_bounds(ctx.get());
+	const float step = (maxValue - minValue) / bounds.w;
+	return nk_slider_float(ctx.get(), minValue, &value, maxValue, step);
 }
 
 bool NuklearUI::ColorPicker(const String& label, float(&colorRGB)[3])
