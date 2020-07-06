@@ -11,11 +11,13 @@ JsonReader::JsonReader(rapidjson::Value::ConstObject jsonObject)
 
 bool JsonReader::GetInt32(const String& name, int32_t& value) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsNumber())
+	for(const auto& member : json)
 	{
-		value = iter->value.GetInt();
-		return true;
+		if(member.value.IsInt() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			value = member.value.GetInt();
+			return true;
+		}
 	}
 
 	return false;
@@ -23,11 +25,13 @@ bool JsonReader::GetInt32(const String& name, int32_t& value) const
 
 bool JsonReader::GetInt64(const String& name, int64_t& value) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsNumber())
+	for(const auto& member : json)
 	{
-		value = iter->value.GetInt64();
-		return true;
+		if(member.value.IsInt64() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			value = member.value.GetInt64();
+			return true;
+		}
 	}
 
 	return false;
@@ -35,11 +39,13 @@ bool JsonReader::GetInt64(const String& name, int64_t& value) const
 
 bool JsonReader::GetUint32(const String& name, uint32_t& value) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsNumber())
+	for(const auto& member : json)
 	{
-		value = iter->value.GetUint();
-		return true;
+		if(member.value.IsUint() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			value = member.value.GetUint();
+			return true;
+		}
 	}
 
 	return false;
@@ -47,11 +53,13 @@ bool JsonReader::GetUint32(const String& name, uint32_t& value) const
 
 bool JsonReader::GetUint64(const String& name, uint64_t& value) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsNumber())
+	for(const auto& member : json)
 	{
-		value = iter->value.GetUint64();
-		return true;
+		if(member.value.IsUint64() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			value = member.value.GetUint64();
+			return true;
+		}
 	}
 
 	return false;
@@ -59,11 +67,13 @@ bool JsonReader::GetUint64(const String& name, uint64_t& value) const
 
 bool JsonReader::GetFloat(const String& name, float& value) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsNumber())
+	for(const auto& member : json)
 	{
-		value = iter->value.GetFloat();
-		return true;
+		if(member.value.IsNumber() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			value = member.value.GetFloat();
+			return true;
+		}
 	}
 
 	return false;
@@ -71,11 +81,13 @@ bool JsonReader::GetFloat(const String& name, float& value) const
 
 bool JsonReader::GetBool(const String& name, bool& value) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsBool())
+	for(const auto& member : json)
 	{
-		value = iter->value.GetBool();
-		return true;
+		if(member.value.IsBool() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			value = member.value.GetBool();
+			return true;
+		}
 	}
 
 	return false;
@@ -83,11 +95,13 @@ bool JsonReader::GetBool(const String& name, bool& value) const
 
 bool JsonReader::GetString(const String& name, WritableString& value) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsString())
+	for(const auto& member : json)
 	{
-		value.Set(iter->value.GetString(), iter->value.GetStringLength());
-		return true;
+		if(member.value.IsString() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			value.Set(member.value.GetString(), member.value.GetStringLength());
+			return true;
+		}
 	}
 
 	return false;
@@ -117,49 +131,58 @@ bool JsonReader::GetQuat(const String& name, Quat& value) const
 	return false;
 }
 
-bool JsonReader::GetInt32Array(const String& name, int32_t* values, size_t numValues) const
+bool JsonReader::GetInt32Array(const String& name, int32_t* pValues, size_t numValues) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsArray() && iter->value.Size() == numValues)
-	{
-		for(uint32_t i = 0; i < numValues; ++i)
-		{
-			values[i] = iter->value[i].GetInt();
-		}
+	ASSERT(pValues != nullptr);
 
-		return true;
+	for(const auto& member : json)
+	{
+		if(member.value.IsArray() && member.value.Size() == numValues && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			for(uint32_t i = 0; i < numValues; ++i)
+			{
+				pValues[i] = member.value[i].GetInt();
+			}
+			return true;
+		}
 	}
 
 	return false;
 }
 
-bool JsonReader::GetFloatArray(const String& name, float* values, size_t numValues) const
+bool JsonReader::GetFloatArray(const String& name, float* pValues, size_t numValues) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsArray() && iter->value.Size() == numValues)
-	{
-		for(uint32_t i = 0; i < numValues; ++i)
-		{
-			values[i] = iter->value[i].GetFloat();
-		}
+	ASSERT(pValues != nullptr);
 
-		return true;
+	for(const auto& member : json)
+	{
+		if(member.value.IsArray() && member.value.Size() == numValues && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			for(uint32_t i = 0; i < numValues; ++i)
+			{
+				pValues[i] = member.value[i].GetFloat();
+			}
+			return true;
+		}
 	}
 
 	return false;
 }
 
-bool JsonReader::GetVector3Array(const String& name, Vector3* values, size_t numValues) const
+bool JsonReader::GetVector3Array(const String& name, Vector3* pValues, size_t numValues) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsArray() && iter->value.Size() == numValues * 3)
-	{
-		for(uint32_t i = 0; i < numValues; ++i)
-		{
-			values[i] = Vector3(iter->value[i * 3 + 0].GetFloat(), iter->value[i * 3 + 1].GetFloat(), iter->value[i * 3 + 2].GetFloat());
-		}
+	ASSERT(pValues != nullptr);
 
-		return true;
+	for(const auto& member : json)
+	{
+		if(member.value.IsArray() && member.value.Size() == numValues * 3 && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			for(uint32_t i = 0; i < numValues; ++i)
+			{
+				pValues[i] = Vector3(member.value[i * 3 + 0].GetFloat(), member.value[i * 3 + 1].GetFloat(), member.value[i * 3 + 2].GetFloat());
+			}
+			return true;
+		}
 	}
 
 	return false;
@@ -167,10 +190,12 @@ bool JsonReader::GetVector3Array(const String& name, Vector3* values, size_t num
 
 JsonReader JsonReader::GetObject(const String& name) const
 {
-	auto iter = json.FindMember(rapidjson::GenericStringRef(name.Str(), static_cast<rapidjson::SizeType>(name.Length())));
-	if(iter != json.MemberEnd() && iter->value.IsObject())
+	for(const auto& member : json)
 	{
-		return JsonReader(iter->value.GetObject());
+		if(member.value.IsObject() && String(member.name.GetString(), member.name.GetStringLength()).Equals(name))
+		{
+			return JsonReader(member.value.GetObject());
+		}
 	}
 
 	const rapidjson::Value emptyValue(rapidjson::kObjectType);
