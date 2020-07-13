@@ -17,13 +17,6 @@ public:
 	void Update() override;
 
 private:
-	enum class ERadioButtonOption
-	{
-		A,
-		B,
-		C
-	};
-
 	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
 
 	Object* scriptedObject = nullptr;

@@ -9,14 +9,14 @@ public:
 
 	static void* Alloc(size_t size, size_t alignment = kDefaultAlignment);
 	static void* Calloc(size_t num, size_t size);
-	static void* Realloc(void* ptr, size_t size);
-	static void Free(void* ptr);
+	static void* Realloc(void* pMemory, size_t size);
+	static void Free(void* pMemory);
 
 	static void* SystemAlloc(size_t size);
-	static void* SystemRealloc(void* ptr, size_t size);
+	static void* SystemRealloc(void* pMemory, size_t size);
 	static void* SystemAlignedAlloc(size_t size, size_t alignment);
-	static void SystemFree(void* ptr);
-	static void SystemAlignedFree(void* ptr);
+	static void SystemFree(void* pMemory);
+	static void SystemAlignedFree(void* pMemory);
 
 	static Allocator& GetActiveAllocator();
 	static void PushAllocator(Allocator& allocator);
@@ -30,14 +30,14 @@ public:
 	struct AllocatorScope
 	{
 		AllocatorScope(Allocator& allocator)	{ MemorySystem::PushAllocator(allocator); }
-		AllocatorScope(Allocator* allocator)	{ MemorySystem::PushAllocator(*allocator); }
+		AllocatorScope(Allocator* pAllocator)	{ MemorySystem::PushAllocator(*pAllocator); }
 		~AllocatorScope()						{ MemorySystem::PopAllocator(); }
 	};
 
 private:
 	struct AllocationHeader
 	{
-		Allocator* allocator;
+		Allocator* pAllocator;
 		uint32_t allocatedSize;
 		uint32_t offsetBetweenPtrAndAllocatedMemory;
 	};

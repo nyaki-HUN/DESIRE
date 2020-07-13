@@ -144,33 +144,42 @@ void SandBox::Update()
 	Modules::UI->NewFrame(mainWindow.get());
 
 	// Variables for UI testing
-	static bool isCheckboxChecked = false;
-	static ERadioButtonOption radioButtonOption = ERadioButtonOption::A;
-	static float sliderValue = 0.0f;
-	static int32_t spinnerValue = 0;
-	static Vector3 vec3 = Vector3::Zero();
-	static DynamicString textValue;
-	static 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-
 	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(300, 500));
 
 	Modules::UI->Text("Text");
+
+	static DynamicString textValue;
 	Modules::UI->TextInput("InputField", textValue);
+
 	Modules::UI->Button("Button");
 
 	Modules::UI->ArrowButton("ArrowButton", UI::EArrowDir::Left);
+
+	static bool isCheckboxChecked = false;
 	Modules::UI->Checkbox("Checkbox", isCheckboxChecked);
 
+	enum class ERadioButtonOption
+	{
+		A,
+		B,
+		C
+	};
+	static ERadioButtonOption radioButtonOption = ERadioButtonOption::A;
 	Modules::UI->RadioButton("RadioButton - A", radioButtonOption, ERadioButtonOption::A);
 	Modules::UI->RadioButton("RadioButton - B", radioButtonOption, ERadioButtonOption::B);
 	Modules::UI->RadioButton("RadioButton - C", radioButtonOption, ERadioButtonOption::C);
 
+	static float sliderValue = 0.0f;
 	Modules::UI->Slider("Slider", sliderValue, 0.0f, 100.0f);
+	Modules::UI->ProgressBar(sliderValue / 100.0f);
 
+	static int32_t spinnerValue = 0;
 	Modules::UI->ValueSpinner("ValueSpinner", spinnerValue);
 
+	static Vector3 vec3 = Vector3::Zero();
 	Modules::UI->ValueEdit("ValueEdit", vec3);
 
+	static 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 	Modules::UI->ColorPicker("ColorPicker", color);
 
 	Modules::UI->EndWindow();
