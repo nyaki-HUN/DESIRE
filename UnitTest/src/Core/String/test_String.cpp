@@ -61,11 +61,11 @@ TEST_CASE("String", "[Core]")
 		String intInString1 = "-12345";
 		CHECK(intInString1.AsInt32() == -12345);
 		String intInString2 = "123asd";
-		CHECK(intInString2.AsInt32() == INT32_MAX);
+		CHECK(intInString2.AsInt32() == 123);
 		String intInString3 = "asd123";
-		CHECK(intInString3.AsInt32() == INT32_MAX);
+		CHECK(intInString3.AsInt32() == 0);
 		String intInString4 = "  123  ";
-		CHECK(intInString4.AsInt32() == INT32_MAX);
+		CHECK(intInString4.AsInt32() == 123);
 	}
 
 	SECTION("AsInt64()")
@@ -73,11 +73,11 @@ TEST_CASE("String", "[Core]")
 		String intInString1 = "0x123456789";
 		CHECK(intInString1.AsInt64() == 0x123456789);
 		String intInString2 = "123asd";
-		CHECK(intInString2.AsInt64() == INT64_MAX);
+		CHECK(intInString2.AsInt64() == 123);
 		String intInString3 = "asd123";
-		CHECK(intInString3.AsInt64() == INT64_MAX);
+		CHECK(intInString3.AsInt64() == 0);
 		String intInString4 = "  123  ";
-		CHECK(intInString4.AsInt64() == INT64_MAX);
+		CHECK(intInString4.AsInt64() == 123);
 	}
 
 	SECTION("AsInt64()")
@@ -85,11 +85,11 @@ TEST_CASE("String", "[Core]")
 		String intInString1 = "-12345";
 		CHECK(intInString1.AsInt64() == -12345);
 		String intInString2 = "123asd";
-		CHECK(intInString2.AsInt64() == INT64_MAX);
+		CHECK(intInString2.AsInt64() == 123);
 		String intInString3 = "asd123";
-		CHECK(intInString3.AsInt64() == INT64_MAX);
+		CHECK(intInString3.AsInt64() == 0);
 		String intInString4 = "  123  ";
-		CHECK(intInString4.AsInt64() == INT64_MAX);
+		CHECK(intInString4.AsInt64() == 123);
 	}
 
 	SECTION("AsUint64()")
@@ -97,11 +97,11 @@ TEST_CASE("String", "[Core]")
 		String intInString1 = "0xffffffffffffffff";
 		CHECK(intInString1.AsUint64() == 0xffffffffffffffffu);
 		String intInString2 = "123asd";
-		CHECK(intInString2.AsUint64() == UINT64_MAX);
+		CHECK(intInString2.AsUint64() == 123);
 		String intInString3 = "asd123";
-		CHECK(intInString3.AsUint64() == UINT64_MAX);
+		CHECK(intInString3.AsUint64() == 0);
 		String intInString4 = "  123  ";
-		CHECK(intInString4.AsUint64() == UINT64_MAX);
+		CHECK(intInString4.AsUint64() == 123);
 	}
 
 	SECTION("AsFloat()")
@@ -115,11 +115,11 @@ TEST_CASE("String", "[Core]")
 		String floatInString4 = ".5";
 		CHECK(floatInString4.AsFloat() == Approx(0.5f));
 		String floatInString5 = "123.0asd";
-		CHECK(floatInString5.AsFloat() == FLT_MAX);
+		CHECK(floatInString5.AsFloat() == Approx(123.0f));
 		String floatInString6 = "asd123.0";
-		CHECK(floatInString6.AsFloat() == FLT_MAX);
+		CHECK(floatInString6.AsFloat() == Approx(0.0f));
 		String floatInString7 = ".123.0";
-		CHECK(floatInString7.AsFloat() == FLT_MAX);
+		CHECK(floatInString7.AsFloat() == Approx(0.123f));
 	}
 
 	SECTION("AsDouble()")
@@ -133,23 +133,20 @@ TEST_CASE("String", "[Core]")
 		String floatInString4 = ".5";
 		CHECK(floatInString4.AsDouble() == Approx(0.5));
 		String floatInString5 = "123.0asd";
-		CHECK(floatInString5.AsDouble() == DBL_MAX);
+		CHECK(floatInString5.AsDouble() == Approx(123.0));
 		String floatInString6 = "asd123.0";
-		CHECK(floatInString6.AsDouble() == DBL_MAX);
+		CHECK(floatInString6.AsDouble() == Approx(0.0));
 		String floatInString7 = ".123.0";
-		CHECK(floatInString7.AsDouble() == DBL_MAX);
+		CHECK(floatInString7.AsDouble() == Approx(0.123));
 	}
 
-	SECTION("Compare() | CompareIgnoreCase() | operator <()")
+	SECTION("Compare() | operator <()")
 	{
 		String s("XXX");
 
 		CHECK(s.Compare("XXX") == 0);
 		CHECK(string.Compare(s) < 0);
 		CHECK(string < s);
-
-		CHECK(s.Compare("XXX") == s.CompareIgnoreCase(String("xXx")));
-		CHECK(s.Compare("XXX") == s.CompareIgnoreCase("xXx"));
 
 		String stringWithNullSeparator = "Word0\0Word1";
 		REQUIRE(strcmp(stringWithNullSeparator.Str(), "Word0") == 0);

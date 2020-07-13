@@ -44,10 +44,7 @@ public:
 
 	// Compare strings
 	int Compare(const String& string) const;
-	int CompareIgnoreCase(const String& string) const;
-
 	bool Equals(const String& string) const;
-	bool EqualsIgnoreCase(const String& string) const;
 
 	bool operator ==(const String& string) const		{ return Equals(string); }
 	bool operator !=(const String& string) const		{ return !Equals(string); }

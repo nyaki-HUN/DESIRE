@@ -108,74 +108,32 @@ bool String::IsEmpty() const
 
 int32_t String::AsInt32() const
 {
-	char* end = nullptr;
-	const int32_t value = strtol(data, &end, 10);
-	if(end != data + size)
-	{
-		return INT32_MAX;
-	}
-
-	return value;
+	return std::strtol(data, nullptr, 0);
 }
 
 int64_t String::AsInt64() const
 {
-	char* end = nullptr;
-	const int64_t value = strtoll(data, &end, 0);
-	if(end != data + size)
-	{
-		return INT64_MAX;
-	}
-
-	return value;
+	return std::strtoll(data, nullptr, 0);
 }
 
 uint32_t String::AsUint32() const
 {
-	char* end = nullptr;
-	const uint32_t value = strtoul(data, &end, 0);
-	if(end != data + size)
-	{
-		return UINT32_MAX;
-	}
-
-	return value;
+	return std::strtoul(data, nullptr, 0);
 }
 
 uint64_t String::AsUint64() const
 {
-	char* end = nullptr;
-	const uint64_t value = strtoull(data, &end, 0);
-	if(end != data + size)
-	{
-		return UINT64_MAX;
-	}
-
-	return value;
+	return std::strtoull(data, nullptr, 0);
 }
 
 float String::AsFloat() const
 {
-	char* end = nullptr;
-	const float value = strtof(data, &end);
-	if(end != data + size)
-	{
-		return FLT_MAX;
-	}
-
-	return value;
+	return std::strtof(data, nullptr);
 }
 
 double String::AsDouble() const
 {
-	char* end = nullptr;
-	const double value = strtod(data, &end);
-	if(end != data + size)
-	{
-		return DBL_MAX;
-	}
-
-	return value;
+	return std::strtod(data, nullptr);
 }
 
 int String::Compare(const String& string) const
@@ -184,23 +142,9 @@ int String::Compare(const String& string) const
 	return (rv != 0) ? rv : static_cast<int>(string.size) - static_cast<int>(size);
 }
 
-int String::CompareIgnoreCase(const String& string) const
-{
-#if DESIRE_PLATFORM_WINDOWS
-	return _stricmp(data, string.data);
-#else
-	return strcasecmp(data, string.data);
-#endif
-}
-
 bool String::Equals(const String& string) const
 {
 	return (size == string.size) ? (memcmp(data, string.data, size) == 0) : false;
-}
-
-bool String::EqualsIgnoreCase(const String& string) const
-{
-	return (size == string.size) ? (CompareIgnoreCase(string) == 0) : false;
 }
 
 bool String::StartsWith(const String& prefix) const
