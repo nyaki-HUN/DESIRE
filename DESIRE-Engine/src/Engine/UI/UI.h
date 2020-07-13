@@ -57,6 +57,8 @@ public:
 	virtual bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) = 0;
 	virtual bool Slider(const String& label, float& value, float minValue, float maxValue) = 0;
 
+	virtual void ProgressBar(float progress) = 0;
+
 	virtual bool ColorPicker(const String& label, float(&colorRGB)[3]) = 0;
 	virtual bool ColorPicker(const String& label, float(&colorRGBA)[4]) = 0;
 

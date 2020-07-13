@@ -44,6 +44,8 @@ public:
 	bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) override;
 	bool Slider(const String& label, float& value, float minValue, float maxValue) override;
 
+	void ProgressBar(float progressPercent) override;
+
 	bool ColorPicker(const String& label, float(&colorRGB)[3]) override;
 	bool ColorPicker(const String& label, float(&colorRGBA)[4]) override;
 

@@ -346,6 +346,11 @@ bool ImGuiUI::Slider(const String& label, float& value, float minValue, float ma
 	return false;
 }
 
+void ImGuiUI::ProgressBar(float progress)
+{
+	ImGui::ProgressBar(progress, ImVec2(-1.0f, 0.0f), nullptr);
+}
+
 bool ImGuiUI::ColorPicker(const String& label, float(&colorRGB)[3])
 {
 	return ImGui::ColorEdit3(label.Str(), colorRGB, ImGuiColorEditFlags_None);

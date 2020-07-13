@@ -304,6 +304,12 @@ bool NuklearUI::RadioButtonOption(const String& label, bool isActive)
 	return nk_radio_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), &active) && active;
 }
 
+void NuklearUI::ProgressBar(float progressPercent)
+{
+	nk_size progress = static_cast<nk_size>(progressPercent * 1000.0f);
+	nk_progress(ctx.get(), &progress, 1000, NK_FIXED);
+}
+
 bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t step, int32_t minValue, int32_t maxValue)
 {
 	int32_t newValue = value;
