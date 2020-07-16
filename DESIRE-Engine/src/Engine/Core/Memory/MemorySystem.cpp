@@ -62,7 +62,7 @@ void* MemorySystem::Calloc(size_t num, size_t size)
 	void* pMemory = MemorySystem::Alloc(num * size);
 	if(pMemory != nullptr)
 	{
-		memset(ptr, 0, num * size);
+		memset(pMemory, 0, num * size);
 	}
 
 	return pMemory;
