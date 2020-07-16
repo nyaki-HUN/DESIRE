@@ -31,6 +31,12 @@
 		ptr = nullptr;		\
 	}
 
+#if defined(_DEBUG)
+	#define DX_CHECK_HRESULT(hr)		ASSERT(SUCCEEDED(hr))
+#else
+	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
+#endif
+
 Direct3D12Render::Direct3D12Render()
 {
 	const char vs_screenSpaceQuad[] =
@@ -223,12 +229,12 @@ void Direct3D12Render::SetView(View* pView)
 	if(pView != nullptr)
 	{
 		RenderTarget* rt = pView->GetRenderTarget();
-		if(rt->renderData == nullptr)
+		if(rt->pRenderData == nullptr)
 		{
 			Bind(rt);
 		}
 
-//		RenderTargetRenderDataD3D12* pRenderData = static_cast<RenderTargetRenderDataD3D12*>(rt->renderData);
+//		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(rt->pRenderData);
 		SetViewport(pView->GetPosX(), pView->GetPosY(), pView->GetWidth(), pView->GetHeight());
 	}
 	else
@@ -399,34 +405,18 @@ void Direct3D12Render::SetBlendModeDisabled()
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
-void Direct3D12Render::Bind(Mesh* pMesh)
+void* Direct3D12Render::CreateMeshRenderData(const Mesh* pMesh)
 {
-	ASSERT(pMesh != nullptr);
+	MeshRenderDataD3D12* pMeshRenderData = new MeshRenderDataD3D12();
 
-	if(pMesh->pRenderData != nullptr)
-	{
-		// Already bound
-		return;
-	}
+	DESIRE_UNUSED(pMesh);
 
-	MeshRenderDataD3D12* pRenderData = new MeshRenderDataD3D12();
-
-	pMesh->pRenderData = pRenderData;
+	return pMeshRenderData;
 }
 
-void Direct3D12Render::Bind(Shader* pShader)
+void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
 {
-	ASSERT(pShader != nullptr);
-
-	if(pShader->renderData != nullptr)
-	{
-		// Already bound
-		return;
-	}
-
-	const bool isVertexShader = pShader->name.StartsWith("vs_");
-
-	ShaderRenderDataD3D12* pRenderData = new ShaderRenderDataD3D12();
+	ShaderRenderDataD3D12* pShaderRenderData = new ShaderRenderDataD3D12();
 
 	D3D_SHADER_MACRO defines[32] = {};
 	ASSERT(pShader->defines.size() < DESIRE_ASIZEOF(defines));
@@ -441,6 +431,7 @@ void Direct3D12Render::Bind(Shader* pShader)
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
 	AppendShaderFilenameWithPath(filenameWithPath, pShader->name);
 
+	const bool isVertexShader = pShader->name.StartsWith("vs_");
 	UINT compileFlags = 0;
 
 	ID3DBlob* pErrorBlob = nullptr;
@@ -453,7 +444,7 @@ void Direct3D12Render::Bind(Shader* pShader)
 		, isVertexShader ? "vs_5_0" : "ps_5_0"		// pTarget
 		, compileFlags								// D3DCOMPILE flags
 		, 0											// D3DCOMPILE_EFFECT flags
-		, &pRenderData->shaderCode					// ppCode
+		, &pShaderRenderData->shaderCode			// ppCode
 		, &pErrorBlob);								// ppErrorMsgs
 	if(FAILED(hr))
 	{
@@ -463,25 +454,24 @@ void Direct3D12Render::Bind(Shader* pShader)
 			DX_RELEASE(pErrorBlob);
 		}
 
-		delete pRenderData;
-		pShader->renderData = isVertexShader ? errorVertexShader->renderData : errorPixelShader->renderData;
-		return;
+		delete pShaderRenderData;
+		return isVertexShader ? errorVertexShader->pRenderData : errorPixelShader->pRenderData;
 	}
 
 	if(isVertexShader)
 	{
-//		hr = d3dDevice->CreateVertexShader(pRenderData->shaderCode->GetBufferPointer(), pRenderData->shaderCode->GetBufferSize(), nullptr, &renderData->vertexShader);
+//		hr = d3dDevice->CreateVertexShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
 	}
 	else
 	{
-//		hr = d3dDevice->CreatePixelShader(pRenderData->shaderCode->GetBufferPointer(), pRenderData->shaderCode->GetBufferSize(), nullptr, &renderData->pixelShader);
+//		hr = d3dDevice->CreatePixelShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
 	}
-	ASSERT(SUCCEEDED(hr));
+	DX_CHECK_HRESULT(hr);
 
-//	renderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)pShader->name.Length(), pShader->name.Str());
+//	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)pShader->name.Length(), pShader->name.Str());
 
 	ID3D12ShaderReflection* pReflection = nullptr;
-	hr = D3DReflect(pRenderData->shaderCode->GetBufferPointer(), pRenderData->shaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
+	hr = D3DReflect(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
 	if(FAILED(hr))
 	{
 		LOG_ERROR("D3DReflect failed 0x%08x\n", (uint32_t)hr);
@@ -494,25 +484,25 @@ void Direct3D12Render::Bind(Shader* pShader)
 		LOG_ERROR("ID3D12ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
 	}
 
-	pRenderData->constantBuffers.resize(shaderDesc.ConstantBuffers);
-	pRenderData->constantBuffersData.resize(shaderDesc.ConstantBuffers);
+	pShaderRenderData->constantBuffers.resize(shaderDesc.ConstantBuffers);
+	pShaderRenderData->constantBuffersData.resize(shaderDesc.ConstantBuffers);
 /*	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
 		ID3D12ShaderReflectionConstantBuffer* cbuffer = pReflection->GetConstantBufferByIndex(i);
 		D3D12_SHADER_BUFFER_DESC shaderBufferDesc;
 		hr = cbuffer->GetDesc(&shaderBufferDesc);
-		ASSERT(SUCCEEDED(hr));
+		DX_CHECK_HRESULT(hr);
 
 		// Create constant buffer
 		D3D12_BUFFER_DESC bufferDesc = {};
 		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D12_USAGE_DEFAULT;
 		bufferDesc.BindFlags = D3D12_BIND_CONSTANT_BUFFER;
-		hr = d3dDevice->CreateCommittedResource(&bufferDesc, nullptr, &renderData->constantBuffers[i]);
-		ASSERT(SUCCEEDED(hr));
+		hr = d3dDevice->CreateCommittedResource(&bufferDesc, nullptr, &pShaderRenderData->constantBuffers[i]);
+		DX_CHECK_HRESULT(hr);
 
 		// Create constant buffer data
-		ShaderRenderDataD3D12::ConstantBufferData& bufferData = pRenderData->constantBuffersData[i];
+		ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->constantBuffersData[i];
 		bufferData.buffer = MemoryBuffer(shaderBufferDesc.Size);
 
 		for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
@@ -520,7 +510,7 @@ void Direct3D12Render::Bind(Shader* pShader)
 			ID3D12ShaderReflectionVariable* shaderVar = cbuffer->GetVariableByIndex(j);
 			D3D12_SHADER_VARIABLE_DESC varDesc;
 			hr = shaderVar->GetDesc(&varDesc);
-			ASSERT(SUCCEEDED(hr));
+			DX_CHECK_HRESULT(hr);
 
 			if((varDesc.uFlags & D3D_SVF_USED) == 0)
 			{
@@ -530,7 +520,7 @@ void Direct3D12Render::Bind(Shader* pShader)
 			ID3D12ShaderReflectionType* type = shaderVar->GetType();
 			D3D12_SHADER_TYPE_DESC typeDesc;
 			hr = type->GetDesc(&typeDesc);
-			ASSERT(SUCCEEDED(hr));
+			DX_CHECK_HRESULT(hr);
 
 			if( typeDesc.Class != D3D_SVC_SCALAR &&
 				typeDesc.Class != D3D_SVC_VECTOR &&
@@ -539,128 +529,66 @@ void Direct3D12Render::Bind(Shader* pShader)
 				continue;
 			}
 
-			bufferData.variableOffsetSizePairs.Insert(HashedString::CreateFromDynamicString(varDesc.Name), std::make_pair(varDesc.StartOffset, varDesc.Size));
+			const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
+			bufferData.variableOffsetSizePairs.Insert(key, std::make_pair(varDesc.StartOffset, varDesc.Size));
 		}
 	}
 */
 
 	DX_RELEASE(pReflection);
 
-	pShader->renderData = pRenderData;
+	return pShaderRenderData;
 }
 
-void Direct3D12Render::Bind(Texture* texture)
+void* Direct3D12Render::CreateTextureRenderData(const Texture* pTexture)
 {
-	ASSERT(texture != nullptr);
+	TextureRenderDataD3D12* pTextureRenderData = new TextureRenderDataD3D12();
 
-	if(texture->renderData != nullptr)
-	{
-		// Already bound
-		return;
-	}
+	DESIRE_UNUSED(pTexture);
 
-	TextureRenderDataD3D12* pRenderData = new TextureRenderDataD3D12();
-
-	texture->renderData = pRenderData;
+	return pTextureRenderData;
 }
 
-void Direct3D12Render::Bind(RenderTarget* renderTarget)
+void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget* pRenderTarget)
 {
-	ASSERT(renderTarget != nullptr);
+	RenderTargetRenderDataD3D12* pRenderTargetRenderData = new RenderTargetRenderDataD3D12();
 
-	if(renderTarget->renderData != nullptr)
-	{
-		// Already bound
-		return;
-	}
+	DESIRE_UNUSED(pRenderTarget);
 
-	RenderTargetRenderDataD3D12* pRenderData = new RenderTargetRenderDataD3D12();
-
-	renderTarget->renderData = pRenderData;
+	return pRenderTargetRenderData;
 }
 
-void Direct3D12Render::Unbind(Mesh* pMesh)
+void Direct3D12Render::DestroyMeshRenderData(void* pRenderData)
 {
-	if(pMesh == nullptr || pMesh->pRenderData == nullptr)
-	{
-		// Not yet bound
-		return;
-	}
-
-	MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
-
-	delete pRenderData;
-	pMesh->pRenderData = nullptr;
-
-	if(pActiveMesh == pMesh)
-	{
-		pActiveMesh = nullptr;
-	}
+	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(pRenderData);
+	delete pMeshRenderData;
 }
 
-void Direct3D12Render::Unbind(Shader* pShader)
+void Direct3D12Render::DestroyShaderRenderData(void* pRenderData)
 {
-	if(pShader == nullptr || pShader->renderData == nullptr)
+	ShaderRenderDataD3D12* pShaderRenderData = static_cast<ShaderRenderDataD3D12*>(pRenderData);
+
+	if((pShaderRenderData == errorVertexShader->pRenderData || pShaderRenderData == errorPixelShader->pRenderData)
+//		&& pShader != errorVertexShader.get()
+//		&& pShader != errorPixelShader.get()
+		)
 	{
-		// Not yet bound
 		return;
 	}
 
-	if((pShader->renderData == errorVertexShader->renderData || pShader->renderData == errorPixelShader->renderData) &&
-		pShader != errorVertexShader.get() &&
-		pShader != errorPixelShader.get())
-	{
-		pShader->renderData = nullptr;
-		return;
-	}
-
-	ShaderRenderDataD3D12* pRenderData = static_cast<ShaderRenderDataD3D12*>(pShader->renderData);
-
-	delete pRenderData;
-	pShader->renderData = nullptr;
-
-	if(pActiveVertexShader == pShader)
-	{
-		pActiveVertexShader = nullptr;
-	}
-	if(pActiveFragmentShader == pShader)
-	{
-		pActiveFragmentShader = nullptr;
-	}
+	delete pShaderRenderData;
 }
 
-void Direct3D12Render::Unbind(Texture* texture)
+void Direct3D12Render::DestroyTextureRenderData(void* pRenderData)
 {
-	if(texture == nullptr || texture->renderData == nullptr)
-	{
-		// Not yet bound
-		return;
-	}
-
-	TextureRenderDataD3D12* pRenderData = static_cast<TextureRenderDataD3D12*>(texture->renderData);
-
-	delete pRenderData;
-	texture->renderData = nullptr;
+	TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(pRenderData);
+	delete pTextureRenderData;
 }
 
-void Direct3D12Render::Unbind(RenderTarget* renderTarget)
+void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
 {
-	if(renderTarget == nullptr || renderTarget->renderData == nullptr)
-	{
-		// Not yet bound
-		return;
-	}
-
-	RenderTargetRenderDataD3D12* pRenderData = static_cast<RenderTargetRenderDataD3D12*>(renderTarget->renderData);
-
-	const uint8_t textureCount = std::min<uint8_t>(renderTarget->GetTextureCount(), D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
-	for(uint8_t i = 0; i < textureCount; ++i)
-	{
-		Unbind(renderTarget->GetTexture(i).get());
-	}
-
-	delete pRenderData;
-	renderTarget->renderData = nullptr;
+	RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderData);
+	delete pRenderTargetRenderData;
 }
 
 void Direct3D12Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -672,7 +600,7 @@ void Direct3D12Render::SetMesh(Mesh* pMesh)
 {
 	if(pMesh != nullptr)
 	{
-//		MeshRenderDataD3D12* pRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
+//		MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
 	}
 	else
 	{
@@ -697,7 +625,7 @@ void Direct3D12Render::SetVertexShader(Shader* pVertexShader)
 		return;
 	}
 
-//	const ShaderRenderDataD3D12* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader->renderData);
+//	const ShaderRenderDataD3D12* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader->pRenderData);
 
 	pActiveVertexShader = pVertexShader;
 }
@@ -709,18 +637,18 @@ void Direct3D12Render::SetFragmentShader(Shader* pFragmentShader)
 		return;
 	}
 
-//	const ShaderRenderDataD3D12* shaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader->renderData);
+//	const ShaderRenderDataD3D12* shaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader->pRenderData);
 
 	pActiveFragmentShader = pFragmentShader;
 }
 
-void Direct3D12Render::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterMode filterMode, EAddressMode addressMode)
+void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	DESIRE_UNUSED(samplerIdx);
 
 	ASSERT(samplerIdx < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
-//	TextureRenderDataD3D12* pRenderData = static_cast<TextureRenderDataD3D12*>(texture->renderData);
+//	TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->pRenderData);
 
 	static const D3D12_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
 	{
@@ -751,10 +679,10 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, Texture* texture, EFilterM
 
 void Direct3D12Render::UpdateShaderParams(const Material* pMaterial)
 {
-	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveVertexShader->renderData);
+	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveVertexShader->pRenderData);
 	UpdateShaderParams(pMaterial, pVertexShaderRenderData);
 
-	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveFragmentShader->renderData);
+	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveFragmentShader->pRenderData);
 	UpdateShaderParams(pMaterial, pFragmentShaderRenderData);
 }
 

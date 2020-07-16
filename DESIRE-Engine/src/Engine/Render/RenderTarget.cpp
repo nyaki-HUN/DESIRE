@@ -13,10 +13,7 @@ RenderTarget::RenderTarget(uint16_t width, uint16_t height)
 
 RenderTarget::~RenderTarget()
 {
-	if(renderData != nullptr)
-	{
-		Modules::Render->Unbind(this);
-	}
+	Modules::Render->Unbind(this);
 }
 
 uint16_t RenderTarget::GetWidth() const
@@ -31,7 +28,7 @@ uint16_t RenderTarget::GetHeight() const
 
 uint8_t RenderTarget::GetTextureCount() const
 {
-	return (uint8_t)textures.Size();
+	return static_cast<uint8_t>(textures.Size());
 }
 
 const std::shared_ptr<Texture>& RenderTarget::GetTexture(uint8_t idx) const

@@ -46,7 +46,7 @@ public:
 	}
 
 	// Render engine specific data set at bind
-	void* renderData = nullptr;
+	void* pRenderData = nullptr;
 
 	const uint16_t width;
 	const uint16_t height;

@@ -10,8 +10,5 @@ Shader::Shader(const String& name)
 
 Shader::~Shader()
 {
-	if(renderData != nullptr)
-	{
-		Modules::Render->Unbind(this);
-	}
+	Modules::Render->Unbind(this);
 }

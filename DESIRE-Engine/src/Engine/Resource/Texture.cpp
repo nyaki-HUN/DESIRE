@@ -28,10 +28,7 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pD
 
 Texture::~Texture()
 {
-	if(renderData != nullptr)
-	{
-		Modules::Render->Unbind(this);
-	}
+	Modules::Render->Unbind(this);
 }
 
 bool Texture::IsDepthFormat() const

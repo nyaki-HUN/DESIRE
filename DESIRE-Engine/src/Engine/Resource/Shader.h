@@ -12,7 +12,7 @@ public:
 	~Shader();
 
 	// Render engine specific data set at bind
-	void* renderData = nullptr;
+	void* pRenderData = nullptr;
 
 	MemoryBuffer data;
 	std::set<DynamicString> defines;

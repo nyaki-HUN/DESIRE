@@ -35,24 +35,24 @@ public:
 	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
 	void SetBlendModeDisabled() override;
 
-	void Bind(Mesh* pMesh) override;
-	void Bind(Shader* pShader) override;
-	void Bind(Texture* pTexture) override;
-	void Bind(RenderTarget* pRenderTarget) override;
-
-	void Unbind(Mesh* pMesh) override;
-	void Unbind(Shader* pShader) override;
-	void Unbind(Texture* pTexture) override;
-	void Unbind(RenderTarget* pRenderTarget) override;
-
 private:
+	void* CreateMeshRenderData(const Mesh* pMesh) override;
+	void* CreateShaderRenderData(const Shader* pShader) override;
+	void* CreateTextureRenderData(const Texture* pTexture) override;
+	void* CreateRenderTargetRenderData(const RenderTarget* pRenderTarget) override;
+
+	void DestroyMeshRenderData(void* pRenderData) override;
+	void DestroyShaderRenderData(void* pRenderData) override;
+	void DestroyTextureRenderData(void* pRenderData) override;
+	void DestroyRenderTargetRenderData(void* pRenderData) override;
+
 	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void SetMesh(Mesh* pMesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
 	void SetVertexShader(Shader* pVertexShader) override;
 	void SetFragmentShader(Shader* pFragmentShader) override;
-	void SetTexture(uint8_t samplerIdx, Texture* pTexture, EFilterMode filterMode, EAddressMode addressMode) override;
+	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
 	void UpdateShaderParams(const Material* pMaterial) override;
 
 	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;

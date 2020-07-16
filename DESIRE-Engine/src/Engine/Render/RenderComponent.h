@@ -28,7 +28,7 @@ public:
 	const AABB& GetAABB() const;
 
 private:
-	const Mesh* mesh = nullptr;
+	Mesh* mesh = nullptr;
 	Material* material = nullptr;
 
 	std::unique_ptr<AABB> aabb;

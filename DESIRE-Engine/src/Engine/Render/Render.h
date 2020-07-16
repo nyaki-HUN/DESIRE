@@ -109,16 +109,16 @@ public:
 	virtual void SetBlendModeDisabled() = 0;
 
 	// Resource bind
-	virtual void Bind(Mesh* pMesh) = 0;
-	virtual void Bind(Shader* pShader) = 0;
-	virtual void Bind(Texture* pTexture) = 0;
-	virtual void Bind(RenderTarget* pRenderTarget) = 0;
+	void Bind(Mesh* pMesh);
+	void Bind(Shader* pShader);
+	void Bind(Texture* pTexture);
+	void Bind(RenderTarget* pRenderTarget);
 
 	// Resource unbind
-	virtual void Unbind(Mesh* pMesh) = 0;
-	virtual void Unbind(Shader* pShader) = 0;
-	virtual void Unbind(Texture* pTexture) = 0;
-	virtual void Unbind(RenderTarget* pRenderTarget) = 0;
+	void Unbind(Mesh* pMesh);
+	void Unbind(Shader* pShader);
+	void Unbind(Texture* pTexture);
+	void Unbind(RenderTarget* pRenderTarget);
 
 protected:
 	void SetDefaultRenderStates();
@@ -133,12 +133,22 @@ protected:
 	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
 
 private:
+	virtual void* CreateMeshRenderData(const Mesh* pMesh) = 0;
+	virtual void* CreateShaderRenderData(const Shader* pShader) = 0;
+	virtual void* CreateTextureRenderData(const Texture* pTexture) = 0;
+	virtual void* CreateRenderTargetRenderData(const RenderTarget* pRenderTarget) = 0;
+
+	virtual void DestroyMeshRenderData(void* pRenderData) = 0;
+	virtual void DestroyShaderRenderData(void* pRenderData) = 0;
+	virtual void DestroyTextureRenderData(void* pRenderData) = 0;
+	virtual void DestroyRenderTargetRenderData(void* pRenderData) = 0;
+
 	virtual void SetMesh(Mesh* pMesh) = 0;
 	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
 	void SetMaterial(Material* pMaterial);
 	virtual void SetVertexShader(Shader* pVertexShader) = 0;
 	virtual void SetFragmentShader(Shader* pFragmentShader) = 0;
-	virtual void SetTexture(uint8_t samplerIdx, Texture* pTexture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
+	virtual void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
 	virtual void UpdateShaderParams(const Material* pMaterial) = 0;
 
 	// Submit draw command
