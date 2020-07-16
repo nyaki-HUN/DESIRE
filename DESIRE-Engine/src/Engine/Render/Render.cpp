@@ -136,6 +136,13 @@ void Render::Bind(RenderTarget* pRenderTarget)
 		return;
 	}
 
+	const uint8_t textureCount = pRenderTarget->GetTextureCount();
+	for(uint8_t i = 0; i < textureCount; ++i)
+	{
+		const std::shared_ptr<Texture>& texture = pRenderTarget->GetTexture(i);
+		Bind(texture.get());
+	}
+
 	pRenderTarget->pRenderData = CreateRenderTargetRenderData(pRenderTarget);
 }
 

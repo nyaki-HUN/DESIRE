@@ -474,13 +474,11 @@ void* BgfxRender::CreateRenderTargetRenderData(const RenderTarget* pRenderTarget
 	const uint8_t textureCount = std::min<uint8_t>(pRenderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
-		// Bind texture
 		const std::shared_ptr<Texture>& texture = pRenderTarget->GetTexture(i);
-		ASSERT(texture->pRenderData == nullptr);
-		Bind(texture.get());
+		const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(texture->pRenderData);
+		ASSERT(pTextureRenderData != nullptr);
 
-		const TextureRenderDataBgfx* textureRenderData = static_cast<const TextureRenderDataBgfx*>(texture->pRenderData);
-		renderTargetTextures[i] = textureRenderData->textureHandle;
+		renderTargetTextures[i] = pTextureRenderData->textureHandle;
 	}
 
 	pRenderTargetRenderData->frameBuffer = bgfx::createFrameBuffer(textureCount, renderTargetTextures);

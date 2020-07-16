@@ -723,18 +723,15 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget* pRender
 	pRenderTargetRenderData->renderTargetViews.reserve(textureCount);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
-		// Bind texture
 		const std::shared_ptr<Texture>& texture = pRenderTarget->GetTexture(i);
-		ASSERT(texture->pRenderData == nullptr);
-		Bind(texture.get());
-
-		TextureRenderDataD3D11* textureRenderData = static_cast<TextureRenderDataD3D11*>(texture->pRenderData);
+		const TextureRenderDataD3D11* pTextureRenderData = static_cast<const TextureRenderDataD3D11*>(texture->pRenderData);
+		ASSERT(pTextureRenderData != nullptr);
 
 		if(texture->IsDepthFormat())
 		{
 			ASSERT(pRenderTargetRenderData->depthStencilView == nullptr && "RenderTargets can have only 1 depth attachment");
 
-			HRESULT hr = d3dDevice->CreateDepthStencilView(textureRenderData->pTexture2D, nullptr, &pRenderTargetRenderData->depthStencilView);
+			HRESULT hr = d3dDevice->CreateDepthStencilView(pTextureRenderData->pTexture2D, nullptr, &pRenderTargetRenderData->depthStencilView);
 			DX_CHECK_HRESULT(hr);
 		}
 		else
@@ -743,11 +740,11 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget* pRender
 			renderTargetViewDesc.Format = GetTextureFormat(texture.get());
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
-			ID3D11RenderTargetView* renderTargetView = nullptr;
-			HRESULT hr = d3dDevice->CreateRenderTargetView(textureRenderData->pTexture2D, &renderTargetViewDesc, &renderTargetView);
+			ID3D11RenderTargetView* pRenderTargetView = nullptr;
+			HRESULT hr = d3dDevice->CreateRenderTargetView(pTextureRenderData->pTexture2D, &renderTargetViewDesc, &pRenderTargetView);
 			DX_CHECK_HRESULT(hr);
 
-			pRenderTargetRenderData->renderTargetViews.push_back(renderTargetView);
+			pRenderTargetRenderData->renderTargetViews.push_back(pRenderTargetView);
 		}
 	}
 
