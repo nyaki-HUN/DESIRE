@@ -3,6 +3,13 @@
 class TextureRenderDataD3D11
 {
 public:
-	ID3D11ShaderResourceView* textureSRV = nullptr;
-	ID3D11Texture2D* texture2D = nullptr;
+	union
+	{
+		ID3D11Texture2D* pTexture2D;
+		ID3D11Texture3D* pTexture3D;
+
+		ID3D11Resource* pTexture = nullptr;			// Generic base class pointer
+	};
+
+	ID3D11ShaderResourceView* pTextureSRV = nullptr;
 };

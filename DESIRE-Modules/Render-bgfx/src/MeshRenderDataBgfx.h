@@ -3,17 +3,11 @@
 class MeshRenderDataBgfx
 {
 public:
-	union
-	{
-		bgfx::IndexBufferHandle indexBuffer;
-		bgfx::DynamicIndexBufferHandle dynamicIndexBuffer;
-	};
+	bgfx::IndexBufferHandle indexBuffer = BGFX_INVALID_HANDLE;
+	bgfx::VertexBufferHandle vertexBuffer = BGFX_INVALID_HANDLE;
 
-	union
-	{
-		bgfx::VertexBufferHandle vertexBuffer;
-		bgfx::DynamicVertexBufferHandle dynamicVertexBuffer;
-	};
+	bgfx::DynamicIndexBufferHandle dynamicIndexBuffer = BGFX_INVALID_HANDLE;
+	bgfx::DynamicVertexBufferHandle dynamicVertexBuffer = BGFX_INVALID_HANDLE;
 
 	bgfx::VertexLayout vertexLayout;
 
