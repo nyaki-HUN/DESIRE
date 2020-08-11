@@ -263,9 +263,9 @@ bool ImGuiUI::TextInput(const String& label, WritableString& value)
 {
 	constexpr int kMaxSize = 255;
 	StackString<kMaxSize> string = value;
-	if(ImGui::InputText(label.Str(), string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_None, nullptr, nullptr))
+	if(ImGui::InputText(label.Str(), string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_EnterReturnsTrue, nullptr, nullptr))
 	{
-		value = string;
+		value.Set(string.Str(), strlen(string.Str()));
 		return true;
 	}
 	return false;
