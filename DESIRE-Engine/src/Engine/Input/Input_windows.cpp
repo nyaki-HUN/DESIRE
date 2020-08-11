@@ -231,7 +231,7 @@ void Input::Update_internal()
 
 void Input::SetOsMouseCursorClipped(bool isClipped)
 {
-	if(isMouseCursorClipped == isClipped)
+	if(isOsMouseCursorClipped == isClipped)
 	{
 		return;
 	}
@@ -250,10 +250,21 @@ void Input::SetOsMouseCursorClipped(bool isClipped)
 	}
 	else
 	{
-		ClipCursor(NULL);
+		ClipCursor(nullptr);
 	}
 
-	isMouseCursorClipped = isClipped;
+	isOsMouseCursorClipped = isClipped;
+}
+
+void Input::SetOsMouseCursorVisible(bool isVisible)
+{
+	if(isOsMouseCursorVisible == isVisible)
+	{
+		return;
+	}
+
+	ShowCursor(isVisible);
+	isOsMouseCursorVisible = isVisible;
 }
 
 #endif	// #if DESIRE_PLATFORM_WINDOWS

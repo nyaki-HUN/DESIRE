@@ -42,6 +42,7 @@ public:
 
 	const Vector2& GetOsMouseCursorPos() const;
 	void SetOsMouseCursorClipped(bool isClipped);
+	void SetOsMouseCursorVisible(bool isVisible);
 
 private:
 	Keyboard& GetKeyboardByHandle(void* handle);
@@ -59,7 +60,8 @@ private:
 	StackString<kMaxNumTypingCharacters> typingCharacters;
 
 	Vector2 mouseCursorPos = Vector2::Zero();
-	bool isMouseCursorClipped = false;
+	bool isOsMouseCursorClipped = false;
+	bool isOsMouseCursorVisible = true;
 
 	friend class InputImpl;
 };
