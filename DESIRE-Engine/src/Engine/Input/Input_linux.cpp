@@ -164,4 +164,14 @@ void Input::Update_internal()
 {
 }
 
+void Input::SetOsMouseCursorClipped(bool isClipped)
+{
+	if(isMouseCursorClipped == isClipped)
+	{
+		return;
+	}
+
+	isMouseCursorClipped = isClipped;
+}
+
 #endif	// #if DESIRE_PLATFORM_LINUX

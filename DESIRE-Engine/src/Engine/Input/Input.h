@@ -41,6 +41,7 @@ public:
 	bool WasMouseButtonPressed(Mouse::EButton button) const;
 
 	const Vector2& GetOsMouseCursorPos() const;
+	void SetOsMouseCursorClipped(bool isClipped);
 
 private:
 	Keyboard& GetKeyboardByHandle(void* handle);
@@ -58,6 +59,7 @@ private:
 	StackString<kMaxNumTypingCharacters> typingCharacters;
 
 	Vector2 mouseCursorPos = Vector2::Zero();
+	bool isMouseCursorClipped = false;
 
 	friend class InputImpl;
 };

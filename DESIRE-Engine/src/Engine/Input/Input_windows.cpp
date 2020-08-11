@@ -229,4 +229,31 @@ void Input::Update_internal()
 {
 }
 
+void Input::SetOsMouseCursorClipped(bool isClipped)
+{
+	if(isMouseCursorClipped == isClipped)
+	{
+		return;
+	}
+
+	if(isClipped)
+	{
+		POINT pos;
+		GetCursorPos(&pos);
+
+		RECT clipRect;
+		clipRect.left = pos.x;
+		clipRect.top = pos.y;
+		clipRect.right = clipRect.left + 1;
+		clipRect.bottom = clipRect.top + 1;
+		ClipCursor(&clipRect);
+	}
+	else
+	{
+		ClipCursor(NULL);
+	}
+
+	isMouseCursorClipped = isClipped;
+}
+
 #endif	// #if DESIRE_PLATFORM_WINDOWS
