@@ -1,33 +1,39 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/Material.h"
 
-Material::ShaderParam::ShaderParam(HashedString name, std::function<void(void*)>&& func)
+Material::ShaderParam::ShaderParam(HashedString name, const void* pParam)
 	: name(name)
-	, func(std::move(func))
+	, pParam(pParam)
 {
+	ASSERT(pParam != nullptr);
+}
 
+Material::ShaderParam::ShaderParam(HashedString name, std::function<void(float*)>&& func)
+	: name(name)
+	, paramFunc(std::move(func))
+{
+	ASSERT(paramFunc != nullptr);
 }
 
 const void* Material::ShaderParam::GetValue() const
 {
-	static float s_value[16] = {};
-
-	if(func != nullptr)
+	if(pParam != nullptr)
 	{
-		func(s_value);
+		return pParam;
 	}
+
+	static float s_value[16] = {};
+	paramFunc(s_value);
 
 	return s_value;
 }
 
 Material::Material()
 {
-
 }
 
 Material::~Material()
 {
-
 }
 
 void Material::AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode, Render::EAddressMode addressMode)
@@ -50,7 +56,12 @@ const Array<Material::TextureInfo>& Material::GetTextures() const
 	return textures;
 }
 
-void Material::AddShaderParam(HashedString name, std::function<void(void*)>&& func)
+void Material::AddShaderParam(HashedString name, const void* pParam)
+{
+	shaderParams.EmplaceAdd(name, pParam);
+}
+
+void Material::AddShaderParam(HashedString name, std::function<void(float*)>&& func)
 {
 	shaderParams.EmplaceAdd(name, std::move(func));
 }

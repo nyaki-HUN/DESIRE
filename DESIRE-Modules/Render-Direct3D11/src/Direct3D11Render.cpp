@@ -542,17 +542,17 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader* pShader)
 /**/compileFlags = D3DCOMPILE_SKIP_OPTIMIZATION;
 
 	ID3DBlob* pErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(pShader->data.ptr.get()	// pSrcData
-		, pShader->data.size						// SrcDataSize
-		, filenameWithPath.Str()					// pSourceName
-		, defines									// pDefines
-		, D3D_COMPILE_STANDARD_FILE_INCLUDE			// pInclude
-		, "main"									// pEntrypoint
-		, isVertexShader ? "vs_5_0" : "ps_5_0"		// pTarget
-		, compileFlags								// D3DCOMPILE flags
-		, 0											// D3DCOMPILE_EFFECT flags
-		, &pShaderRenderData->shaderCode			// ppCode
-		, &pErrorBlob);								// ppErrorMsgs
+	HRESULT hr = D3DCompile(pShader->data.ptr.get(),	// pSrcData
+		pShader->data.size,								// SrcDataSize
+		filenameWithPath.Str(),							// pSourceName
+		defines,										// pDefines
+		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
+		"main",											// pEntrypoint
+		isVertexShader ? "vs_5_0" : "ps_5_0",			// pTarget
+		compileFlags,									// D3DCOMPILE flags
+		0,												// D3DCOMPILE_EFFECT flags
+		&pShaderRenderData->shaderCode,					// ppCode
+		&pErrorBlob);									// ppErrorMsgs
 	if(FAILED(hr))
 	{
 		if(pErrorBlob != nullptr)
