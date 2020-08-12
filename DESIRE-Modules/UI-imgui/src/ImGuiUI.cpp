@@ -299,7 +299,7 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 	return ImGui::RadioButton(label.Str(), isActive) && !isActive;
 }
 
-bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t step, int32_t minValue, int32_t maxValue)
+bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, int32_t step)
 {
 	if(ImGui::DragInt(label.Str(), &value, static_cast<float>(step), minValue, maxValue, "%d"))
 	{
@@ -309,7 +309,7 @@ bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t step, in
 	return false;
 }
 
-bool ImGuiUI::ValueSpinner(const String& label, float& value, float step, float minValue, float maxValue)
+bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float step)
 {
 	if(ImGui::DragFloat(label.Str(), &value, step, minValue, maxValue, "%.3f"))
 	{

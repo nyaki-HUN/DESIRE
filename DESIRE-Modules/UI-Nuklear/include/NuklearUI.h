@@ -36,8 +36,8 @@ public:
 	bool Checkbox(const String& label, bool& isChecked) override;
 	bool RadioButtonOption(const String& label, bool isActive) override;
 
-	bool ValueSpinner(const String& label, int32_t& value, int32_t step = 1, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX) override;
-	bool ValueSpinner(const String& label, float& value, float step = 0.01f, float minValue = -FLT_MAX, float maxValue = FLT_MAX) override;
+	bool ValueSpinner(const String& label, int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, int32_t step = 1) override;
+	bool ValueSpinner(const String& label, float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float step = 0.01f) override;
 
 	bool ValueEdit(const String& label, Vector3& value) override;
 
