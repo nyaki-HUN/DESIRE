@@ -8,13 +8,13 @@ class StackString : public WritableString
 public:
 	StackString()
 	{
-		data = charBuffer;
+		pData = charBuffer;
 	}
 
-	StackString(const char* str, size_t size)
+	StackString(const char* pStr, size_t size)
 	{
-		data = charBuffer;
-		Set(str, size);
+		pData = charBuffer;
+		Set(pStr, size);
 	}
 
 	StackString(const String& string)					: StackString(string.Str(), string.Length()) {}
@@ -24,13 +24,13 @@ public:
 	StackString<STACK_SIZE>& operator =(const StackString<STACK_SIZE>& string)	{ Set(string.Str(), string.Length()); return *this; }
 
 	// Create formatted string from variable argument list
-	static StackString<STACK_SIZE> Format(const char* format, ...)
+	static StackString<STACK_SIZE> Format(const char* pFormat, ...)
 	{
 		StackString<STACK_SIZE> string;
 
 		std::va_list args;
-		va_start(args, format);
-		string.Sprintf_internal(0, format, args);
+		va_start(args, pFormat);
+		string.Sprintf_internal(0, pFormat, args);
 		va_end(args);
 
 		return string;

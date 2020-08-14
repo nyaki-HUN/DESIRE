@@ -6,7 +6,7 @@ class DynamicString : public WritableString
 {
 public:
 	DynamicString();
-	DynamicString(const char* str, size_t size);
+	DynamicString(const char* pStr, size_t size);
 	DynamicString(const String& string)				: DynamicString(string.Str(), string.Length()) {}
 	DynamicString(const DynamicString& string)		: DynamicString(string.Str(), string.Length()) {}
 	DynamicString(DynamicString&& string);
@@ -20,8 +20,8 @@ public:
 	DynamicString& operator =(const DynamicString& string)		{ Set(string.Str(), string.Length()); return *this; }
 	DynamicString& operator =(DynamicString&& string);
 
-	// Create a new string which is initialized to a copy a substring of this string
-	DynamicString SubString(size_t startIndex, size_t numChars = SIZE_MAX) const;
+	// Returns a newly constructed string which is initialized to a copy a substring of this string
+	DynamicString SubString(size_t pos, size_t numChars = SIZE_MAX) const;
 
 	// Resets the string to an empty string and deallocates its memory
 	void Reset();

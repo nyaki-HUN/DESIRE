@@ -9,18 +9,18 @@ public:
 	void Clear();
 
 	// Insert characters
-	void Insert(size_t startIndex, const char* pStr, size_t numChars);
-	void Insert(size_t startIndex, const String& string)				{ Insert(startIndex, string.Str(), string.Length()); }
+	void Insert(size_t pos, const char* pStr, size_t numChars);
+	void Insert(size_t pos, const String& string)					{ Insert(pos, string.Str(), string.Length()); }
 
 	template<size_t SIZE>
-	void Insert(size_t startIndex, const char(&str)[SIZE])				{ Insert(startIndex, str, SIZE - 1); }
+	void Insert(size_t pos, const char(&str)[SIZE])					{ Insert(pos, str, SIZE - 1); }
 
 	// Remove characters
-	void RemoveFrom(size_t startIndex, size_t numChars = SIZE_MAX);
+	void RemoveFrom(size_t pos, size_t numChars = SIZE_MAX);
 	void RemoveFromEnd(size_t numChars);
 
 	// Truncate the string at a given position and readjust the length
-	void TruncateAt(size_t startIndex);
+	void TruncateAt(size_t pos);
 
 	// Replace characters in string
 	void Replace(const String& search, const String& replaceTo);

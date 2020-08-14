@@ -25,7 +25,7 @@ TEST_CASE("String", "[Core]")
 
 	SECTION("Find()")
 	{
-		// TODO: Add test cases
+		DESIRE_TODO("Add test cases");
 //		size_t Find(const String& search, size_t startIndex = 0) const;
 //		size_t Find(const char *search, size_t startIndex = 0) const;
 //		size_t Find(char search, size_t startIndex = 0) const;
@@ -33,7 +33,7 @@ TEST_CASE("String", "[Core]")
 
 	SECTION("FindLast()")
 	{
-		// TODO: Add test cases
+		DESIRE_TODO("Add test cases");
 //		size_t FindLast(const String& search) const;
 //		size_t FindLast(const char *search) const;
 //		size_t FindLast(char search) const;
@@ -175,5 +175,11 @@ TEST_CASE("String", "[Core]")
 		String stringWithNullSeparator = "Word0\0Word1";
 		CHECK(stringWithNullSeparator.EndsWith("Word1"));
 		CHECK(stringWithNullSeparator.EndsWith("Word0\0Word1"));
+	}
+
+	SECTION("SubString()")
+	{
+		DESIRE_TODO("Add test cases");
+//		String SubString(size_t pos) const;
 	}
 }

@@ -4,14 +4,14 @@
 void WritableString::Clear()
 {
 	size = 0;
-	data[size] = '\0';
+	pData[size] = '\0';
 }
 
-void WritableString::Insert(size_t startIndex, const char* pStr, size_t numChars)
+void WritableString::Insert(size_t pos, const char* pStr, size_t numChars)
 {
 	ASSERT(pStr != nullptr);
 
-	if(startIndex > size)
+	if(pos > size)
 	{
 		return;
 	}
@@ -22,39 +22,39 @@ void WritableString::Insert(size_t startIndex, const char* pStr, size_t numChars
 		return;
 	}
 
-	memmove(data + startIndex + numChars, data + startIndex, size - startIndex + 1);
-	memcpy(data + startIndex, pStr, numChars);
+	memmove(pData + pos + numChars, pData + pos, size - pos + 1);
+	memcpy(pData + pos, pStr, numChars);
 	size += numChars;
 }
 
-void WritableString::RemoveFrom(size_t startIndex, size_t numChars)
+void WritableString::RemoveFrom(size_t pos, size_t numChars)
 {
-	if(startIndex >= size)
+	if(pos >= size)
 	{
 		return;
 	}
 
-	numChars = std::min(numChars, size - startIndex);
+	numChars = std::min(numChars, size - pos);
 
-	memmove(data + startIndex, data + startIndex + numChars, size - startIndex - numChars + 1);
+	memmove(pData + pos, pData + pos + numChars, size - pos - numChars + 1);
 	size -= numChars;
 }
 
 void WritableString::RemoveFromEnd(size_t numChars)
 {
 	size -= (numChars <= size) ? numChars : size;
-	data[size] = '\0';
+	pData[size] = '\0';
 }
 
-void WritableString::TruncateAt(size_t startIndex)
+void WritableString::TruncateAt(size_t pos)
 {
-	if(startIndex >= size)
+	if(pos >= size)
 	{
 		return;
 	}
 
-	data[startIndex] = '\0';
-	size = startIndex;
+	pData[pos] = '\0';
+	size = pos;
 }
 
 void WritableString::Replace(const String& search, const String& replaceTo)
@@ -130,7 +130,7 @@ void WritableString::ReplaceAllChar(char search, char replaceTo)
 
 	do
 	{
-		data[foundPos] = replaceTo;
+		pData[foundPos] = replaceTo;
 		foundPos = Find(search, foundPos + 1);
 	} while(foundPos != kInvalidPos);
 }
@@ -144,9 +144,9 @@ void WritableString::Append(const String& string)
 		return;
 	}
 
-	memcpy(data + size, string.Str(), numChars);
+	memcpy(pData + size, string.Str(), numChars);
 	size += numChars;
-	data[size] = '\0';
+	pData[size] = '\0';
 }
 
 void WritableString::AppendChar(char ch)
@@ -157,9 +157,9 @@ void WritableString::AppendChar(char ch)
 		return;
 	}
 
-	data[size] = ch;
+	pData[size] = ch;
 	size++;
-	data[size] = '\0';
+	pData[size] = '\0';
 }
 
 WritableString& WritableString::operator +=(int32_t number)
@@ -232,7 +232,7 @@ WritableString& WritableString::operator =(const WritableString& string)
 void WritableString::Set(const char* pStr, size_t numChars)
 {
 	ASSERT(pStr != nullptr);
-	ASSERT(data != pStr);	// It's not allowed to copy from ourself
+	ASSERT(pData != pStr);	// It's not allowed to copy from ourself
 
 	if(!Reserve(numChars))
 	{
@@ -240,9 +240,9 @@ void WritableString::Set(const char* pStr, size_t numChars)
 		return;
 	}
 
-	memcpy(data, pStr, numChars);
+	memcpy(pData, pStr, numChars);
 	size = numChars;
-	data[size] = '\0';
+	pData[size] = '\0';
 }
 
 void WritableString::Trim()
@@ -253,29 +253,29 @@ void WritableString::Trim()
 	};
 
 	// Remove from end
-	while(size > 0 && IsWhiteSpace(data[size - 1]))
+	while(size > 0 && IsWhiteSpace(pData[size - 1]))
 	{
 		size--;
 	}
-	data[size] = '\0';
+	pData[size] = '\0';
 
 	// Remove from beginning
-	char* ch = data;
+	char* ch = pData;
 	while(*ch != '\0' && IsWhiteSpace(*ch))
 	{
 		++ch;
 	}
 
-	if(ch != data)
+	if(ch != pData)
 	{
-		size -= ch - data;
-		memmove(data, ch, size + 1);
+		size -= ch - pData;
+		memmove(pData, ch, size + 1);
 	}
 }
 
 void WritableString::ToLower()
 {
-	char* ch = data;
+	char* ch = pData;
 	while(*ch != '\0')
 	{
 		constexpr uint32_t rangeBegin = 'A';
@@ -291,7 +291,7 @@ void WritableString::ToLower()
 
 void WritableString::ToUpper()
 {
-	char* ch = data;
+	char* ch = pData;
 	while(*ch != '\0')
 	{
 		constexpr uint32_t rangeBegin = 'a';
@@ -310,8 +310,8 @@ char* WritableString::AsCharBufferWithSize(size_t newSize)
 	if(Reserve(newSize))
 	{
 		size = newSize;
-		data[size] = '\0';
-		return data;
+		pData[size] = '\0';
+		return pData;
 	}
 
 	return nullptr;
@@ -351,14 +351,14 @@ void WritableString::Sprintf_internal(size_t pos, const char* pFormatStr, std::v
 	if(Reserve(newSize))
 	{
 		size = newSize;
-		vsnprintf(data + pos, requiredSize + 1, pFormatStr, args);
+		vsnprintf(pData + pos, requiredSize + 1, pFormatStr, args);
 	}
 }
 
 void WritableString::Replace_Internal(size_t pos, size_t numChars, const String& replaceTo)
 {
-	memmove(data + pos + replaceTo.Length(), data + pos + numChars, size - pos - numChars + 1);
+	memmove(pData + pos + replaceTo.Length(), pData + pos + numChars, size - pos - numChars + 1);
 	size += replaceTo.Length() - numChars;
 
-	memcpy(data + pos, replaceTo.Str(), replaceTo.Length());
+	memcpy(pData + pos, replaceTo.Str(), replaceTo.Length());
 }

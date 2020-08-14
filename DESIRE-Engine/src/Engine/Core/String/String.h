@@ -6,7 +6,7 @@ public:
 	static constexpr size_t kInvalidPos = (size_t)-1;
 	static const String kEmptyString;
 
-	String(const char* str, size_t numChars);
+	String(const char* pStr, size_t numChars);
 
 	template<size_t SIZE>
 	String(const char(&str)[SIZE])
@@ -17,8 +17,8 @@ public:
 	virtual ~String() {}
 
 	// Find character(s) in string
-	size_t Find(const String& search, size_t startIndex = 0) const;
-	size_t Find(char search, size_t startIndex = 0) const;
+	size_t Find(const String& search, size_t pos = 0) const;
+	size_t Find(char search, size_t pos = 0) const;
 	size_t FindLast(const String& search) const;
 	size_t FindLast(char search) const;
 
@@ -58,10 +58,13 @@ public:
 	bool EndsWith(const String& suffix) const;
 	bool EndsWith(char suffix) const;
 
+	// Returns a portion of the string that starts at a given character position
+	String SubString(size_t pos) const;
+
 protected:
 	String() {}
 
-	char* data = nullptr;
+	char* pData = nullptr;
 	size_t size = 0;
 
 private:

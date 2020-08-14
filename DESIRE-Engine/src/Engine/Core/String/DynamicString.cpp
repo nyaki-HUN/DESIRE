@@ -7,7 +7,7 @@ static char emptyData[1] = { '\0' };
 
 DynamicString::DynamicString()
 {
-	data = emptyData;
+	pData = emptyData;
 }
 
 DynamicString::DynamicString(const char* str, size_t size)
@@ -17,11 +17,11 @@ DynamicString::DynamicString(const char* str, size_t size)
 
 DynamicString::DynamicString(DynamicString&& string)
 {
-	data = string.data;
+	pData = string.pData;
 	size = string.size;
 	preallocatedSize = string.preallocatedSize;
 
-	string.data = emptyData;
+	string.pData = emptyData;
 	string.size = 0;
 	string.preallocatedSize = 0;
 }
@@ -37,33 +37,33 @@ DynamicString& DynamicString::operator =(DynamicString&& string)
 
 	Reset();
 
-	data = string.data;
+	pData = string.pData;
 	size = string.size;
 	preallocatedSize = string.preallocatedSize;
 
-	string.data = emptyData;
+	string.pData = emptyData;
 	string.size = 0;
 	string.preallocatedSize = 0;
 
 	return *this;
 }
 
-DynamicString DynamicString::SubString(size_t startIndex, size_t numChars) const
+DynamicString DynamicString::SubString(size_t pos, size_t numChars) const
 {
-	if(startIndex >= size)
+	if(pos < size)
 	{
-		return DynamicString();
+		return DynamicString(&pData[pos], std::min(numChars, size - pos));
 	}
 
-	return DynamicString(&data[startIndex], std::min(numChars, size - startIndex));
+	return DynamicString();
 }
 
 void DynamicString::Reset()
 {
-	if(data != emptyData)
+	if(pData != emptyData)
 	{
-		MemorySystem::Free(data);
-		data = emptyData;
+		MemorySystem::Free(pData);
+		pData = emptyData;
 		size = 0;
 		preallocatedSize = 0;
 	}
@@ -75,13 +75,13 @@ bool DynamicString::Reserve(size_t numChars)
 	{
 		preallocatedSize = numChars + 1;
 
-		if(data != emptyData)
+		if(pData != emptyData)
 		{
-			data = static_cast<char*>(MemorySystem::Realloc(data, preallocatedSize * sizeof(char)));
+			pData = static_cast<char*>(MemorySystem::Realloc(pData, preallocatedSize * sizeof(char)));
 		}
 		else
 		{
-			data = static_cast<char*>(MemorySystem::Alloc(preallocatedSize * sizeof(char)));
+			pData = static_cast<char*>(MemorySystem::Alloc(preallocatedSize * sizeof(char)));
 		}
 	}
 
