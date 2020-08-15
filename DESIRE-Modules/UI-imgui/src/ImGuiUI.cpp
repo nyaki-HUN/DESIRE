@@ -299,9 +299,9 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 	return ImGui::RadioButton(label.Str(), isActive) && !isActive;
 }
 
-bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, int32_t step)
+bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
-	if(ImGui::DragInt(label.Str(), &value, static_cast<float>(step), minValue, maxValue, "%d"))
+	if(ImGui::DragScalar(label.Str(), ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d"))
 	{
 		value = std::clamp(value, minValue, maxValue);	//  Manually input values aren't clamped and can go off-bounds
 		return true;
@@ -309,9 +309,9 @@ bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue
 	return false;
 }
 
-bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float step)
+bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float speed)
 {
-	if(ImGui::DragFloat(label.Str(), &value, step, minValue, maxValue, "%.3f"))
+	if(ImGui::DragScalar(label.Str(), ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f"))
 	{
 		value = std::clamp(value, minValue, maxValue);	//  Manually input values aren't clamped and can go off-bounds, so we do it here
 		return true;

@@ -49,8 +49,8 @@ public:
 		return false;
 	}
 
-	virtual bool ValueSpinner(const String& label, int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, int32_t step = 1) = 0;
-	virtual bool ValueSpinner(const String& label, float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float step = 0.01f) = 0;
+	virtual bool ValueSpinner(const String& label, int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, float speed = 0.1f) = 0;
+	virtual bool ValueSpinner(const String& label, float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float speed = 0.01f) = 0;
 
 	virtual bool ValueEdit(const String& label, Vector3& value) = 0;
 

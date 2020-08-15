@@ -310,10 +310,10 @@ void NuklearUI::ProgressBar(float progressPercent)
 	nk_progress(ctx.get(), &progress, 1000, NK_FIXED);
 }
 
-bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, int32_t step)
+bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
 	int32_t newValue = value;
-	nk_property_int(ctx.get(), label.Str(), minValue, &newValue, maxValue, step, static_cast<float>(step));
+	nk_property_int(ctx.get(), label.Str(), minValue, &newValue, maxValue, 1, 1);
 	if(value != newValue)
 	{
 		value = newValue;
@@ -322,10 +322,10 @@ bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t minVal
 	return false;
 }
 
-bool NuklearUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float step)
+bool NuklearUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float speed)
 {
 	float newValue = value;
-	nk_property_float(ctx.get(), label.Str(), minValue, &newValue, maxValue, step, step);
+	nk_property_float(ctx.get(), label.Str(), minValue, &newValue, maxValue, speed, speed);
 	if(value != newValue)
 	{
 		value = newValue;
