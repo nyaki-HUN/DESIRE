@@ -176,6 +176,16 @@ const Vector2& Input::GetOsMouseCursorPos() const
 	return mouseCursorPos;
 }
 
+bool Input::IsOsMouseCursorClipped() const
+{
+	return isOsMouseCursorClipped;
+}
+
+bool Input::IsOsMouseCursorVisible() const
+{
+	return isOsMouseCursorVisible;
+}
+
 Keyboard& Input::GetKeyboardByHandle(void* handle)
 {
 	for(Keyboard& keyboard : keyboards)

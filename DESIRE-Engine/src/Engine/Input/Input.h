@@ -41,8 +41,12 @@ public:
 	bool WasMouseButtonPressed(Mouse::EButton button) const;
 
 	const Vector2& GetOsMouseCursorPos() const;
+
 	void SetOsMouseCursorClipped(bool isClipped);
+	bool IsOsMouseCursorClipped() const;
+
 	void SetOsMouseCursorVisible(bool isVisible);
+	bool IsOsMouseCursorVisible() const;
 
 private:
 	Keyboard& GetKeyboardByHandle(void* handle);
