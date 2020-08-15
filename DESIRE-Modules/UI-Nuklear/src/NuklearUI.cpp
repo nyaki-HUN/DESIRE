@@ -313,7 +313,7 @@ void NuklearUI::ProgressBar(float progressPercent)
 bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
 	int32_t newValue = value;
-	nk_property_int(ctx.get(), label.Str(), minValue, &newValue, maxValue, 1, 1);
+	nk_property_int(ctx.get(), label.Str(), minValue, &newValue, maxValue, 1, std::max(1.0f, speed));
 	if(value != newValue)
 	{
 		value = newValue;
