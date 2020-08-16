@@ -39,6 +39,7 @@ public:
 	// Mouse
 	bool IsMouseButtonDown(Mouse::EButton button) const;
 	bool WasMouseButtonPressed(Mouse::EButton button) const;
+	float GetMouseAxisDelta(Mouse::EAxis axis) const;
 
 	const Vector2& GetOsMouseCursorPos() const;
 

@@ -171,13 +171,8 @@ void NuklearUI::NewFrame(OSWindow* pWindow)
 	nk_input_button(ctx.get(), NK_BUTTON_MIDDLE, x, y, Modules::Input->IsMouseButtonDown(Mouse::Button_Middle));
 	nk_input_button(ctx.get(), NK_BUTTON_RIGHT, x, y, Modules::Input->IsMouseButtonDown(Mouse::Button_Right));
 
-	float mouseWheel = 0.0f;
-	float mouseWheelH = 0.0f;
-	for(const Mouse& mouse : Modules::Input->GetMouses())
-	{
-		mouseWheel += mouse.GetAxisDelta(Mouse::Wheel);
-		mouseWheelH += mouse.GetAxisDelta(Mouse::Wheel_Horizontal);
-	}
+	const float mouseWheel = Modules::Input->GetMouseAxisDelta(Mouse::Wheel);
+	const float mouseWheelH = Modules::Input->GetMouseAxisDelta(Mouse::Wheel_Horizontal);
 	nk_input_scroll(ctx.get(), nk_vec2(mouseWheelH, mouseWheel));
 
 	nk_input_end(ctx.get());

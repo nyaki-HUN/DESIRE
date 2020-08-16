@@ -171,6 +171,17 @@ bool Input::WasMouseButtonPressed(Mouse::EButton button) const
 	return false;
 }
 
+float Input::GetMouseAxisDelta(Mouse::EAxis axis) const
+{
+	float delta = 0.0f;
+	for(const Mouse& mouse : mouses)
+	{
+		delta += mouse.GetAxisDelta(axis);
+	}
+
+	return delta;
+}
+
 const Vector2& Input::GetOsMouseCursorPos() const
 {
 	return mouseCursorPos;

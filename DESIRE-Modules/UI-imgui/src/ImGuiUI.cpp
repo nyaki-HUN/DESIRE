@@ -134,13 +134,8 @@ void ImGuiUI::NewFrame(OSWindow* pWindow)
 	io.MouseDown[ImGuiMouseButton_Left] = Modules::Input->IsMouseButtonDown(Mouse::EButton::Button_Left);
 	io.MouseDown[ImGuiMouseButton_Right] = Modules::Input->IsMouseButtonDown(Mouse::EButton::Button_Right);
 	io.MouseDown[ImGuiMouseButton_Middle] = Modules::Input->IsMouseButtonDown(Mouse::EButton::Button_Middle);
-	io.MouseWheel = 0.0f;
-	io.MouseWheelH = 0.0f;
-	for(const Mouse& mouse : Modules::Input->GetMouses())
-	{
-		io.MouseWheel += mouse.GetAxisDelta(Mouse::Wheel);
-		io.MouseWheelH += mouse.GetAxisDelta(Mouse::Wheel_Horizontal);
-	}
+	io.MouseWheel = Modules::Input->GetMouseAxisDelta(Mouse::Wheel);
+	io.MouseWheelH = Modules::Input->GetMouseAxisDelta(Mouse::Wheel_Horizontal);
 
 	switch(ImGui::GetMouseCursor())
 	{
