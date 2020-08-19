@@ -281,7 +281,7 @@ bool ImGuiUI::TextInput(const String& label, WritableString& value)
 bool ImGuiUI::Button(const String& label, const Vector2& size)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isPressed = ImGui::ButtonEx(label.Str(), ImVec2(size.GetX(), size.GetY()), ImGuiButtonFlags_None);
+	const bool isPressed = ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
 	ImGui::PopID();
 
 	return isPressed;
@@ -328,7 +328,7 @@ bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue
 	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
 	ImGui::PopID();
 
-	if(ImGui::GetItemID() == ImGui::GetActiveID())
+	if(ImGui::IsItemActive())
 	{
 		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
 	}
@@ -342,7 +342,7 @@ bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, fl
 	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
 	ImGui::PopID();
 
-	if(ImGui::GetItemID() == ImGui::GetActiveID())
+	if(ImGui::IsItemActive())
 	{
 		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
 	}
