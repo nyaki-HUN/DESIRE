@@ -262,14 +262,20 @@ void ImGuiUI::Text(const String& label)
 
 bool ImGuiUI::TextInput(const String& label, WritableString& value)
 {
+	bool isValueChanged = false;
+
 	constexpr int kMaxSize = 255;
 	StackString<kMaxSize> string = value;
+
+	ImGui::PushID(s_widgetCounter++);
 	if(ImGui::InputText(label.Str(), string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_EnterReturnsTrue, nullptr, nullptr))
 	{
 		value.Set(string.Str(), strlen(string.Str()));
-		return true;
+		isValueChanged = true;
 	}
-	return false;
+	ImGui::PopID();
+
+	return isValueChanged;
 }
 
 bool ImGuiUI::Button(const String& label, const Vector2& size)
@@ -283,8 +289,9 @@ bool ImGuiUI::Button(const String& label, const Vector2& size)
 
 bool ImGuiUI::ArrowButton(EArrowDir dir)
 {
-	ImGui::PushID(s_widgetCounter++);
 	bool isPressed = false;
+
+	ImGui::PushID(s_widgetCounter++);
 	switch(dir)
 	{
 		case EArrowDir::Left:	isPressed = ImGui::ArrowButton("", ImGuiDir_Left); break;
@@ -299,17 +306,27 @@ bool ImGuiUI::ArrowButton(EArrowDir dir)
 
 bool ImGuiUI::Checkbox(const String& label, bool& isChecked)
 {
-	return ImGui::Checkbox(label.Str(), &isChecked);
+	ImGui::PushID(s_widgetCounter++);
+	const bool isPressed = ImGui::Checkbox(label.Str(), &isChecked);
+	ImGui::PopID();
+
+	return isPressed;
 }
 
 bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 {
-	return ImGui::RadioButton(label.Str(), isActive) && !isActive;
+	ImGui::PushID(s_widgetCounter++);
+	const bool isPressed = ImGui::RadioButton(label.Str(), isActive) && !isActive;
+	ImGui::PopID();
+
+	return isPressed;
 }
 
 bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
+	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	ImGui::PopID();
 
 	if(ImGui::GetItemID() == ImGui::GetActiveID())
 	{
@@ -321,7 +338,9 @@ bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue
 
 bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float speed)
 {
+	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	ImGui::PopID();
 
 	if(ImGui::GetItemID() == ImGui::GetActiveID())
 	{
@@ -333,24 +352,38 @@ bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, fl
 
 bool ImGuiUI::ValueEdit(const String& label, Vector3& value)
 {
+	bool isValueChanged = false;
+
 	float elements[3];
 	value.StoreXYZ(elements);
+
+	ImGui::PushID(s_widgetCounter++);
 	if(ImGui::InputFloat3(label.Str(), elements, "%.3f", ImGuiInputTextFlags_None))
 	{
 		value.LoadXYZ(elements);
-		return true;
+		isValueChanged = true;
 	}
-	return false;
+	ImGui::PopID();
+
+	return isValueChanged;
 }
 
 bool ImGuiUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
 {
-	return ImGui::SliderScalar(label.Str(), ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	ImGui::PushID(s_widgetCounter++);
+	const bool isValueChanged = ImGui::SliderScalar(label.Str(), ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	ImGui::PopID();
+
+	return isValueChanged;
 }
 
 bool ImGuiUI::Slider(const String& label, float& value, float minValue, float maxValue)
 {
-	return ImGui::SliderScalar(label.Str(), ImGuiDataType_Float , &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	ImGui::PushID(s_widgetCounter++);
+	const bool isValueChanged = ImGui::SliderScalar(label.Str(), ImGuiDataType_Float , &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	ImGui::PopID();
+
+	return isValueChanged;
 }
 
 void ImGuiUI::ProgressBar(float progress)
@@ -360,12 +393,20 @@ void ImGuiUI::ProgressBar(float progress)
 
 bool ImGuiUI::ColorPicker(const String& label, float(&colorRGB)[3])
 {
-	return ImGui::ColorEdit3(label.Str(), colorRGB, ImGuiColorEditFlags_None);
+	ImGui::PushID(s_widgetCounter++);
+	const bool isValueChanged = ImGui::ColorEdit3(label.Str(), colorRGB, ImGuiColorEditFlags_None);
+	ImGui::PopID();
+
+	return isValueChanged;
 }
 
 bool ImGuiUI::ColorPicker(const String& label, float(&colorRGBA)[4])
 {
-	return ImGui::ColorEdit4(label.Str(), colorRGBA, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+	ImGui::PushID(s_widgetCounter++);
+	const bool isValueChanged = ImGui::ColorEdit4(label.Str(), colorRGBA, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+	ImGui::PopID();
+
+	return isValueChanged;
 }
 
 void ImGuiUI::SameLine()
