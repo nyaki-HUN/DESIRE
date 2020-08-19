@@ -296,12 +296,26 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 
 bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
-	return ImGui::DragScalar(label.Str(), ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+
+	if(ImGui::GetItemID() == ImGui::GetActiveID())
+	{
+		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+	}
+
+	return isValueChanged;
 }
 
 bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float speed)
 {
-	return ImGui::DragScalar(label.Str(), ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+
+	if(ImGui::GetItemID() == ImGui::GetActiveID())
+	{
+		ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+	}
+
+	return isValueChanged;
 }
 
 bool ImGuiUI::ValueEdit(const String& label, Vector3& value)
@@ -318,12 +332,12 @@ bool ImGuiUI::ValueEdit(const String& label, Vector3& value)
 
 bool ImGuiUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
 {
-	return ImGui::SliderInt(label.Str(), &value, minValue, maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	return ImGui::SliderScalar(label.Str(), ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
 }
 
 bool ImGuiUI::Slider(const String& label, float& value, float minValue, float maxValue)
 {
-	return ImGui::SliderFloat(label.Str(), &value, minValue, maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	return ImGui::SliderScalar(label.Str(), ImGuiDataType_Float , &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
 }
 
 void ImGuiUI::ProgressBar(float progress)
