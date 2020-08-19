@@ -22,6 +22,8 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 
+static int s_widgetCounter = 0;
+
 ImGuiUI::ImGuiUI()
 {
 	ImGui::SetAllocatorFunctions(&ImGuiCallbacks::MallocWrapper, &ImGuiCallbacks::FreeWrapper, this);
@@ -107,6 +109,8 @@ void ImGuiUI::Kill()
 
 void ImGuiUI::NewFrame(OSWindow* pWindow)
 {
+	s_widgetCounter = 0;
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(pWindow->GetWidth(), pWindow->GetHeight());
 	io.DeltaTime = std::max(FLT_MIN, Modules::Application->GetTimer()->GetSecDelta());		// imgui needs a positive delta time
@@ -251,7 +255,9 @@ void ImGuiUI::EndWindow()
 
 void ImGuiUI::Text(const String& label)
 {
+	ImGui::PushID(s_widgetCounter++);
 	ImGui::TextUnformatted(label.Str(), label.Str() + label.Length());
+	ImGui::PopID();
 }
 
 bool ImGuiUI::TextInput(const String& label, WritableString& value)
@@ -268,20 +274,27 @@ bool ImGuiUI::TextInput(const String& label, WritableString& value)
 
 bool ImGuiUI::Button(const String& label, const Vector2& size)
 {
-	return ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
+	ImGui::PushID(s_widgetCounter++);
+	const bool isPressed = ImGui::ButtonEx(label.Str(), ImVec2(size.GetX(), size.GetY()), ImGuiButtonFlags_None);
+	ImGui::PopID();
+
+	return isPressed;
 }
 
-bool ImGuiUI::ArrowButton(const String& label, EArrowDir dir)
+bool ImGuiUI::ArrowButton(EArrowDir dir)
 {
+	ImGui::PushID(s_widgetCounter++);
+	bool isPressed = false;
 	switch(dir)
 	{
-		case EArrowDir::Left:	return ImGui::ArrowButton(label.Str(), ImGuiDir_Left);
-		case EArrowDir::Right:	return ImGui::ArrowButton(label.Str(), ImGuiDir_Right);
-		case EArrowDir::Up:		return ImGui::ArrowButton(label.Str(), ImGuiDir_Up);
-		case EArrowDir::Down:	return ImGui::ArrowButton(label.Str(), ImGuiDir_Down);
+		case EArrowDir::Left:	isPressed = ImGui::ArrowButton("", ImGuiDir_Left); break;
+		case EArrowDir::Right:	isPressed = ImGui::ArrowButton("", ImGuiDir_Right); break;
+		case EArrowDir::Up:		isPressed = ImGui::ArrowButton("", ImGuiDir_Up); break;
+		case EArrowDir::Down:	isPressed = ImGui::ArrowButton("", ImGuiDir_Down); break;
 	}
+	ImGui::PopID();
 
-	return false;
+	return isPressed;
 }
 
 bool ImGuiUI::Checkbox(const String& label, bool& isChecked)

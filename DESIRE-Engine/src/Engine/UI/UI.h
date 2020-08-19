@@ -34,7 +34,7 @@ public:
 	virtual void Text(const String& label) = 0;
 	virtual bool TextInput(const String& label, WritableString& value) = 0;
 	virtual bool Button(const String& label, const Vector2& size = Vector2::Zero()) = 0;
-	virtual bool ArrowButton(const String& label, EArrowDir dir) = 0;
+	virtual bool ArrowButton(EArrowDir dir) = 0;
 	virtual bool Checkbox(const String& label, bool& isChecked) = 0;
 	virtual bool RadioButtonOption(const String& label, bool isActive) = 0;
 

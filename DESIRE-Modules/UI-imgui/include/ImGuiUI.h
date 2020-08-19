@@ -26,7 +26,7 @@ public:
 	void Text(const String& label) override;
 	bool TextInput(const String& label, WritableString& value) override;
 	bool Button(const String& label, const Vector2& size = Vector2::Zero()) override;
-	bool ArrowButton(const String& label, EArrowDir dir) override;
+	bool ArrowButton(EArrowDir dir) override;
 	bool Checkbox(const String& label, bool& isChecked) override;
 	bool RadioButtonOption(const String& label, bool isActive) override;
 

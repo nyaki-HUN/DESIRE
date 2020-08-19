@@ -266,19 +266,18 @@ bool NuklearUI::Button(const String& label, const Vector2& size)
 	return nk_button_text(ctx.get(), label.Str(), static_cast<int>(label.Length()));
 }
 
-bool NuklearUI::ArrowButton(const String& label, EArrowDir dir)
+bool NuklearUI::ArrowButton(EArrowDir dir)
 {
-    DESIRE_UNUSED(label);
-
+	int isPressed = nk_false;
 	switch(dir)
 	{
-		case EArrowDir::Left:	return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_LEFT);
-		case EArrowDir::Right:	return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_RIGHT);
-		case EArrowDir::Up:		return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_UP);
-		case EArrowDir::Down:	return nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_DOWN);
+		case EArrowDir::Left:	isPressed = nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_LEFT); break;
+		case EArrowDir::Right:	isPressed = nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_RIGHT); break;
+		case EArrowDir::Up:		isPressed = nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_UP); break;
+		case EArrowDir::Down:	isPressed = nk_button_symbol(ctx.get(), NK_SYMBOL_TRIANGLE_DOWN); break;
 	}
 
-	return false;
+	return (isPressed == nk_true);
 }
 
 bool NuklearUI::Checkbox(const String& label, bool& isChecked)

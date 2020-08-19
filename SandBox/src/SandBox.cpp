@@ -153,7 +153,7 @@ void SandBox::Update()
 
 	Modules::UI->Button("Button");
 
-	Modules::UI->ArrowButton("ArrowButton", UI::EArrowDir::Left);
+	Modules::UI->ArrowButton(UI::EArrowDir::Left);
 
 	static bool isCheckboxChecked = false;
 	Modules::UI->Checkbox("Checkbox", isCheckboxChecked);
