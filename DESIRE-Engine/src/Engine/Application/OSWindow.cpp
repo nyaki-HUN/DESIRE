@@ -38,5 +38,5 @@ void OSWindow::SetSize(uint16_t i_width, uint16_t i_height)
 
 	width = i_width;
 	height = i_height;
-	Modules::Render->UpdateRenderWindow(this);
+	Modules::Render->UpdateRenderWindow(*this);
 }

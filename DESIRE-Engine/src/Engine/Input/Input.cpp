@@ -9,7 +9,7 @@ Input::~Input()
 {
 }
 
-void Input::Init(OSWindow* window)
+void Input::Init(OSWindow& window)
 {
 	Init_internal(window);
 }
@@ -85,11 +85,11 @@ const Array<GameController>& Input::GetControllers() const
 	return gameControllers;
 }
 
-const InputDevice* Input::GetInputDeviceByHandle(const void* handle) const
+const InputDevice* Input::GetInputDeviceByHandle(const void* pHandle) const
 {
 	for(const Keyboard& device : keyboards)
 	{
-		if(device.handle == handle)
+		if(device.handle == pHandle)
 		{
 			return &device;
 		}
@@ -97,7 +97,7 @@ const InputDevice* Input::GetInputDeviceByHandle(const void* handle) const
 
 	for(const Mouse& device : mouses)
 	{
-		if(device.handle == handle)
+		if(device.handle == pHandle)
 		{
 			return &device;
 		}
@@ -105,7 +105,7 @@ const InputDevice* Input::GetInputDeviceByHandle(const void* handle) const
 
 	for(const GameController& device : gameControllers)
 	{
-		if(device.handle == handle)
+		if(device.handle == pHandle)
 		{
 			return &device;
 		}
@@ -197,32 +197,32 @@ bool Input::IsOsMouseCursorVisible() const
 	return isOsMouseCursorVisible;
 }
 
-Keyboard& Input::GetKeyboardByHandle(void* handle)
+Keyboard& Input::GetKeyboardByHandle(void* pHandle)
 {
 	for(Keyboard& keyboard : keyboards)
 	{
-		if(keyboard.handle == handle)
+		if(keyboard.handle == pHandle)
 		{
 			return keyboard;
 		}
 	}
 
 	// New keyboard found
-	keyboards.Add(Keyboard(handle));
+	keyboards.Add(Keyboard(pHandle));
 	return keyboards.GetLast();
 }
 
-Mouse& Input::GetMouseByHandle(void* handle)
+Mouse& Input::GetMouseByHandle(void* pHandle)
 {
 	for(Mouse& mouse : mouses)
 	{
-		if(mouse.handle == handle)
+		if(mouse.handle == pHandle)
 		{
 			return mouse;
 		}
 	}
 
 	// New mouse found
-	mouses.Add(Mouse(handle));
+	mouses.Add(Mouse(pHandle));
 	return mouses.GetLast();
 }

@@ -12,8 +12,8 @@ class BgfxRender : public Render
 public:
 	BgfxRender();
 
-	void Init(OSWindow* pMainWindow) override;
-	void UpdateRenderWindow(OSWindow* pWindow) override;
+	void Init(OSWindow& mainWindow) override;
+	void UpdateRenderWindow(OSWindow& window) override;
 	void Kill() override;
 
 	void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const override;

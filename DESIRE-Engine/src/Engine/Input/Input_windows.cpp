@@ -166,23 +166,23 @@ public:
 //	Input
 // --------------------------------------------------------------------------------------------------------------------
 
-void Input::Init_internal(OSWindow* window)
+void Input::Init_internal(OSWindow& window)
 {
-	window->RegisterMessageHandler(WM_INPUT, InputImpl::Handle_WM_INPUT);
-	window->RegisterMessageHandler(WM_MOUSEMOVE, InputImpl::Handle_WM_MOUSEMOVE);
-	window->RegisterMessageHandler(WM_CHAR, InputImpl::Handle_WM_CHAR);
+	window.RegisterMessageHandler(WM_INPUT, InputImpl::Handle_WM_INPUT);
+	window.RegisterMessageHandler(WM_MOUSEMOVE, InputImpl::Handle_WM_MOUSEMOVE);
+	window.RegisterMessageHandler(WM_CHAR, InputImpl::Handle_WM_CHAR);
 
 	RAWINPUTDEVICE rawInputDevices[2];
 	// Mouse
 	rawInputDevices[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
 	rawInputDevices[0].usUsage = HID_USAGE_GENERIC_MOUSE;
 	rawInputDevices[0].dwFlags = 0;
-	rawInputDevices[0].hwndTarget = (HWND)window->GetHandle();
+	rawInputDevices[0].hwndTarget = static_cast<HWND>(window.GetHandle());
 	// Keyboard
 	rawInputDevices[1].usUsagePage = HID_USAGE_PAGE_GENERIC;
 	rawInputDevices[1].usUsage = HID_USAGE_GENERIC_KEYBOARD;
 	rawInputDevices[1].dwFlags = 0;
-	rawInputDevices[1].hwndTarget = (HWND)window->GetHandle();
+	rawInputDevices[1].hwndTarget = static_cast<HWND>(window.GetHandle());
 	BOOL succeeded = RegisterRawInputDevices(rawInputDevices, 2, sizeof(RAWINPUTDEVICE));
 	if(!succeeded)
 	{

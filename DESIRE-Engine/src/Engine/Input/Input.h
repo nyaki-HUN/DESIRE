@@ -13,12 +13,10 @@ class OSWindow;
 class Input
 {
 public:
-	typedef void(*HotkeyCallback_t)(void* userData);
-
 	Input();
 	~Input();
 
-	void Init(OSWindow* window);
+	void Init(OSWindow& window);
 	void Kill();
 	void Update();
 	void Reset();
@@ -27,7 +25,7 @@ public:
 	const Array<Mouse>& GetMouses() const;
 	const Array<GameController>& GetControllers() const;
 
-	const InputDevice* GetInputDeviceByHandle(const void* handle) const;
+	const InputDevice* GetInputDeviceByHandle(const void* pHandle) const;
 
 	// Keyboard
 	bool IsKeyDown(EKeyCode keyCode, EKeyModifier modifierType = EKeyModifier::None) const;
@@ -50,10 +48,10 @@ public:
 	bool IsOsMouseCursorVisible() const;
 
 private:
-	Keyboard& GetKeyboardByHandle(void* handle);
-	Mouse& GetMouseByHandle(void* handle);
+	Keyboard& GetKeyboardByHandle(void* pHandle);
+	Mouse& GetMouseByHandle(void* pHandle);
 
-	void Init_internal(OSWindow* window);
+	void Init_internal(OSWindow& window);
 	void Kill_internal();
 	void Update_internal();
 

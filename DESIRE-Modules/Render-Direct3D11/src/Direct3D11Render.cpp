@@ -117,11 +117,11 @@ Direct3D11Render::~Direct3D11Render()
 {
 }
 
-void Direct3D11Render::Init(OSWindow* pMainWindow)
+void Direct3D11Render::Init(OSWindow& mainWindow)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
-	swapChainDesc.BufferDesc.Width = pMainWindow->GetWidth();
-	swapChainDesc.BufferDesc.Height = pMainWindow->GetHeight();
+	swapChainDesc.BufferDesc.Width = mainWindow.GetWidth();
+	swapChainDesc.BufferDesc.Height = mainWindow.GetHeight();
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -130,7 +130,7 @@ void Direct3D11Render::Init(OSWindow* pMainWindow)
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
-	swapChainDesc.OutputWindow = (HWND)pMainWindow->GetHandle();
+	swapChainDesc.OutputWindow = static_cast<HWND>(mainWindow.GetHandle());
 	swapChainDesc.Windowed = TRUE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
@@ -161,7 +161,7 @@ void Direct3D11Render::Init(OSWindow* pMainWindow)
 	// Set the default topology when there is no active mesh
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	CreateBackBuffer(pMainWindow->GetWidth(), pMainWindow->GetHeight());
+	CreateBackBuffer(mainWindow.GetWidth(), mainWindow.GetHeight());
 	SetDefaultRenderStates();
 
 	Bind(screenSpaceQuadVertexShader.get());
@@ -169,7 +169,7 @@ void Direct3D11Render::Init(OSWindow* pMainWindow)
 	Bind(errorPixelShader.get());
 }
 
-void Direct3D11Render::UpdateRenderWindow(OSWindow* pWindow)
+void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 {
 	if(!initialized)
 	{
@@ -182,7 +182,7 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow* pWindow)
 	DX_RELEASE(backBufferRenderTargetView);
 	deviceCtx->Flush();
 
-	HRESULT hr = swapChain->ResizeBuffers(0, pWindow->GetWidth(), pWindow->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	HRESULT hr = swapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 	if(hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
 	{
 		// Have to destroy the device, swapchain, and all resources and recreate them to recover from this case
@@ -190,7 +190,7 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow* pWindow)
 
 	DX_CHECK_HRESULT(hr);
 
-	CreateBackBuffer(pWindow->GetWidth(), pWindow->GetHeight());
+	CreateBackBuffer(window.GetWidth(), window.GetHeight());
 }
 
 void Direct3D11Render::Kill()

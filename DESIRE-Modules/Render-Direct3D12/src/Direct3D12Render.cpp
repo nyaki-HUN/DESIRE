@@ -118,7 +118,7 @@ Direct3D12Render::~Direct3D12Render()
 {
 }
 
-void Direct3D12Render::Init(OSWindow* pMainWindow)
+void Direct3D12Render::Init(OSWindow& mainWindow)
 {
 	HRESULT hr;
 
@@ -133,8 +133,8 @@ void Direct3D12Render::Init(OSWindow* pMainWindow)
 	}
 #endif
 
-	IDXGIFactory4* factory = nullptr;
-	hr = CreateDXGIFactory1(IID_PPV_ARGS(&factory));
+	IDXGIFactory4* pFactory = nullptr;
+	hr = CreateDXGIFactory1(IID_PPV_ARGS(&pFactory));
 	ASSERT(SUCCEEDED(hr));
 
 	hr = D3D12CreateDevice(
@@ -158,8 +158,8 @@ void Direct3D12Render::Init(OSWindow* pMainWindow)
 
 	// Ccreate swap chain
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-	swapChainDesc.Width = pMainWindow->GetWidth();
-	swapChainDesc.Height = pMainWindow->GetHeight();
+	swapChainDesc.Width = mainWindow.GetWidth();
+	swapChainDesc.Height = mainWindow.GetHeight();
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.Stereo = FALSE;
 	swapChainDesc.SampleDesc.Count = 1;
@@ -169,7 +169,7 @@ void Direct3D12Render::Init(OSWindow* pMainWindow)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 
-	hr = factory->CreateSwapChainForHwnd(commandQueue, static_cast<HWND>(pMainWindow->GetHandle()), &swapChainDesc, nullptr, nullptr, &swapChain);
+	hr = pFactory->CreateSwapChainForHwnd(commandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &swapChain);
 	ASSERT(SUCCEEDED(hr));
 
 	Bind(screenSpaceQuadVertexShader.get());
@@ -177,14 +177,14 @@ void Direct3D12Render::Init(OSWindow* pMainWindow)
 	Bind(errorPixelShader.get());
 }
 
-void Direct3D12Render::UpdateRenderWindow(OSWindow* pWindow)
+void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 {
 	if(!initialized)
 	{
 		return;
 	}
 
-	swapChain->ResizeBuffers(0, pWindow->GetWidth(), pWindow->GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	swapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 }
 
 void Direct3D12Render::Kill()
@@ -435,17 +435,17 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
 	UINT compileFlags = 0;
 
 	ID3DBlob* pErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(pShader->data.ptr.get()	// pSrcData
-		, pShader->data.size						// SrcDataSize
-		, filenameWithPath.Str()					// pSourceName
-		, defines									// pDefines
-		, D3D_COMPILE_STANDARD_FILE_INCLUDE			// pInclude
-		, "main"									// pEntrypoint
-		, isVertexShader ? "vs_5_0" : "ps_5_0"		// pTarget
-		, compileFlags								// D3DCOMPILE flags
-		, 0											// D3DCOMPILE_EFFECT flags
-		, &pShaderRenderData->shaderCode			// ppCode
-		, &pErrorBlob);								// ppErrorMsgs
+	HRESULT hr = D3DCompile(pShader->data.ptr.get(),	// pSrcData
+		pShader->data.size,								// SrcDataSize
+		filenameWithPath.Str(),							// pSourceName
+		defines,										// pDefines
+		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
+		"main",											// pEntrypoint
+		isVertexShader ? "vs_5_0" : "ps_5_0",			// pTarget
+		compileFlags,									// D3DCOMPILE flags
+		0,												// D3DCOMPILE_EFFECT flags
+		&pShaderRenderData->shaderCode,					// ppCode
+		&pErrorBlob);									// ppErrorMsgs
 	if(FAILED(hr))
 	{
 		if(pErrorBlob != nullptr)
@@ -648,7 +648,7 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 
 	ASSERT(samplerIdx < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
-//	TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->pRenderData);
+//	const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->pRenderData);
 
 	static const D3D12_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
 	{

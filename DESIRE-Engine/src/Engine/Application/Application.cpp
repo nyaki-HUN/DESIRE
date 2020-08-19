@@ -73,8 +73,8 @@ int Application::Start(int argc, const char* const* argv)
 		Modules::Application->mainWindow = std::make_unique<OSWindow>(params.windowParams);
 	}
 
-	Modules::Render->Init(Modules::Application->mainWindow.get());
-	Modules::Input->Init(Modules::Application->mainWindow.get());
+	Modules::Render->Init(*Modules::Application->mainWindow);
+	Modules::Input->Init(*Modules::Application->mainWindow);
 	Modules::UI->Init();
 
 	Modules::Application->Run();

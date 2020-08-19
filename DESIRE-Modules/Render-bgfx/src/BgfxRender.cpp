@@ -40,19 +40,19 @@ BgfxRender::BgfxRender()
 	screenSpaceQuadVertexLayout.end();
 }
 
-void BgfxRender::Init(OSWindow* mainWindow)
+void BgfxRender::Init(OSWindow& mainWindow)
 {
 	bgfx::PlatformData pd = {};
 #if DESIRE_PLATFORM_LINUX
 	pd.ndt = GetDisplay();
 #endif	// #if DESIRE_PLATFORM_LINUX
-	pd.nwh = mainWindow->GetHandle();
+	pd.nwh = mainWindow.GetHandle();
 	bgfx::setPlatformData(pd);
 
 	bgfx::Init initParams;
 	initParams.resolution.format = bgfx::TextureFormat::RGBA8;
-	initParams.resolution.width = mainWindow->GetWidth();
-	initParams.resolution.height = mainWindow->GetHeight();
+	initParams.resolution.width = mainWindow.GetWidth();
+	initParams.resolution.height = mainWindow.GetHeight();
 	initialized = bgfx::init(initParams);
 	activeViewId = 0;
 
@@ -72,17 +72,17 @@ void BgfxRender::Init(OSWindow* mainWindow)
 
 	BindEmbeddedShader(screenSpaceQuadVertexShader.get());
 
-	bgfx::reset(mainWindow->GetWidth(), mainWindow->GetHeight(), BGFX_RESET_VSYNC);
+	bgfx::reset(mainWindow.GetWidth(), mainWindow.GetHeight(), BGFX_RESET_VSYNC);
 }
 
-void BgfxRender::UpdateRenderWindow(OSWindow* window)
+void BgfxRender::UpdateRenderWindow(OSWindow& window)
 {
 	if(!initialized)
 	{
 		return;
 	}
 
-	bgfx::reset(window->GetWidth(), window->GetHeight(), BGFX_RESET_VSYNC);
+	bgfx::reset(window.GetWidth(), window.GetHeight(), BGFX_RESET_VSYNC);
 }
 
 void BgfxRender::Kill()

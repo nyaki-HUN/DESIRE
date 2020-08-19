@@ -79,8 +79,8 @@ public:
 	Render();
 	virtual ~Render();
 
-	virtual void Init(OSWindow* pMainWindow) = 0;
-	virtual void UpdateRenderWindow(OSWindow* pWindow) = 0;
+	virtual void Init(OSWindow& mainWindow) = 0;
+	virtual void UpdateRenderWindow(OSWindow& window) = 0;
 	virtual void Kill() = 0;
 
 	virtual void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const = 0;

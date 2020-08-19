@@ -106,7 +106,7 @@ public:
 //	Input
 // --------------------------------------------------------------------------------------------------------------------
 
-void Input::Init_internal(OSWindow* window)
+void Input::Init_internal(OSWindow& window)
 {
 	ASSERT(s_display == nullptr && "Input is already initialized");
 
@@ -118,14 +118,13 @@ void Input::Init_internal(OSWindow* window)
 		return;
 	}
 
-	LINUXWindow* win = static_cast<LINUXWindow*>(window);
-	win->RegisterMessageHandler(KeyPress, InputImpl::Handle_KeyPress_KeyRelease);
-	win->RegisterMessageHandler(KeyRelease, InputImpl::Handle_KeyPress_KeyRelease);
-	win->RegisterMessageHandler(ButtonPress, InputImpl::Handle_ButtonPress_ButtonRelease);
-	win->RegisterMessageHandler(ButtonRelease, InputImpl::Handle_ButtonPress_ButtonRelease);
-	win->RegisterMessageHandler(MotionNotify, InputImpl::Handle_MotionNotify);
+	window.RegisterMessageHandler(KeyPress, InputImpl::Handle_KeyPress_KeyRelease);
+	window.RegisterMessageHandler(KeyRelease, InputImpl::Handle_KeyPress_KeyRelease);
+	window.RegisterMessageHandler(ButtonPress, InputImpl::Handle_ButtonPress_ButtonRelease);
+	window.RegisterMessageHandler(ButtonRelease, InputImpl::Handle_ButtonPress_ButtonRelease);
+	window.RegisterMessageHandler(MotionNotify, InputImpl::Handle_MotionNotify);
 
-	XSelectInput(s_display, (Window)window->GetHandle(), KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
+	XSelectInput(s_display, static_cast<Window>(window.GetHandle()), KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 
 	// Add a default keyboard and mouse
 	GetKeyboardByHandle(nullptr);
