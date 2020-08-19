@@ -260,7 +260,7 @@ void ImGuiUI::Text(const String& label)
 	ImGui::PopID();
 }
 
-bool ImGuiUI::TextInput(const String& label, WritableString& value)
+bool ImGuiUI::TextInput(WritableString& value)
 {
 	bool isValueChanged = false;
 
@@ -268,7 +268,7 @@ bool ImGuiUI::TextInput(const String& label, WritableString& value)
 	StackString<kMaxSize> string = value;
 
 	ImGui::PushID(s_widgetCounter++);
-	if(ImGui::InputText(label.Str(), string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_EnterReturnsTrue, nullptr, nullptr))
+	if(ImGui::InputText("", string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_EnterReturnsTrue, nullptr, nullptr))
 	{
 		value.Set(string.Str(), strlen(string.Str()));
 		isValueChanged = true;
@@ -350,7 +350,16 @@ bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, fl
 	return isValueChanged;
 }
 
-bool ImGuiUI::ValueEdit(const String& label, Vector3& value)
+bool ImGuiUI::ValueEdit(float& value)
+{
+	ImGui::PushID(s_widgetCounter++);
+	const bool isValueChanged = ImGui::InputScalar("", ImGuiDataType_Float, &value, nullptr, nullptr, "%.3f", ImGuiInputTextFlags_CharsDecimal);
+	ImGui::PopID();
+
+	return isValueChanged;
+}
+
+bool ImGuiUI::ValueEdit(Vector3& value)
 {
 	bool isValueChanged = false;
 
@@ -358,7 +367,7 @@ bool ImGuiUI::ValueEdit(const String& label, Vector3& value)
 	value.StoreXYZ(elements);
 
 	ImGui::PushID(s_widgetCounter++);
-	if(ImGui::InputFloat3(label.Str(), elements, "%.3f", ImGuiInputTextFlags_None))
+	if(ImGui::InputScalarN("", ImGuiDataType_Float, elements, 3, nullptr, nullptr, "%.3f", ImGuiInputTextFlags_CharsDecimal))
 	{
 		value.LoadXYZ(elements);
 		isValueChanged = true;

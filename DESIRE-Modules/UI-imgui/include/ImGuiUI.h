@@ -24,21 +24,22 @@ public:
 
 	// Widgets
 	void Text(const String& label) override;
-	bool TextInput(const String& label, WritableString& value) override;
+	bool TextInput(WritableString& value) override;
 	bool Button(const String& label, const Vector2& size = Vector2::Zero()) override;
 	bool ArrowButton(EArrowDir dir) override;
 	bool Checkbox(const String& label, bool& isChecked) override;
 	bool RadioButtonOption(const String& label, bool isActive) override;
 
 	bool ValueSpinner(const String& label, int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, float speed = 0.1f) override;
-	bool ValueSpinner(const String& label, float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float step = 0.01f) override;
+	bool ValueSpinner(const String& label, float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float speed = 0.01f) override;
 
-	bool ValueEdit(const String& label, Vector3& value) override;
+	bool ValueEdit(float& value) override;
+	bool ValueEdit(Vector3& value) override;
 
 	bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) override;
 	bool Slider(const String& label, float& value, float minValue, float maxValue) override;
 
-	void ProgressBar(float progress) override;
+	void ProgressBar(float progressPercent) override;
 
 	bool ColorPicker(const String& label, float(&colorRGB)[3]) override;
 	bool ColorPicker(const String& label, float(&colorRGBA)[4]) override;

@@ -244,7 +244,7 @@ void NuklearUI::Text(const String& label)
 	nk_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), NK_TEXT_LEFT);
 }
 
-bool NuklearUI::TextInput(const String& label, WritableString& value)
+bool NuklearUI::TextInput(WritableString& value)
 {
 	constexpr int kMaxSize = 255;
 	StackString<kMaxSize> string = value;
@@ -306,46 +306,41 @@ void NuklearUI::ProgressBar(float progressPercent)
 
 bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
-	int32_t newValue = value;
-	nk_property_int(ctx.get(), label.Str(), minValue, &newValue, maxValue, 1, std::max(1.0f, speed));
-	if(value != newValue)
-	{
-		value = newValue;
-		return true;
-	}
-	return false;
+	int32_t oldValue = value;
+	nk_property_int(ctx.get(), label.Str(), minValue, &value, maxValue, 1, std::max(1.0f, speed));
+	return (oldValue != value);
 }
 
 bool NuklearUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float speed)
 {
-	float newValue = value;
-	nk_property_float(ctx.get(), label.Str(), minValue, &newValue, maxValue, speed, speed);
-	if(value != newValue)
-	{
-		value = newValue;
-		return true;
-	}
-	return false;
+	float oldValue = value;
+	nk_property_float(ctx.get(), label.Str(), minValue, &value, maxValue, speed, speed);
+	return (oldValue != value);
 }
 
-bool NuklearUI::ValueEdit(const String& label, Vector3& value)
+bool NuklearUI::ValueEdit(float& value)
 {
-	bool sizeChanged = false;
+	return ValueSpinner("#", value);
+}
+
+bool NuklearUI::ValueEdit(Vector3& value)
+{
+	bool isValueChanged = false;
+
 	float elements[3];
 	value.StoreXYZ(elements);
 
-	Text(label);
 	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 3);
-	sizeChanged |= ValueSpinner("#X", elements[0]);
-	sizeChanged |= ValueSpinner("#Y", elements[1]);
-	sizeChanged |= ValueSpinner("#Z", elements[2]);
+	isValueChanged |= ValueSpinner("#X", elements[0]);
+	isValueChanged |= ValueSpinner("#Y", elements[1]);
+	isValueChanged |= ValueSpinner("#Z", elements[2]);
 	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
-	if(sizeChanged)
+	if(isValueChanged)
 	{
 		value.LoadXYZ(elements);
-		return true;
 	}
-	return false;
+
+	return isValueChanged;
 }
 
 bool NuklearUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
