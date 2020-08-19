@@ -7942,7 +7942,8 @@ void ImGui::NextColumn()
     float offset_0 = GetColumnOffset(columns->Current);
     float offset_1 = GetColumnOffset(columns->Current + 1);
     float width = offset_1 - offset_0;
-    PushItemWidth(width * 0.65f);
+//    PushItemWidth(width * 0.65f);
+    PushItemWidth(width - column_padding);
     window->WorkRect.Max.x = window->Pos.x + offset_1 - column_padding;
 }
 

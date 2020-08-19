@@ -49,20 +49,20 @@ public:
 		return false;
 	}
 
-	virtual bool ValueSpinner(const String& label, int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, float speed = 0.1f) = 0;
-	virtual bool ValueSpinner(const String& label, float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float speed = 0.01f) = 0;
+	virtual bool ValueSpinner(int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, float speed = 0.1f) = 0;
+	virtual bool ValueSpinner(float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float speed = 0.01f) = 0;
 
 	virtual bool ValueEdit(float& value) = 0;
 	virtual bool ValueEdit(Vector3& value) = 0;
 
-	virtual bool Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue) = 0;
-	virtual bool Slider(const String& label, float& value, float minValue, float maxValue) = 0;
+	virtual bool Slider(int32_t& value, int32_t minValue, int32_t maxValue) = 0;
+	virtual bool Slider(float& value, float minValue, float maxValue) = 0;
 
 	virtual void ProgressBar(float progressPercent) = 0;
 
-	virtual bool ColorPicker(const String& label, float(&colorRGB)[3]) = 0;
-	virtual bool ColorPicker(const String& label, float(&colorRGBA)[4]) = 0;
+	virtual bool ColorPicker(float(&colorRGB)[3]) = 0;
+	virtual bool ColorPicker(float(&colorRGBA)[4]) = 0;
 
 	// Layout
-	virtual void SameLine() = 0;
+	virtual void LayoutColumns(uint8_t numColumns, const float* pRatio) = 0;
 };

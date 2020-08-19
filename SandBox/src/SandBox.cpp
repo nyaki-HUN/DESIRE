@@ -144,7 +144,7 @@ void SandBox::Update()
 	Modules::UI->NewFrame(mainWindow.get());
 
 	// Variables for UI testing
-	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(300, 500));
+	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600));
 
 	Modules::UI->Text("TextInput:");
 	static DynamicString textValue;
@@ -168,23 +168,31 @@ void SandBox::Update()
 	Modules::UI->RadioButton("RadioButton - B", radioButtonOption, ERadioButtonOption::B);
 	Modules::UI->RadioButton("RadioButton - C", radioButtonOption, ERadioButtonOption::C);
 
-	Modules::UI->Text("Slider:");
+	static const float ratio[] = { 0.3f, 0.7f };
+	Modules::UI->LayoutColumns(2, ratio);
+
 	static float sliderValue = 0.5f;
-	Modules::UI->Slider("Slider", sliderValue, 0.0f, 1.0f);
-	Modules::UI->Text("ProgressBar:");
+	Modules::UI->Text("Slider");
+	Modules::UI->Slider(sliderValue, 0.0f, 1.0f);
+
+	Modules::UI->Text("ProgressBar");
 	Modules::UI->ProgressBar(sliderValue);
 
 	static int32_t spinnerValue = 0;
-	Modules::UI->ValueSpinner("ValueSpinner", spinnerValue);
+	Modules::UI->Text("ValueSpinner");
+	Modules::UI->ValueSpinner(spinnerValue);
 
-	Modules::UI->Text("ValueEdit:");
 	static float floatValue = 0.0f;
+	Modules::UI->Text("ValueEdit");
 	Modules::UI->ValueEdit(floatValue);
+
 	static Vector3 vec3 = Vector3::Zero();
+	Modules::UI->Text("ValueEdit");
 	Modules::UI->ValueEdit(vec3);
 
 	static 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-	Modules::UI->ColorPicker("ColorPicker", color);
+	Modules::UI->Text("ColorPicker");
+	Modules::UI->ColorPicker(color);
 
 	Modules::UI->EndWindow();
 

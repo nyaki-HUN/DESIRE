@@ -255,9 +255,12 @@ void ImGuiUI::EndWindow()
 
 void ImGuiUI::Text(const String& label)
 {
+	ImGui::AlignTextToFramePadding();
+
 	ImGui::PushID(s_widgetCounter++);
 	ImGui::TextUnformatted(label.Str(), label.Str() + label.Length());
 	ImGui::PopID();
+	ImGui::NextColumn();
 }
 
 bool ImGuiUI::TextInput(WritableString& value)
@@ -268,12 +271,13 @@ bool ImGuiUI::TextInput(WritableString& value)
 	StackString<kMaxSize> string = value;
 
 	ImGui::PushID(s_widgetCounter++);
-	if(ImGui::InputText("", string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_EnterReturnsTrue, nullptr, nullptr))
+	if(ImGui::InputText("", string.AsCharBufferWithSize(kMaxSize - 1), kMaxSize, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue, nullptr, nullptr))
 	{
 		value.Set(string.Str(), strlen(string.Str()));
 		isValueChanged = true;
 	}
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isValueChanged;
 }
@@ -283,6 +287,7 @@ bool ImGuiUI::Button(const String& label, const Vector2& size)
 	ImGui::PushID(s_widgetCounter++);
 	const bool isPressed = ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isPressed;
 }
@@ -300,6 +305,7 @@ bool ImGuiUI::ArrowButton(EArrowDir dir)
 		case EArrowDir::Down:	isPressed = ImGui::ArrowButton("", ImGuiDir_Down); break;
 	}
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isPressed;
 }
@@ -309,6 +315,7 @@ bool ImGuiUI::Checkbox(const String& label, bool& isChecked)
 	ImGui::PushID(s_widgetCounter++);
 	const bool isPressed = ImGui::Checkbox(label.Str(), &isChecked);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isPressed;
 }
@@ -318,15 +325,17 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 	ImGui::PushID(s_widgetCounter++);
 	const bool isPressed = ImGui::RadioButton(label.Str(), isActive) && !isActive;
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isPressed;
 }
 
-bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
+bool ImGuiUI::ValueSpinner(int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	if(ImGui::IsItemActive())
 	{
@@ -336,11 +345,12 @@ bool ImGuiUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue
 	return isValueChanged;
 }
 
-bool ImGuiUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float speed)
+bool ImGuiUI::ValueSpinner(float& value, float minValue, float maxValue, float speed)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::DragScalar(label.Str(), ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	if(ImGui::IsItemActive())
 	{
@@ -355,6 +365,7 @@ bool ImGuiUI::ValueEdit(float& value)
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::InputScalar("", ImGuiDataType_Float, &value, nullptr, nullptr, "%.3f", ImGuiInputTextFlags_CharsDecimal);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isValueChanged;
 }
@@ -373,52 +384,64 @@ bool ImGuiUI::ValueEdit(Vector3& value)
 		isValueChanged = true;
 	}
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
-bool ImGuiUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
+bool ImGuiUI::Slider(int32_t& value, int32_t minValue, int32_t maxValue)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::SliderScalar(label.Str(), ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
-bool ImGuiUI::Slider(const String& label, float& value, float minValue, float maxValue)
+bool ImGuiUI::Slider(float& value, float minValue, float maxValue)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::SliderScalar(label.Str(), ImGuiDataType_Float , &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_Float, &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
 void ImGuiUI::ProgressBar(float progress)
 {
-	ImGui::ProgressBar(progress, ImVec2(-1.0f, 0.0f), nullptr);
+	ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), nullptr);
+	ImGui::NextColumn();
 }
 
-bool ImGuiUI::ColorPicker(const String& label, float(&colorRGB)[3])
+bool ImGuiUI::ColorPicker(float(&colorRGB)[3])
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::ColorEdit3(label.Str(), colorRGB, ImGuiColorEditFlags_None);
+	const bool isValueChanged = ImGui::ColorEdit3("", colorRGB, ImGuiColorEditFlags_None);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
-bool ImGuiUI::ColorPicker(const String& label, float(&colorRGBA)[4])
+bool ImGuiUI::ColorPicker(float(&colorRGBA)[4])
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::ColorEdit4(label.Str(), colorRGBA, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
+	const bool isValueChanged = ImGui::ColorEdit4("", colorRGBA, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 	ImGui::PopID();
+	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
-void ImGuiUI::SameLine()
+void ImGuiUI::LayoutColumns(uint8_t numColumns, const float* pRatio)
 {
-	ImGui::SameLine();
+	ImGui::Columns(numColumns, nullptr, false);
+
+	const float width = ImGui::GetWindowWidth();
+	for(uint8_t i = 0; i < numColumns; ++i)
+	{
+		ImGui::SetColumnWidth(i, width * pRatio[i]);
+	}
 }

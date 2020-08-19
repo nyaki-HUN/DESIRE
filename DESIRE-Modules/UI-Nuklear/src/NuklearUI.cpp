@@ -21,7 +21,7 @@
 #include "Engine/Resource/Shader.h"
 #include "Engine/Resource/Texture.h"
 
-constexpr int cDefaultRowHeight = 25;
+constexpr int kDefaultRowHeight = 25;
 
 NuklearUI::NuklearUI()
 	: allocator(std::make_unique<nk_allocator>())
@@ -231,7 +231,7 @@ void NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, cons
 {
 	nk_flags flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE;
 	nk_begin(ctx.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), flags);
-	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
+	nk_layout_row_dynamic(ctx.get(), kDefaultRowHeight, 1);
 }
 
 void NuklearUI::EndWindow()
@@ -304,58 +304,66 @@ void NuklearUI::ProgressBar(float progressPercent)
 	nk_progress(ctx.get(), &progress, 1000, NK_FIXED);
 }
 
-bool NuklearUI::ValueSpinner(const String& label, int32_t& value, int32_t minValue, int32_t maxValue, float speed)
+bool NuklearUI::ValueSpinner(int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
 	int32_t oldValue = value;
-	nk_property_int(ctx.get(), label.Str(), minValue, &value, maxValue, 1, std::max(1.0f, speed));
+	nk_property_int(ctx.get(), "#", minValue, &value, maxValue, 1, std::max(1.0f, speed));
 	return (oldValue != value);
 }
 
-bool NuklearUI::ValueSpinner(const String& label, float& value, float minValue, float maxValue, float speed)
+bool NuklearUI::ValueSpinner(float& value, float minValue, float maxValue, float speed)
 {
 	float oldValue = value;
-	nk_property_float(ctx.get(), label.Str(), minValue, &value, maxValue, speed, speed);
+	nk_property_float(ctx.get(), "#", minValue, &value, maxValue, speed, speed);
 	return (oldValue != value);
 }
 
 bool NuklearUI::ValueEdit(float& value)
 {
-	return ValueSpinner("#", value);
+	return ValueSpinner(value);
 }
 
 bool NuklearUI::ValueEdit(Vector3& value)
 {
 	bool isValueChanged = false;
 
-	float elements[3];
-	value.StoreXYZ(elements);
+	nk_style_push_vec2(ctx.get(), &ctx->style.window.group_padding, nk_vec2(0.0f, 0.0f));
 
-	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 3);
-	isValueChanged |= ValueSpinner("#X", elements[0]);
-	isValueChanged |= ValueSpinner("#Y", elements[1]);
-	isValueChanged |= ValueSpinner("#Z", elements[2]);
-	nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
-	if(isValueChanged)
+	if(nk_group_begin(ctx.get(), "#", NK_WINDOW_NO_SCROLLBAR))
 	{
-		value.LoadXYZ(elements);
+		float elements[3];
+		value.StoreXYZ(elements);
+
+		nk_layout_row_dynamic(ctx.get(), kDefaultRowHeight, 3);
+		isValueChanged |= ValueSpinner(elements[0]);
+		isValueChanged |= ValueSpinner(elements[1]);
+		isValueChanged |= ValueSpinner(elements[2]);
+		if(isValueChanged)
+		{
+			value.LoadXYZ(elements);
+		}
+
+		nk_group_end(ctx.get());
 	}
+
+	nk_style_pop_vec2(ctx.get());
 
 	return isValueChanged;
 }
 
-bool NuklearUI::Slider(const String& label, int32_t& value, int32_t minValue, int32_t maxValue)
+bool NuklearUI::Slider(int32_t& value, int32_t minValue, int32_t maxValue)
 {
 	return nk_slider_int(ctx.get(), minValue, &value, maxValue, 1);
 }
 
-bool NuklearUI::Slider(const String& label, float& value, float minValue, float maxValue)
+bool NuklearUI::Slider(float& value, float minValue, float maxValue)
 {
 	const struct nk_rect bounds = nk_layout_widget_bounds(ctx.get());
 	const float step = (maxValue - minValue) / bounds.w;
 	return nk_slider_float(ctx.get(), minValue, &value, maxValue, step);
 }
 
-bool NuklearUI::ColorPicker(const String& label, float(&colorRGB)[3])
+bool NuklearUI::ColorPicker(float(&colorRGB)[3])
 {
 	bool result = false;
 
@@ -373,7 +381,7 @@ bool NuklearUI::ColorPicker(const String& label, float(&colorRGB)[3])
 			color = nk_rgb_fv(colorRGB);
 		}
 
-		nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
+		nk_layout_row_dynamic(ctx.get(), kDefaultRowHeight, 1);
 		const nk_color origColor = color;
 		color.r = (nk_byte)nk_propertyi(ctx.get(), "#R", 0, color.r, 255, 1, 1);
 		color.g = (nk_byte)nk_propertyi(ctx.get(), "#G", 0, color.g, 255, 1, 1);
@@ -391,7 +399,7 @@ bool NuklearUI::ColorPicker(const String& label, float(&colorRGB)[3])
 	return result;
 }
 
-bool NuklearUI::ColorPicker(const String& label, float(&colorRGBA)[4])
+bool NuklearUI::ColorPicker(float(&colorRGBA)[4])
 {
 	bool result = false;
 
@@ -402,7 +410,7 @@ bool NuklearUI::ColorPicker(const String& label, float(&colorRGBA)[4])
 
 		result |= (nk_color_pick(ctx.get(), reinterpret_cast<nk_colorf*>(colorRGBA), NK_RGBA) != 0);
 
-		nk_layout_row_dynamic(ctx.get(), cDefaultRowHeight, 1);
+		nk_layout_row_dynamic(ctx.get(), kDefaultRowHeight, 1);
 		const nk_color origColor = color;
 		color.r = (nk_byte)nk_propertyi(ctx.get(), "#R", 0, color.r, 255, 1, 1);
 		color.g = (nk_byte)nk_propertyi(ctx.get(), "#G", 0, color.g, 255, 1, 1);
@@ -420,6 +428,7 @@ bool NuklearUI::ColorPicker(const String& label, float(&colorRGBA)[4])
 	return result;
 }
 
-void NuklearUI::SameLine()
+void NuklearUI::LayoutColumns(uint8_t numColumns, const float* pRatio)
 {
+	nk_layout_row(ctx.get(), NK_DYNAMIC, kDefaultRowHeight, numColumns, pRatio);
 }
