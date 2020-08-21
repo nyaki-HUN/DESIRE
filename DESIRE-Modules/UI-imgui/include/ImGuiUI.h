@@ -45,7 +45,7 @@ public:
 	bool ColorPicker(float(&colorRGBA)[4]) override;
 
 	// Layout
-	void LayoutColumns(uint8_t numColumns, const float* pRatio) override;
+	void LayoutColumns(uint8_t numColumns, const float* pRatio = nullptr) override;
 
 private:
 	std::unique_ptr<DynamicMesh> mesh;
