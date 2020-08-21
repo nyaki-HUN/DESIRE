@@ -64,5 +64,5 @@ public:
 	virtual bool ColorPicker(float(&colorRGBA)[4]) = 0;
 
 	// Layout
-	virtual void LayoutColumns(uint8_t numColumns, const float* pRatio) = 0;
+	virtual void LayoutColumns(uint8_t numColumns, const float* pRatio = nullptr) = 0;
 };
