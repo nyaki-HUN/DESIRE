@@ -437,11 +437,22 @@ bool ImGuiUI::ColorPicker(float(&colorRGBA)[4])
 
 void ImGuiUI::LayoutColumns(uint8_t numColumns, const float* pRatio)
 {
-	ImGui::Columns(numColumns, nullptr, false);
+	StackString<16> strId;
+	strId += s_widgetCounter++;
 
-	const float width = ImGui::GetWindowWidth();
-	for(uint8_t i = 0; i < numColumns; ++i)
+	ImGuiStyle& style = ImGui::GetStyle();
+	const float itemSpacingX = style.ItemSpacing.x;
+	style.ItemSpacing.x = 0.0f;
+	ImGui::Columns(1);
+	ImGui::Columns(numColumns, strId.Str(), false);
+	style.ItemSpacing.x = itemSpacingX;
+
+	if(pRatio != nullptr)
 	{
-		ImGui::SetColumnWidth(i, width * pRatio[i]);
+		const float width = ImGui::GetWindowWidth();
+		for(uint8_t i = 0; i < numColumns; ++i)
+		{
+			ImGui::SetColumnWidth(i, width * pRatio[i]);
+		}
 	}
 }
