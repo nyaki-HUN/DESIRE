@@ -310,7 +310,7 @@ bool ImGuiUI::ArrowButton(EArrowDir dir)
 	return isPressed;
 }
 
-bool ImGuiUI::Checkbox(const String& label, bool& isChecked)
+bool ImGuiUI::Checkbox(bool& isChecked, const String& label)
 {
 	ImGui::PushID(s_widgetCounter++);
 	const bool isPressed = ImGui::Checkbox(label.Str(), &isChecked);

@@ -280,7 +280,7 @@ bool NuklearUI::ArrowButton(EArrowDir dir)
 	return (isPressed == nk_true);
 }
 
-bool NuklearUI::Checkbox(const String& label, bool& isChecked)
+bool NuklearUI::Checkbox(bool& isChecked, const String& label)
 {
 	int active = isChecked ? 1 : 0;
 	if(nk_checkbox_text(ctx.get(), label.Str(), static_cast<int>(label.Length()), &active))
@@ -430,5 +430,12 @@ bool NuklearUI::ColorPicker(float(&colorRGBA)[4])
 
 void NuklearUI::LayoutColumns(uint8_t numColumns, const float* pRatio)
 {
-	nk_layout_row(ctx.get(), NK_DYNAMIC, kDefaultRowHeight, numColumns, pRatio);
+	if(pRatio != nullptr)
+	{
+		nk_layout_row(ctx.get(), NK_DYNAMIC, kDefaultRowHeight, numColumns, pRatio);
+	}
+	else
+	{
+		nk_layout_row_dynamic(ctx.get(), kDefaultRowHeight, numColumns);
+	}
 }

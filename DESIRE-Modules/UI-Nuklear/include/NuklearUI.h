@@ -31,9 +31,12 @@ public:
 	// Widgets
 	void Text(const String& label) override;
 	bool TextInput(WritableString& value) override;
-	bool Button(const String& label, const Vector2& size = Vector2::Zero()) override;
+
+	bool Button(const String& label, const Vector2& size) override;
 	bool ArrowButton(EArrowDir dir) override;
-	bool Checkbox(const String& label, bool& isChecked) override;
+
+	bool Checkbox(bool& isChecked, const String& label) override;
+
 	bool RadioButtonOption(const String& label, bool isActive) override;
 
 	bool ValueSpinner(int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, float speed = 0.1f) override;

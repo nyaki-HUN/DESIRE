@@ -1,9 +1,8 @@
 #pragma once
 
-#include "Engine/Core/Math/Vector2.h"
-
 class OSWindow;
 class String;
+class Vector2;
 class Vector3;
 class WritableString;
 
@@ -18,7 +17,7 @@ public:
 		Down
 	};
 
-	virtual ~UI() {};
+	virtual ~UI() {}
 
 	virtual void Init() = 0;
 	virtual void Kill() = 0;
@@ -33,10 +32,13 @@ public:
 	// Widgets
 	virtual void Text(const String& label) = 0;
 	virtual bool TextInput(WritableString& value) = 0;
-	virtual bool Button(const String& label, const Vector2& size = Vector2::Zero()) = 0;
+
+	bool Button(const String& label);
+	virtual bool Button(const String& label, const Vector2& size) = 0;
 	virtual bool ArrowButton(EArrowDir dir) = 0;
-	virtual bool Checkbox(const String& label, bool& isChecked) = 0;
-	virtual bool RadioButtonOption(const String& label, bool isActive) = 0;
+
+	bool Checkbox(bool& isChecked);
+	virtual bool Checkbox(bool& isChecked, const String& label) = 0;
 
 	template<typename T>
 	bool RadioButton(const String& label, T& value, T buttonValue)
@@ -48,6 +50,8 @@ public:
 		}
 		return false;
 	}
+
+	virtual bool RadioButtonOption(const String& label, bool isActive) = 0;
 
 	virtual bool ValueSpinner(int32_t& value, int32_t minValue = INT32_MIN, int32_t maxValue = INT32_MAX, float speed = 0.1f) = 0;
 	virtual bool ValueSpinner(float& value, float minValue = -FLT_MAX, float maxValue = FLT_MAX, float speed = 0.01f) = 0;

@@ -155,7 +155,7 @@ void SandBox::Update()
 	Modules::UI->ArrowButton(UI::EArrowDir::Left);
 
 	static bool isCheckboxChecked = false;
-	Modules::UI->Checkbox("Checkbox", isCheckboxChecked);
+	Modules::UI->Checkbox(isCheckboxChecked, "Checkbox");
 
 	enum class ERadioButtonOption
 	{
