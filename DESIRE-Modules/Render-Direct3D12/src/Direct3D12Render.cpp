@@ -530,7 +530,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
 			}
 
 			const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-			bufferData.variableOffsetSizePairs.Insert(key, std::make_pair(varDesc.StartOffset, varDesc.Size));
+			bufferData.variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
 		}
 	}
 */

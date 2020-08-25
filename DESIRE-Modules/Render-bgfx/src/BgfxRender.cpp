@@ -609,7 +609,7 @@ void BgfxRender::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t 
 
 	bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;
 
-	const std::pair<uint64_t, uint64_t> key = std::make_pair(reinterpret_cast<uint64_t>(pActiveVertexShader->pRenderData), reinterpret_cast<uint64_t>(pActiveFragmentShader->pRenderData));
+	const std::pair<uint64_t, uint64_t> key(reinterpret_cast<uint64_t>(pActiveVertexShader->pRenderData), reinterpret_cast<uint64_t>(pActiveFragmentShader->pRenderData));
 	auto it = shaderProgramCache.find(key);
 	if(it != shaderProgramCache.end())
 	{
@@ -621,7 +621,7 @@ void BgfxRender::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t 
 		const ShaderRenderDataBgfx* pFragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(pActiveFragmentShader->pRenderData);
 		shaderProgram = bgfx::createProgram(pVertexShaderRenderData->shaderHandle, pFragmentShaderRenderData->shaderHandle);
 
-		shaderProgramCache.insert(std::make_pair(key, shaderProgram));
+		shaderProgramCache.emplace(key, shaderProgram);
 	}
 
 	if(pActiveMesh != nullptr)

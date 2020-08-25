@@ -637,7 +637,7 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader* pShader)
 			}
 
 			const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-			bufferData.variableOffsetSizePairs.Insert(key, std::make_pair(varDesc.StartOffset, varDesc.Size));
+			bufferData.variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
 		}
 	}
 
@@ -1111,7 +1111,7 @@ void Direct3D11Render::SetDepthStencilState()
 	{
 		HRESULT hr = d3dDevice->CreateDepthStencilState(&depthStencilDesc, &pDepthStencilState);
 		DX_CHECK_HRESULT(hr);
-		depthStencilStateCache.insert(std::make_pair(key, pDepthStencilState));
+		depthStencilStateCache.emplace(key, pDepthStencilState);
 	}
 
 	if(pActiveDepthStencilState != pDepthStencilState)
@@ -1146,7 +1146,7 @@ void Direct3D11Render::SetRasterizerState()
 	{
 		HRESULT hr = d3dDevice->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
 		DX_CHECK_HRESULT(hr);
-		rasterizerStateCache.insert(std::make_pair(key, pRasterizerState));
+		rasterizerStateCache.emplace(key, pRasterizerState);
 	}
 
 	if(pActiveRasterizerState != pRasterizerState)
@@ -1181,7 +1181,7 @@ void Direct3D11Render::SetBlendState()
 	{
 		HRESULT hr = d3dDevice->CreateBlendState(&blendDesc, &pBlendState);
 		DX_CHECK_HRESULT(hr);
-		blendStateCache.insert(std::make_pair(key, pBlendState));
+		blendStateCache.emplace(key, pBlendState);
 	}
 
 	if(pActiveBlendState != pBlendState)
@@ -1199,7 +1199,7 @@ void Direct3D11Render::SetInputLayout()
 	{
 		const MeshRenderDataD3D11* pMeshRenderData = static_cast<const MeshRenderDataD3D11*>(pActiveMesh->pRenderData);
 
-		const std::pair<uint64_t, uint64_t> key = std::make_pair(pMeshRenderData->vertexLayoutKey, reinterpret_cast<uint64_t>(pActiveVertexShader->pRenderData));
+		const std::pair<uint64_t, uint64_t> key(pMeshRenderData->vertexLayoutKey, reinterpret_cast<uint64_t>(pActiveVertexShader->pRenderData));
 		auto it = inputLayoutCache.find(key);
 		if(it != inputLayoutCache.end())
 		{
@@ -1290,7 +1290,7 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 	{
 		HRESULT hr = d3dDevice->CreateSamplerState(&samplerDesc, &samplerState);
 		DX_CHECK_HRESULT(hr);
-		samplerStateCache.insert(std::make_pair(key, samplerState));
+		samplerStateCache.emplace(key, samplerState);
 	}
 
 	if(activeSamplerStates[samplerIdx] != samplerState)
