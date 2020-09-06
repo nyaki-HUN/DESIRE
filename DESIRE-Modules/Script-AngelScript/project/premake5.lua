@@ -8,11 +8,6 @@ project "Script-AngelScript"
 
 	exceptionhandling "On"
 
-	flags
-	{
-		"FatalCompileWarnings",
-	}
-
 	includedirs
 	{
 		"../Externals/AngelScript/include",
