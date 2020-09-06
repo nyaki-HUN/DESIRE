@@ -15,7 +15,7 @@
 
 static std::pair<b2Vec2, b2Vec2> GetValidRay(const Vector3& p1, const Vector3& p2)
 {
-	std::pair<b2Vec2, b2Vec2> ray = std::make_pair(b2Vec2(p1.GetX(), p1.GetY()), b2Vec2(p2.GetX(), p2.GetY()));
+	std::pair<b2Vec2, b2Vec2> ray(b2Vec2(p1.GetX(), p1.GetY()), b2Vec2(p2.GetX(), p2.GetY()));
 
 	if(ray.first.x == ray.second.x && ray.first.y == ray.second.y)
 	{
