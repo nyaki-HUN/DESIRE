@@ -5,6 +5,11 @@ project "Script-Lua"
 	pchheader "stdafx_Lua.h"
 	pchsource "../src/stdafx_Lua.cpp"
 
+	defines
+	{
+		"SOL_NO_EXCEPTIONS=1",
+	}
+
 	includedirs
 	{
 		"../Externals/lua/src",

@@ -5,6 +5,15 @@ project "UI-Nuklear"
 	pchheader "stdafx_Nuklear.h"
 	pchsource "../src/stdafx_Nuklear.cpp"
 
+	defines
+	{
+		"NK_INCLUDE_FIXED_TYPES",
+		"NK_INCLUDE_VERTEX_BUFFER_OUTPUT",
+		"NK_INCLUDE_FONT_BAKING",
+		"NK_INCLUDE_DEFAULT_FONT",
+		"NK_KEYSTATE_BASED_INPUT",
+	}
+
 	includedirs
 	{
 		"../Externals/Nuklear/include",
