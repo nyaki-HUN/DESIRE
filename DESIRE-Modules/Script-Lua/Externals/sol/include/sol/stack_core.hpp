@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2019 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -24,17 +24,17 @@
 #ifndef SOL_STACK_CORE_HPP
 #define SOL_STACK_CORE_HPP
 
-#include "types.hpp"
-#include "inheritance.hpp"
-#include "error_handler.hpp"
-#include "reference.hpp"
-#include "stack_reference.hpp"
-#include "tuple.hpp"
-#include "traits.hpp"
-#include "tie.hpp"
-#include "stack_guard.hpp"
-#include "demangle.hpp"
-#include "forward_detail.hpp"
+#include <sol/types.hpp>
+#include <sol/inheritance.hpp>
+#include <sol/error_handler.hpp>
+#include <sol/reference.hpp>
+#include <sol/stack_reference.hpp>
+#include <sol/tuple.hpp>
+#include <sol/traits.hpp>
+#include <sol/tie.hpp>
+#include <sol/stack_guard.hpp>
+#include <sol/demangle.hpp>
+#include <sol/forward_detail.hpp>
 
 #include <vector>
 #include <bitset>
@@ -46,16 +46,16 @@
 
 namespace sol {
 	namespace detail {
-		struct with_function_tag {};
-		struct as_reference_tag {};
+		struct with_function_tag { };
+		struct as_reference_tag { };
 		template <typename T>
-		struct as_pointer_tag {};
+		struct as_pointer_tag { };
 		template <typename T>
-		struct as_value_tag {};
+		struct as_value_tag { };
 		template <typename T>
-		struct as_unique_tag {};
+		struct as_unique_tag { };
 		template <typename T>
-		struct as_table_tag {};
+		struct as_table_tag { };
 
 		using lua_reg_table = luaL_Reg[64];
 
@@ -92,14 +92,16 @@ namespace sol {
 
 		template <typename... Args>
 		std::size_t aligned_space_for(void* alignment = nullptr) {
-			char* start = static_cast<char*>(alignment);
+			// use temporary storage to prevent strict UB shenanigans
+			char alignment_shim[(std::max)({ sizeof(Args)... }) + (std::max)({ alignof(Args)... })] {};
+			char* start = alignment == nullptr ? static_cast<char*>(alignment) : alignment_shim;
 			(void)detail::swallow { int {}, (align_one(std::alignment_of_v<Args>, sizeof(Args), alignment), int {})... };
 			return static_cast<char*>(alignment) - start;
 		}
 
 		inline void* align_usertype_pointer(void* ptr) {
 			using use_align = std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<void*>::value > 1)
@@ -115,7 +117,7 @@ namespace sol {
 		template <bool pre_aligned = false, bool pre_shifted = false>
 		void* align_usertype_unique_destructor(void* ptr) {
 			using use_align = std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<unique_destructor>::value > 1)
@@ -137,7 +139,7 @@ namespace sol {
 		template <bool pre_aligned = false, bool pre_shifted = false>
 		void* align_usertype_unique_tag(void* ptr) {
 			using use_align = std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<unique_tag>::value > 1)
@@ -159,7 +161,7 @@ namespace sol {
 		template <typename T, bool pre_aligned = false, bool pre_shifted = false>
 		void* align_usertype_unique(void* ptr) {
 			typedef std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<T>::value > 1)
@@ -182,7 +184,7 @@ namespace sol {
 		template <typename T>
 		void* align_user(void* ptr) {
 			typedef std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<T>::value > 1)
@@ -199,7 +201,7 @@ namespace sol {
 		template <typename T>
 		T** usertype_allocate_pointer(lua_State* L) {
 			typedef std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<T*>::value > 1)
@@ -292,7 +294,7 @@ namespace sol {
 		template <typename T>
 		T* usertype_allocate(lua_State* L) {
 			typedef std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<T*>::value > 1 || std::alignment_of<T>::value > 1)
@@ -357,7 +359,7 @@ namespace sol {
 		template <typename T, typename Real>
 		Real* usertype_unique_allocate(lua_State* L, T**& pref, unique_destructor*& dx, unique_tag*& id) {
 			typedef std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<T*>::value > 1 || std::alignment_of<unique_tag>::value > 1 || std::alignment_of<unique_destructor>::value > 1
@@ -431,7 +433,7 @@ namespace sol {
 		template <typename T>
 		T* user_allocate(lua_State* L) {
 			typedef std::integral_constant<bool,
-#if defined(SOL_NO_MEMORY_ALIGNMENT) && SOL_NO_MEMORY_ALIGNMENT
+#if SOL_IS_OFF(SOL_ALIGN_MEMORY_I_)
 			     false
 #else
 			     (std::alignment_of<T>::value > 1)
@@ -1153,7 +1155,7 @@ namespace sol {
 
 		template <typename T>
 		auto unqualified_get(lua_State* L, int index, record& tracking) -> decltype(stack_detail::unchecked_unqualified_get<T>(L, index, tracking)) {
-#if defined(SOL_SAFE_GETTER) && SOL_SAFE_GETTER
+#if SOL_IS_ON(SOL_SAFE_GETTER_I_)
 			static constexpr bool is_op = meta::is_optional_v<T>;
 			if constexpr (is_op) {
 				return stack_detail::unchecked_unqualified_get<T>(L, index, tracking);
@@ -1178,7 +1180,7 @@ namespace sol {
 
 		template <typename T>
 		auto get(lua_State* L, int index, record& tracking) -> decltype(stack_detail::unchecked_get<T>(L, index, tracking)) {
-#if defined(SOL_SAFE_GETTER) && SOL_SAFE_GETTER
+#if SOL_IS_ON(SOL_SAFE_GETTER_I_)
 			static constexpr bool is_op = meta::is_optional_v<T>;
 			if constexpr (is_op) {
 				return stack_detail::unchecked_get<T>(L, index, tracking);
@@ -1423,24 +1425,24 @@ namespace sol {
 		void insert_default_registrations(IFx&& ifx, Fx&& fx);
 
 		template <typename T, bool, bool>
-		struct get_is_primitive : is_lua_primitive<T> {};
+		struct get_is_primitive : is_lua_primitive<T> { };
 
 		template <typename T>
 		struct get_is_primitive<T, true, false>
-		: meta::neg<std::is_reference<decltype(sol_lua_get(types<T>(), nullptr, -1, std::declval<stack::record&>()))>> {};
+		: meta::neg<std::is_reference<decltype(sol_lua_get(types<T>(), nullptr, -1, std::declval<stack::record&>()))>> { };
 
 		template <typename T>
 		struct get_is_primitive<T, false, true>
-		: meta::neg<std::is_reference<decltype(sol_lua_get(types<meta::unqualified_t<T>>(), nullptr, -1, std::declval<stack::record&>()))>> {};
+		: meta::neg<std::is_reference<decltype(sol_lua_get(types<meta::unqualified_t<T>>(), nullptr, -1, std::declval<stack::record&>()))>> { };
 
 		template <typename T>
-		struct get_is_primitive<T, true, true> : get_is_primitive<T, true, false> {};
+		struct get_is_primitive<T, true, true> : get_is_primitive<T, true, false> { };
 
 	} // namespace detail
 
 	template <typename T>
 	struct is_proxy_primitive
-	: detail::get_is_primitive<T, meta::meta_detail::is_adl_sol_lua_get_v<T>, meta::meta_detail::is_adl_sol_lua_get_v<meta::unqualified_t<T>>> {};
+	: detail::get_is_primitive<T, meta::meta_detail::is_adl_sol_lua_get_v<T>, meta::meta_detail::is_adl_sol_lua_get_v<meta::unqualified_t<T>>> { };
 
 } // namespace sol
 

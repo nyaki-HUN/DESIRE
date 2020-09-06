@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2019 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -24,13 +24,13 @@
 #ifndef SOL_FUNCTION_TYPES_HPP
 #define SOL_FUNCTION_TYPES_HPP
 
-#include "function_types_core.hpp"
-#include "function_types_templated.hpp"
-#include "function_types_stateless.hpp"
-#include "function_types_stateful.hpp"
-#include "function_types_overloaded.hpp"
-#include "resolve.hpp"
-#include "call.hpp"
+#include <sol/function_types_core.hpp>
+#include <sol/function_types_templated.hpp>
+#include <sol/function_types_stateless.hpp>
+#include <sol/function_types_stateful.hpp>
+#include <sol/function_types_overloaded.hpp>
+#include <sol/resolve.hpp>
+#include <sol/call.hpp>
 
 namespace sol {
 	namespace function_detail {
@@ -214,7 +214,7 @@ namespace sol {
 				int upvalues = 0;
 				upvalues += stack::push(L, nullptr);
 				upvalues += stack::push(L, std::forward<Fx>(fx));
-#if defined(SOL_NOEXCEPT_FUNCTION_TYPE) && SOL_NOEXCEPT_FUNCTION_TYPE
+#if SOL_IS_ON(SOL_USE_NOEXCEPT_FUNCTION_TYPE_I_)
 				if constexpr (std::is_nothrow_invocable_r_v<int, uFx, lua_State*>) {
 					detail::lua_CFunction_noexcept cf = &lua_c_noexcept_wrapper<is_yielding>;
 					lua_pushcclosure(L, reinterpret_cast<lua_CFunction>(cf), 2);
@@ -272,6 +272,9 @@ namespace sol {
 			static int push(lua_State* L, Arg0&& arg0, Args&&... args) {
 				if constexpr (std::is_same_v<meta::unqualified_t<Arg0>, detail::yield_tag_t>) {
 					push<true>(L, std::forward<Args>(args)...);
+				}
+				else if constexpr (meta::is_specialization_of_v<meta::unqualified_t<Arg0>, yielding_t>) {
+					push<true>(L, std::forward<Arg0>(arg0).func, std::forward<Args>(args)...);
 				}
 				else {
 					push<false>(L, std::forward<Arg0>(arg0), std::forward<Args>(args)...);
@@ -369,7 +372,7 @@ namespace sol {
 		struct unqualified_pusher<Signature,
 		     std::enable_if_t<meta::all<std::is_function<std::remove_pointer_t<Signature>>, meta::neg<std::is_same<Signature, lua_CFunction>>,
 		          meta::neg<std::is_same<Signature, std::remove_pointer_t<lua_CFunction>>>
-#if defined(SOL_NOEXCEPT_FUNCTION_TYPE) && SOL_NOEXCEPT_FUNCTION_TYPE
+#if SOL_IS_ON(SOL_USE_NOEXCEPT_FUNCTION_TYPE_I_)
 		          ,
 		          meta::neg<std::is_same<Signature, detail::lua_CFunction_noexcept>>,
 		          meta::neg<std::is_same<Signature, std::remove_pointer_t<detail::lua_CFunction_noexcept>>>
@@ -494,7 +497,7 @@ namespace sol {
 
 		template <typename T>
 		struct unqualified_pusher<detail::tagged<T, no_construction>> {
-			static int push(lua_State* L, no_construction) {
+			static int push(lua_State* L, detail::tagged<T, no_construction>) {
 				lua_CFunction cf = &function_detail::no_construction_error;
 				return stack::push(L, cf);
 			}

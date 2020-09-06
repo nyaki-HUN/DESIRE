@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2019 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -24,12 +24,12 @@
 #ifndef SOL_STACK_UNQUALIFIED_GET_HPP
 #define SOL_STACK_UNQUALIFIED_GET_HPP
 
-#include "stack_core.hpp"
-#include "usertype_traits.hpp"
-#include "inheritance.hpp"
-#include "overload.hpp"
-#include "error.hpp"
-#include "unicode.hpp"
+#include <sol/stack_core.hpp>
+#include <sol/usertype_traits.hpp>
+#include <sol/inheritance.hpp>
+#include <sol/overload.hpp>
+#include <sol/error.hpp>
+#include <sol/unicode.hpp>
 
 #include <memory>
 #include <functional>
@@ -37,7 +37,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <string_view>
-#if defined(SOL_STD_VARIANT) && SOL_STD_VARIANT
+#if SOL_IS_ON(SOL_STD_VARIANT_I_)
 #include <variant>
 #endif // Apple clang screwed up
 
@@ -153,7 +153,7 @@ namespace sol { namespace stack {
 			}
 			else if constexpr (meta::is_optional_v<T>) {
 				using ValueType = typename T::value_type;
-				return stack::unqualified_check_get<ValueType>(L, index, no_panic, tracking);
+				return unqualified_check_getter<ValueType>::template get_using<T>(L, index, no_panic, tracking);
 			}
 			else if constexpr (std::is_same_v<T, luaL_Stream*>) {
 				luaL_Stream* pstream = static_cast<luaL_Stream*>(lua_touserdata(L, index));
@@ -338,7 +338,7 @@ namespace sol { namespace stack {
 				bool isnil = false;
 				for (int vi = 0; vi < lua_size<V>::value; ++vi) {
 #if defined(LUA_NILINTABLE) && LUA_NILINTABLE && SOL_LUA_VERSION >= 600
-#if defined(SOL_SAFE_STACK_CHECK) && SOL_SAFE_STACK_CHECK
+#if SOL_IS_ON(SOL_SAFE_STACK_CHECK_I_)
 					luaL_checkstack(L, 1, detail::not_enough_stack_space_generic);
 #endif // make sure stack doesn't overflow
 					lua_pushinteger(L, static_cast<lua_Integer>(i + vi));
@@ -386,7 +386,7 @@ namespace sol { namespace stack {
 					// see above comment
 					goto done;
 				}
-#if defined(SOL_SAFE_STACK_CHECK) && SOL_SAFE_STACK_CHECK
+#if SOL_IS_ON(SOL_SAFE_STACK_CHECK_I_)
 				luaL_checkstack(L, 2, detail::not_enough_stack_space_generic);
 #endif // make sure stack doesn't overflow
 				bool isnil = false;
@@ -425,7 +425,7 @@ namespace sol { namespace stack {
 		static T get(types<K, V>, lua_State* L, int relindex, record& tracking) {
 			tracking.use(1);
 
-#if defined(SOL_SAFE_STACK_CHECK) && SOL_SAFE_STACK_CHECK
+#if SOL_IS_ON(SOL_SAFE_STACK_CHECK_I_)
 			luaL_checkstack(L, 3, detail::not_enough_stack_space_generic);
 #endif // make sure stack doesn't overflow
 
@@ -468,7 +468,7 @@ namespace sol { namespace stack {
 		template <typename V>
 		static C get(types<V>, lua_State* L, int relindex, record& tracking) {
 			tracking.use(1);
-#if defined(SOL_SAFE_STACK_CHECK) && SOL_SAFE_STACK_CHECK
+#if SOL_IS_ON(SOL_SAFE_STACK_CHECK_I_)
 			luaL_checkstack(L, 3, detail::not_enough_stack_space_generic);
 #endif // make sure stack doesn't overflow
 
@@ -533,7 +533,7 @@ namespace sol { namespace stack {
 		static C get(types<K, V>, lua_State* L, int relindex, record& tracking) {
 			tracking.use(1);
 
-#if defined(SOL_SAFE_STACK_CHECK) && SOL_SAFE_STACK_CHECK
+#if SOL_IS_ON(SOL_SAFE_STACK_CHECK_I_)
 			luaL_checkstack(L, 3, detail::not_enough_stack_space_generic);
 #endif // make sure stack doesn't overflow
 
@@ -865,7 +865,7 @@ namespace sol { namespace stack {
 	struct unqualified_getter<detail::as_value_tag<T>> {
 		static T* get_no_lua_nil(lua_State* L, int index, record& tracking) {
 			void* memory = lua_touserdata(L, index);
-#if defined(SOL_ENABLE_INTEROP) && SOL_ENABLE_INTEROP
+#if SOL_IS_ON(SOL_USE_INTEROP_I_)
 			auto ugr = stack_detail::interop_get<T>(L, index, memory, tracking);
 			if (ugr.first) {
 				return ugr.second;
@@ -986,7 +986,8 @@ namespace sol { namespace stack {
 		}
 	};
 
-#if defined(SOL_STD_VARIANT) && SOL_STD_VARIANT
+#if SOL_IS_ON(SOL_STD_VARIANT_I_)
+
 	template <typename... Tn>
 	struct unqualified_getter<std::variant<Tn...>> {
 		using V = std::variant<Tn...>;
@@ -1020,7 +1021,7 @@ namespace sol { namespace stack {
 			return get_one(std::integral_constant<std::size_t, 0>(), L, index, tracking);
 		}
 	};
-#endif // SOL_STD_VARIANT
+#endif // variant
 
 }} // namespace sol::stack
 

@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2019 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -24,7 +24,7 @@
 #ifndef SOL_TABLE_ITERATOR_HPP
 #define SOL_TABLE_ITERATOR_HPP
 
-#include "object.hpp"
+#include <sol/object.hpp>
 #include <iterator>
 
 namespace sol {

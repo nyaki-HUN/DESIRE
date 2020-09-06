@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2019 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -38,7 +38,9 @@
 #ifndef SOL_TL_OPTIONAL_HPP
 #define SOL_TL_OPTIONAL_HPP
 
-#include "in_place.hpp"
+#include <sol/version.hpp>
+
+#include <sol/in_place.hpp>
 
 #define SOL_TL_OPTIONAL_VERSION_MAJOR 0
 #define SOL_TL_OPTIONAL_VERSION_MINOR 5
@@ -49,6 +51,7 @@
 #include <type_traits>
 #include <utility>
 #include <cstdlib>
+#include <optional>
 
 #if (defined(_MSC_VER) && _MSC_VER == 1900)
 #define SOL_TL_OPTIONAL_MSVC2015
@@ -321,7 +324,7 @@ namespace sol {
 		struct is_swappable : std::integral_constant<bool,
 		                           decltype(detail::swap_adl_tests::can_swap<T, U>(0))::value
 		                                && (!decltype(detail::swap_adl_tests::uses_std<T, U>(0))::value
-		                                        || (std::is_move_assignable<T>::value && std::is_move_constructible<T>::value))> {};
+		                                     || (std::is_move_assignable<T>::value && std::is_move_constructible<T>::value))> {};
 
 		template <class T, std::size_t N>
 		struct is_swappable<T[N], T[N]> : std::integral_constant<bool,
@@ -333,7 +336,7 @@ namespace sol {
 		: std::integral_constant<bool,
 		       is_swappable<T, U>::value
 		            && ((decltype(detail::swap_adl_tests::uses_std<T, U>(0))::value&& detail::swap_adl_tests::is_std_swap_noexcept<T>::value)
-		                    || (!decltype(detail::swap_adl_tests::uses_std<T, U>(0))::value&& detail::swap_adl_tests::is_adl_swap_noexcept<T, U>::value))> {};
+		                 || (!decltype(detail::swap_adl_tests::uses_std<T, U>(0))::value&& detail::swap_adl_tests::is_adl_swap_noexcept<T, U>::value))> {};
 #endif
 
 		// The storage base manages the actual storage, and correctly propagates
@@ -638,11 +641,8 @@ namespace sol {
 	} // namespace detail
 
 	/// \brief A tag type to represent an empty optional
-	struct nullopt_t {
-		struct do_not_use {};
-		constexpr explicit nullopt_t(do_not_use, do_not_use) noexcept {
-		}
-	};
+	using nullopt_t = std::nullopt_t;
+
 	/// \brief Represents an empty optional
 	/// \synopsis static constexpr nullopt_t nullopt;
 	///
@@ -652,7 +652,7 @@ namespace sol {
 	/// void foo (sol::optional<int>);
 	/// foo(sol::nullopt); //pass an empty optional
 	/// ```
-	static constexpr nullopt_t nullopt{ nullopt_t::do_not_use{}, nullopt_t::do_not_use{} };
+	using std::nullopt;
 
 	class bad_optional_access : public std::exception {
 	public:
@@ -1010,7 +1010,7 @@ namespace sol {
 		template <class U>
 		constexpr optional<typename std::decay<U>::type> conjunction(U&& u) const {
 			using result = optional<detail::decay_t<U>>;
-			return has_value() ? result{ u } : result{ nullopt };
+			return has_value() ? result { u } : result { nullopt };
 		}
 
 		/// \returns `rhs` if `*this` is empty, otherwise the current value.
@@ -1372,7 +1372,7 @@ namespace sol {
 		SOL_TL_OPTIONAL_11_CONSTEXPR T& value() & {
 			if (has_value())
 				return this->m_value;
-#if defined(SOL_NO_EXCEPTIONS) && SOL_NO_EXCEPTIONS != 0
+#if SOL_IS_OFF(SOL_EXCEPTIONS_I_)
 			std::abort();
 #else
 			throw bad_optional_access();
@@ -1383,7 +1383,7 @@ namespace sol {
 		SOL_TL_OPTIONAL_11_CONSTEXPR const T& value() const& {
 			if (has_value())
 				return this->m_value;
-#if defined(SOL_NO_EXCEPTIONS) && SOL_NO_EXCEPTIONS != 0
+#if SOL_IS_OFF(SOL_EXCEPTIONS_I_)
 			std::abort();
 #else
 			throw bad_optional_access();
@@ -1393,7 +1393,7 @@ namespace sol {
 		SOL_TL_OPTIONAL_11_CONSTEXPR T&& value() && {
 			if (has_value())
 				return std::move(this->m_value);
-#if defined(SOL_NO_EXCEPTIONS) && SOL_NO_EXCEPTIONS != 0
+#if SOL_IS_OFF(SOL_EXCEPTIONS_I_)
 			std::abort();
 #else
 			throw bad_optional_access();
@@ -1405,7 +1405,7 @@ namespace sol {
 		SOL_TL_OPTIONAL_11_CONSTEXPR const T&& value() const&& {
 			if (has_value())
 				return std::move(this->m_value);
-#if defined(SOL_NO_EXCEPTIONS) && SOL_NO_EXCEPTIONS != 0
+#if SOL_IS_OFF(SOL_EXCEPTIONS_I_)
 			std::abort();
 #else
 			throw bad_optional_access();
@@ -1644,7 +1644,7 @@ namespace sol {
 		auto optional_map_impl(Opt&& opt, F&& f) {
 			if (opt.has_value()) {
 				detail::invoke(std::forward<F>(f), *std::forward<Opt>(opt));
-				return make_optional(monostate{});
+				return make_optional(monostate {});
 			}
 
 			return optional<monostate>(nullopt);
@@ -1663,7 +1663,7 @@ namespace sol {
 		auto optional_map_impl(Opt&& opt, F&& f) -> optional<monostate> {
 			if (opt.has_value()) {
 				detail::invoke(std::forward<F>(f), *std::forward<Opt>(opt));
-				return monostate{};
+				return monostate {};
 			}
 
 			return nullopt;
@@ -2027,7 +2027,7 @@ namespace sol {
 		template <class U>
 		constexpr optional<typename std::decay<U>::type> conjunction(U&& u) const {
 			using result = optional<detail::decay_t<U>>;
-			return has_value() ? result{ u } : result{ nullopt };
+			return has_value() ? result { u } : result { nullopt };
 		}
 
 		/// \returns `rhs` if `*this` is empty, otherwise the current value.
@@ -2247,7 +2247,7 @@ namespace sol {
 		SOL_TL_OPTIONAL_11_CONSTEXPR T& value() {
 			if (has_value())
 				return *m_value;
-#if defined(SOL_NO_EXCEPTIONS) && SOL_NO_EXCEPTIONS != 0
+#if SOL_IS_OFF(SOL_EXCEPTIONS_I_)
 			std::abort();
 #else
 			throw bad_optional_access();
@@ -2258,7 +2258,7 @@ namespace sol {
 		SOL_TL_OPTIONAL_11_CONSTEXPR const T& value() const {
 			if (has_value())
 				return *m_value;
-#if defined(SOL_NO_EXCEPTIONS) && SOL_NO_EXCEPTIONS != 0
+#if SOL_IS_OFF(SOL_EXCEPTIONS_I_)
 			std::abort();
 #else
 			throw bad_optional_access();

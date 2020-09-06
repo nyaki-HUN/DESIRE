@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2019 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -24,11 +24,11 @@
 #ifndef SOL_TRAITS_HPP
 #define SOL_TRAITS_HPP
 
-#include "tuple.hpp"
-#include "bind_traits.hpp"
-#include "pointer_like.hpp"
-#include "base_traits.hpp"
-#include "string_view.hpp"
+#include <sol/tuple.hpp>
+#include <sol/bind_traits.hpp>
+#include <sol/pointer_like.hpp>
+#include <sol/base_traits.hpp>
+#include <sol/string_view.hpp>
 
 #include <type_traits>
 #include <cstdint>
@@ -37,7 +37,7 @@
 #include <array>
 #include <iterator>
 #include <iosfwd>
-#if defined(SOL_STD_VARIANT) && SOL_STD_VARIANT != 0
+#if SOL_IS_ON(SOL_STD_VARIANT_I_)
 #include <variant>
 #endif // variant is weird on XCode, thanks XCode
 

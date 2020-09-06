@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2019 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -24,10 +24,9 @@
 #ifndef SOL_USERTYPE_CONTAINER_HPP
 #define SOL_USERTYPE_CONTAINER_HPP
 
-#include "traits.hpp"
-#include "stack.hpp"
-#include "object.hpp"
-#include "map.hpp"
+#include <sol/traits.hpp>
+#include <sol/stack.hpp>
+#include <sol/object.hpp>
 
 namespace sol {
 
@@ -525,7 +524,7 @@ namespace sol {
 			};
 
 			static auto& get_src(lua_State* L) {
-#if defined(SOL_SAFE_USERTYPE) && SOL_SAFE_USERTYPE
+#if SOL_IS_ON(SOL_SAFE_USERTYPE_I_)
 				auto p = stack::unqualified_check_get<T*>(L, 1);
 				if (!p) {
 					luaL_error(L,
@@ -1244,8 +1243,22 @@ namespace sol {
 
 			static int set(lua_State* L) {
 				stack_object value = stack_object(L, raw_index(3));
-				if (type_of(L, 3) == type::lua_nil) {
-					return erase(L);
+				if constexpr (is_linear_integral::value) {
+					// for non-associative containers,
+					// erasure only happens if it is the
+					// last index in the container
+					auto key = stack::get<K>(L, 2);
+					auto self_size = deferred_uc::size(L);
+					if (key == static_cast<K>(self_size)) {
+						if (type_of(L, 3) == type::lua_nil) {
+							return erase(L);
+						}
+					}
+				}
+				else {
+					if (type_of(L, 3) == type::lua_nil) {
+						return erase(L);
+					}
 				}
 				auto& self = get_src(L);
 				detail::error_result er = set_start(L, self, stack_object(L, raw_index(2)), std::move(value));
@@ -1328,11 +1341,7 @@ namespace sol {
 			}
 
 			static std::ptrdiff_t index_adjustment(lua_State*, T&) {
-#if defined(SOL_CONTAINERS_START_INDEX)
-				return static_cast<std::ptrdiff_t>((SOL_CONTAINERS_START) == 0 ? 0 : -(SOL_CONTAINERS_START));
-#else
-				return static_cast<std::ptrdiff_t>(-1);
-#endif
+				return static_cast<std::ptrdiff_t>((SOL_CONTAINER_START_INDEX_I_) == 0 ? 0 : -(SOL_CONTAINER_START_INDEX_I_));
 			}
 
 			static int pairs(lua_State* L) {
@@ -1371,7 +1380,7 @@ namespace sol {
 
 			static auto& get_src(lua_State* L) {
 				auto p = stack::unqualified_check_get<T*>(L, 1);
-#if defined(SOL_SAFE_USERTYPE) && SOL_SAFE_USERTYPE
+#if SOL_IS_ON(SOL_SAFE_USERTYPE_I_)
 				if (!p) {
 					luaL_error(L,
 					     "sol: 'self' is not of type '%s' (pass 'self' as first argument with ':' or call on proper type)",
@@ -1505,11 +1514,7 @@ namespace sol {
 			}
 
 			static std::ptrdiff_t index_adjustment(lua_State*, T&) {
-#if defined(SOL_CONTAINERS_START_INDEX)
-				return (SOL_CONTAINERS_START) == 0 ? 0 : -(SOL_CONTAINERS_START);
-#else
-				return -1;
-#endif
+				return (SOL_CONTAINER_START_INDEX_I_) == 0 ? 0 : -(SOL_CONTAINER_START_INDEX_I_);
 			}
 
 			static iterator begin(lua_State*, T& self) {
