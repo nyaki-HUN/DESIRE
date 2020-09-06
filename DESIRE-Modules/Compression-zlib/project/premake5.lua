@@ -26,3 +26,9 @@ project "Compression-zlib"
 		"../Externals/zlib/gz*.h",
 		"../Externals/zlib/gz*.c",
 	}
+
+	filter "action:linux"
+		defines
+		{
+			"LUA_USE_LINUX",
+		}

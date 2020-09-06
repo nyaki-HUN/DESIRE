@@ -5,8 +5,6 @@ project "Network-curl"
 	pchheader "stdafx_curl.h"
 	pchsource "../src/stdafx_curl.cpp"
 
-	removeflags { "FatalCompileWarnings" }
-
 	defines
 	{
 		"BUILDING_LIBCURL",
