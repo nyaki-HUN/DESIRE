@@ -5,8 +5,6 @@ project "Script-Lua"
 	pchheader "stdafx_Lua.h"
 	pchsource "../src/stdafx_Lua.cpp"
 
-	removeflags { "FatalCompileWarnings" }
-
 	includedirs
 	{
 		"../Externals/lua/src",
