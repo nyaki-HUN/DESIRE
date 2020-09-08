@@ -28,7 +28,38 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pD
 
 Texture::~Texture()
 {
-	Modules::Render->Unbind(this);
+	Modules::Render->Unbind(*this);
+}
+
+Texture& Texture::operator =(Texture&& otherTexture)
+{
+	Modules::Render->Unbind(*this);
+
+	pRenderData = otherTexture.pRenderData;
+	width = otherTexture.width;
+	height = otherTexture.height;
+	format = otherTexture.format;
+	numMipLevels = otherTexture.numMipLevels;
+	data = std::move(otherTexture.data);
+
+	otherTexture.pRenderData = nullptr;
+
+	return *this;
+}
+
+uint16_t Texture::GetWidth() const
+{
+	return width;
+}
+
+uint16_t Texture::GetHeight() const
+{
+	return height;
+}
+
+Texture::EFormat Texture::GetFormat() const
+{
+	return format;
 }
 
 bool Texture::IsDepthFormat() const

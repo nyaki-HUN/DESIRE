@@ -196,9 +196,9 @@ void Direct3D12Render::Kill()
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
 
-	Unbind(errorVertexShader.get());
-	Unbind(errorPixelShader.get());
-	Unbind(screenSpaceQuadVertexShader.get());
+	Unbind(*errorVertexShader);
+	Unbind(*errorPixelShader);
+	Unbind(*screenSpaceQuadVertexShader);
 }
 
 void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const

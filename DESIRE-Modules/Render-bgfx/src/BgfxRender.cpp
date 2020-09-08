@@ -102,7 +102,7 @@ void BgfxRender::Kill()
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
 
-	Unbind(screenSpaceQuadVertexShader.get());
+	Unbind(*screenSpaceQuadVertexShader);
 
 	bgfx::shutdown();
 	initialized = false;

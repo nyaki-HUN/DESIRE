@@ -10,5 +10,5 @@ Shader::Shader(const String& name)
 
 Shader::~Shader()
 {
-	Modules::Render->Unbind(this);
+	Modules::Render->Unbind(*this);
 }

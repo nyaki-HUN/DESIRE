@@ -194,51 +194,51 @@ void Render::Bind(RenderTarget& renderTarget)
 	renderTarget.pRenderData = CreateRenderTargetRenderData(renderTarget);
 }
 
-void Render::Unbind(Mesh* pMesh)
+void Render::Unbind(Mesh& mesh)
 {
-	if(pMesh == nullptr || pMesh->pRenderData == nullptr)
+	if(mesh.pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyMeshRenderData(pMesh->pRenderData);
-	pMesh->pRenderData = nullptr;
+	DestroyMeshRenderData(mesh.pRenderData);
+	mesh.pRenderData = nullptr;
 
-	if(pActiveMesh == pMesh)
+	if(pActiveMesh == &mesh)
 	{
 		pActiveMesh = nullptr;
 	}
 }
 
-void Render::Unbind(Shader* pShader)
+void Render::Unbind(Shader& shader)
 {
-	if(pShader == nullptr || pShader->pRenderData == nullptr)
+	if(shader.pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyShaderRenderData(pShader->pRenderData);
-	pShader->pRenderData = nullptr;
+	DestroyShaderRenderData(shader.pRenderData);
+	shader.pRenderData = nullptr;
 
-	if(pActiveVertexShader == pShader)
+	if(pActiveVertexShader == &shader)
 	{
 		pActiveVertexShader = nullptr;
 	}
-	if(pActiveFragmentShader == pShader)
+	if(pActiveFragmentShader == &shader)
 	{
 		pActiveFragmentShader = nullptr;
 	}
 }
 
-void Render::Unbind(Texture* pTexture)
+void Render::Unbind(Texture& texture)
 {
-	if(pTexture == nullptr || pTexture->pRenderData == nullptr)
+	if(texture.pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyTextureRenderData(pTexture->pRenderData);
-	pTexture->pRenderData = nullptr;
+	DestroyTextureRenderData(texture.pRenderData);
+	texture.pRenderData = nullptr;
 }
 
 void Render::Unbind(RenderTarget& renderTarget)
@@ -254,7 +254,12 @@ void Render::Unbind(RenderTarget& renderTarget)
 	const uint8_t textureCount = renderTarget.GetTextureCount();
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
-		Unbind(renderTarget.GetTexture(i).get());
+		Unbind(*renderTarget.GetTexture(i));
+	}
+
+	if(pActiveRenderTarget == &renderTarget)
+	{
+		pActiveRenderTarget = nullptr;
 	}
 }
 

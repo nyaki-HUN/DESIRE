@@ -95,15 +95,17 @@ std::shared_ptr<Texture> ResourceManager::GetTexture(const String& filename)
 void ResourceManager::ReloadMesh(const String& filename)
 {
 	auto it = loadedMeshes.find(filename);
-	if(it == loadedMeshes.end() || !it->second.expired())
+	if(it == loadedMeshes.end())
 	{
 		return;
 	}
 
-	std::shared_ptr<Mesh> newMesh = LoadMesh(filename);
-	if(newMesh != nullptr)
+	std::shared_ptr<Mesh> mesh = it->second.lock();
+	if(mesh != nullptr)
 	{
-		std::shared_ptr<Mesh> mesh = it->second.lock();
+		Modules::Render->Unbind(*mesh);
+
+		std::shared_ptr<Mesh> newMesh = LoadMesh(filename);
 		mesh = std::move(newMesh);
 	}
 }
@@ -111,22 +113,16 @@ void ResourceManager::ReloadMesh(const String& filename)
 void ResourceManager::ReloadTexture(const String& filename)
 {
 	auto it = loadedTextures.find(filename);
-	if(it == loadedTextures.end() || !it->second.expired())
+	if(it == loadedTextures.end())
 	{
 		return;
 	}
 
-	std::shared_ptr<Texture> newTexture = LoadTexture(filename);
-	if(newTexture != nullptr)
+	std::shared_ptr<Texture> texture = it->second.lock();
+	if(texture != nullptr)
 	{
-		std::shared_ptr<Texture> texture = it->second.lock();
-		Modules::Render->Unbind(texture.get());
-
-		ASSERT(texture->width == newTexture->width);
-		ASSERT(texture->height == newTexture->height);
-		ASSERT(texture->format == newTexture->format);
-		ASSERT(texture->numMipLevels == newTexture->numMipLevels);
-		texture->data = std::move(newTexture->data);
+		std::shared_ptr<Texture> newTexture = LoadTexture(filename);
+		*texture = std::move(*newTexture);
 	}
 }
 
@@ -137,13 +133,10 @@ void ResourceManager::ReloadShader(const String& filename)
 		std::shared_ptr<Shader> shader = pair.second.lock();
 		if(shader != nullptr && shader->name == filename)
 		{
-			std::shared_ptr<Shader> newShader = LoadShader(filename);
-			if(newShader != nullptr)
-			{
-				Modules::Render->Unbind(shader.get());
+			Modules::Render->Unbind(*shader);
 
-				shader->data = std::move(newShader->data);
-			}
+			std::shared_ptr<Shader> newShader = LoadShader(filename);
+			shader->data = std::move(newShader->data);
 		}
 	}
 }

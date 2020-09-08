@@ -237,9 +237,9 @@ void Direct3D11Render::Kill()
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
 
-	Unbind(errorVertexShader.get());
-	Unbind(errorPixelShader.get());
-	Unbind(screenSpaceQuadVertexShader.get());
+	Unbind(*errorVertexShader);
+	Unbind(*errorPixelShader);
+	Unbind(*screenSpaceQuadVertexShader);
 
 	DX_RELEASE(pBackBufferDepthStencilView);
 	DX_RELEASE(pBackBufferRenderTargetView);

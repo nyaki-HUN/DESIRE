@@ -118,9 +118,9 @@ public:
 	void Bind(RenderTarget& renderTarget);
 
 	// Resource unbind
-	void Unbind(Mesh* pMesh);
-	void Unbind(Shader* pShader);
-	void Unbind(Texture* pTexture);
+	void Unbind(Mesh& mesh);
+	void Unbind(Shader& shader);
+	void Unbind(Texture& texture);
 	void Unbind(RenderTarget& renderTarget);
 
 protected:
