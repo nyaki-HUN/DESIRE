@@ -15,7 +15,7 @@ public:
 	uint16_t GetWidth() const;
 	uint16_t GetHeight() const;
 
-	RenderTarget* GetRenderTarget() const;
+	RenderTarget& GetRenderTarget() const;
 
 private:
 	uint16_t posX = 0;

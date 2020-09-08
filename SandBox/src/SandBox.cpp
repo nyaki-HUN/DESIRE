@@ -197,7 +197,7 @@ void SandBox::Update()
 	Modules::UI->EndWindow();
 
 	// Render
-	Modules::Render->BeginFrame(mainWindow.get());
+	Modules::Render->BeginFrame(*mainWindow);
 
 	Modules::UI->Render();
 

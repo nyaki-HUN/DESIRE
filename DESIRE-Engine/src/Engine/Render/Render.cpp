@@ -1,8 +1,11 @@
 #include "Engine/stdafx.h"
 #include "Engine/Render/Render.h"
 
+#include "Engine/Application/OSWindow.h"
+
 #include "Engine/Render/Material.h"
 #include "Engine/Render/RenderTarget.h"
+#include "Engine/Render/View.h"
 
 #include "Engine/Resource/Mesh.h"
 #include "Engine/Resource/Shader.h"
@@ -15,6 +18,17 @@ Render::Render()
 
 Render::~Render()
 {
+}
+
+void Render::BeginFrame(OSWindow& window)
+{
+	SetRenderTarget(nullptr);
+	pActiveRenderTarget = nullptr;
+
+	ClearActiveRenderTarget();
+	SetViewport(0, 0, window.GetWidth(), window.GetHeight());
+
+	pActiveWindow = &window;
 }
 
 void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
@@ -66,7 +80,7 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, 
 	}
 
 	SetMaterial(pMaterial);
-	UpdateShaderParams(pMaterial);
+	UpdateShaderParams(*pMaterial);
 
 	DoRender(indexOffset, vertexOffset, numIndices, numVertices);
 }
@@ -89,9 +103,43 @@ void Render::RenderScreenSpaceQuad(Material* pMaterial)
 
 	SetMaterial(pMaterial);
 	SetVertexShader(screenSpaceQuadVertexShader.get());
-	UpdateShaderParams(pMaterial);
+	UpdateShaderParams(*pMaterial);
 
 	DoRender(0, 0, 0, 4);
+}
+
+void Render::SetView(View* pView)
+{
+	if(pView != nullptr)
+	{
+		SetActiveRenderTarget(pView->GetRenderTarget());
+		ClearActiveRenderTarget();
+		SetViewport(pView->GetPosX(), pView->GetPosY(), pView->GetWidth(), pView->GetHeight());
+	}
+	else
+	{
+		SetRenderTarget(nullptr);
+		pActiveRenderTarget = nullptr;
+
+		if(pActiveWindow != nullptr)
+		{
+			SetViewport(0, 0, pActiveWindow->GetWidth(), pActiveWindow->GetHeight());
+		}
+	}
+}
+
+void Render::SetActiveRenderTarget(RenderTarget& renderTarget)
+{
+	if(renderTarget.pRenderData == nullptr)
+	{
+		Bind(renderTarget);
+	}
+
+	if(pActiveRenderTarget != &renderTarget)
+	{
+		SetRenderTarget(&renderTarget);
+		pActiveRenderTarget = &renderTarget;
+	}
 }
 
 void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
@@ -129,21 +177,21 @@ void Render::Bind(Texture* pTexture)
 	pTexture->pRenderData = CreateTextureRenderData(pTexture);
 }
 
-void Render::Bind(RenderTarget* pRenderTarget)
+void Render::Bind(RenderTarget& renderTarget)
 {
-	if(pRenderTarget == nullptr || pRenderTarget->pRenderData != nullptr)
+	if(renderTarget.pRenderData != nullptr)
 	{
 		return;
 	}
 
-	const uint8_t textureCount = pRenderTarget->GetTextureCount();
+	const uint8_t textureCount = renderTarget.GetTextureCount();
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
-		const std::shared_ptr<Texture>& texture = pRenderTarget->GetTexture(i);
+		const std::shared_ptr<Texture>& texture = renderTarget.GetTexture(i);
 		Bind(texture.get());
 	}
 
-	pRenderTarget->pRenderData = CreateRenderTargetRenderData(pRenderTarget);
+	renderTarget.pRenderData = CreateRenderTargetRenderData(renderTarget);
 }
 
 void Render::Unbind(Mesh* pMesh)
@@ -193,20 +241,20 @@ void Render::Unbind(Texture* pTexture)
 	pTexture->pRenderData = nullptr;
 }
 
-void Render::Unbind(RenderTarget* pRenderTarget)
+void Render::Unbind(RenderTarget& renderTarget)
 {
-	if(pRenderTarget == nullptr || pRenderTarget->pRenderData == nullptr)
+	if(renderTarget.pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyRenderTargetRenderData(pRenderTarget->pRenderData);
-	pRenderTarget->pRenderData = nullptr;
+	DestroyRenderTargetRenderData(renderTarget.pRenderData);
+	renderTarget.pRenderData = nullptr;
 
-	const uint8_t textureCount = pRenderTarget->GetTextureCount();
+	const uint8_t textureCount = renderTarget.GetTextureCount();
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
-		Unbind(pRenderTarget->GetTexture(i).get());
+		Unbind(renderTarget.GetTexture(i).get());
 	}
 }
 

@@ -85,14 +85,17 @@ public:
 
 	virtual void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const = 0;
 
-	virtual void BeginFrame(OSWindow* pWindow) = 0;
+	void BeginFrame(OSWindow& window);
 	virtual void EndFrame() = 0;
 
 	void RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset = 0, uint32_t vertexOffset = 0, uint32_t numIndices = UINT32_MAX, uint32_t numVertices = UINT32_MAX);
 	void RenderScreenSpaceQuad(Material* pMaterial);
 
 	// Sets the current view that the rendering will happen on. (Use nullptr to set the default view which is using the frame buffer)
-	virtual void SetView(View* pView) = 0;
+	void SetView(View* pView);
+
+	void SetActiveRenderTarget(RenderTarget& renderTarget);
+	virtual void ClearActiveRenderTarget() = 0;
 
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
@@ -112,13 +115,13 @@ public:
 	void Bind(Mesh* pMesh);
 	void Bind(Shader* pShader);
 	void Bind(Texture* pTexture);
-	void Bind(RenderTarget* pRenderTarget);
+	void Bind(RenderTarget& renderTarget);
 
 	// Resource unbind
 	void Unbind(Mesh* pMesh);
 	void Unbind(Shader* pShader);
 	void Unbind(Texture* pTexture);
-	void Unbind(RenderTarget* pRenderTarget);
+	void Unbind(RenderTarget& renderTarget);
 
 protected:
 	void SetDefaultRenderStates();
@@ -129,6 +132,7 @@ protected:
 	const Mesh* pActiveMesh = nullptr;
 	const Shader* pActiveVertexShader = nullptr;
 	const Shader* pActiveFragmentShader = nullptr;
+	const RenderTarget* pActiveRenderTarget = nullptr;
 
 	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
 
@@ -136,7 +140,7 @@ private:
 	virtual void* CreateMeshRenderData(const Mesh* pMesh) = 0;
 	virtual void* CreateShaderRenderData(const Shader* pShader) = 0;
 	virtual void* CreateTextureRenderData(const Texture* pTexture) = 0;
-	virtual void* CreateRenderTargetRenderData(const RenderTarget* pRenderTarget) = 0;
+	virtual void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) = 0;
 
 	virtual void DestroyMeshRenderData(void* pRenderData) = 0;
 	virtual void DestroyShaderRenderData(void* pRenderData) = 0;
@@ -149,7 +153,8 @@ private:
 	virtual void SetVertexShader(Shader* pVertexShader) = 0;
 	virtual void SetFragmentShader(Shader* pFragmentShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
-	virtual void UpdateShaderParams(const Material* pMaterial) = 0;
+	virtual void SetRenderTarget(RenderTarget* pRenderTarget) = 0;
+	virtual void UpdateShaderParams(const Material& material) = 0;
 
 	// Submit draw command
 	virtual void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) = 0;

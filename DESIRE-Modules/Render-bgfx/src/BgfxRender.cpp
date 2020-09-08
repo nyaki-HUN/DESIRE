@@ -129,41 +129,14 @@ void BgfxRender::AppendShaderFilenameWithPath(WritableString& outString, const S
 	outString += ".bin";
 }
 
-void BgfxRender::BeginFrame(OSWindow* window)
-{
-	activeViewId = 0;
-	SetViewport(0, 0, window->GetWidth(), window->GetHeight());
-
-	// This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0
-	bgfx::touch(0);
-}
-
 void BgfxRender::EndFrame()
 {
 	bgfx::frame();
 }
 
-void BgfxRender::SetView(View* view)
+void BgfxRender::ClearActiveRenderTarget()
 {
-	if(view != nullptr)
-	{
-		RenderTarget* rt = view->GetRenderTarget();
-		if(rt->pRenderData == nullptr)
-		{
-			Bind(rt);
-		}
-
-		RenderTargetRenderDataBgfx* pRenderTargetRenderData = static_cast<RenderTargetRenderDataBgfx*>(rt->pRenderData);
-		ASSERT(pRenderTargetRenderData->id < BGFX_CONFIG_MAX_VIEWS);
-		activeViewId = pRenderTargetRenderData->id;
-		SetViewport(view->GetPosX(), view->GetPosY(), view->GetWidth(), view->GetHeight());
-
-		bgfx::setViewClear(activeViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColor, 1.0f, 0);
-	}
-	else
-	{
-		activeViewId = 0;
-	}
+	bgfx::touch(activeViewId);
 }
 
 void BgfxRender::SetWorldMatrix(const Matrix4& matrix)
@@ -442,7 +415,7 @@ void* BgfxRender::CreateShaderRenderData(const Shader* pShader)
 
 		bgfx::UniformInfo info;
 		bgfx::getUniformInfo(uniforms[i], info);
-		pShaderRenderData->uniforms.Insert(HashedString::CreateFromString(info.name), uniforms[i]);
+		pShaderRenderData->uniforms.Insert(HashedString::CreateFromString(String(info.name, strlen(info.name))), uniforms[i]);
 	}
 
 	return pShaderRenderData;
@@ -466,15 +439,15 @@ void* BgfxRender::CreateTextureRenderData(const Texture* pTexture)
 	return pTextureRenderData;
 }
 
-void* BgfxRender::CreateRenderTargetRenderData(const RenderTarget* pRenderTarget)
+void* BgfxRender::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
 {
 	RenderTargetRenderDataBgfx* pRenderTargetRenderData = new RenderTargetRenderDataBgfx();
 
 	bgfx::TextureHandle renderTargetTextures[BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS];
-	const uint8_t textureCount = std::min<uint8_t>(pRenderTarget->GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
+	const uint8_t textureCount = std::min<uint8_t>(renderTarget.GetTextureCount(), BGFX_CONFIG_MAX_FRAME_BUFFER_ATTACHMENTS);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
-		const std::shared_ptr<Texture>& texture = pRenderTarget->GetTexture(i);
+		const std::shared_ptr<Texture>& texture = renderTarget.GetTexture(i);
 		const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(texture->pRenderData);
 		ASSERT(pTextureRenderData != nullptr);
 
@@ -582,12 +555,26 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterM
 	bgfx::setTexture(samplerIdx, samplerUniforms[samplerIdx], pTextureRenderData->textureHandle, flags);
 }
 
-void BgfxRender::UpdateShaderParams(const Material* material)
+void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
+{
+	if(pRenderTarget != nullptr)
+	{
+		RenderTargetRenderDataBgfx* pRenderTargetRenderData = static_cast<RenderTargetRenderDataBgfx*>(pRenderTarget->pRenderData);
+		ASSERT(pRenderTargetRenderData->id < BGFX_CONFIG_MAX_VIEWS);
+		activeViewId = pRenderTargetRenderData->id;
+	}
+	else
+	{
+		activeViewId = 0;
+	}
+}
+
+void BgfxRender::UpdateShaderParams(const Material& material)
 {
 	const ShaderRenderDataBgfx* vertexShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(pActiveVertexShader->pRenderData);
 	const ShaderRenderDataBgfx* fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(pActiveFragmentShader->pRenderData);
 
-	for(const Material::ShaderParam& shaderParam : material->GetShaderParams())
+	for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 	{
 		const bgfx::UniformHandle* uniform = vertexShaderRenderData->uniforms.Find(shaderParam.name);
 		if(uniform == nullptr)

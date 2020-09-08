@@ -48,7 +48,7 @@ uint16_t View::GetHeight() const
 	return height;
 }
 
-RenderTarget* View::GetRenderTarget() const
+RenderTarget& View::GetRenderTarget() const
 {
-	return renderTarget.get();
+	return *renderTarget;
 }

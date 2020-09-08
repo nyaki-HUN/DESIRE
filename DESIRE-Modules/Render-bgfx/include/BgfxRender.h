@@ -18,10 +18,10 @@ public:
 
 	void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const override;
 
-	void BeginFrame(OSWindow* window) override;
 	void EndFrame() override;
 
-	void SetView(View* view) override;
+	void SetRenderTarget(RenderTarget* pRenderTarget) override;
+	void ClearActiveRenderTarget() override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
@@ -39,7 +39,7 @@ private:
 	void* CreateMeshRenderData(const Mesh* pMesh) override;
 	void* CreateShaderRenderData(const Shader* pShader) override;
 	void* CreateTextureRenderData(const Texture* pTexture) override;
-	void* CreateRenderTargetRenderData(const RenderTarget* pRenderTarget) override;
+	void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
 
 	void DestroyMeshRenderData(void* pRenderData) override;
 	void DestroyShaderRenderData(void* pRenderData) override;
@@ -53,7 +53,7 @@ private:
 	void SetVertexShader(Shader* pVertexShader) override;
 	void SetFragmentShader(Shader* pFragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
-	void UpdateShaderParams(const Material* pMaterial) override;
+	void UpdateShaderParams(const Material& material) override;
 
 	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 

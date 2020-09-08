@@ -13,7 +13,7 @@ RenderTarget::RenderTarget(uint16_t width, uint16_t height)
 
 RenderTarget::~RenderTarget()
 {
-	Modules::Render->Unbind(this);
+	Modules::Render->Unbind(*this);
 }
 
 uint16_t RenderTarget::GetWidth() const

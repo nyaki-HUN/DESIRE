@@ -20,10 +20,9 @@ public:
 
 	void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const override;
 
-	void BeginFrame(OSWindow* pWindow) override;
 	void EndFrame() override;
 
-	void SetView(View* pView) override;
+	void ClearActiveRenderTarget() override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
@@ -41,7 +40,7 @@ private:
 	void* CreateMeshRenderData(const Mesh* pMesh) override;
 	void* CreateShaderRenderData(const Shader* pShader) override;
 	void* CreateTextureRenderData(const Texture* pTexture) override;
-	void* CreateRenderTargetRenderData(const RenderTarget* pRenderTarget) override;
+	void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
 
 	void DestroyMeshRenderData(void* pRenderData) override;
 	void DestroyShaderRenderData(void* pRenderData) override;
@@ -55,8 +54,9 @@ private:
 	void SetVertexShader(Shader* pVertexShader) override;
 	void SetFragmentShader(Shader* pFragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
-	void UpdateShaderParams(const Material* pMaterial) override;
-	void UpdateShaderParams(const Material* pMaterial, const ShaderRenderDataD3D12* pShaderRenderData);
+	void SetRenderTarget(RenderTarget* pRenderTarget) override;
+	void UpdateShaderParams(const Material& material) override;
+	void UpdateShaderParams(const Material& material, const ShaderRenderDataD3D12* pShaderRenderData);
 	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
 	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
@@ -70,8 +70,6 @@ private:
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
 	D3D12_RASTERIZER_DESC rasterizerDesc = {};
 	D3D12_BLEND_DESC blendDesc = {};
-
-	const View* pActiveView = nullptr;
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };

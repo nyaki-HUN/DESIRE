@@ -208,41 +208,13 @@ void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, c
 	outString += ".hlsl";
 }
 
-void Direct3D12Render::BeginFrame(OSWindow* pWindow)
-{
-	pActiveWindow = pWindow;
-	SetViewport(0, 0, pWindow->GetWidth(), pWindow->GetHeight());
-}
-
 void Direct3D12Render::EndFrame()
 {
 	swapChain->Present(1, 0);
 }
 
-void Direct3D12Render::SetView(View* pView)
+void Direct3D12Render::ClearActiveRenderTarget()
 {
-	if(pView == pActiveView)
-	{
-		return;
-	}
-
-	if(pView != nullptr)
-	{
-		RenderTarget* rt = pView->GetRenderTarget();
-		if(rt->pRenderData == nullptr)
-		{
-			Bind(rt);
-		}
-
-//		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(rt->pRenderData);
-		SetViewport(pView->GetPosX(), pView->GetPosY(), pView->GetWidth(), pView->GetHeight());
-	}
-	else
-	{
-		SetViewport(0, 0, pActiveWindow->GetWidth(), pActiveWindow->GetHeight());
-	}
-
-	pActiveView = pView;
 }
 
 void Direct3D12Render::SetWorldMatrix(const Matrix4& matrix)
@@ -549,11 +521,11 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture* pTexture)
 	return pTextureRenderData;
 }
 
-void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget* pRenderTarget)
+void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
 {
 	RenderTargetRenderDataD3D12* pRenderTargetRenderData = new RenderTargetRenderDataD3D12();
 
-	DESIRE_UNUSED(pRenderTarget);
+	DESIRE_UNUSED(renderTarget);
 
 	return pRenderTargetRenderData;
 }
@@ -677,16 +649,27 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 	DESIRE_UNUSED(texture);
 }
 
-void Direct3D12Render::UpdateShaderParams(const Material* pMaterial)
+void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
-	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveVertexShader->pRenderData);
-	UpdateShaderParams(pMaterial, pVertexShaderRenderData);
-
-	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveFragmentShader->pRenderData);
-	UpdateShaderParams(pMaterial, pFragmentShaderRenderData);
+	if(pRenderTarget != nullptr)
+	{
+//		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderTarget->pRenderData);
+	}
+	else
+	{
+	}
 }
 
-void Direct3D12Render::UpdateShaderParams(const Material* pMaterial, const ShaderRenderDataD3D12* pShaderRenderData)
+void Direct3D12Render::UpdateShaderParams(const Material& material)
+{
+	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveVertexShader->pRenderData);
+	UpdateShaderParams(material, pVertexShaderRenderData);
+
+	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveFragmentShader->pRenderData);
+	UpdateShaderParams(material, pFragmentShaderRenderData);
+}
+
+void Direct3D12Render::UpdateShaderParams(const Material& material, const ShaderRenderDataD3D12* pShaderRenderData)
 {
 	const std::pair<uint32_t, uint32_t>* pOffsetSizePair = nullptr;
 
@@ -695,7 +678,7 @@ void Direct3D12Render::UpdateShaderParams(const Material* pMaterial, const Shade
 		bool isChanged = false;
 		const ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->constantBuffersData[i];
 
-		for(const Material::ShaderParam& shaderParam : pMaterial->GetShaderParams())
+		for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 		{
 			pOffsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
 			if(pOffsetSizePair != nullptr)
@@ -742,13 +725,13 @@ void Direct3D12Render::UpdateShaderParams(const Material* pMaterial, const Shade
 		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
 		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == 2 * sizeof(float))
 		{
-			float resolution[2];
-			if(pActiveView != nullptr)
+			float resolution[2] = {};
+			if(pActiveRenderTarget != nullptr)
 			{
-				resolution[0] = pActiveView->GetWidth();
-				resolution[1] = pActiveView->GetHeight();
+				resolution[0] = pActiveRenderTarget->GetWidth();
+				resolution[1] = pActiveRenderTarget->GetHeight();
 			}
-			else
+			else if(pActiveWindow != nullptr)
 			{
 				resolution[0] = pActiveWindow->GetWidth();
 				resolution[1] = pActiveWindow->GetHeight();

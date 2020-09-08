@@ -21,10 +21,9 @@ public:
 
 	void AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const override;
 
-	void BeginFrame(OSWindow* pWindow) override;
 	void EndFrame() override;
 
-	void SetView(View* pView) override;
+	void ClearActiveRenderTarget() override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
@@ -42,7 +41,7 @@ private:
 	void* CreateMeshRenderData(const Mesh* pMesh) override;
 	void* CreateShaderRenderData(const Shader* pShader) override;
 	void* CreateTextureRenderData(const Texture* pTexture) override;
-	void* CreateRenderTargetRenderData(const RenderTarget* pRenderTarget) override;
+	void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
 
 	void DestroyMeshRenderData(void* pRenderData) override;
 	void DestroyShaderRenderData(void* pRenderData) override;
@@ -58,8 +57,9 @@ private:
 	void SetVertexShader(Shader* pVertexShader) override;
 	void SetFragmentShader(Shader* pFragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
-	void UpdateShaderParams(const Material* pMaterial) override;
-	void UpdateShaderParams(const Material* pMaterial, const ShaderRenderDataD3D11* pShaderRenderData);
+	void SetRenderTarget(RenderTarget* pRenderTarget) override;
+	void UpdateShaderParams(const Material& material) override;
+	void UpdateShaderParams(const Material& material, const ShaderRenderDataD3D11* pShaderRenderData);
 	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
 	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
@@ -76,8 +76,8 @@ private:
 	ID3D11Device* d3dDevice = nullptr;
 	ID3D11DeviceContext* deviceCtx = nullptr;
 	IDXGISwapChain* swapChain = nullptr;
-	ID3D11RenderTargetView* backBufferRenderTargetView = nullptr;
-	ID3D11DepthStencilView* backBufferDepthStencilView = nullptr;
+	ID3D11RenderTargetView* pBackBufferRenderTargetView = nullptr;
+	ID3D11DepthStencilView* pBackBufferDepthStencilView = nullptr;
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
 	D3D11_RASTERIZER_DESC rasterizerDesc = {};
@@ -88,7 +88,6 @@ private:
 	const ID3D11BlendState* pActiveBlendState = nullptr;
 	const ID3D11InputLayout* pActiveInputLayout = nullptr;
 	const ID3D11SamplerState* activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
-	const View* pActiveView = nullptr;
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
