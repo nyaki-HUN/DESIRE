@@ -103,10 +103,8 @@ void ResourceManager::ReloadMesh(const String& filename)
 	std::shared_ptr<Mesh> mesh = it->second.lock();
 	if(mesh != nullptr)
 	{
-		Modules::Render->Unbind(*mesh);
-
 		std::shared_ptr<Mesh> newMesh = LoadMesh(filename);
-		mesh = std::move(newMesh);
+		*mesh = std::move(*newMesh);
 	}
 }
 

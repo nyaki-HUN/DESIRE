@@ -25,6 +25,11 @@ public:
 	Texture(uint16_t width, uint16_t height, EFormat format, const void* pDataToCopy = nullptr, uint8_t numMipLevels = 1);
 	~Texture();
 
+	Texture& operator =(Texture&& otherTexture);
+
+	uint16_t GetWidth() const;
+	uint16_t GetHeight() const;
+	EFormat GetFormat() const;
 	bool IsDepthFormat() const;
 	uint32_t GetDataSize() const;
 
@@ -48,9 +53,9 @@ public:
 	// Render engine specific data set at bind
 	void* pRenderData = nullptr;
 
-	const uint16_t width;
-	const uint16_t height;
-	const EFormat format;
-	const uint8_t numMipLevels;
+	uint16_t width;
+	uint16_t height;
+	EFormat format;
+	uint8_t numMipLevels;
 	std::unique_ptr<uint8_t[]> data;
 };

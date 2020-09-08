@@ -56,12 +56,16 @@ Mesh::~Mesh()
 
 Mesh& Mesh::operator =(Mesh&& otherMesh)
 {
-	const uint32_t numIndices = 0;
-	const uint32_t numVertices = 0;
-	std::unique_ptr<uint16_t[]> indices;
-	std::unique_ptr<float[]> vertices;
-	uint32_t stride = 0;
-	otherMesh.vertices
+	Modules::Render->Unbind(*this);
+
+	numIndices = otherMesh.numIndices;
+	numVertices = otherMesh.numVertices;
+	indices = std::move(otherMesh.indices);
+	vertices = std::move(otherMesh.vertices);
+	type = otherMesh.type;
+	vertexLayout = std::move(otherMesh.vertexLayout);
+
+	return *this;
 }
 
 uint32_t Mesh::GetSizeOfIndexData() const

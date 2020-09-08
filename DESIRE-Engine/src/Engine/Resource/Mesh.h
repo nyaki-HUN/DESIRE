@@ -47,6 +47,8 @@ public:
 	Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount);
 	~Mesh();
 
+	Mesh& operator =(Mesh&& otherMesh);
+
 	uint32_t GetSizeOfIndexData() const;
 	uint32_t GetSizeOfVertexData() const;
 
@@ -56,8 +58,8 @@ public:
 	// Render engine specific data set at bind
 	void* pRenderData = nullptr;
 
-	const uint32_t numIndices = 0;
-	const uint32_t numVertices = 0;
+	uint32_t numIndices = 0;
+	uint32_t numVertices = 0;
 	std::unique_ptr<uint16_t[]> indices;
 	std::unique_ptr<float[]> vertices;
 	uint32_t stride = 0;
