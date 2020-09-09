@@ -68,6 +68,16 @@ Mesh& Mesh::operator =(Mesh&& otherMesh)
 	return *this;
 }
 
+uint32_t Mesh::GetNumIndices() const
+{
+	return numIndices;
+}
+
+uint32_t Mesh::GetNumVertices() const
+{
+	return numVertices;
+}
+
 uint32_t Mesh::GetSizeOfIndexData() const
 {
 	return numIndices * sizeof(uint16_t); 

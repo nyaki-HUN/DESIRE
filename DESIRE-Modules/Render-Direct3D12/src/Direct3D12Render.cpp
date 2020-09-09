@@ -788,5 +788,5 @@ DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* pTexture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[static_cast<size_t>(pTexture->format)];
+	return conversionTable[static_cast<size_t>(pTexture->GetFormat())];
 }

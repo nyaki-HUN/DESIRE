@@ -208,7 +208,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 void ResourceManager::CreateErrorTexture()
 {
 	constexpr uint16_t kTextureSize = 128;
-	constexpr uint32_t dataSize = kTextureSize * kTextureSize * Texture::GetBytesPerPixel(Texture::EFormat::RGBA8);
+	constexpr uint32_t dataSize = kTextureSize * kTextureSize * Texture::GetBytesPerPixelForFormat(Texture::EFormat::RGBA8);
 	std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(dataSize);
 
 	uint32_t* pPixel = reinterpret_cast<uint32_t*>(data.get());

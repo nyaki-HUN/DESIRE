@@ -489,7 +489,7 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
 			break;
 	}
 
-	if(pMesh->numIndices != 0)
+	if(pMesh->GetNumIndices() != 0)
 	{
 		bufferDesc.ByteWidth = pMesh->GetSizeOfIndexData();
 		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -641,12 +641,12 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture* pTexture)
 {
 	TextureRenderDataD3D11* pTextureRenderData = new TextureRenderDataD3D11();
 
-	const bool isRenderTarget = (pTexture->data == nullptr);
+	const bool isRenderTarget = (pTexture->GetData() == nullptr);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = pTexture->width;
-	textureDesc.Height = pTexture->height;
-	textureDesc.MipLevels = pTexture->numMipLevels;
+	textureDesc.Width = pTexture->GetWidth();
+	textureDesc.Height = pTexture->GetHeight();
+	textureDesc.MipLevels = pTexture->GetNumMipLevels();
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = GetTextureFormat(pTexture);
 	textureDesc.SampleDesc.Count = 1;
@@ -658,7 +658,7 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture* pTexture)
 	else if(isRenderTarget)
 	{
 		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		if(pTexture->numMipLevels > 1)
+		if(pTexture->GetNumMipLevels() > 1)
 		{
 			textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		}
@@ -684,9 +684,9 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture* pTexture)
 		ASSERT(textureDesc.MipLevels * textureDesc.ArraySize == 1 && "TODO: Set initial data properly in the loop below");
 		for(uint32_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
 		{
-			subResourceData[i].pSysMem = pTexture->data.get();
-			subResourceData[i].SysMemPitch = pTexture->width * Texture::GetBytesPerPixel(pTexture->format);
-			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * pTexture->height;
+			subResourceData[i].pSysMem = pTexture->GetData();
+			subResourceData[i].SysMemPitch = pTexture->GetWidth() * pTexture->GetBytesPerPixel();
+			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * pTexture->GetHeight();
 		}
 
 		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &pTextureRenderData->pTexture2D);
@@ -1308,5 +1308,5 @@ DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture* pTexture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[static_cast<size_t>(pTexture->format)];
+	return conversionTable[static_cast<size_t>(pTexture->GetFormat())];
 }

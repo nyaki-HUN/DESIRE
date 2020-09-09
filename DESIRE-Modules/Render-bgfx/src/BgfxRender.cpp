@@ -330,7 +330,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 	}
 	pMeshRenderData->vertexLayout.end();
 
-	const bgfx::Memory* pIndexData = (pMesh->numIndices != 0) ? bgfx::copy(pMesh->indices.get(), pMesh->GetSizeOfIndexData()) : nullptr;
+	const bgfx::Memory* pIndexData = (pMesh->GetNumIndices() != 0) ? bgfx::copy(pMesh->indices.get(), pMesh->GetSizeOfIndexData()) : nullptr;
 	const bgfx::Memory* pVertexData = bgfx::copy(pMesh->vertices.get(), pMesh->GetSizeOfVertexData());
 
 	switch(pMesh->GetType())
@@ -425,15 +425,15 @@ void* BgfxRender::CreateTextureRenderData(const Texture* pTexture)
 {
 	TextureRenderDataBgfx* pTextureRenderData = new TextureRenderDataBgfx();
 
-	const bool isRenderTarget = (pTexture->data == nullptr);
+	const bool isRenderTarget = (pTexture->GetData() == nullptr);
 
 	if(isRenderTarget)
 	{
-		pTextureRenderData->textureHandle = bgfx::createTexture2D(pTexture->width, pTexture->height, (pTexture->numMipLevels > 1), 1, GetTextureFormat(pTexture), BGFX_TEXTURE_RT);
+		pTextureRenderData->textureHandle = bgfx::createTexture2D(pTexture->GetWidth(), pTexture->GetHeight(), (pTexture->GetNumMipLevels() > 1), 1, GetTextureFormat(pTexture), BGFX_TEXTURE_RT);
 	}
 	else
 	{
-		pTextureRenderData->textureHandle = bgfx::createTexture2D(pTexture->width, pTexture->height, (pTexture->numMipLevels > 1), 1, GetTextureFormat(pTexture), BGFX_TEXTURE_NONE, bgfx::makeRef(pTexture->data.get(), pTexture->GetDataSize()));
+		pTextureRenderData->textureHandle = bgfx::createTexture2D(pTexture->GetWidth(), pTexture->GetHeight(), (pTexture->GetNumMipLevels() > 1), 1, GetTextureFormat(pTexture), BGFX_TEXTURE_NONE, bgfx::makeRef(pTexture->GetData(), pTexture->GetDataSize()));
 	}
 
 	return pTextureRenderData;
@@ -683,7 +683,7 @@ bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[static_cast<size_t>(texture->format)];
+	return conversionTable[static_cast<size_t>(texture->GetFormat())];
 }
 
 void BgfxRender::BindEmbeddedShader(Shader* pShader)

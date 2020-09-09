@@ -18,12 +18,12 @@ RenderTarget::~RenderTarget()
 
 uint16_t RenderTarget::GetWidth() const
 {
-	return textures[0]->width;
+	return textures[0]->GetWidth();
 }
 
 uint16_t RenderTarget::GetHeight() const
 {
-	return textures[0]->height;
+	return textures[0]->GetHeight();
 }
 
 uint8_t RenderTarget::GetTextureCount() const

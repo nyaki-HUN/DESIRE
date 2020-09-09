@@ -48,17 +48,17 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, 
 	if(numIndices == UINT32_MAX)
 	{
 		// Use all the indices
-		numIndices = pMesh->numIndices - indexOffset;
+		numIndices = pMesh->GetNumIndices() - indexOffset;
 	}
 
 	if(numVertices == UINT32_MAX)
 	{
 		// Use all the vertices
-		numVertices = pMesh->numVertices - vertexOffset;
+		numVertices = pMesh->GetNumVertices() - vertexOffset;
 	}
 
-	if(indexOffset + numIndices > pMesh->numIndices ||
-		vertexOffset + numVertices > pMesh->numVertices)
+	if(indexOffset + numIndices > pMesh->GetNumIndices() ||
+		vertexOffset + numVertices > pMesh->GetNumVertices())
 	{
 		return;
 	}

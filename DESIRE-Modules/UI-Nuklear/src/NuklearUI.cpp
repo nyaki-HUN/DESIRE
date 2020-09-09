@@ -187,8 +187,8 @@ void NuklearUI::Render()
 	// Update mesh with packed buffers for contiguous indices and vertices
 	nk_buffer indexBuffer;
 	nk_buffer vertexBuffer;
-	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->numIndices);
-	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->numVertices);
+	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->GetNumIndices());
+	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->GetNumVertices());
 	nk_flags result = nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
 	if(result != NK_CONVERT_SUCCESS)
 	{

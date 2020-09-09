@@ -172,8 +172,8 @@ void ImGuiUI::Render()
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > mesh->numIndices ||
-		static_cast<uint32_t>(pDrawData->TotalVtxCount) > mesh->numVertices)
+	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > mesh->GetNumIndices() ||
+		static_cast<uint32_t>(pDrawData->TotalVtxCount) > mesh->GetNumVertices())
 	{
 		// Skip rendering if we have too many indices or vertices
 		ASSERT(false && "DynamicMesh is too small");

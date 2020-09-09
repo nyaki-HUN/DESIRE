@@ -30,10 +30,14 @@ public:
 	uint16_t GetWidth() const;
 	uint16_t GetHeight() const;
 	EFormat GetFormat() const;
-	bool IsDepthFormat() const;
+	uint8_t GetNumMipLevels() const;
+	const uint8_t* GetData() const;
 	uint32_t GetDataSize() const;
 
-	static constexpr uint8_t GetBytesPerPixel(EFormat format)
+	bool IsDepthFormat() const;
+	uint8_t GetBytesPerPixel() const;
+
+	static constexpr uint8_t GetBytesPerPixelForFormat(EFormat format)
 	{
 		switch(format)
 		{
@@ -53,6 +57,7 @@ public:
 	// Render engine specific data set at bind
 	void* pRenderData = nullptr;
 
+private:
 	uint16_t width;
 	uint16_t height;
 	EFormat format;

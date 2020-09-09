@@ -62,6 +62,21 @@ Texture::EFormat Texture::GetFormat() const
 	return format;
 }
 
+uint8_t Texture::GetNumMipLevels() const
+{
+	return numMipLevels;
+}
+
+const uint8_t* Texture::GetData() const
+{
+	return data.get();
+}
+
+uint32_t Texture::GetDataSize() const
+{
+	return static_cast<uint32_t>(width) * height * GetBytesPerPixel();
+}
+
 bool Texture::IsDepthFormat() const
 {
 	return format == Texture::EFormat::D16
@@ -69,7 +84,7 @@ bool Texture::IsDepthFormat() const
 		|| format == Texture::EFormat::D32;
 }
 
-uint32_t Texture::GetDataSize() const
+uint8_t Texture::GetBytesPerPixel() const
 {
-	return static_cast<uint32_t>(width) * height * GetBytesPerPixel(format);
+	return GetBytesPerPixelForFormat(format);
 }
