@@ -842,10 +842,12 @@ void Direct3D11Render::SetMesh(Mesh* pMesh)
 	if(pMesh != nullptr)
 	{
 		MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(pMesh->pRenderData);
-		const uint32_t indexByteOffset = pMeshRenderData->indexOffset * sizeof(uint16_t);
-		const uint32_t vertexByteOffset = pMeshRenderData->vertexOffset * pMesh->stride;
-		deviceCtx->IASetIndexBuffer(pMeshRenderData->indexBuffer, DXGI_FORMAT_R16_UINT, indexByteOffset);
-		deviceCtx->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBuffer, &pMesh->stride, &vertexByteOffset);
+		const uint32_t indexSize = pMesh->GetIndexSize();
+		const uint32_t vertexSize = pMesh->GetVertexSize();
+		const uint32_t indexByteOffset = pMeshRenderData->indexOffset * indexSize;
+		const uint32_t vertexByteOffset = pMeshRenderData->vertexOffset * vertexSize;
+		deviceCtx->IASetIndexBuffer(pMeshRenderData->indexBuffer, (indexSize == sizeof(uint16_t)) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, indexByteOffset);
+		deviceCtx->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBuffer, &vertexSize, &vertexByteOffset);
 
 		if(pActiveMesh == nullptr)
 		{

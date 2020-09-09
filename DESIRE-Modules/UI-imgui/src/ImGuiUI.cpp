@@ -73,8 +73,8 @@ void ImGuiUI::Init()
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
 	mesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
-	static_assert(sizeof(ImDrawIdx) == sizeof(uint16_t) && "Conversion is required for index buffer");
-	ASSERT(sizeof(ImDrawVert) == mesh->stride && "ImDrawVert struct layout has changed");
+	ASSERT(sizeof(ImDrawIdx) == mesh->GetIndexSize() && "ImDrawIdx has changed");
+	ASSERT(sizeof(ImDrawVert) == mesh->GetVertexSize() && "ImDrawVert has changed");
 
 	// Setup material
 	material = std::make_unique<Material>();

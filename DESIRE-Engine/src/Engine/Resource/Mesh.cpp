@@ -30,22 +30,24 @@ Mesh::Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint3
 	, numIndices(indexCount)
 	, numVertices(vertexCount)
 {
-	stride = 0;
+	vertexSize = 0;
 	for(const VertexLayout& decl : vertexLayout)
 	{
-		stride += decl.GetSizeInBytes();
+		vertexSize += decl.GetSizeInBytes();
 	}
 
 	if(numIndices != 0)
 	{
-		indices = std::make_unique<uint16_t[]>(numIndices);
-		memset(indices.get(), 0, GetSizeOfIndexData());
+		const uint32_t sizeInBytes = GetSizeOfIndexData();
+		indices = std::make_unique<uint16_t[]>(sizeInBytes / sizeof(uint16_t));
+		memset(indices.get(), 0, sizeInBytes);
 	}
 
 	if(numVertices != 0)
 	{
-		vertices = std::make_unique<float[]>(numVertices * stride / sizeof(float));
-		memset(vertices.get(), 0, GetSizeOfVertexData());
+		const uint32_t sizeInBytes = GetSizeOfVertexData();
+		vertices = std::make_unique<float[]>(sizeInBytes / sizeof(float));
+		memset(vertices.get(), 0, sizeInBytes);
 	}
 }
 
@@ -58,14 +60,20 @@ Mesh& Mesh::operator =(Mesh&& otherMesh)
 {
 	Modules::Render->Unbind(*this);
 
-	numIndices = otherMesh.numIndices;
-	numVertices = otherMesh.numVertices;
+	type = otherMesh.type;
 	indices = std::move(otherMesh.indices);
 	vertices = std::move(otherMesh.vertices);
-	type = otherMesh.type;
+	numIndices = otherMesh.numIndices;
+	numVertices = otherMesh.numVertices;
+	vertexSize = otherMesh.vertexSize;
 	vertexLayout = std::move(otherMesh.vertexLayout);
 
 	return *this;
+}
+
+Mesh::EType Mesh::GetType() const
+{
+	return type;
 }
 
 uint32_t Mesh::GetNumIndices() const
@@ -78,19 +86,24 @@ uint32_t Mesh::GetNumVertices() const
 	return numVertices;
 }
 
+uint32_t Mesh::GetIndexSize() const
+{
+	return sizeof(uint16_t);
+}
+
+uint32_t Mesh::GetVertexSize() const
+{
+	return vertexSize;
+}
+
 uint32_t Mesh::GetSizeOfIndexData() const
 {
-	return numIndices * sizeof(uint16_t); 
+	return numIndices * GetIndexSize();
 }
 
 uint32_t Mesh::GetSizeOfVertexData() const
 {
-	return numVertices * stride; 
-}
-
-Mesh::EType Mesh::GetType() const
-{
-	return type;
+	return numVertices * GetVertexSize();
 }
 
 const Array<Mesh::VertexLayout>& Mesh::GetVertexLayout() const

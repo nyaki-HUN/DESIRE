@@ -49,12 +49,13 @@ public:
 
 	Mesh& operator =(Mesh&& otherMesh);
 
+	EType GetType() const;
 	uint32_t GetNumIndices() const;
 	uint32_t GetNumVertices() const;
+	uint32_t GetIndexSize() const;
+	uint32_t GetVertexSize() const;
 	uint32_t GetSizeOfIndexData() const;
 	uint32_t GetSizeOfVertexData() const;
-
-	EType GetType() const;
 	const Array<VertexLayout>& GetVertexLayout() const;
 
 	// Render engine specific data set at bind
@@ -62,7 +63,6 @@ public:
 
 	std::unique_ptr<uint16_t[]> indices;
 	std::unique_ptr<float[]> vertices;
-	uint32_t stride = 0;
 
 protected:
 	EType type = EType::Static;
@@ -70,6 +70,7 @@ protected:
 private:
 	uint32_t numIndices = 0;
 	uint32_t numVertices = 0;
+	uint32_t vertexSize = 0;
 	Array<VertexLayout> vertexLayout;
 };
 
