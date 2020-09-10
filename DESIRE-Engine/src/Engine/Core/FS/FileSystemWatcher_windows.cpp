@@ -22,7 +22,7 @@ public:
 			TRUE,
 			FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION,
 			nullptr,
-			&overlapped,
+			pOverlapped,
 			&FileSystemWatcherImpl::CompletionCallback,
 			ReadDirectoryNotifyExtendedInformation);
 
@@ -31,12 +31,18 @@ public:
 
 	static void CALLBACK CompletionCallback(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped)
 	{
+		if(dwErrorCode == ERROR_OPERATION_ABORTED || lpOverlapped->hEvent == nullptr)
+		{
+			delete lpOverlapped;
+			return;
+		}
+
 		if(dwNumberOfBytesTransfered == 0)
 		{
 			return;
 		}
 
-		FileSystemWatcher* watcher = static_cast<FileSystemWatcher*>(lpOverlapped->hEvent);
+		FileSystemWatcher* pWatcher = static_cast<FileSystemWatcher*>(lpOverlapped->hEvent);
 
 		if(dwErrorCode == ERROR_SUCCESS)
 		{
@@ -45,7 +51,7 @@ public:
 			size_t offset = 0;
 			do
 			{
-				notify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(watcher->impl->buffer + offset);
+				notify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(pWatcher->impl->buffer + offset);
 
 				// Convert filename to UTF-8
 				const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
@@ -56,19 +62,19 @@ public:
 				{
 					case FILE_ACTION_ADDED:
 					case FILE_ACTION_RENAMED_NEW_NAME:
-						watcher->actionCallback(FileSystemWatcher::EAction::Added, filename);
+						pWatcher->actionCallback(FileSystemWatcher::EAction::Added, filename);
 						break;
 
 					case FILE_ACTION_REMOVED:
 					case FILE_ACTION_RENAMED_OLD_NAME:
-						watcher->actionCallback(FileSystemWatcher::EAction::Deleted, filename);
+						pWatcher->actionCallback(FileSystemWatcher::EAction::Deleted, filename);
 						break;
 
 					case FILE_ACTION_MODIFIED:
 						// Don't call for empty files to filter out duplicated notifications about file writes
 						if(notify->FileSize.QuadPart != 0)
 						{
-							watcher->actionCallback(FileSystemWatcher::EAction::Modified, filename);
+							pWatcher->actionCallback(FileSystemWatcher::EAction::Modified, filename);
 						}
 						break;
 				}
@@ -77,14 +83,14 @@ public:
 			} while(notify->NextEntryOffset != 0);
 		}
 
-		if(watcher->impl->isActive)
+		if(pWatcher->impl->isActive)
 		{
-			watcher->impl->RefreshWatch();
+			pWatcher->impl->RefreshWatch();
 		}
 	}
 
 	HANDLE dirHandle = INVALID_HANDLE_VALUE;
-	OVERLAPPED overlapped;
+	OVERLAPPED* pOverlapped = nullptr;
 
 	uint8_t buffer[8 * 1024];
 	bool isActive = false;
@@ -98,7 +104,8 @@ FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void
 	: actionCallback(actionCallback)
 	, impl(std::make_unique<FileSystemWatcherImpl>())
 {
-	impl->overlapped.hEvent = this;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
+	impl->pOverlapped = new OVERLAPPED();		// Will be deleted in the CompletionCallback()
+	impl->pOverlapped->hEvent = this;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
 	impl->dirHandle = CreateFileA(
 		directory.Str(),
 		FILE_LIST_DIRECTORY,
@@ -119,14 +126,17 @@ FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void
 
 FileSystemWatcher::~FileSystemWatcher()
 {
+	impl->pOverlapped->hEvent = nullptr;
+
 	if(impl->isActive)
 	{
 		impl->isActive = false;
-		CancelIo(impl->dirHandle);
-		if(!HasOverlappedIoCompleted(&impl->overlapped))
-		{
-			SleepEx(5, TRUE);
-		}
+		CancelIoEx(impl->dirHandle, impl->pOverlapped);
+	}
+	else
+	{
+		delete impl->pOverlapped;
+		impl->pOverlapped = nullptr;
 	}
 
 	if(impl->dirHandle != INVALID_HANDLE_VALUE)
