@@ -338,7 +338,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 		case Mesh::EType::Static:
 			if(pIndexData != nullptr)
 			{
-				pMeshRenderData->indexBuffer = bgfx::createIndexBuffer(pIndexData, BGFX_BUFFER_NONE);
+				pMeshRenderData->indexBuffer = bgfx::createIndexBuffer(pIndexData, (pMesh->GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
 			}
 
 			pMeshRenderData->vertexBuffer = bgfx::createVertexBuffer(pVertexData, pMeshRenderData->vertexLayout, BGFX_BUFFER_NONE);
@@ -347,7 +347,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 		case Mesh::EType::Dynamic:
 			if(pIndexData != nullptr)
 			{
-				pMeshRenderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pIndexData, BGFX_BUFFER_NONE);
+				pMeshRenderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pIndexData, (pMesh->GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
 			}
 
 			pMeshRenderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(pVertexData, pMeshRenderData->vertexLayout, BGFX_BUFFER_NONE);
