@@ -40,11 +40,7 @@ public:
 	const Matrix4& GetWorldMatrix() const;
 
 private:
-	// Prevent copy and move
-	Transform(const Transform&) = delete;
-	Transform(Transform&&) = delete;
-	Transform& operator=(const Transform&) = delete;
-	Transform& operator=(Transform&&) = delete;
+	DESIRE_NO_COPY_AND_MOVE(Transform)
 
 	enum EFlags
 	{

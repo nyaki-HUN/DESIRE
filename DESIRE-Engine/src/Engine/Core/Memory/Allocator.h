@@ -22,9 +22,5 @@ protected:
 	std::atomic<uint64_t> allocatedBytes = 0;
 
 private:
-	// Prevent copy and move
-	Allocator(const Allocator&) = delete;
-	Allocator(Allocator&&) = delete;
-	Allocator& operator=(const Allocator&) = delete;
-	Allocator& operator=(Allocator&&) = delete;
+	DESIRE_NO_COPY_AND_MOVE(Allocator)
 };

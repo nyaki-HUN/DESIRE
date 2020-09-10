@@ -38,9 +38,5 @@ public:
 	bool operator !=(const StdAllocatorWrapper& other) const	{ return false; }
 
 private:
-	// Prevent copy and move
-	StdAllocatorWrapper(const StdAllocatorWrapper&) = delete;
-	StdAllocatorWrapper(StdAllocatorWrapper&&) = delete;
-	StdAllocatorWrapper& operator=(const StdAllocatorWrapper&) = delete;
-	StdAllocatorWrapper& operator=(StdAllocatorWrapper&&) = delete;
+	DESIRE_NO_COPY_AND_MOVE(StdAllocatorWrapper)
 };

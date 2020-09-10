@@ -76,11 +76,7 @@ public:
 	}
 
 private:
-	// Prevent copy and move
-	LockFreeRingBuffer(const LockFreeRingBuffer&) = delete;
-	LockFreeRingBuffer(LockFreeRingBuffer&&) = delete;
-	LockFreeRingBuffer& operator=(const LockFreeRingBuffer&) = delete;
-	LockFreeRingBuffer& operator=(LockFreeRingBuffer&&) = delete;
+	DESIRE_NO_COPY_AND_MOVE(LockFreeRingBuffer)
 
 	T data[SIZE];
 

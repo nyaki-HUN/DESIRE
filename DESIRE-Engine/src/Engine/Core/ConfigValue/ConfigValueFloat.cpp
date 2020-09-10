@@ -10,7 +10,7 @@ ConfigValueFloat::ConfigValueFloat(const char* name, const char* description, fl
 
 }
 
-ConfigValueFloat& ConfigValueFloat::operator=(float newValue)
+ConfigValueFloat& ConfigValueFloat::operator =(float newValue)
 {
 	if(newValue < minValue)
 	{

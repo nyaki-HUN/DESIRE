@@ -68,9 +68,5 @@ protected:
 	size_t size = 0;
 
 private:
-	// Prevent copy and move
-	String(const String&) = delete;
-	String(String&&) = delete;
-	String& operator =(const String&) = delete;
-	String& operator =(String&&) = delete;
+	DESIRE_NO_COPY_AND_MOVE(String)
 };

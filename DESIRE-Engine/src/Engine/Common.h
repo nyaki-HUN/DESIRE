@@ -51,3 +51,10 @@ constexpr size_t DesireArraySizeHelper(T(&)[N])
 
 // Compile-time check to make sure the array has the same number of elements as 'count'
 #define DESIRE_CHECK_ARRAY_SIZE(X, COUNT)	static_assert(DESIRE_ASIZEOF(X) == (size_t)COUNT, "Array size doesn't match the number of elements");
+
+// Prevent copy and move
+#define DESIRE_NO_COPY_AND_MOVE(Class)			\
+	Class(const Class&) = delete;				\
+	Class(Class&&) = delete;					\
+	Class& operator =(const Class&) = delete;	\
+	Class& operator =(Class&&) = delete;

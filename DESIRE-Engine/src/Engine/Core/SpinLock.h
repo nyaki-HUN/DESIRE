@@ -23,11 +23,7 @@ public:
 		}
 
 	private:
-		// Prevent copy and move
-		ScopeLock(const ScopeLock&) = delete;
-		ScopeLock(ScopeLock&&) = delete;
-		ScopeLock& operator =(const ScopeLock&) = delete;
-		ScopeLock& operator =(ScopeLock&&) = delete;
+		DESIRE_NO_COPY_AND_MOVE(ScopeLock)
 
 		SpinLock& spinLock;
 	};

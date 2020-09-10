@@ -10,7 +10,7 @@ ConfigValueInt::ConfigValueInt(const char* name, const char* description, int in
 
 }
 
-ConfigValueInt& ConfigValueInt::operator=(int newValue)
+ConfigValueInt& ConfigValueInt::operator =(int newValue)
 {
 	if(newValue < minValue)
 	{
