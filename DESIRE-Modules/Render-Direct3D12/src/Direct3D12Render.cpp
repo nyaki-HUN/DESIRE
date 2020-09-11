@@ -212,8 +212,18 @@ void Direct3D12Render::EndFrame()
 	swapChain->Present(1, 0);
 }
 
-void Direct3D12Render::ClearActiveRenderTarget()
+void Direct3D12Render::ClearActiveRenderTarget(uint32_t clearColorRGBA, float depth, uint8_t stencil)
 {
+	const float clearColor[4] =
+	{
+		((clearColorRGBA >> 24) & 0xFF) / 255.0f,
+		((clearColorRGBA >> 16) & 0xFF) / 255.0f,
+		((clearColorRGBA >> 8) & 0xFF) / 255.0f,
+		((clearColorRGBA >> 0) & 0xFF) / 255.0f,
+	};
+
+	DESIRE_UNUSED(depth);
+	DESIRE_UNUSED(stencil);
 }
 
 void Direct3D12Render::SetWorldMatrix(const Matrix4& matrix)
@@ -243,14 +253,6 @@ void Direct3D12Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16
 	DESIRE_UNUSED(y);
 	DESIRE_UNUSED(width);
 	DESIRE_UNUSED(height);
-}
-
-void Direct3D12Render::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-	clearColor[0] = r / 255.0f;
-	clearColor[1] = g / 255.0f;
-	clearColor[2] = b / 255.0f;
-	clearColor[3] = a / 255.0f;
 }
 
 void Direct3D12Render::SetColorWriteEnabled(bool r, bool g, bool b, bool a)

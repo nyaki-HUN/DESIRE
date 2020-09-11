@@ -23,13 +23,12 @@ public:
 
 	void EndFrame() override;
 
-	void ClearActiveRenderTarget() override;
+	void ClearActiveRenderTarget(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 
 	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
-	void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
 	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
 	void SetDepthWriteEnabled(bool enabled) override;
 	void SetDepthTest(EDepthTest depthTest) override;
@@ -90,7 +89,6 @@ private:
 	const ID3D11SamplerState* activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
 
 	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	DirectX::XMMATRIX matWorld;
 	DirectX::XMMATRIX matView;
 	DirectX::XMMATRIX matProj;

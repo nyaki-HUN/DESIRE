@@ -95,14 +95,13 @@ public:
 	void SetView(View* pView);
 
 	void SetActiveRenderTarget(RenderTarget& renderTarget);
-	virtual void ClearActiveRenderTarget() = 0;
+	virtual void ClearActiveRenderTarget(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) = 0;
 
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
 
 	// Render state setup
 	virtual void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) = 0;
-	virtual void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) = 0;
 	virtual void SetColorWriteEnabled(bool r, bool g, bool b, bool a) = 0;
 	virtual void SetDepthWriteEnabled(bool enabled) = 0;
 	virtual void SetDepthTest(EDepthTest deptTest) = 0;

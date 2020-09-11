@@ -20,14 +20,12 @@ public:
 
 	void EndFrame() override;
 
-	void SetRenderTarget(RenderTarget* pRenderTarget) override;
-	void ClearActiveRenderTarget() override;
+	void ClearActiveRenderTarget(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 
 	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
-	void SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override;
 	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
 	void SetDepthWriteEnabled(bool enabled) override;
 	void SetDepthTest(EDepthTest depthTest) override;
@@ -53,6 +51,7 @@ private:
 	void SetVertexShader(Shader* pVertexShader) override;
 	void SetFragmentShader(Shader* pFragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
+	void SetRenderTarget(RenderTarget* pRenderTarget) override;
 	void UpdateShaderParams(const Material& material) override;
 
 	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
@@ -67,7 +66,6 @@ private:
 
 	uint64_t renderState = 0;
 	uint32_t blendFactor = 0;
-	uint32_t clearColor = 0x000000FF;
 
 	bgfx::VertexLayout screenSpaceQuadVertexLayout;
 

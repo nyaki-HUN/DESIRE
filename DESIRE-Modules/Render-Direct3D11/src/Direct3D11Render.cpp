@@ -256,8 +256,16 @@ void Direct3D11Render::EndFrame()
 	swapChain->Present(1, 0);
 }
 
-void Direct3D11Render::ClearActiveRenderTarget()
+void Direct3D11Render::ClearActiveRenderTarget(uint32_t clearColorRGBA, float depth, uint8_t stencil)
 {
+	const float clearColor[4] =
+	{
+		((clearColorRGBA >> 24) & 0xFF) / 255.0f,
+		((clearColorRGBA >> 16) & 0xFF) / 255.0f,
+		((clearColorRGBA >>  8) & 0xFF) / 255.0f,
+		((clearColorRGBA >>  0) & 0xFF) / 255.0f,
+	};
+
 	if(pActiveRenderTarget != nullptr)
 	{
 		RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pActiveRenderTarget->pRenderData);
@@ -269,7 +277,7 @@ void Direct3D11Render::ClearActiveRenderTarget()
 			}
 			if(pRenderTargetRenderData->pDepthStencilView != nullptr)
 			{
-				deviceCtx->ClearDepthStencilView(pRenderTargetRenderData->pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+				deviceCtx->ClearDepthStencilView(pRenderTargetRenderData->pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 			}
 		}
 	}
@@ -314,14 +322,6 @@ void Direct3D11Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16
 		const D3D11_RECT rect = { x, y, x + width, y + height };
 		deviceCtx->RSSetScissorRects(1, &rect);
 	}
-}
-
-void Direct3D11Render::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-	clearColor[0] = r / 255.0f;
-	clearColor[1] = g / 255.0f;
-	clearColor[2] = b / 255.0f;
-	clearColor[3] = a / 255.0f;
 }
 
 void Direct3D11Render::SetColorWriteEnabled(bool r, bool g, bool b, bool a)

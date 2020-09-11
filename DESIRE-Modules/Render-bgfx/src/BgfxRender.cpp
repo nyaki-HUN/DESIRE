@@ -55,11 +55,6 @@ void BgfxRender::Init(OSWindow& mainWindow)
 	initialized = bgfx::init(initParams);
 	activeViewId = 0;
 
-	for(bgfx::ViewId viewId = 0; viewId < BGFX_CONFIG_MAX_VIEWS; ++viewId)
-	{
-		bgfx::setViewClear(viewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColor, 1.0f, 0);
-	}
-
 	samplerUniforms[0] = bgfx::createUniform("s_tex", bgfx::UniformType::Sampler);
 	for(uint8_t i = 1; i < DESIRE_ASIZEOF(samplerUniforms); ++i)
 	{
@@ -133,8 +128,9 @@ void BgfxRender::EndFrame()
 	bgfx::frame();
 }
 
-void BgfxRender::ClearActiveRenderTarget()
+void BgfxRender::ClearActiveRenderTarget(uint32_t clearColorRGBA, float depth, uint8_t stencil)
 {
+	bgfx::setViewClear(activeViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColorRGBA, depth, stencil);
 	bgfx::touch(activeViewId);
 }
 
@@ -159,11 +155,6 @@ void BgfxRender::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matr
 void BgfxRender::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
 	bgfx::setScissor(x, y, width, height);
-}
-
-void BgfxRender::SetClearColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-	clearColor = (r << 24) | (g << 16) | (b << 8) | a;
 }
 
 void BgfxRender::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
