@@ -5,11 +5,10 @@
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/StackString.h"
 
+#include "Engine/Render/Mesh.h"
 #include "Engine/Render/Render.h"
-
-#include "Engine/Resource/Mesh.h"
-#include "Engine/Resource/Shader.h"
-#include "Engine/Resource/Texture.h"
+#include "Engine/Render/Shader.h"
+#include "Engine/Render/Texture.h"
 
 ResourceManager::ResourceManager()
 {

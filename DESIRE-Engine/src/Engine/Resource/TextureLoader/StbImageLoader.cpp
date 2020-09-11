@@ -4,7 +4,7 @@
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Memory/MemorySystem.h"
 
-#include "Engine/Resource/Texture.h"
+#include "Engine/Render/Texture.h"
 
 DESIRE_DISABLE_WARNINGS
 #define STBI_NO_TGA					// We have our own TGA loader

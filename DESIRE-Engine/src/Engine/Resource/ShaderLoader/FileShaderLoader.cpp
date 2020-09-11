@@ -4,7 +4,7 @@
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/StackString.h"
 
-#include "Engine/Resource/Shader.h"
+#include "Engine/Render/Shader.h"
 
 std::unique_ptr<Shader> FileShaderLoader::Load(const ReadFilePtr& file)
 {

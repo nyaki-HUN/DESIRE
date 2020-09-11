@@ -3,7 +3,7 @@
 
 #include "Engine/Core/FS/IReadFile.h"
 
-#include "Engine/Resource/Texture.h"
+#include "Engine/Render/Texture.h"
 
 #if DESIRE_PLATFORM_WINDOWS
 	#include <PshPack1.h>

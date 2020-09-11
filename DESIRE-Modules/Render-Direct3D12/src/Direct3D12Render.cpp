@@ -14,12 +14,11 @@
 #include "Engine/Core/String/StackString.h"
 
 #include "Engine/Render/Material.h"
+#include "Engine/Render/Mesh.h"
 #include "Engine/Render/RenderTarget.h"
+#include "Engine/Render/Shader.h"
+#include "Engine/Render/Texture.h"
 #include "Engine/Render/View.h"
-
-#include "Engine/Resource/Mesh.h"
-#include "Engine/Resource/Shader.h"
-#include "Engine/Resource/Texture.h"
 
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>

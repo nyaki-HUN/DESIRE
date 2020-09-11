@@ -3,7 +3,7 @@
 
 #include "Engine/Core/FS/IReadFile.h"
 
-#include "Engine/Resource/Mesh.h"
+#include "Engine/Render/Mesh.h"
 
 class AssimpIOStreamWrapper : public Assimp::IOStream
 {
