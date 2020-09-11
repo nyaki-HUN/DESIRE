@@ -4,12 +4,11 @@
 #include "Engine/Application/OSWindow.h"
 
 #include "Engine/Render/Material.h"
+#include "Engine/Render/Mesh.h"
 #include "Engine/Render/RenderTarget.h"
+#include "Engine/Render/Shader.h"
+#include "Engine/Render/Texture.h"
 #include "Engine/Render/View.h"
-
-#include "Engine/Resource/Mesh.h"
-#include "Engine/Resource/Shader.h"
-#include "Engine/Resource/Texture.h"
 
 Render::Render()
 {

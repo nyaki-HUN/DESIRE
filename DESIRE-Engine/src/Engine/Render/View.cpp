@@ -3,8 +3,6 @@
 
 #include "Engine/Render/RenderTarget.h"
 
-#include "Engine/Resource/Texture.h"
-
 View::View(uint16_t renderTextureWidth, uint16_t renderTextureHeight)
 	: width(renderTextureWidth)
 	, height(renderTextureHeight)
