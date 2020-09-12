@@ -62,6 +62,7 @@ void ImGuiUI::Init()
 	io.KeyMap[ImGuiKey_Y] = KEY_Y;
 	io.KeyMap[ImGuiKey_Z] = KEY_Z;
 
+	io.ConfigFlags = ImGuiConfigFlags_DockingEnable;
 	io.IniFilename = nullptr;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
@@ -114,7 +115,6 @@ void ImGuiUI::NewFrame(OSWindow* pWindow)
 	ImGuiIO& io = ImGui::GetIO();
 	io.DisplaySize = ImVec2(pWindow->GetWidth(), pWindow->GetHeight());
 	io.DeltaTime = std::max(FLT_MIN, Modules::Application->GetTimer()->GetSecDelta());		// imgui needs a positive delta time
-	io.ImeWindowHandle = pWindow->GetHandle();
 
 	// Keyboard
 	io.KeyCtrl = Modules::Input->IsKeyDown(KEY_LCONTROL, EKeyModifier::DontCare) || Modules::Input->IsKeyDown(KEY_RCONTROL, EKeyModifier::DontCare);
@@ -167,6 +167,7 @@ void ImGuiUI::Render()
 		return;
 	}
 
+	Modules::Render->SetColorWriteEnabled(true, true, true, true);
 	Modules::Render->SetDepthWriteEnabled(false);
 	Modules::Render->SetCullMode(Render::ECullMode::None);
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
