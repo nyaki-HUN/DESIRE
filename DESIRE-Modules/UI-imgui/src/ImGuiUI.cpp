@@ -280,7 +280,17 @@ bool ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const 
 
 	ImGui::SetNextWindowPos(ImVec2(initialPos.GetX(), initialPos.GetY()), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(initialSize.GetX(), initialSize.GetY()), ImGuiCond_FirstUseEver);
+
 	const bool isVisible = ImGui::Begin(label.Str(), pOpen, imguiFlags);
+	if(isVisible)
+	{
+		// Auto-focus on right click as well
+		if(ImGui::GetIO().MouseDown[ImGuiMouseButton_Right] && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows))
+		{
+			ImGui::SetWindowFocus();
+		}
+	}
+
 	return isVisible;
 }
 
