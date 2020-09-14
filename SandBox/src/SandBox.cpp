@@ -141,59 +141,59 @@ void SandBox::Update()
 
 	FileSystemWatcher::UpdateAll();
 
-	Modules::UI->NewFrame(mainWindow.get());
+	Modules::UI->NewFrame(*mainWindow);
 
 	// Variables for UI testing
-	Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600));
-
-	Modules::UI->Text("TextInput:");
-	static DynamicString textValue;
-	Modules::UI->TextInput(textValue);
-
-	Modules::UI->Button("Button");
-
-	Modules::UI->ArrowButton(UI::EArrowDir::Left);
-
-	static bool isCheckboxChecked = false;
-	Modules::UI->Checkbox(isCheckboxChecked, "Checkbox");
-
-	enum class ERadioButtonOption
+	if(Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600)))
 	{
-		A,
-		B,
-		C
-	};
-	static ERadioButtonOption radioButtonOption = ERadioButtonOption::A;
-	Modules::UI->RadioButton("RadioButton - A", radioButtonOption, ERadioButtonOption::A);
-	Modules::UI->RadioButton("RadioButton - B", radioButtonOption, ERadioButtonOption::B);
-	Modules::UI->RadioButton("RadioButton - C", radioButtonOption, ERadioButtonOption::C);
+		Modules::UI->Text("TextInput:");
+		static DynamicString textValue;
+		Modules::UI->TextInput(textValue);
 
-	static const float ratio[] = { 0.3f, 0.7f };
-	Modules::UI->LayoutColumns(2, ratio);
+		Modules::UI->Button("Button");
 
-	static float sliderValue = 0.5f;
-	Modules::UI->Text("Slider");
-	Modules::UI->Slider(sliderValue, 0.0f, 1.0f);
+		Modules::UI->ArrowButton(UI::EArrowDir::Left);
 
-	Modules::UI->Text("ProgressBar");
-	Modules::UI->ProgressBar(sliderValue);
+		static bool isCheckboxChecked = false;
+		Modules::UI->Checkbox(isCheckboxChecked, "Checkbox");
 
-	static int32_t spinnerValue = 0;
-	Modules::UI->Text("ValueSpinner");
-	Modules::UI->ValueSpinner(spinnerValue);
+		enum class ERadioButtonOption
+		{
+			A,
+			B,
+			C
+		};
+		static ERadioButtonOption radioButtonOption = ERadioButtonOption::A;
+		Modules::UI->RadioButton("RadioButton - A", radioButtonOption, ERadioButtonOption::A);
+		Modules::UI->RadioButton("RadioButton - B", radioButtonOption, ERadioButtonOption::B);
+		Modules::UI->RadioButton("RadioButton - C", radioButtonOption, ERadioButtonOption::C);
 
-	static float floatValue = 0.0f;
-	Modules::UI->Text("ValueEdit");
-	Modules::UI->ValueEdit(floatValue);
+		static const float ratio[] = { 0.3f, 0.7f };
+		Modules::UI->LayoutColumns(2, ratio);
 
-	static Vector3 vec3 = Vector3::Zero();
-	Modules::UI->Text("ValueEdit");
-	Modules::UI->ValueEdit(vec3);
+		static float sliderValue = 0.5f;
+		Modules::UI->Text("Slider");
+		Modules::UI->Slider(sliderValue, 0.0f, 1.0f);
 
-	static 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-	Modules::UI->Text("ColorPicker");
-	Modules::UI->ColorPicker(color);
+		Modules::UI->Text("ProgressBar");
+		Modules::UI->ProgressBar(sliderValue);
 
+		static int32_t spinnerValue = 0;
+		Modules::UI->Text("ValueSpinner");
+		Modules::UI->ValueSpinner(spinnerValue);
+
+		static float floatValue = 0.0f;
+		Modules::UI->Text("ValueEdit");
+		Modules::UI->ValueEdit(floatValue);
+
+		static Vector3 vec3 = Vector3::Zero();
+		Modules::UI->Text("ValueEdit");
+		Modules::UI->ValueEdit(vec3);
+
+		static 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+		Modules::UI->Text("ColorPicker");
+		Modules::UI->ColorPicker(color);
+	}
 	Modules::UI->EndWindow();
 
 	// Render

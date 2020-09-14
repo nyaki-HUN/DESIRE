@@ -108,12 +108,10 @@ void ImGuiUI::Kill()
 	mesh = nullptr;
 }
 
-void ImGuiUI::NewFrame(OSWindow* pWindow)
+void ImGuiUI::NewFrame(OSWindow& window)
 {
-	s_widgetCounter = 0;
-
 	ImGuiIO& io = ImGui::GetIO();
-	io.DisplaySize = ImVec2(pWindow->GetWidth(), pWindow->GetHeight());
+	io.DisplaySize = ImVec2(window.GetWidth(), window.GetHeight());
 	io.DeltaTime = std::max(FLT_MIN, Modules::Application->GetTimer()->GetSecDelta());		// imgui needs a positive delta time
 
 	// Keyboard
@@ -143,18 +141,36 @@ void ImGuiUI::NewFrame(OSWindow* pWindow)
 
 	switch(ImGui::GetMouseCursor())
 	{
-		case ImGuiMouseCursor_Arrow:		pWindow->SetCursor(OSWindow::CURSOR_ARROW); break;
-		case ImGuiMouseCursor_TextInput:	pWindow->SetCursor(OSWindow::CURSOR_IBEAM); break;
-		case ImGuiMouseCursor_ResizeAll:	pWindow->SetCursor(OSWindow::CURSOR_MOVE); break;
-		case ImGuiMouseCursor_ResizeNS:		pWindow->SetCursor(OSWindow::CURSOR_SIZE_NS); break;
-		case ImGuiMouseCursor_ResizeEW:		pWindow->SetCursor(OSWindow::CURSOR_SIZE_WE); break;
-		case ImGuiMouseCursor_ResizeNESW:	pWindow->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMLEFT); break;
-		case ImGuiMouseCursor_ResizeNWSE:	pWindow->SetCursor(OSWindow::CURSOR_SIZE_BOTTOMRIGHT); break;
-		case ImGuiMouseCursor_Hand:			pWindow->SetCursor(OSWindow::CURSOR_HAND); break;
-		case ImGuiMouseCursor_NotAllowed:	pWindow->SetCursor(OSWindow::CURSOR_NOT_ALLOWED); break;
+		case ImGuiMouseCursor_Arrow:		window.SetCursor(OSWindow::CURSOR_ARROW); break;
+		case ImGuiMouseCursor_TextInput:	window.SetCursor(OSWindow::CURSOR_IBEAM); break;
+		case ImGuiMouseCursor_ResizeAll:	window.SetCursor(OSWindow::CURSOR_MOVE); break;
+		case ImGuiMouseCursor_ResizeNS:		window.SetCursor(OSWindow::CURSOR_SIZE_NS); break;
+		case ImGuiMouseCursor_ResizeEW:		window.SetCursor(OSWindow::CURSOR_SIZE_WE); break;
+		case ImGuiMouseCursor_ResizeNESW:	window.SetCursor(OSWindow::CURSOR_SIZE_BOTTOMLEFT); break;
+		case ImGuiMouseCursor_ResizeNWSE:	window.SetCursor(OSWindow::CURSOR_SIZE_BOTTOMRIGHT); break;
+		case ImGuiMouseCursor_Hand:			window.SetCursor(OSWindow::CURSOR_HAND); break;
+		case ImGuiMouseCursor_NotAllowed:	window.SetCursor(OSWindow::CURSOR_NOT_ALLOWED); break;
 	};
 
 	ImGui::NewFrame();
+	s_widgetCounter = 0;
+
+	// Docking
+	if(io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+	{
+		ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiCond_Once);
+		ImGui::SetNextWindowSize(ImVec2(window.GetWidth(), window.GetHeight()));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("##Docking", nullptr, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDocking);
+		ImGui::PopStyleVar(2);
+
+		ImGui::PushID(s_widgetCounter++);
+		ImGui::DockSpace(ImGui::GetID(""), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+		ImGui::PopID();
+
+		ImGui::End();
+	}
 }
 
 void ImGuiUI::Render()
@@ -242,11 +258,30 @@ void ImGuiUI::Render()
 	Modules::Render->SetScissor();
 }
 
-void ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize)
+bool ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen, EWindowFlags flags)
 {
+	ImGuiWindowFlags imguiFlags = ImGuiWindowFlags_NoCollapse;
+	if(flags & WindowFlags_NoTitleBar)
+	{
+		imguiFlags |= ImGuiWindowFlags_NoTitleBar;
+	}
+	if(flags & WindowFlags_NoResize)
+	{
+		imguiFlags |= ImGuiWindowFlags_NoResize;
+	}
+	if(flags & WindowFlags_NoMove)
+	{
+		imguiFlags |= ImGuiWindowFlags_NoMove;
+	}
+	if(flags & WindowFlags_NoScrollbar)
+	{
+		imguiFlags |= ImGuiWindowFlags_NoScrollbar;
+	}
+
 	ImGui::SetNextWindowPos(ImVec2(initialPos.GetX(), initialPos.GetY()), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(initialSize.GetX(), initialSize.GetY()), ImGuiCond_FirstUseEver);
-	ImGui::Begin(label.Str(), nullptr, ImGuiWindowFlags_None);
+	const bool isVisible = ImGui::Begin(label.Str(), pOpen, imguiFlags);
+	return isVisible;
 }
 
 void ImGuiUI::EndWindow()

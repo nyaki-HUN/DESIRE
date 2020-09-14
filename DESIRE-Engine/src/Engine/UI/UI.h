@@ -17,16 +17,25 @@ public:
 		Down
 	};
 
+	enum EWindowFlags
+	{
+		WindowFlags_None			= 0,
+		WindowFlags_NoTitleBar		= 1 << 0,
+		WindowFlags_NoResize		= 1 << 1,
+		WindowFlags_NoMove			= 1 << 2,
+		WindowFlags_NoScrollbar		= 1 << 3,
+	};
+
 	virtual ~UI() {}
 
 	virtual void Init() = 0;
 	virtual void Kill() = 0;
 
-	virtual void NewFrame(OSWindow* pWindow) = 0;
+	virtual void NewFrame(OSWindow& window) = 0;
 	virtual void Render() = 0;
 
 	// Window
-	virtual void BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize) = 0;
+	virtual bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) = 0;
 	virtual void EndWindow() = 0;
 
 	// Widgets

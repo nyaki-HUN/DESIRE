@@ -21,11 +21,11 @@ public:
 	void Init() override;
 	void Kill() override;
 
-	void NewFrame(OSWindow* pWindow) override;
+	void NewFrame(OSWindow& window) override;
 	void Render() override;
 
 	// Window
-	void BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize) override;
+	bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) override;
 	void EndWindow() override;
 
 	// Widgets

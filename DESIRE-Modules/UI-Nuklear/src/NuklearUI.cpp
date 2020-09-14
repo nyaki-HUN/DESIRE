@@ -118,9 +118,9 @@ void NuklearUI::Kill()
 	mesh = nullptr;
 }
 
-void NuklearUI::NewFrame(OSWindow* pWindow)
+void NuklearUI::NewFrame(OSWindow& window)
 {
-	ctx->clip.userdata = nk_handle_ptr(pWindow);
+	ctx->clip.userdata = nk_handle_ptr(&window);
 	ctx->delta_time_seconds = Modules::Application->GetTimer()->GetSecDelta();
 
 	nk_input_begin(ctx.get());
@@ -227,11 +227,45 @@ void NuklearUI::Render()
 	nk_buffer_clear(cmdBuffer.get());
 }
 
-void NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize)
+bool NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen, EWindowFlags flags)
 {
-	nk_flags flags = NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_SCALABLE;
-	nk_begin(ctx.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), flags);
-	nk_layout_row_dynamic(ctx.get(), kDefaultRowHeight, 1);
+	nk_flags nkFlags = NK_WINDOW_BORDER;
+	if(!(flags & WindowFlags_NoTitleBar))
+	{
+		nkFlags |= NK_WINDOW_TITLE;
+	}
+	if(!(flags & WindowFlags_NoResize))
+	{
+		nkFlags |= NK_WINDOW_SCALABLE;
+	}
+	if(!(flags & WindowFlags_NoMove))
+	{
+		nkFlags |= NK_WINDOW_MOVABLE;
+	}
+	if(flags & WindowFlags_NoScrollbar)
+	{
+		nkFlags |= NK_WINDOW_NO_SCROLLBAR;
+	}
+
+	if(pOpen != nullptr)
+	{
+		nkFlags |= NK_WINDOW_CLOSABLE;
+
+		nk_window_show(ctx.get(), label.Str(), *pOpen ? NK_SHOWN : NK_HIDDEN);
+	}
+
+	const bool isVisible = nk_begin(ctx.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), nkFlags);
+	if(isVisible)
+	{
+		nk_layout_row_dynamic(ctx.get(), kDefaultRowHeight, 1);
+	}
+
+	if(pOpen != nullptr)
+	{
+		*pOpen = isVisible;
+	}
+
+	return isVisible;
 }
 
 void NuklearUI::EndWindow()
