@@ -284,10 +284,19 @@ bool ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const 
 	const bool isVisible = ImGui::Begin(label.Str(), pOpen, imguiFlags);
 	if(isVisible)
 	{
-		// Auto-focus on right click as well
-		if(ImGui::GetIO().MouseDown[ImGuiMouseButton_Right] && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows))
+		// Auto-focus on top level window on all mouse clicks as well (the default is ImGuiMouseButton_Left)
+		ImGuiIO& io = ImGui::GetIO();
+		for(int i = ImGuiMouseButton_Right; i < ImGuiMouseButton_COUNT; ++i)
 		{
-			ImGui::SetWindowFocus();
+			if(io.MouseClicked[i])
+			{
+				if(!ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows) && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows))
+				{
+					ImGui::SetWindowFocus();
+				}
+
+				break;
+			}
 		}
 	}
 
