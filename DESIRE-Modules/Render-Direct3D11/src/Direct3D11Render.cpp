@@ -18,7 +18,6 @@
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
-#include "Engine/Render/View.h"
 
 #include <d3dcompiler.h>
 
@@ -256,7 +255,7 @@ void Direct3D11Render::EndFrame()
 	swapChain->Present(1, 0);
 }
 
-void Direct3D11Render::ClearActiveRenderTarget(uint32_t clearColorRGBA, float depth, uint8_t stencil)
+void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil)
 {
 	const float clearColor[4] =
 	{
@@ -449,15 +448,22 @@ void Direct3D11Render::SetBlendModeDisabled()
 
 void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
+	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(pActiveWindow->GetWidth()), static_cast<FLOAT>(pActiveWindow->GetHeight()), 0.0f, 1.0f };
+
 	if(pRenderTarget != nullptr)
 	{
-		RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderTarget->pRenderData);
+		const RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderTarget->pRenderData);
 		deviceCtx->OMSetRenderTargets(static_cast<UINT>(pRenderTargetRenderData->renderTargetViews.size()), pRenderTargetRenderData->renderTargetViews.data(), pRenderTargetRenderData->pDepthStencilView);
+
+		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
+		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());
 	}
 	else
 	{
 		deviceCtx->OMSetRenderTargets(1, &pBackBufferRenderTargetView, pBackBufferDepthStencilView);
 	}
+
+	deviceCtx->RSSetViewports(1, &viewport);
 }
 
 void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
@@ -830,17 +836,11 @@ void Direct3D11Render::CreateBackBuffer(uint32_t width, uint32_t height)
 	deviceCtx->OMSetRenderTargets(1, &pBackBufferRenderTargetView, pBackBufferDepthStencilView);
 }
 
-void Direct3D11Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-	const D3D11_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
-	deviceCtx->RSSetViewports(1, &vp);
-}
-
 void Direct3D11Render::SetMesh(Mesh* pMesh)
 {
 	if(pMesh != nullptr)
 	{
-		MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(pMesh->pRenderData);
+		const MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(pMesh->pRenderData);
 		const uint32_t indexSize = pMesh->GetIndexSize();
 		const uint32_t vertexSize = pMesh->GetVertexSize();
 		const uint32_t indexByteOffset = pMeshRenderData->indexOffset * indexSize;

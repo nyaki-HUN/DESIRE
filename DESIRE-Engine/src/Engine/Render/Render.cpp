@@ -8,7 +8,6 @@
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
-#include "Engine/Render/View.h"
 
 Render::Render()
 {
@@ -21,13 +20,12 @@ Render::~Render()
 
 void Render::BeginFrame(OSWindow& window)
 {
+	pActiveWindow = &window;
+
 	SetRenderTarget(nullptr);
 	pActiveRenderTarget = nullptr;
 
-	ClearActiveRenderTarget();
-	SetViewport(0, 0, window.GetWidth(), window.GetHeight());
-
-	pActiveWindow = &window;
+	Clear();
 }
 
 void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
@@ -107,37 +105,17 @@ void Render::RenderScreenSpaceQuad(Material* pMaterial)
 	DoRender(0, 0, 0, 4);
 }
 
-void Render::SetView(View* pView)
+void Render::SetActiveRenderTarget(RenderTarget* pRenderTarget)
 {
-	if(pView != nullptr)
+	if(pRenderTarget != nullptr && pRenderTarget->pRenderData == nullptr)
 	{
-		SetActiveRenderTarget(pView->GetRenderTarget());
-		ClearActiveRenderTarget();
-		SetViewport(pView->GetPosX(), pView->GetPosY(), pView->GetWidth(), pView->GetHeight());
-	}
-	else
-	{
-		SetRenderTarget(nullptr);
-		pActiveRenderTarget = nullptr;
-
-		if(pActiveWindow != nullptr)
-		{
-			SetViewport(0, 0, pActiveWindow->GetWidth(), pActiveWindow->GetHeight());
-		}
-	}
-}
-
-void Render::SetActiveRenderTarget(RenderTarget& renderTarget)
-{
-	if(renderTarget.pRenderData == nullptr)
-	{
-		Bind(renderTarget);
+		Bind(*pRenderTarget);
 	}
 
-	if(pActiveRenderTarget != &renderTarget)
+	if(pActiveRenderTarget != pRenderTarget)
 	{
-		SetRenderTarget(&renderTarget);
-		pActiveRenderTarget = &renderTarget;
+		SetRenderTarget(pRenderTarget);
+		pActiveRenderTarget = pRenderTarget;
 	}
 }
 

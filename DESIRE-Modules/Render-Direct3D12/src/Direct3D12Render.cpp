@@ -18,7 +18,6 @@
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
-#include "Engine/Render/View.h"
 
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
@@ -212,7 +211,7 @@ void Direct3D12Render::EndFrame()
 	swapChain->Present(1, 0);
 }
 
-void Direct3D12Render::ClearActiveRenderTarget(uint32_t clearColorRGBA, float depth, uint8_t stencil)
+void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil)
 {
 	const float clearColor[4] =
 	{
@@ -564,11 +563,6 @@ void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
 	delete pRenderTargetRenderData;
 }
 
-void Direct3D12Render::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-	const D3D12_VIEWPORT vp = { (float)x, (float)y, (float)width, (float)height, 0.0f, 1.0f };
-}
-
 void Direct3D12Render::SetMesh(Mesh* pMesh)
 {
 	if(pMesh != nullptr)
@@ -652,13 +646,22 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 
 void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
+	D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(pActiveWindow->GetWidth()), static_cast<FLOAT>(pActiveWindow->GetHeight()), 0.0f, 1.0f };
+
 	if(pRenderTarget != nullptr)
 	{
-//		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderTarget->pRenderData);
+		const RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderTarget->pRenderData);
+		pCmdList->OMSetRenderTargets(pRenderTargetRenderData->numRenderTargetDescriptors, pRenderTargetRenderData->renderTargetDescriptors, TRUE, &pRenderTargetRenderData->depthStencilDescriptor);
+
+		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
+		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());
 	}
 	else
 	{
+		pCmdList->OMSetRenderTargets(0, nullptr, TRUE, nullptr);
 	}
+
+	pCmdList->RSSetViewports(1, &viewport);
 }
 
 void Direct3D12Render::UpdateShaderParams(const Material& material)

@@ -22,7 +22,7 @@ public:
 
 	void EndFrame() override;
 
-	void ClearActiveRenderTarget(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) override;
+	void Clear(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
@@ -46,8 +46,6 @@ private:
 	void DestroyTextureRenderData(void* pRenderData) override;
 	void DestroyRenderTargetRenderData(void* pRenderData) override;
 
-	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
-
 	void SetMesh(Mesh* pMesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
 	void SetVertexShader(Shader* pVertexShader) override;
@@ -65,6 +63,8 @@ private:
 	ID3D12Device3* d3dDevice = nullptr;
 	ID3D12CommandQueue* commandQueue = nullptr;
 	IDXGISwapChain1* swapChain = nullptr;
+
+	ID3D12GraphicsCommandList* pCmdList = nullptr;
 
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
 	D3D12_RASTERIZER_DESC rasterizerDesc = {};

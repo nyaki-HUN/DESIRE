@@ -20,7 +20,7 @@ public:
 
 	void EndFrame() override;
 
-	void ClearActiveRenderTarget(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) override;
+	void Clear(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) override;
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
@@ -43,8 +43,6 @@ private:
 	void DestroyShaderRenderData(void* pRenderData) override;
 	void DestroyTextureRenderData(void* pRenderData) override;
 	void DestroyRenderTargetRenderData(void* pRenderData) override;
-
-	void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 
 	void SetMesh(Mesh* pMesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;

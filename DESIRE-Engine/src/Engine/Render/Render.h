@@ -91,11 +91,8 @@ public:
 	void RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset = 0, uint32_t vertexOffset = 0, uint32_t numIndices = UINT32_MAX, uint32_t numVertices = UINT32_MAX);
 	void RenderScreenSpaceQuad(Material* pMaterial);
 
-	// Sets the current view that the rendering will happen on. (Use nullptr to set the default view which is using the frame buffer)
-	void SetView(View* pView);
-
-	void SetActiveRenderTarget(RenderTarget& renderTarget);
-	virtual void ClearActiveRenderTarget(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) = 0;
+	void SetActiveRenderTarget(RenderTarget* pRenderTarget);
+	virtual void Clear(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) = 0;
 
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
@@ -124,8 +121,6 @@ public:
 
 protected:
 	void SetDefaultRenderStates();
-
-	virtual void SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height) = 0;
 
 	const OSWindow* pActiveWindow = nullptr;
 	const Mesh* pActiveMesh = nullptr;

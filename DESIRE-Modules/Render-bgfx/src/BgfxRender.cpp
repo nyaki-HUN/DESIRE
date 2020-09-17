@@ -17,7 +17,6 @@
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
-#include "Engine/Render/View.h"
 
 #include "bgfx/../../src/config.h"
 
@@ -128,7 +127,7 @@ void BgfxRender::EndFrame()
 	bgfx::frame();
 }
 
-void BgfxRender::ClearActiveRenderTarget(uint32_t clearColorRGBA, float depth, uint8_t stencil)
+void BgfxRender::Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil)
 {
 	bgfx::setViewClear(activeViewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH | BGFX_CLEAR_STENCIL, clearColorRGBA, depth, stencil);
 	bgfx::touch(activeViewId);
@@ -484,11 +483,6 @@ void BgfxRender::DestroyRenderTargetRenderData(void* pRenderData)
 	delete pRenderTargetRenderData;
 }
 
-void BgfxRender::SetViewport(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-	bgfx::setViewRect(activeViewId, x, y, width, height);
-}
-
 void BgfxRender::SetMesh(Mesh* pMesh)
 {
 	// Nothing to do
@@ -552,10 +546,12 @@ void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
 		RenderTargetRenderDataBgfx* pRenderTargetRenderData = static_cast<RenderTargetRenderDataBgfx*>(pRenderTarget->pRenderData);
 		ASSERT(pRenderTargetRenderData->id < BGFX_CONFIG_MAX_VIEWS);
 		activeViewId = pRenderTargetRenderData->id;
+		bgfx::setViewRect(activeViewId, 0, 0, pRenderTarget->GetWidth(), pRenderTarget->GetHeight());
 	}
 	else
 	{
 		activeViewId = 0;
+		bgfx::setViewRect(activeViewId, 0, 0, pActiveWindow->GetWidth(), pActiveWindow->GetHeight());
 	}
 }
 
