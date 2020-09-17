@@ -3,7 +3,7 @@
 #include "Engine/Core/Component.h"
 #include "Engine/Core/Math/Transform.h"
 
-static const uint32_t kMaxNumTransforms = 10000;
+static constexpr uint32_t kMaxNumTransforms = 10000;
 static Transform preallocatedTransforms[kMaxNumTransforms];
 static size_t numTransforms = 0;
 

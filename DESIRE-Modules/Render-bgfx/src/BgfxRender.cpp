@@ -20,7 +20,7 @@
 
 #include "bgfx/../../src/config.h"
 
-static const bgfx::EmbeddedShader s_embeddedShaders[] =
+static constexpr bgfx::EmbeddedShader s_embeddedShaders[] =
 {
 	BGFX_EMBEDDED_SHADER(vs_screenSpaceQuad),
 	BGFX_EMBEDDED_SHADER_END()
@@ -239,7 +239,7 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 {
 	renderState &= ~BGFX_STATE_BLEND_MASK;
 
-	static const uint64_t s_blendConversionTable[] =
+	constexpr uint64_t s_blendConversionTable[] =
 	{
 		BGFX_STATE_BLEND_ZERO,				// EBlend::Zero
 		BGFX_STATE_BLEND_ONE,				// EBlend::One
@@ -263,7 +263,7 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 	const uint64_t destAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
 	renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(srcRGB, destRGB, srcAlpha, destAlpha);
 
-	static const uint64_t s_equationConversionTable[] =
+	constexpr uint64_t s_equationConversionTable[] =
 	{
 		BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::Add
 		BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::Subtract
@@ -287,7 +287,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 {
 	MeshRenderDataBgfx* pMeshRenderData = new MeshRenderDataBgfx();
 
-	static const bgfx::Attrib::Enum s_attribConversionTable[] =
+	constexpr bgfx::Attrib::Enum s_attribConversionTable[] =
 	{
 		bgfx::Attrib::Position,		// Mesh::EAttrib::Position
 		bgfx::Attrib::Normal,		// Mesh::EAttrib::Normal
@@ -303,7 +303,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
 
-	static const bgfx::AttribType::Enum s_attribTypeConversionTable[] =
+	constexpr bgfx::AttribType::Enum s_attribTypeConversionTable[] =
 	{
 		bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::Float
 		bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::Uint8
@@ -626,7 +626,7 @@ void BgfxRender::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t 
 		if(bgfx::allocTransientBuffers(&vertexBuffer, screenSpaceQuadVertexLayout, 4, &indexBuffer, 6))
 		{
 			// Vertices
-			const float vertices[] =
+			constexpr float vertices[] =
 			{
 				-1.0f,	 1.0f,
 				1.0f,	 1.0f,
@@ -655,7 +655,7 @@ void BgfxRender::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t 
 
 bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
 {
-	const bgfx::TextureFormat::Enum conversionTable[] =
+	constexpr bgfx::TextureFormat::Enum conversionTable[] =
 	{
 		bgfx::TextureFormat::R8,			// Texture::EFormat::R8
 		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8

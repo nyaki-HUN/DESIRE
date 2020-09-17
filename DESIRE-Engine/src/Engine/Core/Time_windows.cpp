@@ -8,9 +8,9 @@
 static double GetTicksPerMicroSecond()
 {
 	LARGE_INTEGER qwTimerFrequency;
-	QueryPerformanceFrequency(&qwTimerFrequency);								// ticks/second
-	double ticksPerMicroSecond = (double)qwTimerFrequency.QuadPart / 1000.0;	// ticks/millisecond
-	ticksPerMicroSecond /= 1000.0;												// ticks/microsecond
+	QueryPerformanceFrequency(&qwTimerFrequency);											// ticks/second
+	double ticksPerMicroSecond = static_cast<double>(qwTimerFrequency.QuadPart) / 1000.0;	// ticks/millisecond
+	ticksPerMicroSecond /= 1000.0;															// ticks/microsecond
 	return ticksPerMicroSecond;
 }
 
@@ -22,17 +22,17 @@ uint64_t Time::GetMicroTime()
 	static const LARGE_INTEGER startTime = qwTime;
 	static const double ticksPerMicroSecond = GetTicksPerMicroSecond();
 
-	return static_cast<uint64_t>((double)(qwTime.QuadPart - startTime.QuadPart) / ticksPerMicroSecond);
+	return static_cast<uint64_t>(static_cast<double>(qwTime.QuadPart - startTime.QuadPart) / ticksPerMicroSecond);
 }
 
-void Time::GetGMTime(const time_t& time, tm* timeInfo)
+void Time::GetGMTime(const time_t& time, tm* pTimeInfo)
 {
-	gmtime_s(timeInfo, &time);
+	gmtime_s(pTimeInfo, &time);
 }
 
-void Time::GetLocalTime(const time_t& time, tm* timeInfo)
+void Time::GetLocalTime(const time_t& time, tm* pTimeInfo)
 {
-	localtime_s(timeInfo, &time);
+	localtime_s(pTimeInfo, &time);
 }
 
 #endif	// #if DESIRE_PLATFORM_WINDOWS

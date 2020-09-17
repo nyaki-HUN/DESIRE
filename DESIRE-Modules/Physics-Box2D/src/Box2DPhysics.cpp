@@ -19,7 +19,7 @@ static std::pair<b2Vec2, b2Vec2> GetValidRay(const Vector3& p1, const Vector3& p
 
 	if(ray.first.x == ray.second.x && ray.first.y == ray.second.y)
 	{
-		static const float kEpsilon = 0.001f;
+		constexpr float kEpsilon = 0.001f;
 		ray.first.x += kEpsilon;
 		ray.first.y += kEpsilon;
 	}
