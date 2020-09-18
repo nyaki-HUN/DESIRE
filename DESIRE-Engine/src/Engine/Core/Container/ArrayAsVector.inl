@@ -122,12 +122,12 @@ public:
 
 	void Insert(size_t pos, const T& value)
 	{
-		vector.insert(value);
+		vector.insert(pos, value);
 	}
 
 	void Insert(size_t pos, T&& value)
 	{
-		vector.insert(std::move(value));
+		vector.insert(pos, std::move(value));
 	}
 
 	size_t Find(const T& value) const
