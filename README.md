@@ -40,7 +40,7 @@ Modules
 
 * [Box2D](https://box2d.org) *(WIP)*
 * [Bullet](https://bulletphysics.org) *(WIP)*
-* [PhysX](https://developer.nvidia.com/physx-sdk) *(WIP)*
+* [PhysX 3.4](https://github.com/NVIDIAGameWorks/PhysX-3.4) *(WIP)*
 
 ### Render
 
