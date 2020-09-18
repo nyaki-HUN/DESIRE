@@ -516,7 +516,32 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture* pTexture)
 {
 	TextureRenderDataD3D12* pTextureRenderData = new TextureRenderDataD3D12();
 
-	DESIRE_UNUSED(pTexture);
+	D3D12_RESOURCE_DESC resourceDesc = {};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	resourceDesc.Width = pTexture->GetWidth();
+	resourceDesc.Height = pTexture->GetHeight();
+	resourceDesc.DepthOrArraySize = 1;
+	resourceDesc.MipLevels = pTexture->GetNumMipLevels();
+	resourceDesc.Format = GetTextureFormat(pTexture);
+	resourceDesc.SampleDesc.Count = 1;
+	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+	D3D12_HEAP_PROPERTIES heapProperties = {};
+	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProperties.CreationNodeMask = 1;
+	heapProperties.VisibleNodeMask = 1;
+
+	d3dDevice->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&pTextureRenderData->pTexture2D)
+	);
 
 	return pTextureRenderData;
 }
