@@ -409,7 +409,7 @@ void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
-	static const D3D11_BLEND blendConversionTable[] =
+	static constexpr D3D11_BLEND blendConversionTable[] =
 	{
 		D3D11_BLEND_ZERO,				// EBlend::Zero
 		D3D11_BLEND_ONE,				// EBlend::One
@@ -432,7 +432,7 @@ void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 	blendDesc.RenderTarget[0].SrcBlendAlpha = blendConversionTable[(size_t)srcBlendAlpha];
 	blendDesc.RenderTarget[0].DestBlendAlpha = blendConversionTable[(size_t)destBlendAlpha];
 
-	static const D3D11_BLEND_OP equationConversionTable[] =
+	static constexpr D3D11_BLEND_OP equationConversionTable[] =
 	{
 		D3D11_BLEND_OP_ADD,				// EBlendOp::Add
 		D3D11_BLEND_OP_SUBTRACT,		// EBlendOp::Subtract
@@ -907,7 +907,7 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 	deviceCtx->VSSetShaderResources(samplerIdx, 1, &pTextureRenderData->pTextureSRV);
 	deviceCtx->PSSetShaderResources(samplerIdx, 1, &pTextureRenderData->pTextureSRV);
 
-	static const D3D11_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
+	static constexpr D3D11_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
 	{
 		D3D11_TEXTURE_ADDRESS_WRAP,			// ETextureWrapMode::Repeat
 		D3D11_TEXTURE_ADDRESS_CLAMP,		// ETextureWrapMode::Clamp
@@ -1188,7 +1188,7 @@ void Direct3D11Render::SetInputLayout()
 		}
 		else
 		{
-			static const D3D11_INPUT_ELEMENT_DESC s_attribConversionTable[] =
+			static constexpr D3D11_INPUT_ELEMENT_DESC s_attribConversionTable[] =
 			{
 				{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
 				{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
@@ -1204,7 +1204,7 @@ void Direct3D11Render::SetInputLayout()
 			};
 			DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
 
-			static const DXGI_FORMAT s_attribTypeConversionTable[][4] =
+			static constexpr DXGI_FORMAT s_attribTypeConversionTable[][4] =
 			{
 				// Mesh::EAttribType::FLOAT
 				{
