@@ -146,7 +146,7 @@ void MemorySystem::PopAllocator()
 
 Allocator& MemorySystem::GetScratchAllocator()
 {
-	static constexpr size_t kScratchAllocatorSize = 10 * 1024 * 1024;
+	constexpr size_t kScratchAllocatorSize = 10 * 1024 * 1024;
 	static std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(kScratchAllocatorSize);
 	static LinearAllocator s_scratchAllocator(data.get(), kScratchAllocatorSize);
 	return s_scratchAllocator;
