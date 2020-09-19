@@ -38,7 +38,7 @@ BgfxRender::BgfxRender()
 	screenSpaceQuadVertexLayout.end();
 }
 
-void BgfxRender::Init(OSWindow& mainWindow)
+bool BgfxRender::Init(OSWindow& mainWindow)
 {
 	bgfx::PlatformData pd = {};
 #if DESIRE_PLATFORM_LINUX
@@ -51,7 +51,12 @@ void BgfxRender::Init(OSWindow& mainWindow)
 	initParams.resolution.format = bgfx::TextureFormat::RGBA8;
 	initParams.resolution.width = mainWindow.GetWidth();
 	initParams.resolution.height = mainWindow.GetHeight();
-	initialized = bgfx::init(initParams);
+	const bool isInitialized = bgfx::init(initParams);
+	if(!isInitialized)
+	{
+		return false;
+	}
+
 	activeViewId = 0;
 
 	samplerUniforms[0] = bgfx::createUniform("s_tex", bgfx::UniformType::Sampler);
@@ -66,15 +71,12 @@ void BgfxRender::Init(OSWindow& mainWindow)
 	BindEmbeddedShader(screenSpaceQuadVertexShader.get());
 
 	bgfx::reset(mainWindow.GetWidth(), mainWindow.GetHeight(), BGFX_RESET_VSYNC);
+
+	return true;
 }
 
 void BgfxRender::UpdateRenderWindow(OSWindow& window)
 {
-	if(!initialized)
-	{
-		return;
-	}
-
 	bgfx::reset(window.GetWidth(), window.GetHeight(), BGFX_RESET_VSYNC);
 }
 
@@ -92,13 +94,15 @@ void BgfxRender::Kill()
 	}
 	shaderProgramCache.clear();
 
+	pActiveWindow = nullptr;
+	pActiveMesh = nullptr;
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
+	pActiveRenderTarget = nullptr;
 
 	Unbind(*screenSpaceQuadVertexShader);
 
 	bgfx::shutdown();
-	initialized = false;
 }
 
 void BgfxRender::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
@@ -528,6 +532,7 @@ void BgfxRender::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterM
 		case EFilterMode::Trilinear:	break;
 		case EFilterMode::Anisotropic:	flags |= BGFX_SAMPLER_MIN_ANISOTROPIC | BGFX_SAMPLER_MAG_ANISOTROPIC; break;
 	}
+
 	switch(addressMode)
 	{
 		case EAddressMode::Repeat:			break;

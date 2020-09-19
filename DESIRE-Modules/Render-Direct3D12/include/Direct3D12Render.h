@@ -14,7 +14,7 @@ public:
 	Direct3D12Render();
 	~Direct3D12Render();
 
-	void Init(OSWindow& mainWindow) override;
+	bool Init(OSWindow& mainWindow) override;
 	void UpdateRenderWindow(OSWindow& window) override;
 	void Kill() override;
 
@@ -77,6 +77,4 @@ private:
 
 	std::unique_ptr<Shader> errorVertexShader;
 	std::unique_ptr<Shader> errorPixelShader;
-
-	bool initialized = false;
 };

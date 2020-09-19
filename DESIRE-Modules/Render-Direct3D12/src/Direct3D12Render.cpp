@@ -19,8 +19,8 @@
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
 
-#include <dxgi1_4.h>
 #include <d3dcompiler.h>
+#include <dxgi1_4.h>
 
 #define DX_RELEASE(ptr)		\
 	if(ptr != nullptr)		\
@@ -116,7 +116,7 @@ Direct3D12Render::~Direct3D12Render()
 {
 }
 
-void Direct3D12Render::Init(OSWindow& mainWindow)
+bool Direct3D12Render::Init(OSWindow& mainWindow)
 {
 	HRESULT hr;
 
@@ -140,10 +140,9 @@ void Direct3D12Render::Init(OSWindow& mainWindow)
 		D3D_FEATURE_LEVEL_12_1,
 		IID_PPV_ARGS(&d3dDevice));
 
-	initialized = SUCCEEDED(hr);
-	if(!initialized)
+	if(FAILED(hr))
 	{
-		return;
+		return false;
 	}
 
 	// Ccreate command queue
@@ -173,26 +172,22 @@ void Direct3D12Render::Init(OSWindow& mainWindow)
 	Bind(screenSpaceQuadVertexShader.get());
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
+
+	return true;
 }
 
 void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 {
-	if(!initialized)
-	{
-		return;
-	}
-
 	swapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 }
 
 void Direct3D12Render::Kill()
 {
-	initialized = false;
-
 	pActiveWindow = nullptr;
 	pActiveMesh = nullptr;
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
+	pActiveRenderTarget = nullptr;
 
 	Unbind(*errorVertexShader);
 	Unbind(*errorPixelShader);
@@ -217,8 +212,8 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	{
 		((clearColorRGBA >> 24) & 0xFF) / 255.0f,
 		((clearColorRGBA >> 16) & 0xFF) / 255.0f,
-		((clearColorRGBA >> 8) & 0xFF) / 255.0f,
-		((clearColorRGBA >> 0) & 0xFF) / 255.0f,
+		((clearColorRGBA >>  8) & 0xFF) / 255.0f,
+		((clearColorRGBA >>  0) & 0xFF) / 255.0f,
 	};
 
 	DESIRE_UNUSED(depth);
@@ -335,7 +330,7 @@ void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
-	static constexpr D3D12_BLEND blendConversionTable[] =
+	static constexpr D3D12_BLEND s_blendConversionTable[] =
 	{
 		D3D12_BLEND_ZERO,				// EBlend::Zero
 		D3D12_BLEND_ONE,				// EBlend::One
@@ -351,14 +346,14 @@ void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 		D3D12_BLEND_BLEND_FACTOR,		// EBlend::BlendFactor
 		D3D12_BLEND_INV_BLEND_FACTOR	// EBlend::InvBlendFactor
 	};
-	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::InvBlendFactor + 1);
+	DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
 
-	blendDesc.RenderTarget[0].SrcBlend = blendConversionTable[(size_t)srcBlendRGB];
-	blendDesc.RenderTarget[0].DestBlend = blendConversionTable[(size_t)destBlendRGB];
-	blendDesc.RenderTarget[0].SrcBlendAlpha = blendConversionTable[(size_t)srcBlendAlpha];
-	blendDesc.RenderTarget[0].DestBlendAlpha = blendConversionTable[(size_t)destBlendAlpha];
+	blendDesc.RenderTarget[0].SrcBlend = s_blendConversionTable[(size_t)srcBlendRGB];
+	blendDesc.RenderTarget[0].DestBlend = s_blendConversionTable[(size_t)destBlendRGB];
+	blendDesc.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[(size_t)srcBlendAlpha];
+	blendDesc.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
 
-	static constexpr D3D12_BLEND_OP equationConversionTable[] =
+	static constexpr D3D12_BLEND_OP s_equationConversionTable[] =
 	{
 		D3D12_BLEND_OP_ADD,				// EBlendOp::Add
 		D3D12_BLEND_OP_SUBTRACT,		// EBlendOp::Subtract
@@ -366,10 +361,10 @@ void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 		D3D12_BLEND_OP_MIN,				// EBlendOp::Min
 		D3D12_BLEND_OP_MAX				// EBlendOp::Max
 	};
-	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::Max + 1);
+	DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
 
-	blendDesc.RenderTarget[0].BlendOp = equationConversionTable[(size_t)blendOpRGB];
-	blendDesc.RenderTarget[0].BlendOpAlpha = equationConversionTable[(size_t)blendOpAlpha];
+	blendDesc.RenderTarget[0].BlendOp = s_equationConversionTable[(size_t)blendOpRGB];
+	blendDesc.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[(size_t)blendOpAlpha];
 }
 
 void Direct3D12Render::SetBlendModeDisabled()
@@ -630,7 +625,7 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 
 //	const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->pRenderData);
 
-	static constexpr D3D12_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
+	static constexpr D3D12_TEXTURE_ADDRESS_MODE s_addressModeConversionTable[] =
 	{
 		D3D12_TEXTURE_ADDRESS_MODE_WRAP,		// ETextureWrapMode::Repeat
 		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,		// ETextureWrapMode::Clamp
@@ -646,10 +641,11 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 		case EFilterMode::Bilinear:		samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
 		case EFilterMode::Trilinear:	samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
 		case EFilterMode::Anisotropic:	samplerDesc.Filter = D3D12_ENCODE_ANISOTROPIC_FILTER(D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
-	};
-	samplerDesc.AddressU = addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressV = addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressW = addressModeConversionTable[(size_t)addressMode];
+	}
+
+	samplerDesc.AddressU = s_addressModeConversionTable[(size_t)addressMode];
+	samplerDesc.AddressV = s_addressModeConversionTable[(size_t)addressMode];
+	samplerDesc.AddressW = s_addressModeConversionTable[(size_t)addressMode];
 	samplerDesc.MaxAnisotropy = D3D12_MAX_MAXANISOTROPY;
 	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
 	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;

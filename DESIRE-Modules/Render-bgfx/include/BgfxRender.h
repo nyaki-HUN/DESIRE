@@ -12,7 +12,7 @@ class BgfxRender : public Render
 public:
 	BgfxRender();
 
-	void Init(OSWindow& mainWindow) override;
+	bool Init(OSWindow& mainWindow) override;
 	void UpdateRenderWindow(OSWindow& window) override;
 	void Kill() override;
 
@@ -66,6 +66,4 @@ private:
 	uint32_t blendFactor = 0;
 
 	bgfx::VertexLayout screenSpaceQuadVertexLayout;
-
-	bool initialized = false;
 };

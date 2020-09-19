@@ -115,7 +115,7 @@ Direct3D11Render::~Direct3D11Render()
 {
 }
 
-void Direct3D11Render::Init(OSWindow& mainWindow)
+bool Direct3D11Render::Init(OSWindow& mainWindow)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = mainWindow.GetWidth();
@@ -155,10 +155,9 @@ void Direct3D11Render::Init(OSWindow& mainWindow)
 		nullptr,
 		&deviceCtx);
 
-	initialized = SUCCEEDED(hr);
-	if(!initialized)
+	if(FAILED(hr))
 	{
-		return;
+		return false;
 	}
 
 	// Set the default topology when there is no active mesh
@@ -170,15 +169,12 @@ void Direct3D11Render::Init(OSWindow& mainWindow)
 	Bind(screenSpaceQuadVertexShader.get());
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
+
+	return true;
 }
 
 void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 {
-	if(!initialized)
-	{
-		return;
-	}
-
 	ID3D11RenderTargetView* nullViews[] = { nullptr };
 	deviceCtx->OMSetRenderTargets(1, nullViews, nullptr);
 	DX_RELEASE(pBackBufferDepthStencilView);
@@ -198,8 +194,6 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 
 void Direct3D11Render::Kill()
 {
-	initialized = false;
-
 	for(auto& pair : depthStencilStateCache)
 	{
 		DX_RELEASE(pair.second);
@@ -239,6 +233,7 @@ void Direct3D11Render::Kill()
 	pActiveMesh = nullptr;
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
+	pActiveRenderTarget = nullptr;
 
 	Unbind(*errorVertexShader);
 	Unbind(*errorPixelShader);
@@ -409,7 +404,7 @@ void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
-	static constexpr D3D11_BLEND blendConversionTable[] =
+	static constexpr D3D11_BLEND s_blendConversionTable[] =
 	{
 		D3D11_BLEND_ZERO,				// EBlend::Zero
 		D3D11_BLEND_ONE,				// EBlend::One
@@ -425,14 +420,14 @@ void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 		D3D11_BLEND_BLEND_FACTOR,		// EBlend::BlendFactor
 		D3D11_BLEND_INV_BLEND_FACTOR	// EBlend::InvBlendFactor
 	};
-	DESIRE_CHECK_ARRAY_SIZE(blendConversionTable, EBlend::InvBlendFactor + 1);
+	DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
 
-	blendDesc.RenderTarget[0].SrcBlend = blendConversionTable[(size_t)srcBlendRGB];
-	blendDesc.RenderTarget[0].DestBlend = blendConversionTable[(size_t)destBlendRGB];
-	blendDesc.RenderTarget[0].SrcBlendAlpha = blendConversionTable[(size_t)srcBlendAlpha];
-	blendDesc.RenderTarget[0].DestBlendAlpha = blendConversionTable[(size_t)destBlendAlpha];
+	blendDesc.RenderTarget[0].SrcBlend = s_blendConversionTable[(size_t)srcBlendRGB];
+	blendDesc.RenderTarget[0].DestBlend = s_blendConversionTable[(size_t)destBlendRGB];
+	blendDesc.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[(size_t)srcBlendAlpha];
+	blendDesc.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
 
-	static constexpr D3D11_BLEND_OP equationConversionTable[] =
+	static constexpr D3D11_BLEND_OP s_equationConversionTable[] =
 	{
 		D3D11_BLEND_OP_ADD,				// EBlendOp::Add
 		D3D11_BLEND_OP_SUBTRACT,		// EBlendOp::Subtract
@@ -440,35 +435,15 @@ void Direct3D11Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 		D3D11_BLEND_OP_MIN,				// EBlendOp::Min
 		D3D11_BLEND_OP_MAX				// EBlendOp::Max
 	};
-	DESIRE_CHECK_ARRAY_SIZE(equationConversionTable, EBlendOp::Max + 1);
+	DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
 
-	blendDesc.RenderTarget[0].BlendOp = equationConversionTable[(size_t)blendOpRGB];
-	blendDesc.RenderTarget[0].BlendOpAlpha = equationConversionTable[(size_t)blendOpAlpha];
+	blendDesc.RenderTarget[0].BlendOp = s_equationConversionTable[(size_t)blendOpRGB];
+	blendDesc.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[(size_t)blendOpAlpha];
 }
 
 void Direct3D11Render::SetBlendModeDisabled()
 {
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
-}
-
-void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
-{
-	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(pActiveWindow->GetWidth()), static_cast<FLOAT>(pActiveWindow->GetHeight()), 0.0f, 1.0f };
-
-	if(pRenderTarget != nullptr)
-	{
-		const RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderTarget->pRenderData);
-		deviceCtx->OMSetRenderTargets(static_cast<UINT>(pRenderTargetRenderData->renderTargetViews.size()), pRenderTargetRenderData->renderTargetViews.data(), pRenderTargetRenderData->pDepthStencilView);
-
-		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
-		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());
-	}
-	else
-	{
-		deviceCtx->OMSetRenderTargets(1, &pBackBufferRenderTargetView, pBackBufferDepthStencilView);
-	}
-
-	deviceCtx->RSSetViewports(1, &viewport);
 }
 
 void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
@@ -907,7 +882,7 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 	deviceCtx->VSSetShaderResources(samplerIdx, 1, &pTextureRenderData->pTextureSRV);
 	deviceCtx->PSSetShaderResources(samplerIdx, 1, &pTextureRenderData->pTextureSRV);
 
-	static constexpr D3D11_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
+	static constexpr D3D11_TEXTURE_ADDRESS_MODE s_addressModeConversionTable[] =
 	{
 		D3D11_TEXTURE_ADDRESS_WRAP,			// ETextureWrapMode::Repeat
 		D3D11_TEXTURE_ADDRESS_CLAMP,		// ETextureWrapMode::Clamp
@@ -923,15 +898,36 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 		case EFilterMode::Bilinear:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
 		case EFilterMode::Trilinear:	samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
 		case EFilterMode::Anisotropic:	samplerDesc.Filter = D3D11_ENCODE_ANISOTROPIC_FILTER(D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-	};
-	samplerDesc.AddressU = addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressV = addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressW = addressModeConversionTable[(size_t)addressMode];
+	}
+
+	samplerDesc.AddressU = s_addressModeConversionTable[(size_t)addressMode];
+	samplerDesc.AddressV = s_addressModeConversionTable[(size_t)addressMode];
+	samplerDesc.AddressW = s_addressModeConversionTable[(size_t)addressMode];
 	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	SetSamplerState(samplerIdx, samplerDesc);
+}
+
+void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
+{
+	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(pActiveWindow->GetWidth()), static_cast<FLOAT>(pActiveWindow->GetHeight()), 0.0f, 1.0f };
+
+	if(pRenderTarget != nullptr)
+	{
+		const RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderTarget->pRenderData);
+		deviceCtx->OMSetRenderTargets(static_cast<UINT>(pRenderTargetRenderData->renderTargetViews.size()), pRenderTargetRenderData->renderTargetViews.data(), pRenderTargetRenderData->pDepthStencilView);
+
+		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
+		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());
+	}
+	else
+	{
+		deviceCtx->OMSetRenderTargets(1, &pBackBufferRenderTargetView, pBackBufferDepthStencilView);
+	}
+
+	deviceCtx->RSSetViewports(1, &viewport);
 }
 
 void Direct3D11Render::UpdateShaderParams(const Material& material)

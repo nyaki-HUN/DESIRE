@@ -79,7 +79,7 @@ public:
 	Render();
 	virtual ~Render();
 
-	virtual void Init(OSWindow& mainWindow) = 0;
+	virtual bool Init(OSWindow& mainWindow) = 0;
 	virtual void UpdateRenderWindow(OSWindow& window) = 0;
 	virtual void Kill() = 0;
 
