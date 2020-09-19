@@ -54,7 +54,7 @@ void NuklearUI::Init()
 	mesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
 	static_assert(sizeof(nk_draw_index) == sizeof(uint16_t), "Conversion is required for index buffer");
 
-	static const nk_draw_vertex_layout_element s_nkVertexLayout[] =
+	const nk_draw_vertex_layout_element s_nkVertexLayout[] =
 	{
 		{ NK_VERTEX_POSITION, NK_FORMAT_FLOAT, 0 },
 		{ NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, 2 * sizeof(float) },

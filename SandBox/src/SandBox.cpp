@@ -168,7 +168,7 @@ void SandBox::Update()
 		Modules::UI->RadioButton("RadioButton - B", radioButtonOption, ERadioButtonOption::B);
 		Modules::UI->RadioButton("RadioButton - C", radioButtonOption, ERadioButtonOption::C);
 
-		constexpr float ratio[] = { 0.3f, 0.7f };
+		static const float ratio[] = { 0.3f, 0.7f };
 		Modules::UI->LayoutColumns(2, ratio);
 
 		static float sliderValue = 0.5f;

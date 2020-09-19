@@ -335,7 +335,7 @@ void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
-	constexpr D3D12_BLEND blendConversionTable[] =
+	static const D3D12_BLEND blendConversionTable[] =
 	{
 		D3D12_BLEND_ZERO,				// EBlend::Zero
 		D3D12_BLEND_ONE,				// EBlend::One
@@ -358,7 +358,7 @@ void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 	blendDesc.RenderTarget[0].SrcBlendAlpha = blendConversionTable[(size_t)srcBlendAlpha];
 	blendDesc.RenderTarget[0].DestBlendAlpha = blendConversionTable[(size_t)destBlendAlpha];
 
-	constexpr D3D12_BLEND_OP equationConversionTable[] =
+	static const D3D12_BLEND_OP equationConversionTable[] =
 	{
 		D3D12_BLEND_OP_ADD,				// EBlendOp::Add
 		D3D12_BLEND_OP_SUBTRACT,		// EBlendOp::Subtract
@@ -630,7 +630,7 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 
 //	const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->pRenderData);
 
-	constexpr D3D12_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
+	static const D3D12_TEXTURE_ADDRESS_MODE addressModeConversionTable[] =
 	{
 		D3D12_TEXTURE_ADDRESS_MODE_WRAP,		// ETextureWrapMode::Repeat
 		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,		// ETextureWrapMode::Clamp
