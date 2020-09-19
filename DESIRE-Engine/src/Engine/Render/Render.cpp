@@ -260,7 +260,7 @@ void Render::SetMaterial(Material& material)
 			Bind(material.vertexShader.get());
 		}
 
-		if(pActiveVertexShader == material.vertexShader.get())
+		if(pActiveVertexShader != material.vertexShader.get())
 		{
 			SetVertexShader(*material.vertexShader);
 			pActiveVertexShader = material.vertexShader.get();
@@ -275,7 +275,7 @@ void Render::SetMaterial(Material& material)
 			Bind(material.fragmentShader.get());
 		}
 
-		if(pActiveFragmentShader == material.fragmentShader.get())
+		if(pActiveFragmentShader != material.fragmentShader.get())
 		{
 			SetFragmentShader(*material.fragmentShader);
 			pActiveFragmentShader = material.fragmentShader.get();
