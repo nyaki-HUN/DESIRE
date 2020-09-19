@@ -37,23 +37,6 @@
 
 Direct3D12Render::Direct3D12Render()
 {
-	const char vs_screenSpaceQuad[] =
-	{
-		"struct v2f\n"
-		"{\n"
-		"	float4 pos : SV_Position;\n"
-		"	float2 uv : TEXCOORD0;\n"
-		"};\n"
-		"v2f main(uint idx : SV_VertexID)\n"
-		"{\n"
-		"	v2f Out;\n"
-		"	Out.uv = float2(idx & 1, idx >> 1);\n"
-		"	Out.pos = float4((Out.uv.x - 0.5) * 2.0, -(Out.uv.y - 0.5) * 2.0, 0.0, 1.0);\n"
-		"	return Out;\n"
-		"}\n"
-	};
-	screenSpaceQuadVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_screenSpaceQuad, sizeof(vs_screenSpaceQuad));
-
 	const char vs_error[] =
 	{
 		"cbuffer CB : register(b0)\n"
@@ -169,7 +152,6 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	hr = pFactory->CreateSwapChainForHwnd(commandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &swapChain);
 	ASSERT(SUCCEEDED(hr));
 
-	Bind(screenSpaceQuadVertexShader.get());
 	Bind(errorVertexShader.get());
 	Bind(errorPixelShader.get());
 
@@ -191,7 +173,6 @@ void Direct3D12Render::Kill()
 
 	Unbind(*errorVertexShader);
 	Unbind(*errorPixelShader);
-	Unbind(*screenSpaceQuadVertexShader);
 }
 
 void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const

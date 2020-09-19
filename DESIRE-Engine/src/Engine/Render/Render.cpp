@@ -12,7 +12,6 @@
 
 Render::Render()
 {
-	screenSpaceQuadVertexShader = std::make_unique<Shader>("vs_screenSpaceQuad");
 }
 
 Render::~Render()

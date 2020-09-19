@@ -55,7 +55,6 @@ private:
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture* pTexture);
-	static void BindEmbeddedShader(Shader* pShader);
 
 	bgfx::UniformHandle samplerUniforms[8];
 	bgfx::ViewId activeViewId = 0;

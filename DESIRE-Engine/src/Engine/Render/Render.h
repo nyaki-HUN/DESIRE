@@ -128,8 +128,6 @@ protected:
 	const Shader* pActiveFragmentShader = nullptr;
 	const RenderTarget* pActiveRenderTarget = nullptr;
 
-	std::unique_ptr<Shader> screenSpaceQuadVertexShader;
-
 private:
 	virtual void* CreateMeshRenderData(const Mesh* pMesh) = 0;
 	virtual void* CreateShaderRenderData(const Shader* pShader) = 0;

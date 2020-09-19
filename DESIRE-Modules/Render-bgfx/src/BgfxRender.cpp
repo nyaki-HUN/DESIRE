@@ -1,7 +1,6 @@
 #include "stdafx_bgfx.h"
 #include "BgfxRender.h"
 
-#include "Embedded_shaders/vs_screenSpaceQuad.bin.h"
 #include "MeshRenderDataBgfx.h"
 #include "RenderTargetRenderDataBgfx.h"
 #include "ShaderRenderDataBgfx.h"
@@ -20,12 +19,6 @@
 #include "Engine/Render/Texture.h"
 
 #include "bgfx/../../src/config.h"
-
-static const bgfx::EmbeddedShader s_embeddedShaders[] =
-{
-	BGFX_EMBEDDED_SHADER(vs_screenSpaceQuad),
-	BGFX_EMBEDDED_SHADER_END()
-};
 
 BgfxRender::BgfxRender()
 {
@@ -69,8 +62,6 @@ bool BgfxRender::Init(OSWindow& mainWindow)
 	renderState = BGFX_STATE_MSAA;
 	SetDefaultRenderStates();
 
-	BindEmbeddedShader(screenSpaceQuadVertexShader.get());
-
 	bgfx::reset(mainWindow.GetWidth(), mainWindow.GetHeight(), BGFX_RESET_VSYNC);
 
 	return true;
@@ -100,8 +91,6 @@ void BgfxRender::Kill()
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
 	pActiveRenderTarget = nullptr;
-
-	Unbind(*screenSpaceQuadVertexShader);
 
 	bgfx::shutdown();
 }
@@ -678,15 +667,4 @@ bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
 	return conversionTable[static_cast<size_t>(texture->GetFormat())];
-}
-
-void BgfxRender::BindEmbeddedShader(Shader* pShader)
-{
-	ASSERT(pShader != nullptr && pShader->pRenderData == nullptr);
-
-	ShaderRenderDataBgfx* pShaderRenderData = new ShaderRenderDataBgfx();
-	pShaderRenderData->shaderHandle = bgfx::createEmbeddedShader(s_embeddedShaders, bgfx::getRendererType(), pShader->name.Str());
-	ASSERT(bgfx::isValid(pShaderRenderData->shaderHandle));
-
-	pShader->pRenderData = pShaderRenderData;
 }
