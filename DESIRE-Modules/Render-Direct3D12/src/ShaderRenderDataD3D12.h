@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/Core/Container/Array.h"
 #include "Engine/Core/MemoryBuffer.h"
 #include "Engine/Core/HashedStringMap.h"
 
@@ -10,12 +11,12 @@ class ShaderRenderDataD3D12
 public:
 	ID3DBlob *shaderCode = nullptr;
 
-	std::vector<ID3D12Resource*> constantBuffers;
+	Array<ID3D12Resource*> constantBuffers;
 
 	struct ConstantBufferData
 	{
 		MemoryBuffer data;
 		HashedStringMap<std::pair<uint32_t, uint32_t>> variableOffsetSizePairs;
 	};
-	std::vector<ConstantBufferData> constantBuffersData;
+	Array<ConstantBufferData> constantBuffersData;
 };

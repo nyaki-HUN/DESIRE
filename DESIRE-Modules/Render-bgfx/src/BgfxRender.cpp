@@ -14,6 +14,7 @@
 
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
+#include "Engine/Render/Renderable.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
@@ -583,7 +584,7 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 	}
 }
 
-void BgfxRender::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
+void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
 	bgfx::setState(renderState, blendFactor);
 

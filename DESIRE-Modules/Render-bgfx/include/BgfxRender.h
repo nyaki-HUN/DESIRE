@@ -52,7 +52,7 @@ private:
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
 	void UpdateShaderParams(const Material& material) override;
 
-	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
+	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture* pTexture);
 	static void BindEmbeddedShader(Shader* pShader);

@@ -2,8 +2,7 @@
 
 #include "Engine/UI/UI.h"
 
-class DynamicMesh;
-class Material;
+class Renderable;
 class Texture;
 
 class ImGuiUI : public UI
@@ -51,7 +50,6 @@ public:
 	void LayoutColumns(uint8_t numColumns, const float* pRatio = nullptr) override;
 
 private:
-	std::unique_ptr<DynamicMesh> mesh;
-	std::unique_ptr<Material> material;
+	std::unique_ptr<Renderable> renderable;
 	std::shared_ptr<Texture> fontTexture;
 };

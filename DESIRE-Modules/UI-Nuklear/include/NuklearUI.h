@@ -2,8 +2,8 @@
 
 #include "Engine/UI/UI.h"
 
-class DynamicMesh;
 class Material;
+class Renderable;
 class Texture;
 
 struct nk_allocator;
@@ -63,7 +63,6 @@ private:
 	std::unique_ptr<nk_font_atlas> fontAtlas;
 	std::unique_ptr<nk_convert_config> convertConfig;
 
-	std::unique_ptr<DynamicMesh> mesh;
-	std::unique_ptr<Material> material;
+	std::unique_ptr<Renderable> renderable;
 	std::shared_ptr<Texture> fontTexture;
 };

@@ -15,6 +15,7 @@
 
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
+#include "Engine/Render/Renderable.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
@@ -283,7 +284,7 @@ void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	else
 	{
 		deviceCtx->ClearRenderTargetView(pBackBufferRenderTargetView, clearColor);
-		deviceCtx->ClearDepthStencilView(pBackBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		deviceCtx->ClearDepthStencilView(pBackBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 	}
 }
 
@@ -1028,8 +1029,10 @@ bool Direct3D11Render::CheckAndUpdateShaderParam(const void* value, void* valueI
 	return true;
 }
 
-void Direct3D11Render::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
+void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
+	DESIRE_UNUSED(renderable);
+
 	SetDepthStencilState();
 	SetRasterizerState();
 	SetBlendState();

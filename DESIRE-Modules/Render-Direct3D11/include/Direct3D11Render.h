@@ -59,7 +59,7 @@ private:
 	void UpdateShaderParams(const Material& material, const ShaderRenderDataD3D11* pShaderRenderData);
 	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
-	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
+	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	void UpdateD3D11Resource(ID3D11Resource* pResource, const void* pData, size_t size);
 	void SetDepthStencilState();

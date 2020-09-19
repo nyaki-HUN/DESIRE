@@ -216,8 +216,24 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 		((clearColorRGBA >>  0) & 0xFF) / 255.0f,
 	};
 
-	DESIRE_UNUSED(depth);
-	DESIRE_UNUSED(stencil);
+	if(pActiveRenderTarget != nullptr)
+	{
+		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pActiveRenderTarget->pRenderData);
+		if(pRenderTargetRenderData != nullptr)
+		{
+			for(D3D12_CPU_DESCRIPTOR_HANDLE& renderTargetDescriptor : pRenderTargetRenderData->renderTargetDescriptors)
+			{
+				pCmdList->ClearRenderTargetView(renderTargetDescriptor, clearColor, 0, nullptr);
+			}
+
+			pCmdList->ClearDepthStencilView(pRenderTargetRenderData->depthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+		}
+	}
+	else
+	{
+		pCmdList->ClearRenderTargetView(backBufferRenderTargetDescriptor, clearColor, 0, nullptr);
+		pCmdList->ClearDepthStencilView(backBufferDepthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+	}
 }
 
 void Direct3D12Render::SetWorldMatrix(const Matrix4& matrix)
@@ -451,8 +467,8 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
 		LOG_ERROR("ID3D12ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
 	}
 
-	pShaderRenderData->constantBuffers.resize(shaderDesc.ConstantBuffers);
-	pShaderRenderData->constantBuffersData.resize(shaderDesc.ConstantBuffers);
+	pShaderRenderData->constantBuffers.SetSize(shaderDesc.ConstantBuffers);
+	pShaderRenderData->constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
 /*	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
 		ID3D12ShaderReflectionConstantBuffer* cbuffer = pReflection->GetConstantBufferByIndex(i);
@@ -511,6 +527,13 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture* pTexture)
 {
 	TextureRenderDataD3D12* pTextureRenderData = new TextureRenderDataD3D12();
 
+	D3D12_HEAP_PROPERTIES heapProperties = {};
+	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProperties.CreationNodeMask = 1;
+	heapProperties.VisibleNodeMask = 1;
+
 	D3D12_RESOURCE_DESC resourceDesc = {};
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	resourceDesc.Width = pTexture->GetWidth();
@@ -521,13 +544,6 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture* pTexture)
 	resourceDesc.SampleDesc.Count = 1;
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-
-	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProperties.CreationNodeMask = 1;
-	heapProperties.VisibleNodeMask = 1;
 
 	d3dDevice->CreateCommittedResource(
 		&heapProperties,
@@ -598,10 +614,12 @@ void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 {
 	if(dynamicMesh.isIndicesDirty)
 	{
+		dynamicMesh.isIndicesDirty = false;
 	}
 
 	if(dynamicMesh.isVerticesDirty)
 	{
+		dynamicMesh.isVerticesDirty = false;
 	}
 }
 
@@ -686,7 +704,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, const Shader
 {
 	const std::pair<uint32_t, uint32_t>* pOffsetSizePair = nullptr;
 
-	for(size_t i = 0; i < pShaderRenderData->constantBuffers.size(); ++i)
+	for(size_t i = 0; i < pShaderRenderData->constantBuffers.Size(); ++i)
 	{
 		bool isChanged = false;
 		const ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->constantBuffersData[i];
@@ -771,8 +789,9 @@ bool Direct3D12Render::CheckAndUpdateShaderParam(const void* value, void* valueI
 	return true;
 }
 
-void Direct3D12Render::DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
+void Direct3D12Render::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
+	DESIRE_UNUSED(renderable);
 	DESIRE_UNUSED(indexOffset);
 	DESIRE_UNUSED(vertexOffset);
 	DESIRE_UNUSED(numVertices);

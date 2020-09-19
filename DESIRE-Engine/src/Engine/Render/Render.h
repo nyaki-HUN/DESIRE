@@ -5,6 +5,7 @@ class Material;
 class Matrix4;
 class Mesh;
 class OSWindow;
+class Renderable;
 class RenderTarget;
 class Shader;
 class String;
@@ -88,8 +89,7 @@ public:
 	void BeginFrame(OSWindow& window);
 	virtual void EndFrame() = 0;
 
-	void RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset = 0, uint32_t vertexOffset = 0, uint32_t numIndices = UINT32_MAX, uint32_t numVertices = UINT32_MAX);
-	void RenderScreenSpaceQuad(Material* pMaterial);
+	void RenderRenderable(Renderable& renderable, uint32_t indexOffset = 0, uint32_t vertexOffset = 0, uint32_t numIndices = UINT32_MAX, uint32_t numVertices = UINT32_MAX);
 
 	void SetActiveRenderTarget(RenderTarget* pRenderTarget);
 	virtual void Clear(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) = 0;
@@ -150,6 +150,5 @@ private:
 	virtual void SetRenderTarget(RenderTarget* pRenderTarget) = 0;
 	virtual void UpdateShaderParams(const Material& material) = 0;
 
-	// Submit draw command
-	virtual void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) = 0;
+	virtual void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) = 0;
 };

@@ -56,13 +56,15 @@ private:
 	void UpdateShaderParams(const Material& material, const ShaderRenderDataD3D12* pShaderRenderData);
 	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
-	void DoRender(uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
+	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	static DXGI_FORMAT GetTextureFormat(const Texture* pTexture);
 
 	ID3D12Device3* d3dDevice = nullptr;
 	ID3D12CommandQueue* commandQueue = nullptr;
 	IDXGISwapChain1* swapChain = nullptr;
+	D3D12_CPU_DESCRIPTOR_HANDLE backBufferRenderTargetDescriptor = {};
+	D3D12_CPU_DESCRIPTOR_HANDLE backBufferDepthStencilDescriptor = {};
 
 	ID3D12GraphicsCommandList* pCmdList = nullptr;
 

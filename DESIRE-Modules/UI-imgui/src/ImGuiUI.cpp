@@ -17,6 +17,7 @@
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
 #include "Engine/Render/Render.h"
+#include "Engine/Render/Renderable.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
 
@@ -66,6 +67,8 @@ void ImGuiUI::Init()
 	io.IniFilename = nullptr;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
+	renderable = std::make_unique<Renderable>();
+
 	// Dynamic mesh for the draw list
 	const std::initializer_list<Mesh::VertexLayout> vertexLayout =
 	{
@@ -73,14 +76,14 @@ void ImGuiUI::Init()
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	mesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
-	ASSERT(sizeof(ImDrawIdx) == mesh->GetIndexSize() && "ImDrawIdx has changed");
-	ASSERT(sizeof(ImDrawVert) == mesh->GetVertexSize() && "ImDrawVert has changed");
+	renderable->mesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
+	ASSERT(sizeof(ImDrawIdx) == renderable->mesh->GetIndexSize() && "ImDrawIdx has changed");
+	ASSERT(sizeof(ImDrawVert) == renderable->mesh->GetVertexSize() && "ImDrawVert has changed");
 
 	// Setup material
-	material = std::make_unique<Material>();
-	material->vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
-	material->fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->material = std::make_unique<Material>();
+	renderable->material->vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
+	renderable->material->fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
 
 	// Setup fonts
 	io.Fonts->AddFontDefault();
@@ -91,7 +94,7 @@ void ImGuiUI::Init()
 	int height = 0;
 	io.Fonts->GetTexDataAsRGBA32(&pTextureData, &width, &height);
 	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
-	material->AddTexture(fontTexture);
+	renderable->material->AddTexture(fontTexture);
 	io.Fonts->TexID = &fontTexture;
 
 	// Cleanup (don't clear the input data if you want to append new fonts later)
@@ -104,8 +107,7 @@ void ImGuiUI::Kill()
 	ImGui::DestroyContext();
 
 	fontTexture = nullptr;
-	material = nullptr;
-	mesh = nullptr;
+	renderable = nullptr;
 }
 
 void ImGuiUI::NewFrame(OSWindow& window)
@@ -189,16 +191,16 @@ void ImGuiUI::Render()
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > mesh->GetNumIndices() ||
-		static_cast<uint32_t>(pDrawData->TotalVtxCount) > mesh->GetNumVertices())
+	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > renderable->mesh->GetNumIndices() ||
+		static_cast<uint32_t>(pDrawData->TotalVtxCount) > renderable->mesh->GetNumVertices())
 	{
 		// Skip rendering if we have too many indices or vertices
 		ASSERT(false && "DynamicMesh is too small");
 		return;
 	}
 
-	ImDrawIdx* pIndex = mesh->indices.get();
-	ImDrawVert* pVertex = reinterpret_cast<ImDrawVert*>(mesh->vertices.get());
+	ImDrawIdx* pIndex = renderable->mesh->indices.get();
+	ImDrawVert* pVertex = reinterpret_cast<ImDrawVert*>(renderable->mesh->vertices.get());
 	for(int i = 0; i < pDrawData->CmdListsCount; i++)
 	{
 		const ImDrawList* pDrawList = pDrawData->CmdLists[i];
@@ -207,8 +209,9 @@ void ImGuiUI::Render()
 		pIndex += pDrawList->IdxBuffer.Size;
 		pVertex += pDrawList->VtxBuffer.Size;
 	}
-	mesh->isIndicesDirty = true;
-	mesh->isVerticesDirty = true;
+
+	static_cast<DynamicMesh*>(renderable->mesh.get())->isIndicesDirty = true;
+	static_cast<DynamicMesh*>(renderable->mesh.get())->isVerticesDirty = true;
 
 	// Because we merged all buffers into a single one, we maintain our own offset into them
 	uint32_t indexOffset = 0;
@@ -239,7 +242,7 @@ void ImGuiUI::Render()
 					continue;
 				}
 
-				material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
+				renderable->material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
 				const uint16_t x = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.x));
 				const uint16_t y = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.y));
@@ -247,7 +250,7 @@ void ImGuiUI::Render()
 				const uint16_t h = static_cast<uint16_t>(std::min<float>(cmd.ClipRect.w - cmd.ClipRect.y, UINT16_MAX));
 				Modules::Render->SetScissor(x, y, w, h);
 
-				Modules::Render->RenderMesh(mesh.get(), material.get(), cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
+				Modules::Render->RenderRenderable(*renderable, cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
 			}
 		}
 

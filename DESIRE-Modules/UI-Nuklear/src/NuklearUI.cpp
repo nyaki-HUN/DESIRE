@@ -16,12 +16,21 @@
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
 #include "Engine/Render/Render.h"
+#include "Engine/Render/Renderable.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
 
 #include "Engine/Resource/ResourceManager.h"
 
 constexpr int kDefaultRowHeight = 25;
+
+static constexpr nk_draw_vertex_layout_element s_nkVertexLayout[] =
+{
+	{ NK_VERTEX_POSITION, NK_FORMAT_FLOAT, 0 },
+	{ NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, 2 * sizeof(float) },
+	{ NK_VERTEX_COLOR, NK_FORMAT_R8G8B8A8, 4 * sizeof(float) },
+	{ NK_VERTEX_LAYOUT_END }
+};
 
 NuklearUI::NuklearUI()
 	: allocator(std::make_unique<nk_allocator>())
@@ -44,6 +53,8 @@ void NuklearUI::Init()
 	ctx->clip.userdata = nk_handle_ptr(nullptr);
 	ctx->button_behavior = NK_BUTTON_REPEATER;
 
+	renderable = std::make_unique<Renderable>();
+
 	// Dynamic mesh for the draw list
 	const std::initializer_list<Mesh::VertexLayout> vertexLayout =
 	{
@@ -51,20 +62,12 @@ void NuklearUI::Init()
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	mesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
+	renderable->mesh = std::make_shared<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
 	static_assert(sizeof(nk_draw_index) == sizeof(uint16_t), "Conversion is required for index buffer");
-
-	static constexpr nk_draw_vertex_layout_element s_nkVertexLayout[] =
-	{
-		{ NK_VERTEX_POSITION, NK_FORMAT_FLOAT, 0 },
-		{ NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, 2 * sizeof(float) },
-		{ NK_VERTEX_COLOR, NK_FORMAT_R8G8B8A8, 4 * sizeof(float) },
-		{ NK_VERTEX_LAYOUT_END }
-	};
 
 	convertConfig = std::make_unique<nk_convert_config>();
 	convertConfig->vertex_layout = s_nkVertexLayout;
-	convertConfig->vertex_size = mesh->GetVertexSize();
+	convertConfig->vertex_size = renderable->mesh->GetVertexSize();
 	convertConfig->vertex_alignment = NK_ALIGNOF(float);
 	convertConfig->global_alpha = 1.0f;
 	convertConfig->shape_AA = NK_ANTI_ALIASING_ON;
@@ -74,9 +77,9 @@ void NuklearUI::Init()
 	convertConfig->arc_segment_count = 22;
 
 	// Setup material
-	material = std::make_unique<Material>();
-	material->vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
-	material->fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->material = std::make_unique<Material>();
+	renderable->material->vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
+	renderable->material->fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
 
 	// Setup fonts
 	fontAtlas = std::make_unique<nk_font_atlas>();
@@ -88,7 +91,7 @@ void NuklearUI::Init()
 	int height = 0;
 	const void* pTextureData = nk_font_atlas_bake(fontAtlas.get(), &width, &height, NK_FONT_ATLAS_RGBA32);
 	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
-	material->AddTexture(fontTexture);
+	renderable->material->AddTexture(fontTexture);
 
 	nk_font_atlas_end(fontAtlas.get(), nk_handle_ptr(&fontTexture), &convertConfig->null);
 
@@ -109,13 +112,12 @@ void NuklearUI::Kill()
 	nk_font_atlas_clear(fontAtlas.get());
 	fontAtlas = nullptr;
 
+	fontTexture = nullptr;
+	convertConfig = nullptr;
+	renderable = nullptr;
+
 	nk_free(ctx.get());
 	ctx = nullptr;
-
-	fontTexture = nullptr;
-	material = nullptr;
-	convertConfig = nullptr;
-	mesh = nullptr;
 }
 
 void NuklearUI::NewFrame(OSWindow& window)
@@ -187,8 +189,8 @@ void NuklearUI::Render()
 	// Update mesh with packed buffers for contiguous indices and vertices
 	nk_buffer indexBuffer;
 	nk_buffer vertexBuffer;
-	nk_buffer_init_fixed(&indexBuffer, mesh->indices.get(), mesh->GetNumIndices());
-	nk_buffer_init_fixed(&vertexBuffer, mesh->vertices.get(), mesh->GetNumVertices());
+	nk_buffer_init_fixed(&indexBuffer, renderable->mesh->indices.get(), renderable->mesh->GetNumIndices());
+	nk_buffer_init_fixed(&vertexBuffer, renderable->mesh->vertices.get(), renderable->mesh->GetNumVertices());
 	nk_flags result = nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
 	if(result != NK_CONVERT_SUCCESS)
 	{
@@ -197,8 +199,8 @@ void NuklearUI::Render()
 		return;
 	}
 
-	mesh->isIndicesDirty = true;
-	mesh->isVerticesDirty = true;
+	static_cast<DynamicMesh*>(renderable->mesh.get())->isIndicesDirty = true;
+	static_cast<DynamicMesh*>(renderable->mesh.get())->isVerticesDirty = true;
 
 	uint32_t indexOffset = 0;
 	const nk_draw_command* pCmd = nullptr;
@@ -209,7 +211,7 @@ void NuklearUI::Render()
 			continue;
 		}
 
-		material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
+		renderable->material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
 
 		const uint16_t x = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.x));
 		const uint16_t y = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.y));
@@ -217,7 +219,7 @@ void NuklearUI::Render()
 		const uint16_t h = static_cast<uint16_t>(std::min<float>(pCmd->clip_rect.h, UINT16_MAX));
 		Modules::Render->SetScissor(x, y, w, h);
 
-		Modules::Render->RenderMesh(mesh.get(), material.get(), indexOffset, 0, pCmd->elem_count);
+		Modules::Render->RenderRenderable(*renderable, indexOffset, 0, pCmd->elem_count);
 		indexOffset += pCmd->elem_count;
 	}
 

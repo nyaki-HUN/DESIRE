@@ -5,6 +5,7 @@
 
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
+#include "Engine/Render/Renderable.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
@@ -28,15 +29,15 @@ void Render::BeginFrame(OSWindow& window)
 	Clear();
 }
 
-void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
+void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	if(pMesh == nullptr)
+	if(renderable.mesh == nullptr)
 	{
 		ASSERT(false && "Invalid mesh");
 		return;
 	}
 
-	if(pMaterial == nullptr || pMaterial->vertexShader == nullptr || pMaterial->fragmentShader == nullptr)
+	if(renderable.material == nullptr || renderable.material->vertexShader == nullptr || renderable.material->fragmentShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
@@ -45,66 +46,41 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, 
 	if(numIndices == UINT32_MAX)
 	{
 		// Use all the indices
-		numIndices = pMesh->GetNumIndices() - indexOffset;
+		numIndices = renderable.mesh->GetNumIndices() - indexOffset;
 	}
 
 	if(numVertices == UINT32_MAX)
 	{
 		// Use all the vertices
-		numVertices = pMesh->GetNumVertices() - vertexOffset;
+		numVertices = renderable.mesh->GetNumVertices() - vertexOffset;
 	}
 
-	if(indexOffset + numIndices > pMesh->GetNumIndices() ||
-		vertexOffset + numVertices > pMesh->GetNumVertices())
+	if(indexOffset + numIndices > renderable.mesh->GetNumIndices() ||
+		vertexOffset + numVertices > renderable.mesh->GetNumVertices())
 	{
 		return;
 	}
 
-	if(pMesh->pRenderData == nullptr)
+	if(renderable.mesh->pRenderData == nullptr)
 	{
-		Bind(pMesh);
+		Bind(renderable.mesh.get());
 	}
-	else if(pMesh->GetType() == Mesh::EType::Dynamic)
+	else if(renderable.mesh->GetType() == Mesh::EType::Dynamic)
 	{
-		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(pMesh);
+		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(renderable.mesh.get());
 		UpdateDynamicMesh(*pDynamicMesh);
 	}
 
-	if(pActiveMesh != pMesh)
+	if(pActiveMesh != renderable.mesh.get())
 	{
-		SetMesh(pMesh);
-		pActiveMesh = pMesh;
+		SetMesh(renderable.mesh.get());
+		pActiveMesh = renderable.mesh.get();
 	}
 
-	SetMaterial(*pMaterial);
-	UpdateShaderParams(*pMaterial);
+	SetMaterial(*renderable.material);
+	UpdateShaderParams(*renderable.material);
 
-	DoRender(indexOffset, vertexOffset, numIndices, numVertices);
-}
-
-void Render::RenderScreenSpaceQuad(Material* pMaterial)
-{
-	ASSERT(screenSpaceQuadVertexShader->pRenderData != nullptr && "Shader needs to be bound by the render module");
-
-	if(pMaterial == nullptr || pMaterial->fragmentShader == nullptr)
-	{
-		ASSERT(false && "Invalid material");
-		return;
-	}
-
-	if(pActiveMesh != nullptr)
-	{
-		SetMesh(nullptr);
-		pActiveMesh = nullptr;
-	}
-
-	SetMaterial(*pMaterial);
-	// Override vertex shader
-	SetVertexShader(*screenSpaceQuadVertexShader);
-	pActiveVertexShader = screenSpaceQuadVertexShader.get();
-	UpdateShaderParams(*pMaterial);
-
-	DoRender(0, 0, 0, 4);
+	DoRender(renderable, indexOffset, vertexOffset, numIndices, numVertices);
 }
 
 void Render::SetActiveRenderTarget(RenderTarget* pRenderTarget)
