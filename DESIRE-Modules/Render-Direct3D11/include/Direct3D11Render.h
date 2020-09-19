@@ -49,7 +49,7 @@ private:
 
 	void CreateBackBuffer(uint32_t width, uint32_t height);
 
-	void SetMesh(Mesh* pMesh) override;
+	void SetMesh(Mesh& mesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
 	void SetVertexShader(Shader& vertexShader) override;
 	void SetFragmentShader(Shader& fragmentShader) override;

@@ -580,15 +580,10 @@ void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
 	delete pRenderTargetRenderData;
 }
 
-void Direct3D12Render::SetMesh(Mesh* pMesh)
+void Direct3D12Render::SetMesh(Mesh& mesh)
 {
-	if(pMesh != nullptr)
-	{
-//		MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(pMesh->pRenderData);
-	}
-	else
-	{
-	}
+	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(mesh.pRenderData);
+	DESIRE_UNUSED(pMeshRenderData);
 }
 
 void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)

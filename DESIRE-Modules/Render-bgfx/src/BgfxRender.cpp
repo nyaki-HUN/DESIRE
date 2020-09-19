@@ -477,9 +477,9 @@ void BgfxRender::DestroyRenderTargetRenderData(void* pRenderData)
 	delete pRenderTargetRenderData;
 }
 
-void BgfxRender::SetMesh(Mesh* pMesh)
+void BgfxRender::SetMesh(Mesh& mesh)
 {
-	DESIRE_UNUSED(pMesh);
+	DESIRE_UNUSED(mesh);
 	// No-op
 }
 
@@ -594,57 +594,22 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 		shaderProgramCache.emplace(key, shaderProgram);
 	}
 
-	if(pActiveMesh != nullptr)
+	MeshRenderDataBgfx* pMeshRenderData = static_cast<MeshRenderDataBgfx*>(pActiveMesh->pRenderData);
+	switch(pActiveMesh->GetType())
 	{
-		MeshRenderDataBgfx* pMeshRenderData = static_cast<MeshRenderDataBgfx*>(pActiveMesh->pRenderData);
-
-		switch(pActiveMesh->GetType())
+		case Mesh::EType::Static:
 		{
-			case Mesh::EType::Static:
-			{
-				bgfx::setIndexBuffer(pMeshRenderData->indexBuffer, pMeshRenderData->indexOffset + indexOffset, numIndices);
-				bgfx::setVertexBuffer(0, pMeshRenderData->vertexBuffer, pMeshRenderData->vertexOffset + vertexOffset, numVertices);
-				break;
-			}
-
-			case Mesh::EType::Dynamic:
-			{
-				bgfx::setIndexBuffer(pMeshRenderData->dynamicIndexBuffer, pMeshRenderData->indexOffset + indexOffset, numIndices);
-				bgfx::setVertexBuffer(0, pMeshRenderData->dynamicVertexBuffer, pMeshRenderData->vertexOffset + vertexOffset, numVertices);
-				break;
-			}
-		}
-	}
-	else
-	{
-		// Set screen space quad
-		bgfx::TransientIndexBuffer indexBuffer;
-		bgfx::TransientVertexBuffer vertexBuffer;
-		if(bgfx::allocTransientBuffers(&vertexBuffer, screenSpaceQuadVertexLayout, 4, &indexBuffer, 6))
-		{
-			// Vertices
-			static constexpr float vertices[] =
-			{
-				-1.0f,	 1.0f,
-				1.0f,	 1.0f,
-				-1.0f,	-1.0f,
-				1.0f,	-1.0f
-			};
-			memcpy(vertexBuffer.data, vertices, sizeof(vertices));
-
-			// Indices
-			uint16_t* pIndices = reinterpret_cast<uint16_t*>(indexBuffer.data);
-			pIndices[0] = 0;
-			pIndices[1] = 1;
-			pIndices[2] = 2;
-
-			pIndices[3] = 3;
-			pIndices[4] = 2;
-			pIndices[5] = 1;
+			bgfx::setIndexBuffer(pMeshRenderData->indexBuffer, pMeshRenderData->indexOffset + indexOffset, numIndices);
+			bgfx::setVertexBuffer(0, pMeshRenderData->vertexBuffer, pMeshRenderData->vertexOffset + vertexOffset, numVertices);
+			break;
 		}
 
-		bgfx::setIndexBuffer(&indexBuffer);
-		bgfx::setVertexBuffer(0, &vertexBuffer);
+		case Mesh::EType::Dynamic:
+		{
+			bgfx::setIndexBuffer(pMeshRenderData->dynamicIndexBuffer, pMeshRenderData->indexOffset + indexOffset, numIndices);
+			bgfx::setVertexBuffer(0, pMeshRenderData->dynamicVertexBuffer, pMeshRenderData->vertexOffset + vertexOffset, numVertices);
+			break;
+		}
 	}
 
 	bgfx::submit(activeViewId, shaderProgram);

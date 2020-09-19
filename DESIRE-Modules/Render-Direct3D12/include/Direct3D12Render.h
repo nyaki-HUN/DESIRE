@@ -46,7 +46,7 @@ private:
 	void DestroyTextureRenderData(void* pRenderData) override;
 	void DestroyRenderTargetRenderData(void* pRenderData) override;
 
-	void SetMesh(Mesh* pMesh) override;
+	void SetMesh(Mesh& mesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
 	void SetVertexShader(Shader& vertexShader) override;
 	void SetFragmentShader(Shader& fragmentShader) override;

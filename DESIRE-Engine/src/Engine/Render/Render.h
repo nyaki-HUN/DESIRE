@@ -139,7 +139,7 @@ private:
 	virtual void DestroyTextureRenderData(void* pRenderData) = 0;
 	virtual void DestroyRenderTargetRenderData(void* pRenderData) = 0;
 
-	virtual void SetMesh(Mesh* pMesh) = 0;
+	virtual void SetMesh(Mesh& mesh) = 0;
 	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
 	void SetMaterial(Material& material);
 	virtual void SetVertexShader(Shader& vertexShader) = 0;

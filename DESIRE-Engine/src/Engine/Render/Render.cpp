@@ -72,7 +72,7 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 
 	if(pActiveMesh != renderable.mesh.get())
 	{
-		SetMesh(renderable.mesh.get());
+		SetMesh(*renderable.mesh);
 		pActiveMesh = renderable.mesh.get();
 	}
 

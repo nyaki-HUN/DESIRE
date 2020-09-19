@@ -144,8 +144,7 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 		return false;
 	}
 
-	// Set the default topology when there is no active mesh
-	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	CreateBackBuffer(mainWindow.GetWidth(), mainWindow.GetHeight());
 	SetDefaultRenderStates();
@@ -798,31 +797,15 @@ void Direct3D11Render::CreateBackBuffer(uint32_t width, uint32_t height)
 	deviceCtx->OMSetRenderTargets(1, &pBackBufferRenderTargetView, pBackBufferDepthStencilView);
 }
 
-void Direct3D11Render::SetMesh(Mesh* pMesh)
+void Direct3D11Render::SetMesh(Mesh& mesh)
 {
-	if(pMesh != nullptr)
-	{
-		const MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(pMesh->pRenderData);
-		const uint32_t indexSize = pMesh->GetIndexSize();
-		const uint32_t vertexSize = pMesh->GetVertexSize();
-		const uint32_t indexByteOffset = pMeshRenderData->indexOffset * indexSize;
-		const uint32_t vertexByteOffset = pMeshRenderData->vertexOffset * vertexSize;
-		deviceCtx->IASetIndexBuffer(pMeshRenderData->indexBuffer, (indexSize == sizeof(uint16_t)) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, indexByteOffset);
-		deviceCtx->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBuffer, &vertexSize, &vertexByteOffset);
-
-		if(pActiveMesh == nullptr)
-		{
-			deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		}
-	}
-	else
-	{
-		// Set screen space quad
-		deviceCtx->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
-		deviceCtx->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-
-		deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	}
+	const MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(mesh.pRenderData);
+	const uint32_t indexSize = mesh.GetIndexSize();
+	const uint32_t vertexSize = mesh.GetVertexSize();
+	const uint32_t indexByteOffset = pMeshRenderData->indexOffset * indexSize;
+	const uint32_t vertexByteOffset = pMeshRenderData->vertexOffset * vertexSize;
+	deviceCtx->IASetIndexBuffer(pMeshRenderData->indexBuffer, (indexSize == sizeof(uint16_t)) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, indexByteOffset);
+	deviceCtx->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBuffer, &vertexSize, &vertexByteOffset);
 }
 
 void Direct3D11Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
