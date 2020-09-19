@@ -10,7 +10,4 @@ public:
 	bgfx::DynamicVertexBufferHandle dynamicVertexBuffer = BGFX_INVALID_HANDLE;
 
 	bgfx::VertexLayout vertexLayout;
-
-	uint32_t indexOffset = 0;
-	uint32_t vertexOffset = 0;
 };

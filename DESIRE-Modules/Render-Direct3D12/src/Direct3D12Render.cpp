@@ -583,7 +583,8 @@ void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
 void Direct3D12Render::SetMesh(Mesh& mesh)
 {
 	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(mesh.pRenderData);
-	DESIRE_UNUSED(pMeshRenderData);
+	pCmdList->IASetIndexBuffer(&pMeshRenderData->indexBufferView);
+	pCmdList->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBufferView);
 }
 
 void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)

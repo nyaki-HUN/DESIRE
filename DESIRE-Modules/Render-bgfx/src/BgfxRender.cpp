@@ -599,15 +599,15 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 	{
 		case Mesh::EType::Static:
 		{
-			bgfx::setIndexBuffer(pMeshRenderData->indexBuffer, pMeshRenderData->indexOffset + indexOffset, numIndices);
-			bgfx::setVertexBuffer(0, pMeshRenderData->vertexBuffer, pMeshRenderData->vertexOffset + vertexOffset, numVertices);
+			bgfx::setIndexBuffer(pMeshRenderData->indexBuffer, indexOffset, numIndices);
+			bgfx::setVertexBuffer(0, pMeshRenderData->vertexBuffer, vertexOffset, numVertices);
 			break;
 		}
 
 		case Mesh::EType::Dynamic:
 		{
-			bgfx::setIndexBuffer(pMeshRenderData->dynamicIndexBuffer, pMeshRenderData->indexOffset + indexOffset, numIndices);
-			bgfx::setVertexBuffer(0, pMeshRenderData->dynamicVertexBuffer, pMeshRenderData->vertexOffset + vertexOffset, numVertices);
+			bgfx::setIndexBuffer(pMeshRenderData->dynamicIndexBuffer, indexOffset, numIndices);
+			bgfx::setVertexBuffer(0, pMeshRenderData->dynamicVertexBuffer, vertexOffset, numVertices);
 			break;
 		}
 	}

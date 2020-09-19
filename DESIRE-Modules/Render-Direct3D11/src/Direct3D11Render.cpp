@@ -462,7 +462,7 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
 
 		D3D11_SUBRESOURCE_DATA initialIndexData = {};
 		initialIndexData.pSysMem = pMesh->indices.get();
-		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pMeshRenderData->indexBuffer);
+		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pMeshRenderData->pIndexBuffer);
 		DX_CHECK_HRESULT(hr);
 	}
 
@@ -471,7 +471,7 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
 
 	D3D11_SUBRESOURCE_DATA initialVertexData = {};
 	initialVertexData.pSysMem = pMesh->vertices.get();
-	HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pMeshRenderData->vertexBuffer);
+	HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pMeshRenderData->pVertexBuffer);
 	DX_CHECK_HRESULT(hr);
 
 	return pMeshRenderData;
@@ -711,8 +711,8 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 void Direct3D11Render::DestroyMeshRenderData(void* pRenderData)
 {
 	MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(pRenderData);
-	DX_RELEASE(pMeshRenderData->indexBuffer);
-	DX_RELEASE(pMeshRenderData->vertexBuffer);
+	DX_RELEASE(pMeshRenderData->pIndexBuffer);
+	DX_RELEASE(pMeshRenderData->pVertexBuffer);
 	delete pMeshRenderData;
 }
 
@@ -800,12 +800,10 @@ void Direct3D11Render::CreateBackBuffer(uint32_t width, uint32_t height)
 void Direct3D11Render::SetMesh(Mesh& mesh)
 {
 	const MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(mesh.pRenderData);
-	const uint32_t indexSize = mesh.GetIndexSize();
+	deviceCtx->IASetIndexBuffer(pMeshRenderData->pIndexBuffer, (mesh.GetIndexSize() == sizeof(uint16_t)) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, 0);
 	const uint32_t vertexSize = mesh.GetVertexSize();
-	const uint32_t indexByteOffset = pMeshRenderData->indexOffset * indexSize;
-	const uint32_t vertexByteOffset = pMeshRenderData->vertexOffset * vertexSize;
-	deviceCtx->IASetIndexBuffer(pMeshRenderData->indexBuffer, (indexSize == sizeof(uint16_t)) ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT, indexByteOffset);
-	deviceCtx->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBuffer, &vertexSize, &vertexByteOffset);
+	const uint32_t vertexByteOffset = 0;
+	deviceCtx->IASetVertexBuffers(0, 1, &pMeshRenderData->pVertexBuffer, &vertexSize, &vertexByteOffset);
 }
 
 void Direct3D11Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
@@ -814,13 +812,13 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 
 	if(dynamicMesh.isIndicesDirty)
 	{
-		UpdateD3D11Resource(pMeshRenderData->indexBuffer, dynamicMesh.indices.get(), dynamicMesh.GetSizeOfIndexData());
+		UpdateD3D11Resource(pMeshRenderData->pIndexBuffer, dynamicMesh.indices.get(), dynamicMesh.GetSizeOfIndexData());
 		dynamicMesh.isIndicesDirty = false;
 	}
 
 	if(dynamicMesh.isVerticesDirty)
 	{
-		UpdateD3D11Resource(pMeshRenderData->vertexBuffer, dynamicMesh.vertices.get(), dynamicMesh.GetSizeOfVertexData());
+		UpdateD3D11Resource(pMeshRenderData->pVertexBuffer, dynamicMesh.vertices.get(), dynamicMesh.GetSizeOfVertexData());
 		dynamicMesh.isVerticesDirty = false;
 	}
 }
