@@ -610,28 +610,16 @@ void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void Direct3D12Render::SetVertexShader(Shader* pVertexShader)
+void Direct3D12Render::SetVertexShader(Shader& vertexShader)
 {
-	if(pActiveVertexShader == pVertexShader)
-	{
-		return;
-	}
-
-//	const ShaderRenderDataD3D12* vertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader->pRenderData);
-
-	pActiveVertexShader = pVertexShader;
+	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader.pRenderData);
+	DESIRE_UNUSED(pShaderRenderData);
 }
 
-void Direct3D12Render::SetFragmentShader(Shader* pFragmentShader)
+void Direct3D12Render::SetFragmentShader(Shader& fragmentShader)
 {
-	if(pActiveFragmentShader == pFragmentShader)
-	{
-		return;
-	}
-
-//	const ShaderRenderDataD3D12* shaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader->pRenderData);
-
-	pActiveFragmentShader = pFragmentShader;
+	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader.pRenderData);
+	DESIRE_UNUSED(pShaderRenderData);
 }
 
 void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)

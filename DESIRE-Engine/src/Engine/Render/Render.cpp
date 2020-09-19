@@ -76,7 +76,7 @@ void Render::RenderMesh(Mesh* pMesh, Material* pMaterial, uint32_t indexOffset, 
 		pActiveMesh = pMesh;
 	}
 
-	SetMaterial(pMaterial);
+	SetMaterial(*pMaterial);
 	UpdateShaderParams(*pMaterial);
 
 	DoRender(indexOffset, vertexOffset, numIndices, numVertices);
@@ -98,8 +98,10 @@ void Render::RenderScreenSpaceQuad(Material* pMaterial)
 		pActiveMesh = nullptr;
 	}
 
-	SetMaterial(pMaterial);
-	SetVertexShader(screenSpaceQuadVertexShader.get());
+	SetMaterial(*pMaterial);
+	// Override vertex shader
+	SetVertexShader(*screenSpaceQuadVertexShader);
+	pActiveVertexShader = screenSpaceQuadVertexShader.get();
 	UpdateShaderParams(*pMaterial);
 
 	DoRender(0, 0, 0, 4);
@@ -248,33 +250,41 @@ void Render::SetDefaultRenderStates()
 	SetCullMode(ECullMode::CCW);
 }
 
-void Render::SetMaterial(Material* pMaterial)
+void Render::SetMaterial(Material& material)
 {
 	// Vertex shader
-	if(pMaterial->vertexShader != nullptr)
+	if(material.vertexShader != nullptr)
 	{
-		if(pMaterial->vertexShader->pRenderData == nullptr)
+		if(material.vertexShader->pRenderData == nullptr)
 		{
-			Bind(pMaterial->vertexShader.get());
+			Bind(material.vertexShader.get());
 		}
 
-		SetVertexShader(pMaterial->vertexShader.get());
+		if(pActiveVertexShader == material.vertexShader.get())
+		{
+			SetVertexShader(*material.vertexShader);
+			pActiveVertexShader = material.vertexShader.get();
+		}
 	}
 
 	// Fragment shader
-	if(pMaterial->fragmentShader != nullptr)
+	if(material.fragmentShader != nullptr)
 	{
-		if(pMaterial->fragmentShader->pRenderData == nullptr)
+		if(material.fragmentShader->pRenderData == nullptr)
 		{
-			Bind(pMaterial->fragmentShader.get());
+			Bind(material.fragmentShader.get());
 		}
 
-		SetFragmentShader(pMaterial->fragmentShader.get());
+		if(pActiveFragmentShader == material.fragmentShader.get())
+		{
+			SetFragmentShader(*material.fragmentShader);
+			pActiveFragmentShader = material.fragmentShader.get();
+		}
 	}
 
 	// Textures
 	uint8_t samplerIdx = 0;
-	for(const Material::TextureInfo& textureInfo : pMaterial->GetTextures())
+	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
 		if(textureInfo.texture->pRenderData == nullptr)
 		{

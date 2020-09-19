@@ -48,8 +48,8 @@ private:
 
 	void SetMesh(Mesh* pMesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
-	void SetVertexShader(Shader* pVertexShader) override;
-	void SetFragmentShader(Shader* pFragmentShader) override;
+	void SetVertexShader(Shader& vertexShader) override;
+	void SetFragmentShader(Shader& fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
 	void UpdateShaderParams(const Material& material) override;

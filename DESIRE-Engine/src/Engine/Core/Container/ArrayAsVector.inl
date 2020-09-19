@@ -72,7 +72,12 @@ public:
 		return vector.back();
 	}
 
-	T* Data() const
+	T* Data()
+	{
+		return vector.data();
+	}
+
+	const T* Data() const
 	{
 		return vector.data();
 	}
@@ -91,6 +96,11 @@ public:
 	size_t Size() const
 	{
 		return vector.size();
+	}
+
+	void SetSize(size_t newSize)
+	{
+		vector.resize(newSize);
 	}
 
 	void Reserve(size_t newReservedSize)

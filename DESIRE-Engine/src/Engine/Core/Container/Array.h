@@ -99,7 +99,12 @@ public:
 		return data[size - 1];
 	}
 
-	T* Data() const
+	T* Data()
+	{
+		return data;
+	}
+
+	const T* Data() const
 	{
 		return data;
 	}
@@ -120,8 +125,16 @@ public:
 		return size;
 	}
 
+	size_t SetSize(size_t newSize) const
+	{
+		ASSERT(false);
+//		Reserve(newSize);
+		size = newSize;
+	}
+
 	void Reserve(size_t newReservedSize)
 	{
+		ASSERT(false);
 		reservedSize = newReservedSize;
 	}
 

@@ -20,7 +20,7 @@
 
 #include "bgfx/../../src/config.h"
 
-static constexpr bgfx::EmbeddedShader s_embeddedShaders[] =
+static const bgfx::EmbeddedShader s_embeddedShaders[] =
 {
 	BGFX_EMBEDDED_SHADER(vs_screenSpaceQuad),
 	BGFX_EMBEDDED_SHADER_END()
@@ -485,8 +485,8 @@ void BgfxRender::DestroyRenderTargetRenderData(void* pRenderData)
 
 void BgfxRender::SetMesh(Mesh* pMesh)
 {
-	// Nothing to do
 	DESIRE_UNUSED(pMesh);
+	// No-op
 }
 
 void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
@@ -506,14 +506,16 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void BgfxRender::SetVertexShader(Shader* vertexShader)
+void BgfxRender::SetVertexShader(Shader& vertexShader)
 {
-	pActiveVertexShader = vertexShader;
+	DESIRE_UNUSED(vertexShader);
+	// No-op
 }
 
-void BgfxRender::SetFragmentShader(Shader* fragmentShader)
+void BgfxRender::SetFragmentShader(Shader& fragmentShader)
 {
-	pActiveFragmentShader = fragmentShader;
+	DESIRE_UNUSED(fragmentShader);
+	// No-op
 }
 
 void BgfxRender::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)

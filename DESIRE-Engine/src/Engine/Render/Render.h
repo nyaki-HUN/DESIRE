@@ -143,9 +143,9 @@ private:
 
 	virtual void SetMesh(Mesh* pMesh) = 0;
 	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
-	void SetMaterial(Material* pMaterial);
-	virtual void SetVertexShader(Shader* pVertexShader) = 0;
-	virtual void SetFragmentShader(Shader* pFragmentShader) = 0;
+	void SetMaterial(Material& material);
+	virtual void SetVertexShader(Shader& vertexShader) = 0;
+	virtual void SetFragmentShader(Shader& fragmentShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
 	virtual void SetRenderTarget(RenderTarget* pRenderTarget) = 0;
 	virtual void UpdateShaderParams(const Material& material) = 0;
