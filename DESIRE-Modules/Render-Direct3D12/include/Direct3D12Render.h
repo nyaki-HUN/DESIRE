@@ -72,12 +72,11 @@ private:
 	IDXGISwapChain3* pSwapChain = nullptr;
 
 	// Frame buffers
-	ID3D12DescriptorHeap* pFrameBuffersDescriptorHeap = nullptr;
+	ID3D12DescriptorHeap* pFrameBufferRenderTargetDescriptorHeap = nullptr;
 	struct FrameBuffer
 	{
 		ID3D12Resource* pRenderTargetResource = nullptr;
 		D3D12_CPU_DESCRIPTOR_HANDLE renderTargetDescriptor = {};
-		D3D12_CPU_DESCRIPTOR_HANDLE depthStencilDescriptor = {};
 		ID3D12CommandAllocator* pCommandAllocator = nullptr;
 		ID3D12Fence* pFence = nullptr;
 		uint64_t fenceValue = 0;
@@ -85,6 +84,9 @@ private:
 	FrameBuffer frameBuffers[kFrameBufferCount];
 	uint32_t activeFrameBufferIdx = 0;
 	HANDLE fenceEvent;
+
+	ID3D12DescriptorHeap* pDepthStencilDescriptorHeap = nullptr;
+	ID3D12Resource* pDepthStencilResource = nullptr;
 
 	ID3D12GraphicsCommandList* pCmdList = nullptr;
 
