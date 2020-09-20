@@ -277,7 +277,13 @@ void BgfxRender::SetBlendModeDisabled()
 	renderState &= ~BGFX_STATE_BLEND_MASK;
 }
 
-void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
+void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
+{
+	DESIRE_UNUSED(renderable);
+	return nullptr;
+}
+
+void* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
 {
 	MeshRenderDataBgfx* pMeshRenderData = new MeshRenderDataBgfx();
 
@@ -305,7 +311,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
 
 	pMeshRenderData->vertexLayout.begin();
-	const Array<Mesh::VertexLayout>& vertexLayout = pMesh->GetVertexLayout();
+	const Array<Mesh::VertexLayout>& vertexLayout = mesh.GetVertexLayout();
 	for(const Mesh::VertexLayout& layout : vertexLayout)
 	{
 		const bool isNormalized = (layout.type == Mesh::EAttribType::Uint8);
@@ -313,15 +319,15 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 	}
 	pMeshRenderData->vertexLayout.end();
 
-	const bgfx::Memory* pIndexData = (pMesh->GetNumIndices() != 0) ? bgfx::copy(pMesh->indices.get(), pMesh->GetSizeOfIndexData()) : nullptr;
-	const bgfx::Memory* pVertexData = bgfx::copy(pMesh->vertices.get(), pMesh->GetSizeOfVertexData());
+	const bgfx::Memory* pIndexData = (mesh.GetNumIndices() != 0) ? bgfx::copy(mesh.indices.get(), mesh.GetSizeOfIndexData()) : nullptr;
+	const bgfx::Memory* pVertexData = bgfx::copy(mesh.vertices.get(), mesh.GetSizeOfVertexData());
 
-	switch(pMesh->GetType())
+	switch(mesh.GetType())
 	{
 		case Mesh::EType::Static:
 			if(pIndexData != nullptr)
 			{
-				pMeshRenderData->indexBuffer = bgfx::createIndexBuffer(pIndexData, (pMesh->GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
+				pMeshRenderData->indexBuffer = bgfx::createIndexBuffer(pIndexData, (mesh.GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
 			}
 
 			pMeshRenderData->vertexBuffer = bgfx::createVertexBuffer(pVertexData, pMeshRenderData->vertexLayout, BGFX_BUFFER_NONE);
@@ -330,7 +336,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 		case Mesh::EType::Dynamic:
 			if(pIndexData != nullptr)
 			{
-				pMeshRenderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pIndexData, (pMesh->GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
+				pMeshRenderData->dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pIndexData, (mesh.GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
 			}
 
 			pMeshRenderData->dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(pVertexData, pMeshRenderData->vertexLayout, BGFX_BUFFER_NONE);
@@ -340,26 +346,26 @@ void* BgfxRender::CreateMeshRenderData(const Mesh* pMesh)
 	return pMeshRenderData;
 }
 
-void* BgfxRender::CreateShaderRenderData(const Shader* pShader)
+void* BgfxRender::CreateShaderRenderData(const Shader& shader)
 {
 	ShaderRenderDataBgfx* pShaderRenderData = new ShaderRenderDataBgfx();
 
 	const bgfx::Memory* shaderData = nullptr;
-	if(pShader->defines.empty())
+	if(shader.defines.empty())
 	{
-		shaderData = bgfx::makeRef(pShader->data.ptr.get(), static_cast<uint32_t>(pShader->data.size));
+		shaderData = bgfx::makeRef(shader.data.ptr.get(), static_cast<uint32_t>(shader.data.size));
 	}
 	else
 	{
 		size_t totalDefinesLength = 0;
-		for(const String& define : pShader->defines)
+		for(const String& define : shader.defines)
 		{
 			totalDefinesLength += 8 + define.Length() + 3;	// "#define ASD 1\n"
 		}
 
-		shaderData = bgfx::alloc(static_cast<uint32_t>(totalDefinesLength + pShader->data.size));
+		shaderData = bgfx::alloc(static_cast<uint32_t>(totalDefinesLength + shader.data.size));
 		uint8_t* ptr = shaderData->data;
-		for(const String& define : pShader->defines)
+		for(const String& define : shader.defines)
 		{
 			memcpy(ptr, "#define ", 8);
 			ptr += 8;
@@ -368,12 +374,12 @@ void* BgfxRender::CreateShaderRenderData(const Shader* pShader)
 			memcpy(ptr, " 1\n", 3);
 			ptr += 3;
 		}
-		memcpy(ptr, pShader->data.ptr.get(), pShader->data.size);
+		memcpy(ptr, shader.data.ptr.get(), shader.data.size);
 	}
 
 	pShaderRenderData->shaderHandle = bgfx::createShader(shaderData);
 	ASSERT(bgfx::isValid(pShaderRenderData->shaderHandle));
-	bgfx::setName(pShaderRenderData->shaderHandle, pShader->name.Str());
+	bgfx::setName(pShaderRenderData->shaderHandle, shader.name.Str());
 
 	const uint16_t uniformCount = bgfx::getShaderUniforms(pShaderRenderData->shaderHandle, nullptr, 0);
 	bgfx::UniformHandle* uniforms = static_cast<bgfx::UniformHandle*>(alloca(uniformCount * sizeof(bgfx::UniformHandle)));
@@ -404,19 +410,19 @@ void* BgfxRender::CreateShaderRenderData(const Shader* pShader)
 	return pShaderRenderData;
 }
 
-void* BgfxRender::CreateTextureRenderData(const Texture* pTexture)
+void* BgfxRender::CreateTextureRenderData(const Texture& texture)
 {
 	TextureRenderDataBgfx* pTextureRenderData = new TextureRenderDataBgfx();
 
-	const bool isRenderTarget = (pTexture->GetData() == nullptr);
+	const bool isRenderTarget = (texture.GetData() == nullptr);
 
 	if(isRenderTarget)
 	{
-		pTextureRenderData->textureHandle = bgfx::createTexture2D(pTexture->GetWidth(), pTexture->GetHeight(), (pTexture->GetNumMipLevels() > 1), 1, GetTextureFormat(pTexture), BGFX_TEXTURE_RT);
+		pTextureRenderData->textureHandle = bgfx::createTexture2D(texture.GetWidth(), texture.GetHeight(), (texture.GetNumMipLevels() > 1), 1, GetTextureFormat(texture), BGFX_TEXTURE_RT);
 	}
 	else
 	{
-		pTextureRenderData->textureHandle = bgfx::createTexture2D(pTexture->GetWidth(), pTexture->GetHeight(), (pTexture->GetNumMipLevels() > 1), 1, GetTextureFormat(pTexture), BGFX_TEXTURE_NONE, bgfx::makeRef(pTexture->GetData(), pTexture->GetDataSize()));
+		pTextureRenderData->textureHandle = bgfx::createTexture2D(texture.GetWidth(), texture.GetHeight(), (texture.GetNumMipLevels() > 1), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture.GetData(), texture.GetDataSize()));
 	}
 
 	return pTextureRenderData;
@@ -441,6 +447,12 @@ void* BgfxRender::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
 	bgfx::setViewFrameBuffer(pRenderTargetRenderData->id, pRenderTargetRenderData->frameBuffer);
 
 	return pRenderTargetRenderData;
+}
+
+void BgfxRender::DestroyRenderableRenderData(void* pRenderData)
+{
+	DESIRE_UNUSED(pRenderData);
+	// No-op
 }
 
 void BgfxRender::DestroyMeshRenderData(void* pRenderData)
@@ -615,7 +627,7 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 	bgfx::submit(activeViewId, shaderProgram);
 }
 
-bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
+bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture& texture)
 {
 	static constexpr bgfx::TextureFormat::Enum conversionTable[] =
 	{
@@ -631,5 +643,5 @@ bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture* texture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[static_cast<size_t>(texture->GetFormat())];
+	return conversionTable[static_cast<size_t>(texture.GetFormat())];
 }

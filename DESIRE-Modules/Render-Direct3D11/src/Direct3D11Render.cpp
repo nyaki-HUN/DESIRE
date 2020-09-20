@@ -149,8 +149,8 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 	CreateBackBuffer(mainWindow.GetWidth(), mainWindow.GetHeight());
 	SetDefaultRenderStates();
 
-	Bind(errorVertexShader.get());
-	Bind(errorPixelShader.get());
+	Bind(*errorVertexShader);
+	Bind(*errorPixelShader);
 
 	return true;
 }
@@ -427,11 +427,17 @@ void Direct3D11Render::SetBlendModeDisabled()
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
-void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
+void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
+{
+	DESIRE_UNUSED(renderable);
+	return nullptr;
+}
+
+void* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 {
 	MeshRenderDataD3D11* pMeshRenderData = new MeshRenderDataD3D11();
 
-	const Array<Mesh::VertexLayout>& vertexLayout = pMesh->GetVertexLayout();
+	const Array<Mesh::VertexLayout>& vertexLayout = mesh.GetVertexLayout();
 	ASSERT(vertexLayout.Size() <= 9 && "It is possible to encode maximum of 9 vertex layouts into 64-bit");
 	for(size_t i = 0; i < vertexLayout.Size(); ++i)
 	{
@@ -442,7 +448,7 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
 	}
 
 	D3D11_BUFFER_DESC bufferDesc = {};
-	switch(pMesh->GetType())
+	switch(mesh.GetType())
 	{
 		case Mesh::EType::Static:
 			bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -455,36 +461,36 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh* pMesh)
 			break;
 	}
 
-	if(pMesh->GetNumIndices() != 0)
+	if(mesh.GetNumIndices() != 0)
 	{
-		bufferDesc.ByteWidth = pMesh->GetSizeOfIndexData();
+		bufferDesc.ByteWidth = mesh.GetSizeOfIndexData();
 		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA initialIndexData = {};
-		initialIndexData.pSysMem = pMesh->indices.get();
+		initialIndexData.pSysMem = mesh.indices.get();
 		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pMeshRenderData->pIndexBuffer);
 		DX_CHECK_HRESULT(hr);
 	}
 
-	bufferDesc.ByteWidth = pMesh->GetSizeOfVertexData();
+	bufferDesc.ByteWidth = mesh.GetSizeOfVertexData();
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA initialVertexData = {};
-	initialVertexData.pSysMem = pMesh->vertices.get();
+	initialVertexData.pSysMem = mesh.vertices.get();
 	HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pMeshRenderData->pVertexBuffer);
 	DX_CHECK_HRESULT(hr);
 
 	return pMeshRenderData;
 }
 
-void* Direct3D11Render::CreateShaderRenderData(const Shader* pShader)
+void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 {
 	ShaderRenderDataD3D11* pShaderRenderData = new ShaderRenderDataD3D11();
 
 	D3D_SHADER_MACRO defines[32] = {};
-	ASSERT(pShader->defines.size() < DESIRE_ASIZEOF(defines));
+	ASSERT(shader.defines.size() < DESIRE_ASIZEOF(defines));
 	D3D_SHADER_MACRO* definePtr = &defines[0];
-	for(const String& define : pShader->defines)
+	for(const String& define : shader.defines)
 	{
 		definePtr->Name = define.Str();
 		definePtr->Definition = "1";
@@ -492,15 +498,15 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader* pShader)
 	}
 
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
-	AppendShaderFilenameWithPath(filenameWithPath, pShader->name);
+	AppendShaderFilenameWithPath(filenameWithPath, shader.name);
 
-	const bool isVertexShader = pShader->name.StartsWith("vs_");
+	const bool isVertexShader = shader.name.StartsWith("vs_");
 	UINT compileFlags = 0;
 /**/compileFlags = D3DCOMPILE_SKIP_OPTIMIZATION;
 
 	ID3DBlob* pErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(pShader->data.ptr.get(),	// pSrcData
-		pShader->data.size,								// SrcDataSize
+	HRESULT hr = D3DCompile(shader.data.ptr.get(),		// pSrcData
+		shader.data.size,								// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
 		defines,										// pDefines
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
@@ -532,7 +538,7 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader* pShader)
 	}
 	DX_CHECK_HRESULT(hr);
 
-	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)pShader->name.Length(), pShader->name.Str());
+	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(shader.name.Length()), shader.name.Str());
 
 	ID3D11ShaderReflection* pReflection = nullptr;
 	hr = D3DReflect(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pReflection);
@@ -603,28 +609,28 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader* pShader)
 	return pShaderRenderData;
 }
 
-void* Direct3D11Render::CreateTextureRenderData(const Texture* pTexture)
+void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 {
 	TextureRenderDataD3D11* pTextureRenderData = new TextureRenderDataD3D11();
 
-	const bool isRenderTarget = (pTexture->GetData() == nullptr);
+	const bool isRenderTarget = (texture.GetData() == nullptr);
 
 	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = pTexture->GetWidth();
-	textureDesc.Height = pTexture->GetHeight();
-	textureDesc.MipLevels = pTexture->GetNumMipLevels();
+	textureDesc.Width = texture.GetWidth();
+	textureDesc.Height = texture.GetHeight();
+	textureDesc.MipLevels = texture.GetNumMipLevels();
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = GetTextureFormat(pTexture);
+	textureDesc.Format = GetTextureFormat(texture);
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	if(pTexture->IsDepthFormat())
+	if(texture.IsDepthFormat())
 	{
 		textureDesc.BindFlags |= D3D11_BIND_DEPTH_STENCIL;
 	}
 	else if(isRenderTarget)
 	{
 		textureDesc.BindFlags |= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-		if(pTexture->GetNumMipLevels() > 1)
+		if(texture.GetNumMipLevels() > 1)
 		{
 			textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		}
@@ -650,9 +656,9 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture* pTexture)
 		ASSERT(textureDesc.MipLevels * textureDesc.ArraySize == 1 && "TODO: Set initial data properly in the loop below");
 		for(uint32_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
 		{
-			subResourceData[i].pSysMem = pTexture->GetData();
-			subResourceData[i].SysMemPitch = pTexture->GetWidth() * pTexture->GetBytesPerPixel();
-			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * pTexture->GetHeight();
+			subResourceData[i].pSysMem = texture.GetData();
+			subResourceData[i].SysMemPitch = texture.GetWidth() * texture.GetBytesPerPixel();
+			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * texture.GetHeight();
 		}
 
 		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &pTextureRenderData->pTexture2D);
@@ -694,7 +700,7 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 		else
 		{
 			D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
-			renderTargetViewDesc.Format = GetTextureFormat(texture.get());
+			renderTargetViewDesc.Format = GetTextureFormat(*texture);
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
 			ID3D11RenderTargetView* pRenderTargetView = nullptr;
@@ -706,6 +712,12 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 	}
 
 	return pRenderTargetRenderData;
+}
+
+void Direct3D11Render::DestroyRenderableRenderData(void* pRenderData)
+{
+	DESIRE_UNUSED(pRenderData);
+	// No-op
 }
 
 void Direct3D11Render::DestroyMeshRenderData(void* pRenderData)
@@ -1243,7 +1255,7 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 	}
 }
 
-DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture* pTexture)
+DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture& texture)
 {
 	const DXGI_FORMAT conversionTable[] =
 	{
@@ -1259,5 +1271,5 @@ DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture* pTexture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[static_cast<size_t>(pTexture->GetFormat())];
+	return conversionTable[static_cast<size_t>(texture.GetFormat())];
 }

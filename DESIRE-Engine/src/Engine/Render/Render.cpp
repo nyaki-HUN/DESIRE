@@ -62,7 +62,7 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 
 	if(renderable.mesh->pRenderData == nullptr)
 	{
-		Bind(renderable.mesh.get());
+		Bind(*renderable.mesh);
 	}
 	else if(renderable.mesh->GetType() == Mesh::EType::Dynamic)
 	{
@@ -101,34 +101,36 @@ void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
 	SetBlendModeSeparated(srcBlend, destBlend, blendOp, srcBlend, destBlend, blendOp);
 }
 
-void Render::Bind(Mesh* pMesh)
+void Render::Bind(Renderable& renderable)
 {
-	if(pMesh == nullptr || pMesh->pRenderData != nullptr)
+	if(renderable.pRenderData == nullptr)
 	{
-		return;
+		renderable.pRenderData = CreateRenderableRenderData(renderable);
 	}
-
-	pMesh->pRenderData = CreateMeshRenderData(pMesh);
 }
 
-void Render::Bind(Shader* pShader)
+void Render::Bind(Mesh& mesh)
 {
-	if(pShader == nullptr || pShader->pRenderData != nullptr)
+	if(mesh.pRenderData == nullptr)
 	{
-		return;
+		mesh.pRenderData = CreateMeshRenderData(mesh);
 	}
-
-	pShader->pRenderData = CreateShaderRenderData(pShader);
 }
 
-void Render::Bind(Texture* pTexture)
+void Render::Bind(Shader& shader)
 {
-	if(pTexture == nullptr || pTexture->pRenderData != nullptr)
+	if(shader.pRenderData == nullptr)
 	{
-		return;
+		shader.pRenderData = CreateShaderRenderData(shader);
 	}
+}
 
-	pTexture->pRenderData = CreateTextureRenderData(pTexture);
+void Render::Bind(Texture& texture)
+{
+	if(texture.pRenderData == nullptr)
+	{
+		texture.pRenderData = CreateTextureRenderData(texture);
+	}
 }
 
 void Render::Bind(RenderTarget& renderTarget)
@@ -142,10 +144,34 @@ void Render::Bind(RenderTarget& renderTarget)
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
 		const std::shared_ptr<Texture>& texture = renderTarget.GetTexture(i);
-		Bind(texture.get());
+		Bind(*texture);
 	}
 
 	renderTarget.pRenderData = CreateRenderTargetRenderData(renderTarget);
+}
+
+void Render::Unbind(Renderable& renderable)
+{
+	if(renderable.pRenderData == nullptr)
+	{
+		return;
+	}
+
+	if( renderable.mesh == nullptr ||
+		renderable.material == nullptr ||
+		renderable.material->vertexShader == nullptr ||
+		renderable.material->fragmentShader == nullptr)
+	{
+		ASSERT(false && "Invalid renderable");
+		return;
+	}
+
+	Bind(*renderable.mesh);
+	Bind(*renderable.material->vertexShader);
+	Bind(*renderable.material->fragmentShader);
+
+	DestroyRenderableRenderData(renderable.pRenderData);
+	renderable.pRenderData = nullptr;
 }
 
 void Render::Unbind(Mesh& mesh)
@@ -232,7 +258,7 @@ void Render::SetMaterial(Material& material)
 	{
 		if(material.vertexShader->pRenderData == nullptr)
 		{
-			Bind(material.vertexShader.get());
+			Bind(*material.vertexShader);
 		}
 
 		if(pActiveVertexShader != material.vertexShader.get())
@@ -247,7 +273,7 @@ void Render::SetMaterial(Material& material)
 	{
 		if(material.fragmentShader->pRenderData == nullptr)
 		{
-			Bind(material.fragmentShader.get());
+			Bind(*material.fragmentShader);
 		}
 
 		if(pActiveFragmentShader != material.fragmentShader.get())
@@ -263,7 +289,7 @@ void Render::SetMaterial(Material& material)
 	{
 		if(textureInfo.texture->pRenderData == nullptr)
 		{
-			Bind(textureInfo.texture.get());
+			Bind(*textureInfo.texture);
 		}
 
 		SetTexture(samplerIdx, *textureInfo.texture, textureInfo.filterMode, textureInfo.addressMode);

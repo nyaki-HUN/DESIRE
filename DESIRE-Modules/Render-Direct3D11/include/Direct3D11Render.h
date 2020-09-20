@@ -37,11 +37,13 @@ public:
 	void SetBlendModeDisabled() override;
 
 private:
-	void* CreateMeshRenderData(const Mesh* pMesh) override;
-	void* CreateShaderRenderData(const Shader* pShader) override;
-	void* CreateTextureRenderData(const Texture* pTexture) override;
+	void* CreateRenderableRenderData(const Renderable& renderable) override;
+	void* CreateMeshRenderData(const Mesh& mesh) override;
+	void* CreateShaderRenderData(const Shader& shader) override;
+	void* CreateTextureRenderData(const Texture& texture) override;
 	void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
 
+	void DestroyRenderableRenderData(void* pRenderData) override;
 	void DestroyMeshRenderData(void* pRenderData) override;
 	void DestroyShaderRenderData(void* pRenderData) override;
 	void DestroyTextureRenderData(void* pRenderData) override;
@@ -68,7 +70,7 @@ private:
 	void SetInputLayout();
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 
-	static DXGI_FORMAT GetTextureFormat(const Texture* pTexture);
+	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
 	ID3D11Device* d3dDevice = nullptr;
 	ID3D11DeviceContext* deviceCtx = nullptr;

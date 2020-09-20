@@ -34,11 +34,13 @@ public:
 	void SetBlendModeDisabled() override;
 
 private:
-	void* CreateMeshRenderData(const Mesh* pMesh) override;
-	void* CreateShaderRenderData(const Shader* pShader) override;
-	void* CreateTextureRenderData(const Texture* pTexture) override;
+	void* CreateRenderableRenderData(const Renderable& renderable) override;
+	void* CreateMeshRenderData(const Mesh& mesh) override;
+	void* CreateShaderRenderData(const Shader& shader) override;
+	void* CreateTextureRenderData(const Texture& texture) override;
 	void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
 
+	void DestroyRenderableRenderData(void* pRenderData) override;
 	void DestroyMeshRenderData(void* pRenderData) override;
 	void DestroyShaderRenderData(void* pRenderData) override;
 	void DestroyTextureRenderData(void* pRenderData) override;
@@ -54,7 +56,7 @@ private:
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
-	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture* pTexture);
+	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture& texture);
 
 	bgfx::UniformHandle samplerUniforms[8];
 	bgfx::ViewId activeViewId = 0;

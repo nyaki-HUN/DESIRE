@@ -108,12 +108,14 @@ public:
 	virtual void SetBlendModeDisabled() = 0;
 
 	// Resource bind
-	void Bind(Mesh* pMesh);
-	void Bind(Shader* pShader);
-	void Bind(Texture* pTexture);
+	void Bind(Renderable& renderable);
+	void Bind(Mesh& mesh);
+	void Bind(Shader& shader);
+	void Bind(Texture& texture);
 	void Bind(RenderTarget& renderTarget);
 
 	// Resource unbind
+	void Unbind(Renderable& renderable);
 	void Unbind(Mesh& mesh);
 	void Unbind(Shader& shader);
 	void Unbind(Texture& texture);
@@ -129,11 +131,13 @@ protected:
 	const RenderTarget* pActiveRenderTarget = nullptr;
 
 private:
-	virtual void* CreateMeshRenderData(const Mesh* pMesh) = 0;
-	virtual void* CreateShaderRenderData(const Shader* pShader) = 0;
-	virtual void* CreateTextureRenderData(const Texture* pTexture) = 0;
+	virtual void* CreateRenderableRenderData(const Renderable& renderable) = 0;
+	virtual void* CreateMeshRenderData(const Mesh& mesh) = 0;
+	virtual void* CreateShaderRenderData(const Shader& shader) = 0;
+	virtual void* CreateTextureRenderData(const Texture& texture) = 0;
 	virtual void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) = 0;
 
+	virtual void DestroyRenderableRenderData(void* pRenderData) = 0;
 	virtual void DestroyMeshRenderData(void* pRenderData) = 0;
 	virtual void DestroyShaderRenderData(void* pRenderData) = 0;
 	virtual void DestroyTextureRenderData(void* pRenderData) = 0;

@@ -152,8 +152,8 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	hr = pFactory->CreateSwapChainForHwnd(commandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &swapChain);
 	ASSERT(SUCCEEDED(hr));
 
-	Bind(errorVertexShader.get());
-	Bind(errorPixelShader.get());
+	Bind(*errorVertexShader);
+	Bind(*errorPixelShader);
 
 	return true;
 }
@@ -369,23 +369,29 @@ void Direct3D12Render::SetBlendModeDisabled()
 	blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
-void* Direct3D12Render::CreateMeshRenderData(const Mesh* pMesh)
+void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
+{
+	DESIRE_UNUSED(renderable);
+	return nullptr;
+}
+
+void* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 {
 	MeshRenderDataD3D12* pMeshRenderData = new MeshRenderDataD3D12();
 
-	DESIRE_UNUSED(pMesh);
+	DESIRE_UNUSED(mesh);
 
 	return pMeshRenderData;
 }
 
-void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
+void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 {
 	ShaderRenderDataD3D12* pShaderRenderData = new ShaderRenderDataD3D12();
 
 	D3D_SHADER_MACRO defines[32] = {};
-	ASSERT(pShader->defines.size() < DESIRE_ASIZEOF(defines));
+	ASSERT(shader.defines.size() < DESIRE_ASIZEOF(defines));
 	D3D_SHADER_MACRO* definePtr = &defines[0];
-	for(const String& define : pShader->defines)
+	for(const String& define : shader.defines)
 	{
 		definePtr->Name = define.Str();
 		definePtr->Definition = "1";
@@ -393,14 +399,14 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
 	}
 
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
-	AppendShaderFilenameWithPath(filenameWithPath, pShader->name);
+	AppendShaderFilenameWithPath(filenameWithPath, shader.name);
 
-	const bool isVertexShader = pShader->name.StartsWith("vs_");
+	const bool isVertexShader = shader.name.StartsWith("vs_");
 	UINT compileFlags = 0;
 
 	ID3DBlob* pErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(pShader->data.ptr.get(),	// pSrcData
-		pShader->data.size,								// SrcDataSize
+	HRESULT hr = D3DCompile(shader.data.ptr.get(),		// pSrcData
+		shader.data.size,								// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
 		defines,										// pDefines
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
@@ -432,7 +438,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
 	}
 	DX_CHECK_HRESULT(hr);
 
-//	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, (UINT)pShader->name.Length(), pShader->name.Str());
+//	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(shader.name.Length()), shader.name.Str());
 
 	ID3D12ShaderReflection* pReflection = nullptr;
 	hr = D3DReflect(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
@@ -504,7 +510,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader* pShader)
 	return pShaderRenderData;
 }
 
-void* Direct3D12Render::CreateTextureRenderData(const Texture* pTexture)
+void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 {
 	TextureRenderDataD3D12* pTextureRenderData = new TextureRenderDataD3D12();
 
@@ -517,11 +523,11 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture* pTexture)
 
 	D3D12_RESOURCE_DESC resourceDesc = {};
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	resourceDesc.Width = pTexture->GetWidth();
-	resourceDesc.Height = pTexture->GetHeight();
+	resourceDesc.Width = texture.GetWidth();
+	resourceDesc.Height = texture.GetHeight();
 	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = pTexture->GetNumMipLevels();
-	resourceDesc.Format = GetTextureFormat(pTexture);
+	resourceDesc.MipLevels = texture.GetNumMipLevels();
+	resourceDesc.Format = GetTextureFormat(texture);
 	resourceDesc.SampleDesc.Count = 1;
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
@@ -545,6 +551,12 @@ void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 	DESIRE_UNUSED(renderTarget);
 
 	return pRenderTargetRenderData;
+}
+
+void Direct3D12Render::DestroyRenderableRenderData(void* pRenderData)
+{
+	DESIRE_UNUSED(pRenderData);
+	// No-op
 }
 
 void Direct3D12Render::DestroyMeshRenderData(void* pRenderData)
@@ -781,7 +793,7 @@ void Direct3D12Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 	}
 }
 
-DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* pTexture)
+DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture& texture)
 {
 	const DXGI_FORMAT conversionTable[] =
 	{
@@ -797,5 +809,5 @@ DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture* pTexture)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
 
-	return conversionTable[static_cast<size_t>(pTexture->GetFormat())];
+	return conversionTable[static_cast<size_t>(texture.GetFormat())];
 }
