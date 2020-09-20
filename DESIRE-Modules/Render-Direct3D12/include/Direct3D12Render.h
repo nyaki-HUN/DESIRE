@@ -62,11 +62,17 @@ private:
 
 	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
+	static constexpr size_t kFrameBufferCount = 3;
+
 	ID3D12Device3* d3dDevice = nullptr;
-	ID3D12CommandQueue* commandQueue = nullptr;
-	IDXGISwapChain1* swapChain = nullptr;
-	D3D12_CPU_DESCRIPTOR_HANDLE backBufferRenderTargetDescriptor = {};
-	D3D12_CPU_DESCRIPTOR_HANDLE backBufferDepthStencilDescriptor = {};
+	IDXGISwapChain1* pSwapChain = nullptr;
+	ID3D12CommandQueue* pCommandQueue = nullptr;
+	ID3D12DescriptorHeap* pDescriptorHeap = nullptr;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE frameBufferRenderTargetDescriptor = {};
+	D3D12_CPU_DESCRIPTOR_HANDLE frameBufferDepthStencilDescriptor = {};
+
+	ID3D12CommandAllocator* commandAllocators[kFrameBufferCount] = {};
 
 	ID3D12GraphicsCommandList* pCmdList = nullptr;
 

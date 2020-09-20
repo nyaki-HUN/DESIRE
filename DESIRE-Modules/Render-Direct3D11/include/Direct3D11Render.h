@@ -49,7 +49,7 @@ private:
 	void DestroyTextureRenderData(void* pRenderData) override;
 	void DestroyRenderTargetRenderData(void* pRenderData) override;
 
-	void CreateBackBuffer(uint32_t width, uint32_t height);
+	void CreateFrameBuffer(uint32_t width, uint32_t height);
 
 	void SetMesh(Mesh& mesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
@@ -73,10 +73,10 @@ private:
 	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
 	ID3D11Device* d3dDevice = nullptr;
-	ID3D11DeviceContext* deviceCtx = nullptr;
 	IDXGISwapChain* swapChain = nullptr;
-	ID3D11RenderTargetView* pBackBufferRenderTargetView = nullptr;
-	ID3D11DepthStencilView* pBackBufferDepthStencilView = nullptr;
+	ID3D11DeviceContext* deviceCtx = nullptr;
+	ID3D11RenderTargetView* pFrameBufferRenderTargetView = nullptr;
+	ID3D11DepthStencilView* pFrameBufferDepthStencilView = nullptr;
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
 	D3D11_RASTERIZER_DESC rasterizerDesc = {};

@@ -146,7 +146,7 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 
 	deviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	CreateBackBuffer(mainWindow.GetWidth(), mainWindow.GetHeight());
+	CreateFrameBuffer(mainWindow.GetWidth(), mainWindow.GetHeight());
 	SetDefaultRenderStates();
 
 	Bind(*errorVertexShader);
@@ -159,8 +159,8 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 {
 	ID3D11RenderTargetView* nullViews[] = { nullptr };
 	deviceCtx->OMSetRenderTargets(1, nullViews, nullptr);
-	DX_RELEASE(pBackBufferDepthStencilView);
-	DX_RELEASE(pBackBufferRenderTargetView);
+	DX_RELEASE(pFrameBufferDepthStencilView);
+	DX_RELEASE(pFrameBufferRenderTargetView);
 	deviceCtx->Flush();
 
 	HRESULT hr = swapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
@@ -171,7 +171,7 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 
 	DX_CHECK_HRESULT(hr);
 
-	CreateBackBuffer(window.GetWidth(), window.GetHeight());
+	CreateFrameBuffer(window.GetWidth(), window.GetHeight());
 }
 
 void Direct3D11Render::Kill()
@@ -220,8 +220,8 @@ void Direct3D11Render::Kill()
 	Unbind(*errorVertexShader);
 	Unbind(*errorPixelShader);
 
-	DX_RELEASE(pBackBufferDepthStencilView);
-	DX_RELEASE(pBackBufferRenderTargetView);
+	DX_RELEASE(pFrameBufferDepthStencilView);
+	DX_RELEASE(pFrameBufferRenderTargetView);
 }
 
 void Direct3D11Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
@@ -263,8 +263,8 @@ void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	}
 	else
 	{
-		deviceCtx->ClearRenderTargetView(pBackBufferRenderTargetView, clearColor);
-		deviceCtx->ClearDepthStencilView(pBackBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
+		deviceCtx->ClearRenderTargetView(pFrameBufferRenderTargetView, clearColor);
+		deviceCtx->ClearDepthStencilView(pFrameBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 	}
 }
 
@@ -776,15 +776,15 @@ void Direct3D11Render::DestroyRenderTargetRenderData(void* pRenderData)
 	delete pRenderTargetRenderData;
 }
 
-void Direct3D11Render::CreateBackBuffer(uint32_t width, uint32_t height)
+void Direct3D11Render::CreateFrameBuffer(uint32_t width, uint32_t height)
 {
 	// Create back buffer render target view
-	ID3D11Texture2D* pBackBufferTexture = nullptr;
-	HRESULT hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBufferTexture));
+	ID3D11Texture2D* pFrameBufferTexture = nullptr;
+	HRESULT hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&pFrameBufferTexture));
 	DX_CHECK_HRESULT(hr);
-	hr = d3dDevice->CreateRenderTargetView(pBackBufferTexture, nullptr, &pBackBufferRenderTargetView);
+	hr = d3dDevice->CreateRenderTargetView(pFrameBufferTexture, nullptr, &pFrameBufferRenderTargetView);
 	DX_CHECK_HRESULT(hr);
-	DX_RELEASE(pBackBufferTexture);
+	DX_RELEASE(pFrameBufferTexture);
 
 	// Create back buffer depth stencil view
 	D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -801,12 +801,12 @@ void Direct3D11Render::CreateBackBuffer(uint32_t width, uint32_t height)
 	hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &pDepthStencilTexture);
 	DX_CHECK_HRESULT(hr);
 
-	hr = d3dDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &pBackBufferDepthStencilView);
+	hr = d3dDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &pFrameBufferDepthStencilView);
 	DX_CHECK_HRESULT(hr);
 
 	DX_RELEASE(pDepthStencilTexture);
 
-	deviceCtx->OMSetRenderTargets(1, &pBackBufferRenderTargetView, pBackBufferDepthStencilView);
+	deviceCtx->OMSetRenderTargets(1, &pFrameBufferRenderTargetView, pFrameBufferDepthStencilView);
 }
 
 void Direct3D11Render::SetMesh(Mesh& mesh)
@@ -899,7 +899,7 @@ void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 	}
 	else
 	{
-		deviceCtx->OMSetRenderTargets(1, &pBackBufferRenderTargetView, pBackBufferDepthStencilView);
+		deviceCtx->OMSetRenderTargets(1, &pFrameBufferRenderTargetView, pFrameBufferDepthStencilView);
 	}
 
 	deviceCtx->RSSetViewports(1, &viewport);

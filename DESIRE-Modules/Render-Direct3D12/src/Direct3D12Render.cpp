@@ -105,23 +105,27 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 #if defined(_DEBUG)
 	// Enable the D3D12 debug layer.
-	ID3D12Debug* debugController = nullptr;
-	hr = D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
+	ID3D12Debug* pDebugController = nullptr;
+	hr = D3D12GetDebugInterface(IID_PPV_ARGS(&pDebugController));
 	if(SUCCEEDED(hr))
 	{
-		debugController->EnableDebugLayer();
-		debugController->Release();
+		pDebugController->EnableDebugLayer();
+		pDebugController->Release();
 	}
 #endif
 
 	IDXGIFactory4* pFactory = nullptr;
 	hr = CreateDXGIFactory1(IID_PPV_ARGS(&pFactory));
-	ASSERT(SUCCEEDED(hr));
+	if(FAILED(hr))
+	{
+		return false;
+	}
 
 	hr = D3D12CreateDevice(
 		nullptr,
 		D3D_FEATURE_LEVEL_12_1,
-		IID_PPV_ARGS(&d3dDevice));
+		IID_PPV_ARGS(&d3dDevice)
+	);
 
 	if(FAILED(hr))
 	{
@@ -130,11 +134,15 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 	// Ccreate command queue
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
-	commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
+	commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
-	hr = d3dDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
-	ASSERT(SUCCEEDED(hr));
+	hr = d3dDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&pCommandQueue));
+	if(FAILED(hr))
+	{
+		return false;
+	}
 
 	// Ccreate swap chain
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
@@ -144,13 +152,16 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	swapChainDesc.Stereo = FALSE;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 2;
+	swapChainDesc.BufferCount = kFrameBufferCount;
 	swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 
-	hr = pFactory->CreateSwapChainForHwnd(commandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &swapChain);
-	ASSERT(SUCCEEDED(hr));
+	hr = pFactory->CreateSwapChainForHwnd(pCommandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &pSwapChain);
+	if(FAILED(hr))
+	{
+		return false;
+	}
 
 	Bind(*errorVertexShader);
 	Bind(*errorPixelShader);
@@ -160,7 +171,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 {
-	swapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 }
 
 void Direct3D12Render::Kill()
@@ -184,7 +195,7 @@ void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, c
 
 void Direct3D12Render::EndFrame()
 {
-	swapChain->Present(1, 0);
+	pSwapChain->Present(1, 0);
 }
 
 void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil)
@@ -212,8 +223,8 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	}
 	else
 	{
-		pCmdList->ClearRenderTargetView(backBufferRenderTargetDescriptor, clearColor, 0, nullptr);
-		pCmdList->ClearDepthStencilView(backBufferDepthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+		pCmdList->ClearRenderTargetView(frameBufferRenderTargetDescriptor, clearColor, 0, nullptr);
+		pCmdList->ClearDepthStencilView(frameBufferDepthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
 	}
 }
 
