@@ -72,7 +72,7 @@ private:
 	IDXGISwapChain3* pSwapChain = nullptr;
 
 	// Frame buffers
-	ID3D12DescriptorHeap* pDescriptorHeapRTV = nullptr;
+	ID3D12DescriptorHeap* pFrameBuffersDescriptorHeap = nullptr;
 	struct FrameBuffer
 	{
 		ID3D12Resource* pRenderTargetResource = nullptr;

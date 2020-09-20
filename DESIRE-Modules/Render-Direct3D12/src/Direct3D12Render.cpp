@@ -177,14 +177,14 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	descriptorHeapDesc.NumDescriptors = kFrameBufferCount;
 	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-	hr = pDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&pDescriptorHeapRTV));
+	hr = pDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&pFrameBuffersDescriptorHeap));
 	if(FAILED(hr))
 	{
 		return false;
 	}
 
 	const UINT descriptorHandleIncrementSize = pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	D3D12_CPU_DESCRIPTOR_HANDLE handleRTV = pDescriptorHeapRTV->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE handleRTV = pFrameBuffersDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
 		FrameBuffer& frameBuffer = frameBuffers[i];
@@ -206,12 +206,6 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 		frameBuffer.fenceValue = 0;
 	}
 
-	fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-	if(fenceEvent == nullptr)
-	{
-		return false;
-	}
-
 	hr = pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frameBuffers[0].pCommandAllocator, nullptr, IID_PPV_ARGS(&pCmdList));
 	if(FAILED(hr))
 	{
@@ -221,6 +215,12 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	// Command lists are created in the recording state, but we will set it up for recording again so close it now
 	hr = pCmdList->Close();
 	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	if(fenceEvent == nullptr)
 	{
 		return false;
 	}
@@ -268,6 +268,19 @@ void Direct3D12Render::Kill()
 	pActiveFragmentShader = nullptr;
 	pActiveRenderTarget = nullptr;
 
+	CloseHandle(fenceEvent);
+
+	DX_RELEASE(pCmdList);
+
+	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
+	{
+		FrameBuffer& frameBuffer = frameBuffers[i];
+		DX_RELEASE(frameBuffer.pRenderTargetResource);
+		DX_RELEASE(frameBuffer.pCommandAllocator);
+		DX_RELEASE(frameBuffer.pFence);
+	};
+	DX_RELEASE(pFrameBuffersDescriptorHeap);
+
 	DX_RELEASE(pSwapChain);
 	DX_RELEASE(pCommandQueue);
 	DX_RELEASE(pDevice);
@@ -282,13 +295,27 @@ void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, c
 
 void Direct3D12Render::EndFrame()
 {
+	FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
+
+	// Transition the render target from render target state to present state
+	D3D12_RESOURCE_BARRIER barrier = {};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = frameBuffer.pRenderTargetResource;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	pCmdList->ResourceBarrier(1, &barrier);
+
+	HRESULT hr = pCmdList->Close();
+	DX_CHECK_HRESULT(hr);
+
 	ID3D12CommandList* commandLists[] = { pCmdList };
 	pCommandQueue->ExecuteCommandLists(static_cast<UINT>(DESIRE_ASIZEOF(commandLists)), commandLists);
 
 	// This command goes in at the end of our command queue.
 	// We will know when our command queue has finished because the fence value will be set to "fenceValue" from the GPU
-	FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
-	HRESULT hr = pCommandQueue->Signal(frameBuffer.pFence, frameBuffer.fenceValue);
+	hr = pCommandQueue->Signal(frameBuffer.pFence, frameBuffer.fenceValue);
 	DX_CHECK_HRESULT(hr);
 
 	hr = pSwapChain->Present(1, 0);
@@ -320,7 +347,27 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	}
 	else
 	{
+		// We have to wait for the gpu to finish with the command allocator before we reset it
+		WaitForPreviousFrame();
+
 		FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
+		HRESULT hr = frameBuffer.pCommandAllocator->Reset();
+		DX_CHECK_HRESULT(hr);
+
+		// By resetting the command list we are putting it into a recording state so we can start recording commands
+		ID3D12PipelineState* pPipelineState = nullptr;
+		hr = pCmdList->Reset(frameBuffer.pCommandAllocator, pPipelineState);
+
+		// Transition the render target from present state to render target state
+		D3D12_RESOURCE_BARRIER barrier = {};
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		barrier.Transition.pResource = frameBuffer.pRenderTargetResource;
+		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+		pCmdList->ResourceBarrier(1, &barrier);
+
 		pCmdList->ClearRenderTargetView(frameBuffer.renderTargetDescriptor, clearColor, 0, nullptr);
 		pCmdList->ClearDepthStencilView(frameBuffer.depthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
 	}
@@ -781,7 +828,8 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 	}
 	else
 	{
-		pCmdList->OMSetRenderTargets(0, nullptr, TRUE, nullptr);
+		FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
+		pCmdList->OMSetRenderTargets(1, &frameBuffer.renderTargetDescriptor, TRUE, &frameBuffer.depthStencilDescriptor);
 	}
 
 	pCmdList->RSSetViewports(1, &viewport);
