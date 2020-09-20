@@ -72,8 +72,8 @@ private:
 
 	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
-	ID3D11Device* d3dDevice = nullptr;
-	IDXGISwapChain* swapChain = nullptr;
+	ID3D11Device* pDevice = nullptr;
+	IDXGISwapChain* pSwapChain = nullptr;
 	ID3D11DeviceContext* deviceCtx = nullptr;
 	ID3D11RenderTargetView* pFrameBufferRenderTargetView = nullptr;
 	ID3D11DepthStencilView* pFrameBufferDepthStencilView = nullptr;

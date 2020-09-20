@@ -134,8 +134,8 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 		static_cast<UINT>(DESIRE_ASIZEOF(featureLevels)),
 		D3D11_SDK_VERSION,
 		&swapChainDesc,
-		&swapChain,
-		&d3dDevice,
+		&pSwapChain,
+		&pDevice,
 		nullptr,
 		&deviceCtx);
 
@@ -163,7 +163,7 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 	DX_RELEASE(pFrameBufferRenderTargetView);
 	deviceCtx->Flush();
 
-	HRESULT hr = swapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	HRESULT hr = pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 	if(hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
 	{
 		// Have to destroy the device, swapchain, and all resources and recreate them to recover from this case
@@ -233,7 +233,8 @@ void Direct3D11Render::AppendShaderFilenameWithPath(WritableString& outString, c
 
 void Direct3D11Render::EndFrame()
 {
-	swapChain->Present(1, 0);
+	HRESULT hr = pSwapChain->Present(1, 0);
+	DX_CHECK_HRESULT(hr);
 }
 
 void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil)
@@ -468,7 +469,7 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 
 		D3D11_SUBRESOURCE_DATA initialIndexData = {};
 		initialIndexData.pSysMem = mesh.indices.get();
-		HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pMeshRenderData->pIndexBuffer);
+		HRESULT hr = pDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pMeshRenderData->pIndexBuffer);
 		DX_CHECK_HRESULT(hr);
 	}
 
@@ -477,7 +478,7 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 
 	D3D11_SUBRESOURCE_DATA initialVertexData = {};
 	initialVertexData.pSysMem = mesh.vertices.get();
-	HRESULT hr = d3dDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pMeshRenderData->pVertexBuffer);
+	HRESULT hr = pDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pMeshRenderData->pVertexBuffer);
 	DX_CHECK_HRESULT(hr);
 
 	return pMeshRenderData;
@@ -530,11 +531,11 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 
 	if(isVertexShader)
 	{
-		hr = d3dDevice->CreateVertexShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
+		hr = pDevice->CreateVertexShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
 	}
 	else
 	{
-		hr = d3dDevice->CreatePixelShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
+		hr = pDevice->CreatePixelShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
 	}
 	DX_CHECK_HRESULT(hr);
 
@@ -568,7 +569,7 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = d3dDevice->CreateBuffer(&bufferDesc, nullptr, &pShaderRenderData->constantBuffers[i]);
+		hr = pDevice->CreateBuffer(&bufferDesc, nullptr, &pShaderRenderData->constantBuffers[i]);
 		DX_CHECK_HRESULT(hr);
 
 		// Create constant buffer data
@@ -647,7 +648,7 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 
 	if(isRenderTarget)
 	{
-		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &pTextureRenderData->pTexture2D);
+		HRESULT hr = pDevice->CreateTexture2D(&textureDesc, nullptr, &pTextureRenderData->pTexture2D);
 		DX_CHECK_HRESULT(hr);
 	}
 	else
@@ -661,7 +662,7 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * texture.GetHeight();
 		}
 
-		HRESULT hr = d3dDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &pTextureRenderData->pTexture2D);
+		HRESULT hr = pDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &pTextureRenderData->pTexture2D);
 		DX_CHECK_HRESULT(hr);
 	}
 
@@ -671,7 +672,7 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 		srvDesc.Format = textureDesc.Format;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
-		HRESULT hr = d3dDevice->CreateShaderResourceView(pTextureRenderData->pTexture2D, &srvDesc, &pTextureRenderData->pTextureSRV);
+		HRESULT hr = pDevice->CreateShaderResourceView(pTextureRenderData->pTexture2D, &srvDesc, &pTextureRenderData->pTextureSRV);
 		DX_CHECK_HRESULT(hr);
 	}
 
@@ -694,7 +695,7 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 		{
 			ASSERT(pRenderTargetRenderData->pDepthStencilView == nullptr && "RenderTargets can have only 1 depth attachment");
 
-			HRESULT hr = d3dDevice->CreateDepthStencilView(pTextureRenderData->pTexture2D, nullptr, &pRenderTargetRenderData->pDepthStencilView);
+			HRESULT hr = pDevice->CreateDepthStencilView(pTextureRenderData->pTexture2D, nullptr, &pRenderTargetRenderData->pDepthStencilView);
 			DX_CHECK_HRESULT(hr);
 		}
 		else
@@ -704,7 +705,7 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
 			ID3D11RenderTargetView* pRenderTargetView = nullptr;
-			HRESULT hr = d3dDevice->CreateRenderTargetView(pTextureRenderData->pTexture2D, &renderTargetViewDesc, &pRenderTargetView);
+			HRESULT hr = pDevice->CreateRenderTargetView(pTextureRenderData->pTexture2D, &renderTargetViewDesc, &pRenderTargetView);
 			DX_CHECK_HRESULT(hr);
 
 			pRenderTargetRenderData->renderTargetViews.push_back(pRenderTargetView);
@@ -780,9 +781,9 @@ void Direct3D11Render::CreateFrameBuffer(uint32_t width, uint32_t height)
 {
 	// Create back buffer render target view
 	ID3D11Texture2D* pFrameBufferTexture = nullptr;
-	HRESULT hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&pFrameBufferTexture));
+	HRESULT hr = pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pFrameBufferTexture));
 	DX_CHECK_HRESULT(hr);
-	hr = d3dDevice->CreateRenderTargetView(pFrameBufferTexture, nullptr, &pFrameBufferRenderTargetView);
+	hr = pDevice->CreateRenderTargetView(pFrameBufferTexture, nullptr, &pFrameBufferRenderTargetView);
 	DX_CHECK_HRESULT(hr);
 	DX_RELEASE(pFrameBufferTexture);
 
@@ -798,10 +799,10 @@ void Direct3D11Render::CreateFrameBuffer(uint32_t width, uint32_t height)
 	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
 	ID3D11Texture2D* pDepthStencilTexture = nullptr;
-	hr = d3dDevice->CreateTexture2D(&textureDesc, nullptr, &pDepthStencilTexture);
+	hr = pDevice->CreateTexture2D(&textureDesc, nullptr, &pDepthStencilTexture);
 	DX_CHECK_HRESULT(hr);
 
-	hr = d3dDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &pFrameBufferDepthStencilView);
+	hr = pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &pFrameBufferDepthStencilView);
 	DX_CHECK_HRESULT(hr);
 
 	DX_RELEASE(pDepthStencilTexture);
@@ -1063,7 +1064,7 @@ void Direct3D11Render::SetDepthStencilState()
 	}
 	else
 	{
-		HRESULT hr = d3dDevice->CreateDepthStencilState(&depthStencilDesc, &pDepthStencilState);
+		HRESULT hr = pDevice->CreateDepthStencilState(&depthStencilDesc, &pDepthStencilState);
 		DX_CHECK_HRESULT(hr);
 		depthStencilStateCache.emplace(key, pDepthStencilState);
 	}
@@ -1098,7 +1099,7 @@ void Direct3D11Render::SetRasterizerState()
 	}
 	else
 	{
-		HRESULT hr = d3dDevice->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
+		HRESULT hr = pDevice->CreateRasterizerState(&rasterizerDesc, &pRasterizerState);
 		DX_CHECK_HRESULT(hr);
 		rasterizerStateCache.emplace(key, pRasterizerState);
 	}
@@ -1133,7 +1134,7 @@ void Direct3D11Render::SetBlendState()
 	}
 	else
 	{
-		HRESULT hr = d3dDevice->CreateBlendState(&blendDesc, &pBlendState);
+		HRESULT hr = pDevice->CreateBlendState(&blendDesc, &pBlendState);
 		DX_CHECK_HRESULT(hr);
 		blendStateCache.emplace(key, pBlendState);
 	}
@@ -1206,7 +1207,7 @@ void Direct3D11Render::SetInputLayout()
 			}
 
 			const ShaderRenderDataD3D11* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(pActiveVertexShader->pRenderData);
-			HRESULT hr = d3dDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), pVertexShaderRenderData->shaderCode->GetBufferPointer(), pVertexShaderRenderData->shaderCode->GetBufferSize(), &pInputLayout);
+			HRESULT hr = pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), pVertexShaderRenderData->shaderCode->GetBufferPointer(), pVertexShaderRenderData->shaderCode->GetBufferSize(), &pInputLayout);
 			DX_CHECK_HRESULT(hr);
 			inputLayoutCache.emplace(key, pInputLayout);
 		}
@@ -1242,7 +1243,7 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 	}
 	else
 	{
-		HRESULT hr = d3dDevice->CreateSamplerState(&samplerDesc, &samplerState);
+		HRESULT hr = pDevice->CreateSamplerState(&samplerDesc, &samplerState);
 		DX_CHECK_HRESULT(hr);
 		samplerStateCache.emplace(key, samplerState);
 	}

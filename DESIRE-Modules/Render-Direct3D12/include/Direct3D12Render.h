@@ -6,7 +6,7 @@
 #include <DirectXMath.h>
 
 class ShaderRenderDataD3D12;
-struct IDXGISwapChain1;
+struct IDXGISwapChain3;
 
 class Direct3D12Render : public Render
 {
@@ -60,19 +60,31 @@ private:
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
+	void CreateFrameBuffers();
+	void WaitForPreviousFrame();
+
 	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
-	static constexpr size_t kFrameBufferCount = 3;
+	static constexpr uint32_t kFrameBufferCount = 3;
 
-	ID3D12Device3* d3dDevice = nullptr;
-	IDXGISwapChain1* pSwapChain = nullptr;
+	ID3D12Device3* pDevice = nullptr;
+	IDXGISwapChain3* pSwapChain = nullptr;
 	ID3D12CommandQueue* pCommandQueue = nullptr;
-	ID3D12DescriptorHeap* pDescriptorHeap = nullptr;
 
-	D3D12_CPU_DESCRIPTOR_HANDLE frameBufferRenderTargetDescriptor = {};
-	D3D12_CPU_DESCRIPTOR_HANDLE frameBufferDepthStencilDescriptor = {};
-
-	ID3D12CommandAllocator* commandAllocators[kFrameBufferCount] = {};
+	// Frame buffers
+	ID3D12DescriptorHeap* pDescriptorHeapRTV = nullptr;
+	struct FrameBuffer
+	{
+		ID3D12Resource* pRenderTargetResource = nullptr;
+		D3D12_CPU_DESCRIPTOR_HANDLE renderTargetDescriptor = {};
+		D3D12_CPU_DESCRIPTOR_HANDLE depthStencilDescriptor = {};
+		ID3D12CommandAllocator* pCommandAllocator = nullptr;
+		ID3D12Fence* pFence = nullptr;
+		uint64_t fenceValue = 0;
+	};
+	FrameBuffer frameBuffers[kFrameBufferCount];
+	uint32_t activeFrameBufferIdx = 0;
+	HANDLE fenceEvent;
 
 	ID3D12GraphicsCommandList* pCmdList = nullptr;
 
