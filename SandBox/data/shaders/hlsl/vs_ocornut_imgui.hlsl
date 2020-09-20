@@ -12,7 +12,7 @@ struct VSInput
 
 struct v2f
 {
-	float4 pos : SV_POSITION;
+	float4 pos : SV_Position;
 	float2 uv : TEXCOORD0;
 	float4 color : TEXCOORD1;
 };
