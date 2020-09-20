@@ -176,6 +176,15 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 
 void Direct3D11Render::Kill()
 {
+	Unbind(*errorVertexShader);
+	Unbind(*errorPixelShader);
+
+	pActiveWindow = nullptr;
+	pActiveMesh = nullptr;
+	pActiveVertexShader = nullptr;
+	pActiveFragmentShader = nullptr;
+	pActiveRenderTarget = nullptr;
+
 	for(auto& pair : depthStencilStateCache)
 	{
 		DX_RELEASE(pair.second);
@@ -211,17 +220,11 @@ void Direct3D11Render::Kill()
 	samplerStateCache.clear();
 	memset(activeSamplerStates, 0, sizeof(activeSamplerStates));
 
-	pActiveWindow = nullptr;
-	pActiveMesh = nullptr;
-	pActiveVertexShader = nullptr;
-	pActiveFragmentShader = nullptr;
-	pActiveRenderTarget = nullptr;
-
-	Unbind(*errorVertexShader);
-	Unbind(*errorPixelShader);
-
 	DX_RELEASE(pFrameBufferDepthStencilView);
 	DX_RELEASE(pFrameBufferRenderTargetView);
+	DX_RELEASE(pSwapChain);
+	DX_RELEASE(deviceCtx);
+	DX_RELEASE(pDevice);
 }
 
 void Direct3D11Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const

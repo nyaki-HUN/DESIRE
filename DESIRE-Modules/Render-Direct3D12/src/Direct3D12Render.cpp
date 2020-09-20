@@ -121,10 +121,11 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 		return false;
 	}
 
+	// Create device
 	hr = D3D12CreateDevice(
 		nullptr,
 		D3D_FEATURE_LEVEL_12_1,
-		IID_PPV_ARGS(&d3dDevice)
+		IID_PPV_ARGS(&pDevice)
 	);
 
 	if(FAILED(hr))
@@ -132,19 +133,19 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 		return false;
 	}
 
-	// Ccreate command queue
+	// Create command queue
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
 	commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 	commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 	commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
-	hr = d3dDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&pCommandQueue));
+	hr = pDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&pCommandQueue));
 	if(FAILED(hr))
 	{
 		return false;
 	}
 
-	// Ccreate swap chain
+	// Create swap chain
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 	swapChainDesc.Width = mainWindow.GetWidth();
 	swapChainDesc.Height = mainWindow.GetHeight();
@@ -157,11 +158,76 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 
-	hr = pFactory->CreateSwapChainForHwnd(pCommandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &pSwapChain);
+	IDXGISwapChain1* pTmpSwapChain = nullptr;
+	hr = pFactory->CreateSwapChainForHwnd(pCommandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &pTmpSwapChain);
 	if(FAILED(hr))
 	{
 		return false;
 	}
+
+	hr = pTmpSwapChain->QueryInterface(IID_PPV_ARGS(&pSwapChain));
+	DX_RELEASE(pTmpSwapChain);
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
+	descriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	descriptorHeapDesc.NumDescriptors = kFrameBufferCount;
+	descriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	hr = pDevice->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&pDescriptorHeapRTV));
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	const UINT descriptorHandleIncrementSize = pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	D3D12_CPU_DESCRIPTOR_HANDLE handleRTV = pDescriptorHeapRTV->GetCPUDescriptorHandleForHeapStart();
+	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
+	{
+		FrameBuffer& frameBuffer = frameBuffers[i];
+		frameBuffer.renderTargetDescriptor = handleRTV;
+		handleRTV.ptr += descriptorHandleIncrementSize;
+
+		hr = pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frameBuffer.pCommandAllocator));
+		if(FAILED(hr))
+		{
+			return false;
+		}
+
+		hr = pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frameBuffer.pFence));
+		if(FAILED(hr))
+		{
+			return false;
+		}
+
+		frameBuffer.fenceValue = 0;
+	}
+
+	fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	if(fenceEvent == nullptr)
+	{
+		return false;
+	}
+
+	hr = pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frameBuffers[0].pCommandAllocator, nullptr, IID_PPV_ARGS(&pCmdList));
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	// Command lists are created in the recording state, but we will set it up for recording again so close it now
+	hr = pCmdList->Close();
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	activeFrameBufferIdx = pSwapChain->GetCurrentBackBufferIndex();
+
+	CreateFrameBuffers();
 
 	Bind(*errorVertexShader);
 	Bind(*errorPixelShader);
@@ -171,19 +237,40 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 {
-	pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	HRESULT hr = pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	DX_CHECK_HRESULT(hr);
+
+	WaitForPreviousFrame();
+
+	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
+	{
+		DX_RELEASE(frameBuffers[i].pRenderTargetResource);
+	}
+
+	CreateFrameBuffers();
 }
 
 void Direct3D12Render::Kill()
 {
+	// Wait for the GPU to finish all frames
+	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
+	{
+		activeFrameBufferIdx = i;
+		WaitForPreviousFrame();
+	}
+
+	Unbind(*errorVertexShader);
+	Unbind(*errorPixelShader);
+
 	pActiveWindow = nullptr;
 	pActiveMesh = nullptr;
 	pActiveVertexShader = nullptr;
 	pActiveFragmentShader = nullptr;
 	pActiveRenderTarget = nullptr;
 
-	Unbind(*errorVertexShader);
-	Unbind(*errorPixelShader);
+	DX_RELEASE(pSwapChain);
+	DX_RELEASE(pCommandQueue);
+	DX_RELEASE(pDevice);
 }
 
 void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
@@ -195,7 +282,17 @@ void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, c
 
 void Direct3D12Render::EndFrame()
 {
-	pSwapChain->Present(1, 0);
+	ID3D12CommandList* commandLists[] = { pCmdList };
+	pCommandQueue->ExecuteCommandLists(static_cast<UINT>(DESIRE_ASIZEOF(commandLists)), commandLists);
+
+	// This command goes in at the end of our command queue.
+	// We will know when our command queue has finished because the fence value will be set to "fenceValue" from the GPU
+	FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
+	HRESULT hr = pCommandQueue->Signal(frameBuffer.pFence, frameBuffer.fenceValue);
+	DX_CHECK_HRESULT(hr);
+
+	hr = pSwapChain->Present(1, 0);
+	DX_CHECK_HRESULT(hr);
 }
 
 void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil)
@@ -223,8 +320,9 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	}
 	else
 	{
-		pCmdList->ClearRenderTargetView(frameBufferRenderTargetDescriptor, clearColor, 0, nullptr);
-		pCmdList->ClearDepthStencilView(frameBufferDepthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+		FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
+		pCmdList->ClearRenderTargetView(frameBuffer.renderTargetDescriptor, clearColor, 0, nullptr);
+		pCmdList->ClearDepthStencilView(frameBuffer.depthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
 	}
 }
 
@@ -441,11 +539,11 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 
 	if(isVertexShader)
 	{
-//		hr = d3dDevice->CreateVertexShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
+//		hr = pDevice->CreateVertexShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
 	}
 	else
 	{
-//		hr = d3dDevice->CreatePixelShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
+//		hr = pDevice->CreatePixelShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
 	}
 	DX_CHECK_HRESULT(hr);
 
@@ -479,7 +577,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D12_USAGE_DEFAULT;
 		bufferDesc.BindFlags = D3D12_BIND_CONSTANT_BUFFER;
-		hr = d3dDevice->CreateCommittedResource(&bufferDesc, nullptr, &pShaderRenderData->constantBuffers[i]);
+		hr = pDevice->CreateCommittedResource(&bufferDesc, nullptr, &pShaderRenderData->constantBuffers[i]);
 		DX_CHECK_HRESULT(hr);
 
 		// Create constant buffer data
@@ -529,8 +627,6 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProperties.CreationNodeMask = 1;
-	heapProperties.VisibleNodeMask = 1;
 
 	D3D12_RESOURCE_DESC resourceDesc = {};
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -543,7 +639,7 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-	d3dDevice->CreateCommittedResource(
+	pDevice->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
@@ -802,6 +898,33 @@ void Direct3D12Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 	else
 	{
 	}
+}
+
+void Direct3D12Render::CreateFrameBuffers()
+{
+	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
+	{
+		FrameBuffer& frameBuffer = frameBuffers[i];
+		HRESULT hr = pSwapChain->GetBuffer(i, IID_PPV_ARGS(&frameBuffer.pRenderTargetResource));
+		DX_CHECK_HRESULT(hr);
+		pDevice->CreateRenderTargetView(frameBuffer.pRenderTargetResource, nullptr, frameBuffer.renderTargetDescriptor);
+	}
+}
+
+void Direct3D12Render::WaitForPreviousFrame()
+{
+	FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
+	if(frameBuffer.pFence->GetCompletedValue() < frameBuffer.fenceValue)
+	{
+		// The GPU has not finished executing the command queue so we will wait until the fence has triggered the event
+		HRESULT hr = frameBuffer.pFence->SetEventOnCompletion(frameBuffer.fenceValue, fenceEvent);
+		DX_CHECK_HRESULT(hr);
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+
+	frameBuffer.fenceValue++;
+
+	activeFrameBufferIdx = pSwapChain->GetCurrentBackBufferIndex();
 }
 
 DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture& texture)

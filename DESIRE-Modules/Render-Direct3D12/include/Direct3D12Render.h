@@ -68,8 +68,8 @@ private:
 	static constexpr uint32_t kFrameBufferCount = 3;
 
 	ID3D12Device3* pDevice = nullptr;
-	IDXGISwapChain3* pSwapChain = nullptr;
 	ID3D12CommandQueue* pCommandQueue = nullptr;
+	IDXGISwapChain3* pSwapChain = nullptr;
 
 	// Frame buffers
 	ID3D12DescriptorHeap* pDescriptorHeapRTV = nullptr;

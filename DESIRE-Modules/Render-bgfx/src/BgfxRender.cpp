@@ -74,6 +74,12 @@ void BgfxRender::UpdateRenderWindow(OSWindow& window)
 
 void BgfxRender::Kill()
 {
+	pActiveWindow = nullptr;
+	pActiveMesh = nullptr;
+	pActiveVertexShader = nullptr;
+	pActiveFragmentShader = nullptr;
+	pActiveRenderTarget = nullptr;
+
 	for(bgfx::UniformHandle& uniform : samplerUniforms)
 	{
 		bgfx::destroy(uniform);
@@ -85,12 +91,6 @@ void BgfxRender::Kill()
 		bgfx::destroy(pair.second);
 	}
 	shaderProgramCache.clear();
-
-	pActiveWindow = nullptr;
-	pActiveMesh = nullptr;
-	pActiveVertexShader = nullptr;
-	pActiveFragmentShader = nullptr;
-	pActiveRenderTarget = nullptr;
 
 	bgfx::shutdown();
 }
