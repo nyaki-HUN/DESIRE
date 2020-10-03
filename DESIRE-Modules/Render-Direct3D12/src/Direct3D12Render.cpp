@@ -3,6 +3,7 @@
 
 #include "DirectXMathExt.h"
 #include "MeshRenderDataD3D12.h"
+#include "RenderableRenderDataD3D12.h"
 #include "RenderTargetRenderDataD3D12.h"
 #include "ShaderRenderDataD3D12.h"
 #include "TextureRenderDataD3D12.h"
@@ -501,8 +502,80 @@ void Direct3D12Render::SetBlendModeDisabled()
 
 void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 {
-	DESIRE_UNUSED(renderable);
-	return nullptr;
+	RenderableRenderDataD3D12* pRenderableRenderData = new RenderableRenderDataD3D12();
+
+	static constexpr D3D12_INPUT_ELEMENT_DESC s_attribConversionTable[] =
+	{
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
+		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
+		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
+		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
+		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
+		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
+		{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
+		{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
+		{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
+		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
+		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
+	};
+	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
+
+	static constexpr DXGI_FORMAT s_attribTypeConversionTable[][4] =
+	{
+		// Mesh::EAttribType::FLOAT
+		{
+			DXGI_FORMAT_R32_FLOAT,
+			DXGI_FORMAT_R32G32_FLOAT,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			DXGI_FORMAT_R32G32B32A32_FLOAT
+		},
+		// Mesh::EAttribType::UINT8
+		{
+			DXGI_FORMAT_R8_UNORM,
+			DXGI_FORMAT_R8G8_UNORM,
+			DXGI_FORMAT_UNKNOWN,
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+		},
+	};
+	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
+
+	const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_mesh->GetVertexLayout();
+	D3D12_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
+	for(size_t i = 0; i < vertexLayout.Size(); ++i)
+	{
+		const Mesh::VertexLayout& layout = vertexLayout[i];
+		vertexElementDesc[i] = s_attribConversionTable[static_cast<size_t>(layout.m_attrib)];
+		vertexElementDesc[i].Format = s_attribTypeConversionTable[static_cast<size_t>(layout.m_type)][layout.m_count - 1];
+	}
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
+	psoDesc.pRootSignature = nullptr;	// TODO
+	psoDesc.VS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_vertexShader->m_pRenderData)->m_pShaderCode);
+	psoDesc.PS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_fragmentShader->m_pRenderData)->m_pShaderCode);
+//	D3D12_STREAM_OUTPUT_DESC StreamOutput;
+	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);						// TODO
+	psoDesc.SampleMask = UINT_MAX;
+	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);			// TODO
+	psoDesc.DepthStencilState.DepthEnable = TRUE;								// TODO
+	psoDesc.InputLayout = { vertexElementDesc, static_cast<UINT>(vertexLayout.Size()) };
+//	D3D12_INDEX_BUFFER_STRIP_CUT_VALUE IBStripCutValue;
+	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	psoDesc.NumRenderTargets = 1;
+	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;							// TODO
+	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	psoDesc.SampleDesc.Count = 1;
+	psoDesc.NodeMask = 1;
+//	D3D12_CACHED_PIPELINE_STATE CachedPSO;
+	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	HRESULT hr = m_pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pRenderableRenderData->m_pPipelineState));
+	if(FAILED(hr))
+	{
+		delete pRenderableRenderData;
+		return nullptr;
+	}
+
+	return pRenderableRenderData;
 }
 
 void* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
@@ -632,32 +705,63 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 {
 	TextureRenderDataD3D12* pTextureRenderData = new TextureRenderDataD3D12();
 
-	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProperties.CreationNodeMask = 1;
-	heapProperties.VisibleNodeMask = 1;
+	CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Tex2D(GetTextureFormat(texture), texture.GetWidth(), texture.GetHeight(), 1, texture.GetNumMipLevels());
 
-	D3D12_RESOURCE_DESC resourceDesc = {};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	resourceDesc.Width = texture.GetWidth();
-	resourceDesc.Height = texture.GetHeight();
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = texture.GetNumMipLevels();
-	resourceDesc.Format = GetTextureFormat(texture);
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
-
-	m_pDevice->CreateCommittedResource(
+	HRESULT hr = m_pDevice->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(&pTextureRenderData->m_pTexture2D)
 	);
+	DX_CHECK_HRESULT(hr);
+
+	// Create the upload buffer
+	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+	CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pTextureRenderData->m_pTexture2D, 0, 1));
+
+	ID3D12Resource* pTextureUploadResource = nullptr;
+	hr = m_pDevice->CreateCommittedResource(
+		&uploadHeapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&uploadResourceDesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&pTextureUploadResource)
+	);
+	DX_CHECK_HRESULT(hr);
+
+	D3D12_SUBRESOURCE_DATA textureData = {};
+	textureData.pData = texture.GetData();
+	textureData.RowPitch = texture.GetWidth() * texture.GetBytesPerPixel();
+	textureData.SlicePitch = textureData.RowPitch * texture.GetHeight();
+
+	UpdateSubresources(m_pCmdList, pTextureRenderData->m_pTexture2D, pTextureUploadResource, 0, 0, 1, &textureData);
+
+	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(pTextureRenderData->m_pTexture2D, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	m_pCmdList->ResourceBarrier(1, &barrier);
+
+	// Create shader resource view
+	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.NumDescriptors = 1;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+
+	hr = m_pDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&pTextureRenderData->m_pHeapForSRV));
+	DX_CHECK_HRESULT(hr);
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = resourceDesc.Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Texture2D.MipLevels = resourceDesc.MipLevels;
+
+	m_pDevice->CreateShaderResourceView(pTextureRenderData->m_pTexture2D, &srvDesc, pTextureRenderData->m_pHeapForSRV->GetCPUDescriptorHandleForHeapStart());
+
+	// TODO: this is a memory leak should be solved by executing the command list here
+//	DX_RELEASE(pTextureUploadResource);
 
 	return pTextureRenderData;
 }
@@ -973,11 +1077,11 @@ bool Direct3D12Render::CreateFrameBuffers(uint32_t width, uint32_t height)
 
 	// Create the depth/stencil buffer
 	CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
-	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, width, height);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D24_UNORM_S8_UINT, width, height);
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
 	D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
-	depthOptimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
+	depthOptimizedClearValue.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
 	depthOptimizedClearValue.DepthStencil.Stencil = 0;
 
@@ -1006,12 +1110,12 @@ bool Direct3D12Render::CreateFrameBuffers(uint32_t width, uint32_t height)
 	}
 //	m_pHeapForDSV->SetName(L"m_pHeapForDSV");
 
-	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
-	depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	depthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	depthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	dsvDesc.Format = resourceDesc.Format;
+	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-	m_pDevice->CreateDepthStencilView(m_pDepthStencilResource, &depthStencilViewDesc, m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
+	m_pDevice->CreateDepthStencilView(m_pDepthStencilResource, &dsvDesc, m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
 
 	return true;
 }
