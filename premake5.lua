@@ -22,7 +22,7 @@ flags
 }
 
 filter { "system:windows", "action:vs*" }
-	systemversion "10.0.16299.0"
+	systemversion "10.0.19041.0"
 	defines
 	{
 		"WIN32",
