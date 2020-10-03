@@ -124,11 +124,11 @@ public:
 protected:
 	void SetDefaultRenderStates();
 
-	const OSWindow* pActiveWindow = nullptr;
-	const Mesh* pActiveMesh = nullptr;
-	const Shader* pActiveVertexShader = nullptr;
-	const Shader* pActiveFragmentShader = nullptr;
-	const RenderTarget* pActiveRenderTarget = nullptr;
+	const OSWindow* m_pActiveWindow = nullptr;
+	const Mesh* m_pActiveMesh = nullptr;
+	const Shader* m_pActiveVertexShader = nullptr;
+	const Shader* m_pActiveFragmentShader = nullptr;
+	const RenderTarget* m_pActiveRenderTarget = nullptr;
 
 private:
 	virtual void* CreateRenderableRenderData(const Renderable& renderable) = 0;

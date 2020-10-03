@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Engine/Core/Component.h"
+#include "Engine/Core/Container/Array.h"
 
-class Mesh;
-class Material;
 class AABB;
+class Renderable;
 
 class RenderComponent : public Component
 {
@@ -22,17 +22,13 @@ public:
 	void SetVisible(bool visible);
 	bool IsVisible() const;
 
-	void SetMaterial(Material* material);
-	Material* GetMaterial() const;
-
 	const AABB& GetAABB() const;
 
 private:
-	Mesh* mesh = nullptr;
-	Material* material = nullptr;
+	Array<Renderable*> m_renderables;
 
-	std::unique_ptr<AABB> aabb;
+	std::unique_ptr<AABB> m_aabb;
 
-	int renderLayer = 0;
-	bool isVisible = false;
+	int m_renderLayer = 0;
+	bool m_isVisible = false;
 };

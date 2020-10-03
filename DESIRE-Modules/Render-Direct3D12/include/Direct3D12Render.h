@@ -67,38 +67,38 @@ private:
 
 	static constexpr uint32_t kFrameBufferCount = 3;
 
-	ID3D12Device3* pDevice = nullptr;
-	ID3D12CommandQueue* pCommandQueue = nullptr;
-	IDXGISwapChain3* pSwapChain = nullptr;
+	ID3D12Device3* m_pDevice = nullptr;
+	ID3D12CommandQueue* m_pCommandQueue = nullptr;
+	IDXGISwapChain3* m_pSwapChain = nullptr;
 
 	// Frame buffers
-	ID3D12DescriptorHeap* pFrameBufferRenderTargetDescriptorHeap = nullptr;
+	ID3D12DescriptorHeap* m_pFrameBufferRenderTargetDescriptorHeap = nullptr;
 	struct FrameBuffer
 	{
-		ID3D12Resource* pRenderTargetResource = nullptr;
-		D3D12_CPU_DESCRIPTOR_HANDLE renderTargetDescriptor = {};
-		ID3D12CommandAllocator* pCommandAllocator = nullptr;
-		ID3D12Fence* pFence = nullptr;
-		uint64_t fenceValue = 0;
+		ID3D12Resource* m_pRenderTargetResource = nullptr;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_renderTargetDescriptor = {};
+		ID3D12CommandAllocator* m_pCommandAllocator = nullptr;
+		ID3D12Fence* m_pFence = nullptr;
+		uint64_t m_fenceValue = 0;
 	};
-	FrameBuffer frameBuffers[kFrameBufferCount];
-	uint32_t activeFrameBufferIdx = 0;
-	HANDLE fenceEvent;
+	FrameBuffer m_frameBuffers[kFrameBufferCount];
+	uint32_t m_activeFrameBufferIdx = 0;
+	HANDLE m_fenceEvent;
 
-	ID3D12DescriptorHeap* pDepthStencilDescriptorHeap = nullptr;
-	ID3D12Resource* pDepthStencilResource = nullptr;
+	ID3D12DescriptorHeap* m_pDepthStencilDescriptorHeap = nullptr;
+	ID3D12Resource* m_pDepthStencilResource = nullptr;
 
-	ID3D12GraphicsCommandList* pCmdList = nullptr;
+	ID3D12GraphicsCommandList* m_pCmdList = nullptr;
 
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
-	D3D12_RASTERIZER_DESC rasterizerDesc = {};
-	D3D12_BLEND_DESC blendDesc = {};
+	D3D12_DEPTH_STENCIL_DESC m_depthStencilDesc = {};
+	D3D12_RASTERIZER_DESC m_rasterizerDesc = {};
+	D3D12_BLEND_DESC m_blendDesc = {};
 
-	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	DirectX::XMMATRIX matWorld;
-	DirectX::XMMATRIX matView;
-	DirectX::XMMATRIX matProj;
+	float m_blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	DirectX::XMMATRIX m_matWorld;
+	DirectX::XMMATRIX m_matView;
+	DirectX::XMMATRIX m_matProj;
 
-	std::unique_ptr<Shader> errorVertexShader;
-	std::unique_ptr<Shader> errorPixelShader;
+	std::unique_ptr<Shader> m_errorVertexShader;
+	std::unique_ptr<Shader> m_errorPixelShader;
 };

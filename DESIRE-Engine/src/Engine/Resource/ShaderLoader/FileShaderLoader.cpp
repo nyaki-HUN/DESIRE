@@ -25,7 +25,7 @@ std::unique_ptr<Shader> FileShaderLoader::Load(const ReadFilePtr& file)
 	}
 
 	std::unique_ptr<Shader> shader = std::make_unique<Shader>(name);
-	shader->data = file->ReadAllAsBinary();
+	shader->m_data = file->ReadAllAsBinary();
 
 	return shader;
 }

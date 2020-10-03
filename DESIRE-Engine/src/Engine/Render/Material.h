@@ -13,22 +13,22 @@ class Material
 public:
 	struct TextureInfo
 	{
-		std::shared_ptr<Texture> texture;
-		Render::EFilterMode filterMode;
-		Render::EAddressMode addressMode;
+		std::shared_ptr<Texture> m_texture;
+		Render::EFilterMode m_filterMode;
+		Render::EAddressMode m_addressMode;
 	};
 
 	struct ShaderParam
 	{
-		const HashedString name;
+		const HashedString m_name;
 
 		ShaderParam(HashedString name, const void* pParam);
 		ShaderParam(HashedString name, std::function<void(float*)>&& func);
 		const void* GetValue() const;
 
 	private:
-		const void* pParam = nullptr;
-		std::function<void(float*)> paramFunc = nullptr;
+		const void* m_pParam = nullptr;
+		std::function<void(float*)> m_paramFunc = nullptr;
 	};
 
 	Material();
@@ -43,10 +43,10 @@ public:
 	void RemoveAllShaderParams();
 	const Array<ShaderParam>& Material::GetShaderParams() const;
 
-	std::shared_ptr<Shader> vertexShader;
-	std::shared_ptr<Shader> fragmentShader;
+	std::shared_ptr<Shader> m_vertexShader;
+	std::shared_ptr<Shader> m_fragmentShader;
 
 private:
-	Array<TextureInfo> textures;
-	Array<ShaderParam> shaderParams;
+	Array<TextureInfo> m_textures;
+	Array<ShaderParam> m_shaderParams;
 };

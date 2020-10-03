@@ -9,21 +9,21 @@ class ShaderRenderDataD3D11
 public:
 	union
 	{
-		ID3D11VertexShader* vertexShader;
-		ID3D11PixelShader* pixelShader;
-		ID3D11ComputeShader* computeShader;
+		ID3D11VertexShader* m_pVertexShader;
+		ID3D11PixelShader* m_pPixelShader;
+		ID3D11ComputeShader* m_pComputeShader;
 
-		ID3D11DeviceChild* ptr = nullptr;			// Generic base class pointer
+		ID3D11DeviceChild* m_pPtr = nullptr;			// Generic base class pointer
 	};
 
-	ID3DBlob* shaderCode = nullptr;
+	ID3DBlob* m_pShaderCode = nullptr;
 
-	Array<ID3D11Buffer*> constantBuffers;
+	Array<ID3D11Buffer*> m_constantBuffers;
 
 	struct ConstantBufferData
 	{
-		MemoryBuffer data;
-		HashedStringMap<std::pair<uint32_t, uint32_t>> variableOffsetSizePairs;
+		MemoryBuffer m_data;
+		HashedStringMap<std::pair<uint32_t, uint32_t>> m_variableOffsetSizePairs;
 	};
-	Array<ConstantBufferData> constantBuffersData;
+	Array<ConstantBufferData> m_constantBuffersData;
 };

@@ -56,43 +56,43 @@ Direct3D12Render::Direct3D12Render()
 		"	return float3(1, 0, 1);\n"
 		"}"
 	};
-	errorVertexShader = std::make_unique<Shader>("vs_error");
-	errorVertexShader->data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
-	errorPixelShader = std::make_unique<Shader>("ps_error");
-	errorPixelShader->data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
+	m_errorVertexShader = std::make_unique<Shader>("vs_error");
+	m_errorVertexShader->m_data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
+	m_errorPixelShader = std::make_unique<Shader>("ps_error");
+	m_errorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
 	// Stencil test parameters
-	depthStencilDesc.StencilEnable = FALSE;
-	depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-	depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
+	m_depthStencilDesc.StencilEnable = FALSE;
+	m_depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
+	m_depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
 	// Stencil operations if pixel is front-facing
-	depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	m_depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	m_depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	m_depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	m_depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 	// Stencil operations if pixel is back-facing
-	depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	depthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	m_depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
+	m_depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
+	m_depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
+	m_depthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	rasterizerDesc.DepthClipEnable = TRUE;
-	rasterizerDesc.MultisampleEnable = TRUE;
-	rasterizerDesc.AntialiasedLineEnable = TRUE;
+	m_rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	m_rasterizerDesc.DepthClipEnable = TRUE;
+	m_rasterizerDesc.MultisampleEnable = TRUE;
+	m_rasterizerDesc.AntialiasedLineEnable = TRUE;
 
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	m_blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	m_blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	m_blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	m_blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	m_blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+	m_blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+	m_blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	m_blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-	matWorld = DirectX::XMMatrixIdentity();
-	matView = DirectX::XMMatrixIdentity();
-	matProj = DirectX::XMMatrixIdentity();
+	m_matWorld = DirectX::XMMatrixIdentity();
+	m_matView = DirectX::XMMatrixIdentity();
+	m_matProj = DirectX::XMMatrixIdentity();
 }
 
 Direct3D12Render::~Direct3D12Render()
@@ -125,7 +125,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	hr = D3D12CreateDevice(
 		nullptr,
 		D3D_FEATURE_LEVEL_12_1,
-		IID_PPV_ARGS(&pDevice)
+		IID_PPV_ARGS(&m_pDevice)
 	);
 
 	if(FAILED(hr))
@@ -139,7 +139,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	commandQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 	commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 
-	hr = pDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&pCommandQueue));
+	hr = m_pDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&m_pCommandQueue));
 	if(FAILED(hr))
 	{
 		return false;
@@ -159,13 +159,13 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 
 	IDXGISwapChain1* pTmpSwapChain = nullptr;
-	hr = pFactory->CreateSwapChainForHwnd(pCommandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &pTmpSwapChain);
+	hr = pFactory->CreateSwapChainForHwnd(m_pCommandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &pTmpSwapChain);
 	if(FAILED(hr))
 	{
 		return false;
 	}
 
-	hr = pTmpSwapChain->QueryInterface(IID_PPV_ARGS(&pSwapChain));
+	hr = pTmpSwapChain->QueryInterface(IID_PPV_ARGS(&m_pSwapChain));
 	DX_RELEASE(pTmpSwapChain);
 	if(FAILED(hr))
 	{
@@ -178,34 +178,34 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	rtvHeapDesc.NumDescriptors = kFrameBufferCount;
 	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-	hr = pDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&pFrameBufferRenderTargetDescriptorHeap));
+	hr = m_pDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_pFrameBufferRenderTargetDescriptorHeap));
 	if(FAILED(hr))
 	{
 		return false;
 	}
-	pFrameBufferRenderTargetDescriptorHeap->SetName(L"pFrameBufferRenderTargetDescriptorHeap");
+	m_pFrameBufferRenderTargetDescriptorHeap->SetName(L"pFrameBufferRenderTargetDescriptorHeap");
 
-	const UINT descriptorHandleIncrementSize = pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	D3D12_CPU_DESCRIPTOR_HANDLE handleRTV = pFrameBufferRenderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	const UINT descriptorHandleIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	D3D12_CPU_DESCRIPTOR_HANDLE handleRTV = m_pFrameBufferRenderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
-		FrameBuffer& frameBuffer = frameBuffers[i];
-		frameBuffer.renderTargetDescriptor = handleRTV;
+		FrameBuffer& frameBuffer = m_frameBuffers[i];
+		frameBuffer.m_renderTargetDescriptor = handleRTV;
 		handleRTV.ptr += descriptorHandleIncrementSize;
 
-		hr = pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frameBuffer.pCommandAllocator));
+		hr = m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frameBuffer.m_pCommandAllocator));
 		if(FAILED(hr))
 		{
 			return false;
 		}
 
-		hr = pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frameBuffer.pFence));
+		hr = m_pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frameBuffer.m_pFence));
 		if(FAILED(hr))
 		{
 			return false;
 		}
 
-		frameBuffer.fenceValue = 0;
+		frameBuffer.m_fenceValue = 0;
 	}
 
 	// Create the depth/stencil buffer
@@ -232,13 +232,13 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
 	depthOptimizedClearValue.DepthStencil.Stencil = 0;
 
-	hr = pDevice->CreateCommittedResource(
+	hr = m_pDevice->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
 		&depthOptimizedClearValue,
-		IID_PPV_ARGS(&pDepthStencilResource)
+		IID_PPV_ARGS(&m_pDepthStencilResource)
 	);
 	if(FAILED(hr))
 	{
@@ -250,60 +250,60 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	dsvHeapDesc.NumDescriptors = 1;
 	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-	hr = pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&pDepthStencilDescriptorHeap));
+	hr = m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_pDepthStencilDescriptorHeap));
 	if(FAILED(hr))
 	{
 		return false;
 	}
-	pDepthStencilDescriptorHeap->SetName(L"pDepthStencilDescriptorHeap");
+	m_pDepthStencilDescriptorHeap->SetName(L"pm_depthStencilDescriptorHeap");
 
 	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
 	depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	depthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-	pDevice->CreateDepthStencilView(pDepthStencilResource, &depthStencilViewDesc, pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+	m_pDevice->CreateDepthStencilView(m_pDepthStencilResource, &depthStencilViewDesc, m_pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 	// Create command list
-	hr = pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frameBuffers[0].pCommandAllocator, nullptr, IID_PPV_ARGS(&pCmdList));
+	hr = m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_frameBuffers[0].m_pCommandAllocator, nullptr, IID_PPV_ARGS(&m_pCmdList));
 	if(FAILED(hr))
 	{
 		return false;
 	}
 
 	// Command lists are created in the recording state, but we will set it up for recording again so close it now
-	hr = pCmdList->Close();
+	hr = m_pCmdList->Close();
 	if(FAILED(hr))
 	{
 		return false;
 	}
 
-	fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-	if(fenceEvent == nullptr)
+	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	if(m_fenceEvent == nullptr)
 	{
 		return false;
 	}
 
-	activeFrameBufferIdx = pSwapChain->GetCurrentBackBufferIndex();
+	m_activeFrameBufferIdx = m_pSwapChain->GetCurrentBackBufferIndex();
 
 	CreateFrameBuffers();
 
-	Bind(*errorVertexShader);
-	Bind(*errorPixelShader);
+	Bind(*m_errorVertexShader);
+	Bind(*m_errorPixelShader);
 
 	return true;
 }
 
 void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 {
-	HRESULT hr = pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	HRESULT hr = m_pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 	DX_CHECK_HRESULT(hr);
 
 	WaitForPreviousFrame();
 
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
-		DX_RELEASE(frameBuffers[i].pRenderTargetResource);
+		DX_RELEASE(m_frameBuffers[i].m_pRenderTargetResource);
 	}
 
 	CreateFrameBuffers();
@@ -314,38 +314,38 @@ void Direct3D12Render::Kill()
 	// Wait for the GPU to finish all frames
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
-		activeFrameBufferIdx = i;
+		m_activeFrameBufferIdx = i;
 		WaitForPreviousFrame();
 	}
 
-	Unbind(*errorVertexShader);
-	Unbind(*errorPixelShader);
+	Unbind(*m_errorVertexShader);
+	Unbind(*m_errorPixelShader);
 
-	pActiveWindow = nullptr;
-	pActiveMesh = nullptr;
-	pActiveVertexShader = nullptr;
-	pActiveFragmentShader = nullptr;
-	pActiveRenderTarget = nullptr;
+	m_pActiveWindow = nullptr;
+	m_pActiveMesh = nullptr;
+	m_pActiveVertexShader = nullptr;
+	m_pActiveFragmentShader = nullptr;
+	m_pActiveRenderTarget = nullptr;
 
-	CloseHandle(fenceEvent);
+	CloseHandle(m_fenceEvent);
 
-	DX_RELEASE(pCmdList);
+	DX_RELEASE(m_pCmdList);
 
-	DX_RELEASE(pDepthStencilResource);
-	DX_RELEASE(pDepthStencilDescriptorHeap);
+	DX_RELEASE(m_pDepthStencilResource);
+	DX_RELEASE(m_pDepthStencilDescriptorHeap);
 
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
-		FrameBuffer& frameBuffer = frameBuffers[i];
-		DX_RELEASE(frameBuffer.pRenderTargetResource);
-		DX_RELEASE(frameBuffer.pCommandAllocator);
-		DX_RELEASE(frameBuffer.pFence);
+		FrameBuffer& frameBuffer = m_frameBuffers[i];
+		DX_RELEASE(frameBuffer.m_pRenderTargetResource);
+		DX_RELEASE(frameBuffer.m_pCommandAllocator);
+		DX_RELEASE(frameBuffer.m_pFence);
 	};
-	DX_RELEASE(pFrameBufferRenderTargetDescriptorHeap);
+	DX_RELEASE(m_pFrameBufferRenderTargetDescriptorHeap);
 
-	DX_RELEASE(pSwapChain);
-	DX_RELEASE(pCommandQueue);
-	DX_RELEASE(pDevice);
+	DX_RELEASE(m_pSwapChain);
+	DX_RELEASE(m_pCommandQueue);
+	DX_RELEASE(m_pDevice);
 }
 
 void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
@@ -357,30 +357,30 @@ void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, c
 
 void Direct3D12Render::EndFrame()
 {
-	FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
+	FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
 
 	// Transition the render target from render target state to present state
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = frameBuffer.pRenderTargetResource;
+	barrier.Transition.pResource = frameBuffer.m_pRenderTargetResource;
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	pCmdList->ResourceBarrier(1, &barrier);
+	m_pCmdList->ResourceBarrier(1, &barrier);
 
-	HRESULT hr = pCmdList->Close();
+	HRESULT hr = m_pCmdList->Close();
 	DX_CHECK_HRESULT(hr);
 
-	ID3D12CommandList* commandLists[] = { pCmdList };
-	pCommandQueue->ExecuteCommandLists(static_cast<UINT>(DESIRE_ASIZEOF(commandLists)), commandLists);
+	ID3D12CommandList* commandLists[] = { m_pCmdList };
+	m_pCommandQueue->ExecuteCommandLists(static_cast<UINT>(DESIRE_ASIZEOF(commandLists)), commandLists);
 
 	// This command goes in at the end of our command queue.
 	// We will know when our command queue has finished because the fence value will be set to "fenceValue" from the GPU
-	hr = pCommandQueue->Signal(frameBuffer.pFence, frameBuffer.fenceValue);
+	hr = m_pCommandQueue->Signal(frameBuffer.m_pFence, frameBuffer.m_fenceValue);
 	DX_CHECK_HRESULT(hr);
 
-	hr = pSwapChain->Present(1, 0);
+	hr = m_pSwapChain->Present(1, 0);
 	DX_CHECK_HRESULT(hr);
 }
 
@@ -394,46 +394,46 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 		((clearColorRGBA >>  0) & 0xFF) / 255.0f,
 	};
 
-	if(pActiveRenderTarget != nullptr)
+	if(m_pActiveRenderTarget != nullptr)
 	{
-		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pActiveRenderTarget->pRenderData);
+		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(m_pActiveRenderTarget->m_pRenderData);
 		if(pRenderTargetRenderData != nullptr)
 		{
-			for(D3D12_CPU_DESCRIPTOR_HANDLE& renderTargetDescriptor : pRenderTargetRenderData->renderTargetDescriptors)
+			for(D3D12_CPU_DESCRIPTOR_HANDLE& renderTargetDescriptor : pRenderTargetRenderData->m_renderTargetDescriptors)
 			{
-				pCmdList->ClearRenderTargetView(renderTargetDescriptor, clearColor, 0, nullptr);
+				m_pCmdList->ClearRenderTargetView(renderTargetDescriptor, clearColor, 0, nullptr);
 			}
 
-			pCmdList->ClearDepthStencilView(pRenderTargetRenderData->depthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+			m_pCmdList->ClearDepthStencilView(pRenderTargetRenderData->m_depthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
 		}
 	}
 	else
 	{
-		FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
-		pCmdList->ClearRenderTargetView(frameBuffer.renderTargetDescriptor, clearColor, 0, nullptr);
-		pCmdList->ClearDepthStencilView(pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+		FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
+		m_pCmdList->ClearRenderTargetView(frameBuffer.m_renderTargetDescriptor, clearColor, 0, nullptr);
+		m_pCmdList->ClearDepthStencilView(m_pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
 	}
 }
 
 void Direct3D12Render::SetWorldMatrix(const Matrix4& matrix)
 {
-	matWorld.r[0] = GetXMVECTOR(matrix.col0);
-	matWorld.r[1] = GetXMVECTOR(matrix.col1);
-	matWorld.r[2] = GetXMVECTOR(matrix.col2);
-	matWorld.r[3] = GetXMVECTOR(matrix.col3);
+	m_matWorld.r[0] = GetXMVECTOR(matrix.col0);
+	m_matWorld.r[1] = GetXMVECTOR(matrix.col1);
+	m_matWorld.r[2] = GetXMVECTOR(matrix.col2);
+	m_matWorld.r[3] = GetXMVECTOR(matrix.col3);
 }
 
 void Direct3D12Render::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
-	matView.r[0] = GetXMVECTOR(viewMatrix.col0);
-	matView.r[1] = GetXMVECTOR(viewMatrix.col1);
-	matView.r[2] = GetXMVECTOR(viewMatrix.col2);
-	matView.r[3] = GetXMVECTOR(viewMatrix.col3);
+	m_matView.r[0] = GetXMVECTOR(viewMatrix.col0);
+	m_matView.r[1] = GetXMVECTOR(viewMatrix.col1);
+	m_matView.r[2] = GetXMVECTOR(viewMatrix.col2);
+	m_matView.r[3] = GetXMVECTOR(viewMatrix.col3);
 
-	matProj.r[0] = GetXMVECTOR(projMatrix.col0);
-	matProj.r[1] = GetXMVECTOR(projMatrix.col1);
-	matProj.r[2] = GetXMVECTOR(projMatrix.col2);
-	matProj.r[3] = GetXMVECTOR(projMatrix.col3);
+	m_matProj.r[0] = GetXMVECTOR(projMatrix.col0);
+	m_matProj.r[1] = GetXMVECTOR(projMatrix.col1);
+	m_matProj.r[2] = GetXMVECTOR(projMatrix.col2);
+	m_matProj.r[3] = GetXMVECTOR(projMatrix.col3);
 }
 
 void Direct3D12Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
@@ -446,48 +446,48 @@ void Direct3D12Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16
 
 void Direct3D12Render::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
 {
-	ASSERT(!blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
+	ASSERT(!m_blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
 
 	if(r)
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_RED;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_RED;
 	}
 	else
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_RED;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_RED;
 	}
 
 	if(g)
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_GREEN;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_GREEN;
 	}
 	else
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_GREEN;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_GREEN;
 	}
 
 	if(b)
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_BLUE;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_BLUE;
 	}
 	else
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_BLUE;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_BLUE;
 	}
 
 	if(a)
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_ALPHA;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask |= D3D12_COLOR_WRITE_ENABLE_ALPHA;
 	}
 	else
 	{
-		blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_ALPHA;
+		m_blendDesc.RenderTarget[0].RenderTargetWriteMask &= ~D3D12_COLOR_WRITE_ENABLE_ALPHA;
 	}
 }
 
 void Direct3D12Render::SetDepthWriteEnabled(bool enabled)
 {
-	depthStencilDesc.DepthWriteMask = enabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
+	m_depthStencilDesc.DepthWriteMask = enabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 }
 
 void Direct3D12Render::SetDepthTest(EDepthTest depthTest)
@@ -495,35 +495,35 @@ void Direct3D12Render::SetDepthTest(EDepthTest depthTest)
 	switch(depthTest)
 	{
 		case EDepthTest::Disabled:
-			depthStencilDesc.DepthEnable = FALSE;
+			m_depthStencilDesc.DepthEnable = FALSE;
 			return;
 
-		case EDepthTest::Less:			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; break;
-		case EDepthTest::LessEqual:		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
-		case EDepthTest::Greater:		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER; break;
-		case EDepthTest::GreaterEqual:	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
-		case EDepthTest::Equal:			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL; break;
-		case EDepthTest::NotEqual:		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
+		case EDepthTest::Less:			m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; break;
+		case EDepthTest::LessEqual:		m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
+		case EDepthTest::Greater:		m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER; break;
+		case EDepthTest::GreaterEqual:	m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
+		case EDepthTest::Equal:			m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL; break;
+		case EDepthTest::NotEqual:		m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
 	}
 
-	depthStencilDesc.DepthEnable = TRUE;
+	m_depthStencilDesc.DepthEnable = TRUE;
 }
 
 void Direct3D12Render::SetCullMode(ECullMode cullMode)
 {
 	switch(cullMode)
 	{
-		case ECullMode::None:	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; break;
-		case ECullMode::CCW:	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; break;
-		case ECullMode::CW:		rasterizerDesc.CullMode = D3D12_CULL_MODE_FRONT; break;
+		case ECullMode::None:	m_rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; break;
+		case ECullMode::CCW:	m_rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; break;
+		case ECullMode::CW:		m_rasterizerDesc.CullMode = D3D12_CULL_MODE_FRONT; break;
 	}
 }
 
 void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
 {
-	ASSERT(!blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
+	ASSERT(!m_blendDesc.IndependentBlendEnable && "Independent render target blend states are not supported (only the RenderTarget[0] members are used)");
 
-	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	m_blendDesc.RenderTarget[0].BlendEnable = TRUE;
 
 	static constexpr D3D12_BLEND s_blendConversionTable[] =
 	{
@@ -543,10 +543,10 @@ void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 	};
 	DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
 
-	blendDesc.RenderTarget[0].SrcBlend = s_blendConversionTable[(size_t)srcBlendRGB];
-	blendDesc.RenderTarget[0].DestBlend = s_blendConversionTable[(size_t)destBlendRGB];
-	blendDesc.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[(size_t)srcBlendAlpha];
-	blendDesc.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
+	m_blendDesc.RenderTarget[0].SrcBlend = s_blendConversionTable[(size_t)srcBlendRGB];
+	m_blendDesc.RenderTarget[0].DestBlend = s_blendConversionTable[(size_t)destBlendRGB];
+	m_blendDesc.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[(size_t)srcBlendAlpha];
+	m_blendDesc.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
 
 	static constexpr D3D12_BLEND_OP s_equationConversionTable[] =
 	{
@@ -558,13 +558,13 @@ void Direct3D12Render::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlen
 	};
 	DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
 
-	blendDesc.RenderTarget[0].BlendOp = s_equationConversionTable[(size_t)blendOpRGB];
-	blendDesc.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[(size_t)blendOpAlpha];
+	m_blendDesc.RenderTarget[0].BlendOp = s_equationConversionTable[(size_t)blendOpRGB];
+	m_blendDesc.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[(size_t)blendOpAlpha];
 }
 
 void Direct3D12Render::SetBlendModeDisabled()
 {
-	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	m_blendDesc.RenderTarget[0].BlendEnable = FALSE;
 }
 
 void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
@@ -587,9 +587,9 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 	ShaderRenderDataD3D12* pShaderRenderData = new ShaderRenderDataD3D12();
 
 	D3D_SHADER_MACRO defines[32] = {};
-	ASSERT(shader.defines.size() < DESIRE_ASIZEOF(defines));
+	ASSERT(shader.m_defines.size() < DESIRE_ASIZEOF(defines));
 	D3D_SHADER_MACRO* definePtr = &defines[0];
-	for(const String& define : shader.defines)
+	for(const String& define : shader.m_defines)
 	{
 		definePtr->Name = define.Str();
 		definePtr->Definition = "1";
@@ -597,14 +597,14 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 	}
 
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
-	AppendShaderFilenameWithPath(filenameWithPath, shader.name);
+	AppendShaderFilenameWithPath(filenameWithPath, shader.m_name);
 
-	const bool isVertexShader = shader.name.StartsWith("vs_");
+	const bool isVertexShader = shader.m_name.StartsWith("vs_");
 	UINT compileFlags = 0;
 
 	ID3DBlob* pErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader.data.ptr.get(),		// pSrcData
-		shader.data.size,								// SrcDataSize
+	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),		// pSrcData
+		shader.m_data.size,								// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
 		defines,										// pDefines
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
@@ -612,7 +612,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		isVertexShader ? "vs_5_0" : "ps_5_0",			// pTarget
 		compileFlags,									// D3DCOMPILE flags
 		0,												// D3DCOMPILE_EFFECT flags
-		&pShaderRenderData->shaderCode,					// ppCode
+		&pShaderRenderData->m_pShaderCode,				// ppCode
 		&pErrorBlob);									// ppErrorMsgs
 	if(FAILED(hr))
 	{
@@ -623,23 +623,23 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		}
 
 		delete pShaderRenderData;
-		return isVertexShader ? errorVertexShader->pRenderData : errorPixelShader->pRenderData;
+		return isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData;
 	}
 
 	if(isVertexShader)
 	{
-//		hr = pDevice->CreateVertexShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
+//		hr = m_pDevice->CreateVertexShader(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
 	}
 	else
 	{
-//		hr = pDevice->CreatePixelShader(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
+//		hr = m_pDevice->CreatePixelShader(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
 	}
 	DX_CHECK_HRESULT(hr);
 
-//	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(shader.name.Length()), shader.name.Str());
+//	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(shader.m_name.Length()), shader.m_name.Str());
 
 	ID3D12ShaderReflection* pReflection = nullptr;
-	hr = D3DReflect(pShaderRenderData->shaderCode->GetBufferPointer(), pShaderRenderData->shaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
+	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
 	if(FAILED(hr))
 	{
 		LOG_ERROR("D3DReflect failed 0x%08x\n", (uint32_t)hr);
@@ -652,8 +652,8 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		LOG_ERROR("ID3D12ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
 	}
 
-	pShaderRenderData->constantBuffers.SetSize(shaderDesc.ConstantBuffers);
-	pShaderRenderData->constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
+	pShaderRenderData->m_constantBuffers.SetSize(shaderDesc.ConstantBuffers);
+	pShaderRenderData->m_constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
 /*	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
 		ID3D12ShaderReflectionConstantBuffer* cbuffer = pReflection->GetConstantBufferByIndex(i);
@@ -666,7 +666,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D12_USAGE_DEFAULT;
 		bufferDesc.BindFlags = D3D12_BIND_CONSTANT_BUFFER;
-		hr = pDevice->CreateCommittedResource(&bufferDesc, nullptr, &pShaderRenderData->constantBuffers[i]);
+		hr = m_pDevice->CreateCommittedResource(&bufferDesc, nullptr, &pShaderRenderData->constantBuffers[i]);
 		DX_CHECK_HRESULT(hr);
 
 		// Create constant buffer data
@@ -698,7 +698,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 			}
 
 			const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-			bufferData.variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
+			bufferData.m_variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
 		}
 	}
 */
@@ -730,13 +730,13 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-	pDevice->CreateCommittedResource(
+	m_pDevice->CreateCommittedResource(
 		&heapProperties,
 		D3D12_HEAP_FLAG_NONE,
 		&resourceDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
-		IID_PPV_ARGS(&pTextureRenderData->pTexture2D)
+		IID_PPV_ARGS(&pTextureRenderData->m_pTexture2D)
 	);
 
 	return pTextureRenderData;
@@ -767,9 +767,9 @@ void Direct3D12Render::DestroyShaderRenderData(void* pRenderData)
 {
 	ShaderRenderDataD3D12* pShaderRenderData = static_cast<ShaderRenderDataD3D12*>(pRenderData);
 
-	if((pShaderRenderData == errorVertexShader->pRenderData || pShaderRenderData == errorPixelShader->pRenderData)
-//		&& pShader != errorVertexShader.get()
-//		&& pShader != errorPixelShader.get()
+	if((pShaderRenderData == m_errorVertexShader->m_pRenderData || pShaderRenderData == m_errorPixelShader->m_pRenderData)
+//		&& pShader != errorVertexshader.m_get()
+//		&& pShader != errorPixelshader.m_get()
 		)
 	{
 		return;
@@ -792,33 +792,33 @@ void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
 
 void Direct3D12Render::SetMesh(Mesh& mesh)
 {
-	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(mesh.pRenderData);
-	pCmdList->IASetIndexBuffer(&pMeshRenderData->indexBufferView);
-	pCmdList->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBufferView);
+	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(mesh.m_pRenderData);
+	m_pCmdList->IASetIndexBuffer(&pMeshRenderData->indexBufferView);
+	m_pCmdList->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBufferView);
 }
 
 void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 {
-	if(dynamicMesh.isIndicesDirty)
+	if(dynamicMesh.m_isIndicesDirty)
 	{
-		dynamicMesh.isIndicesDirty = false;
+		dynamicMesh.m_isIndicesDirty = false;
 	}
 
-	if(dynamicMesh.isVerticesDirty)
+	if(dynamicMesh.m_isVerticesDirty)
 	{
-		dynamicMesh.isVerticesDirty = false;
+		dynamicMesh.m_isVerticesDirty = false;
 	}
 }
 
 void Direct3D12Render::SetVertexShader(Shader& vertexShader)
 {
-	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader.pRenderData);
+	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader.m_pRenderData);
 	DESIRE_UNUSED(pShaderRenderData);
 }
 
 void Direct3D12Render::SetFragmentShader(Shader& fragmentShader)
 {
-	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader.pRenderData);
+	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader.m_pRenderData);
 	DESIRE_UNUSED(pShaderRenderData);
 }
 
@@ -828,7 +828,7 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 
 	ASSERT(samplerIdx < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
-//	const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->pRenderData);
+//	const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->m_pRenderData);
 
 	static constexpr D3D12_TEXTURE_ADDRESS_MODE s_addressModeConversionTable[] =
 	{
@@ -860,12 +860,12 @@ void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 
 void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
-	D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(pActiveWindow->GetWidth()), static_cast<FLOAT>(pActiveWindow->GetHeight()), 0.0f, 1.0f };
+	D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(m_pActiveWindow->GetWidth()), static_cast<FLOAT>(m_pActiveWindow->GetHeight()), 0.0f, 1.0f };
 
 	if(pRenderTarget != nullptr)
 	{
-		const RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderTarget->pRenderData);
-		pCmdList->OMSetRenderTargets(pRenderTargetRenderData->numRenderTargetDescriptors, pRenderTargetRenderData->renderTargetDescriptors, TRUE, &pRenderTargetRenderData->depthStencilDescriptor);
+		const RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderTarget->m_pRenderData);
+		m_pCmdList->OMSetRenderTargets(pRenderTargetRenderData->m_numRenderTargetDescriptors, pRenderTargetRenderData->m_renderTargetDescriptors, TRUE, &pRenderTargetRenderData->m_depthStencilDescriptor);
 
 		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
 		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());
@@ -877,39 +877,39 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 			// We have to wait for the gpu to finish with the command allocator before we reset it
 			WaitForPreviousFrame();
 
-			FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
-			HRESULT hr = frameBuffer.pCommandAllocator->Reset();
+			FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
+			HRESULT hr = frameBuffer.m_pCommandAllocator->Reset();
 			DX_CHECK_HRESULT(hr);
 
 			// By resetting the command list we are putting it into a recording state so we can start recording commands
 			ID3D12PipelineState* pPipelineState = nullptr;
-			hr = pCmdList->Reset(frameBuffer.pCommandAllocator, pPipelineState);
+			hr = m_pCmdList->Reset(frameBuffer.m_pCommandAllocator, pPipelineState);
 
 			// Transition the render target from present state to render target state
 			D3D12_RESOURCE_BARRIER barrier = {};
 			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-			barrier.Transition.pResource = frameBuffer.pRenderTargetResource;
+			barrier.Transition.pResource = frameBuffer.m_pRenderTargetResource;
 			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 			barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-			pCmdList->ResourceBarrier(1, &barrier);
+			m_pCmdList->ResourceBarrier(1, &barrier);
 		}
 
-		FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
-		const D3D12_CPU_DESCRIPTOR_HANDLE depthStencilDescriptor = pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		pCmdList->OMSetRenderTargets(1, &frameBuffer.renderTargetDescriptor, TRUE, &depthStencilDescriptor);
+		FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
+		const D3D12_CPU_DESCRIPTOR_HANDLE m_depthStencilDescriptor = m_pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		m_pCmdList->OMSetRenderTargets(1, &frameBuffer.m_renderTargetDescriptor, TRUE, &m_depthStencilDescriptor);
 	}
 
-	pCmdList->RSSetViewports(1, &viewport);
+	m_pCmdList->RSSetViewports(1, &viewport);
 }
 
 void Direct3D12Render::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveVertexShader->pRenderData);
+	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(m_pActiveVertexShader->m_pRenderData);
 	UpdateShaderParams(material, pVertexShaderRenderData);
 
-	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(pActiveFragmentShader->pRenderData);
+	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(m_pActiveFragmentShader->m_pRenderData);
 	UpdateShaderParams(material, pFragmentShaderRenderData);
 }
 
@@ -917,76 +917,76 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, const Shader
 {
 	const std::pair<uint32_t, uint32_t>* pOffsetSizePair = nullptr;
 
-	for(size_t i = 0; i < pShaderRenderData->constantBuffers.Size(); ++i)
+	for(size_t i = 0; i < pShaderRenderData->m_constantBuffers.Size(); ++i)
 	{
 		bool isChanged = false;
-		const ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->constantBuffersData[i];
+		const ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
 
 		for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 		{
-			pOffsetSizePair = bufferData.variableOffsetSizePairs.Find(shaderParam.name);
+			pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find(shaderParam.m_name);
 			if(pOffsetSizePair != nullptr)
 			{
-				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 			}
 		}
 
-		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldView");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matWorldView");
 		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
-			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matWorldViewProj");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matWorldViewProj");
 		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
-			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(matWorld, matView);
-			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, matProj);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
+			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, m_matProj);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matView");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matView");
 		if(pOffsetSizePair != nullptr)
 		{
-			isChanged |= CheckAndUpdateShaderParam(&matView.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(&m_matView.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("matViewInv");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matViewInv");
 		if(pOffsetSizePair != nullptr)
 		{
-			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("camPos");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("camPos");
 		if(pOffsetSizePair != nullptr)
 		{
-			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.variableOffsetSizePairs.Find("resolution");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("resolution");
 		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == 2 * sizeof(float))
 		{
 			float resolution[2] = {};
-			if(pActiveRenderTarget != nullptr)
+			if(m_pActiveRenderTarget != nullptr)
 			{
-				resolution[0] = pActiveRenderTarget->GetWidth();
-				resolution[1] = pActiveRenderTarget->GetHeight();
+				resolution[0] = m_pActiveRenderTarget->GetWidth();
+				resolution[1] = m_pActiveRenderTarget->GetHeight();
 			}
-			else if(pActiveWindow != nullptr)
+			else if(m_pActiveWindow != nullptr)
 			{
-				resolution[0] = pActiveWindow->GetWidth();
-				resolution[1] = pActiveWindow->GetHeight();
+				resolution[0] = m_pActiveWindow->GetWidth();
+				resolution[1] = m_pActiveWindow->GetHeight();
 			}
 
-			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
 		if(isChanged)
 		{
-//			deviceCtx->UpdateSubresource(pShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.data.ptr.get(), 0, 0);
+//			deviceCtx->UpdateSubresource(pShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.m_data.ptr.get(), 0, 0);
 		}
 	}
 }
@@ -1021,27 +1021,27 @@ void Direct3D12Render::CreateFrameBuffers()
 {
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
-		FrameBuffer& frameBuffer = frameBuffers[i];
-		HRESULT hr = pSwapChain->GetBuffer(i, IID_PPV_ARGS(&frameBuffer.pRenderTargetResource));
+		FrameBuffer& frameBuffer = m_frameBuffers[i];
+		HRESULT hr = m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&frameBuffer.m_pRenderTargetResource));
 		DX_CHECK_HRESULT(hr);
-		pDevice->CreateRenderTargetView(frameBuffer.pRenderTargetResource, nullptr, frameBuffer.renderTargetDescriptor);
+		m_pDevice->CreateRenderTargetView(frameBuffer.m_pRenderTargetResource, nullptr, frameBuffer.m_renderTargetDescriptor);
 	}
 }
 
 void Direct3D12Render::WaitForPreviousFrame()
 {
-	FrameBuffer& frameBuffer = frameBuffers[activeFrameBufferIdx];
-	if(frameBuffer.pFence->GetCompletedValue() < frameBuffer.fenceValue)
+	FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
+	if(frameBuffer.m_pFence->GetCompletedValue() < frameBuffer.m_fenceValue)
 	{
 		// The GPU has not finished executing the command queue so we will wait until the fence has triggered the event
-		HRESULT hr = frameBuffer.pFence->SetEventOnCompletion(frameBuffer.fenceValue, fenceEvent);
+		HRESULT hr = frameBuffer.m_pFence->SetEventOnCompletion(frameBuffer.m_fenceValue, m_fenceEvent);
 		DX_CHECK_HRESULT(hr);
-		WaitForSingleObject(fenceEvent, INFINITE);
+		WaitForSingleObject(m_fenceEvent, INFINITE);
 	}
 
-	frameBuffer.fenceValue++;
+	frameBuffer.m_fenceValue++;
 
-	activeFrameBufferIdx = pSwapChain->GetCurrentBackBufferIndex();
+	m_activeFrameBufferIdx = m_pSwapChain->GetCurrentBackBufferIndex();
 }
 
 DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture& texture)

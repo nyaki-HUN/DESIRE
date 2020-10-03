@@ -3,8 +3,8 @@
 class MeshRenderDataD3D11
 {
 public:
-	ID3D11Buffer* pIndexBuffer = nullptr;
-	ID3D11Buffer* pVertexBuffer = nullptr;
+	ID3D11Buffer* m_pIndexBuffer = nullptr;
+	ID3D11Buffer* m_pVertexBuffer = nullptr;
 
-	uint64_t vertexLayoutKey = 0;
+	uint64_t m_vertexLayoutKey = 0;
 };

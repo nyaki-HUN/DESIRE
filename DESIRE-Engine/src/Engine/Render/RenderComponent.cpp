@@ -6,7 +6,7 @@
 
 RenderComponent::RenderComponent(Object& object)
 	: Component(object)
-	, aabb(std::make_unique<AABB>())
+	, m_aabb(std::make_unique<AABB>())
 {
 }
 
@@ -18,45 +18,35 @@ void RenderComponent::CloneTo(Object& otherObject) const
 {
 	RenderComponent& otherComponent = otherObject.AddComponent<RenderComponent>();
 	DESIRE_TODO("Implement CloneTo");
-//	otherComponent.mesh =
-//	otherComponent.material =
-//	otherComponent.aabb =
-	otherComponent.renderLayer = renderLayer;
-	otherComponent.isVisible = isVisible;
+//	otherComponent.m_mesh =
+//	otherComponent.m_material =
+//	otherComponent.m_aabb =
+	otherComponent.m_renderLayer = m_renderLayer;
+	otherComponent.m_isVisible = m_isVisible;
 	otherComponent.SetEnabled(IsEnabled());
 }
 
 void RenderComponent::SetLayer(int layer)
 {
-	renderLayer = layer;
+	m_renderLayer = layer;
 }
 
 int RenderComponent::GetLayer() const
 {
-	return renderLayer;
+	return m_renderLayer;
 }
 
 void RenderComponent::SetVisible(bool visible)
 {
-	isVisible = visible;
+	m_isVisible = visible;
 }
 
 bool RenderComponent::IsVisible() const
 {
-	return isVisible;
-}
-
-void RenderComponent::SetMaterial(Material* newMaterial)
-{
-	material = newMaterial;
-}
-
-Material* RenderComponent::GetMaterial() const
-{
-	return material;
+	return m_isVisible;
 }
 
 const AABB& RenderComponent::GetAABB() const
 {
-	return *aabb;
+	return *m_aabb;
 }

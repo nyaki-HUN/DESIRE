@@ -36,9 +36,9 @@ public:
 
 	struct VertexLayout
 	{
-		EAttrib attrib = EAttrib::Num;
-		EAttribType type = EAttribType::Num;
-		uint8_t count = 0;
+		EAttrib m_attrib = EAttrib::Num;
+		EAttribType m_type = EAttribType::Num;
+		uint8_t m_count = 0;
 
 		VertexLayout(EAttrib attrib, int count, EAttribType type);
 		uint32_t GetSizeInBytes() const;
@@ -59,19 +59,19 @@ public:
 	const Array<VertexLayout>& GetVertexLayout() const;
 
 	// Render engine specific data set at bind
-	void* pRenderData = nullptr;
+	void* m_pRenderData = nullptr;
 
-	std::unique_ptr<uint16_t[]> indices;
-	std::unique_ptr<float[]> vertices;
+	std::unique_ptr<uint16_t[]> m_indices;
+	std::unique_ptr<float[]> m_vertices;
 
 protected:
-	EType type = EType::Static;
+	EType m_type = EType::Static;
 
 private:
-	uint32_t numIndices = 0;
-	uint32_t numVertices = 0;
-	uint32_t vertexSize = 0;
-	Array<VertexLayout> vertexLayout;
+	uint32_t m_numIndices = 0;
+	uint32_t m_numVertices = 0;
+	uint32_t m_vertexSize = 0;
+	Array<VertexLayout> m_vertexLayout;
 };
 
 class DynamicMesh : public Mesh
@@ -80,9 +80,9 @@ public:
 	DynamicMesh::DynamicMesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount)
 		: Mesh(vertexLayoutInitList, indexCount, vertexCount)
 	{
-		type = Mesh::EType::Dynamic;
+		m_type = Mesh::EType::Dynamic;
 	}
 
-	bool isIndicesDirty = false;
-	bool isVerticesDirty = false;
+	bool m_isIndicesDirty = false;
+	bool m_isVerticesDirty = false;
 };

@@ -4,7 +4,7 @@
 #include "Engine/Render/Render.h"
 
 Shader::Shader(const String& name)
-	: name(name)
+	: m_name(name)
 {
 }
 

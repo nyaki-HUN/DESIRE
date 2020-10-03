@@ -4,25 +4,25 @@
 #include "Engine/Render/Render.h"
 
 Texture::Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> dataToMove, uint8_t numMipLevels)
-	: width(width)
-	, height(height)
-	, format(format)
-	, numMipLevels(numMipLevels)
-	, data(std::move(dataToMove))
+	: m_width(width)
+	, m_height(height)
+	, m_format(format)
+	, m_numMipLevels(numMipLevels)
+	, m_data(std::move(dataToMove))
 {
-	ASSERT(data != nullptr);
+	ASSERT(m_data != nullptr);
 }
 
 Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pDataToCopy, uint8_t numMipLevels)
-	: width(width)
-	, height(height)
-	, format(format)
-	, numMipLevels(numMipLevels)
+	: m_width(width)
+	, m_height(height)
+	, m_format(format)
+	, m_numMipLevels(numMipLevels)
 {
 	if(pDataToCopy != nullptr)
 	{
-		data = std::make_unique<uint8_t[]>(GetDataSize());
-		memcpy(data.get(), pDataToCopy, GetDataSize());
+		m_data = std::make_unique<uint8_t[]>(GetDataSize());
+		memcpy(m_data.get(), pDataToCopy, GetDataSize());
 	}
 }
 
@@ -35,56 +35,56 @@ Texture& Texture::operator =(Texture&& otherTexture)
 {
 	Modules::Render->Unbind(*this);
 
-	pRenderData = otherTexture.pRenderData;
-	width = otherTexture.width;
-	height = otherTexture.height;
-	format = otherTexture.format;
-	numMipLevels = otherTexture.numMipLevels;
-	data = std::move(otherTexture.data);
+	m_pRenderData = otherTexture.m_pRenderData;
+	m_width = otherTexture.m_width;
+	m_height = otherTexture.m_height;
+	m_format = otherTexture.m_format;
+	m_numMipLevels = otherTexture.m_numMipLevels;
+	m_data = std::move(otherTexture.m_data);
 
-	otherTexture.pRenderData = nullptr;
+	otherTexture.m_pRenderData = nullptr;
 
 	return *this;
 }
 
 uint16_t Texture::GetWidth() const
 {
-	return width;
+	return m_width;
 }
 
 uint16_t Texture::GetHeight() const
 {
-	return height;
+	return m_height;
 }
 
 Texture::EFormat Texture::GetFormat() const
 {
-	return format;
+	return m_format;
 }
 
 uint8_t Texture::GetNumMipLevels() const
 {
-	return numMipLevels;
+	return m_numMipLevels;
 }
 
 const uint8_t* Texture::GetData() const
 {
-	return data.get();
+	return m_data.get();
 }
 
 uint32_t Texture::GetDataSize() const
 {
-	return static_cast<uint32_t>(width) * height * GetBytesPerPixel();
+	return static_cast<uint32_t>(m_width) * m_height * GetBytesPerPixel();
 }
 
 bool Texture::IsDepthFormat() const
 {
-	return format == Texture::EFormat::D16
-		|| format == Texture::EFormat::D24_S8
-		|| format == Texture::EFormat::D32;
+	return m_format == Texture::EFormat::D16
+		|| m_format == Texture::EFormat::D24_S8
+		|| m_format == Texture::EFormat::D32;
 }
 
 uint8_t Texture::GetBytesPerPixel() const
 {
-	return GetBytesPerPixelForFormat(format);
+	return GetBytesPerPixelForFormat(m_format);
 }

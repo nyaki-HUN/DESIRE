@@ -5,109 +5,106 @@
 
 Camera::Camera()
 {
-	viewMat = Matrix4::Identity();
-
 	SetPosition(Vector3(0.0f, 0.0f, -0.5f));
 	SetTarget(Vector3::Zero());
 }
 
 Camera::~Camera()
 {
-
 }
 
 void Camera::SetViewMatrix(const Matrix4& mat)
 {
-	viewMat = mat;
-	flags &= ~VIEW_MATRIX_IS_DIRTY;
+	m_viewMat = mat;
+	m_flags &= ~VIEW_MATRIX_IS_DIRTY;
 }
 
 void Camera::SetProjectionMatrix(const Matrix4& mat)
 {
-	projMat = mat;
-	flags &= PROJECTION_MATRIX_IS_DIRTY;
+	m_projMat = mat;
+	m_flags &= PROJECTION_MATRIX_IS_DIRTY;
 }
 
 const Matrix4& Camera::GetViewMatrix() const
 {
-	return viewMat;
+	return m_viewMat;
 }
 
 const Matrix4& Camera::GetProjectionMatrix() const
 {
-	return projMat;
+	return m_projMat;
 }
 
 void Camera::SetPosition(const Vector3& pos)
 {
-	position = pos;
-	flags |= VIEW_MATRIX_IS_DIRTY;
+	m_position = pos;
+	m_flags |= VIEW_MATRIX_IS_DIRTY;
 }
 
 void Camera::SetTarget(const Vector3& targetPos)
 {
-	target = targetPos;
-	flags |= VIEW_MATRIX_IS_DIRTY;
+	m_target = targetPos;
+	m_flags |= VIEW_MATRIX_IS_DIRTY;
 }
 
 void Camera::SetFov(float newFov)
 {
-	if(fov != newFov)
+	if(m_fov != newFov)
 	{
-		fov = newFov;
-		flags |= PROJECTION_MATRIX_IS_DIRTY;
+		m_fov = newFov;
+		m_flags |= PROJECTION_MATRIX_IS_DIRTY;
 	}
 }
 
 void Camera::SetAspectRatio(float aspectRatio)
 {
-	if(aspect != aspectRatio)
+	if(m_aspect != aspectRatio)
 	{
-		aspect = aspectRatio;
-		flags |= PROJECTION_MATRIX_IS_DIRTY;
+		m_aspect = aspectRatio;
+		m_flags |= PROJECTION_MATRIX_IS_DIRTY;
 	}
 }
 
 const Vector3& Camera::GetPosition() const
 {
-	return position;
+	return m_position;
 }
 
 const Vector3& Camera::GetTarget() const
 {
-	return target;
+	return m_target;
 }
 
 float Camera::GetFov() const
 {
-	return fov;
+	return m_fov;
 }
 
 float Camera::GetAspectRatio() const
 {
-	return aspect;
+	return m_aspect;
 }
 
 void Camera::RecalculateMatrices()
 {
-	if(flags & VIEW_MATRIX_IS_DIRTY)
+	if(m_flags & VIEW_MATRIX_IS_DIRTY)
 	{
-		viewMat = CreateViewMatrix(position, target);
+		m_viewMat = CreateViewMatrix(m_position, m_target);
 	}
 
-	if(flags & PROJECTION_MATRIX_IS_DIRTY)
+	if(m_flags & PROJECTION_MATRIX_IS_DIRTY)
 	{
-		projMat = CreatePerspectiveProjectionMatrix(fov, aspect, zNear, zFar);
+		m_projMat = CreatePerspectiveProjectionMatrix(m_fov, m_aspect, m_zNear, m_zFar);
 	}
 
-	flags &= ~ALL_MATRICES_ARE_DIRTY;
+	m_flags &= ~ALL_MATRICES_ARE_DIRTY;
 }
 
 void Camera::CalculateFrustum(Vector3(&points)[8]) const
 {
-	Matrix4 invView = viewMat;
+	Matrix4 invView = m_viewMat;
 	invView.OrthoInvert();
-	Matrix4 invProj = projMat;
+	Matrix4 invProj = m_projMat;
 	invProj.Invert();
 
 	for(uint8_t i = 0; i < 8; i++)

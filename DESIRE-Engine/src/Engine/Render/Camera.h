@@ -41,15 +41,15 @@ private:
 		ALL_MATRICES_ARE_DIRTY = VIEW_MATRIX_IS_DIRTY | PROJECTION_MATRIX_IS_DIRTY
 	};
 
-	Matrix4 viewMat;
-	Matrix4 projMat;
+	Matrix4 m_viewMat = Matrix4::Identity();
+	Matrix4 m_projMat;
 
-	Vector3 position;
-	Vector3 target;
-	float fov = 60.0f;
-	float aspect = 16.0f / 9.0f;
-	float zNear = 0.1f;
-	float zFar = 1000.0f;
+	Vector3 m_position;
+	Vector3 m_target;
+	float m_fov = 60.0f;
+	float m_aspect = 16.0f / 9.0f;
+	float m_zNear = 0.1f;
+	float m_zFar = 1000.0f;
 
-	int flags = 0;
+	int m_flags = 0;
 };

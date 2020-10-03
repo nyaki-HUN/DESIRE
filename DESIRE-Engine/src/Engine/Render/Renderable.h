@@ -8,9 +8,9 @@ class Renderable
 public:
 	~Renderable();
 
-	std::shared_ptr<Mesh> mesh;
-	std::shared_ptr<Material> material;
+	std::shared_ptr<Mesh> m_mesh;
+	std::shared_ptr<Material> m_material;
 
 	// Render engine specific data set at bind
-	void* pRenderData = nullptr;
+	void* m_pRenderData = nullptr;
 };

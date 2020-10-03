@@ -55,12 +55,12 @@ public:
 	}
 
 	// Render engine specific data set at bind
-	void* pRenderData = nullptr;
+	void* m_pRenderData = nullptr;
 
 private:
-	uint16_t width;
-	uint16_t height;
-	EFormat format;
-	uint8_t numMipLevels;
-	std::unique_ptr<uint8_t[]> data;
+	uint16_t m_width;
+	uint16_t m_height;
+	EFormat m_format;
+	uint8_t m_numMipLevels;
+	std::unique_ptr<uint8_t[]> m_data;
 };

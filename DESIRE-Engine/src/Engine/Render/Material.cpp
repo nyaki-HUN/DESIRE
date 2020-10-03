@@ -2,28 +2,28 @@
 #include "Engine/Render/Material.h"
 
 Material::ShaderParam::ShaderParam(HashedString name, const void* pParam)
-	: name(name)
-	, pParam(pParam)
+	: m_name(name)
+	, m_pParam(pParam)
 {
 	ASSERT(pParam != nullptr);
 }
 
 Material::ShaderParam::ShaderParam(HashedString name, std::function<void(float*)>&& func)
-	: name(name)
-	, paramFunc(std::move(func))
+	: m_name(name)
+	, m_paramFunc(std::move(func))
 {
-	ASSERT(paramFunc != nullptr);
+	ASSERT(m_paramFunc != nullptr);
 }
 
 const void* Material::ShaderParam::GetValue() const
 {
-	if(pParam != nullptr)
+	if(m_pParam != nullptr)
 	{
-		return pParam;
+		return m_pParam;
 	}
 
 	static float s_value[16] = {};
-	paramFunc(s_value);
+	m_paramFunc(s_value);
 
 	return s_value;
 }
@@ -38,40 +38,40 @@ Material::~Material()
 
 void Material::AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode, Render::EAddressMode addressMode)
 {
-	textures.Add({ texture, filterMode, addressMode });
+	m_textures.Add({ texture, filterMode, addressMode });
 }
 
 void Material::ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& texture)
 {
-	if(idx >= textures.Size())
+	if(idx >= m_textures.Size())
 	{
 		return;
 	}
 
-	textures[idx].texture = texture;
+	m_textures[idx].m_texture = texture;
 }
 
 const Array<Material::TextureInfo>& Material::GetTextures() const
 {
-	return textures;
+	return m_textures;
 }
 
 void Material::AddShaderParam(HashedString name, const void* pParam)
 {
-	shaderParams.EmplaceAdd(name, pParam);
+	m_shaderParams.EmplaceAdd(name, pParam);
 }
 
 void Material::AddShaderParam(HashedString name, std::function<void(float*)>&& func)
 {
-	shaderParams.EmplaceAdd(name, std::move(func));
+	m_shaderParams.EmplaceAdd(name, std::move(func));
 }
 
 void Material::RemoveAllShaderParams()
 {
-	shaderParams.Clear();
+	m_shaderParams.Clear();
 }
 
 const Array<Material::ShaderParam>& Material::GetShaderParams() const
 {
-	return shaderParams;
+	return m_shaderParams;
 }

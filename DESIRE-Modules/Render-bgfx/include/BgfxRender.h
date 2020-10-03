@@ -58,13 +58,13 @@ private:
 
 	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture& texture);
 
-	bgfx::UniformHandle samplerUniforms[8];
-	bgfx::ViewId activeViewId = 0;
+	bgfx::UniformHandle m_samplerUniforms[8];
+	bgfx::ViewId m_activeViewId = 0;
 
-	std::unordered_map<std::pair<uint64_t, uint64_t>, bgfx::ProgramHandle, stl_utils::hash_pair<uint64_t, uint64_t>> shaderProgramCache;
+	std::unordered_map<std::pair<uint64_t, uint64_t>, bgfx::ProgramHandle, stl_utils::hash_pair<uint64_t, uint64_t>> m_shaderProgramCache;
 
-	uint64_t renderState = 0;
-	uint32_t blendFactor = 0;
+	uint64_t m_renderState = 0;
+	uint32_t m_blendFactor = 0;
 
-	bgfx::VertexLayout screenSpaceQuadVertexLayout;
+	bgfx::VertexLayout m_screenSpaceQuadVertexLayout;
 };

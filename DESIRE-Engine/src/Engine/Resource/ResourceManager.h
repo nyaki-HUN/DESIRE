@@ -35,11 +35,11 @@ private:
 
 	void CreateErrorTexture();
 
-	std::map<DynamicString, std::weak_ptr<Mesh>> loadedMeshes;
-	std::map<DynamicString, std::weak_ptr<Shader>> loadedShaders;
-	std::map<DynamicString, std::weak_ptr<Texture>> loadedTextures;
+	std::map<DynamicString, std::weak_ptr<Mesh>> m_loadedMeshes;
+	std::map<DynamicString, std::weak_ptr<Shader>> m_loadedShaders;
+	std::map<DynamicString, std::weak_ptr<Texture>> m_loadedTextures;
 
-	std::shared_ptr<Texture> errorTexture;
+	std::shared_ptr<Texture> m_errorTexture;
 
 	// The loaders should be initialized in modules.cpp
 	static const Array<MeshLoaderFunc_t> s_meshLoaders;

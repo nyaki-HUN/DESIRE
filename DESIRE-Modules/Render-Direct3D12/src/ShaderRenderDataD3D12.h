@@ -9,14 +9,14 @@
 class ShaderRenderDataD3D12
 {
 public:
-	ID3DBlob *shaderCode = nullptr;
+	ID3DBlob* m_pShaderCode = nullptr;
 
-	Array<ID3D12Resource*> constantBuffers;
+	Array<ID3D12Resource*> m_constantBuffers;
 
 	struct ConstantBufferData
 	{
-		MemoryBuffer data;
-		HashedStringMap<std::pair<uint32_t, uint32_t>> variableOffsetSizePairs;
+		MemoryBuffer m_data;
+		HashedStringMap<std::pair<uint32_t, uint32_t>> m_variableOffsetSizePairs;
 	};
-	Array<ConstantBufferData> constantBuffersData;
+	Array<ConstantBufferData> m_constantBuffersData;
 };

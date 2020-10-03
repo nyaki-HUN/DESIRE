@@ -20,23 +20,23 @@ Render::~Render()
 
 void Render::BeginFrame(OSWindow& window)
 {
-	pActiveWindow = &window;
+	m_pActiveWindow = &window;
 
 	SetRenderTarget(nullptr);
-	pActiveRenderTarget = nullptr;
+	m_pActiveRenderTarget = nullptr;
 
 	Clear();
 }
 
 void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	if(renderable.mesh == nullptr)
+	if(renderable.m_mesh == nullptr)
 	{
 		ASSERT(false && "Invalid mesh");
 		return;
 	}
 
-	if(renderable.material == nullptr || renderable.material->vertexShader == nullptr || renderable.material->fragmentShader == nullptr)
+	if(renderable.m_material == nullptr || renderable.m_material->m_vertexShader == nullptr || renderable.m_material->m_fragmentShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
@@ -45,54 +45,54 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 	if(numIndices == UINT32_MAX)
 	{
 		// Use all the indices
-		numIndices = renderable.mesh->GetNumIndices() - indexOffset;
+		numIndices = renderable.m_mesh->GetNumIndices() - indexOffset;
 	}
 
 	if(numVertices == UINT32_MAX)
 	{
 		// Use all the vertices
-		numVertices = renderable.mesh->GetNumVertices() - vertexOffset;
+		numVertices = renderable.m_mesh->GetNumVertices() - vertexOffset;
 	}
 
-	if(indexOffset + numIndices > renderable.mesh->GetNumIndices() ||
-		vertexOffset + numVertices > renderable.mesh->GetNumVertices())
+	if(indexOffset + numIndices > renderable.m_mesh->GetNumIndices() ||
+		vertexOffset + numVertices > renderable.m_mesh->GetNumVertices())
 	{
 		return;
 	}
 
-	if(renderable.mesh->pRenderData == nullptr)
+	if(renderable.m_mesh->m_pRenderData == nullptr)
 	{
-		Bind(*renderable.mesh);
+		Bind(*renderable.m_mesh);
 	}
-	else if(renderable.mesh->GetType() == Mesh::EType::Dynamic)
+	else if(renderable.m_mesh->GetType() == Mesh::EType::Dynamic)
 	{
-		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(renderable.mesh.get());
+		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(renderable.m_mesh.get());
 		UpdateDynamicMesh(*pDynamicMesh);
 	}
 
-	if(pActiveMesh != renderable.mesh.get())
+	if(m_pActiveMesh != renderable.m_mesh.get())
 	{
-		SetMesh(*renderable.mesh);
-		pActiveMesh = renderable.mesh.get();
+		SetMesh(*renderable.m_mesh);
+		m_pActiveMesh = renderable.m_mesh.get();
 	}
 
-	SetMaterial(*renderable.material);
-	UpdateShaderParams(*renderable.material);
+	SetMaterial(*renderable.m_material);
+	UpdateShaderParams(*renderable.m_material);
 
 	DoRender(renderable, indexOffset, vertexOffset, numIndices, numVertices);
 }
 
 void Render::SetActiveRenderTarget(RenderTarget* pRenderTarget)
 {
-	if(pRenderTarget != nullptr && pRenderTarget->pRenderData == nullptr)
+	if(pRenderTarget != nullptr && pRenderTarget->m_pRenderData == nullptr)
 	{
 		Bind(*pRenderTarget);
 	}
 
-	if(pActiveRenderTarget != pRenderTarget)
+	if(m_pActiveRenderTarget != pRenderTarget)
 	{
 		SetRenderTarget(pRenderTarget);
-		pActiveRenderTarget = pRenderTarget;
+		m_pActiveRenderTarget = pRenderTarget;
 	}
 }
 
@@ -103,39 +103,39 @@ void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
 
 void Render::Bind(Renderable& renderable)
 {
-	if(renderable.pRenderData == nullptr)
+	if(renderable.m_pRenderData == nullptr)
 	{
-		renderable.pRenderData = CreateRenderableRenderData(renderable);
+		renderable.m_pRenderData = CreateRenderableRenderData(renderable);
 	}
 }
 
 void Render::Bind(Mesh& mesh)
 {
-	if(mesh.pRenderData == nullptr)
+	if(mesh.m_pRenderData == nullptr)
 	{
-		mesh.pRenderData = CreateMeshRenderData(mesh);
+		mesh.m_pRenderData = CreateMeshRenderData(mesh);
 	}
 }
 
 void Render::Bind(Shader& shader)
 {
-	if(shader.pRenderData == nullptr)
+	if(shader.m_pRenderData == nullptr)
 	{
-		shader.pRenderData = CreateShaderRenderData(shader);
+		shader.m_pRenderData = CreateShaderRenderData(shader);
 	}
 }
 
 void Render::Bind(Texture& texture)
 {
-	if(texture.pRenderData == nullptr)
+	if(texture.m_pRenderData == nullptr)
 	{
-		texture.pRenderData = CreateTextureRenderData(texture);
+		texture.m_pRenderData = CreateTextureRenderData(texture);
 	}
 }
 
 void Render::Bind(RenderTarget& renderTarget)
 {
-	if(renderTarget.pRenderData != nullptr)
+	if(renderTarget.m_pRenderData != nullptr)
 	{
 		return;
 	}
@@ -147,89 +147,89 @@ void Render::Bind(RenderTarget& renderTarget)
 		Bind(*texture);
 	}
 
-	renderTarget.pRenderData = CreateRenderTargetRenderData(renderTarget);
+	renderTarget.m_pRenderData = CreateRenderTargetRenderData(renderTarget);
 }
 
 void Render::Unbind(Renderable& renderable)
 {
-	if(renderable.pRenderData == nullptr)
+	if(renderable.m_pRenderData == nullptr)
 	{
 		return;
 	}
 
-	if( renderable.mesh == nullptr ||
-		renderable.material == nullptr ||
-		renderable.material->vertexShader == nullptr ||
-		renderable.material->fragmentShader == nullptr)
+	if( renderable.m_mesh == nullptr ||
+		renderable.m_material == nullptr ||
+		renderable.m_material->m_vertexShader == nullptr ||
+		renderable.m_material->m_fragmentShader == nullptr)
 	{
 		ASSERT(false && "Invalid renderable");
 		return;
 	}
 
-	Bind(*renderable.mesh);
-	Bind(*renderable.material->vertexShader);
-	Bind(*renderable.material->fragmentShader);
+	Bind(*renderable.m_mesh);
+	Bind(*renderable.m_material->m_vertexShader);
+	Bind(*renderable.m_material->m_fragmentShader);
 
-	DestroyRenderableRenderData(renderable.pRenderData);
-	renderable.pRenderData = nullptr;
+	DestroyRenderableRenderData(renderable.m_pRenderData);
+	renderable.m_pRenderData = nullptr;
 }
 
 void Render::Unbind(Mesh& mesh)
 {
-	if(mesh.pRenderData == nullptr)
+	if(mesh.m_pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyMeshRenderData(mesh.pRenderData);
-	mesh.pRenderData = nullptr;
+	DestroyMeshRenderData(mesh.m_pRenderData);
+	mesh.m_pRenderData = nullptr;
 
-	if(pActiveMesh == &mesh)
+	if(m_pActiveMesh == &mesh)
 	{
-		pActiveMesh = nullptr;
+		m_pActiveMesh = nullptr;
 	}
 }
 
 void Render::Unbind(Shader& shader)
 {
-	if(shader.pRenderData == nullptr)
+	if(shader.m_pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyShaderRenderData(shader.pRenderData);
-	shader.pRenderData = nullptr;
+	DestroyShaderRenderData(shader.m_pRenderData);
+	shader.m_pRenderData = nullptr;
 
-	if(pActiveVertexShader == &shader)
+	if(m_pActiveVertexShader == &shader)
 	{
-		pActiveVertexShader = nullptr;
+		m_pActiveVertexShader = nullptr;
 	}
-	if(pActiveFragmentShader == &shader)
+	if(m_pActiveFragmentShader == &shader)
 	{
-		pActiveFragmentShader = nullptr;
+		m_pActiveFragmentShader = nullptr;
 	}
 }
 
 void Render::Unbind(Texture& texture)
 {
-	if(texture.pRenderData == nullptr)
+	if(texture.m_pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyTextureRenderData(texture.pRenderData);
-	texture.pRenderData = nullptr;
+	DestroyTextureRenderData(texture.m_pRenderData);
+	texture.m_pRenderData = nullptr;
 }
 
 void Render::Unbind(RenderTarget& renderTarget)
 {
-	if(renderTarget.pRenderData == nullptr)
+	if(renderTarget.m_pRenderData == nullptr)
 	{
 		return;
 	}
 
-	DestroyRenderTargetRenderData(renderTarget.pRenderData);
-	renderTarget.pRenderData = nullptr;
+	DestroyRenderTargetRenderData(renderTarget.m_pRenderData);
+	renderTarget.m_pRenderData = nullptr;
 
 	const uint8_t textureCount = renderTarget.GetTextureCount();
 	for(uint8_t i = 0; i < textureCount; ++i)
@@ -237,9 +237,9 @@ void Render::Unbind(RenderTarget& renderTarget)
 		Unbind(*renderTarget.GetTexture(i));
 	}
 
-	if(pActiveRenderTarget == &renderTarget)
+	if(m_pActiveRenderTarget == &renderTarget)
 	{
-		pActiveRenderTarget = nullptr;
+		m_pActiveRenderTarget = nullptr;
 	}
 }
 
@@ -254,32 +254,32 @@ void Render::SetDefaultRenderStates()
 void Render::SetMaterial(Material& material)
 {
 	// Vertex shader
-	if(material.vertexShader != nullptr)
+	if(material.m_vertexShader != nullptr)
 	{
-		if(material.vertexShader->pRenderData == nullptr)
+		if(material.m_vertexShader->m_pRenderData == nullptr)
 		{
-			Bind(*material.vertexShader);
+			Bind(*material.m_vertexShader);
 		}
 
-		if(pActiveVertexShader != material.vertexShader.get())
+		if(m_pActiveVertexShader != material.m_vertexShader.get())
 		{
-			SetVertexShader(*material.vertexShader);
-			pActiveVertexShader = material.vertexShader.get();
+			SetVertexShader(*material.m_vertexShader);
+			m_pActiveVertexShader = material.m_vertexShader.get();
 		}
 	}
 
 	// Fragment shader
-	if(material.fragmentShader != nullptr)
+	if(material.m_fragmentShader != nullptr)
 	{
-		if(material.fragmentShader->pRenderData == nullptr)
+		if(material.m_fragmentShader->m_pRenderData == nullptr)
 		{
-			Bind(*material.fragmentShader);
+			Bind(*material.m_fragmentShader);
 		}
 
-		if(pActiveFragmentShader != material.fragmentShader.get())
+		if(m_pActiveFragmentShader != material.m_fragmentShader.get())
 		{
-			SetFragmentShader(*material.fragmentShader);
-			pActiveFragmentShader = material.fragmentShader.get();
+			SetFragmentShader(*material.m_fragmentShader);
+			m_pActiveFragmentShader = material.m_fragmentShader.get();
 		}
 	}
 
@@ -287,12 +287,12 @@ void Render::SetMaterial(Material& material)
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
-		if(textureInfo.texture->pRenderData == nullptr)
+		if(textureInfo.m_texture->m_pRenderData == nullptr)
 		{
-			Bind(*textureInfo.texture);
+			Bind(*textureInfo.m_texture);
 		}
 
-		SetTexture(samplerIdx, *textureInfo.texture, textureInfo.filterMode, textureInfo.addressMode);
+		SetTexture(samplerIdx, *textureInfo.m_texture, textureInfo.m_filterMode, textureInfo.m_addressMode);
 		samplerIdx++;
 	}
 }

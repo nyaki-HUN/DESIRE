@@ -72,33 +72,33 @@ private:
 
 	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
-	ID3D11Device* pDevice = nullptr;
-	ID3D11DeviceContext* deviceCtx = nullptr;
-	IDXGISwapChain* pSwapChain = nullptr;
-	ID3D11RenderTargetView* pFrameBufferRenderTargetView = nullptr;
-	ID3D11DepthStencilView* pFrameBufferDepthStencilView = nullptr;
+	ID3D11Device* m_pDevice = nullptr;
+	ID3D11DeviceContext* m_pDeviceCtx = nullptr;
+	IDXGISwapChain* m_pSwapChain = nullptr;
+	ID3D11RenderTargetView* m_pFrameBufferRenderTargetView = nullptr;
+	ID3D11DepthStencilView* m_pFrameBufferDepthStencilView = nullptr;
 
-	D3D11_DEPTH_STENCIL_DESC depthStencilDesc = {};
-	D3D11_RASTERIZER_DESC rasterizerDesc = {};
-	D3D11_BLEND_DESC blendDesc = {};
+	D3D11_DEPTH_STENCIL_DESC m_depthStencilDesc = {};
+	D3D11_RASTERIZER_DESC m_rasterizerDesc = {};
+	D3D11_BLEND_DESC m_blendDesc = {};
 
-	const ID3D11DepthStencilState* pActiveDepthStencilState = nullptr;
-	const ID3D11RasterizerState* pActiveRasterizerState = nullptr;
-	const ID3D11BlendState* pActiveBlendState = nullptr;
-	const ID3D11InputLayout* pActiveInputLayout = nullptr;
-	const ID3D11SamplerState* activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
+	const ID3D11DepthStencilState* m_pActiveDepthStencilState = nullptr;
+	const ID3D11RasterizerState* m_pActiveRasterizerState = nullptr;
+	const ID3D11BlendState* m_pActiveBlendState = nullptr;
+	const ID3D11InputLayout* m_pActiveInputLayout = nullptr;
+	const ID3D11SamplerState* m_activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
 
-	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	DirectX::XMMATRIX matWorld;
-	DirectX::XMMATRIX matView;
-	DirectX::XMMATRIX matProj;
+	float m_blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	DirectX::XMMATRIX m_matWorld;
+	DirectX::XMMATRIX m_matView;
+	DirectX::XMMATRIX m_matProj;
 
-	std::unordered_map<uint64_t, ID3D11DepthStencilState*> depthStencilStateCache;
-	std::unordered_map<uint64_t, ID3D11RasterizerState*> rasterizerStateCache;
-	std::unordered_map<uint64_t, ID3D11BlendState*> blendStateCache;
-	std::unordered_map<std::pair<uint64_t, uint64_t>, ID3D11InputLayout*, stl_utils::hash_pair<uint64_t, uint64_t>> inputLayoutCache;
-	std::unordered_map<uint64_t, ID3D11SamplerState*> samplerStateCache;
+	std::unordered_map<uint64_t, ID3D11DepthStencilState*> m_depthStencilStateCache;
+	std::unordered_map<uint64_t, ID3D11RasterizerState*> m_rasterizerStateCache;
+	std::unordered_map<uint64_t, ID3D11BlendState*> m_blendStateCache;
+	std::unordered_map<std::pair<uint64_t, uint64_t>, ID3D11InputLayout*, stl_utils::hash_pair<uint64_t, uint64_t>> m_inputLayoutCache;
+	std::unordered_map<uint64_t, ID3D11SamplerState*> m_samplerStateCache;
 
-	std::unique_ptr<Shader> errorVertexShader;
-	std::unique_ptr<Shader> errorPixelShader;
+	std::unique_ptr<Shader> m_errorVertexShader;
+	std::unique_ptr<Shader> m_errorPixelShader;
 };
