@@ -5,3 +5,8 @@ project "Render-Direct3D12"
 
 	pchheader "stdafx_Direct3D12.h"
 	pchsource "../src/stdafx_Direct3D12.cpp"
+
+	includedirs
+	{
+		"../Externals/D3DX12",
+	}
