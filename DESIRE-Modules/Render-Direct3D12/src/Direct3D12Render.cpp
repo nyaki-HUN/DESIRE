@@ -15,6 +15,7 @@
 
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
+#include "Engine/Render/Renderable.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
@@ -110,7 +111,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	if(SUCCEEDED(hr))
 	{
 		pDebugController->EnableDebugLayer();
-		pDebugController->Release();
+		DX_RELEASE(pDebugController);
 	}
 #endif
 
@@ -122,13 +123,34 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	}
 
 	// Create device
-	hr = D3D12CreateDevice(
-		nullptr,
-		D3D_FEATURE_LEVEL_12_1,
-		IID_PPV_ARGS(&m_pDevice)
-	);
+	UINT adapterIndex = 0;
+	IDXGIAdapter1* pAdapter = nullptr;
+	while(pFactory->EnumAdapters1(adapterIndex, &pAdapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		DXGI_ADAPTER_DESC1 desc;
+		pAdapter->GetDesc1(&desc);
 
-	if(FAILED(hr))
+		if(desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+		{
+			// Skip SW device
+			continue;
+		}
+
+		hr = D3D12CreateDevice(
+			pAdapter,
+			D3D_FEATURE_LEVEL_12_1,
+			IID_PPV_ARGS(&m_pDevice)
+		);
+
+		if(SUCCEEDED(hr))
+		{
+			break;
+		}
+
+		adapterIndex++;
+	}
+
+	if(m_pDevice == nullptr)
 	{
 		return false;
 	}
@@ -172,97 +194,14 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 		return false;
 	}
 
-	// Create the frame buffers
-	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
-	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvHeapDesc.NumDescriptors = kFrameBufferCount;
-	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	hr = pFactory->MakeWindowAssociation(static_cast<HWND>(mainWindow.GetHandle()), DXGI_MWA_NO_ALT_ENTER);
+	DX_CHECK_HRESULT(hr);
 
-	hr = m_pDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_pFrameBufferRenderTargetDescriptorHeap));
-	if(FAILED(hr))
+	bool succeeded = CreateFrameBuffers(mainWindow.GetWidth(), mainWindow.GetHeight());
+	if(!succeeded)
 	{
 		return false;
 	}
-	m_pFrameBufferRenderTargetDescriptorHeap->SetName(L"pFrameBufferRenderTargetDescriptorHeap");
-
-	const UINT descriptorHandleIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	D3D12_CPU_DESCRIPTOR_HANDLE handleRTV = m_pFrameBufferRenderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
-	{
-		FrameBuffer& frameBuffer = m_frameBuffers[i];
-		frameBuffer.m_renderTargetDescriptor = handleRTV;
-		handleRTV.ptr += descriptorHandleIncrementSize;
-
-		hr = m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frameBuffer.m_pCommandAllocator));
-		if(FAILED(hr))
-		{
-			return false;
-		}
-
-		hr = m_pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frameBuffer.m_pFence));
-		if(FAILED(hr))
-		{
-			return false;
-		}
-
-		frameBuffer.m_fenceValue = 0;
-	}
-
-	// Create the depth/stencil buffer
-	D3D12_HEAP_PROPERTIES heapProperties = {};
-	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	heapProperties.CreationNodeMask = 1;
-	heapProperties.VisibleNodeMask = 1;
-
-	D3D12_RESOURCE_DESC resourceDesc = {};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	resourceDesc.Width = mainWindow.GetWidth();
-	resourceDesc.Height = mainWindow.GetHeight();
-	resourceDesc.DepthOrArraySize = 1;
-	resourceDesc.MipLevels = 0;
-	resourceDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	resourceDesc.SampleDesc.Count = 1;
-	resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
-
-	D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
-	depthOptimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
-	depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
-	depthOptimizedClearValue.DepthStencil.Stencil = 0;
-
-	hr = m_pDevice->CreateCommittedResource(
-		&heapProperties,
-		D3D12_HEAP_FLAG_NONE,
-		&resourceDesc,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		&depthOptimizedClearValue,
-		IID_PPV_ARGS(&m_pDepthStencilResource)
-	);
-	if(FAILED(hr))
-	{
-		return false;
-	}
-
-	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
-	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvHeapDesc.NumDescriptors = 1;
-	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-	hr = m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_pDepthStencilDescriptorHeap));
-	if(FAILED(hr))
-	{
-		return false;
-	}
-	m_pDepthStencilDescriptorHeap->SetName(L"pm_depthStencilDescriptorHeap");
-
-	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
-	depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	depthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-	depthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
-
-	m_pDevice->CreateDepthStencilView(m_pDepthStencilResource, &depthStencilViewDesc, m_pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 
 	// Create command list
 	hr = m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_frameBuffers[0].m_pCommandAllocator, nullptr, IID_PPV_ARGS(&m_pCmdList));
@@ -286,8 +225,6 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 	m_activeFrameBufferIdx = m_pSwapChain->GetCurrentBackBufferIndex();
 
-	CreateFrameBuffers();
-
 	Bind(*m_errorVertexShader);
 	Bind(*m_errorPixelShader);
 
@@ -303,10 +240,11 @@ void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
-		DX_RELEASE(m_frameBuffers[i].m_pRenderTargetResource);
+		DX_RELEASE(m_frameBuffers[i].m_pRenderTarget);
 	}
 
-	CreateFrameBuffers();
+	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
+	ASSERT(succeeded);
 }
 
 void Direct3D12Render::Kill()
@@ -332,16 +270,16 @@ void Direct3D12Render::Kill()
 	DX_RELEASE(m_pCmdList);
 
 	DX_RELEASE(m_pDepthStencilResource);
-	DX_RELEASE(m_pDepthStencilDescriptorHeap);
+	DX_RELEASE(m_pHeapForDSV);
 
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
 		FrameBuffer& frameBuffer = m_frameBuffers[i];
-		DX_RELEASE(frameBuffer.m_pRenderTargetResource);
+		DX_RELEASE(frameBuffer.m_pRenderTarget);
 		DX_RELEASE(frameBuffer.m_pCommandAllocator);
 		DX_RELEASE(frameBuffer.m_pFence);
 	};
-	DX_RELEASE(m_pFrameBufferRenderTargetDescriptorHeap);
+	DX_RELEASE(m_pHeapForFrameBufferRTVs);
 
 	DX_RELEASE(m_pSwapChain);
 	DX_RELEASE(m_pCommandQueue);
@@ -360,13 +298,7 @@ void Direct3D12Render::EndFrame()
 	FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
 
 	// Transition the render target from render target state to present state
-	D3D12_RESOURCE_BARRIER barrier = {};
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	barrier.Transition.pResource = frameBuffer.m_pRenderTargetResource;
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(frameBuffer.m_pRenderTarget, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 	m_pCmdList->ResourceBarrier(1, &barrier);
 
 	HRESULT hr = m_pCmdList->Close();
@@ -410,8 +342,8 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	else
 	{
 		FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
-		m_pCmdList->ClearRenderTargetView(frameBuffer.m_renderTargetDescriptor, clearColor, 0, nullptr);
-		m_pCmdList->ClearDepthStencilView(m_pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+		m_pCmdList->ClearRenderTargetView(frameBuffer.m_RTV, clearColor, 0, nullptr);
+		m_pCmdList->ClearDepthStencilView(m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
 	}
 }
 
@@ -626,18 +558,6 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		return isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData;
 	}
 
-	if(isVertexShader)
-	{
-//		hr = m_pDevice->CreateVertexShader(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), nullptr, &pShaderRenderData->vertexShader);
-	}
-	else
-	{
-//		hr = m_pDevice->CreatePixelShader(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), nullptr, &pShaderRenderData->pixelShader);
-	}
-	DX_CHECK_HRESULT(hr);
-
-//	pShaderRenderData->ptr->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(shader.m_name.Length()), shader.m_name.Str());
-
 	ID3D12ShaderReflection* pReflection = nullptr;
 	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
 	if(FAILED(hr))
@@ -654,14 +574,14 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 
 	pShaderRenderData->m_constantBuffers.SetSize(shaderDesc.ConstantBuffers);
 	pShaderRenderData->m_constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
-/*	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
+	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
 		ID3D12ShaderReflectionConstantBuffer* cbuffer = pReflection->GetConstantBufferByIndex(i);
 		D3D12_SHADER_BUFFER_DESC shaderBufferDesc;
 		hr = cbuffer->GetDesc(&shaderBufferDesc);
 		DX_CHECK_HRESULT(hr);
 
-		// Create constant buffer
+/*		// Create constant buffer
 		D3D12_BUFFER_DESC bufferDesc = {};
 		bufferDesc.ByteWidth = shaderBufferDesc.Size;
 		bufferDesc.Usage = D3D12_USAGE_DEFAULT;
@@ -700,8 +620,8 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 			const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
 			bufferData.m_variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
 		}
-	}
 */
+	}
 
 	DX_RELEASE(pReflection);
 
@@ -886,19 +806,13 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 			hr = m_pCmdList->Reset(frameBuffer.m_pCommandAllocator, pPipelineState);
 
 			// Transition the render target from present state to render target state
-			D3D12_RESOURCE_BARRIER barrier = {};
-			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-			barrier.Transition.pResource = frameBuffer.m_pRenderTargetResource;
-			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-			barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(frameBuffer.m_pRenderTarget, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 			m_pCmdList->ResourceBarrier(1, &barrier);
 		}
 
 		FrameBuffer& frameBuffer = m_frameBuffers[m_activeFrameBufferIdx];
-		const D3D12_CPU_DESCRIPTOR_HANDLE m_depthStencilDescriptor = m_pDepthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		m_pCmdList->OMSetRenderTargets(1, &frameBuffer.m_renderTargetDescriptor, TRUE, &m_depthStencilDescriptor);
+		const D3D12_CPU_DESCRIPTOR_HANDLE frameBufferDSV = m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart();
+		m_pCmdList->OMSetRenderTargets(1, &frameBuffer.m_RTV, TRUE, &frameBufferDSV);
 	}
 
 	m_pCmdList->RSSetViewports(1, &viewport);
@@ -1017,15 +931,89 @@ void Direct3D12Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 	}
 }
 
-void Direct3D12Render::CreateFrameBuffers()
+bool Direct3D12Render::CreateFrameBuffers(uint32_t width, uint32_t height)
 {
+	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	rtvHeapDesc.NumDescriptors = kFrameBufferCount;
+	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	HRESULT hr = m_pDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&m_pHeapForFrameBufferRTVs));
+	if(FAILED(hr))
+	{
+		return false;
+	}
+//	m_pHeapForFrameBufferRTVs->SetName(L"m_pHeapForFrameBufferRTVs");
+
+	const UINT descriptorHandleIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	D3D12_CPU_DESCRIPTOR_HANDLE currRTV = m_pHeapForFrameBufferRTVs->GetCPUDescriptorHandleForHeapStart();
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
 		FrameBuffer& frameBuffer = m_frameBuffers[i];
-		HRESULT hr = m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&frameBuffer.m_pRenderTargetResource));
+		frameBuffer.m_RTV = currRTV;
+		currRTV.ptr += descriptorHandleIncrementSize;
+
+		hr = m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&frameBuffer.m_pRenderTarget));
 		DX_CHECK_HRESULT(hr);
-		m_pDevice->CreateRenderTargetView(frameBuffer.m_pRenderTargetResource, nullptr, frameBuffer.m_renderTargetDescriptor);
+		m_pDevice->CreateRenderTargetView(frameBuffer.m_pRenderTarget, nullptr, frameBuffer.m_RTV);
+
+		hr = m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frameBuffer.m_pCommandAllocator));
+		if(FAILED(hr))
+		{
+			return false;
+		}
+
+		frameBuffer.m_fenceValue = 0;
+		hr = m_pDevice->CreateFence(frameBuffer.m_fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frameBuffer.m_pFence));
+		if(FAILED(hr))
+		{
+			return false;
+		}
 	}
+
+	// Create the depth/stencil buffer
+	CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, width, height);
+	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+	D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
+	depthOptimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
+	depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
+	depthOptimizedClearValue.DepthStencil.Stencil = 0;
+
+	hr = m_pDevice->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		&depthOptimizedClearValue,
+		IID_PPV_ARGS(&m_pDepthStencilResource)
+	);
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+	dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	dsvHeapDesc.NumDescriptors = 1;
+	dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	hr = m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_pHeapForDSV));
+	if(FAILED(hr))
+	{
+		return false;
+	}
+//	m_pHeapForDSV->SetName(L"m_pHeapForDSV");
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+	depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+	m_pDevice->CreateDepthStencilView(m_pDepthStencilResource, &depthStencilViewDesc, m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
+
+	return true;
 }
 
 void Direct3D12Render::WaitForPreviousFrame()

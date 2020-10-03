@@ -60,7 +60,7 @@ private:
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
-	void CreateFrameBuffers();
+	bool CreateFrameBuffers(uint32_t width, uint32_t height);
 	void WaitForPreviousFrame();
 
 	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
@@ -72,11 +72,11 @@ private:
 	IDXGISwapChain3* m_pSwapChain = nullptr;
 
 	// Frame buffers
-	ID3D12DescriptorHeap* m_pFrameBufferRenderTargetDescriptorHeap = nullptr;
+	ID3D12DescriptorHeap* m_pHeapForFrameBufferRTVs = nullptr;
 	struct FrameBuffer
 	{
-		ID3D12Resource* m_pRenderTargetResource = nullptr;
-		D3D12_CPU_DESCRIPTOR_HANDLE m_renderTargetDescriptor = {};
+		ID3D12Resource* m_pRenderTarget = nullptr;
+		D3D12_CPU_DESCRIPTOR_HANDLE m_RTV = {};
 		ID3D12CommandAllocator* m_pCommandAllocator = nullptr;
 		ID3D12Fence* m_pFence = nullptr;
 		uint64_t m_fenceValue = 0;
@@ -85,7 +85,7 @@ private:
 	uint32_t m_activeFrameBufferIdx = 0;
 	HANDLE m_fenceEvent;
 
-	ID3D12DescriptorHeap* m_pDepthStencilDescriptorHeap = nullptr;
+	ID3D12DescriptorHeap* m_pHeapForDSV = nullptr;
 	ID3D12Resource* m_pDepthStencilResource = nullptr;
 
 	ID3D12GraphicsCommandList* m_pCmdList = nullptr;

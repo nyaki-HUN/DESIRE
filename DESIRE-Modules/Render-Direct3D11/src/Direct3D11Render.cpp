@@ -144,9 +144,13 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 		return false;
 	}
 
-	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	bool succeeded = CreateFrameBuffers(mainWindow.GetWidth(), mainWindow.GetHeight());
+	if(!succeeded)
+	{
+		return false;
+	}
 
-	CreateFrameBuffer(mainWindow.GetWidth(), mainWindow.GetHeight());
+	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	SetDefaultRenderStates();
 
 	Bind(*m_errorVertexShader);
@@ -159,8 +163,8 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 {
 	ID3D11RenderTargetView* nullViews[] = { nullptr };
 	m_pDeviceCtx->OMSetRenderTargets(1, nullViews, nullptr);
-	DX_RELEASE(m_pFrameBufferDepthStencilView);
-	DX_RELEASE(m_pFrameBufferRenderTargetView);
+	DX_RELEASE(m_pFrameBufferDSV);
+	DX_RELEASE(m_pFrameBufferRTV);
 	m_pDeviceCtx->Flush();
 
 	HRESULT hr = m_pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
@@ -171,7 +175,8 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 
 	DX_CHECK_HRESULT(hr);
 
-	CreateFrameBuffer(window.GetWidth(), window.GetHeight());
+	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
+	ASSERT(succeeded);
 }
 
 void Direct3D11Render::Kill()
@@ -220,8 +225,8 @@ void Direct3D11Render::Kill()
 	m_samplerStateCache.clear();
 	memset(m_activeSamplerStates, 0, sizeof(m_activeSamplerStates));
 
-	DX_RELEASE(m_pFrameBufferDepthStencilView);
-	DX_RELEASE(m_pFrameBufferRenderTargetView);
+	DX_RELEASE(m_pFrameBufferDSV);
+	DX_RELEASE(m_pFrameBufferRTV);
 	DX_RELEASE(m_pSwapChain);
 	DX_RELEASE(m_pDeviceCtx);
 	DX_RELEASE(m_pDevice);
@@ -255,20 +260,20 @@ void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 		RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(m_pActiveRenderTarget->m_pRenderData);
 		if(pRenderTargetRenderData != nullptr)
 		{
-			for(ID3D11RenderTargetView* pRenderTargetView : pRenderTargetRenderData->m_renderTargetViews)
+			for(ID3D11RenderTargetView* pRTV : pRenderTargetRenderData->m_RTVs)
 			{
-				m_pDeviceCtx->ClearRenderTargetView(pRenderTargetView, clearColor);
+				m_pDeviceCtx->ClearRenderTargetView(pRTV, clearColor);
 			}
-			if(pRenderTargetRenderData->m_pDepthStencilView != nullptr)
+			if(pRenderTargetRenderData->m_pDSV != nullptr)
 			{
-				m_pDeviceCtx->ClearDepthStencilView(pRenderTargetRenderData->m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
+				m_pDeviceCtx->ClearDepthStencilView(pRenderTargetRenderData->m_pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 			}
 		}
 	}
 	else
 	{
-		m_pDeviceCtx->ClearRenderTargetView(m_pFrameBufferRenderTargetView, clearColor);
-		m_pDeviceCtx->ClearDepthStencilView(m_pFrameBufferDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
+		m_pDeviceCtx->ClearRenderTargetView(m_pFrameBufferRTV, clearColor);
+		m_pDeviceCtx->ClearDepthStencilView(m_pFrameBufferDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 	}
 }
 
@@ -669,13 +674,14 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 		DX_CHECK_HRESULT(hr);
 	}
 
+	// Create SRV
 	if(textureDesc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = textureDesc.Format;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MipLevels = textureDesc.MipLevels;
-		HRESULT hr = m_pDevice->CreateShaderResourceView(pTextureRenderData->m_pTexture2D, &srvDesc, &pTextureRenderData->m_pTextureSRV);
+		HRESULT hr = m_pDevice->CreateShaderResourceView(pTextureRenderData->m_pTexture2D, &srvDesc, &pTextureRenderData->m_pSRV);
 		DX_CHECK_HRESULT(hr);
 	}
 
@@ -687,7 +693,7 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 	RenderTargetRenderDataD3D11* pRenderTargetRenderData = new RenderTargetRenderDataD3D11();
 
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget.GetTextureCount(), D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
-	pRenderTargetRenderData->m_renderTargetViews.reserve(textureCount);
+	pRenderTargetRenderData->m_RTVs.reserve(textureCount);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
 		const std::shared_ptr<Texture>& texture = renderTarget.GetTexture(i);
@@ -696,9 +702,9 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 
 		if(texture->IsDepthFormat())
 		{
-			ASSERT(pRenderTargetRenderData->m_pDepthStencilView == nullptr && "RenderTargets can have only 1 depth attachment");
+			ASSERT(pRenderTargetRenderData->m_pDSV == nullptr && "RenderTargets can have only 1 depth attachment");
 
-			HRESULT hr = m_pDevice->CreateDepthStencilView(pTextureRenderData->m_pTexture2D, nullptr, &pRenderTargetRenderData->m_pDepthStencilView);
+			HRESULT hr = m_pDevice->CreateDepthStencilView(pTextureRenderData->m_pTexture2D, nullptr, &pRenderTargetRenderData->m_pDSV);
 			DX_CHECK_HRESULT(hr);
 		}
 		else
@@ -707,11 +713,11 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 			renderTargetViewDesc.Format = GetTextureFormat(*texture);
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 			renderTargetViewDesc.Texture2D.MipSlice = 0;
-			ID3D11RenderTargetView* pRenderTargetView = nullptr;
-			HRESULT hr = m_pDevice->CreateRenderTargetView(pTextureRenderData->m_pTexture2D, &renderTargetViewDesc, &pRenderTargetView);
+			ID3D11RenderTargetView* pRTV = nullptr;
+			HRESULT hr = m_pDevice->CreateRenderTargetView(pTextureRenderData->m_pTexture2D, &renderTargetViewDesc, &pRTV);
 			DX_CHECK_HRESULT(hr);
 
-			pRenderTargetRenderData->m_renderTargetViews.push_back(pRenderTargetView);
+			pRenderTargetRenderData->m_RTVs.push_back(pRTV);
 		}
 	}
 
@@ -761,7 +767,7 @@ void Direct3D11Render::DestroyTextureRenderData(void* pRenderData)
 {
 	TextureRenderDataD3D11* pTextureRenderData = static_cast<TextureRenderDataD3D11*>(pRenderData);
 	DX_RELEASE(pTextureRenderData->m_pTexture);
-	DX_RELEASE(pTextureRenderData->m_pTextureSRV);
+	DX_RELEASE(pTextureRenderData->m_pSRV);
 	delete pTextureRenderData;
 }
 
@@ -769,48 +775,15 @@ void Direct3D11Render::DestroyRenderTargetRenderData(void* pRenderData)
 {
 	RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderData);
 
-	for(ID3D11RenderTargetView* pRenderTargetView : pRenderTargetRenderData->m_renderTargetViews)
+	for(ID3D11RenderTargetView* pRTV : pRenderTargetRenderData->m_RTVs)
 	{
-		DX_RELEASE(pRenderTargetView);
+		DX_RELEASE(pRTV);
 	}
-	pRenderTargetRenderData->m_renderTargetViews.clear();
+	pRenderTargetRenderData->m_RTVs.clear();
 
-	DX_RELEASE(pRenderTargetRenderData->m_pDepthStencilView);
+	DX_RELEASE(pRenderTargetRenderData->m_pDSV);
 
 	delete pRenderTargetRenderData;
-}
-
-void Direct3D11Render::CreateFrameBuffer(uint32_t width, uint32_t height)
-{
-	// Create back buffer render target view
-	ID3D11Texture2D* pFrameBufferTexture = nullptr;
-	HRESULT hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pFrameBufferTexture));
-	DX_CHECK_HRESULT(hr);
-	hr = m_pDevice->CreateRenderTargetView(pFrameBufferTexture, nullptr, &m_pFrameBufferRenderTargetView);
-	DX_CHECK_HRESULT(hr);
-	DX_RELEASE(pFrameBufferTexture);
-
-	// Create back buffer depth stencil view
-	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = width;
-	textureDesc.Height = height;
-	textureDesc.MipLevels = 1;
-	textureDesc.ArraySize = 1;
-	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	textureDesc.SampleDesc.Count = 1;
-	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
-	ID3D11Texture2D* pDepthStencilTexture = nullptr;
-	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, &pDepthStencilTexture);
-	DX_CHECK_HRESULT(hr);
-
-	hr = m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pFrameBufferDepthStencilView);
-	DX_CHECK_HRESULT(hr);
-
-	DX_RELEASE(pDepthStencilTexture);
-
-	m_pDeviceCtx->OMSetRenderTargets(1, &m_pFrameBufferRenderTargetView, m_pFrameBufferDepthStencilView);
 }
 
 void Direct3D11Render::SetMesh(Mesh& mesh)
@@ -858,8 +831,8 @@ void Direct3D11Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EF
 	ASSERT(samplerIdx < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
 
 	const TextureRenderDataD3D11* pTextureRenderData = static_cast<const TextureRenderDataD3D11*>(texture.m_pRenderData);
-	m_pDeviceCtx->VSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pTextureSRV);
-	m_pDeviceCtx->PSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pTextureSRV);
+	m_pDeviceCtx->VSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
+	m_pDeviceCtx->PSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
 
 	static constexpr D3D11_TEXTURE_ADDRESS_MODE s_addressModeConversionTable[] =
 	{
@@ -896,14 +869,14 @@ void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 	if(pRenderTarget != nullptr)
 	{
 		const RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderTarget->m_pRenderData);
-		m_pDeviceCtx->OMSetRenderTargets(static_cast<UINT>(pRenderTargetRenderData->m_renderTargetViews.size()), pRenderTargetRenderData->m_renderTargetViews.data(), pRenderTargetRenderData->m_pDepthStencilView);
+		m_pDeviceCtx->OMSetRenderTargets(static_cast<UINT>(pRenderTargetRenderData->m_RTVs.size()), pRenderTargetRenderData->m_RTVs.data(), pRenderTargetRenderData->m_pDSV);
 
 		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
 		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());
 	}
 	else
 	{
-		m_pDeviceCtx->OMSetRenderTargets(1, &m_pFrameBufferRenderTargetView, m_pFrameBufferDepthStencilView);
+		m_pDeviceCtx->OMSetRenderTargets(1, &m_pFrameBufferRTV, m_pFrameBufferDSV);
 	}
 
 	m_pDeviceCtx->RSSetViewports(1, &viewport);
@@ -1024,6 +997,44 @@ void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 	{
 		m_pDeviceCtx->Draw(numVertices, vertexOffset);
 	}
+}
+
+bool Direct3D11Render::CreateFrameBuffers(uint32_t width, uint32_t height)
+{
+	// Create back buffer render target view
+	ID3D11Texture2D* pFrameBufferTexture = nullptr;
+	HRESULT hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pFrameBufferTexture));
+	DX_CHECK_HRESULT(hr);
+	hr = m_pDevice->CreateRenderTargetView(pFrameBufferTexture, nullptr, &m_pFrameBufferRTV);
+	DX_CHECK_HRESULT(hr);
+	DX_RELEASE(pFrameBufferTexture);
+
+	// Create back buffer depth stencil view
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	textureDesc.Width = width;
+	textureDesc.Height = height;
+	textureDesc.MipLevels = 1;
+	textureDesc.ArraySize = 1;
+	textureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+	ID3D11Texture2D* pDepthStencilTexture = nullptr;
+	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, &pDepthStencilTexture);
+	DX_CHECK_HRESULT(hr);
+
+	hr = m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pFrameBufferDSV);
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	DX_RELEASE(pDepthStencilTexture);
+
+	m_pDeviceCtx->OMSetRenderTargets(1, &m_pFrameBufferRTV, m_pFrameBufferDSV);
+
+	return true;
 }
 
 void Direct3D11Render::UpdateD3D11Resource(ID3D11Resource* pResource, const void* pData, size_t size)

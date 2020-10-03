@@ -49,8 +49,6 @@ private:
 	void DestroyTextureRenderData(void* pRenderData) override;
 	void DestroyRenderTargetRenderData(void* pRenderData) override;
 
-	void CreateFrameBuffer(uint32_t width, uint32_t height);
-
 	void SetMesh(Mesh& mesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
 	void SetVertexShader(Shader& vertexShader) override;
@@ -63,6 +61,7 @@ private:
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
+	bool CreateFrameBuffers(uint32_t width, uint32_t height);
 	void UpdateD3D11Resource(ID3D11Resource* pResource, const void* pData, size_t size);
 	void SetDepthStencilState();
 	void SetRasterizerState();
@@ -75,8 +74,8 @@ private:
 	ID3D11Device* m_pDevice = nullptr;
 	ID3D11DeviceContext* m_pDeviceCtx = nullptr;
 	IDXGISwapChain* m_pSwapChain = nullptr;
-	ID3D11RenderTargetView* m_pFrameBufferRenderTargetView = nullptr;
-	ID3D11DepthStencilView* m_pFrameBufferDepthStencilView = nullptr;
+	ID3D11RenderTargetView* m_pFrameBufferRTV = nullptr;
+	ID3D11DepthStencilView* m_pFrameBufferDSV = nullptr;
 
 	D3D11_DEPTH_STENCIL_DESC m_depthStencilDesc = {};
 	D3D11_RASTERIZER_DESC m_rasterizerDesc = {};

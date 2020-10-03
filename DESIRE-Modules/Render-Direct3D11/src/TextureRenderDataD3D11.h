@@ -11,5 +11,5 @@ public:
 		ID3D11Resource* m_pTexture = nullptr;			// Generic base class pointer
 	};
 
-	ID3D11ShaderResourceView* m_pTextureSRV = nullptr;
+	ID3D11ShaderResourceView* m_pSRV = nullptr;
 };
