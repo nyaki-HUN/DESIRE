@@ -714,13 +714,13 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 		&resourceDesc,
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
-		IID_PPV_ARGS(&pTextureRenderData->m_pTexture2D)
+		IID_PPV_ARGS(&pTextureRenderData->m_pTexture)
 	);
 	DX_CHECK_HRESULT(hr);
 
 	// Create the upload buffer
 	CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-	CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pTextureRenderData->m_pTexture2D, 0, 1));
+	CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pTextureRenderData->m_pTexture, 0, 1));
 
 	ID3D12Resource* pTextureUploadResource = nullptr;
 	hr = m_pDevice->CreateCommittedResource(
@@ -738,9 +738,9 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 	textureData.RowPitch = texture.GetWidth() * texture.GetBytesPerPixel();
 	textureData.SlicePitch = textureData.RowPitch * texture.GetHeight();
 
-	UpdateSubresources(m_pCmdList, pTextureRenderData->m_pTexture2D, pTextureUploadResource, 0, 0, 1, &textureData);
+	UpdateSubresources(m_pCmdList, pTextureRenderData->m_pTexture, pTextureUploadResource, 0, 0, 1, &textureData);
 
-	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(pTextureRenderData->m_pTexture2D, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(pTextureRenderData->m_pTexture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 	m_pCmdList->ResourceBarrier(1, &barrier);
 
 	// Create shader resource view
@@ -758,7 +758,7 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.Texture2D.MipLevels = resourceDesc.MipLevels;
 
-	m_pDevice->CreateShaderResourceView(pTextureRenderData->m_pTexture2D, &srvDesc, pTextureRenderData->m_pHeapForSRV->GetCPUDescriptorHandleForHeapStart());
+	m_pDevice->CreateShaderResourceView(pTextureRenderData->m_pTexture, &srvDesc, pTextureRenderData->m_pHeapForSRV->GetCPUDescriptorHandleForHeapStart());
 
 	// TODO: this is a memory leak should be solved by executing the command list here
 //	DX_RELEASE(pTextureUploadResource);
@@ -815,11 +815,11 @@ void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 			dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 			dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-			m_pDevice->CreateDepthStencilView(pTextureRenderData->m_pTexture2D, &dsvDesc, pRenderTargetRenderData->m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
+			m_pDevice->CreateDepthStencilView(pTextureRenderData->m_pTexture, &dsvDesc, pRenderTargetRenderData->m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
 		}
 		else
 		{
-			m_pDevice->CreateRenderTargetView(pTextureRenderData->m_pTexture2D, nullptr, currRTV);
+			m_pDevice->CreateRenderTargetView(pTextureRenderData->m_pTexture, nullptr, currRTV);
 
 			pRenderTargetRenderData->m_RTVs[pRenderTargetRenderData->m_numRTVs++] = currRTV;
 			currRTV.ptr += descriptorHandleIncrementSize;
@@ -845,13 +845,12 @@ void Direct3D12Render::DestroyShaderRenderData(void* pRenderData)
 {
 	ShaderRenderDataD3D12* pShaderRenderData = static_cast<ShaderRenderDataD3D12*>(pRenderData);
 
-	if((pShaderRenderData == m_errorVertexShader->m_pRenderData || pShaderRenderData == m_errorPixelShader->m_pRenderData)
-//		&& pShader != errorVertexshader.m_get()
-//		&& pShader != errorPixelshader.m_get()
-		)
+	if(pShaderRenderData == m_errorVertexShader->m_pRenderData || pShaderRenderData == m_errorPixelShader->m_pRenderData)
 	{
 		return;
 	}
+
+	DX_RELEASE(pShaderRenderData->m_pShaderCode);
 
 	delete pShaderRenderData;
 }
@@ -859,6 +858,10 @@ void Direct3D12Render::DestroyShaderRenderData(void* pRenderData)
 void Direct3D12Render::DestroyTextureRenderData(void* pRenderData)
 {
 	TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(pRenderData);
+
+	DX_RELEASE(pTextureRenderData->m_pTexture);
+	DX_RELEASE(pTextureRenderData->m_pHeapForSRV);
+
 	delete pTextureRenderData;
 }
 
@@ -1062,7 +1065,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, const Shader
 
 		if(isChanged)
 		{
-//			deviceCtx->UpdateSubresource(pShaderRenderData->constantBuffers[i], 0, nullptr, bufferData.m_data.ptr.get(), 0, 0);
+//			deviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.m_data.ptr.get(), 0, 0);
 		}
 	}
 }

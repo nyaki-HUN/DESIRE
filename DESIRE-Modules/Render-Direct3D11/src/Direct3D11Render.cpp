@@ -41,11 +41,11 @@ Direct3D11Render::Direct3D11Render()
 	{
 		"cbuffer CB : register(b0)\n"
 		"{\n"
-		"	float4x4 m_matWorldViewProj;\n"
+		"	float4x4 matWorldViewProj;\n"
 		"};\n"
 		"float4 main(float3 pos : POSITION) : SV_Position\n"
 		"{\n"
-		"	float4 position = mul(m_matWorldViewProj, float4(pos, 1.0));\n"
+		"	float4 position = mul(matWorldViewProj, float4(pos, 1.0));\n"
 		"	return position;\n"
 		"}"
 	};
@@ -733,8 +733,10 @@ void Direct3D11Render::DestroyRenderableRenderData(void* pRenderData)
 void Direct3D11Render::DestroyMeshRenderData(void* pRenderData)
 {
 	MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(pRenderData);
+
 	DX_RELEASE(pMeshRenderData->m_pIndexBuffer);
 	DX_RELEASE(pMeshRenderData->m_pVertexBuffer);
+
 	delete pMeshRenderData;
 }
 
@@ -742,10 +744,7 @@ void Direct3D11Render::DestroyShaderRenderData(void* pRenderData)
 {
 	ShaderRenderDataD3D11* pShaderRenderData = static_cast<ShaderRenderDataD3D11*>(pRenderData);
 
-	if((pShaderRenderData == m_errorVertexShader->m_pRenderData || pShaderRenderData == m_errorPixelShader->m_pRenderData)
-//		&& pShader != errorVertexShader.get()
-//		&& pShader != errorPixelShader.get()
-		)
+	if(pShaderRenderData == m_errorVertexShader->m_pRenderData || pShaderRenderData == m_errorPixelShader->m_pRenderData)
 	{
 		return;
 	}
@@ -766,8 +765,10 @@ void Direct3D11Render::DestroyShaderRenderData(void* pRenderData)
 void Direct3D11Render::DestroyTextureRenderData(void* pRenderData)
 {
 	TextureRenderDataD3D11* pTextureRenderData = static_cast<TextureRenderDataD3D11*>(pRenderData);
+
 	DX_RELEASE(pTextureRenderData->m_pTexture);
 	DX_RELEASE(pTextureRenderData->m_pSRV);
+
 	delete pTextureRenderData;
 }
 
@@ -908,39 +909,39 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, const Shader
 			}
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("m_matWorldView");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matWorldView");
 		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
-			const DirectX::XMMATRIX m_matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
-			isChanged |= CheckAndUpdateShaderParam(&m_matWorldView.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("m_matWorldViewProj");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matWorldViewProj");
 		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
 		{
-			const DirectX::XMMATRIX m_matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
-			const DirectX::XMMATRIX m_matWorldViewProj = DirectX::XMMatrixMultiply(m_matWorldView, m_matProj);
-			isChanged |= CheckAndUpdateShaderParam(&m_matWorldViewProj.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
+			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, m_matProj);
+			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("m_matView");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matView");
 		if(pOffsetSizePair != nullptr)
 		{
 			isChanged |= CheckAndUpdateShaderParam(&m_matView.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("m_matViewInv");
+		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matViewInv");
 		if(pOffsetSizePair != nullptr)
 		{
-			const DirectX::XMMATRIX m_matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
-			isChanged |= CheckAndUpdateShaderParam(&m_matViewInv.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
 		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("camPos");
 		if(pOffsetSizePair != nullptr)
 		{
-			const DirectX::XMMATRIX m_matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
-			isChanged |= CheckAndUpdateShaderParam(&m_matViewInv.r[3], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
+			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
 		}
 
 		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("resolution");
@@ -1055,19 +1056,19 @@ void Direct3D11Render::SetDepthStencilState()
 	ID3D11DepthStencilState* pDepthStencilState = nullptr;
 
 	uint64_t key = 0;
-	key |= (uint64_t)m_depthStencilDesc.DepthEnable					<< 0;	// 1 bit
-	key |= (uint64_t)m_depthStencilDesc.DepthWriteMask				<< 1;	// 1 bit
+	key |= (uint64_t)m_depthStencilDesc.DepthEnable						<< 0;	// 1 bit
+	key |= (uint64_t)m_depthStencilDesc.DepthWriteMask					<< 1;	// 1 bit
 	key |= (uint64_t)m_depthStencilDesc.DepthFunc						<< 2;	// 4 bits
 	key |= (uint64_t)m_depthStencilDesc.StencilEnable					<< 6;	// 1 bit
-	key |= (uint64_t)m_depthStencilDesc.StencilReadMask				<< 7;	// 8 bits
+	key |= (uint64_t)m_depthStencilDesc.StencilReadMask					<< 7;	// 8 bits
 	key |= (uint64_t)m_depthStencilDesc.StencilWriteMask				<< 15;	// 8 bits
-	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilFailOp		<< 23;	// 4 bits
+	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilFailOp			<< 23;	// 4 bits
 	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilDepthFailOp	<< 27;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilPassOp		<< 31;	// 4 bits
+	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilPassOp			<< 31;	// 4 bits
 	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilFunc			<< 35;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilFailOp		<< 39;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilDepthFailOp	<< 43;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilPassOp		<< 47;	// 4 bits
+	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilFailOp			<< 39;	// 4 bits
+	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilDepthFailOp		<< 43;	// 4 bits
+	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilPassOp			<< 47;	// 4 bits
 	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilFunc			<< 51;	// 4 bits
 
 	auto it = m_depthStencilStateCache.find(key);
@@ -1098,7 +1099,7 @@ void Direct3D11Render::SetRasterizerState()
 	key |= (uint64_t)m_rasterizerDesc.CullMode				<< 2;	// 2 bits
 	key |= (uint64_t)m_rasterizerDesc.FrontCounterClockwise	<< 4;	// 1 bit
 	key |= (uint64_t)m_rasterizerDesc.DepthBias				<< 5;	// 32 bits
-//	key |= (uint64_t)m_rasterizerDesc.DepthBiasClamp			<< // Constant
+//	key |= (uint64_t)m_rasterizerDesc.DepthBiasClamp		<< // Constant
 //	key |= (uint64_t)m_rasterizerDesc.SlopeScaledDepthBias	<< // Constant
 	key |= (uint64_t)m_rasterizerDesc.DepthClipEnable 		<< 37;	// 1 bit
 	key |= (uint64_t)m_rasterizerDesc.ScissorEnable			<< 38;	// 1 bit
@@ -1131,13 +1132,13 @@ void Direct3D11Render::SetBlendState()
 	uint64_t key = 0;
 	key |= (uint64_t)m_blendDesc.AlphaToCoverageEnable					<< 0;	// 1 bit
 	key |= (uint64_t)m_blendDesc.IndependentBlendEnable					<< 1;	// 1 bit
-	key |= (uint64_t)m_blendDesc.RenderTarget[0].BlendEnable				<< 2;	// 1 bit
-	key |= (uint64_t)m_blendDesc.RenderTarget[0].SrcBlend					<< 3;	// 5 bits
+	key |= (uint64_t)m_blendDesc.RenderTarget[0].BlendEnable			<< 2;	// 1 bit
+	key |= (uint64_t)m_blendDesc.RenderTarget[0].SrcBlend				<< 3;	// 5 bits
 	key |= (uint64_t)m_blendDesc.RenderTarget[0].DestBlend				<< 8;	// 5 bits
-	key |= (uint64_t)m_blendDesc.RenderTarget[0].BlendOp					<< 13;	// 3 bits
+	key |= (uint64_t)m_blendDesc.RenderTarget[0].BlendOp				<< 13;	// 3 bits
 	key |= (uint64_t)m_blendDesc.RenderTarget[0].SrcBlendAlpha			<< 16;	// 5 bits
 	key |= (uint64_t)m_blendDesc.RenderTarget[0].DestBlendAlpha			<< 21;	// 5 bits
-	key |= (uint64_t)m_blendDesc.RenderTarget[0].BlendOpAlpha				<< 26;	// 3 bits
+	key |= (uint64_t)m_blendDesc.RenderTarget[0].BlendOpAlpha			<< 26;	// 3 bits
 	key |= (uint64_t)m_blendDesc.RenderTarget[0].RenderTargetWriteMask	<< 29;	// 4 bits [0, 15], see D3D11_COLOR_WRITE_ENABLE
 
 	auto it = m_blendStateCache.find(key);
