@@ -743,7 +743,7 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 	CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(pTextureRenderData->m_pTexture, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 	m_pCmdList->ResourceBarrier(1, &barrier);
 
-	// Create shader resource view
+	// Create SRV
 	D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvHeapDesc.NumDescriptors = 1;
@@ -810,12 +810,7 @@ void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 			hr = m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&pRenderTargetRenderData->m_pHeapForDSV));
 			DX_CHECK_HRESULT(hr);
 
-			D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-			dsvDesc.Format = GetTextureFormat(*texture);
-			dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-			dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
-
-			m_pDevice->CreateDepthStencilView(pTextureRenderData->m_pTexture, &dsvDesc, pRenderTargetRenderData->m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
+			m_pDevice->CreateDepthStencilView(pTextureRenderData->m_pTexture, nullptr, pRenderTargetRenderData->m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
 		}
 		else
 		{
