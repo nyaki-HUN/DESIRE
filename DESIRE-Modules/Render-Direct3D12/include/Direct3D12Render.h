@@ -65,14 +65,6 @@ private:
 
 	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
-	static constexpr uint32_t kFrameBufferCount = 3;
-
-	ID3D12Device3* m_pDevice = nullptr;
-	ID3D12CommandQueue* m_pCommandQueue = nullptr;
-	IDXGISwapChain3* m_pSwapChain = nullptr;
-
-	// Frame buffers
-	ID3D12DescriptorHeap* m_pHeapForFrameBufferRTVs = nullptr;
 	struct FrameBuffer
 	{
 		ID3D12Resource* m_pRenderTarget = nullptr;
@@ -81,6 +73,15 @@ private:
 		ID3D12Fence* m_pFence = nullptr;
 		uint64_t m_fenceValue = 0;
 	};
+
+	static constexpr uint32_t kFrameBufferCount = 3;
+
+	ID3D12Device3* m_pDevice = nullptr;
+	ID3D12CommandQueue* m_pCommandQueue = nullptr;
+	IDXGISwapChain3* m_pSwapChain = nullptr;
+
+	// Frame buffers
+	ID3D12DescriptorHeap* m_pHeapForFrameBufferRTVs = nullptr;
 	FrameBuffer m_frameBuffers[kFrameBufferCount];
 	uint32_t m_activeFrameBufferIdx = 0;
 	HANDLE m_fenceEvent;

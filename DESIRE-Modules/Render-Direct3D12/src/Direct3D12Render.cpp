@@ -332,12 +332,12 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(m_pActiveRenderTarget->m_pRenderData);
 		if(pRenderTargetRenderData != nullptr)
 		{
-			for(D3D12_CPU_DESCRIPTOR_HANDLE& renderTargetDescriptor : pRenderTargetRenderData->m_renderTargetDescriptors)
+			for(uint32_t i = 0; i < pRenderTargetRenderData->m_numRTVs; ++i)
 			{
-				m_pCmdList->ClearRenderTargetView(renderTargetDescriptor, clearColor, 0, nullptr);
+				m_pCmdList->ClearRenderTargetView(pRenderTargetRenderData->m_RTVs[i], clearColor, 0, nullptr);
 			}
 
-			m_pCmdList->ClearDepthStencilView(pRenderTargetRenderData->m_depthStencilDescriptor, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
+			m_pCmdList->ClearDepthStencilView(pRenderTargetRenderData->m_DSV, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, depth, stencil, 0, nullptr);
 		}
 	}
 	else
@@ -770,7 +770,61 @@ void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 {
 	RenderTargetRenderDataD3D12* pRenderTargetRenderData = new RenderTargetRenderDataD3D12();
 
-	DESIRE_UNUSED(renderTarget);
+	const uint8_t textureCount = std::min<uint8_t>(renderTarget.GetTextureCount(), D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
+
+	bool hasDepthTexture = false;
+	for(uint8_t i = 0; i < textureCount; ++i)
+	{
+		if(renderTarget.GetTexture(i)->IsDepthFormat())
+		{
+			hasDepthTexture = true;
+			break;
+		}
+	}
+
+	D3D12_DESCRIPTOR_HEAP_DESC rtvHeapDesc = {};
+	rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	rtvHeapDesc.NumDescriptors = hasDepthTexture ? textureCount - 1 : textureCount;
+	rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	HRESULT hr = m_pDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(&pRenderTargetRenderData->m_pHeapForRTVs));
+	DX_CHECK_HRESULT(hr);
+
+	const UINT descriptorHandleIncrementSize = m_pDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	D3D12_CPU_DESCRIPTOR_HANDLE currRTV = m_pHeapForFrameBufferRTVs->GetCPUDescriptorHandleForHeapStart();
+	for(uint8_t i = 0; i < textureCount; ++i)
+	{
+		const std::shared_ptr<Texture>& texture = renderTarget.GetTexture(i);
+		const TextureRenderDataD3D12* pTextureRenderData = static_cast<const TextureRenderDataD3D12*>(texture->m_pRenderData);
+		ASSERT(pTextureRenderData != nullptr);
+
+		if(texture->IsDepthFormat())
+		{
+			ASSERT(pRenderTargetRenderData->m_pHeapForDSV == nullptr && "RenderTargets can have only 1 depth attachment");
+
+			D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
+			dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+			dsvHeapDesc.NumDescriptors = 1;
+			dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+			hr = m_pDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&pRenderTargetRenderData->m_pHeapForDSV));
+			DX_CHECK_HRESULT(hr);
+
+			D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+			dsvDesc.Format = GetTextureFormat(*texture);
+			dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+			dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+			m_pDevice->CreateDepthStencilView(pTextureRenderData->m_pTexture2D, &dsvDesc, pRenderTargetRenderData->m_pHeapForDSV->GetCPUDescriptorHandleForHeapStart());
+		}
+		else
+		{
+			m_pDevice->CreateRenderTargetView(pTextureRenderData->m_pTexture2D, nullptr, currRTV);
+
+			pRenderTargetRenderData->m_RTVs[pRenderTargetRenderData->m_numRTVs++] = currRTV;
+			currRTV.ptr += descriptorHandleIncrementSize;
+		}
+	}
 
 	return pRenderTargetRenderData;
 }
@@ -811,6 +865,10 @@ void Direct3D12Render::DestroyTextureRenderData(void* pRenderData)
 void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
 {
 	RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderData);
+
+	pRenderTargetRenderData->m_pHeapForRTVs->Release();
+	pRenderTargetRenderData->m_pHeapForDSV->Release();
+
 	delete pRenderTargetRenderData;
 }
 
@@ -889,7 +947,7 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 	if(pRenderTarget != nullptr)
 	{
 		const RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderTarget->m_pRenderData);
-		m_pCmdList->OMSetRenderTargets(pRenderTargetRenderData->m_numRenderTargetDescriptors, pRenderTargetRenderData->m_renderTargetDescriptors, TRUE, &pRenderTargetRenderData->m_depthStencilDescriptor);
+		m_pCmdList->OMSetRenderTargets(pRenderTargetRenderData->m_numRTVs, pRenderTargetRenderData->m_RTVs, TRUE, &pRenderTargetRenderData->m_DSV);
 
 		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
 		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());

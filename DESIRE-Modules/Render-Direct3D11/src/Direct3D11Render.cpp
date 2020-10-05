@@ -260,10 +260,11 @@ void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 		RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(m_pActiveRenderTarget->m_pRenderData);
 		if(pRenderTargetRenderData != nullptr)
 		{
-			for(ID3D11RenderTargetView* pRTV : pRenderTargetRenderData->m_RTVs)
+			for(uint32_t i = 0; i < pRenderTargetRenderData->m_numRTVs; ++i)
 			{
-				m_pDeviceCtx->ClearRenderTargetView(pRTV, clearColor);
+				m_pDeviceCtx->ClearRenderTargetView(pRenderTargetRenderData->m_RTVs[i], clearColor);
 			}
+
 			if(pRenderTargetRenderData->m_pDSV != nullptr)
 			{
 				m_pDeviceCtx->ClearDepthStencilView(pRenderTargetRenderData->m_pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
@@ -693,7 +694,6 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 	RenderTargetRenderDataD3D11* pRenderTargetRenderData = new RenderTargetRenderDataD3D11();
 
 	const uint8_t textureCount = std::min<uint8_t>(renderTarget.GetTextureCount(), D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
-	pRenderTargetRenderData->m_RTVs.reserve(textureCount);
 	for(uint8_t i = 0; i < textureCount; ++i)
 	{
 		const std::shared_ptr<Texture>& texture = renderTarget.GetTexture(i);
@@ -712,12 +712,12 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 			D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc = {};
 			renderTargetViewDesc.Format = GetTextureFormat(*texture);
 			renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-			renderTargetViewDesc.Texture2D.MipSlice = 0;
+
 			ID3D11RenderTargetView* pRTV = nullptr;
 			HRESULT hr = m_pDevice->CreateRenderTargetView(pTextureRenderData->m_pTexture2D, &renderTargetViewDesc, &pRTV);
 			DX_CHECK_HRESULT(hr);
 
-			pRenderTargetRenderData->m_RTVs.push_back(pRTV);
+			pRenderTargetRenderData->m_RTVs[pRenderTargetRenderData->m_numRTVs++] = pRTV;
 		}
 	}
 
@@ -775,11 +775,10 @@ void Direct3D11Render::DestroyRenderTargetRenderData(void* pRenderData)
 {
 	RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderData);
 
-	for(ID3D11RenderTargetView* pRTV : pRenderTargetRenderData->m_RTVs)
+	for(uint32_t i = 0; i < pRenderTargetRenderData->m_numRTVs; ++i)
 	{
-		DX_RELEASE(pRTV);
+		DX_RELEASE(pRenderTargetRenderData->m_RTVs[i]);
 	}
-	pRenderTargetRenderData->m_RTVs.clear();
 
 	DX_RELEASE(pRenderTargetRenderData->m_pDSV);
 
@@ -869,7 +868,7 @@ void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 	if(pRenderTarget != nullptr)
 	{
 		const RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderTarget->m_pRenderData);
-		m_pDeviceCtx->OMSetRenderTargets(static_cast<UINT>(pRenderTargetRenderData->m_RTVs.size()), pRenderTargetRenderData->m_RTVs.data(), pRenderTargetRenderData->m_pDSV);
+		m_pDeviceCtx->OMSetRenderTargets(pRenderTargetRenderData->m_numRTVs, pRenderTargetRenderData->m_RTVs, pRenderTargetRenderData->m_pDSV);
 
 		viewport.Width = static_cast<FLOAT>(pRenderTarget->GetWidth());
 		viewport.Height = static_cast<FLOAT>(pRenderTarget->GetHeight());
