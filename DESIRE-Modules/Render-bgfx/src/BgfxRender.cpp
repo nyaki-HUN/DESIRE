@@ -610,7 +610,7 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 
 	bgfx::setState(m_renderState, m_blendFactor);
 
-	bgfx::submit(m_activeViewId, shaderProgram, 0, BGFX_DISCARD_ALL);
+	bgfx::submit(m_activeViewId, shaderProgram, 0, BGFX_DISCARD_NONE);
 }
 
 bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture& texture)
