@@ -51,8 +51,6 @@ private:
 
 	void SetMesh(Mesh& mesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
-	void SetVertexShader(Shader& vertexShader) override;
-	void SetFragmentShader(Shader& fragmentShader) override;
 	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
 	void UpdateShaderParams(const Material& material) override;
@@ -81,6 +79,8 @@ private:
 	D3D11_RASTERIZER_DESC m_rasterizerDesc = {};
 	D3D11_BLEND_DESC m_blendDesc = {};
 
+	const ShaderRenderDataD3D11* m_pActiveVS = nullptr;
+	const ShaderRenderDataD3D11* m_pActivePS = nullptr;
 	const ID3D11DepthStencilState* m_pActiveDepthStencilState = nullptr;
 	const ID3D11RasterizerState* m_pActiveRasterizerState = nullptr;
 	const ID3D11BlendState* m_pActiveBlendState = nullptr;

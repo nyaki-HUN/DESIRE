@@ -79,7 +79,7 @@ void NuklearUI::Init()
 	// Setup material
 	renderable->m_material = std::make_unique<Material>();
 	renderable->m_material->m_vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
-	renderable->m_material->m_fragmentShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->m_material->m_pixelShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
 
 	// Setup fonts
 	fontAtlas = std::make_unique<nk_font_atlas>();

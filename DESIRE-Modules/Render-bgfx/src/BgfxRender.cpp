@@ -76,8 +76,6 @@ void BgfxRender::Kill()
 {
 	m_pActiveWindow = nullptr;
 	m_pActiveMesh = nullptr;
-	m_pActiveVertexShader = nullptr;
-	m_pActiveFragmentShader = nullptr;
 	m_pActiveRenderTarget = nullptr;
 
 	for(bgfx::UniformHandle& uniform : m_samplerUniforms)
@@ -512,18 +510,6 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void BgfxRender::SetVertexShader(Shader& vertexShader)
-{
-	DESIRE_UNUSED(vertexShader);
-	// No-op
-}
-
-void BgfxRender::SetFragmentShader(Shader& fragmentShader)
-{
-	DESIRE_UNUSED(fragmentShader);
-	// No-op
-}
-
 void BgfxRender::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	uint32_t flags = BGFX_TEXTURE_NONE;
@@ -566,32 +552,32 @@ void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void BgfxRender::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataBgfx* vertexShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(m_pActiveVertexShader->m_pRenderData);
-	const ShaderRenderDataBgfx* fragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(m_pActiveFragmentShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(material.m_vertexShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(material.m_pixelShader->m_pRenderData);
 
 	for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 	{
-		const bgfx::UniformHandle* uniform = vertexShaderRenderData->uniforms.Find(shaderParam.m_name);
-		if(uniform == nullptr)
+		const bgfx::UniformHandle* pUniform = pVS->uniforms.Find(shaderParam.m_name);
+		if(pUniform == nullptr)
 		{
-			uniform = fragmentShaderRenderData->uniforms.Find(shaderParam.m_name);
+			pUniform = pPS->uniforms.Find(shaderParam.m_name);
 		}
 
-		if(uniform != nullptr && bgfx::isValid(*uniform))
+		if(pUniform != nullptr && bgfx::isValid(*pUniform))
 		{
 			const void* value = shaderParam.GetValue();
-			bgfx::setUniform(*uniform, value);
+			bgfx::setUniform(*pUniform, value);
 		}
 	}
 }
 
 void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	bgfx::setState(m_renderState, m_blendFactor);
+	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_vertexShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_pixelShader->m_pRenderData);
 
 	bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;
-
-	const std::pair<uint64_t, uint64_t> key(reinterpret_cast<uint64_t>(m_pActiveVertexShader->m_pRenderData), reinterpret_cast<uint64_t>(m_pActiveFragmentShader->m_pRenderData));
+	const std::pair<uint64_t, uint64_t> key(reinterpret_cast<uint64_t>(pVS), reinterpret_cast<uint64_t>(pPS));
 	auto it = m_shaderProgramCache.find(key);
 	if(it != m_shaderProgramCache.end())
 	{
@@ -599,9 +585,7 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 	}
 	else
 	{
-		const ShaderRenderDataBgfx* pVertexShaderRenderData = static_cast<ShaderRenderDataBgfx*>(m_pActiveVertexShader->m_pRenderData);
-		const ShaderRenderDataBgfx* pFragmentShaderRenderData = static_cast<const ShaderRenderDataBgfx*>(m_pActiveFragmentShader->m_pRenderData);
-		shaderProgram = bgfx::createProgram(pVertexShaderRenderData->shaderHandle, pFragmentShaderRenderData->shaderHandle);
+		shaderProgram = bgfx::createProgram(pVS->shaderHandle, pPS->shaderHandle);
 
 		m_shaderProgramCache.emplace(key, shaderProgram);
 	}
@@ -624,7 +608,9 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 		}
 	}
 
-	bgfx::submit(m_activeViewId, shaderProgram);
+	bgfx::setState(m_renderState, m_blendFactor);
+
+	bgfx::submit(m_activeViewId, shaderProgram, 0, BGFX_DISCARD_ALL);
 }
 
 bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture& texture)

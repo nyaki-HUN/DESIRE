@@ -226,9 +226,6 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 	m_activeFrameBufferIdx = m_pSwapChain->GetCurrentBackBufferIndex();
 
-	Bind(*m_errorVertexShader);
-	Bind(*m_errorPixelShader);
-
 	return true;
 }
 
@@ -262,8 +259,6 @@ void Direct3D12Render::Kill()
 
 	m_pActiveWindow = nullptr;
 	m_pActiveMesh = nullptr;
-	m_pActiveVertexShader = nullptr;
-	m_pActiveFragmentShader = nullptr;
 	m_pActiveRenderTarget = nullptr;
 
 	CloseHandle(m_fenceEvent);
@@ -551,14 +546,14 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
 	psoDesc.pRootSignature = nullptr;	// TODO
 	psoDesc.VS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_vertexShader->m_pRenderData)->m_pShaderCode);
-	psoDesc.PS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_fragmentShader->m_pRenderData)->m_pShaderCode);
+	psoDesc.PS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_pixelShader->m_pRenderData)->m_pShaderCode);
 //	D3D12_STREAM_OUTPUT_DESC StreamOutput;
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);						// TODO
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);			// TODO
 	psoDesc.DepthStencilState.DepthEnable = TRUE;								// TODO
 	psoDesc.InputLayout = { vertexElementDesc, static_cast<UINT>(vertexLayout.Size()) };
-//	D3D12_INDEX_BUFFER_STRIP_CUT_VALUE IBStripCutValue;
+	psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	psoDesc.NumRenderTargets = 1;
 	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;							// TODO
@@ -608,7 +603,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 	UINT compileFlags = 0;
 
 	ID3DBlob* pErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),		// pSrcData
+	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),	// pSrcData
 		shader.m_data.size,								// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
 		defines,										// pDefines
@@ -635,14 +630,14 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&pReflection);
 	if(FAILED(hr))
 	{
-		LOG_ERROR("D3DReflect failed 0x%08x\n", (uint32_t)hr);
+		LOG_ERROR("D3DReflect failed 0x%08x\n", static_cast<uint32_t>(hr));
 	}
 
 	D3D12_SHADER_DESC shaderDesc;
 	hr = pReflection->GetDesc(&shaderDesc);
 	if(FAILED(hr))
 	{
-		LOG_ERROR("ID3D12ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
+		LOG_ERROR("ID3D12ShaderReflection::GetDesc failed 0x%08x\n", static_cast<uint32_t>(hr));
 	}
 
 	pShaderRenderData->m_constantBuffers.SetSize(shaderDesc.ConstantBuffers);
@@ -890,18 +885,6 @@ void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void Direct3D12Render::SetVertexShader(Shader& vertexShader)
-{
-	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(vertexShader.m_pRenderData);
-	DESIRE_UNUSED(pShaderRenderData);
-}
-
-void Direct3D12Render::SetFragmentShader(Shader& fragmentShader)
-{
-	const ShaderRenderDataD3D12* pShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(fragmentShader.m_pRenderData);
-	DESIRE_UNUSED(pShaderRenderData);
-}
-
 void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	DESIRE_UNUSED(samplerIdx);
@@ -980,10 +963,10 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void Direct3D12Render::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(m_pActiveVertexShader->m_pRenderData);
+	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(material.m_vertexShader->m_pRenderData);
 	UpdateShaderParams(material, pVertexShaderRenderData);
 
-	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(m_pActiveFragmentShader->m_pRenderData);
+	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(material.m_pixelShader->m_pRenderData);
 	UpdateShaderParams(material, pFragmentShaderRenderData);
 }
 

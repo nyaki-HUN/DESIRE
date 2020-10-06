@@ -36,7 +36,7 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 		return;
 	}
 
-	if(renderable.m_material == nullptr || renderable.m_material->m_vertexShader == nullptr || renderable.m_material->m_fragmentShader == nullptr)
+	if(renderable.m_material == nullptr || renderable.m_material->m_vertexShader == nullptr || renderable.m_material->m_pixelShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
@@ -60,9 +60,10 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 		return;
 	}
 
+	// Mesh
 	if(renderable.m_mesh->m_pRenderData == nullptr)
 	{
-		Bind(*renderable.m_mesh);
+		renderable.m_mesh->m_pRenderData = CreateMeshRenderData(*renderable.m_mesh);
 	}
 	else if(renderable.m_mesh->GetType() == Mesh::EType::Dynamic)
 	{
@@ -76,7 +77,36 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 		m_pActiveMesh = renderable.m_mesh.get();
 	}
 
-	SetMaterial(*renderable.m_material);
+	// Vertex shader
+	if(renderable.m_material->m_vertexShader->m_pRenderData == nullptr)
+	{
+		renderable.m_material->m_vertexShader->m_pRenderData = CreateShaderRenderData(*renderable.m_material->m_vertexShader);
+	}
+
+	// Pixel shader
+	if(renderable.m_material->m_pixelShader->m_pRenderData == nullptr)
+	{
+		renderable.m_material->m_pixelShader->m_pRenderData = CreateShaderRenderData(*renderable.m_material->m_pixelShader);
+	}
+
+	// Textures
+	uint8_t samplerIdx = 0;
+	for(const Material::TextureInfo& textureInfo : renderable.m_material->GetTextures())
+	{
+		if(textureInfo.m_texture->m_pRenderData == nullptr)
+		{
+			textureInfo.m_texture->m_pRenderData = CreateTextureRenderData(*textureInfo.m_texture);
+		}
+
+		SetTexture(samplerIdx, *textureInfo.m_texture, textureInfo.m_filterMode, textureInfo.m_addressMode);
+		samplerIdx++;
+	}
+
+	if(renderable.m_pRenderData == nullptr)
+	{
+		renderable.m_pRenderData = CreateRenderableRenderData(renderable);
+	}
+
 	UpdateShaderParams(*renderable.m_material);
 
 	DoRender(renderable, indexOffset, vertexOffset, numIndices, numVertices);
@@ -86,7 +116,17 @@ void Render::SetActiveRenderTarget(RenderTarget* pRenderTarget)
 {
 	if(pRenderTarget != nullptr && pRenderTarget->m_pRenderData == nullptr)
 	{
-		Bind(*pRenderTarget);
+		const uint8_t textureCount = pRenderTarget->GetTextureCount();
+		for(uint8_t i = 0; i < textureCount; ++i)
+		{
+			const std::shared_ptr<Texture>& texture = pRenderTarget->GetTexture(i);
+			if(texture->m_pRenderData == nullptr)
+			{
+				texture->m_pRenderData = CreateTextureRenderData(*texture);
+			}
+		}
+
+		pRenderTarget->m_pRenderData = CreateRenderTargetRenderData(*pRenderTarget);
 	}
 
 	if(m_pActiveRenderTarget != pRenderTarget)
@@ -101,74 +141,12 @@ void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
 	SetBlendModeSeparated(srcBlend, destBlend, blendOp, srcBlend, destBlend, blendOp);
 }
 
-void Render::Bind(Renderable& renderable)
-{
-	if(renderable.m_pRenderData == nullptr)
-	{
-		renderable.m_pRenderData = CreateRenderableRenderData(renderable);
-	}
-}
-
-void Render::Bind(Mesh& mesh)
-{
-	if(mesh.m_pRenderData == nullptr)
-	{
-		mesh.m_pRenderData = CreateMeshRenderData(mesh);
-	}
-}
-
-void Render::Bind(Shader& shader)
-{
-	if(shader.m_pRenderData == nullptr)
-	{
-		shader.m_pRenderData = CreateShaderRenderData(shader);
-	}
-}
-
-void Render::Bind(Texture& texture)
-{
-	if(texture.m_pRenderData == nullptr)
-	{
-		texture.m_pRenderData = CreateTextureRenderData(texture);
-	}
-}
-
-void Render::Bind(RenderTarget& renderTarget)
-{
-	if(renderTarget.m_pRenderData != nullptr)
-	{
-		return;
-	}
-
-	const uint8_t textureCount = renderTarget.GetTextureCount();
-	for(uint8_t i = 0; i < textureCount; ++i)
-	{
-		const std::shared_ptr<Texture>& texture = renderTarget.GetTexture(i);
-		Bind(*texture);
-	}
-
-	renderTarget.m_pRenderData = CreateRenderTargetRenderData(renderTarget);
-}
-
 void Render::Unbind(Renderable& renderable)
 {
 	if(renderable.m_pRenderData == nullptr)
 	{
 		return;
 	}
-
-	if( renderable.m_mesh == nullptr ||
-		renderable.m_material == nullptr ||
-		renderable.m_material->m_vertexShader == nullptr ||
-		renderable.m_material->m_fragmentShader == nullptr)
-	{
-		ASSERT(false && "Invalid renderable");
-		return;
-	}
-
-	Bind(*renderable.m_mesh);
-	Bind(*renderable.m_material->m_vertexShader);
-	Bind(*renderable.m_material->m_fragmentShader);
 
 	DestroyRenderableRenderData(renderable.m_pRenderData);
 	renderable.m_pRenderData = nullptr;
@@ -199,15 +177,6 @@ void Render::Unbind(Shader& shader)
 
 	DestroyShaderRenderData(shader.m_pRenderData);
 	shader.m_pRenderData = nullptr;
-
-	if(m_pActiveVertexShader == &shader)
-	{
-		m_pActiveVertexShader = nullptr;
-	}
-	if(m_pActiveFragmentShader == &shader)
-	{
-		m_pActiveFragmentShader = nullptr;
-	}
 }
 
 void Render::Unbind(Texture& texture)
@@ -249,50 +218,4 @@ void Render::SetDefaultRenderStates()
 	SetDepthWriteEnabled(true);
 	SetDepthTest(EDepthTest::Less);
 	SetCullMode(ECullMode::CCW);
-}
-
-void Render::SetMaterial(Material& material)
-{
-	// Vertex shader
-	if(material.m_vertexShader != nullptr)
-	{
-		if(material.m_vertexShader->m_pRenderData == nullptr)
-		{
-			Bind(*material.m_vertexShader);
-		}
-
-		if(m_pActiveVertexShader != material.m_vertexShader.get())
-		{
-			SetVertexShader(*material.m_vertexShader);
-			m_pActiveVertexShader = material.m_vertexShader.get();
-		}
-	}
-
-	// Fragment shader
-	if(material.m_fragmentShader != nullptr)
-	{
-		if(material.m_fragmentShader->m_pRenderData == nullptr)
-		{
-			Bind(*material.m_fragmentShader);
-		}
-
-		if(m_pActiveFragmentShader != material.m_fragmentShader.get())
-		{
-			SetFragmentShader(*material.m_fragmentShader);
-			m_pActiveFragmentShader = material.m_fragmentShader.get();
-		}
-	}
-
-	// Textures
-	uint8_t samplerIdx = 0;
-	for(const Material::TextureInfo& textureInfo : material.GetTextures())
-	{
-		if(textureInfo.m_texture->m_pRenderData == nullptr)
-		{
-			Bind(*textureInfo.m_texture);
-		}
-
-		SetTexture(samplerIdx, *textureInfo.m_texture, textureInfo.m_filterMode, textureInfo.m_addressMode);
-		samplerIdx++;
-	}
 }

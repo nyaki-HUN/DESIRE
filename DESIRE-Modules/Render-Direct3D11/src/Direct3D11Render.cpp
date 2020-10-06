@@ -153,9 +153,6 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	SetDefaultRenderStates();
 
-	Bind(*m_errorVertexShader);
-	Bind(*m_errorPixelShader);
-
 	return true;
 }
 
@@ -186,8 +183,8 @@ void Direct3D11Render::Kill()
 
 	m_pActiveWindow = nullptr;
 	m_pActiveMesh = nullptr;
-	m_pActiveVertexShader = nullptr;
-	m_pActiveFragmentShader = nullptr;
+	m_pActiveVS = nullptr;
+	m_pActivePS = nullptr;
 	m_pActiveRenderTarget = nullptr;
 
 	for(auto& pair : m_depthStencilStateCache)
@@ -746,6 +743,16 @@ void Direct3D11Render::DestroyShaderRenderData(void* pRenderData)
 		return;
 	}
 
+	if(m_pActiveVS == pRenderData)
+	{
+		m_pActiveVS = nullptr;
+	}
+
+	if(m_pActivePS == pRenderData)
+	{
+		m_pActivePS = nullptr;
+	}
+
 	DX_RELEASE(pShaderRenderData->m_pPtr);
 	DX_RELEASE(pShaderRenderData->m_pShaderCode);
 
@@ -809,20 +816,6 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void Direct3D11Render::SetVertexShader(Shader& vertexShader)
-{
-	const ShaderRenderDataD3D11* pShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(vertexShader.m_pRenderData);
-	m_pDeviceCtx->VSSetShader(pShaderRenderData->m_pVertexShader, nullptr, 0);
-	m_pDeviceCtx->VSSetConstantBuffers(0, static_cast<UINT>(pShaderRenderData->m_constantBuffers.Size()), pShaderRenderData->m_constantBuffers.Data());
-}
-
-void Direct3D11Render::SetFragmentShader(Shader& fragmentShader)
-{
-	const ShaderRenderDataD3D11* pShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(fragmentShader.m_pRenderData);
-	m_pDeviceCtx->PSSetShader(pShaderRenderData->m_pPixelShader, nullptr, 0);
-	m_pDeviceCtx->PSSetConstantBuffers(0, static_cast<UINT>(pShaderRenderData->m_constantBuffers.Size()), pShaderRenderData->m_constantBuffers.Data());
-}
-
 void Direct3D11Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	ASSERT(samplerIdx < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
@@ -881,10 +874,10 @@ void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void Direct3D11Render::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataD3D11* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(m_pActiveVertexShader->m_pRenderData);
+	const ShaderRenderDataD3D11* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material.m_vertexShader->m_pRenderData);
 	UpdateShaderParams(material, pVertexShaderRenderData);
 
-	const ShaderRenderDataD3D11* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(m_pActiveFragmentShader->m_pRenderData);
+	const ShaderRenderDataD3D11* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material.m_pixelShader->m_pRenderData);
 	UpdateShaderParams(material, pFragmentShaderRenderData);
 }
 
@@ -979,7 +972,21 @@ bool Direct3D11Render::CheckAndUpdateShaderParam(const void* value, void* valueI
 
 void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	DESIRE_UNUSED(renderable);
+	const ShaderRenderDataD3D11* pVS = static_cast<const ShaderRenderDataD3D11*>(renderable.m_material->m_vertexShader->m_pRenderData);
+	if(m_pActiveVS != pVS)
+	{
+		m_pDeviceCtx->VSSetShader(pVS->m_pVertexShader, nullptr, 0);
+		m_pDeviceCtx->VSSetConstantBuffers(0, static_cast<UINT>(pVS->m_constantBuffers.Size()), pVS->m_constantBuffers.Data());
+		m_pActiveVS = pVS;
+	}
+
+	const ShaderRenderDataD3D11* pPS = static_cast<const ShaderRenderDataD3D11*>(renderable.m_material->m_pixelShader->m_pRenderData);
+	if(m_pActivePS != pPS)
+	{
+		m_pDeviceCtx->PSSetShader(pPS->m_pPixelShader, nullptr, 0);
+		m_pDeviceCtx->PSSetConstantBuffers(0, static_cast<UINT>(pPS->m_constantBuffers.Size()), pPS->m_constantBuffers.Data());
+		m_pActivePS = pPS;
+	}
 
 	SetDepthStencilState();
 	SetRasterizerState();
@@ -1165,7 +1172,7 @@ void Direct3D11Render::SetInputLayout()
 	{
 		const MeshRenderDataD3D11* pMeshRenderData = static_cast<const MeshRenderDataD3D11*>(m_pActiveMesh->m_pRenderData);
 
-		const std::pair<uint64_t, uint64_t> key(pMeshRenderData->m_vertexLayoutKey, reinterpret_cast<uint64_t>(m_pActiveVertexShader->m_pRenderData));
+		const std::pair<uint64_t, uint64_t> key(pMeshRenderData->m_vertexLayoutKey, reinterpret_cast<uint64_t>(m_pActiveVS));
 		auto it = m_inputLayoutCache.find(key);
 		if(it != m_inputLayoutCache.end())
 		{
@@ -1217,8 +1224,7 @@ void Direct3D11Render::SetInputLayout()
 				vertexElementDesc[i].Format = s_attribTypeConversionTable[static_cast<size_t>(layout.m_type)][layout.m_count - 1];
 			}
 
-			const ShaderRenderDataD3D11* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(m_pActiveVertexShader->m_pRenderData);
-			HRESULT hr = m_pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), pVertexShaderRenderData->m_pShaderCode->GetBufferPointer(), pVertexShaderRenderData->m_pShaderCode->GetBufferSize(), &pInputLayout);
+			HRESULT hr = m_pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), m_pActiveVS->m_pShaderCode->GetBufferPointer(), m_pActiveVS->m_pShaderCode->GetBufferSize(), &pInputLayout);
 			DX_CHECK_HRESULT(hr);
 			m_inputLayoutCache.emplace(key, pInputLayout);
 		}

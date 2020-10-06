@@ -107,13 +107,6 @@ public:
 	virtual void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) = 0;
 	virtual void SetBlendModeDisabled() = 0;
 
-	// Resource bind
-	void Bind(Renderable& renderable);
-	void Bind(Mesh& mesh);
-	void Bind(Shader& shader);
-	void Bind(Texture& texture);
-	void Bind(RenderTarget& renderTarget);
-
 	// Resource unbind
 	void Unbind(Renderable& renderable);
 	void Unbind(Mesh& mesh);
@@ -126,8 +119,6 @@ protected:
 
 	const OSWindow* m_pActiveWindow = nullptr;
 	const Mesh* m_pActiveMesh = nullptr;
-	const Shader* m_pActiveVertexShader = nullptr;
-	const Shader* m_pActiveFragmentShader = nullptr;
 	const RenderTarget* m_pActiveRenderTarget = nullptr;
 
 private:
@@ -145,9 +136,6 @@ private:
 
 	virtual void SetMesh(Mesh& mesh) = 0;
 	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
-	void SetMaterial(Material& material);
-	virtual void SetVertexShader(Shader& vertexShader) = 0;
-	virtual void SetFragmentShader(Shader& fragmentShader) = 0;
 	virtual void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
 	virtual void SetRenderTarget(RenderTarget* pRenderTarget) = 0;
 	virtual void UpdateShaderParams(const Material& material) = 0;

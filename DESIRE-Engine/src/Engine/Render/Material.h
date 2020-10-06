@@ -44,7 +44,7 @@ public:
 	const Array<ShaderParam>& Material::GetShaderParams() const;
 
 	std::shared_ptr<Shader> m_vertexShader;
-	std::shared_ptr<Shader> m_fragmentShader;
+	std::shared_ptr<Shader> m_pixelShader;
 
 private:
 	Array<TextureInfo> m_textures;
