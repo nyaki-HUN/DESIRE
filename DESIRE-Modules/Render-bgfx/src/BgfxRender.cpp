@@ -2,6 +2,7 @@
 #include "BgfxRender.h"
 
 #include "MeshRenderDataBgfx.h"
+#include "RenderableRenderDataBgfx.h"
 #include "RenderTargetRenderDataBgfx.h"
 #include "ShaderRenderDataBgfx.h"
 #include "TextureRenderDataBgfx.h"
@@ -26,10 +27,6 @@ BgfxRender::BgfxRender()
 	{
 		uniform = BGFX_INVALID_HANDLE;
 	}
-
-	m_screenSpaceQuadVertexLayout.begin();
-	m_screenSpaceQuadVertexLayout.add(bgfx::Attrib::Position, 2, bgfx::AttribType::Float);
-	m_screenSpaceQuadVertexLayout.end();
 }
 
 bool BgfxRender::Init(OSWindow& mainWindow)
@@ -83,12 +80,6 @@ void BgfxRender::Kill()
 		bgfx::destroy(uniform);
 		uniform = BGFX_INVALID_HANDLE;
 	}
-
-	for(auto& pair : m_shaderProgramCache)
-	{
-		bgfx::destroy(pair.second);
-	}
-	m_shaderProgramCache.clear();
 
 	bgfx::shutdown();
 }
@@ -277,8 +268,13 @@ void BgfxRender::SetBlendModeDisabled()
 
 void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 {
-	DESIRE_UNUSED(renderable);
-	return nullptr;
+	RenderableRenderDataBgfx* pRenderableRenderData = new RenderableRenderDataBgfx();
+
+	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_vertexShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_pixelShader->m_pRenderData);
+	pRenderableRenderData->m_shaderProgram = bgfx::createProgram(pVS->shaderHandle, pPS->shaderHandle);
+
+	return pRenderableRenderData;
 }
 
 void* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
@@ -449,8 +445,11 @@ void* BgfxRender::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
 
 void BgfxRender::DestroyRenderableRenderData(void* pRenderData)
 {
-	DESIRE_UNUSED(pRenderData);
-	// No-op
+	RenderableRenderDataBgfx* pRenderableRenderData = static_cast<RenderableRenderDataBgfx*>(pRenderData);
+
+	bgfx::destroy(pRenderableRenderData->m_shaderProgram);
+
+	delete pRenderableRenderData;
 }
 
 void BgfxRender::DestroyMeshRenderData(void* pRenderData)
@@ -573,22 +572,7 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 
 void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_vertexShader->m_pRenderData);
-	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_pixelShader->m_pRenderData);
-
-	bgfx::ProgramHandle shaderProgram = BGFX_INVALID_HANDLE;
-	const std::pair<uint64_t, uint64_t> key(reinterpret_cast<uint64_t>(pVS), reinterpret_cast<uint64_t>(pPS));
-	auto it = m_shaderProgramCache.find(key);
-	if(it != m_shaderProgramCache.end())
-	{
-		shaderProgram = it->second;
-	}
-	else
-	{
-		shaderProgram = bgfx::createProgram(pVS->shaderHandle, pPS->shaderHandle);
-
-		m_shaderProgramCache.emplace(key, shaderProgram);
-	}
+	RenderableRenderDataBgfx* pRenderableRenderData = static_cast<RenderableRenderDataBgfx*>(renderable.m_pRenderData);
 
 	MeshRenderDataBgfx* pMeshRenderData = static_cast<MeshRenderDataBgfx*>(m_pActiveMesh->m_pRenderData);
 	switch(m_pActiveMesh->GetType())
@@ -610,7 +594,7 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 
 	bgfx::setState(m_renderState, m_blendFactor);
 
-	bgfx::submit(m_activeViewId, shaderProgram, 0, BGFX_DISCARD_NONE);
+	bgfx::submit(m_activeViewId, pRenderableRenderData->m_shaderProgram, 0, BGFX_DISCARD_NONE);
 }
 
 bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture& texture)

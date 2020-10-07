@@ -1,11 +1,8 @@
 #pragma once
 
 #include "Engine/Render/Render.h"
-#include "Engine/Utils/stl_utils.h"
 
 #include "../Externals/bgfx/include/bgfx/bgfx.h"
-
-#include <unordered_map>
 
 class BgfxRender : public Render
 {
@@ -59,10 +56,6 @@ private:
 	bgfx::UniformHandle m_samplerUniforms[8];
 	bgfx::ViewId m_activeViewId = 0;
 
-	std::unordered_map<std::pair<uint64_t, uint64_t>, bgfx::ProgramHandle, stl_utils::hash_pair<uint64_t, uint64_t>> m_shaderProgramCache;
-
 	uint64_t m_renderState = 0;
 	uint32_t m_blendFactor = 0;
-
-	bgfx::VertexLayout m_screenSpaceQuadVertexLayout;
 };
