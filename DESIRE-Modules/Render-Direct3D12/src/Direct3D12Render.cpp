@@ -291,6 +291,8 @@ void Direct3D12Render::Kill()
 	m_pActiveMesh = nullptr;
 	m_pActiveRenderTarget = nullptr;
 
+	m_pActivePipelineState = nullptr;
+
 	CloseHandle(m_fenceEvent);
 
 	DX_RELEASE(m_pCmdList);
@@ -594,11 +596,7 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
 	HRESULT hr = m_pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pRenderableRenderData->m_pPipelineState));
-	if(FAILED(hr))
-	{
-		delete pRenderableRenderData;
-		return nullptr;
-	}
+	DX_CHECK_HRESULT(hr);
 
 	return pRenderableRenderData;
 }
@@ -851,8 +849,16 @@ void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 
 void Direct3D12Render::DestroyRenderableRenderData(void* pRenderData)
 {
-	DESIRE_UNUSED(pRenderData);
-	// No-op
+	RenderableRenderDataD3D12* pRenderableRenderData = static_cast<RenderableRenderDataD3D12*>(pRenderData);
+
+	if(m_pActivePipelineState == pRenderableRenderData->m_pPipelineState)
+	{
+		m_pActivePipelineState = nullptr;
+	}
+
+	DX_RELEASE(pRenderableRenderData->m_pPipelineState);
+
+	delete pRenderableRenderData;
 }
 
 void Direct3D12Render::DestroyMeshRenderData(void* pRenderData)
@@ -1080,16 +1086,21 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, const Shader
 
 void Direct3D12Render::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	DESIRE_UNUSED(renderable);
-	DESIRE_UNUSED(indexOffset);
-	DESIRE_UNUSED(vertexOffset);
-	DESIRE_UNUSED(numVertices);
+	RenderableRenderDataD3D12* pRenderableRenderData = static_cast<RenderableRenderDataD3D12*>(renderable.m_pRenderData);
+
+	if(m_pActivePipelineState != pRenderableRenderData->m_pPipelineState)
+	{
+		m_pCmdList->SetPipelineState(pRenderableRenderData->m_pPipelineState);
+		m_pActivePipelineState = pRenderableRenderData->m_pPipelineState;
+	}
 
 	if(numIndices != 0)
 	{
+		m_pCmdList->DrawIndexedInstanced(numIndices, 1, indexOffset, vertexOffset, 0);
 	}
 	else
 	{
+		m_pCmdList->DrawInstanced(numVertices, 1, vertexOffset, 0);
 	}
 }
 

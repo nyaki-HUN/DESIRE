@@ -90,6 +90,8 @@ private:
 	D3D12_RASTERIZER_DESC m_rasterizerDesc = {};
 	D3D12_BLEND_DESC m_blendDesc = {};
 
+	const ID3D12PipelineState* m_pActivePipelineState = nullptr;
+
 	float m_blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	DirectX::XMMATRIX m_matWorld;
 	DirectX::XMMATRIX m_matView;
