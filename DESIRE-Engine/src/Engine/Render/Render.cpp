@@ -60,6 +60,14 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 		return;
 	}
 
+	// If the mesh or the shaders changed we need to rebind the renderable
+	if(renderable.m_mesh->m_pRenderData == nullptr ||
+		renderable.m_material->m_vertexShader->m_pRenderData == nullptr ||
+		renderable.m_material->m_pixelShader->m_pRenderData == nullptr)
+	{
+		Unbind(renderable);
+	}
+
 	// Mesh
 	if(renderable.m_mesh->m_pRenderData == nullptr)
 	{

@@ -63,7 +63,6 @@ private:
 	void SetDepthStencilState();
 	void SetRasterizerState();
 	void SetBlendState();
-	void SetInputLayout();
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 
 	ID3D11Device* m_pDevice = nullptr;

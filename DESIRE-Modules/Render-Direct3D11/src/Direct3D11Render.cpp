@@ -3,6 +3,7 @@
 
 #include "DirectXMathExt.h"
 #include "MeshRenderDataD3D11.h"
+#include "RenderableRenderDataD3D11.h"
 #include "RenderTargetRenderDataD3D11.h"
 #include "ShaderRenderDataD3D11.h"
 #include "TextureRenderDataD3D11.h"
@@ -217,34 +218,30 @@ void Direct3D11Render::Kill()
 
 	m_pActiveVS = nullptr;
 	m_pActivePS = nullptr;
+	m_pActiveDepthStencilState = nullptr;
+	m_pActiveRasterizerState = nullptr;
+	m_pActiveBlendState = nullptr;
+	m_pActiveInputLayout = nullptr;
 
 	for(auto& pair : m_depthStencilStateCache)
 	{
 		DX_RELEASE(pair.second);
 	}
 	m_depthStencilStateCache.clear();
-	m_pActiveDepthStencilState = nullptr;
 
 	for(auto& pair : m_rasterizerStateCache)
 	{
 		DX_RELEASE(pair.second);
 	}
 	m_rasterizerStateCache.clear();
-	m_pActiveRasterizerState = nullptr;
 
 	for(auto& pair : m_blendStateCache)
 	{
 		DX_RELEASE(pair.second);
 	}
 	m_blendStateCache.clear();
-	m_pActiveBlendState = nullptr;
 
-	for(auto& pair : m_inputLayoutCache)
-	{
-		DX_RELEASE(pair.second);
-	}
 	m_inputLayoutCache.clear();
-	m_pActiveInputLayout = nullptr;
 
 	for(auto& pair : m_samplerStateCache)
 	{
@@ -467,8 +464,70 @@ void Direct3D11Render::SetBlendModeDisabled()
 
 void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 {
-	DESIRE_UNUSED(renderable);
-	return nullptr;
+	RenderableRenderDataD3D11* pRenderableRenderData = new RenderableRenderDataD3D11();
+
+	static constexpr D3D11_INPUT_ELEMENT_DESC s_attribConversionTable[] =
+	{
+		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
+		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
+		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
+		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
+		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
+		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
+		{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
+		{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
+		{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
+		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
+		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
+	};
+	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
+
+	static constexpr DXGI_FORMAT s_attribTypeConversionTable[][4] =
+	{
+		// Mesh::EAttribType::FLOAT
+		{
+			DXGI_FORMAT_R32_FLOAT,
+			DXGI_FORMAT_R32G32_FLOAT,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			DXGI_FORMAT_R32G32B32A32_FLOAT
+		},
+		// Mesh::EAttribType::UINT8
+		{
+			DXGI_FORMAT_R8_UNORM,
+			DXGI_FORMAT_R8G8_UNORM,
+			DXGI_FORMAT_UNKNOWN,
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+		},
+	};
+	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
+
+	const MeshRenderDataD3D11* pMeshRenderData = static_cast<const MeshRenderDataD3D11*>(renderable.m_mesh->m_pRenderData);
+	const ShaderRenderDataD3D11* pVS = static_cast<const ShaderRenderDataD3D11*>(renderable.m_material->m_vertexShader->m_pRenderData);
+	pRenderableRenderData->m_inputLayoutKey = std::pair(pMeshRenderData->m_vertexLayoutKey, reinterpret_cast<uint64_t>(pVS));
+	auto it = m_inputLayoutCache.find(pRenderableRenderData->m_inputLayoutKey);
+	if(it != m_inputLayoutCache.end())
+	{
+		pRenderableRenderData->m_pInputLayout = it->second;
+		pRenderableRenderData->m_pInputLayout->AddRef();
+	}
+	else
+	{
+		const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_mesh->GetVertexLayout();
+		D3D11_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
+		for(size_t i = 0; i < vertexLayout.Size(); ++i)
+		{
+			const Mesh::VertexLayout& layout = vertexLayout[i];
+			vertexElementDesc[i] = s_attribConversionTable[static_cast<size_t>(layout.m_attrib)];
+			vertexElementDesc[i].Format = s_attribTypeConversionTable[static_cast<size_t>(layout.m_type)][layout.m_count - 1];
+		}
+
+		HRESULT hr = m_pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), pVS->m_pShaderCode->GetBufferPointer(), pVS->m_pShaderCode->GetBufferSize(), &pRenderableRenderData->m_pInputLayout);
+		DX_CHECK_HRESULT(hr);
+
+		m_inputLayoutCache.emplace(pRenderableRenderData->m_inputLayoutKey, pRenderableRenderData->m_pInputLayout);
+	}
+
+	return pRenderableRenderData;
 }
 
 void* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
@@ -751,8 +810,20 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 
 void Direct3D11Render::DestroyRenderableRenderData(void* pRenderData)
 {
-	DESIRE_UNUSED(pRenderData);
-	// No-op
+	RenderableRenderDataD3D11* pRenderableRenderData = static_cast<RenderableRenderDataD3D11*>(pRenderData);
+
+	if(m_pActiveInputLayout == pRenderableRenderData->m_pInputLayout)
+	{
+		m_pActiveInputLayout = nullptr;
+	}
+
+	UINT refCount = pRenderableRenderData->m_pInputLayout->Release();
+	if(refCount == 0)
+	{
+		m_inputLayoutCache.erase(pRenderableRenderData->m_inputLayoutKey);
+	}
+
+	delete pRenderableRenderData;
 }
 
 void Direct3D11Render::DestroyMeshRenderData(void* pRenderData)
@@ -992,6 +1063,8 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, const Shader
 
 void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
+	RenderableRenderDataD3D11* pRenderableRenderData = static_cast<RenderableRenderDataD3D11*>(renderable.m_pRenderData);
+
 	const ShaderRenderDataD3D11* pVS = static_cast<const ShaderRenderDataD3D11*>(renderable.m_material->m_vertexShader->m_pRenderData);
 	if(m_pActiveVS != pVS)
 	{
@@ -1011,7 +1084,12 @@ void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 	SetDepthStencilState();
 	SetRasterizerState();
 	SetBlendState();
-	SetInputLayout();
+
+	if(m_pActiveInputLayout != pRenderableRenderData->m_pInputLayout)
+	{
+		m_pDeviceCtx->IASetInputLayout(pRenderableRenderData->m_pInputLayout);
+		m_pActiveInputLayout = pRenderableRenderData->m_pInputLayout;
+	}
 
 	if(numIndices != 0)
 	{
@@ -1181,79 +1259,6 @@ void Direct3D11Render::SetBlendState()
 	{
 		m_pDeviceCtx->OMSetBlendState(pBlendState, m_blendFactor, 0xffffffff);
 		m_pActiveBlendState = pBlendState;
-	}
-}
-
-void Direct3D11Render::SetInputLayout()
-{
-	ID3D11InputLayout* pInputLayout = nullptr;
-
-	if(m_pActiveMesh != nullptr)
-	{
-		const MeshRenderDataD3D11* pMeshRenderData = static_cast<const MeshRenderDataD3D11*>(m_pActiveMesh->m_pRenderData);
-
-		const std::pair<uint64_t, uint64_t> key(pMeshRenderData->m_vertexLayoutKey, reinterpret_cast<uint64_t>(m_pActiveVS));
-		auto it = m_inputLayoutCache.find(key);
-		if(it != m_inputLayoutCache.end())
-		{
-			pInputLayout = it->second;
-		}
-		else
-		{
-			static constexpr D3D11_INPUT_ELEMENT_DESC s_attribConversionTable[] =
-			{
-				{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
-				{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
-				{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
-				{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
-				{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
-				{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
-				{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
-				{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
-				{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
-				{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
-				{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
-			};
-			DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
-
-			static constexpr DXGI_FORMAT s_attribTypeConversionTable[][4] =
-			{
-				// Mesh::EAttribType::FLOAT
-				{
-					DXGI_FORMAT_R32_FLOAT,
-					DXGI_FORMAT_R32G32_FLOAT,
-					DXGI_FORMAT_R32G32B32_FLOAT,
-					DXGI_FORMAT_R32G32B32A32_FLOAT
-				},
-				// Mesh::EAttribType::UINT8
-				{
-					DXGI_FORMAT_R8_UNORM,
-					DXGI_FORMAT_R8G8_UNORM,
-					DXGI_FORMAT_UNKNOWN,
-					DXGI_FORMAT_R8G8B8A8_UNORM,
-				},
-			};
-			DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
-
-			const Array<Mesh::VertexLayout>& vertexLayout = m_pActiveMesh->GetVertexLayout();
-			D3D11_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
-			for(size_t i = 0; i < vertexLayout.Size(); ++i)
-			{
-				const Mesh::VertexLayout& layout = vertexLayout[i];
-				vertexElementDesc[i] = s_attribConversionTable[static_cast<size_t>(layout.m_attrib)];
-				vertexElementDesc[i].Format = s_attribTypeConversionTable[static_cast<size_t>(layout.m_type)][layout.m_count - 1];
-			}
-
-			HRESULT hr = m_pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), m_pActiveVS->m_pShaderCode->GetBufferPointer(), m_pActiveVS->m_pShaderCode->GetBufferSize(), &pInputLayout);
-			DX_CHECK_HRESULT(hr);
-			m_inputLayoutCache.emplace(key, pInputLayout);
-		}
-	}
-
-	if(m_pActiveInputLayout != pInputLayout)
-	{
-		m_pDeviceCtx->IASetInputLayout(pInputLayout);
-		m_pActiveInputLayout = pInputLayout;
 	}
 }
 
