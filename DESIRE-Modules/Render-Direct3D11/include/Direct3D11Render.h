@@ -55,7 +55,6 @@ private:
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
 	void UpdateShaderParams(const Material& material) override;
 	void UpdateShaderParams(const Material& material, const ShaderRenderDataD3D11* pShaderRenderData);
-	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
@@ -66,8 +65,6 @@ private:
 	void SetBlendState();
 	void SetInputLayout();
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
-
-	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
 	ID3D11Device* m_pDevice = nullptr;
 	ID3D11DeviceContext* m_pDeviceCtx = nullptr;

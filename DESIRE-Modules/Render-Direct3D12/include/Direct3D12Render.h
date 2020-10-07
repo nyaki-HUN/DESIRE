@@ -54,14 +54,11 @@ private:
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
 	void UpdateShaderParams(const Material& material) override;
 	void UpdateShaderParams(const Material& material, const ShaderRenderDataD3D12* pShaderRenderData);
-	static bool CheckAndUpdateShaderParam(const void* pValue, void* pValueInConstantBuffer, uint32_t size);
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	bool CreateFrameBuffers(uint32_t width, uint32_t height);
 	void WaitForPreviousFrame();
-
-	static DXGI_FORMAT GetTextureFormat(const Texture& texture);
 
 	struct FrameBuffer
 	{

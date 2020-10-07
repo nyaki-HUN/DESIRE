@@ -35,6 +35,36 @@
 	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
 #endif
 
+static DXGI_FORMAT GetTextureFormat(const Texture& texture)
+{
+	const DXGI_FORMAT conversionTable[] =
+	{
+		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
+		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
+		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
+		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
+		DXGI_FORMAT_R32G32B32_FLOAT,			// Texture::EFormat::RGB32F
+		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
+		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
+		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
+		DXGI_FORMAT_D32_FLOAT,					// Texture::EFormat::D32
+	};
+	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
+
+	return conversionTable[static_cast<size_t>(texture.GetFormat())];
+}
+
+static inline bool CheckAndUpdateShaderParam(const void* value, void* valueInConstantBuffer, uint32_t size)
+{
+	if(memcmp(valueInConstantBuffer, value, size) == 0)
+	{
+		return false;
+	}
+
+	memcpy(valueInConstantBuffer, value, size);
+	return true;
+}
+
 Direct3D11Render::Direct3D11Render()
 {
 	const char vs_error[] =
@@ -183,9 +213,10 @@ void Direct3D11Render::Kill()
 
 	m_pActiveWindow = nullptr;
 	m_pActiveMesh = nullptr;
+	m_pActiveRenderTarget = nullptr;
+
 	m_pActiveVS = nullptr;
 	m_pActivePS = nullptr;
-	m_pActiveRenderTarget = nullptr;
 
 	for(auto& pair : m_depthStencilStateCache)
 	{
@@ -874,11 +905,11 @@ void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void Direct3D11Render::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataD3D11* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material.m_vertexShader->m_pRenderData);
-	UpdateShaderParams(material, pVertexShaderRenderData);
+	const ShaderRenderDataD3D11* pVS = static_cast<const ShaderRenderDataD3D11*>(material.m_vertexShader->m_pRenderData);
+	UpdateShaderParams(material, pVS);
 
-	const ShaderRenderDataD3D11* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(material.m_pixelShader->m_pRenderData);
-	UpdateShaderParams(material, pFragmentShaderRenderData);
+	const ShaderRenderDataD3D11* pPS = static_cast<const ShaderRenderDataD3D11*>(material.m_pixelShader->m_pRenderData);
+	UpdateShaderParams(material, pPS);
 }
 
 void Direct3D11Render::UpdateShaderParams(const Material& material, const ShaderRenderDataD3D11* pShaderRenderData)
@@ -957,17 +988,6 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, const Shader
 			m_pDeviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.m_data.ptr.get(), 0, 0);
 		}
 	}
-}
-
-bool Direct3D11Render::CheckAndUpdateShaderParam(const void* value, void* valueInConstantBuffer, uint32_t size)
-{
-	if(memcmp(valueInConstantBuffer, value, size) == 0)
-	{
-		return false;
-	}
-
-	memcpy(valueInConstantBuffer, value, size);
-	return true;
 }
 
 void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
@@ -1271,23 +1291,4 @@ void Direct3D11Render::SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_D
 		m_pDeviceCtx->PSSetSamplers(samplerIdx, 1, &samplerState);
 		m_activeSamplerStates[samplerIdx] = samplerState;
 	}
-}
-
-DXGI_FORMAT Direct3D11Render::GetTextureFormat(const Texture& texture)
-{
-	const DXGI_FORMAT conversionTable[] =
-	{
-		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
-		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
-		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
-		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
-		DXGI_FORMAT_R32G32B32_FLOAT,			// Texture::EFormat::RGB32F
-		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
-		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
-		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
-		DXGI_FORMAT_D32_FLOAT,					// Texture::EFormat::D32
-	};
-	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
-
-	return conversionTable[static_cast<size_t>(texture.GetFormat())];
 }

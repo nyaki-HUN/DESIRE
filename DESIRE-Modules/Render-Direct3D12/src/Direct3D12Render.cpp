@@ -37,6 +37,36 @@
 	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
 #endif
 
+static DXGI_FORMAT GetTextureFormat(const Texture& texture)
+{
+	const DXGI_FORMAT conversionTable[] =
+	{
+		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
+		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
+		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
+		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
+		DXGI_FORMAT_R32G32B32_FLOAT,			// Texture::EFormat::RGB32F
+		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
+		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
+		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
+		DXGI_FORMAT_D32_FLOAT,					// Texture::EFormat::D32
+	};
+	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
+
+	return conversionTable[static_cast<size_t>(texture.GetFormat())];
+}
+
+static inline bool CheckAndUpdateShaderParam(const void* value, void* valueInConstantBuffer, uint32_t size)
+{
+	if(memcmp(valueInConstantBuffer, value, size) == 0)
+	{
+		return false;
+	}
+
+	memcpy(valueInConstantBuffer, value, size);
+	return true;
+}
+
 Direct3D12Render::Direct3D12Render()
 {
 	const char vs_error[] =
@@ -867,9 +897,9 @@ void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
 
 void Direct3D12Render::SetMesh(Mesh& mesh)
 {
-	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(mesh.m_pRenderData);
-	m_pCmdList->IASetIndexBuffer(&pMeshRenderData->indexBufferView);
-	m_pCmdList->IASetVertexBuffers(0, 1, &pMeshRenderData->vertexBufferView);
+	const MeshRenderDataD3D12* pMeshRenderData = static_cast<const MeshRenderDataD3D12*>(mesh.m_pRenderData);
+	m_pCmdList->IASetIndexBuffer(&pMeshRenderData->m_indexBufferView);
+	m_pCmdList->IASetVertexBuffers(0, 1, &pMeshRenderData->m_vertexBufferView);
 }
 
 void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
@@ -963,11 +993,11 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void Direct3D12Render::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataD3D12* pVertexShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(material.m_vertexShader->m_pRenderData);
-	UpdateShaderParams(material, pVertexShaderRenderData);
+	const ShaderRenderDataD3D12* pVS = static_cast<const ShaderRenderDataD3D12*>(material.m_vertexShader->m_pRenderData);
+	UpdateShaderParams(material, pVS);
 
-	const ShaderRenderDataD3D12* pFragmentShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(material.m_pixelShader->m_pRenderData);
-	UpdateShaderParams(material, pFragmentShaderRenderData);
+	const ShaderRenderDataD3D12* pPS = static_cast<const ShaderRenderDataD3D12*>(material.m_pixelShader->m_pRenderData);
+	UpdateShaderParams(material, pPS);
 }
 
 void Direct3D12Render::UpdateShaderParams(const Material& material, const ShaderRenderDataD3D12* pShaderRenderData)
@@ -1046,17 +1076,6 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, const Shader
 //			deviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.m_data.ptr.get(), 0, 0);
 		}
 	}
-}
-
-bool Direct3D12Render::CheckAndUpdateShaderParam(const void* value, void* valueInConstantBuffer, uint32_t size)
-{
-	if(memcmp(valueInConstantBuffer, value, size) == 0)
-	{
-		return false;
-	}
-
-	memcpy(valueInConstantBuffer, value, size);
-	return true;
 }
 
 void Direct3D12Render::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
@@ -1173,23 +1192,4 @@ void Direct3D12Render::WaitForPreviousFrame()
 	frameBuffer.m_fenceValue++;
 
 	m_activeFrameBufferIdx = m_pSwapChain->GetCurrentBackBufferIndex();
-}
-
-DXGI_FORMAT Direct3D12Render::GetTextureFormat(const Texture& texture)
-{
-	const DXGI_FORMAT conversionTable[] =
-	{
-		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
-		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
-		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
-		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
-		DXGI_FORMAT_R32G32B32_FLOAT,			// Texture::EFormat::RGB32F
-		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
-		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
-		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
-		DXGI_FORMAT_D32_FLOAT,					// Texture::EFormat::D32
-	};
-	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
-
-	return conversionTable[static_cast<size_t>(texture.GetFormat())];
 }

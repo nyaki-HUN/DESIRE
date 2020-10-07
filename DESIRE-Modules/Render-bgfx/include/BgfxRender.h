@@ -51,8 +51,6 @@ private:
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
-	static bgfx::TextureFormat::Enum GetTextureFormat(const Texture& texture);
-
 	bgfx::UniformHandle m_samplerUniforms[8];
 	bgfx::ViewId m_activeViewId = 0;
 

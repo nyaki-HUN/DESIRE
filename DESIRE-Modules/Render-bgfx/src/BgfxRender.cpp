@@ -21,6 +21,25 @@
 
 #include "bgfx/../../src/config.h"
 
+static bgfx::TextureFormat::Enum GetTextureFormat(const Texture& texture)
+{
+	static constexpr bgfx::TextureFormat::Enum conversionTable[] =
+	{
+		bgfx::TextureFormat::R8,			// Texture::EFormat::R8
+		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8
+		bgfx::TextureFormat::RGB8,			// Texture::EFormat::RGB8
+		bgfx::TextureFormat::RGBA8,			// Texture::EFormat::RGBA8
+		bgfx::TextureFormat::Unknown,		// Texture::EFormat::RGB32F
+		bgfx::TextureFormat::RGBA32F,		// Texture::EFormat::RGBA32F
+		bgfx::TextureFormat::D16,			// Texture::EFormat::D16
+		bgfx::TextureFormat::D24S8,			// Texture::EFormat::D24_S8
+		bgfx::TextureFormat::D32,			// Texture::EFormat::D32
+	};
+	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
+
+	return conversionTable[static_cast<size_t>(texture.GetFormat())];
+}
+
 BgfxRender::BgfxRender()
 {
 	for(bgfx::UniformHandle& uniform : m_samplerUniforms)
@@ -595,23 +614,4 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 	bgfx::setState(m_renderState, m_blendFactor);
 
 	bgfx::submit(m_activeViewId, pRenderableRenderData->m_shaderProgram, 0, BGFX_DISCARD_NONE);
-}
-
-bgfx::TextureFormat::Enum BgfxRender::GetTextureFormat(const Texture& texture)
-{
-	static constexpr bgfx::TextureFormat::Enum conversionTable[] =
-	{
-		bgfx::TextureFormat::R8,			// Texture::EFormat::R8
-		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8
-		bgfx::TextureFormat::RGB8,			// Texture::EFormat::RGB8
-		bgfx::TextureFormat::RGBA8,			// Texture::EFormat::RGBA8
-		bgfx::TextureFormat::Unknown,		// Texture::EFormat::RGB32F
-		bgfx::TextureFormat::RGBA32F,		// Texture::EFormat::RGBA32F
-		bgfx::TextureFormat::D16,			// Texture::EFormat::D16
-		bgfx::TextureFormat::D24S8,			// Texture::EFormat::D24_S8
-		bgfx::TextureFormat::D32,			// Texture::EFormat::D32
-	};
-	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
-
-	return conversionTable[static_cast<size_t>(texture.GetFormat())];
 }
