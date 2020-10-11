@@ -86,6 +86,8 @@ private:
 
 	ID3D12GraphicsCommandList* m_pCmdList = nullptr;
 
+	ID3D12RootSignature* m_pRootSignature = nullptr;
+
 	D3D12_DEPTH_STENCIL_DESC m_depthStencilDesc = {};
 	D3D12_RASTERIZER_DESC m_rasterizerDesc = {};
 	D3D12_BLEND_DESC m_blendDesc = {};
