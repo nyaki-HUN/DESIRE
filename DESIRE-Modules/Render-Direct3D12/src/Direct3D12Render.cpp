@@ -93,21 +93,6 @@ Direct3D12Render::Direct3D12Render()
 	m_errorPixelShader = std::make_unique<Shader>("ps_error");
 	m_errorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
-	// Stencil test parameters
-	m_depthStencilDesc.StencilEnable = FALSE;
-	m_depthStencilDesc.StencilReadMask = D3D12_DEFAULT_STENCIL_READ_MASK;
-	m_depthStencilDesc.StencilWriteMask = D3D12_DEFAULT_STENCIL_WRITE_MASK;
-	// Stencil operations if pixel is front-facing
-	m_depthStencilDesc.FrontFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	m_depthStencilDesc.FrontFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	m_depthStencilDesc.FrontFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	m_depthStencilDesc.FrontFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-	// Stencil operations if pixel is back-facing
-	m_depthStencilDesc.BackFace.StencilFailOp = D3D12_STENCIL_OP_KEEP;
-	m_depthStencilDesc.BackFace.StencilDepthFailOp = D3D12_STENCIL_OP_KEEP;
-	m_depthStencilDesc.BackFace.StencilPassOp = D3D12_STENCIL_OP_KEEP;
-	m_depthStencilDesc.BackFace.StencilFunc = D3D12_COMPARISON_FUNC_ALWAYS;
-
 	m_rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 	m_rasterizerDesc.DepthClipEnable = TRUE;
 	m_rasterizerDesc.MultisampleEnable = TRUE;
@@ -624,7 +609,7 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);						// TODO
 	psoDesc.SampleMask = UINT_MAX;
 	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);			// TODO
-	psoDesc.DepthStencilState.DepthEnable = TRUE;								// TODO
+	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	psoDesc.InputLayout = { vertexElementDesc, static_cast<UINT>(vertexLayout.Size()) };
 	psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
 	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
@@ -632,7 +617,6 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;							// TODO
 	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	psoDesc.SampleDesc.Count = 1;
-	psoDesc.NodeMask = 1;
 //	D3D12_CACHED_PIPELINE_STATE CachedPSO;
 	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
@@ -669,7 +653,7 @@ void* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 
 		// Create index upload buffer
 		CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-		CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pMeshRenderData->m_pVertexBuffer, 0, 1));
+		CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pMeshRenderData->m_pIndexBuffer, 0, 1));
 
 		ID3D12Resource* pUploadResource = nullptr;
 		hr = m_pDevice->CreateCommittedResource(
@@ -685,7 +669,7 @@ void* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 		D3D12_SUBRESOURCE_DATA indexData = {};
 		indexData.pData = mesh.m_indices.get();
 
-		UpdateSubresources<1>(m_pCmdList, pMeshRenderData->m_pVertexBuffer, pUploadResource, 0, 0, 1, &indexData);
+		UpdateSubresources<1>(m_pCmdList, pMeshRenderData->m_pIndexBuffer, pUploadResource, 0, 0, 1, &indexData);
 	}
 
 	// Create vertex buffer
@@ -1120,8 +1104,7 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 			DX_CHECK_HRESULT(hr);
 
 			// By resetting the command list we are putting it into a recording state so we can start recording commands
-			ID3D12PipelineState* pPipelineState = nullptr;
-			hr = m_pCmdList->Reset(frameBuffer.m_pCommandAllocator, pPipelineState);
+			hr = m_pCmdList->Reset(frameBuffer.m_pCommandAllocator, m_pActivePipelineState);
 
 			// Transition the render target from present state to render target state
 			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(frameBuffer.m_pRenderTarget, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
