@@ -563,18 +563,20 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 		bufferDesc.ByteWidth = mesh.GetSizeOfIndexData();
 		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-		D3D11_SUBRESOURCE_DATA initialIndexData = {};
-		initialIndexData.pSysMem = mesh.m_indices.get();
-		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initialIndexData, &pMeshRenderData->m_pIndexBuffer);
+		D3D11_SUBRESOURCE_DATA indexData = {};
+		indexData.pSysMem = mesh.m_indices.get();
+
+		HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &indexData, &pMeshRenderData->m_pIndexBuffer);
 		DX_CHECK_HRESULT(hr);
 	}
 
 	bufferDesc.ByteWidth = mesh.GetSizeOfVertexData();
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-	D3D11_SUBRESOURCE_DATA initialVertexData = {};
-	initialVertexData.pSysMem = mesh.m_vertices.get();
-	HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &initialVertexData, &pMeshRenderData->m_pVertexBuffer);
+	D3D11_SUBRESOURCE_DATA vertexData = {};
+	vertexData.pSysMem = mesh.m_vertices.get();
+
+	HRESULT hr = m_pDevice->CreateBuffer(&bufferDesc, &vertexData, &pMeshRenderData->m_pVertexBuffer);
 	DX_CHECK_HRESULT(hr);
 
 	return pMeshRenderData;
@@ -617,7 +619,7 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 	{
 		if(pErrorBlob != nullptr)
 		{
-			LOG_ERROR("Shader compile error:\n%s", static_cast<char*>(pErrorBlob->GetBufferPointer()));
+			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(pErrorBlob->GetBufferPointer()));
 			DX_RELEASE(pErrorBlob);
 		}
 
@@ -749,16 +751,17 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 	}
 	else
 	{
-		std::unique_ptr<D3D11_SUBRESOURCE_DATA[]> subResourceData = std::make_unique<D3D11_SUBRESOURCE_DATA[]>(textureDesc.MipLevels * textureDesc.ArraySize);
-		ASSERT(textureDesc.MipLevels * textureDesc.ArraySize == 1 && "TODO: Set initial data properly in the loop below");
-		for(uint32_t i = 0; i < textureDesc.MipLevels * textureDesc.ArraySize; ++i)
+		const uint32_t numTextureData = textureDesc.MipLevels * textureDesc.ArraySize;
+		DESIRE_STACKALLOCATE_ARRAY(D3D11_SUBRESOURCE_DATA, textureData, numTextureData);
+		ASSERT(numTextureData == 1 && "TODO: Set pSysMem properly in the loop below");
+		for(uint32_t i = 0; i < numTextureData; ++i)
 		{
-			subResourceData[i].pSysMem = texture.GetData();
-			subResourceData[i].SysMemPitch = texture.GetWidth() * texture.GetBytesPerPixel();
-			subResourceData[i].SysMemSlicePitch = subResourceData[i].SysMemPitch * texture.GetHeight();
+			textureData[i].pSysMem = texture.GetData();
+			textureData[i].SysMemPitch = texture.GetWidth() * texture.GetBytesPerPixel();
+			textureData[i].SysMemSlicePitch = textureData[i].SysMemPitch * texture.GetHeight();
 		}
 
-		HRESULT hr = m_pDevice->CreateTexture2D(&textureDesc, subResourceData.get(), &pTextureRenderData->m_pTexture2D);
+		HRESULT hr = m_pDevice->CreateTexture2D(&textureDesc, textureData, &pTextureRenderData->m_pTexture2D);
 		DX_CHECK_HRESULT(hr);
 	}
 
