@@ -583,8 +583,8 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 
 		if(pUniform != nullptr && bgfx::isValid(*pUniform))
 		{
-			const void* value = shaderParam.GetValue();
-			bgfx::setUniform(*pUniform, value);
+			const void* pValue = shaderParam.GetValue();
+			bgfx::setUniform(*pUniform, pValue);
 		}
 	}
 }

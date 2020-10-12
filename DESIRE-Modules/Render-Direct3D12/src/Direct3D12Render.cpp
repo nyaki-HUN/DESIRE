@@ -56,17 +56,6 @@ static DXGI_FORMAT GetTextureFormat(const Texture& texture)
 	return conversionTable[static_cast<size_t>(texture.GetFormat())];
 }
 
-static inline bool CheckAndUpdateShaderParam(const void* value, void* valueInConstantBuffer, uint32_t size)
-{
-	if(memcmp(valueInConstantBuffer, value, size) == 0)
-	{
-		return false;
-	}
-
-	memcpy(valueInConstantBuffer, value, size);
-	return true;
-}
-
 Direct3D12Render::Direct3D12Render()
 {
 	const char vs_error[] =
@@ -833,7 +822,7 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 					typeDesc.Class == D3D_SVC_MATRIX_ROWS || typeDesc.Class == D3D_SVC_MATRIX_COLUMNS)
 				{
 					const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-					bufferData.m_variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
+					bufferData.m_variables.Insert(key, { bufferData.m_data.ptr.get() + varDesc.StartOffset, varDesc.Size });
 				}
 			}
 		}
@@ -1127,68 +1116,68 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void Direct3D12Render::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataD3D12* pVS = static_cast<const ShaderRenderDataD3D12*>(material.m_vertexShader->m_pRenderData);
+	ShaderRenderDataD3D12* pVS = static_cast<ShaderRenderDataD3D12*>(material.m_vertexShader->m_pRenderData);
 	UpdateShaderParams(material, pVS);
 
-	const ShaderRenderDataD3D12* pPS = static_cast<const ShaderRenderDataD3D12*>(material.m_pixelShader->m_pRenderData);
+	ShaderRenderDataD3D12* pPS = static_cast<ShaderRenderDataD3D12*>(material.m_pixelShader->m_pRenderData);
 	UpdateShaderParams(material, pPS);
 }
 
-void Direct3D12Render::UpdateShaderParams(const Material& material, const ShaderRenderDataD3D12* pShaderRenderData)
+void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRenderDataD3D12* pShaderRenderData)
 {
-	const std::pair<uint32_t, uint32_t>* pOffsetSizePair = nullptr;
+	ShaderRenderDataD3D12::ConstantBufferData::Variable* pVariable = nullptr;
 
 	for(size_t i = 0; i < pShaderRenderData->m_constantBuffers.Size(); ++i)
 	{
 		bool isChanged = false;
-		const ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
+		ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
 
 		for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 		{
-			pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find(shaderParam.m_name);
-			if(pOffsetSizePair != nullptr)
+			pVariable = bufferData.m_variables.Find(shaderParam.m_name);
+			if(pVariable != nullptr)
 			{
-				isChanged |= CheckAndUpdateShaderParam(shaderParam.GetValue(), bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+				isChanged |= pVariable->CheckAndUpdate(shaderParam.GetValue());
 			}
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matWorldView");
-		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
+		pVariable = bufferData.m_variables.Find("matWorldView");
+		if(pVariable != nullptr && pVariable->m_size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldView.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			isChanged |= pVariable->CheckAndUpdate(&matWorldView.r[0]);
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matWorldViewProj");
-		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == sizeof(DirectX::XMMATRIX))
+		pVariable = bufferData.m_variables.Find("matWorldViewProj");
+		if(pVariable != nullptr && pVariable->m_size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, m_matProj);
-			isChanged |= CheckAndUpdateShaderParam(&matWorldViewProj.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			isChanged |= pVariable->CheckAndUpdate(&matWorldViewProj.r[0]);
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matView");
-		if(pOffsetSizePair != nullptr)
+		pVariable = bufferData.m_variables.Find("matView");
+		if(pVariable != nullptr)
 		{
-			isChanged |= CheckAndUpdateShaderParam(&m_matView.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			isChanged |= pVariable->CheckAndUpdate(&m_matView.r[0]);
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("matViewInv");
-		if(pOffsetSizePair != nullptr)
-		{
-			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[0], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
-		}
-
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("camPos");
-		if(pOffsetSizePair != nullptr)
+		pVariable = bufferData.m_variables.Find("matViewInv");
+		if(pVariable != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
-			isChanged |= CheckAndUpdateShaderParam(&matViewInv.r[3], bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[0]);
 		}
 
-		pOffsetSizePair = bufferData.m_variableOffsetSizePairs.Find("resolution");
-		if(pOffsetSizePair != nullptr && pOffsetSizePair->second == 2 * sizeof(float))
+		pVariable = bufferData.m_variables.Find("camPos");
+		if(pVariable != nullptr)
+		{
+			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
+			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[3]);
+		}
+
+		pVariable = bufferData.m_variables.Find("resolution");
+		if(pVariable != nullptr && pVariable->m_size == 2 * sizeof(float))
 		{
 			float resolution[2] = {};
 			if(m_pActiveRenderTarget != nullptr)
@@ -1202,7 +1191,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, const Shader
 				resolution[1] = m_pActiveWindow->GetHeight();
 			}
 
-			isChanged |= CheckAndUpdateShaderParam(resolution, bufferData.m_data.ptr.get() + pOffsetSizePair->first, pOffsetSizePair->second);
+			isChanged |= pVariable->CheckAndUpdate(resolution);
 		}
 
 		if(isChanged)

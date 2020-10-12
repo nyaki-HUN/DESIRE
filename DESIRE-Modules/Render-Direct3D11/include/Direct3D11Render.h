@@ -54,7 +54,7 @@ private:
 	void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) override;
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
 	void UpdateShaderParams(const Material& material) override;
-	void UpdateShaderParams(const Material& material, const ShaderRenderDataD3D11* pShaderRenderData);
+	void UpdateShaderParams(const Material& material, ShaderRenderDataD3D11* pShaderRenderData);
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
