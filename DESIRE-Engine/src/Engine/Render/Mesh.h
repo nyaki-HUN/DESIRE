@@ -40,6 +40,8 @@ public:
 		EAttribType m_type = EAttribType::Num;
 		uint8_t m_count = 0;
 
+		static constexpr uint8_t kMaxCount = 4;
+
 		VertexLayout(EAttrib attrib, int count, EAttribType type);
 		uint32_t GetSizeInBytes() const;
 	};

@@ -538,7 +538,7 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	};
 	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
 
-	static constexpr DXGI_FORMAT s_attribTypeConversionTable[][4] =
+	static constexpr DXGI_FORMAT s_attribTypeConversionTable[][Mesh::VertexLayout::kMaxCount] =
 	{
 		// Mesh::EAttribType::FLOAT
 		{

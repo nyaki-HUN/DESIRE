@@ -10,7 +10,7 @@ Mesh::VertexLayout::VertexLayout(EAttrib attrib, int count, EAttribType type)
 {
 	ASSERT(attrib != EAttrib::Num);
 	ASSERT(type != EAttribType::Num);
-	ASSERT(0 < count && count <= 4);
+	ASSERT(0 < count && count <= kMaxCount);
 }
 
 uint32_t Mesh::VertexLayout::GetSizeInBytes() const
