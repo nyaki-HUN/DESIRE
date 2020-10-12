@@ -84,6 +84,7 @@ void ImGuiUI::Init()
 	renderable->m_material = std::make_unique<Material>();
 	renderable->m_material->m_vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
 	renderable->m_material->m_pixelShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->m_material->m_isDepthWriteEnabled = false;
 
 	// Setup fonts
 	io.Fonts->AddFontDefault();
@@ -186,7 +187,6 @@ void ImGuiUI::Render()
 	}
 
 	Modules::Render->SetColorWriteEnabled(true, true, true, true);
-	Modules::Render->SetDepthWriteEnabled(false);
 	Modules::Render->SetCullMode(Render::ECullMode::None);
 	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 
@@ -226,7 +226,6 @@ void ImGuiUI::Render()
 				if(cmd.UserCallback == ImDrawCallback_ResetRenderState)
 				{
 					//  Special callback value used by the user to request the renderer to reset render state
-					Modules::Render->SetDepthWriteEnabled(false);
 					Modules::Render->SetCullMode(Render::ECullMode::None);
 					Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 				}

@@ -75,8 +75,8 @@ bool BgfxRender::Init(OSWindow& mainWindow)
 		m_samplerUniforms[i] = bgfx::createUniform(StackString<7>::Format("s_tex%u", i).Str(), bgfx::UniformType::Sampler);
 	}
 
-	m_renderState = BGFX_STATE_MSAA;
-	SetDefaultRenderStates();
+	m_globalRenderState = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
+	SetCullMode(ECullMode::CCW);
 
 	bgfx::reset(mainWindow.GetWidth(), mainWindow.GetHeight(), BGFX_RESET_VSYNC);
 
@@ -162,84 +162,56 @@ void BgfxRender::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
 {
 	if(r)
 	{
-		m_renderState |= BGFX_STATE_WRITE_R;
+		m_globalRenderState |= BGFX_STATE_WRITE_R;
 	}
 	else
 	{
-		m_renderState &= ~BGFX_STATE_WRITE_R;
+		m_globalRenderState &= ~BGFX_STATE_WRITE_R;
 	}
 
 	if(g)
 	{
-		m_renderState |= BGFX_STATE_WRITE_G;
+		m_globalRenderState |= BGFX_STATE_WRITE_G;
 	}
 	else
 	{
-		m_renderState &= ~BGFX_STATE_WRITE_G;
+		m_globalRenderState &= ~BGFX_STATE_WRITE_G;
 	}
 
 	if(b)
 	{
-		m_renderState |= BGFX_STATE_WRITE_B;
+		m_globalRenderState |= BGFX_STATE_WRITE_B;
 	}
 	else
 	{
-		m_renderState &= ~BGFX_STATE_WRITE_B;
+		m_globalRenderState &= ~BGFX_STATE_WRITE_B;
 	}
 
 	if(a)
 	{
-		m_renderState |= BGFX_STATE_WRITE_A;
+		m_globalRenderState |= BGFX_STATE_WRITE_A;
 	}
 	else
 	{
-		m_renderState &= ~BGFX_STATE_WRITE_A;
-	}
-}
-
-void BgfxRender::SetDepthWriteEnabled(bool enabled)
-{
-	if(enabled)
-	{
-		m_renderState |= BGFX_STATE_WRITE_Z;
-	}
-	else
-	{
-		m_renderState &= ~BGFX_STATE_WRITE_Z;
-	}
-}
-
-void BgfxRender::SetDepthTest(EDepthTest depthTest)
-{
-	m_renderState &= ~BGFX_STATE_DEPTH_TEST_MASK;
-
-	switch(depthTest)
-	{
-		case EDepthTest::Disabled:		break;
-		case EDepthTest::Less:			m_renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
-		case EDepthTest::LessEqual:		m_renderState |= BGFX_STATE_DEPTH_TEST_LEQUAL; break;
-		case EDepthTest::Greater:		m_renderState |= BGFX_STATE_DEPTH_TEST_GREATER; break;
-		case EDepthTest::GreaterEqual:	m_renderState |= BGFX_STATE_DEPTH_TEST_GEQUAL; break;
-		case EDepthTest::Equal:			m_renderState |= BGFX_STATE_DEPTH_TEST_EQUAL; break;
-		case EDepthTest::NotEqual:		m_renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
+		m_globalRenderState &= ~BGFX_STATE_WRITE_A;
 	}
 }
 
 void BgfxRender::SetCullMode(ECullMode cullMode)
 {
-	m_renderState &= ~BGFX_STATE_CULL_MASK;
+	m_globalRenderState &= ~BGFX_STATE_CULL_MASK;
 
 	switch(cullMode)
 	{
 		case ECullMode::None:	break;
-		case ECullMode::CCW:	m_renderState |= BGFX_STATE_CULL_CCW; break;
-		case ECullMode::CW:		m_renderState |= BGFX_STATE_CULL_CW; break;
+		case ECullMode::CCW:	m_globalRenderState |= BGFX_STATE_CULL_CCW; break;
+		case ECullMode::CW:		m_globalRenderState |= BGFX_STATE_CULL_CW; break;
 	}
 }
 
 void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
 {
-	m_renderState &= ~BGFX_STATE_BLEND_MASK;
+	m_globalRenderState &= ~BGFX_STATE_BLEND_MASK;
 
 	static constexpr uint64_t s_blendConversionTable[] =
 	{
@@ -263,7 +235,7 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 	const uint64_t destRGB = s_blendConversionTable[(size_t)destBlendRGB];
 	const uint64_t srcAlpha = s_blendConversionTable[(size_t)srcBlendAlpha];
 	const uint64_t destAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
-	m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(srcRGB, destRGB, srcAlpha, destAlpha);
+	m_globalRenderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(srcRGB, destRGB, srcAlpha, destAlpha);
 
 	static constexpr uint64_t s_equationConversionTable[] =
 	{
@@ -277,12 +249,12 @@ void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, 
 
 	const uint64_t equationRGB = s_equationConversionTable[(size_t)blendOpRGB];
 	const uint64_t equationAlpha = s_equationConversionTable[(size_t)blendOpAlpha];
-	m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(equationRGB, equationAlpha);
+	m_globalRenderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(equationRGB, equationAlpha);
 }
 
 void BgfxRender::SetBlendModeDisabled()
 {
-	m_renderState &= ~BGFX_STATE_BLEND_MASK;
+	m_globalRenderState &= ~BGFX_STATE_BLEND_MASK;
 }
 
 void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
@@ -292,6 +264,22 @@ void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_vertexShader->m_pRenderData);
 	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_pixelShader->m_pRenderData);
 	pRenderableRenderData->m_shaderProgram = bgfx::createProgram(pVS->shaderHandle, pPS->shaderHandle);
+
+	switch(renderable.m_material->m_depthTest)
+	{
+		case Material::EDepthTest::Disabled:		break;
+		case Material::EDepthTest::Less:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
+		case Material::EDepthTest::LessEqual:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_LEQUAL; break;
+		case Material::EDepthTest::Greater:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_GREATER; break;
+		case Material::EDepthTest::GreaterEqual:	pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_GEQUAL; break;
+		case Material::EDepthTest::Equal:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_EQUAL; break;
+		case Material::EDepthTest::NotEqual:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
+	}
+
+	if(renderable.m_material->m_isDepthWriteEnabled)
+	{
+		pRenderableRenderData->m_renderState |= BGFX_STATE_WRITE_Z;
+	}
 
 	return pRenderableRenderData;
 }
@@ -611,7 +599,7 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 		}
 	}
 
-	bgfx::setState(m_renderState, m_blendFactor);
+	bgfx::setState(pRenderableRenderData->m_renderState | m_globalRenderState, m_blendFactor);
 
 	bgfx::submit(m_activeViewId, pRenderableRenderData->m_shaderProgram, 0, BGFX_DISCARD_NONE);
 }

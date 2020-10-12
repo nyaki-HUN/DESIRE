@@ -460,30 +460,6 @@ void Direct3D12Render::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
 	}
 }
 
-void Direct3D12Render::SetDepthWriteEnabled(bool enabled)
-{
-	m_depthStencilDesc.DepthWriteMask = enabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
-}
-
-void Direct3D12Render::SetDepthTest(EDepthTest depthTest)
-{
-	switch(depthTest)
-	{
-		case EDepthTest::Disabled:
-			m_depthStencilDesc.DepthEnable = FALSE;
-			return;
-
-		case EDepthTest::Less:			m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; break;
-		case EDepthTest::LessEqual:		m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
-		case EDepthTest::Greater:		m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER; break;
-		case EDepthTest::GreaterEqual:	m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
-		case EDepthTest::Equal:			m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL; break;
-		case EDepthTest::NotEqual:		m_depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
-	}
-
-	m_depthStencilDesc.DepthEnable = TRUE;
-}
-
 void Direct3D12Render::SetCullMode(ECullMode cullMode)
 {
 	switch(cullMode)
@@ -608,6 +584,19 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	psoDesc.SampleDesc.Count = 1;
 //	D3D12_CACHED_PIPELINE_STATE CachedPSO;
 	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+
+	switch(renderable.m_material->m_depthTest)
+	{
+		case Material::EDepthTest::Disabled:		psoDesc.DepthStencilState.DepthEnable = FALSE; break;
+		case Material::EDepthTest::Less:			psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS; break;
+		case Material::EDepthTest::LessEqual:		psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL; break;
+		case Material::EDepthTest::Greater:			psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER; break;
+		case Material::EDepthTest::GreaterEqual:	psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_GREATER_EQUAL; break;
+		case Material::EDepthTest::Equal:			psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_EQUAL; break;
+		case Material::EDepthTest::NotEqual:		psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
+	}
+
+	psoDesc.DepthStencilState.DepthWriteMask = renderable.m_material->m_isDepthWriteEnabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 
 	HRESULT hr = m_pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pRenderableRenderData->m_pPipelineState));
 	DX_CHECK_HRESULT(hr);

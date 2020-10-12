@@ -219,11 +219,3 @@ void Render::Unbind(RenderTarget& renderTarget)
 		m_pActiveRenderTarget = nullptr;
 	}
 }
-
-void Render::SetDefaultRenderStates()
-{
-	SetColorWriteEnabled(true, true, true, true);
-	SetDepthWriteEnabled(true);
-	SetDepthTest(EDepthTest::Less);
-	SetCullMode(ECullMode::CCW);
-}

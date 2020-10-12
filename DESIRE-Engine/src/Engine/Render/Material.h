@@ -11,6 +11,17 @@ class Texture;
 class Material
 {
 public:
+	enum class EDepthTest
+	{
+		Disabled,
+		Less,
+		LessEqual,
+		Greater,
+		GreaterEqual,
+		Equal,
+		NotEqual
+	};
+
 	struct TextureInfo
 	{
 		std::shared_ptr<Texture> m_texture;
@@ -45,6 +56,9 @@ public:
 
 	std::shared_ptr<Shader> m_vertexShader;
 	std::shared_ptr<Shader> m_pixelShader;
+
+	EDepthTest m_depthTest = EDepthTest::Less;
+	bool m_isDepthWriteEnabled = true;
 
 private:
 	Array<TextureInfo> m_textures;

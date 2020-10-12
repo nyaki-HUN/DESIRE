@@ -16,17 +16,6 @@ class WritableString;
 class Render
 {
 public:
-	enum class EDepthTest
-	{
-		Disabled,
-		Less,
-		LessEqual,
-		Greater,
-		GreaterEqual,
-		Equal,
-		NotEqual
-	};
-
 	enum class ECullMode
 	{
 		None,
@@ -100,8 +89,6 @@ public:
 	// Render state setup
 	virtual void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) = 0;
 	virtual void SetColorWriteEnabled(bool r, bool g, bool b, bool a) = 0;
-	virtual void SetDepthWriteEnabled(bool enabled) = 0;
-	virtual void SetDepthTest(EDepthTest deptTest) = 0;
 	virtual void SetCullMode(ECullMode cullMode) = 0;
 	void SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp = EBlendOp::Add);
 	virtual void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) = 0;
@@ -115,8 +102,6 @@ public:
 	void Unbind(RenderTarget& renderTarget);
 
 protected:
-	void SetDefaultRenderStates();
-
 	const OSWindow* m_pActiveWindow = nullptr;
 	const Mesh* m_pActiveMesh = nullptr;
 	const RenderTarget* m_pActiveRenderTarget = nullptr;

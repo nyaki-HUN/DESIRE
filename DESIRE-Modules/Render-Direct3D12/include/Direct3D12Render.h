@@ -29,8 +29,6 @@ public:
 
 	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
 	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
-	void SetDepthWriteEnabled(bool enabled) override;
-	void SetDepthTest(EDepthTest depthTest) override;
 	void SetCullMode(ECullMode cullMode) override;
 	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
 	void SetBlendModeDisabled() override;
@@ -88,7 +86,6 @@ private:
 
 	ID3D12RootSignature* m_pRootSignature = nullptr;
 
-	D3D12_DEPTH_STENCIL_DESC m_depthStencilDesc = {};
 	D3D12_RASTERIZER_DESC m_rasterizerDesc = {};
 	D3D12_BLEND_DESC m_blendDesc = {};
 
