@@ -37,6 +37,41 @@
 	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
 #endif
 
+static constexpr D3D12_INPUT_ELEMENT_DESC s_attribConversionTable[] =
+{
+	{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
+	{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
+	{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
+	{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
+	{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
+	{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
+	{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
+	{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
+	{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
+	{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
+	{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
+};
+DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
+
+static constexpr DXGI_FORMAT s_attribTypeConversionTable[][Mesh::VertexLayout::kMaxCount] =
+{
+	// Mesh::EAttribType::Float
+	{
+		DXGI_FORMAT_R32_FLOAT,
+		DXGI_FORMAT_R32G32_FLOAT,
+		DXGI_FORMAT_R32G32B32_FLOAT,
+		DXGI_FORMAT_R32G32B32A32_FLOAT
+	},
+	// Mesh::EAttribType::Uint8
+	{
+		DXGI_FORMAT_R8_UNORM,
+		DXGI_FORMAT_R8G8_UNORM,
+		DXGI_FORMAT_UNKNOWN,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+	},
+};
+DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
+
 static DXGI_FORMAT GetTextureFormat(const Texture& texture)
 {
 	const DXGI_FORMAT conversionTable[] =
@@ -522,41 +557,25 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 {
 	RenderableRenderDataD3D12* pRenderableRenderData = new RenderableRenderDataD3D12();
 
-	static constexpr D3D12_INPUT_ELEMENT_DESC s_attribConversionTable[] =
-	{
-		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
-		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
-		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
-		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
-		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
-		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
-		{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
-		{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
-		{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
-		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
-		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
+	psoDesc.pRootSignature = m_pRootSignature;
+	psoDesc.VS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_vertexShader->m_pRenderData)->m_pShaderCode);
+	psoDesc.PS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_pixelShader->m_pRenderData)->m_pShaderCode);
+//	D3D12_STREAM_OUTPUT_DESC StreamOutput;
+	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	psoDesc.SampleMask = UINT_MAX;
+	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
+	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	psoDesc.NumRenderTargets = 1;
+	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	psoDesc.SampleDesc.Count = 1;
+//	D3D12_CACHED_PIPELINE_STATE CachedPSO;
+	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
-	static constexpr DXGI_FORMAT s_attribTypeConversionTable[][Mesh::VertexLayout::kMaxCount] =
-	{
-		// Mesh::EAttribType::FLOAT
-		{
-			DXGI_FORMAT_R32_FLOAT,
-			DXGI_FORMAT_R32G32_FLOAT,
-			DXGI_FORMAT_R32G32B32_FLOAT,
-			DXGI_FORMAT_R32G32B32A32_FLOAT
-		},
-		// Mesh::EAttribType::UINT8
-		{
-			DXGI_FORMAT_R8_UNORM,
-			DXGI_FORMAT_R8G8_UNORM,
-			DXGI_FORMAT_UNKNOWN,
-			DXGI_FORMAT_R8G8B8A8_UNORM,
-		},
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
-
+	// Input Layout
 	const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_mesh->GetVertexLayout();
 	D3D12_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
 	for(size_t i = 0; i < vertexLayout.Size(); ++i)
@@ -566,25 +585,10 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 		vertexElementDesc[i].Format = s_attribTypeConversionTable[static_cast<size_t>(layout.m_type)][layout.m_count - 1];
 	}
 
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
-	psoDesc.pRootSignature = m_pRootSignature;
-	psoDesc.VS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_vertexShader->m_pRenderData)->m_pShaderCode);
-	psoDesc.PS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_pixelShader->m_pRenderData)->m_pShaderCode);
-//	D3D12_STREAM_OUTPUT_DESC StreamOutput;
-	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);						// TODO
-	psoDesc.SampleMask = UINT_MAX;
-	psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);			// TODO
-	psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	psoDesc.InputLayout = { vertexElementDesc, static_cast<UINT>(vertexLayout.Size()) };
-	psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
-	psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	psoDesc.NumRenderTargets = 1;
-	psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;							// TODO
-	psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	psoDesc.SampleDesc.Count = 1;
-//	D3D12_CACHED_PIPELINE_STATE CachedPSO;
-	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
+	psoDesc.InputLayout.pInputElementDescs = vertexElementDesc;
+	psoDesc.InputLayout.NumElements = static_cast<UINT>(vertexLayout.Size());
 
+	// Depth Stencil State
 	switch(renderable.m_material->m_depthTest)
 	{
 		case Material::EDepthTest::Disabled:		psoDesc.DepthStencilState.DepthEnable = FALSE; break;
@@ -598,6 +602,7 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 
 	psoDesc.DepthStencilState.DepthWriteMask = renderable.m_material->m_isDepthWriteEnabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 
+	// Pipeline State
 	HRESULT hr = m_pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pRenderableRenderData->m_pPipelineState));
 	DX_CHECK_HRESULT(hr);
 

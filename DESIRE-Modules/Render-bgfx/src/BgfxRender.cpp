@@ -21,6 +21,29 @@
 
 #include "bgfx/../../src/config.h"
 
+static constexpr bgfx::Attrib::Enum s_attribConversionTable[] =
+{
+	bgfx::Attrib::Position,		// Mesh::EAttrib::Position
+	bgfx::Attrib::Normal,		// Mesh::EAttrib::Normal
+	bgfx::Attrib::Color0,		// Mesh::EAttrib::Color
+	bgfx::Attrib::TexCoord0,	// Mesh::EAttrib::Texcoord0
+	bgfx::Attrib::TexCoord1,	// Mesh::EAttrib::Texcoord1
+	bgfx::Attrib::TexCoord2,	// Mesh::EAttrib::Texcoord2
+	bgfx::Attrib::TexCoord3,	// Mesh::EAttrib::Texcoord3
+	bgfx::Attrib::TexCoord4,	// Mesh::EAttrib::Texcoord4
+	bgfx::Attrib::TexCoord5,	// Mesh::EAttrib::Texcoord5
+	bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::Texcoord6
+	bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::Texcoord7
+};
+DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
+
+static constexpr bgfx::AttribType::Enum s_attribTypeConversionTable[] =
+{
+	bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::Float
+	bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::Uint8
+};
+DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
+
 static bgfx::TextureFormat::Enum GetTextureFormat(const Texture& texture)
 {
 	static constexpr bgfx::TextureFormat::Enum conversionTable[] =
@@ -287,29 +310,6 @@ void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 void* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
 {
 	MeshRenderDataBgfx* pMeshRenderData = new MeshRenderDataBgfx();
-
-	static constexpr bgfx::Attrib::Enum s_attribConversionTable[] =
-	{
-		bgfx::Attrib::Position,		// Mesh::EAttrib::Position
-		bgfx::Attrib::Normal,		// Mesh::EAttrib::Normal
-		bgfx::Attrib::Color0,		// Mesh::EAttrib::Color
-		bgfx::Attrib::TexCoord0,	// Mesh::EAttrib::Texcoord0
-		bgfx::Attrib::TexCoord1,	// Mesh::EAttrib::Texcoord1
-		bgfx::Attrib::TexCoord2,	// Mesh::EAttrib::Texcoord2
-		bgfx::Attrib::TexCoord3,	// Mesh::EAttrib::Texcoord3
-		bgfx::Attrib::TexCoord4,	// Mesh::EAttrib::Texcoord4
-		bgfx::Attrib::TexCoord5,	// Mesh::EAttrib::Texcoord5
-		bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::Texcoord6
-		bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::Texcoord7
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
-
-	static constexpr bgfx::AttribType::Enum s_attribTypeConversionTable[] =
-	{
-		bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::Float
-		bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::Uint8
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
 
 	pMeshRenderData->vertexLayout.begin();
 	const Array<Mesh::VertexLayout>& vertexLayout = mesh.GetVertexLayout();
