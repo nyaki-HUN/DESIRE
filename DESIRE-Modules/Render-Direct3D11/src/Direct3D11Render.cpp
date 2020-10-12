@@ -92,22 +92,9 @@ Direct3D11Render::Direct3D11Render()
 	m_errorPixelShader = std::make_unique<Shader>("ps_error");
 	m_errorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
-	// Stencil test parameters
-	m_depthStencilDesc.StencilEnable = FALSE;
-	m_depthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-	m_depthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-	// Stencil operations if pixel is front-facing
-	m_depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	m_depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	m_depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	m_depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-	// Stencil operations if pixel is back-facing
-	m_depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	m_depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-	m_depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	m_depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+	m_depthStencilDesc = CD3D11_DEPTH_STENCIL_DESC(D3D11_DEFAULT);
 
-	m_rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	m_rasterizerDesc = CD3D11_RASTERIZER_DESC(D3D11_DEFAULT);
 	m_rasterizerDesc.DepthClipEnable = FALSE;
 	m_rasterizerDesc.MultisampleEnable = TRUE;
 	m_rasterizerDesc.AntialiasedLineEnable = TRUE;
@@ -640,10 +627,10 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 	pShaderRenderData->m_pPtr->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(shader.m_name.Length()), shader.m_name.Str());
 
 	ID3D11ShaderReflection* pReflection = nullptr;
-	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pReflection);
+	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_PPV_ARGS(&pReflection));
 	if(FAILED(hr))
 	{
-		LOG_ERROR("D3DReflect failed 0x%08x\n", (uint32_t)hr);
+		LOG_ERROR("D3DReflect failed 0x%08x\n", static_cast<uint32_t>(hr));
 	}
 
 	D3D11_SHADER_DESC shaderDesc;
@@ -657,49 +644,51 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 	pShaderRenderData->m_constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
 	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		ID3D11ShaderReflectionConstantBuffer* cbuffer = pReflection->GetConstantBufferByIndex(i);
+		ID3D11ShaderReflectionConstantBuffer* pConstantBuffer = pReflection->GetConstantBufferByIndex(i);
 		D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
-		hr = cbuffer->GetDesc(&shaderBufferDesc);
+		hr = pConstantBuffer->GetDesc(&shaderBufferDesc);
 		DX_CHECK_HRESULT(hr);
 
-		// Create constant buffer
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.ByteWidth = shaderBufferDesc.Size;
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = m_pDevice->CreateBuffer(&bufferDesc, nullptr, &pShaderRenderData->m_constantBuffers[i]);
-		DX_CHECK_HRESULT(hr);
-
-		// Create constant buffer data
-		ShaderRenderDataD3D11::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
-		bufferData.m_data = MemoryBuffer(shaderBufferDesc.Size);
-
-		for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
+		if(shaderBufferDesc.Type == D3D_CT_CBUFFER || shaderBufferDesc.Type == D3D_CT_TBUFFER)
 		{
-			ID3D11ShaderReflectionVariable* shaderVar = cbuffer->GetVariableByIndex(j);
-			D3D11_SHADER_VARIABLE_DESC varDesc;
-			hr = shaderVar->GetDesc(&varDesc);
+			// Create constant buffer
+			D3D11_BUFFER_DESC bufferDesc = {};
+			bufferDesc.ByteWidth = shaderBufferDesc.Size;
+			bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+			hr = m_pDevice->CreateBuffer(&bufferDesc, nullptr, &pShaderRenderData->m_constantBuffers[i]);
 			DX_CHECK_HRESULT(hr);
 
-			if((varDesc.uFlags & D3D_SVF_USED) == 0)
+			// Create constant buffer data
+			ShaderRenderDataD3D11::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
+			bufferData.m_data = MemoryBuffer(shaderBufferDesc.Size);
+
+			for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
 			{
-				continue;
+				ID3D11ShaderReflectionVariable* pVariable = pConstantBuffer->GetVariableByIndex(j);
+				D3D11_SHADER_VARIABLE_DESC varDesc;
+				hr = pVariable->GetDesc(&varDesc);
+				DX_CHECK_HRESULT(hr);
+
+				if((varDesc.uFlags & D3D_SVF_USED) == 0)
+				{
+					continue;
+				}
+
+				ID3D11ShaderReflectionType* pType = pVariable->GetType();
+				D3D11_SHADER_TYPE_DESC typeDesc;
+				hr = pType->GetDesc(&typeDesc);
+				DX_CHECK_HRESULT(hr);
+
+				if( typeDesc.Class == D3D_SVC_SCALAR ||
+					typeDesc.Class == D3D_SVC_VECTOR ||
+					typeDesc.Class == D3D_SVC_MATRIX_ROWS || typeDesc.Class == D3D_SVC_MATRIX_COLUMNS)
+				{
+					const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
+					bufferData.m_variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
+				}
 			}
-
-			ID3D11ShaderReflectionType* type = shaderVar->GetType();
-			D3D11_SHADER_TYPE_DESC typeDesc;
-			hr = type->GetDesc(&typeDesc);
-			DX_CHECK_HRESULT(hr);
-
-			if( typeDesc.Class != D3D_SVC_SCALAR &&
-				typeDesc.Class != D3D_SVC_VECTOR &&
-				typeDesc.Class != D3D_SVC_MATRIX_COLUMNS)
-			{
-				continue;
-			}
-
-			const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-			bufferData.m_variableOffsetSizePairs.Insert(key, std::pair(varDesc.StartOffset, varDesc.Size));
 		}
 	}
 
