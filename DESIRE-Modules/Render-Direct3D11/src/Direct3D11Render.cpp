@@ -36,6 +36,41 @@
 	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
 #endif
 
+static constexpr D3D11_INPUT_ELEMENT_DESC s_attribConversionTable[] =
+{
+	{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
+	{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
+	{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
+	{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
+	{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
+	{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
+	{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
+	{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
+	{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
+	{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
+	{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
+};
+DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
+
+static constexpr DXGI_FORMAT s_attribTypeConversionTable[][Mesh::VertexLayout::kMaxCount] =
+{
+	// Mesh::EAttribType::Float
+	{
+		DXGI_FORMAT_R32_FLOAT,
+		DXGI_FORMAT_R32G32_FLOAT,
+		DXGI_FORMAT_R32G32B32_FLOAT,
+		DXGI_FORMAT_R32G32B32A32_FLOAT
+	},
+	// Mesh::EAttribType::Uint8
+	{
+		DXGI_FORMAT_R8_UNORM,
+		DXGI_FORMAT_R8G8_UNORM,
+		DXGI_FORMAT_UNKNOWN,
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+	},
+};
+DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
+
 static DXGI_FORMAT GetTextureFormat(const Texture& texture)
 {
 	const DXGI_FORMAT conversionTable[] =
@@ -80,8 +115,6 @@ Direct3D11Render::Direct3D11Render()
 	m_errorVertexShader->m_data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
 	m_errorPixelShader = std::make_unique<Shader>("ps_error");
 	m_errorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
-
-	m_depthStencilDesc = CD3D11_DEPTH_STENCIL_DESC(D3D11_DEFAULT);
 
 	m_rasterizerDesc = CD3D11_RASTERIZER_DESC(D3D11_DEFAULT);
 	m_rasterizerDesc.DepthClipEnable = FALSE;
@@ -158,7 +191,6 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 	}
 
 	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	SetDefaultRenderStates();
 
 	return true;
 }
@@ -194,15 +226,12 @@ void Direct3D11Render::Kill()
 
 	m_pActiveVS = nullptr;
 	m_pActivePS = nullptr;
+	m_pActiveInputLayout = nullptr;
 	m_pActiveDepthStencilState = nullptr;
 	m_pActiveRasterizerState = nullptr;
 	m_pActiveBlendState = nullptr;
-	m_pActiveInputLayout = nullptr;
 
-	for(auto& pair : m_depthStencilStateCache)
-	{
-		DX_RELEASE(pair.second);
-	}
+	m_inputLayoutCache.clear();
 	m_depthStencilStateCache.clear();
 
 	for(auto& pair : m_rasterizerStateCache)
@@ -216,8 +245,6 @@ void Direct3D11Render::Kill()
 		DX_RELEASE(pair.second);
 	}
 	m_blendStateCache.clear();
-
-	m_inputLayoutCache.clear();
 
 	for(auto& pair : m_samplerStateCache)
 	{
@@ -356,30 +383,6 @@ void Direct3D11Render::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
 	}
 }
 
-void Direct3D11Render::SetDepthWriteEnabled(bool enabled)
-{
-	m_depthStencilDesc.DepthWriteMask = enabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
-}
-
-void Direct3D11Render::SetDepthTest(EDepthTest depthTest)
-{
-	switch(depthTest)
-	{
-		case EDepthTest::Disabled:
-			m_depthStencilDesc.DepthEnable = FALSE;
-			return;
-
-		case EDepthTest::Less:			m_depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS; break;
-		case EDepthTest::LessEqual:		m_depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; break;
-		case EDepthTest::Greater:		m_depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER; break;
-		case EDepthTest::GreaterEqual:	m_depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; break;
-		case EDepthTest::Equal:			m_depthStencilDesc.DepthFunc = D3D11_COMPARISON_EQUAL; break;
-		case EDepthTest::NotEqual:		m_depthStencilDesc.DepthFunc = D3D11_COMPARISON_NOT_EQUAL; break;
-	}
-
-	m_depthStencilDesc.DepthEnable = TRUE;
-}
-
 void Direct3D11Render::SetCullMode(ECullMode cullMode)
 {
 	switch(cullMode)
@@ -442,41 +445,7 @@ void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 {
 	RenderableRenderDataD3D11* pRenderableRenderData = new RenderableRenderDataD3D11();
 
-	static constexpr D3D11_INPUT_ELEMENT_DESC s_attribConversionTable[] =
-	{
-		{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
-		{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
-		{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
-		{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
-		{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
-		{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
-		{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
-		{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
-		{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
-		{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
-		{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
-
-	static constexpr DXGI_FORMAT s_attribTypeConversionTable[][4] =
-	{
-		// Mesh::EAttribType::FLOAT
-		{
-			DXGI_FORMAT_R32_FLOAT,
-			DXGI_FORMAT_R32G32_FLOAT,
-			DXGI_FORMAT_R32G32B32_FLOAT,
-			DXGI_FORMAT_R32G32B32A32_FLOAT
-		},
-		// Mesh::EAttribType::UINT8
-		{
-			DXGI_FORMAT_R8_UNORM,
-			DXGI_FORMAT_R8G8_UNORM,
-			DXGI_FORMAT_UNKNOWN,
-			DXGI_FORMAT_R8G8B8A8_UNORM,
-		},
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
-
+	// Input Layout
 	const MeshRenderDataD3D11* pMeshRenderData = static_cast<const MeshRenderDataD3D11*>(renderable.m_mesh->m_pRenderData);
 	const ShaderRenderDataD3D11* pVS = static_cast<const ShaderRenderDataD3D11*>(renderable.m_material->m_vertexShader->m_pRenderData);
 	pRenderableRenderData->m_inputLayoutKey = std::pair(pMeshRenderData->m_vertexLayoutKey, reinterpret_cast<uint64_t>(pVS));
@@ -501,6 +470,52 @@ void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 		DX_CHECK_HRESULT(hr);
 
 		m_inputLayoutCache.emplace(pRenderableRenderData->m_inputLayoutKey, pRenderableRenderData->m_pInputLayout);
+	}
+
+	// Depth Stencil State
+	CD3D11_DEPTH_STENCIL_DESC depthStencilDesc = CD3D11_DEPTH_STENCIL_DESC(D3D11_DEFAULT);
+
+	switch(renderable.m_material->m_depthTest)
+	{
+		case Material::EDepthTest::Disabled:		depthStencilDesc.DepthEnable = FALSE; break;
+		case Material::EDepthTest::Less:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS; break;
+		case Material::EDepthTest::LessEqual:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; break;
+		case Material::EDepthTest::Greater:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER; break;
+		case Material::EDepthTest::GreaterEqual:	depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL; break;
+		case Material::EDepthTest::Equal:			depthStencilDesc.DepthFunc = D3D11_COMPARISON_EQUAL; break;
+		case Material::EDepthTest::NotEqual:		depthStencilDesc.DepthFunc = D3D11_COMPARISON_NOT_EQUAL; break;
+	}
+
+	depthStencilDesc.DepthWriteMask = renderable.m_material->m_isDepthWriteEnabled ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+
+	pRenderableRenderData->m_depthStencilKey = 0
+		| (uint64_t)depthStencilDesc.DepthEnable					<< 0	// 1 bit
+		| (uint64_t)depthStencilDesc.DepthWriteMask					<< 1	// 1 bit
+		| (uint64_t)depthStencilDesc.DepthFunc						<< 2	// 4 bits
+		| (uint64_t)depthStencilDesc.StencilEnable					<< 6	// 1 bit
+		| (uint64_t)depthStencilDesc.StencilReadMask				<< 7	// 8 bits
+		| (uint64_t)depthStencilDesc.StencilWriteMask				<< 15	// 8 bits
+		| (uint64_t)depthStencilDesc.FrontFace.StencilFailOp		<< 23	// 4 bits
+		| (uint64_t)depthStencilDesc.FrontFace.StencilDepthFailOp	<< 27	// 4 bits
+		| (uint64_t)depthStencilDesc.FrontFace.StencilPassOp		<< 31	// 4 bits
+		| (uint64_t)depthStencilDesc.FrontFace.StencilFunc			<< 35	// 4 bits
+		| (uint64_t)depthStencilDesc.BackFace.StencilFailOp			<< 39	// 4 bits
+		| (uint64_t)depthStencilDesc.BackFace.StencilDepthFailOp	<< 43	// 4 bits
+		| (uint64_t)depthStencilDesc.BackFace.StencilPassOp			<< 47	// 4 bits
+		| (uint64_t)depthStencilDesc.BackFace.StencilFunc			<< 51;	// 4 bits
+
+	auto iter = m_depthStencilStateCache.find(pRenderableRenderData->m_depthStencilKey);
+	if(iter != m_depthStencilStateCache.end())
+	{
+		pRenderableRenderData->m_pDepthStencilState = iter->second;
+		pRenderableRenderData->m_pDepthStencilState->AddRef();
+	}
+	else
+	{
+		HRESULT hr = m_pDevice->CreateDepthStencilState(&depthStencilDesc, &pRenderableRenderData->m_pDepthStencilState);
+		DX_CHECK_HRESULT(hr);
+
+		m_depthStencilStateCache.emplace(pRenderableRenderData->m_depthStencilKey, pRenderableRenderData->m_pDepthStencilState);
 	}
 
 	return pRenderableRenderData;
@@ -798,10 +813,21 @@ void Direct3D11Render::DestroyRenderableRenderData(void* pRenderData)
 		m_pActiveInputLayout = nullptr;
 	}
 
+	if(m_pActiveDepthStencilState == pRenderableRenderData->m_pDepthStencilState)
+	{
+		m_pActiveDepthStencilState = nullptr;
+	}
+
 	UINT refCount = pRenderableRenderData->m_pInputLayout->Release();
 	if(refCount == 0)
 	{
 		m_inputLayoutCache.erase(pRenderableRenderData->m_inputLayoutKey);
+	}
+
+	refCount = pRenderableRenderData->m_pDepthStencilState->Release();
+	if(refCount == 0)
+	{
+		m_depthStencilStateCache.erase(pRenderableRenderData->m_depthStencilKey);
 	}
 
 	delete pRenderableRenderData;
@@ -1062,7 +1088,6 @@ void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 		m_pActivePS = pPS;
 	}
 
-	SetDepthStencilState();
 	SetRasterizerState();
 	SetBlendState();
 
@@ -1070,6 +1095,12 @@ void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 	{
 		m_pDeviceCtx->IASetInputLayout(pRenderableRenderData->m_pInputLayout);
 		m_pActiveInputLayout = pRenderableRenderData->m_pInputLayout;
+	}
+
+	if(m_pActiveDepthStencilState != pRenderableRenderData->m_pDepthStencilState)
+	{
+		m_pDeviceCtx->OMSetDepthStencilState(pRenderableRenderData->m_pDepthStencilState, 0);
+		m_pActiveDepthStencilState = pRenderableRenderData->m_pDepthStencilState;
 	}
 
 	if(numIndices != 0)
@@ -1132,45 +1163,6 @@ void Direct3D11Render::UpdateD3D11Resource(ID3D11Resource* pResource, const void
 
 	memcpy(mappedResource.pData, pData, size);
 	m_pDeviceCtx->Unmap(pResource, 0);
-}
-
-void Direct3D11Render::SetDepthStencilState()
-{
-	ID3D11DepthStencilState* pDepthStencilState = nullptr;
-
-	uint64_t key = 0;
-	key |= (uint64_t)m_depthStencilDesc.DepthEnable						<< 0;	// 1 bit
-	key |= (uint64_t)m_depthStencilDesc.DepthWriteMask					<< 1;	// 1 bit
-	key |= (uint64_t)m_depthStencilDesc.DepthFunc						<< 2;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.StencilEnable					<< 6;	// 1 bit
-	key |= (uint64_t)m_depthStencilDesc.StencilReadMask					<< 7;	// 8 bits
-	key |= (uint64_t)m_depthStencilDesc.StencilWriteMask				<< 15;	// 8 bits
-	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilFailOp			<< 23;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilDepthFailOp	<< 27;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilPassOp			<< 31;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.FrontFace.StencilFunc			<< 35;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilFailOp			<< 39;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilDepthFailOp		<< 43;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilPassOp			<< 47;	// 4 bits
-	key |= (uint64_t)m_depthStencilDesc.BackFace.StencilFunc			<< 51;	// 4 bits
-
-	auto it = m_depthStencilStateCache.find(key);
-	if(it != m_depthStencilStateCache.end())
-	{
-		pDepthStencilState = it->second;
-	}
-	else
-	{
-		HRESULT hr = m_pDevice->CreateDepthStencilState(&m_depthStencilDesc, &pDepthStencilState);
-		DX_CHECK_HRESULT(hr);
-		m_depthStencilStateCache.emplace(key, pDepthStencilState);
-	}
-
-	if(m_pActiveDepthStencilState != pDepthStencilState)
-	{
-		m_pDeviceCtx->OMSetDepthStencilState(pDepthStencilState, 0);
-		m_pActiveDepthStencilState = pDepthStencilState;
-	}
 }
 
 void Direct3D11Render::SetRasterizerState()
