@@ -320,6 +320,12 @@ void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	}
 }
 
+void Direct3D11Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	const D3D11_RECT rect = { x, y, x + width, y + height };
+	m_pDeviceCtx->RSSetScissorRects(1, &rect);
+}
+
 void Direct3D11Render::SetWorldMatrix(const Matrix4& matrix)
 {
 	m_matWorld.r[0] = GetXMVECTOR(matrix.col0);
@@ -379,6 +385,7 @@ void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 	{
 		CD3D11_RASTERIZER_DESC rasterizerDesc(D3D11_DEFAULT);
 		rasterizerDesc.DepthClipEnable = FALSE;
+		rasterizerDesc.ScissorEnable = TRUE;
 		rasterizerDesc.MultisampleEnable = TRUE;
 		rasterizerDesc.AntialiasedLineEnable = TRUE;
 

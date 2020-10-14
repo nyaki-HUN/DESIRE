@@ -439,6 +439,12 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 	}
 }
 
+void Direct3D12Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	const D3D12_RECT rect = { x, y, x + width, y + height };
+	m_pCmdList->RSSetScissorRects(1, &rect);
+}
+
 void Direct3D12Render::SetWorldMatrix(const Matrix4& matrix)
 {
 	m_matWorld.r[0] = GetXMVECTOR(matrix.col0);

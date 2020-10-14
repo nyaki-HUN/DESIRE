@@ -35,7 +35,7 @@ public:
 
 	void SetActiveRenderTarget(RenderTarget* pRenderTarget);
 	virtual void Clear(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) = 0;
-
+	virtual void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = UINT16_MAX, uint16_t height = UINT16_MAX) = 0;
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
 

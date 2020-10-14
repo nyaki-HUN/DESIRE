@@ -23,8 +23,8 @@ public:
 
 	void EndFrame() override;
 
-	void Clear(uint32_t clearColorRGBA = 0x000000FF, float depth = 1.0f, uint8_t stencil = 0) override;
-
+	void Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil) override;
+	void SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 
