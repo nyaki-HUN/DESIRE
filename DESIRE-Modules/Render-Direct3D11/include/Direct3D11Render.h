@@ -28,12 +28,6 @@ public:
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 
-	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
-	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
-	void SetCullMode(ECullMode cullMode) override;
-	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
-	void SetBlendModeDisabled() override;
-
 private:
 	void* CreateRenderableRenderData(const Renderable& renderable) override;
 	void* CreateMeshRenderData(const Mesh& mesh) override;
@@ -58,8 +52,6 @@ private:
 
 	bool CreateFrameBuffers(uint32_t width, uint32_t height);
 	void UpdateD3D11Resource(ID3D11Resource* pResource, const void* pData, size_t size);
-	void SetRasterizerState();
-	void SetBlendState();
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 
 	ID3D11Device* m_pDevice = nullptr;
@@ -68,15 +60,12 @@ private:
 	ID3D11RenderTargetView* m_pFrameBufferRTV = nullptr;
 	ID3D11DepthStencilView* m_pFrameBufferDSV = nullptr;
 
-	D3D11_RASTERIZER_DESC m_rasterizerDesc = {};
-	D3D11_BLEND_DESC m_blendDesc = {};
-
 	const ShaderRenderDataD3D11* m_pActiveVS = nullptr;
 	const ShaderRenderDataD3D11* m_pActivePS = nullptr;
 	const ID3D11InputLayout* m_pActiveInputLayout = nullptr;
-	const ID3D11DepthStencilState* m_pActiveDepthStencilState = nullptr;
 	const ID3D11RasterizerState* m_pActiveRasterizerState = nullptr;
 	const ID3D11BlendState* m_pActiveBlendState = nullptr;
+	const ID3D11DepthStencilState* m_pActiveDepthStencilState = nullptr;
 	const ID3D11SamplerState* m_activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
 
 	float m_blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };

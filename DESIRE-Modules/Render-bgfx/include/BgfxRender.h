@@ -22,12 +22,6 @@ public:
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 
-	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
-	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
-	void SetCullMode(ECullMode cullMode) override;
-	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
-	void SetBlendModeDisabled() override;
-
 private:
 	void* CreateRenderableRenderData(const Renderable& renderable) override;
 	void* CreateMeshRenderData(const Mesh& mesh) override;
@@ -52,6 +46,5 @@ private:
 	bgfx::UniformHandle m_samplerUniforms[8];
 	bgfx::ViewId m_activeViewId = 0;
 
-	uint64_t m_globalRenderState = 0;
 	uint32_t m_blendFactor = 0;
 };

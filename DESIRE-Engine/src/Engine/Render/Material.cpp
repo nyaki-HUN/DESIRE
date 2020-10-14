@@ -36,7 +36,7 @@ Material::~Material()
 {
 }
 
-void Material::AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode, Render::EAddressMode addressMode)
+void Material::AddTexture(const std::shared_ptr<Texture>& texture, EFilterMode filterMode, EAddressMode addressMode)
 {
 	m_textures.Add({ texture, filterMode, addressMode });
 }

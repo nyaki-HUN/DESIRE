@@ -13,59 +13,12 @@ class Texture;
 class View;
 class WritableString;
 
+enum class EAddressMode;
+enum class EFilterMode;
+
 class Render
 {
 public:
-	enum class ECullMode
-	{
-		None,
-		CCW,
-		CW
-	};
-
-	enum class EBlend
-	{
-		Zero,				// 0, 0, 0, 0
-		One,				// 1, 1, 1, 1
-		SrcColor,			// Rs, Gs, Bs, As
-		InvSrcColor,		// 1-Rs, 1-Gs, 1-Bs, 1-As
-		SrcAlpha,			// As, As, As, As
-		InvSrcAlpha,		// 1-As, 1-As, 1-As, 1-As
-		DestAlpha,			// Ad, Ad, Ad, Ad
-		InvDestAlpha,		// 1-Ad, 1-Ad, 1-Ad ,1-Ad
-		DestColor,			// Rd, Gd, Bd, Ad
-		InvDestColor,		// 1-Rd, 1-Gd, 1-Bd, 1-Ad
-		SrcAlphaSat,		// f, f, f, 1; where f = min(As, 1-Ad)
-		BlendFactor,		// blendFactor
-		InvBlendFactor		// 1-blendFactor
-	};
-
-	enum class EBlendOp
-	{
-		Add,
-		Subtract,
-		RevSubtract,
-		Min,
-		Max
-	};
-
-	enum class EAddressMode
-	{
-		Repeat,
-		Clamp,
-		MirroredRepeat,
-		MirrorOnce,
-		Border
-	};
-
-	enum class EFilterMode
-	{
-		Point,			// No filtering, the texel with coordinates nearest to the desired pixel value is used (at most 1 texel being sampled)
-		Bilinear,		// Texture samples are averaged (at most 4 samples)
-		Trilinear,		// Texture samples are averaged and also blended between mipmap levels (at most 8 samples)
-		Anisotropic,	// Use anisotropic interpolation
-	};
-
 	Render();
 	virtual ~Render();
 
@@ -85,14 +38,6 @@ public:
 
 	virtual void SetWorldMatrix(const Matrix4& worldMatrix) = 0;
 	virtual void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) = 0;
-
-	// Render state setup
-	virtual void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) = 0;
-	virtual void SetColorWriteEnabled(bool r, bool g, bool b, bool a) = 0;
-	virtual void SetCullMode(ECullMode cullMode) = 0;
-	void SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp = EBlendOp::Add);
-	virtual void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) = 0;
-	virtual void SetBlendModeDisabled() = 0;
 
 	// Resource unbind
 	void Unbind(Renderable& renderable);
@@ -121,7 +66,7 @@ private:
 
 	virtual void SetMesh(Mesh& mesh) = 0;
 	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
-	virtual void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode = EAddressMode::Repeat) = 0;
+	virtual void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) = 0;
 	virtual void SetRenderTarget(RenderTarget* pRenderTarget) = 0;
 	virtual void UpdateShaderParams(const Material& material) = 0;
 

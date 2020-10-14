@@ -6,6 +6,7 @@
 #include <DirectXMath.h>
 
 class ShaderRenderDataD3D12;
+
 struct IDXGISwapChain3;
 
 class Direct3D12Render : public Render
@@ -26,12 +27,6 @@ public:
 
 	void SetWorldMatrix(const Matrix4& matrix) override;
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
-
-	void SetScissor(uint16_t x = 0, uint16_t y = 0, uint16_t width = 0, uint16_t height = 0) override;
-	void SetColorWriteEnabled(bool r, bool g, bool b, bool a) override;
-	void SetCullMode(ECullMode cullMode) override;
-	void SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha) override;
-	void SetBlendModeDisabled() override;
 
 private:
 	void* CreateRenderableRenderData(const Renderable& renderable) override;
@@ -85,9 +80,6 @@ private:
 	ID3D12GraphicsCommandList* m_pCmdList = nullptr;
 
 	ID3D12RootSignature* m_pRootSignature = nullptr;
-
-	D3D12_RASTERIZER_DESC m_rasterizerDesc = {};
-	D3D12_BLEND_DESC m_blendDesc = {};
 
 	ID3D12PipelineState* m_pActivePipelineState = nullptr;
 

@@ -144,11 +144,6 @@ void Render::SetActiveRenderTarget(RenderTarget* pRenderTarget)
 	}
 }
 
-void Render::SetBlendMode(EBlend srcBlend, EBlend destBlend, EBlendOp blendOp)
-{
-	SetBlendModeSeparated(srcBlend, destBlend, blendOp, srcBlend, destBlend, blendOp);
-}
-
 void Render::Unbind(Renderable& renderable)
 {
 	if(renderable.m_pRenderData == nullptr)

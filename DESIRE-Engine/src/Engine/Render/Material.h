@@ -3,7 +3,7 @@
 #include "Engine/Core/Container/Array.h"
 #include "Engine/Core/HashedString.h"
 
-#include "Engine/Render/Render.h"
+#include "Engine/Render/RenderEnums.h"
 
 class Shader;
 class Texture;
@@ -11,22 +11,11 @@ class Texture;
 class Material
 {
 public:
-	enum class EDepthTest
-	{
-		Disabled,
-		Less,
-		LessEqual,
-		Greater,
-		GreaterEqual,
-		Equal,
-		NotEqual
-	};
-
 	struct TextureInfo
 	{
 		std::shared_ptr<Texture> m_texture;
-		Render::EFilterMode m_filterMode;
-		Render::EAddressMode m_addressMode;
+		EFilterMode m_filterMode;
+		EAddressMode m_addressMode;
 	};
 
 	struct ShaderParam
@@ -45,7 +34,7 @@ public:
 	Material();
 	~Material();
 
-	void AddTexture(const std::shared_ptr<Texture>& texture, Render::EFilterMode filterMode = Render::EFilterMode::Trilinear, Render::EAddressMode addressMode = Render::EAddressMode::Repeat);
+	void AddTexture(const std::shared_ptr<Texture>& texture, EFilterMode filterMode = EFilterMode::Trilinear, EAddressMode addressMode = EAddressMode::Repeat);
 	void ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& texture);
 	const Array<TextureInfo>& GetTextures() const;
 
@@ -56,6 +45,16 @@ public:
 
 	std::shared_ptr<Shader> m_vertexShader;
 	std::shared_ptr<Shader> m_pixelShader;
+
+	ECullMode m_cullMode = ECullMode::CCW;
+
+	bool m_isBlendEnabled = false;
+	EBlend m_srcBlendRGB = EBlend::SrcAlpha;
+	EBlend m_destBlendRGB = EBlend::InvSrcAlpha;
+	EBlendOp m_blendOpRGB = EBlendOp::Add;
+	EBlend m_srcBlendAlpha = EBlend::SrcAlpha;
+	EBlend m_destBlendAlpha = EBlend::InvSrcAlpha;
+	EBlendOp m_blendOpAlpha = EBlendOp::Add;
 
 	EDepthTest m_depthTest = EDepthTest::Less;
 	bool m_isDepthWriteEnabled = true;

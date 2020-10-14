@@ -44,6 +44,34 @@ static constexpr bgfx::AttribType::Enum s_attribTypeConversionTable[] =
 };
 DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
 
+static constexpr uint64_t s_blendConversionTable[] =
+{
+	BGFX_STATE_BLEND_ZERO,				// EBlend::Zero
+	BGFX_STATE_BLEND_ONE,				// EBlend::One
+	BGFX_STATE_BLEND_SRC_COLOR,			// EBlend::SrcColor
+	BGFX_STATE_BLEND_INV_SRC_COLOR,		// EBlend::InvSrcColor
+	BGFX_STATE_BLEND_SRC_ALPHA,			// EBlend::SrcAlpha
+	BGFX_STATE_BLEND_INV_SRC_ALPHA,		// EBlend::InvSrcAlpha
+	BGFX_STATE_BLEND_DST_ALPHA,			// EBlend::DestAlpha
+	BGFX_STATE_BLEND_INV_DST_ALPHA,		// EBlend::InvDestAlpha
+	BGFX_STATE_BLEND_DST_COLOR,			// EBlend::DestColor
+	BGFX_STATE_BLEND_INV_DST_COLOR,		// EBlend::InvDestColor
+	BGFX_STATE_BLEND_SRC_ALPHA_SAT,		// EBlend::SrcAlphaSat
+	BGFX_STATE_BLEND_FACTOR,			// EBlend::BlendFactor
+	BGFX_STATE_BLEND_INV_FACTOR			// EBlend::InvBlendFactor
+};
+DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
+
+static constexpr uint64_t s_equationConversionTable[] =
+{
+	BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::Add
+	BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::Subtract
+	BGFX_STATE_BLEND_EQUATION_REVSUB,	// EBlendOp::RevSubtract
+	BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::Min
+	BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::Max
+};
+DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
+
 static bgfx::TextureFormat::Enum GetTextureFormat(const Texture& texture)
 {
 	static constexpr bgfx::TextureFormat::Enum conversionTable[] =
@@ -97,9 +125,6 @@ bool BgfxRender::Init(OSWindow& mainWindow)
 	{
 		m_samplerUniforms[i] = bgfx::createUniform(StackString<7>::Format("s_tex%u", i).Str(), bgfx::UniformType::Sampler);
 	}
-
-	m_globalRenderState = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
-	SetCullMode(ECullMode::CCW);
 
 	bgfx::reset(mainWindow.GetWidth(), mainWindow.GetHeight(), BGFX_RESET_VSYNC);
 
@@ -176,110 +201,6 @@ void BgfxRender::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matr
 	bgfx::setViewTransform(m_activeViewId, view, projection);
 }
 
-void BgfxRender::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
-{
-	bgfx::setScissor(x, y, width, height);
-}
-
-void BgfxRender::SetColorWriteEnabled(bool r, bool g, bool b, bool a)
-{
-	if(r)
-	{
-		m_globalRenderState |= BGFX_STATE_WRITE_R;
-	}
-	else
-	{
-		m_globalRenderState &= ~BGFX_STATE_WRITE_R;
-	}
-
-	if(g)
-	{
-		m_globalRenderState |= BGFX_STATE_WRITE_G;
-	}
-	else
-	{
-		m_globalRenderState &= ~BGFX_STATE_WRITE_G;
-	}
-
-	if(b)
-	{
-		m_globalRenderState |= BGFX_STATE_WRITE_B;
-	}
-	else
-	{
-		m_globalRenderState &= ~BGFX_STATE_WRITE_B;
-	}
-
-	if(a)
-	{
-		m_globalRenderState |= BGFX_STATE_WRITE_A;
-	}
-	else
-	{
-		m_globalRenderState &= ~BGFX_STATE_WRITE_A;
-	}
-}
-
-void BgfxRender::SetCullMode(ECullMode cullMode)
-{
-	m_globalRenderState &= ~BGFX_STATE_CULL_MASK;
-
-	switch(cullMode)
-	{
-		case ECullMode::None:	break;
-		case ECullMode::CCW:	m_globalRenderState |= BGFX_STATE_CULL_CCW; break;
-		case ECullMode::CW:		m_globalRenderState |= BGFX_STATE_CULL_CW; break;
-	}
-}
-
-void BgfxRender::SetBlendModeSeparated(EBlend srcBlendRGB, EBlend destBlendRGB, EBlendOp blendOpRGB, EBlend srcBlendAlpha, EBlend destBlendAlpha, EBlendOp blendOpAlpha)
-{
-	m_globalRenderState &= ~BGFX_STATE_BLEND_MASK;
-
-	static constexpr uint64_t s_blendConversionTable[] =
-	{
-		BGFX_STATE_BLEND_ZERO,				// EBlend::Zero
-		BGFX_STATE_BLEND_ONE,				// EBlend::One
-		BGFX_STATE_BLEND_SRC_COLOR,			// EBlend::SrcColor
-		BGFX_STATE_BLEND_INV_SRC_COLOR,		// EBlend::InvSrcColor
-		BGFX_STATE_BLEND_SRC_ALPHA,			// EBlend::SrcAlpha
-		BGFX_STATE_BLEND_INV_SRC_ALPHA,		// EBlend::InvSrcAlpha
-		BGFX_STATE_BLEND_DST_ALPHA,			// EBlend::DestAlpha
-		BGFX_STATE_BLEND_INV_DST_ALPHA,		// EBlend::InvDestAlpha
-		BGFX_STATE_BLEND_DST_COLOR,			// EBlend::DestColor
-		BGFX_STATE_BLEND_INV_DST_COLOR,		// EBlend::InvDestColor
-		BGFX_STATE_BLEND_SRC_ALPHA_SAT,		// EBlend::SrcAlphaSat
-		BGFX_STATE_BLEND_FACTOR,			// EBlend::BlendFactor
-		BGFX_STATE_BLEND_INV_FACTOR			// EBlend::InvBlendFactor
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
-
-	const uint64_t srcRGB = s_blendConversionTable[(size_t)srcBlendRGB];
-	const uint64_t destRGB = s_blendConversionTable[(size_t)destBlendRGB];
-	const uint64_t srcAlpha = s_blendConversionTable[(size_t)srcBlendAlpha];
-	const uint64_t destAlpha = s_blendConversionTable[(size_t)destBlendAlpha];
-	m_globalRenderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(srcRGB, destRGB, srcAlpha, destAlpha);
-
-	static constexpr uint64_t s_equationConversionTable[] =
-	{
-		BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::Add
-		BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::Subtract
-		BGFX_STATE_BLEND_EQUATION_REVSUB,	// EBlendOp::RevSubtract
-		BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::Min
-		BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::Max
-	};
-	DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
-
-	const uint64_t equationRGB = s_equationConversionTable[(size_t)blendOpRGB];
-	const uint64_t equationAlpha = s_equationConversionTable[(size_t)blendOpAlpha];
-	m_globalRenderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(equationRGB, equationAlpha);
-}
-
-void BgfxRender::SetBlendModeDisabled()
-{
-	m_globalRenderState &= ~BGFX_STATE_BLEND_MASK;
-}
-
 void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 {
 	RenderableRenderDataBgfx* pRenderableRenderData = new RenderableRenderDataBgfx();
@@ -288,15 +209,23 @@ void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_pixelShader->m_pRenderData);
 	pRenderableRenderData->m_shaderProgram = bgfx::createProgram(pVS->shaderHandle, pPS->shaderHandle);
 
+	pRenderableRenderData->m_renderState = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
+
+	if(renderable.m_material->m_isBlendEnabled)
+	{
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendRGB], s_blendConversionTable[(size_t)renderable.m_material->m_destBlendRGB], s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendAlpha], s_blendConversionTable[(size_t)renderable.m_material->m_destBlendAlpha]);
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(s_equationConversionTable[(size_t)renderable.m_material->m_blendOpRGB], s_equationConversionTable[(size_t)renderable.m_material->m_blendOpAlpha]);
+	}
+
 	switch(renderable.m_material->m_depthTest)
 	{
-		case Material::EDepthTest::Disabled:		break;
-		case Material::EDepthTest::Less:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
-		case Material::EDepthTest::LessEqual:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_LEQUAL; break;
-		case Material::EDepthTest::Greater:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_GREATER; break;
-		case Material::EDepthTest::GreaterEqual:	pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_GEQUAL; break;
-		case Material::EDepthTest::Equal:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_EQUAL; break;
-		case Material::EDepthTest::NotEqual:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
+		case EDepthTest::Disabled:		break;
+		case EDepthTest::Less:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
+		case EDepthTest::LessEqual:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_LEQUAL; break;
+		case EDepthTest::Greater:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_GREATER; break;
+		case EDepthTest::GreaterEqual:	pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_GEQUAL; break;
+		case EDepthTest::Equal:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_EQUAL; break;
+		case EDepthTest::NotEqual:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
 	}
 
 	if(renderable.m_material->m_isDepthWriteEnabled)
@@ -599,7 +528,7 @@ void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t
 		}
 	}
 
-	bgfx::setState(pRenderableRenderData->m_renderState | m_globalRenderState, m_blendFactor);
+	bgfx::setState(pRenderableRenderData->m_renderState, m_blendFactor);
 
 	bgfx::submit(m_activeViewId, pRenderableRenderData->m_shaderProgram, 0, BGFX_DISCARD_NONE);
 }
