@@ -80,6 +80,8 @@ void NuklearUI::Init()
 	renderable->m_material = std::make_unique<Material>();
 	renderable->m_material->m_vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
 	renderable->m_material->m_pixelShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->m_material->m_cullMode = ECullMode::None;
+	renderable->m_material->m_isBlendEnabled = true;
 	renderable->m_material->m_isDepthWriteEnabled = false;
 
 	// Setup fonts
@@ -183,9 +185,6 @@ void NuklearUI::NewFrame(OSWindow& window)
 
 void NuklearUI::Render()
 {
-	Modules::Render->SetCullMode(Render::ECullMode::None);
-	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
-
 	// Update mesh with packed buffers for contiguous indices and vertices
 	nk_buffer indexBuffer;
 	nk_buffer vertexBuffer;

@@ -84,6 +84,8 @@ void ImGuiUI::Init()
 	renderable->m_material = std::make_unique<Material>();
 	renderable->m_material->m_vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
 	renderable->m_material->m_pixelShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->m_material->m_cullMode = ECullMode::None;
+	renderable->m_material->m_isBlendEnabled = true;
 	renderable->m_material->m_isDepthWriteEnabled = false;
 
 	// Setup fonts
@@ -186,10 +188,6 @@ void ImGuiUI::Render()
 		return;
 	}
 
-	Modules::Render->SetColorWriteEnabled(true, true, true, true);
-	Modules::Render->SetCullMode(Render::ECullMode::None);
-	Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
-
 	// Update mesh with packed buffers for contiguous indices and vertices
 	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > renderable->m_mesh->GetNumIndices() ||
 		static_cast<uint32_t>(pDrawData->TotalVtxCount) > renderable->m_mesh->GetNumVertices())
@@ -226,8 +224,6 @@ void ImGuiUI::Render()
 				if(cmd.UserCallback == ImDrawCallback_ResetRenderState)
 				{
 					//  Special callback value used by the user to request the renderer to reset render state
-					Modules::Render->SetCullMode(Render::ECullMode::None);
-					Modules::Render->SetBlendMode(Render::EBlend::SrcAlpha, Render::EBlend::InvSrcAlpha, Render::EBlendOp::Add);
 				}
 				else
 				{

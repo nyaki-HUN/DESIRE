@@ -183,6 +183,11 @@ void BgfxRender::Clear(uint32_t clearColorRGBA, float depth, uint8_t stencil)
 	bgfx::touch(m_activeViewId);
 }
 
+void BgfxRender::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16_t height)
+{
+	bgfx::setScissor(x, y, width, height);
+}
+
 void BgfxRender::SetWorldMatrix(const Matrix4& matrix)
 {
 	float world[16];
