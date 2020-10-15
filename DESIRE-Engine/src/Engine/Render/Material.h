@@ -48,7 +48,6 @@ public:
 
 	ECullMode m_cullMode = ECullMode::CCW;
 
-	bool m_isBlendEnabled = false;
 	EBlend m_srcBlendRGB = EBlend::SrcAlpha;
 	EBlend m_destBlendRGB = EBlend::InvSrcAlpha;
 	EBlendOp m_blendOpRGB = EBlendOp::Add;
@@ -56,7 +55,11 @@ public:
 	EBlend m_destBlendAlpha = EBlend::InvSrcAlpha;
 	EBlendOp m_blendOpAlpha = EBlendOp::Add;
 
+	EColorWrite m_colorWriteMask = EColorWrite::All;
+
 	EDepthTest m_depthTest = EDepthTest::Less;
+
+	bool m_isBlendEnabled = false;
 	bool m_isDepthWriteEnabled = true;
 
 private:

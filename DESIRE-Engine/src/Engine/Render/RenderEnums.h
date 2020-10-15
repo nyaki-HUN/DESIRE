@@ -1,13 +1,13 @@
 #pragma once
 
-enum class ECullMode
+enum class ECullMode : uint8_t
 {
 	None,
 	CCW,
 	CW
 };
 
-enum class EBlend
+enum class EBlend : uint8_t
 {
 	Zero,				// 0, 0, 0, 0
 	One,				// 1, 1, 1, 1
@@ -24,7 +24,7 @@ enum class EBlend
 	InvBlendFactor		// 1-blendFactor
 };
 
-enum class EBlendOp
+enum class EBlendOp : uint8_t
 {
 	Add,
 	Subtract,
@@ -33,7 +33,18 @@ enum class EBlendOp
 	Max
 };
 
-enum class EDepthTest
+enum class EColorWrite : uint8_t
+{
+	Red		= 1 << 0,
+	Green	= 1 << 1,
+	Blue	= 1 << 2,
+	Alpha	= 1 << 3,
+
+	RGB = Red | Green | Blue,
+	All = Red | Green | Blue | Alpha
+};
+
+enum class EDepthTest : uint8_t
 {
 	Disabled,
 	Less,
@@ -44,7 +55,7 @@ enum class EDepthTest
 	NotEqual
 };
 
-enum class EAddressMode
+enum class EAddressMode : uint8_t
 {
 	Repeat,
 	Clamp,
@@ -53,7 +64,7 @@ enum class EAddressMode
 	Border
 };
 
-enum class EFilterMode
+enum class EFilterMode : uint8_t
 {
 	Point,			// No filtering, the texel with coordinates nearest to the desired pixel value is used (at most 1 texel being sampled)
 	Bilinear,		// Texture samples are averaged (at most 4 samples)

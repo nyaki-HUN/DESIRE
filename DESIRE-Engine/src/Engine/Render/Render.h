@@ -13,8 +13,8 @@ class Texture;
 class View;
 class WritableString;
 
-enum class EAddressMode;
-enum class EFilterMode;
+enum class EAddressMode : uint8_t;
+enum class EFilterMode : uint8_t;
 
 class Render
 {

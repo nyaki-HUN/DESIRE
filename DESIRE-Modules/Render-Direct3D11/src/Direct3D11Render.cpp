@@ -428,13 +428,19 @@ void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 		if(renderable.m_material->m_isBlendEnabled)
 		{
 			blendDesc.RenderTarget[0].BlendEnable = TRUE;
-			blendDesc.RenderTarget[0].SrcBlend = s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendRGB];
-			blendDesc.RenderTarget[0].DestBlend = s_blendConversionTable[(size_t)renderable.m_material->m_destBlendRGB];
-			blendDesc.RenderTarget[0].BlendOp = s_equationConversionTable[(size_t)renderable.m_material->m_blendOpRGB];
-			blendDesc.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendAlpha];
-			blendDesc.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[(size_t)renderable.m_material->m_destBlendAlpha];
-			blendDesc.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[(size_t)renderable.m_material->m_blendOpAlpha];
+			blendDesc.RenderTarget[0].SrcBlend = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendRGB)];
+			blendDesc.RenderTarget[0].DestBlend = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendRGB)];
+			blendDesc.RenderTarget[0].BlendOp = s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpRGB)];
+			blendDesc.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendAlpha)];
+			blendDesc.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendAlpha)];
+			blendDesc.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpAlpha)];
 		}
+
+		static_assert(static_cast<uint8_t>(EColorWrite::Red) == D3D11_COLOR_WRITE_ENABLE_RED);
+		static_assert(static_cast<uint8_t>(EColorWrite::Green) == D3D11_COLOR_WRITE_ENABLE_GREEN);
+		static_assert(static_cast<uint8_t>(EColorWrite::Blue) == D3D11_COLOR_WRITE_ENABLE_BLUE);
+		static_assert(static_cast<uint8_t>(EColorWrite::Alpha) == D3D11_COLOR_WRITE_ENABLE_ALPHA);
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = static_cast<uint8_t>(renderable.m_material->m_colorWriteMask);
 
 		pRenderableRenderData->m_blendStateKey = 0
 			| (uint64_t)blendDesc.AlphaToCoverageEnable					<< 0	// 1 bit

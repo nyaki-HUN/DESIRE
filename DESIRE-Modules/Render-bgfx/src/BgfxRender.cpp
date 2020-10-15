@@ -216,11 +216,33 @@ void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 
 	pRenderableRenderData->m_renderState = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
 
+	switch(renderable.m_material->m_cullMode)
+	{
+		case ECullMode::None:	break;
+		case ECullMode::CCW:	pRenderableRenderData->m_renderState |= BGFX_STATE_CULL_CCW; break;
+		case ECullMode::CW:		pRenderableRenderData->m_renderState |= BGFX_STATE_CULL_CW; break;
+	}
+
 	if(renderable.m_material->m_isBlendEnabled)
 	{
-		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendRGB], s_blendConversionTable[(size_t)renderable.m_material->m_destBlendRGB], s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendAlpha], s_blendConversionTable[(size_t)renderable.m_material->m_destBlendAlpha]);
-		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(s_equationConversionTable[(size_t)renderable.m_material->m_blendOpRGB], s_equationConversionTable[(size_t)renderable.m_material->m_blendOpAlpha]);
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(
+			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendRGB)],
+			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendRGB)],
+			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendAlpha)],
+			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendAlpha)]
+		);
+
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(
+			s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpRGB)],
+			s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpAlpha)]
+		);
 	}
+
+	static_assert(static_cast<uint8_t>(EColorWrite::Red) == BGFX_STATE_WRITE_R);
+	static_assert(static_cast<uint8_t>(EColorWrite::Green) == BGFX_STATE_WRITE_G);
+	static_assert(static_cast<uint8_t>(EColorWrite::Blue) == BGFX_STATE_WRITE_B);
+	static_assert(static_cast<uint8_t>(EColorWrite::Alpha) == BGFX_STATE_WRITE_A);
+	pRenderableRenderData->m_renderState |= static_cast<uint8_t>(renderable.m_material->m_colorWriteMask);
 
 	switch(renderable.m_material->m_depthTest)
 	{

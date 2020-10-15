@@ -517,13 +517,19 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	if(renderable.m_material->m_isBlendEnabled)
 	{
 		psoDesc.BlendState.RenderTarget[0].BlendEnable = TRUE;
-		psoDesc.BlendState.RenderTarget[0].SrcBlend = s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendRGB];
-		psoDesc.BlendState.RenderTarget[0].DestBlend = s_blendConversionTable[(size_t)renderable.m_material->m_destBlendRGB];
-		psoDesc.BlendState.RenderTarget[0].BlendOp = s_equationConversionTable[(size_t)renderable.m_material->m_blendOpRGB];
-		psoDesc.BlendState.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[(size_t)renderable.m_material->m_srcBlendAlpha];
-		psoDesc.BlendState.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[(size_t)renderable.m_material->m_destBlendAlpha];
-		psoDesc.BlendState.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[(size_t)renderable.m_material->m_blendOpAlpha];
+		psoDesc.BlendState.RenderTarget[0].SrcBlend = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendRGB)];
+		psoDesc.BlendState.RenderTarget[0].DestBlend = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendRGB)];
+		psoDesc.BlendState.RenderTarget[0].BlendOp = s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpRGB)];
+		psoDesc.BlendState.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendAlpha)];
+		psoDesc.BlendState.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendAlpha)];
+		psoDesc.BlendState.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpAlpha)];
 	}
+
+	static_assert(static_cast<uint8_t>(EColorWrite::Red) == D3D12_COLOR_WRITE_ENABLE_RED);
+	static_assert(static_cast<uint8_t>(EColorWrite::Green) == D3D12_COLOR_WRITE_ENABLE_GREEN);
+	static_assert(static_cast<uint8_t>(EColorWrite::Blue) == D3D12_COLOR_WRITE_ENABLE_BLUE);
+	static_assert(static_cast<uint8_t>(EColorWrite::Alpha) == D3D12_COLOR_WRITE_ENABLE_ALPHA);
+	psoDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = static_cast<uint8_t>(renderable.m_material->m_colorWriteMask);
 
 	// Depth Stencil State
 	switch(renderable.m_material->m_depthTest)
