@@ -5,13 +5,13 @@
 class Mesh
 {
 public:
-	enum class EType
+	enum class EType : uint8_t
 	{
 		Static,			// Never updated
 		Dynamic			// Sometimes updated (but can be used across multiple frames)
 	};
 
-	enum class EAttrib
+	enum class EAttrib : uint8_t
 	{
 		Position,
 		Normal,
@@ -27,23 +27,27 @@ public:
 		Num
 	};
 
-	enum class EAttribType
+	enum class EAttribType : uint8_t
 	{
 		Float,
 		Uint8,
-		Num
 	};
 
 	struct VertexLayout
 	{
-		EAttrib m_attrib = EAttrib::Num;
-		EAttribType m_type = EAttribType::Num;
-		uint8_t m_count = 0;
+		EAttrib m_attrib;
+		uint8_t m_count;
+		EAttribType m_type;
 
-		static constexpr uint8_t kMaxCount = 4;
-
-		VertexLayout(EAttrib attrib, int count, EAttribType type);
-		uint32_t GetSizeInBytes() const;
+		uint32_t GetSizeInBytes() const
+		{
+			switch(m_type)
+			{
+				case EAttribType::Float:	return m_count * sizeof(float);
+				case EAttribType::Uint8:	return m_count * sizeof(uint8_t);
+			}
+			return 0;
+		}
 	};
 
 	Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount);

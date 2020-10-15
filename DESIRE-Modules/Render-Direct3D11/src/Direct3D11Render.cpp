@@ -7,6 +7,7 @@
 #include "RenderTargetRenderDataD3D11.h"
 #include "ShaderRenderDataD3D11.h"
 #include "TextureRenderDataD3D11.h"
+#include "ToD3D11.h"
 
 #include "Engine/Application/OSWindow.h"
 
@@ -35,88 +36,6 @@
 #else
 	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
 #endif
-
-static constexpr D3D11_INPUT_ELEMENT_DESC s_attribConversionTable[] =
-{
-	{ "POSITION",	0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Position
-	{ "NORMAL",		0,	DXGI_FORMAT_R32G32B32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Normal
-	{ "COLOR",		0,	DXGI_FORMAT_R32G32B32A32_FLOAT,	0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Color
-	{ "TEXCOORD",	0,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord0
-	{ "TEXCOORD",	1,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord1
-	{ "TEXCOORD",	2,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord2
-	{ "TEXCOORD",	3,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord3
-	{ "TEXCOORD",	4,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord4
-	{ "TEXCOORD",	5,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord5
-	{ "TEXCOORD",	6,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord6
-	{ "TEXCOORD",	7,	DXGI_FORMAT_R32G32_FLOAT,		0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },		// Mesh::EAttrib::Texcoord7
-};
-DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
-
-static constexpr DXGI_FORMAT s_attribTypeConversionTable[][Mesh::VertexLayout::kMaxCount] =
-{
-	// Mesh::EAttribType::Float
-	{
-		DXGI_FORMAT_R32_FLOAT,
-		DXGI_FORMAT_R32G32_FLOAT,
-		DXGI_FORMAT_R32G32B32_FLOAT,
-		DXGI_FORMAT_R32G32B32A32_FLOAT
-	},
-	// Mesh::EAttribType::Uint8
-	{
-		DXGI_FORMAT_R8_UNORM,
-		DXGI_FORMAT_R8G8_UNORM,
-		DXGI_FORMAT_UNKNOWN,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-	},
-};
-DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
-
-static constexpr D3D11_BLEND s_blendConversionTable[] =
-{
-	D3D11_BLEND_ZERO,				// EBlend::Zero
-	D3D11_BLEND_ONE,				// EBlend::One
-	D3D11_BLEND_SRC_COLOR,			// EBlend::SrcColor
-	D3D11_BLEND_INV_SRC_COLOR,		// EBlend::InvSrcColor
-	D3D11_BLEND_SRC_ALPHA,			// EBlend::SrcAlpha
-	D3D11_BLEND_INV_SRC_ALPHA,		// EBlend::InvSrcAlpha
-	D3D11_BLEND_DEST_ALPHA,			// EBlend::DestAlpha
-	D3D11_BLEND_INV_DEST_ALPHA,		// EBlend::InvDestAlpha
-	D3D11_BLEND_DEST_COLOR,			// EBlend::DestColor
-	D3D11_BLEND_INV_DEST_COLOR,		// EBlend::InvDestColor
-	D3D11_BLEND_SRC_ALPHA_SAT,		// EBlend::SrcAlphaSat
-	D3D11_BLEND_BLEND_FACTOR,		// EBlend::BlendFactor
-	D3D11_BLEND_INV_BLEND_FACTOR	// EBlend::InvBlendFactor
-};
-DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
-
-static constexpr D3D11_BLEND_OP s_equationConversionTable[] =
-{
-	D3D11_BLEND_OP_ADD,				// EBlendOp::Add
-	D3D11_BLEND_OP_SUBTRACT,		// EBlendOp::Subtract
-	D3D11_BLEND_OP_REV_SUBTRACT,	// EBlendOp::RevSubtract
-	D3D11_BLEND_OP_MIN,				// EBlendOp::Min
-	D3D11_BLEND_OP_MAX				// EBlendOp::Max
-};
-DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
-
-static DXGI_FORMAT GetTextureFormat(const Texture& texture)
-{
-	const DXGI_FORMAT conversionTable[] =
-	{
-		DXGI_FORMAT_R8_UNORM,					// Texture::EFormat::R8
-		DXGI_FORMAT_R8G8_UNORM,					// Texture::EFormat::RG8
-		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGB8
-		DXGI_FORMAT_R8G8B8A8_UNORM,				// Texture::EFormat::RGBA8
-		DXGI_FORMAT_R32G32B32_FLOAT,			// Texture::EFormat::RGB32F
-		DXGI_FORMAT_R32G32B32A32_FLOAT,			// Texture::EFormat::RGBA32F
-		DXGI_FORMAT_D16_UNORM,					// Texture::EFormat::D16
-		DXGI_FORMAT_D24_UNORM_S8_UINT,			// Texture::EFormat::D24S8
-		DXGI_FORMAT_D32_FLOAT,					// Texture::EFormat::D32
-	};
-	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
-
-	return conversionTable[static_cast<size_t>(texture.GetFormat())];
-}
 
 Direct3D11Render::Direct3D11Render()
 {
@@ -370,8 +289,8 @@ void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 			for(size_t i = 0; i < vertexLayout.Size(); ++i)
 			{
 				const Mesh::VertexLayout& layout = vertexLayout[i];
-				vertexElementDesc[i] = s_attribConversionTable[static_cast<size_t>(layout.m_attrib)];
-				vertexElementDesc[i].Format = s_attribTypeConversionTable[static_cast<size_t>(layout.m_type)][layout.m_count - 1];
+				vertexElementDesc[i] = ToD3D11(layout.m_attrib);
+				vertexElementDesc[i].Format = ToD3D11(layout.m_type, layout.m_count);
 			}
 
 			HRESULT hr = m_pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), pVS->m_pShaderCode->GetBufferPointer(), pVS->m_pShaderCode->GetBufferSize(), &pRenderableRenderData->m_pInputLayout);
@@ -428,18 +347,19 @@ void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 		if(renderable.m_material->m_isBlendEnabled)
 		{
 			blendDesc.RenderTarget[0].BlendEnable = TRUE;
-			blendDesc.RenderTarget[0].SrcBlend = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendRGB)];
-			blendDesc.RenderTarget[0].DestBlend = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendRGB)];
-			blendDesc.RenderTarget[0].BlendOp = s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpRGB)];
-			blendDesc.RenderTarget[0].SrcBlendAlpha = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendAlpha)];
-			blendDesc.RenderTarget[0].DestBlendAlpha = s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendAlpha)];
-			blendDesc.RenderTarget[0].BlendOpAlpha = s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpAlpha)];
+			blendDesc.RenderTarget[0].SrcBlend = ToD3D11(renderable.m_material->m_srcBlendRGB);
+			blendDesc.RenderTarget[0].DestBlend = ToD3D11(renderable.m_material->m_destBlendRGB);
+			blendDesc.RenderTarget[0].BlendOp = ToD3D11(renderable.m_material->m_blendOpRGB);
+			blendDesc.RenderTarget[0].SrcBlendAlpha = ToD3D11(renderable.m_material->m_srcBlendAlpha);
+			blendDesc.RenderTarget[0].DestBlendAlpha = ToD3D11(renderable.m_material->m_destBlendAlpha);
+			blendDesc.RenderTarget[0].BlendOpAlpha = ToD3D11(renderable.m_material->m_blendOpAlpha);
 		}
 
 		static_assert(static_cast<uint8_t>(EColorWrite::Red) == D3D11_COLOR_WRITE_ENABLE_RED);
 		static_assert(static_cast<uint8_t>(EColorWrite::Green) == D3D11_COLOR_WRITE_ENABLE_GREEN);
 		static_assert(static_cast<uint8_t>(EColorWrite::Blue) == D3D11_COLOR_WRITE_ENABLE_BLUE);
 		static_assert(static_cast<uint8_t>(EColorWrite::Alpha) == D3D11_COLOR_WRITE_ENABLE_ALPHA);
+
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = static_cast<uint8_t>(renderable.m_material->m_colorWriteMask);
 
 		pRenderableRenderData->m_blendStateKey = 0
@@ -710,7 +630,7 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 	textureDesc.Height = texture.GetHeight();
 	textureDesc.MipLevels = texture.GetNumMipLevels();
 	textureDesc.ArraySize = 1;
-	textureDesc.Format = GetTextureFormat(texture);
+	textureDesc.Format = ToD3D11(texture.GetFormat());
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	if(texture.IsDepthFormat())

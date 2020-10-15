@@ -3,28 +3,6 @@
 
 #include "Engine/Render/Render.h"
 
-Mesh::VertexLayout::VertexLayout(EAttrib attrib, int count, EAttribType type)
-	: m_attrib(attrib)
-	, m_type(type)
-	, m_count(static_cast<uint8_t>(count))
-{
-	ASSERT(attrib != EAttrib::Num);
-	ASSERT(type != EAttribType::Num);
-	ASSERT(0 < count && count <= kMaxCount);
-}
-
-uint32_t Mesh::VertexLayout::GetSizeInBytes() const
-{
-	const uint32_t sizePerAttribType[] =
-	{
-		sizeof(float),
-		sizeof(uint8_t),
-	};
-	DESIRE_CHECK_ARRAY_SIZE(sizePerAttribType, EAttribType::Num);
-
-	return m_count * sizePerAttribType[(size_t)m_type];
-}
-
 Mesh::Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount)
 	: m_vertexLayout(vertexLayoutInitList)
 	, m_numIndices(indexCount)

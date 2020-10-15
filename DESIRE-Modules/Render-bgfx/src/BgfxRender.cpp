@@ -6,6 +6,7 @@
 #include "RenderTargetRenderDataBgfx.h"
 #include "ShaderRenderDataBgfx.h"
 #include "TextureRenderDataBgfx.h"
+#include "ToBgfx.h"
 
 #include "Engine/Application/OSWindow.h"
 
@@ -20,76 +21,6 @@
 #include "Engine/Render/Texture.h"
 
 #include "bgfx/../../src/config.h"
-
-static constexpr bgfx::Attrib::Enum s_attribConversionTable[] =
-{
-	bgfx::Attrib::Position,		// Mesh::EAttrib::Position
-	bgfx::Attrib::Normal,		// Mesh::EAttrib::Normal
-	bgfx::Attrib::Color0,		// Mesh::EAttrib::Color
-	bgfx::Attrib::TexCoord0,	// Mesh::EAttrib::Texcoord0
-	bgfx::Attrib::TexCoord1,	// Mesh::EAttrib::Texcoord1
-	bgfx::Attrib::TexCoord2,	// Mesh::EAttrib::Texcoord2
-	bgfx::Attrib::TexCoord3,	// Mesh::EAttrib::Texcoord3
-	bgfx::Attrib::TexCoord4,	// Mesh::EAttrib::Texcoord4
-	bgfx::Attrib::TexCoord5,	// Mesh::EAttrib::Texcoord5
-	bgfx::Attrib::TexCoord6,	// Mesh::EAttrib::Texcoord6
-	bgfx::Attrib::TexCoord7,	// Mesh::EAttrib::Texcoord7
-};
-DESIRE_CHECK_ARRAY_SIZE(s_attribConversionTable, Mesh::EAttrib::Num);
-
-static constexpr bgfx::AttribType::Enum s_attribTypeConversionTable[] =
-{
-	bgfx::AttribType::Enum::Float,	// Mesh::EAttribType::Float
-	bgfx::AttribType::Enum::Uint8,	// Mesh::EAttribType::Uint8
-};
-DESIRE_CHECK_ARRAY_SIZE(s_attribTypeConversionTable, Mesh::EAttribType::Num);
-
-static constexpr uint64_t s_blendConversionTable[] =
-{
-	BGFX_STATE_BLEND_ZERO,				// EBlend::Zero
-	BGFX_STATE_BLEND_ONE,				// EBlend::One
-	BGFX_STATE_BLEND_SRC_COLOR,			// EBlend::SrcColor
-	BGFX_STATE_BLEND_INV_SRC_COLOR,		// EBlend::InvSrcColor
-	BGFX_STATE_BLEND_SRC_ALPHA,			// EBlend::SrcAlpha
-	BGFX_STATE_BLEND_INV_SRC_ALPHA,		// EBlend::InvSrcAlpha
-	BGFX_STATE_BLEND_DST_ALPHA,			// EBlend::DestAlpha
-	BGFX_STATE_BLEND_INV_DST_ALPHA,		// EBlend::InvDestAlpha
-	BGFX_STATE_BLEND_DST_COLOR,			// EBlend::DestColor
-	BGFX_STATE_BLEND_INV_DST_COLOR,		// EBlend::InvDestColor
-	BGFX_STATE_BLEND_SRC_ALPHA_SAT,		// EBlend::SrcAlphaSat
-	BGFX_STATE_BLEND_FACTOR,			// EBlend::BlendFactor
-	BGFX_STATE_BLEND_INV_FACTOR			// EBlend::InvBlendFactor
-};
-DESIRE_CHECK_ARRAY_SIZE(s_blendConversionTable, EBlend::InvBlendFactor + 1);
-
-static constexpr uint64_t s_equationConversionTable[] =
-{
-	BGFX_STATE_BLEND_EQUATION_ADD,		// EBlendOp::Add
-	BGFX_STATE_BLEND_EQUATION_SUB,		// EBlendOp::Subtract
-	BGFX_STATE_BLEND_EQUATION_REVSUB,	// EBlendOp::RevSubtract
-	BGFX_STATE_BLEND_EQUATION_MIN,		// EBlendOp::Min
-	BGFX_STATE_BLEND_EQUATION_MAX		// EBlendOp::Max
-};
-DESIRE_CHECK_ARRAY_SIZE(s_equationConversionTable, EBlendOp::Max + 1);
-
-static bgfx::TextureFormat::Enum GetTextureFormat(const Texture& texture)
-{
-	static constexpr bgfx::TextureFormat::Enum conversionTable[] =
-	{
-		bgfx::TextureFormat::R8,			// Texture::EFormat::R8
-		bgfx::TextureFormat::RG8,			// Texture::EFormat::RG8
-		bgfx::TextureFormat::RGB8,			// Texture::EFormat::RGB8
-		bgfx::TextureFormat::RGBA8,			// Texture::EFormat::RGBA8
-		bgfx::TextureFormat::Unknown,		// Texture::EFormat::RGB32F
-		bgfx::TextureFormat::RGBA32F,		// Texture::EFormat::RGBA32F
-		bgfx::TextureFormat::D16,			// Texture::EFormat::D16
-		bgfx::TextureFormat::D24S8,			// Texture::EFormat::D24_S8
-		bgfx::TextureFormat::D32,			// Texture::EFormat::D32
-	};
-	DESIRE_CHECK_ARRAY_SIZE(conversionTable, Texture::EFormat::D32 + 1);
-
-	return conversionTable[static_cast<size_t>(texture.GetFormat())];
-}
 
 BgfxRender::BgfxRender()
 {
@@ -225,23 +156,15 @@ void* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 
 	if(renderable.m_material->m_isBlendEnabled)
 	{
-		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(
-			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendRGB)],
-			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendRGB)],
-			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_srcBlendAlpha)],
-			s_blendConversionTable[static_cast<uint8_t>(renderable.m_material->m_destBlendAlpha)]
-		);
-
-		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(
-			s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpRGB)],
-			s_equationConversionTable[static_cast<uint8_t>(renderable.m_material->m_blendOpAlpha)]
-		);
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(ToBgfx(renderable.m_material->m_srcBlendRGB), ToBgfx(renderable.m_material->m_destBlendRGB), ToBgfx(renderable.m_material->m_srcBlendAlpha), ToBgfx(renderable.m_material->m_destBlendAlpha));
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(ToBgfx(renderable.m_material->m_blendOpRGB), ToBgfx(renderable.m_material->m_blendOpAlpha));
 	}
 
 	static_assert(static_cast<uint8_t>(EColorWrite::Red) == BGFX_STATE_WRITE_R);
 	static_assert(static_cast<uint8_t>(EColorWrite::Green) == BGFX_STATE_WRITE_G);
 	static_assert(static_cast<uint8_t>(EColorWrite::Blue) == BGFX_STATE_WRITE_B);
 	static_assert(static_cast<uint8_t>(EColorWrite::Alpha) == BGFX_STATE_WRITE_A);
+
 	pRenderableRenderData->m_renderState |= static_cast<uint8_t>(renderable.m_material->m_colorWriteMask);
 
 	switch(renderable.m_material->m_depthTest)
@@ -272,7 +195,7 @@ void* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
 	for(const Mesh::VertexLayout& layout : vertexLayout)
 	{
 		const bool isNormalized = (layout.m_type == Mesh::EAttribType::Uint8);
-		pMeshRenderData->vertexLayout.add(s_attribConversionTable[(size_t)layout.m_attrib], layout.m_count, s_attribTypeConversionTable[(size_t)layout.m_type], isNormalized);
+		pMeshRenderData->vertexLayout.add(ToBgfx(layout.m_attrib), layout.m_count, ToBgfx(layout.m_type), isNormalized);
 	}
 	pMeshRenderData->vertexLayout.end();
 
@@ -375,11 +298,11 @@ void* BgfxRender::CreateTextureRenderData(const Texture& texture)
 
 	if(isRenderTarget)
 	{
-		pTextureRenderData->textureHandle = bgfx::createTexture2D(texture.GetWidth(), texture.GetHeight(), (texture.GetNumMipLevels() > 1), 1, GetTextureFormat(texture), BGFX_TEXTURE_RT);
+		pTextureRenderData->textureHandle = bgfx::createTexture2D(texture.GetWidth(), texture.GetHeight(), (texture.GetNumMipLevels() > 1), 1, ToBgfx(texture.GetFormat()), BGFX_TEXTURE_RT);
 	}
 	else
 	{
-		pTextureRenderData->textureHandle = bgfx::createTexture2D(texture.GetWidth(), texture.GetHeight(), (texture.GetNumMipLevels() > 1), 1, GetTextureFormat(texture), BGFX_TEXTURE_NONE, bgfx::makeRef(texture.GetData(), texture.GetDataSize()));
+		pTextureRenderData->textureHandle = bgfx::createTexture2D(texture.GetWidth(), texture.GetHeight(), (texture.GetNumMipLevels() > 1), 1, ToBgfx(texture.GetFormat()), BGFX_TEXTURE_NONE, bgfx::makeRef(texture.GetData(), texture.GetDataSize()));
 	}
 
 	return pTextureRenderData;
