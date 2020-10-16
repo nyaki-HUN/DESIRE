@@ -235,8 +235,6 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	hr = m_pDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature));
 	DX_CHECK_HRESULT(hr);
 
-	m_pCmdList->SetGraphicsRootSignature(m_pRootSignature);
-
 	return true;
 }
 
@@ -957,6 +955,10 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 
 			// By resetting the command list we are putting it into a recording state so we can start recording commands
 			hr = m_pCmdList->Reset(frameBuffer.m_pCommandAllocator, m_pActivePipelineState);
+			DX_CHECK_HRESULT(hr);
+
+			m_pCmdList->SetGraphicsRootSignature(m_pRootSignature);
+			m_pCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 			// Transition the render target from present state to render target state
 			CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(frameBuffer.m_pRenderTarget, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
