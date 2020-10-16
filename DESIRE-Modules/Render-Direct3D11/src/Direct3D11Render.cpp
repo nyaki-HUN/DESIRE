@@ -804,42 +804,6 @@ void Direct3D11Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void Direct3D11Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)
-{
-	ASSERT(samplerIdx < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
-
-	const TextureRenderDataD3D11* pTextureRenderData = static_cast<const TextureRenderDataD3D11*>(texture.m_pRenderData);
-	m_pDeviceCtx->VSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
-	m_pDeviceCtx->PSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
-
-	static constexpr D3D11_TEXTURE_ADDRESS_MODE s_addressModeConversionTable[] =
-	{
-		D3D11_TEXTURE_ADDRESS_WRAP,			// ETextureWrapMode::Repeat
-		D3D11_TEXTURE_ADDRESS_CLAMP,		// ETextureWrapMode::Clamp
-		D3D11_TEXTURE_ADDRESS_MIRROR,		// ETextureWrapMode::MirroredRepeat
-		D3D11_TEXTURE_ADDRESS_MIRROR_ONCE,	// ETextureWrapMode::MirrorOnce
-		D3D11_TEXTURE_ADDRESS_BORDER,		// ETextureWrapMode::Border
-	};
-
-	D3D11_SAMPLER_DESC samplerDesc = {};
-	switch(filterMode)
-	{
-		case EFilterMode::Point:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::Bilinear:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::Trilinear:	samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::Anisotropic:	samplerDesc.Filter = D3D11_ENCODE_ANISOTROPIC_FILTER(D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
-	}
-
-	samplerDesc.AddressU = s_addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressV = s_addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressW = s_addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	SetSamplerState(samplerIdx, samplerDesc);
-}
-
 void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
 	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(m_pActiveWindow->GetWidth()), static_cast<FLOAT>(m_pActiveWindow->GetHeight()), 0.0f, 1.0f };
@@ -867,6 +831,45 @@ void Direct3D11Render::UpdateShaderParams(const Material& material)
 
 	ShaderRenderDataD3D11* pPS = static_cast<ShaderRenderDataD3D11*>(material.m_pixelShader->m_pRenderData);
 	UpdateShaderParams(material, pPS);
+
+	ASSERT(material.GetTextures().Size() < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
+	uint8_t samplerIdx = 0;
+	for(const Material::TextureInfo& textureInfo : material.GetTextures())
+	{
+		const TextureRenderDataD3D11* pTextureRenderData = static_cast<const TextureRenderDataD3D11*>(textureInfo.m_texture->m_pRenderData);
+
+		m_pDeviceCtx->VSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
+		m_pDeviceCtx->PSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
+
+		D3D11_TEXTURE_ADDRESS_MODE addressMode = D3D11_TEXTURE_ADDRESS_WRAP;
+		switch(textureInfo.m_addressMode)
+		{
+			case EAddressMode::Repeat:			addressMode = D3D11_TEXTURE_ADDRESS_WRAP; break;
+			case EAddressMode::Clamp:			addressMode = D3D11_TEXTURE_ADDRESS_CLAMP; break;
+			case EAddressMode::MirroredRepeat:	addressMode = D3D11_TEXTURE_ADDRESS_MIRROR; break;
+			case EAddressMode::MirrorOnce:		addressMode = D3D11_TEXTURE_ADDRESS_MIRROR_ONCE; break;
+			case EAddressMode::Border:			addressMode = D3D11_TEXTURE_ADDRESS_BORDER; break;
+		}
+
+		D3D11_SAMPLER_DESC samplerDesc = {};
+		switch(textureInfo.m_filterMode)
+		{
+			case EFilterMode::Point:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+			case EFilterMode::Bilinear:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+			case EFilterMode::Trilinear:	samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+			case EFilterMode::Anisotropic:	samplerDesc.Filter = D3D11_ENCODE_ANISOTROPIC_FILTER(D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
+		}
+
+		samplerDesc.AddressU = addressMode;
+		samplerDesc.AddressV = addressMode;
+		samplerDesc.AddressW = addressMode;
+		samplerDesc.MaxAnisotropy = D3D11_MAX_MAXANISOTROPY;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		SetSamplerState(samplerIdx, samplerDesc);
+		samplerIdx++;
+	}
 }
 
 void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRenderDataD3D11* pShaderRenderData)

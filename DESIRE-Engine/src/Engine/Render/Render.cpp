@@ -99,16 +99,12 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 	}
 
 	// Textures
-	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : renderable.m_material->GetTextures())
 	{
 		if(textureInfo.m_texture->m_pRenderData == nullptr)
 		{
 			textureInfo.m_texture->m_pRenderData = CreateTextureRenderData(*textureInfo.m_texture);
 		}
-
-		SetTexture(samplerIdx, *textureInfo.m_texture, textureInfo.m_filterMode, textureInfo.m_addressMode);
-		samplerIdx++;
 	}
 
 	if(renderable.m_pRenderData == nullptr)

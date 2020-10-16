@@ -233,15 +233,15 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 {
-	HRESULT hr = m_pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
-	DX_CHECK_HRESULT(hr);
-
 	WaitForPreviousFrame();
 
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
 		DX_SAFE_RELEASE(m_frameBuffers[i].m_pRenderTarget);
 	}
+
+	HRESULT hr = m_pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
+	DX_CHECK_HRESULT(hr);
 
 	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
 	ASSERT(succeeded);
@@ -840,42 +840,6 @@ void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void Direct3D12Render::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)
-{
-	DESIRE_UNUSED(samplerIdx);
-
-	ASSERT(samplerIdx < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
-
-//	const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(texture->m_pRenderData);
-
-	static constexpr D3D12_TEXTURE_ADDRESS_MODE s_addressModeConversionTable[] =
-	{
-		D3D12_TEXTURE_ADDRESS_MODE_WRAP,		// ETextureWrapMode::Repeat
-		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,		// ETextureWrapMode::Clamp
-		D3D12_TEXTURE_ADDRESS_MODE_MIRROR,		// ETextureWrapMode::MirroredRepeat
-		D3D12_TEXTURE_ADDRESS_MODE_MIRROR_ONCE,	// ETextureWrapMode::MirrorOnce
-		D3D12_TEXTURE_ADDRESS_MODE_BORDER,		// ETextureWrapMode::Border
-	};
-
-	D3D12_SAMPLER_DESC samplerDesc = {};
-	switch(filterMode)
-	{
-		case EFilterMode::Point:		samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_POINT, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::Bilinear:		samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::Trilinear:	samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
-		case EFilterMode::Anisotropic:	samplerDesc.Filter = D3D12_ENCODE_ANISOTROPIC_FILTER(D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
-	}
-
-	samplerDesc.AddressU = s_addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressV = s_addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.AddressW = s_addressModeConversionTable[(size_t)addressMode];
-	samplerDesc.MaxAnisotropy = D3D12_MAX_MAXANISOTROPY;
-	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
-	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
-
-	DESIRE_UNUSED(texture);
-}
-
 void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
 	D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(m_pActiveWindow->GetWidth()), static_cast<FLOAT>(m_pActiveWindow->GetHeight()), 0.0f, 1.0f };
@@ -903,6 +867,9 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 			hr = m_pCmdList->Reset(frameBuffer.m_pCommandAllocator, m_pActivePipelineState);
 			DX_CHECK_HRESULT(hr);
 
+			m_pActiveMesh = nullptr;
+			m_pActiveRenderTarget = nullptr;
+
 			m_pCmdList->SetGraphicsRootSignature(m_pRootSignature);
 			m_pCmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -926,6 +893,51 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 
 	ShaderRenderDataD3D12* pPS = static_cast<ShaderRenderDataD3D12*>(material.m_pixelShader->m_pRenderData);
 	UpdateShaderParams(material, pPS);
+
+	// TODO: support all textures
+	Texture* pFirstTexture = material.GetTextures().GetFirst().m_texture.get();
+	if(pFirstTexture != nullptr)
+	{
+		const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(pFirstTexture->m_pRenderData);
+		ID3D12DescriptorHeap* heaps[] = { pTextureRenderData->m_pHeapForSRV };
+		m_pCmdList->SetDescriptorHeaps(DESIRE_ASIZEOF(heaps), heaps);
+	}
+
+	ASSERT(material.GetTextures().Size() < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
+	uint8_t samplerIdx = 0;
+	for(const Material::TextureInfo& textureInfo : material.GetTextures())
+	{
+		const TextureRenderDataD3D12* pTextureRenderData = static_cast<const TextureRenderDataD3D12*>(textureInfo.m_texture->m_pRenderData);
+
+		D3D12_TEXTURE_ADDRESS_MODE addressMode = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		switch(textureInfo.m_addressMode)
+		{
+			case EAddressMode::Repeat:			addressMode = D3D12_TEXTURE_ADDRESS_MODE_WRAP; break;
+			case EAddressMode::Clamp:			addressMode = D3D12_TEXTURE_ADDRESS_MODE_CLAMP; break;
+			case EAddressMode::MirroredRepeat:	addressMode = D3D12_TEXTURE_ADDRESS_MODE_MIRROR; break;
+			case EAddressMode::MirrorOnce:		addressMode = D3D12_TEXTURE_ADDRESS_MODE_MIRROR_ONCE; break;
+			case EAddressMode::Border:			addressMode = D3D12_TEXTURE_ADDRESS_MODE_BORDER; break;
+		}
+
+		D3D12_SAMPLER_DESC samplerDesc = {};
+		switch(textureInfo.m_filterMode)
+		{
+			case EFilterMode::Point:		samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_POINT, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
+			case EFilterMode::Bilinear:		samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
+			case EFilterMode::Trilinear:	samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
+			case EFilterMode::Anisotropic:	samplerDesc.Filter = D3D12_ENCODE_ANISOTROPIC_FILTER(D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
+		}
+
+		samplerDesc.AddressU = addressMode;
+		samplerDesc.AddressV = addressMode;
+		samplerDesc.AddressW = addressMode;
+		samplerDesc.MaxAnisotropy = D3D12_MAX_MAXANISOTROPY;
+		samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+		samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+
+		m_pCmdList->SetGraphicsRootDescriptorTable(1, pTextureRenderData->m_pHeapForSRV->GetGPUDescriptorHandleForHeapStart());
+		samplerIdx++;
+	}
 }
 
 void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRenderDataD3D12* pShaderRenderData)

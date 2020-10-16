@@ -352,30 +352,6 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 	}
 }
 
-void BgfxRender::SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode)
-{
-	uint32_t flags = BGFX_TEXTURE_NONE;
-	switch(filterMode)
-	{
-		case EFilterMode::Point:		flags |= BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_MIP_POINT; break;
-		case EFilterMode::Bilinear:		flags |= BGFX_SAMPLER_MIP_POINT; break;
-		case EFilterMode::Trilinear:	break;
-		case EFilterMode::Anisotropic:	flags |= BGFX_SAMPLER_MIN_ANISOTROPIC | BGFX_SAMPLER_MAG_ANISOTROPIC; break;
-	}
-
-	switch(addressMode)
-	{
-		case EAddressMode::Repeat:			break;
-		case EAddressMode::Clamp:			flags |= BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_SAMPLER_W_CLAMP; break;
-		case EAddressMode::MirroredRepeat:	flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
-		case EAddressMode::MirrorOnce:		flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
-		case EAddressMode::Border:			flags |= BGFX_SAMPLER_U_BORDER | BGFX_SAMPLER_V_BORDER | BGFX_SAMPLER_W_BORDER; break;
-	}
-
-	const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(texture.m_pRenderData);
-	bgfx::setTexture(samplerIdx, m_samplerUniforms[samplerIdx], pTextureRenderData->m_textureHandle, flags);
-}
-
 void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
 {
 	if(pRenderTarget != nullptr)
@@ -410,6 +386,33 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 			const void* pValue = shaderParam.GetValue();
 			bgfx::setUniform(*pUniform, pValue);
 		}
+	}
+
+	uint8_t samplerIdx = 0;
+	for(const Material::TextureInfo& textureInfo : material.GetTextures())
+	{
+		const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(textureInfo.m_texture->m_pRenderData);
+
+		uint32_t flags = BGFX_TEXTURE_NONE;
+		switch(textureInfo.m_filterMode)
+		{
+			case EFilterMode::Point:		flags |= BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_MIP_POINT; break;
+			case EFilterMode::Bilinear:		flags |= BGFX_SAMPLER_MIP_POINT; break;
+			case EFilterMode::Trilinear:	break;
+			case EFilterMode::Anisotropic:	flags |= BGFX_SAMPLER_MIN_ANISOTROPIC | BGFX_SAMPLER_MAG_ANISOTROPIC; break;
+		}
+
+		switch(textureInfo.m_addressMode)
+		{
+			case EAddressMode::Repeat:			break;
+			case EAddressMode::Clamp:			flags |= BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_SAMPLER_W_CLAMP; break;
+			case EAddressMode::MirroredRepeat:	flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
+			case EAddressMode::MirrorOnce:		flags |= BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR; break;
+			case EAddressMode::Border:			flags |= BGFX_SAMPLER_U_BORDER | BGFX_SAMPLER_V_BORDER | BGFX_SAMPLER_W_BORDER; break;
+		}
+
+		bgfx::setTexture(samplerIdx, m_samplerUniforms[samplerIdx], pTextureRenderData->m_textureHandle, flags);
+		samplerIdx++;
 	}
 }
 

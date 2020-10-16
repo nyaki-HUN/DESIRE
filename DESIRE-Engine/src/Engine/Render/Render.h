@@ -14,9 +14,6 @@ class Texture;
 class View;
 class WritableString;
 
-enum class EAddressMode : uint8_t;
-enum class EFilterMode : uint8_t;
-
 class Render
 {
 public:
@@ -67,7 +64,6 @@ private:
 
 	virtual void SetMesh(Mesh& mesh) = 0;
 	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
-	virtual void SetTexture(uint8_t samplerIdx, const Texture& texture, EFilterMode filterMode, EAddressMode addressMode) = 0;
 	virtual void SetRenderTarget(RenderTarget* pRenderTarget) = 0;
 	virtual void UpdateShaderParams(const Material& material) = 0;
 
