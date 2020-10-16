@@ -83,7 +83,7 @@ inline bgfx::TextureFormat::Enum ToBgfx(Texture::EFormat format)
 		case Texture::EFormat::RG8:		return bgfx::TextureFormat::RG8;
 		case Texture::EFormat::RGB8:	return bgfx::TextureFormat::RGB8;
 		case Texture::EFormat::RGBA8:	return bgfx::TextureFormat::RGBA8;
-		case Texture::EFormat::RGB32F:	return bgfx::TextureFormat::Unknown;
+		case Texture::EFormat::RGB32F:	break;
 		case Texture::EFormat::RGBA32F:	return bgfx::TextureFormat::RGBA32F;
 		case Texture::EFormat::D16:		return bgfx::TextureFormat::D16;
 		case Texture::EFormat::D24_S8:	return bgfx::TextureFormat::D24S8;

@@ -48,7 +48,7 @@ inline DXGI_FORMAT ToD3D11(Mesh::EAttribType attribType, uint8_t count)
 			{
 				case 1: return DXGI_FORMAT_R8_UNORM;
 				case 2: return DXGI_FORMAT_R8G8_UNORM;
-				case 3: return DXGI_FORMAT_UNKNOWN;
+				case 3: break;
 				case 4: return DXGI_FORMAT_R8G8B8A8_UNORM;
 			}
 		}
