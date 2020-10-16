@@ -23,17 +23,11 @@ public:
 	void SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix) override;
 
 private:
-	void* CreateRenderableRenderData(const Renderable& renderable) override;
-	void* CreateMeshRenderData(const Mesh& mesh) override;
-	void* CreateShaderRenderData(const Shader& shader) override;
-	void* CreateTextureRenderData(const Texture& texture) override;
-	void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
-
-	void DestroyRenderableRenderData(void* pRenderData) override;
-	void DestroyMeshRenderData(void* pRenderData) override;
-	void DestroyShaderRenderData(void* pRenderData) override;
-	void DestroyTextureRenderData(void* pRenderData) override;
-	void DestroyRenderTargetRenderData(void* pRenderData) override;
+	RenderData* CreateRenderableRenderData(const Renderable& renderable) override;
+	RenderData* CreateMeshRenderData(const Mesh& mesh) override;
+	RenderData* CreateShaderRenderData(const Shader& shader) override;
+	RenderData* CreateTextureRenderData(const Texture& texture) override;
+	RenderData* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
 
 	void SetMesh(Mesh& mesh) override;
 	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;

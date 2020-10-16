@@ -2,6 +2,7 @@
 
 #include "Engine/Core/Container/Array.h"
 
+class RenderData;
 class Texture;
 
 class RenderTarget
@@ -17,7 +18,7 @@ public:
 	const std::shared_ptr<Texture>& GetTexture(uint8_t idx = 0) const;
 
 	// Render engine specific data set at bind
-	void* m_pRenderData = nullptr;
+	RenderData* m_pRenderData = nullptr;
 
 private:
 	Array<std::shared_ptr<Texture>> m_textures;

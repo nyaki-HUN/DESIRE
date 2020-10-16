@@ -1,6 +1,8 @@
 #pragma once
 
-class RenderableRenderDataD3D11
+#include "Engine/Render/RenderData.h"
+
+class RenderableRenderDataD3D11 : public RenderData
 {
 public:
 	ID3D11InputLayout* m_pInputLayout = nullptr;

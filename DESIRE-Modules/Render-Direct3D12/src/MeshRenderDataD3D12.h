@@ -1,8 +1,16 @@
 #pragma once
 
-class MeshRenderDataD3D12
+#include "Engine/Render/RenderData.h"
+
+class MeshRenderDataD3D12 : public RenderData
 {
 public:
+	~MeshRenderDataD3D12() override
+	{
+		DX_SAFE_RELEASE(m_pIndexBuffer);
+		DX_SAFE_RELEASE(m_pVertexBuffer);
+	}
+
 	D3D12_INDEX_BUFFER_VIEW m_indexBufferView = {};
 	D3D12_VERTEX_BUFFER_VIEW m_vertexBufferView = {};
 

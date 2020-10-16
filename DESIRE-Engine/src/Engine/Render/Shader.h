@@ -5,6 +5,8 @@
 
 #include <set>
 
+class RenderData;
+
 class Shader
 {
 public:
@@ -12,7 +14,7 @@ public:
 	~Shader();
 
 	// Render engine specific data set at bind
-	void* m_pRenderData = nullptr;
+	RenderData* m_pRenderData = nullptr;
 
 	MemoryBuffer m_data;
 	std::set<DynamicString> m_defines;

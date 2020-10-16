@@ -1,7 +1,14 @@
 #pragma once
 
-class TextureRenderDataBgfx
+#include "Engine/Render/RenderData.h"
+
+class TextureRenderDataBgfx : public RenderData
 {
 public:
-	bgfx::TextureHandle textureHandle = BGFX_INVALID_HANDLE;
+	~TextureRenderDataBgfx() override
+	{
+		bgfx::destroy(m_textureHandle);
+	}
+
+	bgfx::TextureHandle m_textureHandle = BGFX_INVALID_HANDLE;
 };

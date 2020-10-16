@@ -25,13 +25,6 @@
 #include <d3dcompiler.h>
 #include <dxgi1_4.h>
 
-#define DX_RELEASE(ptr)		\
-	if(ptr != nullptr)		\
-	{						\
-		ptr->Release();		\
-		ptr = nullptr;		\
-	}
-
 #if defined(_DEBUG)
 	#define DX_CHECK_HRESULT(hr)		ASSERT(SUCCEEDED(hr))
 #else
@@ -84,7 +77,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	if(SUCCEEDED(hr))
 	{
 		pDebugController->EnableDebugLayer();
-		DX_RELEASE(pDebugController);
+		DX_SAFE_RELEASE(pDebugController);
 	}
 #endif
 
@@ -161,7 +154,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	}
 
 	hr = pTmpSwapChain->QueryInterface(IID_PPV_ARGS(&m_pSwapChain));
-	DX_RELEASE(pTmpSwapChain);
+	DX_SAFE_RELEASE(pTmpSwapChain);
 	if(FAILED(hr))
 	{
 		return false;
@@ -226,7 +219,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 		if(pErrorBlob != nullptr)
 		{
 			LOG_ERROR("Root signature serialize error:\n%s", static_cast<const char*>(pErrorBlob->GetBufferPointer()));
-			DX_RELEASE(pErrorBlob);
+			DX_SAFE_RELEASE(pErrorBlob);
 		}
 
 		return false;
@@ -247,7 +240,7 @@ void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
-		DX_RELEASE(m_frameBuffers[i].m_pRenderTarget);
+		DX_SAFE_RELEASE(m_frameBuffers[i].m_pRenderTarget);
 	}
 
 	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
@@ -272,27 +265,27 @@ void Direct3D12Render::Kill()
 
 	m_pActivePipelineState = nullptr;
 
-	DX_RELEASE(m_pRootSignature);
+	DX_SAFE_RELEASE(m_pRootSignature);
 
-	DX_RELEASE(m_pCmdList);
+	DX_SAFE_RELEASE(m_pCmdList);
 
 	CloseHandle(m_fenceEvent);
 
-	DX_RELEASE(m_pDepthStencilResource);
-	DX_RELEASE(m_pHeapForDSV);
+	DX_SAFE_RELEASE(m_pDepthStencilResource);
+	DX_SAFE_RELEASE(m_pHeapForDSV);
 
 	for(uint32_t i = 0; i < kFrameBufferCount; ++i)
 	{
 		FrameBuffer& frameBuffer = m_frameBuffers[i];
-		DX_RELEASE(frameBuffer.m_pRenderTarget);
-		DX_RELEASE(frameBuffer.m_pCommandAllocator);
-		DX_RELEASE(frameBuffer.m_pFence);
+		DX_SAFE_RELEASE(frameBuffer.m_pRenderTarget);
+		DX_SAFE_RELEASE(frameBuffer.m_pCommandAllocator);
+		DX_SAFE_RELEASE(frameBuffer.m_pFence);
 	};
-	DX_RELEASE(m_pHeapForFrameBufferRTVs);
+	DX_SAFE_RELEASE(m_pHeapForFrameBufferRTVs);
 
-	DX_RELEASE(m_pSwapChain);
-	DX_RELEASE(m_pCommandQueue);
-	DX_RELEASE(m_pDevice);
+	DX_SAFE_RELEASE(m_pSwapChain);
+	DX_SAFE_RELEASE(m_pCommandQueue);
+	DX_SAFE_RELEASE(m_pDevice);
 }
 
 void Direct3D12Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
@@ -383,7 +376,7 @@ void Direct3D12Render::SetViewProjectionMatrices(const Matrix4& viewMatrix, cons
 	m_matProj.r[3] = GetXMVECTOR(projMatrix.col3);
 }
 
-void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
+RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 {
 	RenderableRenderDataD3D12* pRenderableRenderData = new RenderableRenderDataD3D12();
 
@@ -470,7 +463,7 @@ void* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)
 	return pRenderableRenderData;
 }
 
-void* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
+RenderData* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 {
 	MeshRenderDataD3D12* pMeshRenderData = new MeshRenderDataD3D12();
 
@@ -563,12 +556,12 @@ void* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 	m_pCmdList->ResourceBarrier(numBarriers, barriers);
 
 	// TODO: this is a memory leak should be solved by executing the command list here
-//	DX_RELEASE(pUploadResource);
+//	DX_SAFE_RELEASE(pUploadResource);
 
 	return pMeshRenderData;
 }
 
-void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
+RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 {
 	ShaderRenderDataD3D12* pShaderRenderData = new ShaderRenderDataD3D12();
 
@@ -605,11 +598,12 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		if(pErrorBlob != nullptr)
 		{
 			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(pErrorBlob->GetBufferPointer()));
-			DX_RELEASE(pErrorBlob);
+			DX_SAFE_RELEASE(pErrorBlob);
 		}
 
-		delete pShaderRenderData;
-		return isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData;
+		const ShaderRenderDataD3D12* pErrorShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData);
+		pShaderRenderData->m_pShaderCode = pErrorShaderRenderData->m_pShaderCode;
+		pShaderRenderData->m_pShaderCode->AddRef();
 	}
 
 	ID3D12ShaderReflection* pReflection = nullptr;
@@ -683,12 +677,12 @@ void* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		}
 	}
 
-	DX_RELEASE(pReflection);
+	DX_SAFE_RELEASE(pReflection);
 
 	return pShaderRenderData;
 }
 
-void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
+RenderData* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 {
 	TextureRenderDataD3D12* pTextureRenderData = new TextureRenderDataD3D12();
 
@@ -753,12 +747,12 @@ void* Direct3D12Render::CreateTextureRenderData(const Texture& texture)
 	m_pDevice->CreateShaderResourceView(pTextureRenderData->m_pTexture, &srvDesc, pTextureRenderData->m_pHeapForSRV->GetCPUDescriptorHandleForHeapStart());
 
 	// TODO: this is a memory leak should be solved by executing the command list here
-//	DX_RELEASE(pUploadResource);
+//	DX_SAFE_RELEASE(pUploadResource);
 
 	return pTextureRenderData;
 }
 
-void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
+RenderData* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
 {
 	RenderTargetRenderDataD3D12* pRenderTargetRenderData = new RenderTargetRenderDataD3D12();
 
@@ -816,62 +810,14 @@ void* Direct3D12Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 	return pRenderTargetRenderData;
 }
 
-void Direct3D12Render::DestroyRenderableRenderData(void* pRenderData)
+void Direct3D12Render::OnDestroyRenderableRenderData(RenderData* pRenderData)
 {
-	RenderableRenderDataD3D12* pRenderableRenderData = static_cast<RenderableRenderDataD3D12*>(pRenderData);
+	const RenderableRenderDataD3D12* pRenderableRenderData = static_cast<const RenderableRenderDataD3D12*>(pRenderData);
 
 	if(m_pActivePipelineState == pRenderableRenderData->m_pPipelineState)
 	{
 		m_pActivePipelineState = nullptr;
 	}
-
-	DX_RELEASE(pRenderableRenderData->m_pPipelineState);
-
-	delete pRenderableRenderData;
-}
-
-void Direct3D12Render::DestroyMeshRenderData(void* pRenderData)
-{
-	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(pRenderData);
-
-	DX_RELEASE(pMeshRenderData->m_pIndexBuffer);
-	DX_RELEASE(pMeshRenderData->m_pVertexBuffer);
-
-	delete pMeshRenderData;
-}
-
-void Direct3D12Render::DestroyShaderRenderData(void* pRenderData)
-{
-	ShaderRenderDataD3D12* pShaderRenderData = static_cast<ShaderRenderDataD3D12*>(pRenderData);
-
-	if(pShaderRenderData == m_errorVertexShader->m_pRenderData || pShaderRenderData == m_errorPixelShader->m_pRenderData)
-	{
-		return;
-	}
-
-	DX_RELEASE(pShaderRenderData->m_pShaderCode);
-
-	delete pShaderRenderData;
-}
-
-void Direct3D12Render::DestroyTextureRenderData(void* pRenderData)
-{
-	TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(pRenderData);
-
-	DX_RELEASE(pTextureRenderData->m_pTexture);
-	DX_RELEASE(pTextureRenderData->m_pHeapForSRV);
-
-	delete pTextureRenderData;
-}
-
-void Direct3D12Render::DestroyRenderTargetRenderData(void* pRenderData)
-{
-	RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderData);
-
-	pRenderTargetRenderData->m_pHeapForRTVs->Release();
-	pRenderTargetRenderData->m_pHeapForDSV->Release();
-
-	delete pRenderTargetRenderData;
 }
 
 void Direct3D12Render::SetMesh(Mesh& mesh)

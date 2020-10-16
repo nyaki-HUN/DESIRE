@@ -2,6 +2,7 @@
 
 class Material;
 class Mesh;
+class RenderData;
 
 class Renderable
 {
@@ -12,5 +13,5 @@ public:
 	std::shared_ptr<Material> m_material;
 
 	// Render engine specific data set at bind
-	void* m_pRenderData = nullptr;
+	RenderData* m_pRenderData = nullptr;
 };

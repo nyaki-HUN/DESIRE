@@ -2,9 +2,16 @@
 
 #include "Engine/Core/HashedStringMap.h"
 
-class ShaderRenderDataBgfx
+#include "Engine/Render/RenderData.h"
+
+class ShaderRenderDataBgfx : public RenderData
 {
 public:
-	bgfx::ShaderHandle shaderHandle = BGFX_INVALID_HANDLE;
-	HashedStringMap<bgfx::UniformHandle> uniforms;
+	~ShaderRenderDataBgfx() override
+	{
+		bgfx::destroy(m_shaderHandle);
+	}
+
+	bgfx::ShaderHandle m_shaderHandle = BGFX_INVALID_HANDLE;
+	HashedStringMap<bgfx::UniformHandle> m_uniforms;
 };

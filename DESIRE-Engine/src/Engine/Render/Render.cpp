@@ -6,6 +6,7 @@
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
 #include "Engine/Render/Renderable.h"
+#include "Engine/Render/RenderData.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
@@ -151,7 +152,8 @@ void Render::Unbind(Renderable& renderable)
 		return;
 	}
 
-	DestroyRenderableRenderData(renderable.m_pRenderData);
+	OnDestroyRenderableRenderData(renderable.m_pRenderData);
+	delete renderable.m_pRenderData;
 	renderable.m_pRenderData = nullptr;
 }
 
@@ -162,13 +164,14 @@ void Render::Unbind(Mesh& mesh)
 		return;
 	}
 
-	DestroyMeshRenderData(mesh.m_pRenderData);
-	mesh.m_pRenderData = nullptr;
-
 	if(m_pActiveMesh == &mesh)
 	{
 		m_pActiveMesh = nullptr;
 	}
+
+	OnDestroyMeshRenderData(mesh.m_pRenderData);
+	delete mesh.m_pRenderData;
+	mesh.m_pRenderData = nullptr;
 }
 
 void Render::Unbind(Shader& shader)
@@ -178,7 +181,8 @@ void Render::Unbind(Shader& shader)
 		return;
 	}
 
-	DestroyShaderRenderData(shader.m_pRenderData);
+	OnDestroyShaderRenderData(shader.m_pRenderData);
+	delete shader.m_pRenderData;
 	shader.m_pRenderData = nullptr;
 }
 
@@ -189,7 +193,8 @@ void Render::Unbind(Texture& texture)
 		return;
 	}
 
-	DestroyTextureRenderData(texture.m_pRenderData);
+	OnDestroyTextureRenderData(texture.m_pRenderData);
+	delete texture.m_pRenderData;
 	texture.m_pRenderData = nullptr;
 }
 
@@ -200,8 +205,10 @@ void Render::Unbind(RenderTarget& renderTarget)
 		return;
 	}
 
-	DestroyRenderTargetRenderData(renderTarget.m_pRenderData);
-	renderTarget.m_pRenderData = nullptr;
+	if(m_pActiveRenderTarget == &renderTarget)
+	{
+		m_pActiveRenderTarget = nullptr;
+	}
 
 	const uint8_t textureCount = renderTarget.GetTextureCount();
 	for(uint8_t i = 0; i < textureCount; ++i)
@@ -209,8 +216,7 @@ void Render::Unbind(RenderTarget& renderTarget)
 		Unbind(*renderTarget.GetTexture(i));
 	}
 
-	if(m_pActiveRenderTarget == &renderTarget)
-	{
-		m_pActiveRenderTarget = nullptr;
-	}
+	OnDestroyRenderTargetRenderData(renderTarget.m_pRenderData);
+	delete renderTarget.m_pRenderData;
+	renderTarget.m_pRenderData = nullptr;
 }

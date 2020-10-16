@@ -6,6 +6,7 @@ class Matrix4;
 class Mesh;
 class OSWindow;
 class Renderable;
+class RenderData;
 class RenderTarget;
 class Shader;
 class String;
@@ -52,17 +53,17 @@ protected:
 	const RenderTarget* m_pActiveRenderTarget = nullptr;
 
 private:
-	virtual void* CreateRenderableRenderData(const Renderable& renderable) = 0;
-	virtual void* CreateMeshRenderData(const Mesh& mesh) = 0;
-	virtual void* CreateShaderRenderData(const Shader& shader) = 0;
-	virtual void* CreateTextureRenderData(const Texture& texture) = 0;
-	virtual void* CreateRenderTargetRenderData(const RenderTarget& renderTarget) = 0;
+	virtual RenderData* CreateRenderableRenderData(const Renderable& renderable) = 0;
+	virtual RenderData* CreateMeshRenderData(const Mesh& mesh) = 0;
+	virtual RenderData* CreateShaderRenderData(const Shader& shader) = 0;
+	virtual RenderData* CreateTextureRenderData(const Texture& texture) = 0;
+	virtual RenderData* CreateRenderTargetRenderData(const RenderTarget& renderTarget) = 0;
 
-	virtual void DestroyRenderableRenderData(void* pRenderData) = 0;
-	virtual void DestroyMeshRenderData(void* pRenderData) = 0;
-	virtual void DestroyShaderRenderData(void* pRenderData) = 0;
-	virtual void DestroyTextureRenderData(void* pRenderData) = 0;
-	virtual void DestroyRenderTargetRenderData(void* pRenderData) = 0;
+	virtual void OnDestroyRenderableRenderData(RenderData* pRenderData)		{ DESIRE_UNUSED(pRenderData); }
+	virtual void OnDestroyMeshRenderData(RenderData* pRenderData)			{ DESIRE_UNUSED(pRenderData); }
+	virtual void OnDestroyShaderRenderData(RenderData* pRenderData)			{ DESIRE_UNUSED(pRenderData); }
+	virtual void OnDestroyTextureRenderData(RenderData* pRenderData)		{ DESIRE_UNUSED(pRenderData); }
+	virtual void OnDestroyRenderTargetRenderData(RenderData* pRenderData)	{ DESIRE_UNUSED(pRenderData); }
 
 	virtual void SetMesh(Mesh& mesh) = 0;
 	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;

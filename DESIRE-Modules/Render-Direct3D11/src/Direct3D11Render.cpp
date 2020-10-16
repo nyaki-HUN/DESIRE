@@ -24,13 +24,6 @@
 
 #include <d3dcompiler.h>
 
-#define DX_RELEASE(ptr)		\
-	if(ptr != nullptr)		\
-	{						\
-		ptr->Release();		\
-		ptr = nullptr;		\
-	}
-
 #if defined(_DEBUG)
 	#define DX_CHECK_HRESULT(hr)		ASSERT(SUCCEEDED(hr))
 #else
@@ -132,8 +125,8 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 {
 	ID3D11RenderTargetView* nullViews[] = { nullptr };
 	m_pDeviceCtx->OMSetRenderTargets(1, nullViews, nullptr);
-	DX_RELEASE(m_pFrameBufferDSV);
-	DX_RELEASE(m_pFrameBufferRTV);
+	DX_SAFE_RELEASE(m_pFrameBufferDSV);
+	DX_SAFE_RELEASE(m_pFrameBufferRTV);
 	m_pDeviceCtx->Flush();
 
 	HRESULT hr = m_pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
@@ -169,28 +162,28 @@ void Direct3D11Render::Kill()
 
 	for(auto& pair : m_rasterizerStateCache)
 	{
-		DX_RELEASE(pair.second);
+		DX_SAFE_RELEASE(pair.second);
 	}
 	m_rasterizerStateCache.clear();
 
 	for(auto& pair : m_blendStateCache)
 	{
-		DX_RELEASE(pair.second);
+		DX_SAFE_RELEASE(pair.second);
 	}
 	m_blendStateCache.clear();
 
 	for(auto& pair : m_samplerStateCache)
 	{
-		DX_RELEASE(pair.second);
+		DX_SAFE_RELEASE(pair.second);
 	}
 	m_samplerStateCache.clear();
 	memset(m_activeSamplerStates, 0, sizeof(m_activeSamplerStates));
 
-	DX_RELEASE(m_pFrameBufferDSV);
-	DX_RELEASE(m_pFrameBufferRTV);
-	DX_RELEASE(m_pSwapChain);
-	DX_RELEASE(m_pDeviceCtx);
-	DX_RELEASE(m_pDevice);
+	DX_SAFE_RELEASE(m_pFrameBufferDSV);
+	DX_SAFE_RELEASE(m_pFrameBufferRTV);
+	DX_SAFE_RELEASE(m_pSwapChain);
+	DX_SAFE_RELEASE(m_pDeviceCtx);
+	DX_SAFE_RELEASE(m_pDevice);
 }
 
 void Direct3D11Render::AppendShaderFilenameWithPath(WritableString& outString, const String& shaderFilename) const
@@ -266,7 +259,7 @@ void Direct3D11Render::SetViewProjectionMatrices(const Matrix4& viewMatrix, cons
 	m_matProj.r[3] = GetXMVECTOR(projMatrix.col3);
 }
 
-void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
+RenderData* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 {
 	RenderableRenderDataD3D11* pRenderableRenderData = new RenderableRenderDataD3D11();
 
@@ -439,7 +432,7 @@ void* Direct3D11Render::CreateRenderableRenderData(const Renderable& renderable)
 	return pRenderableRenderData;
 }
 
-void* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
+RenderData* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 {
 	MeshRenderDataD3D11* pMeshRenderData = new MeshRenderDataD3D11();
 
@@ -491,7 +484,7 @@ void* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 	return pMeshRenderData;
 }
 
-void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
+RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 {
 	ShaderRenderDataD3D11* pShaderRenderData = new ShaderRenderDataD3D11();
 
@@ -529,11 +522,12 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 		if(pErrorBlob != nullptr)
 		{
 			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(pErrorBlob->GetBufferPointer()));
-			DX_RELEASE(pErrorBlob);
+			DX_SAFE_RELEASE(pErrorBlob);
 		}
 
-		delete pShaderRenderData;
-		return isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData;
+		const ShaderRenderDataD3D11* pErrorShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData);
+		pShaderRenderData->m_pShaderCode = pErrorShaderRenderData->m_pShaderCode;
+		pShaderRenderData->m_pShaderCode->AddRef();
 	}
 
 	if(isVertexShader)
@@ -559,7 +553,7 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 	hr = pReflection->GetDesc(&shaderDesc);
 	if(FAILED(hr))
 	{
-		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x\n", (uint32_t)hr);
+		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x\n", static_cast<uint32_t>(hr));
 	}
 
 	pShaderRenderData->m_constantBuffers.SetSize(shaderDesc.ConstantBuffers);
@@ -614,12 +608,12 @@ void* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 		}
 	}
 
-	DX_RELEASE(pReflection);
+	DX_SAFE_RELEASE(pReflection);
 
 	return pShaderRenderData;
 }
 
-void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
+RenderData* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 {
 	TextureRenderDataD3D11* pTextureRenderData = new TextureRenderDataD3D11();
 
@@ -691,7 +685,7 @@ void* Direct3D11Render::CreateTextureRenderData(const Texture& texture)
 	return pTextureRenderData;
 }
 
-void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
+RenderData* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderTarget)
 {
 	RenderTargetRenderDataD3D11* pRenderTargetRenderData = new RenderTargetRenderDataD3D11();
 
@@ -722,7 +716,7 @@ void* Direct3D11Render::CreateRenderTargetRenderData(const RenderTarget& renderT
 	return pRenderTargetRenderData;
 }
 
-void Direct3D11Render::DestroyRenderableRenderData(void* pRenderData)
+void Direct3D11Render::OnDestroyRenderableRenderData(RenderData* pRenderData)
 {
 	RenderableRenderDataD3D11* pRenderableRenderData = static_cast<RenderableRenderDataD3D11*>(pRenderData);
 
@@ -769,29 +763,10 @@ void Direct3D11Render::DestroyRenderableRenderData(void* pRenderData)
 
 		m_depthStencilStateCache.erase(pRenderableRenderData->m_depthStencilStateKey);
 	}
-
-	delete pRenderableRenderData;
 }
 
-void Direct3D11Render::DestroyMeshRenderData(void* pRenderData)
+void Direct3D11Render::OnDestroyShaderRenderData(RenderData* pRenderData)
 {
-	MeshRenderDataD3D11* pMeshRenderData = static_cast<MeshRenderDataD3D11*>(pRenderData);
-
-	DX_RELEASE(pMeshRenderData->m_pIndexBuffer);
-	DX_RELEASE(pMeshRenderData->m_pVertexBuffer);
-
-	delete pMeshRenderData;
-}
-
-void Direct3D11Render::DestroyShaderRenderData(void* pRenderData)
-{
-	ShaderRenderDataD3D11* pShaderRenderData = static_cast<ShaderRenderDataD3D11*>(pRenderData);
-
-	if(pShaderRenderData == m_errorVertexShader->m_pRenderData || pShaderRenderData == m_errorPixelShader->m_pRenderData)
-	{
-		return;
-	}
-
 	if(m_pActiveVS == pRenderData)
 	{
 		m_pActiveVS = nullptr;
@@ -801,42 +776,6 @@ void Direct3D11Render::DestroyShaderRenderData(void* pRenderData)
 	{
 		m_pActivePS = nullptr;
 	}
-
-	DX_RELEASE(pShaderRenderData->m_pPtr);
-	DX_RELEASE(pShaderRenderData->m_pShaderCode);
-
-	for(ID3D11Buffer* pBuffer : pShaderRenderData->m_constantBuffers)
-	{
-		DX_RELEASE(pBuffer);
-	}
-	pShaderRenderData->m_constantBuffers.Clear();
-	pShaderRenderData->m_constantBuffersData.Clear();
-
-	delete pShaderRenderData;
-}
-
-void Direct3D11Render::DestroyTextureRenderData(void* pRenderData)
-{
-	TextureRenderDataD3D11* pTextureRenderData = static_cast<TextureRenderDataD3D11*>(pRenderData);
-
-	DX_RELEASE(pTextureRenderData->m_pTexture);
-	DX_RELEASE(pTextureRenderData->m_pSRV);
-
-	delete pTextureRenderData;
-}
-
-void Direct3D11Render::DestroyRenderTargetRenderData(void* pRenderData)
-{
-	RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderData);
-
-	for(uint32_t i = 0; i < pRenderTargetRenderData->m_numRTVs; ++i)
-	{
-		DX_RELEASE(pRenderTargetRenderData->m_RTVs[i]);
-	}
-
-	DX_RELEASE(pRenderTargetRenderData->m_pDSV);
-
-	delete pRenderTargetRenderData;
 }
 
 void Direct3D11Render::SetMesh(Mesh& mesh)
@@ -1070,7 +1009,7 @@ bool Direct3D11Render::CreateFrameBuffers(uint32_t width, uint32_t height)
 	DX_CHECK_HRESULT(hr);
 	hr = m_pDevice->CreateRenderTargetView(pFrameBufferTexture, nullptr, &m_pFrameBufferRTV);
 	DX_CHECK_HRESULT(hr);
-	DX_RELEASE(pFrameBufferTexture);
+	DX_SAFE_RELEASE(pFrameBufferTexture);
 
 	// Create back buffer depth stencil view
 	D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -1093,7 +1032,7 @@ bool Direct3D11Render::CreateFrameBuffers(uint32_t width, uint32_t height)
 		return false;
 	}
 
-	DX_RELEASE(pDepthStencilTexture);
+	DX_SAFE_RELEASE(pDepthStencilTexture);
 
 	m_pDeviceCtx->OMSetRenderTargets(1, &m_pFrameBufferRTV, m_pFrameBufferDSV);
 

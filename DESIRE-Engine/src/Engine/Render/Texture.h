@@ -2,6 +2,8 @@
 
 #include "Engine/Core/MemoryBuffer.h"
 
+class RenderData;
+
 class Texture
 {
 public:
@@ -55,7 +57,7 @@ public:
 	}
 
 	// Render engine specific data set at bind
-	void* m_pRenderData = nullptr;
+	RenderData* m_pRenderData = nullptr;
 
 private:
 	uint16_t m_width;

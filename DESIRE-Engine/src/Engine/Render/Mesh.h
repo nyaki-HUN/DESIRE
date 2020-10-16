@@ -2,6 +2,8 @@
 
 #include "Engine/Core/Container/Array.h"
 
+class RenderData;
+
 class Mesh
 {
 public:
@@ -65,7 +67,7 @@ public:
 	const Array<VertexLayout>& GetVertexLayout() const;
 
 	// Render engine specific data set at bind
-	void* m_pRenderData = nullptr;
+	RenderData* m_pRenderData = nullptr;
 
 	std::unique_ptr<uint16_t[]> m_indices;
 	std::unique_ptr<float[]> m_vertices;

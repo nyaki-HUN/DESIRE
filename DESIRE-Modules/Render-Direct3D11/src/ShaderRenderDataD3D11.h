@@ -4,9 +4,23 @@
 #include "Engine/Core/HashedStringMap.h"
 #include "Engine/Core/MemoryBuffer.h"
 
-class ShaderRenderDataD3D11
+#include "Engine/Render/RenderData.h"
+
+class ShaderRenderDataD3D11 : public RenderData
 {
 public:
+	~ShaderRenderDataD3D11() override
+	{
+		DX_SAFE_RELEASE(m_pPtr);
+		DX_SAFE_RELEASE(m_pShaderCode);
+
+		for(ID3D11Buffer* pBuffer : m_constantBuffers)
+		{
+			DX_SAFE_RELEASE(pBuffer);
+		}
+		m_constantBuffers.Clear();
+	}
+
 	struct ConstantBufferData
 	{
 		struct Variable

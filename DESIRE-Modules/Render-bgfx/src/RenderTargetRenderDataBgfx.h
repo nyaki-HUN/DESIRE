@@ -1,8 +1,15 @@
 #pragma once
 
-class RenderTargetRenderDataBgfx
+#include "Engine/Render/RenderData.h"
+
+class RenderTargetRenderDataBgfx : public RenderData
 {
 public:
-	bgfx::FrameBufferHandle frameBuffer = BGFX_INVALID_HANDLE;
-	uint8_t id = 1;
+	~RenderTargetRenderDataBgfx() override
+	{
+		bgfx::destroy(m_frameBuffer);
+	}
+
+	bgfx::FrameBufferHandle m_frameBuffer = BGFX_INVALID_HANDLE;
+	uint8_t m_id = 1;
 };
