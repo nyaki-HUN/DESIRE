@@ -97,7 +97,7 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 		D3D11_CREATE_DEVICE_SINGLETHREADED,
 #endif
 		featureLevels,
-		static_cast<UINT>(DESIRE_ASIZEOF(featureLevels)),
+		DESIRE_ASIZEOF(featureLevels),
 		D3D11_SDK_VERSION,
 		&swapChainDesc,
 		&m_pSwapChain,

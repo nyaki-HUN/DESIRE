@@ -205,9 +205,9 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 	D3D12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
 	rootSignatureDesc.Version = D3D_ROOT_SIGNATURE_VERSION_1_1;
-	rootSignatureDesc.Desc_1_1.NumParameters = static_cast<UINT>(DESIRE_ASIZEOF(rootParameters));
+	rootSignatureDesc.Desc_1_1.NumParameters = DESIRE_ASIZEOF(rootParameters);
 	rootSignatureDesc.Desc_1_1.pParameters = rootParameters;
-	rootSignatureDesc.Desc_1_1.NumStaticSamplers = static_cast<UINT>(DESIRE_ASIZEOF(staticSamplers));
+	rootSignatureDesc.Desc_1_1.NumStaticSamplers = DESIRE_ASIZEOF(staticSamplers);
 	rootSignatureDesc.Desc_1_1.pStaticSamplers = staticSamplers;
 	rootSignatureDesc.Desc_1_1.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
@@ -307,7 +307,7 @@ void Direct3D12Render::EndFrame()
 	DX_CHECK_HRESULT(hr);
 
 	ID3D12CommandList* commandLists[] = { m_pCmdList };
-	m_pCommandQueue->ExecuteCommandLists(static_cast<UINT>(DESIRE_ASIZEOF(commandLists)), commandLists);
+	m_pCommandQueue->ExecuteCommandLists(DESIRE_ASIZEOF(commandLists), commandLists);
 
 	// This command goes in at the end of our command queue.
 	// We will know when our command queue has finished because the fence value will be set to "fenceValue" from the GPU
