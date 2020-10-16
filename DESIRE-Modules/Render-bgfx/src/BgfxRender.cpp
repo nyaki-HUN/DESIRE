@@ -261,7 +261,7 @@ RenderData* BgfxRender::CreateShaderRenderData(const Shader& shader)
 	ASSERT(bgfx::isValid(pShaderRenderData->m_shaderHandle));
 	bgfx::setName(pShaderRenderData->m_shaderHandle, shader.m_name.Str());
 
-	const uint16_t uniformCount = bgfx::getShaderUniforms(pShaderRenderData->m_shaderHandle, nullptr, 0);
+	const uint16_t uniformCount = bgfx::getShaderUniforms(pShaderRenderData->m_shaderHandle);
 	DESIRE_STACKALLOCATE_ARRAY(bgfx::UniformHandle, uniforms, uniformCount);
 	bgfx::getShaderUniforms(pShaderRenderData->m_shaderHandle, uniforms, uniformCount);
 	for(uint16_t i = 0; i < uniformCount; ++i)

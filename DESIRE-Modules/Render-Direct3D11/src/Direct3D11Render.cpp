@@ -488,14 +488,14 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 {
 	ShaderRenderDataD3D11* pShaderRenderData = new ShaderRenderDataD3D11();
 
-	D3D_SHADER_MACRO defines[32] = {};
-	ASSERT(shader.m_defines.size() < DESIRE_ASIZEOF(defines));
-	D3D_SHADER_MACRO* definePtr = &defines[0];
+	D3D_SHADER_MACRO shaderDefines[32] = {};
+	ASSERT(shader.m_defines.size() < DESIRE_ASIZEOF(shaderDefines));
+	D3D_SHADER_MACRO* pShaderDefine = &shaderDefines[0];
 	for(const String& define : shader.m_defines)
 	{
-		definePtr->Name = define.Str();
-		definePtr->Definition = "1";
-		definePtr++;
+		pShaderDefine->Name = define.Str();
+		pShaderDefine->Definition = "1";
+		pShaderDefine++;
 	}
 
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
@@ -509,7 +509,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),	// pSrcData
 		shader.m_data.size,								// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
-		defines,										// pDefines
+		shaderDefines,									// pDefines
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
 		"main",											// pEntrypoint
 		isVertexShader ? "vs_5_0" : "ps_5_0",			// pTarget
