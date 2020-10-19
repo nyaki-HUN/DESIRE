@@ -12,12 +12,6 @@ public:
 	~ShaderRenderDataD3D12() override
 	{
 		DX_SAFE_RELEASE(m_pShaderCode);
-
-		for(ID3D12Resource* pResource : m_constantBuffers)
-		{
-			DX_SAFE_RELEASE(pResource);
-		}
-		m_constantBuffers.Clear();
 	}
 
 	struct ConstantBufferData
@@ -45,6 +39,5 @@ public:
 
 	ID3DBlob* m_pShaderCode = nullptr;
 
-	Array<ID3D12Resource*> m_constantBuffers;
 	Array<ConstantBufferData> m_constantBuffersData;
 };

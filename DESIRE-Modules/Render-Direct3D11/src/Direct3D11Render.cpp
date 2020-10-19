@@ -876,7 +876,7 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRender
 {
 	ShaderRenderDataD3D11::ConstantBufferData::Variable* pVariable = nullptr;
 
-	for(size_t i = 0; i < pShaderRenderData->m_constantBuffers.Size(); ++i)
+	for(size_t i = 0; i < pShaderRenderData->m_constantBuffersData.Size(); ++i)
 	{
 		bool isChanged = false;
 		ShaderRenderDataD3D11::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];

@@ -197,7 +197,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 
 	// Perfomance TIP: Order from most frequent to least frequent
 	CD3DX12_ROOT_PARAMETER1 rootParameters[2] = {};
-	rootParameters[0].InitAsConstantBufferView(0);
+	rootParameters[0].InitAsConstants(4, 0);
 	rootParameters[1].InitAsDescriptorTable(1, &t0, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	CD3DX12_STATIC_SAMPLER_DESC staticSamplers[1];
@@ -620,7 +620,6 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		LOG_ERROR("ID3D12ShaderReflection::GetDesc failed 0x%08x\n", static_cast<uint32_t>(hr));
 	}
 
-	pShaderRenderData->m_constantBuffers.SetSize(shaderDesc.ConstantBuffers);
 	pShaderRenderData->m_constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
 	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
@@ -631,20 +630,6 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 
 		if(shaderBufferDesc.Type == D3D_CT_CBUFFER || shaderBufferDesc.Type == D3D_CT_TBUFFER)
 		{
-			// Create constant buffer
-			CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
-			CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(shaderBufferDesc.Size);
-
-			hr = m_pDevice->CreateCommittedResource(
-				&heapProperties,
-				D3D12_HEAP_FLAG_NONE,
-				&resourceDesc,
-				D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
-				nullptr,
-				IID_PPV_ARGS(&pShaderRenderData->m_constantBuffers[i])
-			);
-			DX_CHECK_HRESULT(hr);
-
 			// Create constant buffer data
 			ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
 			bufferData.m_data = MemoryBuffer(shaderBufferDesc.Size);
@@ -944,7 +929,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRender
 {
 	ShaderRenderDataD3D12::ConstantBufferData::Variable* pVariable = nullptr;
 
-	for(size_t i = 0; i < pShaderRenderData->m_constantBuffers.Size(); ++i)
+	for(size_t i = 0; i < pShaderRenderData->m_constantBuffersData.Size(); ++i)
 	{
 		bool isChanged = false;
 		ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
@@ -1011,10 +996,8 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRender
 			isChanged |= pVariable->CheckAndUpdate(resolution);
 		}
 
-		if(isChanged)
-		{
-//			deviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.m_data.ptr.get(), 0, 0);
-		}
+		uint32_t num32BitValuesToSet = static_cast<uint32_t>(bufferData.m_data.size / sizeof(float));
+		m_pCmdList->SetGraphicsRoot32BitConstants(0, num32BitValuesToSet, bufferData.m_data.ptr.get(), 0);
 	}
 }
 
