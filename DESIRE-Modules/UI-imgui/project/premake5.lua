@@ -5,6 +5,11 @@ project "UI-imgui"
 	pchheader "stdafx_imgui.h"
 	pchsource "../src/stdafx_imgui.cpp"
 
+	defines
+	{
+		"IMGUI_USER_CONFIG=\"custom_imconfig.h\"",
+	}
+
 	includedirs
 	{
 		"../Externals/imgui",

@@ -386,7 +386,7 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 bool ImGuiUI::ValueSpinner(int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
 	ImGui::NextColumn();
 
@@ -401,7 +401,7 @@ bool ImGuiUI::ValueSpinner(int32_t& value, int32_t minValue, int32_t maxValue, f
 bool ImGuiUI::ValueSpinner(float& value, float minValue, float maxValue, float speed)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
 	ImGui::NextColumn();
 
@@ -445,7 +445,7 @@ bool ImGuiUI::ValueEdit(Vector3& value)
 bool ImGuiUI::Slider(int32_t& value, int32_t minValue, int32_t maxValue)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
 	ImGui::NextColumn();
 
@@ -455,7 +455,7 @@ bool ImGuiUI::Slider(int32_t& value, int32_t minValue, int32_t maxValue)
 bool ImGuiUI::Slider(float& value, float minValue, float maxValue)
 {
 	ImGui::PushID(s_widgetCounter++);
-	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_Float, &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_ClampOnInput);
+	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_Float, &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
 	ImGui::NextColumn();
 
