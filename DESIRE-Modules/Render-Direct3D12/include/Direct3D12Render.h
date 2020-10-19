@@ -46,6 +46,7 @@ private:
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	bool CreateFrameBuffers(uint32_t width, uint32_t height);
+	void UpdateD3D12Resource(ID3D12Resource* pResource, const void* pData, size_t size);
 	void WaitForPreviousFrame();
 
 	struct FrameBuffer
