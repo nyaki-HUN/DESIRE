@@ -74,8 +74,8 @@ void SandBox::Init()
 
 	//////////
 
-	std::shared_ptr<Mesh> mesh = Modules::ResourceManager->GetMesh("data/meshes/sibenik/sibenik.obj");
-	std::shared_ptr<Texture> texture = Modules::ResourceManager->GetTexture("data/meshes/sibenik/mramor6x6.png");
+	std::shared_ptr<Mesh> mesh = Modules::ResourceManager->GetMesh("data/sibenik/sibenik.obj");
+	std::shared_ptr<Texture> texture = Modules::ResourceManager->GetTexture("data/sibenik/mramor6x6.png");
 
 	//////////
 
