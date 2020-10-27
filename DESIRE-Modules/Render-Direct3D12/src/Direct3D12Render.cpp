@@ -31,6 +31,8 @@
 	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
 #endif
 
+static_assert(Render::kMaxTextureSamplers == D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
+
 Direct3D12Render::Direct3D12Render()
 {
 	const char vs_error[] =
@@ -52,10 +54,10 @@ Direct3D12Render::Direct3D12Render()
 		"	return float3(1, 0, 1);\n"
 		"}"
 	};
-	m_errorVertexShader = std::make_unique<Shader>("vs_error");
-	m_errorVertexShader->m_data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
-	m_errorPixelShader = std::make_unique<Shader>("ps_error");
-	m_errorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
+	m_spErrorVertexShader = std::make_unique<Shader>("vs_error");
+	m_spErrorVertexShader->m_data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
+	m_spErrorPixelShader = std::make_unique<Shader>("ps_error");
+	m_spErrorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
 	m_matWorld = DirectX::XMMatrixIdentity();
 	m_matView = DirectX::XMMatrixIdentity();
@@ -146,15 +148,14 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 
-	IDXGISwapChain1* pTmpSwapChain = nullptr;
-	hr = pFactory->CreateSwapChainForHwnd(m_pCommandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, &pTmpSwapChain);
+	ComPtr<IDXGISwapChain1> spTmpSwapChain = nullptr;
+	hr = pFactory->CreateSwapChainForHwnd(m_pCommandQueue, static_cast<HWND>(mainWindow.GetHandle()), &swapChainDesc, nullptr, nullptr, spTmpSwapChain.GetAddressOf());
 	if(FAILED(hr))
 	{
 		return false;
 	}
 
-	hr = pTmpSwapChain->QueryInterface(IID_PPV_ARGS(&m_pSwapChain));
-	DX_SAFE_RELEASE(pTmpSwapChain);
+	hr = spTmpSwapChain->QueryInterface(IID_PPV_ARGS(&m_pSwapChain));
 	if(FAILED(hr))
 	{
 		return false;
@@ -211,21 +212,20 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	rootSignatureDesc.Desc_1_1.pStaticSamplers = staticSamplers;
 	rootSignatureDesc.Desc_1_1.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-	ID3DBlob* pSignature = nullptr;
-	ID3DBlob* pErrorBlob = nullptr;
-	hr = D3D12SerializeVersionedRootSignature(&rootSignatureDesc, &pSignature, &pErrorBlob);
+	ComPtr<ID3DBlob> spSignature = nullptr;
+	ComPtr<ID3DBlob> spErrorBlob = nullptr;
+	hr = D3D12SerializeVersionedRootSignature(&rootSignatureDesc, spSignature.GetAddressOf(), spErrorBlob.GetAddressOf());
 	if(FAILED(hr))
 	{
-		if(pErrorBlob != nullptr)
+		if(spErrorBlob != nullptr)
 		{
-			LOG_ERROR("Root signature serialize error:\n%s", static_cast<const char*>(pErrorBlob->GetBufferPointer()));
-			DX_SAFE_RELEASE(pErrorBlob);
+			LOG_ERROR("Root signature serialize error:\n%s", static_cast<const char*>(spErrorBlob->GetBufferPointer()));
 		}
 
 		return false;
 	}
 
-	hr = m_pDevice->CreateRootSignature(0, pSignature->GetBufferPointer(), pSignature->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature));
+	hr = m_pDevice->CreateRootSignature(0, spSignature->GetBufferPointer(), spSignature->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature));
 	DX_CHECK_HRESULT(hr);
 
 	return true;
@@ -243,8 +243,7 @@ void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 	HRESULT hr = m_pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 	DX_CHECK_HRESULT(hr);
 
-	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
-	ASSERT(succeeded);
+	CreateFrameBuffers(window.GetWidth(), window.GetHeight());
 }
 
 void Direct3D12Render::Kill()
@@ -256,8 +255,8 @@ void Direct3D12Render::Kill()
 		WaitForPreviousFrame();
 	}
 
-	Unbind(*m_errorVertexShader);
-	Unbind(*m_errorPixelShader);
+	Unbind(*m_spErrorVertexShader);
+	Unbind(*m_spErrorPixelShader);
 
 	m_pActiveWindow = nullptr;
 	m_pActiveMesh = nullptr;
@@ -591,7 +590,7 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 	const bool isVertexShader = shader.m_name.StartsWith("vs_");
 	UINT compileFlags = 0;
 
-	ID3DBlob* pErrorBlob = nullptr;
+	ComPtr<ID3DBlob> spErrorBlob = nullptr;
 	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),	// pSrcData
 		shader.m_data.size,								// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
@@ -602,29 +601,28 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		compileFlags,									// D3DCOMPILE flags
 		0,												// D3DCOMPILE_EFFECT flags
 		&pShaderRenderData->m_pShaderCode,				// ppCode
-		&pErrorBlob);									// ppErrorMsgs
+		spErrorBlob.GetAddressOf());					// ppErrorMsgs
 	if(FAILED(hr))
 	{
-		if(pErrorBlob != nullptr)
+		if(spErrorBlob != nullptr)
 		{
-			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(pErrorBlob->GetBufferPointer()));
-			DX_SAFE_RELEASE(pErrorBlob);
+			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(spErrorBlob->GetBufferPointer()));
 		}
 
-		const ShaderRenderDataD3D12* pErrorShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData);
+		const ShaderRenderDataD3D12* pErrorShaderRenderData = static_cast<const ShaderRenderDataD3D12*>(isVertexShader ? m_spErrorVertexShader->m_pRenderData : m_spErrorPixelShader->m_pRenderData);
 		pShaderRenderData->m_pShaderCode = pErrorShaderRenderData->m_pShaderCode;
 		pShaderRenderData->m_pShaderCode->AddRef();
 	}
 
-	ID3D12ShaderReflection* pReflection = nullptr;
-	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_PPV_ARGS(&pReflection));
+	ComPtr<ID3D12ShaderReflection> spReflection = nullptr;
+	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_PPV_ARGS(spReflection.GetAddressOf()));
 	if(FAILED(hr))
 	{
 		LOG_ERROR("D3DReflect failed 0x%08x\n", static_cast<uint32_t>(hr));
 	}
 
 	D3D12_SHADER_DESC shaderDesc;
-	hr = pReflection->GetDesc(&shaderDesc);
+	hr = spReflection->GetDesc(&shaderDesc);
 	if(FAILED(hr))
 	{
 		LOG_ERROR("ID3D12ShaderReflection::GetDesc failed 0x%08x\n", static_cast<uint32_t>(hr));
@@ -633,7 +631,7 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 	pShaderRenderData->m_constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
 	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = pReflection->GetConstantBufferByIndex(i);
+		ID3D12ShaderReflectionConstantBuffer* pConstantBuffer = spReflection->GetConstantBufferByIndex(i);
 		D3D12_SHADER_BUFFER_DESC shaderBufferDesc;
 		hr = pConstantBuffer->GetDesc(&shaderBufferDesc);
 		DX_CHECK_HRESULT(hr);
@@ -671,8 +669,6 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 			}
 		}
 	}
-
-	DX_SAFE_RELEASE(pReflection);
 
 	return pShaderRenderData;
 }
@@ -902,7 +898,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 		m_pCmdList->SetDescriptorHeaps(DESIRE_ASIZEOF(heaps), heaps);
 	}
 
-	ASSERT(material.GetTextures().Size() < D3D12_COMMONSHADER_SAMPLER_SLOT_COUNT);
+	ASSERT(material.GetTextures().Size() <= Render::kMaxTextureSamplers);
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{

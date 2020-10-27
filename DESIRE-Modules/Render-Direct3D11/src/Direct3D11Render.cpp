@@ -30,6 +30,8 @@
 	#define DX_CHECK_HRESULT(hr)		DESIRE_UNUSED(hr)
 #endif
 
+static_assert(Render::kMaxTextureSamplers == D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
+
 Direct3D11Render::Direct3D11Render()
 {
 	const char vs_error[] =
@@ -51,10 +53,10 @@ Direct3D11Render::Direct3D11Render()
 		"	return float3(1, 0, 1);\n"
 		"}"
 	};
-	m_errorVertexShader = std::make_unique<Shader>("vs_error");
-	m_errorVertexShader->m_data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
-	m_errorPixelShader = std::make_unique<Shader>("ps_error");
-	m_errorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
+	m_spErrorVertexShader = std::make_unique<Shader>("vs_error");
+	m_spErrorVertexShader->m_data = MemoryBuffer::CreateFromDataCopy(vs_error, sizeof(vs_error));
+	m_spErrorPixelShader = std::make_unique<Shader>("ps_error");
+	m_spErrorPixelShader->m_data = MemoryBuffer::CreateFromDataCopy(ps_error, sizeof(ps_error));
 
 	m_matWorld = DirectX::XMMatrixIdentity();
 	m_matView = DirectX::XMMatrixIdentity();
@@ -137,14 +139,13 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 
 	DX_CHECK_HRESULT(hr);
 
-	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
-	ASSERT(succeeded);
+	CreateFrameBuffers(window.GetWidth(), window.GetHeight());
 }
 
 void Direct3D11Render::Kill()
 {
-	Unbind(*m_errorVertexShader);
-	Unbind(*m_errorPixelShader);
+	Unbind(*m_spErrorVertexShader);
+	Unbind(*m_spErrorPixelShader);
 
 	m_pActiveWindow = nullptr;
 	m_pActiveMesh = nullptr;
@@ -505,7 +506,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 	UINT compileFlags = 0;
 /**/compileFlags = D3DCOMPILE_SKIP_OPTIMIZATION;
 
-	ID3DBlob* pErrorBlob = nullptr;
+	ComPtr<ID3DBlob> spErrorBlob = nullptr;
 	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),	// pSrcData
 		shader.m_data.size,								// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
@@ -516,16 +517,15 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 		compileFlags,									// D3DCOMPILE flags
 		0,												// D3DCOMPILE_EFFECT flags
 		&pShaderRenderData->m_pShaderCode,				// ppCode
-		&pErrorBlob);									// ppErrorMsgs
+		spErrorBlob.GetAddressOf());					// ppErrorMsgs
 	if(FAILED(hr))
 	{
-		if(pErrorBlob != nullptr)
+		if(spErrorBlob != nullptr)
 		{
-			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(pErrorBlob->GetBufferPointer()));
-			DX_SAFE_RELEASE(pErrorBlob);
+			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(spErrorBlob->GetBufferPointer()));
 		}
 
-		const ShaderRenderDataD3D11* pErrorShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(isVertexShader ? m_errorVertexShader->m_pRenderData : m_errorPixelShader->m_pRenderData);
+		const ShaderRenderDataD3D11* pErrorShaderRenderData = static_cast<const ShaderRenderDataD3D11*>(isVertexShader ? m_spErrorVertexShader->m_pRenderData : m_spErrorPixelShader->m_pRenderData);
 		pShaderRenderData->m_pShaderCode = pErrorShaderRenderData->m_pShaderCode;
 		pShaderRenderData->m_pShaderCode->AddRef();
 	}
@@ -542,15 +542,15 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 
 	pShaderRenderData->m_pPtr->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(shader.m_name.Length()), shader.m_name.Str());
 
-	ID3D11ShaderReflection* pReflection = nullptr;
-	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_PPV_ARGS(&pReflection));
+	ComPtr<ID3D11ShaderReflection> spReflection = nullptr;
+	hr = D3DReflect(pShaderRenderData->m_pShaderCode->GetBufferPointer(), pShaderRenderData->m_pShaderCode->GetBufferSize(), IID_PPV_ARGS(spReflection.GetAddressOf()));
 	if(FAILED(hr))
 	{
 		LOG_ERROR("D3DReflect failed 0x%08x\n", static_cast<uint32_t>(hr));
 	}
 
 	D3D11_SHADER_DESC shaderDesc;
-	hr = pReflection->GetDesc(&shaderDesc);
+	hr = spReflection->GetDesc(&shaderDesc);
 	if(FAILED(hr))
 	{
 		LOG_ERROR("ID3D11ShaderReflection::GetDesc failed 0x%08x\n", static_cast<uint32_t>(hr));
@@ -560,7 +560,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 	pShaderRenderData->m_constantBuffersData.SetSize(shaderDesc.ConstantBuffers);
 	for(uint32_t i = 0; i < shaderDesc.ConstantBuffers; ++i)
 	{
-		ID3D11ShaderReflectionConstantBuffer* pConstantBuffer = pReflection->GetConstantBufferByIndex(i);
+		ID3D11ShaderReflectionConstantBuffer* pConstantBuffer = spReflection->GetConstantBufferByIndex(i);
 		D3D11_SHADER_BUFFER_DESC shaderBufferDesc;
 		hr = pConstantBuffer->GetDesc(&shaderBufferDesc);
 		DX_CHECK_HRESULT(hr);
@@ -607,8 +607,6 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 			}
 		}
 	}
-
-	DX_SAFE_RELEASE(pReflection);
 
 	return pShaderRenderData;
 }
@@ -832,7 +830,7 @@ void Direct3D11Render::UpdateShaderParams(const Material& material)
 	ShaderRenderDataD3D11* pPS = static_cast<ShaderRenderDataD3D11*>(material.m_pixelShader->m_pRenderData);
 	UpdateShaderParams(material, pPS);
 
-	ASSERT(material.GetTextures().Size() < D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT);
+	ASSERT(material.GetTextures().Size() <= Render::kMaxTextureSamplers);
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
@@ -1007,12 +1005,18 @@ void Direct3D11Render::DoRender(Renderable& renderable, uint32_t indexOffset, ui
 bool Direct3D11Render::CreateFrameBuffers(uint32_t width, uint32_t height)
 {
 	// Create back buffer render target view
-	ID3D11Texture2D* pFrameBufferTexture = nullptr;
-	HRESULT hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pFrameBufferTexture));
-	DX_CHECK_HRESULT(hr);
-	hr = m_pDevice->CreateRenderTargetView(pFrameBufferTexture, nullptr, &m_pFrameBufferRTV);
-	DX_CHECK_HRESULT(hr);
-	DX_SAFE_RELEASE(pFrameBufferTexture);
+	ComPtr<ID3D11Texture2D> spFrameBufferTexture = nullptr;
+	HRESULT hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(spFrameBufferTexture.GetAddressOf()));
+	if(FAILED(hr))
+	{
+		return false;
+	}
+
+	hr = m_pDevice->CreateRenderTargetView(spFrameBufferTexture.Get(), nullptr, &m_pFrameBufferRTV);
+	if(FAILED(hr))
+	{
+		return false;
+	}
 
 	// Create back buffer depth stencil view
 	D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -1025,17 +1029,18 @@ bool Direct3D11Render::CreateFrameBuffers(uint32_t width, uint32_t height)
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-	ID3D11Texture2D* pDepthStencilTexture = nullptr;
-	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, &pDepthStencilTexture);
-	DX_CHECK_HRESULT(hr);
-
-	hr = m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pFrameBufferDSV);
+	ComPtr<ID3D11Texture2D> spDepthStencilTexture = nullptr;
+	hr = m_pDevice->CreateTexture2D(&textureDesc, nullptr, spDepthStencilTexture.GetAddressOf());
 	if(FAILED(hr))
 	{
 		return false;
 	}
 
-	DX_SAFE_RELEASE(pDepthStencilTexture);
+	hr = m_pDevice->CreateDepthStencilView(spDepthStencilTexture.Get(), nullptr, &m_pFrameBufferDSV);
+	if(FAILED(hr))
+	{
+		return false;
+	}
 
 	m_pDeviceCtx->OMSetRenderTargets(1, &m_pFrameBufferRTV, m_pFrameBufferDSV);
 

@@ -84,6 +84,6 @@ private:
 	DirectX::XMMATRIX m_matView;
 	DirectX::XMMATRIX m_matProj;
 
-	std::unique_ptr<Shader> m_errorVertexShader;
-	std::unique_ptr<Shader> m_errorPixelShader;
+	std::unique_ptr<Shader> m_spErrorVertexShader;
+	std::unique_ptr<Shader> m_spErrorPixelShader;
 };

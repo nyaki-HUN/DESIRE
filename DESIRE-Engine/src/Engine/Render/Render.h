@@ -44,6 +44,8 @@ public:
 	void Unbind(Texture& texture);
 	void Unbind(RenderTarget& renderTarget);
 
+	static constexpr uint32_t kMaxTextureSamplers = 16;
+
 protected:
 	const OSWindow* m_pActiveWindow = nullptr;
 	const Mesh* m_pActiveMesh = nullptr;

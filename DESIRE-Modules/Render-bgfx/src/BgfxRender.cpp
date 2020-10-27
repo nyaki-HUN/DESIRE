@@ -22,6 +22,8 @@
 
 #include "bgfx/../../src/config.h"
 
+static_assert(Render::kMaxTextureSamplers == BGFX_CONFIG_MAX_TEXTURE_SAMPLERS);
+
 BgfxRender::BgfxRender()
 {
 	for(bgfx::UniformHandle& uniform : m_samplerUniforms)
@@ -388,6 +390,7 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 		}
 	}
 
+	ASSERT(material.GetTextures().Size() <= Render::kMaxTextureSamplers);
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{

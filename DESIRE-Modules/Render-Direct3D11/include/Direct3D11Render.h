@@ -3,11 +3,23 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Utils/stl_utils.h"
 
-#include <d3d11.h>
 #include <DirectXMath.h>
 #include <unordered_map>
 
 class ShaderRenderDataD3D11;
+
+struct D3D11_SAMPLER_DESC;
+struct ID3D11BlendState;
+struct ID3D11DepthStencilState;
+struct ID3D11DepthStencilView;
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+struct ID3D11InputLayout;
+struct ID3D11RasterizerState;
+struct ID3D11RenderTargetView;
+struct ID3D11Resource;
+struct ID3D11SamplerState;
+struct IDXGISwapChain;
 
 class Direct3D11Render : public Render
 {
@@ -62,7 +74,7 @@ private:
 	const ID3D11RasterizerState* m_pActiveRasterizerState = nullptr;
 	const ID3D11BlendState* m_pActiveBlendState = nullptr;
 	const ID3D11DepthStencilState* m_pActiveDepthStencilState = nullptr;
-	const ID3D11SamplerState* m_activeSamplerStates[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT] = {};
+	const ID3D11SamplerState* m_activeSamplerStates[kMaxTextureSamplers] = {};
 
 	float m_blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	DirectX::XMMATRIX m_matWorld;
@@ -75,6 +87,6 @@ private:
 	std::unordered_map<uint64_t, ID3D11BlendState*> m_blendStateCache;
 	std::unordered_map<uint64_t, ID3D11SamplerState*> m_samplerStateCache;
 
-	std::unique_ptr<Shader> m_errorVertexShader;
-	std::unique_ptr<Shader> m_errorPixelShader;
+	std::unique_ptr<Shader> m_spErrorVertexShader;
+	std::unique_ptr<Shader> m_spErrorPixelShader;
 };
