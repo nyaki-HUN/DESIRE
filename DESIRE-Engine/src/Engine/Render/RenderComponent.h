@@ -27,7 +27,7 @@ public:
 private:
 	Array<Renderable*> m_renderables;
 
-	std::unique_ptr<AABB> m_aabb;
+	std::unique_ptr<AABB> m_spAABB;
 
 	int m_renderLayer = 0;
 	bool m_isVisible = false;

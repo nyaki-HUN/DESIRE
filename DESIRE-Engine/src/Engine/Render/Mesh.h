@@ -69,8 +69,8 @@ public:
 	// Render engine specific data set at bind
 	RenderData* m_pRenderData = nullptr;
 
-	std::unique_ptr<uint16_t[]> m_indices;
-	std::unique_ptr<float[]> m_vertices;
+	std::unique_ptr<uint16_t[]> m_spIndices;
+	std::unique_ptr<float[]> m_spVertices;
 
 protected:
 	EType m_type = EType::Static;

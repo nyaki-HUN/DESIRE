@@ -62,12 +62,12 @@ void NuklearUI::Init()
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	renderable->m_mesh = std::make_shared<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
+	renderable->m_spMesh = std::make_shared<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
 	static_assert(sizeof(nk_draw_index) == sizeof(uint16_t), "Conversion is required for index buffer");
 
 	convertConfig = std::make_unique<nk_convert_config>();
 	convertConfig->vertex_layout = s_nkVertexLayout;
-	convertConfig->vertex_size = renderable->m_mesh->GetVertexSize();
+	convertConfig->vertex_size = renderable->m_spMesh->GetVertexSize();
 	convertConfig->vertex_alignment = NK_ALIGNOF(float);
 	convertConfig->global_alpha = 1.0f;
 	convertConfig->shape_AA = NK_ANTI_ALIASING_ON;
@@ -77,12 +77,12 @@ void NuklearUI::Init()
 	convertConfig->arc_segment_count = 22;
 
 	// Setup material
-	renderable->m_material = std::make_unique<Material>();
-	renderable->m_material->m_vertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
-	renderable->m_material->m_pixelShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
-	renderable->m_material->m_cullMode = ECullMode::None;
-	renderable->m_material->m_isBlendEnabled = true;
-	renderable->m_material->m_isDepthWriteEnabled = false;
+	renderable->m_spMaterial = std::make_unique<Material>();
+	renderable->m_spMaterial->m_spVertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
+	renderable->m_spMaterial->m_spPixelShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->m_spMaterial->m_cullMode = ECullMode::None;
+	renderable->m_spMaterial->m_isBlendEnabled = true;
+	renderable->m_spMaterial->m_isDepthWriteEnabled = false;
 
 	// Setup fonts
 	fontAtlas = std::make_unique<nk_font_atlas>();
@@ -94,7 +94,7 @@ void NuklearUI::Init()
 	int height = 0;
 	const void* pTextureData = nk_font_atlas_bake(fontAtlas.get(), &width, &height, NK_FONT_ATLAS_RGBA32);
 	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
-	renderable->m_material->AddTexture(fontTexture);
+	renderable->m_spMaterial->AddTexture(fontTexture);
 
 	nk_font_atlas_end(fontAtlas.get(), nk_handle_ptr(&fontTexture), &convertConfig->null);
 
@@ -188,8 +188,8 @@ void NuklearUI::Render()
 	// Update mesh with packed buffers for contiguous indices and vertices
 	nk_buffer indexBuffer;
 	nk_buffer vertexBuffer;
-	nk_buffer_init_fixed(&indexBuffer, renderable->m_mesh->m_indices.get(), renderable->m_mesh->GetNumIndices());
-	nk_buffer_init_fixed(&vertexBuffer, renderable->m_mesh->m_vertices.get(), renderable->m_mesh->GetNumVertices());
+	nk_buffer_init_fixed(&indexBuffer, renderable->m_spMesh->m_spIndices.get(), renderable->m_spMesh->GetNumIndices());
+	nk_buffer_init_fixed(&vertexBuffer, renderable->m_spMesh->m_spVertices.get(), renderable->m_spMesh->GetNumVertices());
 	nk_flags result = nk_convert(ctx.get(), cmdBuffer.get(), &vertexBuffer, &indexBuffer, convertConfig.get());
 	if(result != NK_CONVERT_SUCCESS)
 	{
@@ -198,8 +198,8 @@ void NuklearUI::Render()
 		return;
 	}
 
-	static_cast<DynamicMesh*>(renderable->m_mesh.get())->m_isIndicesDirty = true;
-	static_cast<DynamicMesh*>(renderable->m_mesh.get())->m_isVerticesDirty = true;
+	static_cast<DynamicMesh*>(renderable->m_spMesh.get())->m_isIndicesDirty = true;
+	static_cast<DynamicMesh*>(renderable->m_spMesh.get())->m_isVerticesDirty = true;
 
 	uint32_t indexOffset = 0;
 	const nk_draw_command* pCmd = nullptr;
@@ -210,7 +210,7 @@ void NuklearUI::Render()
 			continue;
 		}
 
-		renderable->m_material->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
+		renderable->m_spMaterial->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(pCmd->texture.ptr));
 
 		const uint16_t x = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.x));
 		const uint16_t y = static_cast<uint16_t>(std::max(0.0f, pCmd->clip_rect.y));

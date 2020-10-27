@@ -6,7 +6,7 @@
 
 RenderComponent::RenderComponent(Object& object)
 	: Component(object)
-	, m_aabb(std::make_unique<AABB>())
+	, m_spAABB(std::make_unique<AABB>())
 {
 }
 
@@ -48,5 +48,5 @@ bool RenderComponent::IsVisible() const
 
 const AABB& RenderComponent::GetAABB() const
 {
-	return *m_aabb;
+	return *m_spAABB;
 }

@@ -3,14 +3,14 @@
 
 #include "Engine/Render/Render.h"
 
-Texture::Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> dataToMove, uint8_t numMipLevels)
+Texture::Texture(uint16_t width, uint16_t height, EFormat format, std::unique_ptr<uint8_t[]> spDataToMove, uint8_t numMipLevels)
 	: m_width(width)
 	, m_height(height)
 	, m_format(format)
 	, m_numMipLevels(numMipLevels)
-	, m_data(std::move(dataToMove))
+	, m_spData(std::move(spDataToMove))
 {
-	ASSERT(m_data != nullptr);
+	ASSERT(m_spData != nullptr);
 }
 
 Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pDataToCopy, uint8_t numMipLevels)
@@ -21,8 +21,8 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pD
 {
 	if(pDataToCopy != nullptr)
 	{
-		m_data = std::make_unique<uint8_t[]>(GetDataSize());
-		memcpy(m_data.get(), pDataToCopy, GetDataSize());
+		m_spData = std::make_unique<uint8_t[]>(GetDataSize());
+		memcpy(m_spData.get(), pDataToCopy, GetDataSize());
 	}
 }
 
@@ -40,7 +40,7 @@ Texture& Texture::operator =(Texture&& otherTexture)
 	m_height = otherTexture.m_height;
 	m_format = otherTexture.m_format;
 	m_numMipLevels = otherTexture.m_numMipLevels;
-	m_data = std::move(otherTexture.m_data);
+	m_spData = std::move(otherTexture.m_spData);
 
 	otherTexture.m_pRenderData = nullptr;
 
@@ -69,7 +69,7 @@ uint8_t Texture::GetNumMipLevels() const
 
 const uint8_t* Texture::GetData() const
 {
-	return m_data.get();
+	return m_spData.get();
 }
 
 uint32_t Texture::GetDataSize() const

@@ -17,15 +17,15 @@ Mesh::Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint3
 	if(m_numIndices != 0)
 	{
 		const uint32_t sizeInBytes = GetSizeOfIndexData();
-		m_indices = std::make_unique<uint16_t[]>(sizeInBytes / sizeof(uint16_t));
-		memset(m_indices.get(), 0, sizeInBytes);
+		m_spIndices = std::make_unique<uint16_t[]>(sizeInBytes / sizeof(uint16_t));
+		memset(m_spIndices.get(), 0, sizeInBytes);
 	}
 
 	if(m_numVertices != 0)
 	{
 		const uint32_t sizeInBytes = GetSizeOfVertexData();
-		m_vertices = std::make_unique<float[]>(sizeInBytes / sizeof(float));
-		memset(m_vertices.get(), 0, sizeInBytes);
+		m_spVertices = std::make_unique<float[]>(sizeInBytes / sizeof(float));
+		memset(m_spVertices.get(), 0, sizeInBytes);
 	}
 }
 
@@ -39,8 +39,8 @@ Mesh& Mesh::operator =(Mesh&& otherMesh)
 	Modules::Render->Unbind(*this);
 
 	m_type = otherMesh.m_type;
-	m_indices = std::move(otherMesh.m_indices);
-	m_vertices = std::move(otherMesh.m_vertices);
+	m_spIndices = std::move(otherMesh.m_spIndices);
+	m_spVertices = std::move(otherMesh.m_spVertices);
 	m_numIndices = otherMesh.m_numIndices;
 	m_numVertices = otherMesh.m_numVertices;
 	m_vertexSize = otherMesh.m_vertexSize;

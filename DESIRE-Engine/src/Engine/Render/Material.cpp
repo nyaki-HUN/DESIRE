@@ -36,19 +36,19 @@ Material::~Material()
 {
 }
 
-void Material::AddTexture(const std::shared_ptr<Texture>& texture, EFilterMode filterMode, EAddressMode addressMode)
+void Material::AddTexture(const std::shared_ptr<Texture>& spTexture, EFilterMode filterMode, EAddressMode addressMode)
 {
-	m_textures.Add({ texture, filterMode, addressMode });
+	m_textures.Add({ spTexture, filterMode, addressMode });
 }
 
-void Material::ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& texture)
+void Material::ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& spTexture)
 {
 	if(idx >= m_textures.Size())
 	{
 		return;
 	}
 
-	m_textures[idx].m_texture = texture;
+	m_textures[idx].m_spTexture = spTexture;
 }
 
 const Array<Material::TextureInfo>& Material::GetTextures() const

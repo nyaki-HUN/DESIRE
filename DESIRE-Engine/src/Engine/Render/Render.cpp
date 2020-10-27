@@ -31,13 +31,13 @@ void Render::BeginFrame(OSWindow& window)
 
 void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	if(renderable.m_mesh == nullptr)
+	if(renderable.m_spMesh == nullptr)
 	{
 		ASSERT(false && "Invalid mesh");
 		return;
 	}
 
-	if(renderable.m_material == nullptr || renderable.m_material->m_vertexShader == nullptr || renderable.m_material->m_pixelShader == nullptr)
+	if(renderable.m_spMaterial == nullptr || renderable.m_spMaterial->m_spVertexShader == nullptr || renderable.m_spMaterial->m_spPixelShader == nullptr)
 	{
 		ASSERT(false && "Invalid material");
 		return;
@@ -46,64 +46,64 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 	if(numIndices == UINT32_MAX)
 	{
 		// Use all the indices
-		numIndices = renderable.m_mesh->GetNumIndices() - indexOffset;
+		numIndices = renderable.m_spMesh->GetNumIndices() - indexOffset;
 	}
 
 	if(numVertices == UINT32_MAX)
 	{
 		// Use all the vertices
-		numVertices = renderable.m_mesh->GetNumVertices() - vertexOffset;
+		numVertices = renderable.m_spMesh->GetNumVertices() - vertexOffset;
 	}
 
-	if(indexOffset + numIndices > renderable.m_mesh->GetNumIndices() ||
-		vertexOffset + numVertices > renderable.m_mesh->GetNumVertices())
+	if(indexOffset + numIndices > renderable.m_spMesh->GetNumIndices() ||
+		vertexOffset + numVertices > renderable.m_spMesh->GetNumVertices())
 	{
 		return;
 	}
 
 	// If the mesh or the shaders changed we need to rebind the renderable
-	if(renderable.m_mesh->m_pRenderData == nullptr ||
-		renderable.m_material->m_vertexShader->m_pRenderData == nullptr ||
-		renderable.m_material->m_pixelShader->m_pRenderData == nullptr)
+	if(renderable.m_spMesh->m_pRenderData == nullptr ||
+		renderable.m_spMaterial->m_spVertexShader->m_pRenderData == nullptr ||
+		renderable.m_spMaterial->m_spPixelShader->m_pRenderData == nullptr)
 	{
 		Unbind(renderable);
 	}
 
 	// Mesh
-	if(renderable.m_mesh->m_pRenderData == nullptr)
+	if(renderable.m_spMesh->m_pRenderData == nullptr)
 	{
-		renderable.m_mesh->m_pRenderData = CreateMeshRenderData(*renderable.m_mesh);
+		renderable.m_spMesh->m_pRenderData = CreateMeshRenderData(*renderable.m_spMesh);
 	}
-	else if(renderable.m_mesh->GetType() == Mesh::EType::Dynamic)
+	else if(renderable.m_spMesh->GetType() == Mesh::EType::Dynamic)
 	{
-		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(renderable.m_mesh.get());
+		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(renderable.m_spMesh.get());
 		UpdateDynamicMesh(*pDynamicMesh);
 	}
 
-	if(m_pActiveMesh != renderable.m_mesh.get())
+	if(m_pActiveMesh != renderable.m_spMesh.get())
 	{
-		SetMesh(*renderable.m_mesh);
-		m_pActiveMesh = renderable.m_mesh.get();
+		SetMesh(*renderable.m_spMesh);
+		m_pActiveMesh = renderable.m_spMesh.get();
 	}
 
 	// Vertex shader
-	if(renderable.m_material->m_vertexShader->m_pRenderData == nullptr)
+	if(renderable.m_spMaterial->m_spVertexShader->m_pRenderData == nullptr)
 	{
-		renderable.m_material->m_vertexShader->m_pRenderData = CreateShaderRenderData(*renderable.m_material->m_vertexShader);
+		renderable.m_spMaterial->m_spVertexShader->m_pRenderData = CreateShaderRenderData(*renderable.m_spMaterial->m_spVertexShader);
 	}
 
 	// Pixel shader
-	if(renderable.m_material->m_pixelShader->m_pRenderData == nullptr)
+	if(renderable.m_spMaterial->m_spPixelShader->m_pRenderData == nullptr)
 	{
-		renderable.m_material->m_pixelShader->m_pRenderData = CreateShaderRenderData(*renderable.m_material->m_pixelShader);
+		renderable.m_spMaterial->m_spPixelShader->m_pRenderData = CreateShaderRenderData(*renderable.m_spMaterial->m_spPixelShader);
 	}
 
 	// Textures
-	for(const Material::TextureInfo& textureInfo : renderable.m_material->GetTextures())
+	for(const Material::TextureInfo& textureInfo : renderable.m_spMaterial->GetTextures())
 	{
-		if(textureInfo.m_texture->m_pRenderData == nullptr)
+		if(textureInfo.m_spTexture->m_pRenderData == nullptr)
 		{
-			textureInfo.m_texture->m_pRenderData = CreateTextureRenderData(*textureInfo.m_texture);
+			textureInfo.m_spTexture->m_pRenderData = CreateTextureRenderData(*textureInfo.m_spTexture);
 		}
 	}
 
@@ -112,7 +112,7 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 		renderable.m_pRenderData = CreateRenderableRenderData(renderable);
 	}
 
-	UpdateShaderParams(*renderable.m_material);
+	UpdateShaderParams(*renderable.m_spMaterial);
 
 	DoRender(renderable, indexOffset, vertexOffset, numIndices, numVertices);
 }
@@ -124,10 +124,10 @@ void Render::SetActiveRenderTarget(RenderTarget* pRenderTarget)
 		const uint8_t textureCount = pRenderTarget->GetTextureCount();
 		for(uint8_t i = 0; i < textureCount; ++i)
 		{
-			const std::shared_ptr<Texture>& texture = pRenderTarget->GetTexture(i);
-			if(texture->m_pRenderData == nullptr)
+			const std::shared_ptr<Texture>& spTexture = pRenderTarget->GetTexture(i);
+			if(spTexture->m_pRenderData == nullptr)
 			{
-				texture->m_pRenderData = CreateTextureRenderData(*texture);
+				spTexture->m_pRenderData = CreateTextureRenderData(*spTexture);
 			}
 		}
 

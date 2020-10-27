@@ -381,8 +381,8 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
 	psoDesc.pRootSignature = m_pRootSignature;
-	psoDesc.VS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_vertexShader->m_pRenderData)->m_pShaderCode);
-	psoDesc.PS = CD3DX12_SHADER_BYTECODE(static_cast<ShaderRenderDataD3D12*>(renderable.m_material->m_pixelShader->m_pRenderData)->m_pShaderCode);
+	psoDesc.VS = CD3DX12_SHADER_BYTECODE(static_cast<const ShaderRenderDataD3D12*>(renderable.m_spMaterial->m_spVertexShader->m_pRenderData)->m_pShaderCode);
+	psoDesc.PS = CD3DX12_SHADER_BYTECODE(static_cast<const ShaderRenderDataD3D12*>(renderable.m_spMaterial->m_spPixelShader->m_pRenderData)->m_pShaderCode);
 //	D3D12_STREAM_OUTPUT_DESC StreamOutput;
 	psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	psoDesc.SampleMask = UINT32_MAX;
@@ -398,7 +398,7 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
 	// Input Layout
-	const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_mesh->GetVertexLayout();
+	const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_spMesh->GetVertexLayout();
 	D3D12_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
 	for(size_t i = 0; i < vertexLayout.Size(); ++i)
 	{
@@ -415,7 +415,7 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 	psoDesc.RasterizerState.MultisampleEnable = TRUE;
 	psoDesc.RasterizerState.AntialiasedLineEnable = TRUE;
 
-	switch(renderable.m_material->m_cullMode)
+	switch(renderable.m_spMaterial->m_cullMode)
 	{
 		case ECullMode::None:	psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE; break;
 		case ECullMode::CCW:	psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_BACK; break;
@@ -423,15 +423,15 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 	}
 
 	// Blend State
-	if(renderable.m_material->m_isBlendEnabled)
+	if(renderable.m_spMaterial->m_isBlendEnabled)
 	{
 		psoDesc.BlendState.RenderTarget[0].BlendEnable = TRUE;
-		psoDesc.BlendState.RenderTarget[0].SrcBlend = ToD3D12(renderable.m_material->m_srcBlendRGB);
-		psoDesc.BlendState.RenderTarget[0].DestBlend = ToD3D12(renderable.m_material->m_destBlendRGB);
-		psoDesc.BlendState.RenderTarget[0].BlendOp = ToD3D12(renderable.m_material->m_blendOpRGB);
-		psoDesc.BlendState.RenderTarget[0].SrcBlendAlpha = ToD3D12(renderable.m_material->m_srcBlendAlpha);
-		psoDesc.BlendState.RenderTarget[0].DestBlendAlpha = ToD3D12(renderable.m_material->m_destBlendAlpha);
-		psoDesc.BlendState.RenderTarget[0].BlendOpAlpha = ToD3D12(renderable.m_material->m_blendOpAlpha);
+		psoDesc.BlendState.RenderTarget[0].SrcBlend = ToD3D12(renderable.m_spMaterial->m_srcBlendRGB);
+		psoDesc.BlendState.RenderTarget[0].DestBlend = ToD3D12(renderable.m_spMaterial->m_destBlendRGB);
+		psoDesc.BlendState.RenderTarget[0].BlendOp = ToD3D12(renderable.m_spMaterial->m_blendOpRGB);
+		psoDesc.BlendState.RenderTarget[0].SrcBlendAlpha = ToD3D12(renderable.m_spMaterial->m_srcBlendAlpha);
+		psoDesc.BlendState.RenderTarget[0].DestBlendAlpha = ToD3D12(renderable.m_spMaterial->m_destBlendAlpha);
+		psoDesc.BlendState.RenderTarget[0].BlendOpAlpha = ToD3D12(renderable.m_spMaterial->m_blendOpAlpha);
 	}
 
 	static_assert(static_cast<uint8_t>(EColorWrite::Red) == D3D12_COLOR_WRITE_ENABLE_RED);
@@ -439,10 +439,10 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 	static_assert(static_cast<uint8_t>(EColorWrite::Blue) == D3D12_COLOR_WRITE_ENABLE_BLUE);
 	static_assert(static_cast<uint8_t>(EColorWrite::Alpha) == D3D12_COLOR_WRITE_ENABLE_ALPHA);
 
-	psoDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = static_cast<uint8_t>(renderable.m_material->m_colorWriteMask);
+	psoDesc.BlendState.RenderTarget[0].RenderTargetWriteMask = static_cast<uint8_t>(renderable.m_spMaterial->m_colorWriteMask);
 
 	// Depth Stencil State
-	switch(renderable.m_material->m_depthTest)
+	switch(renderable.m_spMaterial->m_depthTest)
 	{
 		case EDepthTest::Disabled:		psoDesc.DepthStencilState.DepthEnable = FALSE; break;
 		case EDepthTest::Less:			psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS; break;
@@ -453,7 +453,7 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 		case EDepthTest::NotEqual:		psoDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_NOT_EQUAL; break;
 	}
 
-	psoDesc.DepthStencilState.DepthWriteMask = renderable.m_material->m_isDepthWriteEnabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
+	psoDesc.DepthStencilState.DepthWriteMask = renderable.m_spMaterial->m_isDepthWriteEnabled ? D3D12_DEPTH_WRITE_MASK_ALL : D3D12_DEPTH_WRITE_MASK_ZERO;
 
 	// Pipeline State
 	HRESULT hr = m_pDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pRenderableRenderData->m_pPipelineState));
@@ -528,7 +528,7 @@ RenderData* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 			DX_CHECK_HRESULT(hr);
 
 			D3D12_SUBRESOURCE_DATA indexData = {};
-			indexData.pData = mesh.m_indices.get();
+			indexData.pData = mesh.m_spIndices.get();
 
 			UpdateSubresources<1>(m_pCmdList, pMeshRenderData->m_pIndexBuffer, pIndexUploadResource, 0, 0, 1, &indexData);
 		}
@@ -548,7 +548,7 @@ RenderData* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 		DX_CHECK_HRESULT(hr);
 
 		D3D12_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pData = mesh.m_vertices.get();
+		vertexData.pData = mesh.m_spVertices.get();
 
 		UpdateSubresources<1>(m_pCmdList, pMeshRenderData->m_pVertexBuffer, pVertexUploadResource, 0, 0, 1, &vertexData);
 
@@ -824,13 +824,13 @@ void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 
 	if(dynamicMesh.m_isIndicesDirty)
 	{
-		UpdateD3D12Resource(pMeshRenderData->m_pIndexBuffer, dynamicMesh.m_indices.get(), dynamicMesh.GetSizeOfIndexData());
+		UpdateD3D12Resource(pMeshRenderData->m_pIndexBuffer, dynamicMesh.m_spIndices.get(), dynamicMesh.GetSizeOfIndexData());
 		dynamicMesh.m_isIndicesDirty = false;
 	}
 
 	if(dynamicMesh.m_isVerticesDirty)
 	{
-		UpdateD3D12Resource(pMeshRenderData->m_pVertexBuffer, dynamicMesh.m_vertices.get(), dynamicMesh.GetSizeOfVertexData());
+		UpdateD3D12Resource(pMeshRenderData->m_pVertexBuffer, dynamicMesh.m_spVertices.get(), dynamicMesh.GetSizeOfVertexData());
 		dynamicMesh.m_isVerticesDirty = false;
 	}
 }
@@ -883,14 +883,14 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void Direct3D12Render::UpdateShaderParams(const Material& material)
 {
-	ShaderRenderDataD3D12* pVS = static_cast<ShaderRenderDataD3D12*>(material.m_vertexShader->m_pRenderData);
+	ShaderRenderDataD3D12* pVS = static_cast<ShaderRenderDataD3D12*>(material.m_spVertexShader->m_pRenderData);
 	UpdateShaderParams(material, pVS);
 
-	ShaderRenderDataD3D12* pPS = static_cast<ShaderRenderDataD3D12*>(material.m_pixelShader->m_pRenderData);
+	ShaderRenderDataD3D12* pPS = static_cast<ShaderRenderDataD3D12*>(material.m_spPixelShader->m_pRenderData);
 	UpdateShaderParams(material, pPS);
 
 	// TODO: support all textures
-	Texture* pFirstTexture = material.GetTextures().GetFirst().m_texture.get();
+	Texture* pFirstTexture = material.GetTextures().GetFirst().m_spTexture.get();
 	if(pFirstTexture != nullptr)
 	{
 		const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(pFirstTexture->m_pRenderData);
@@ -902,7 +902,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
-		const TextureRenderDataD3D12* pTextureRenderData = static_cast<const TextureRenderDataD3D12*>(textureInfo.m_texture->m_pRenderData);
+		const TextureRenderDataD3D12* pTextureRenderData = static_cast<const TextureRenderDataD3D12*>(textureInfo.m_spTexture->m_pRenderData);
 
 		D3D12_TEXTURE_ADDRESS_MODE addressMode = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
 		switch(textureInfo.m_addressMode)

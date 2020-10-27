@@ -13,7 +13,7 @@ class Material
 public:
 	struct TextureInfo
 	{
-		std::shared_ptr<Texture> m_texture;
+		std::shared_ptr<Texture> m_spTexture;
 		EFilterMode m_filterMode;
 		EAddressMode m_addressMode;
 	};
@@ -34,8 +34,8 @@ public:
 	Material();
 	~Material();
 
-	void AddTexture(const std::shared_ptr<Texture>& texture, EFilterMode filterMode = EFilterMode::Trilinear, EAddressMode addressMode = EAddressMode::Repeat);
-	void ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& texture);
+	void AddTexture(const std::shared_ptr<Texture>& spTexture, EFilterMode filterMode = EFilterMode::Trilinear, EAddressMode addressMode = EAddressMode::Repeat);
+	void ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& spTexture);
 	const Array<TextureInfo>& GetTextures() const;
 
 	void AddShaderParam(HashedString name, const void* pParam);
@@ -43,8 +43,8 @@ public:
 	void RemoveAllShaderParams();
 	const Array<ShaderParam>& Material::GetShaderParams() const;
 
-	std::shared_ptr<Shader> m_vertexShader;
-	std::shared_ptr<Shader> m_pixelShader;
+	std::shared_ptr<Shader> m_spVertexShader;
+	std::shared_ptr<Shader> m_spPixelShader;
 
 	ECullMode m_cullMode = ECullMode::CCW;
 

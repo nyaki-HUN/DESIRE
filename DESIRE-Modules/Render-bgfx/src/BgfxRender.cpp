@@ -143,23 +143,23 @@ RenderData* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 {
 	RenderableRenderDataBgfx* pRenderableRenderData = new RenderableRenderDataBgfx();
 
-	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_vertexShader->m_pRenderData);
-	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_material->m_pixelShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_spMaterial->m_spVertexShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(renderable.m_spMaterial->m_spPixelShader->m_pRenderData);
 	pRenderableRenderData->m_shaderProgram = bgfx::createProgram(pVS->m_shaderHandle, pPS->m_shaderHandle);
 
 	pRenderableRenderData->m_renderState = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_MSAA;
 
-	switch(renderable.m_material->m_cullMode)
+	switch(renderable.m_spMaterial->m_cullMode)
 	{
 		case ECullMode::None:	break;
 		case ECullMode::CCW:	pRenderableRenderData->m_renderState |= BGFX_STATE_CULL_CCW; break;
 		case ECullMode::CW:		pRenderableRenderData->m_renderState |= BGFX_STATE_CULL_CW; break;
 	}
 
-	if(renderable.m_material->m_isBlendEnabled)
+	if(renderable.m_spMaterial->m_isBlendEnabled)
 	{
-		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(ToBgfx(renderable.m_material->m_srcBlendRGB), ToBgfx(renderable.m_material->m_destBlendRGB), ToBgfx(renderable.m_material->m_srcBlendAlpha), ToBgfx(renderable.m_material->m_destBlendAlpha));
-		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(ToBgfx(renderable.m_material->m_blendOpRGB), ToBgfx(renderable.m_material->m_blendOpAlpha));
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_FUNC_SEPARATE(ToBgfx(renderable.m_spMaterial->m_srcBlendRGB), ToBgfx(renderable.m_spMaterial->m_destBlendRGB), ToBgfx(renderable.m_spMaterial->m_srcBlendAlpha), ToBgfx(renderable.m_spMaterial->m_destBlendAlpha));
+		pRenderableRenderData->m_renderState |= BGFX_STATE_BLEND_EQUATION_SEPARATE(ToBgfx(renderable.m_spMaterial->m_blendOpRGB), ToBgfx(renderable.m_spMaterial->m_blendOpAlpha));
 	}
 
 	static_assert(static_cast<uint8_t>(EColorWrite::Red) == BGFX_STATE_WRITE_R);
@@ -167,9 +167,9 @@ RenderData* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 	static_assert(static_cast<uint8_t>(EColorWrite::Blue) == BGFX_STATE_WRITE_B);
 	static_assert(static_cast<uint8_t>(EColorWrite::Alpha) == BGFX_STATE_WRITE_A);
 
-	pRenderableRenderData->m_renderState |= static_cast<uint8_t>(renderable.m_material->m_colorWriteMask);
+	pRenderableRenderData->m_renderState |= static_cast<uint8_t>(renderable.m_spMaterial->m_colorWriteMask);
 
-	switch(renderable.m_material->m_depthTest)
+	switch(renderable.m_spMaterial->m_depthTest)
 	{
 		case EDepthTest::Disabled:		break;
 		case EDepthTest::Less:			pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_LESS; break;
@@ -180,7 +180,7 @@ RenderData* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 		case EDepthTest::NotEqual:		pRenderableRenderData->m_renderState |= BGFX_STATE_DEPTH_TEST_NOTEQUAL; break;
 	}
 
-	if(renderable.m_material->m_isDepthWriteEnabled)
+	if(renderable.m_spMaterial->m_isDepthWriteEnabled)
 	{
 		pRenderableRenderData->m_renderState |= BGFX_STATE_WRITE_Z;
 	}
@@ -201,8 +201,8 @@ RenderData* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
 	}
 	pMeshRenderData->m_vertexLayout.end();
 
-	const bgfx::Memory* pIndexData = (mesh.GetNumIndices() != 0) ? bgfx::copy(mesh.m_indices.get(), mesh.GetSizeOfIndexData()) : nullptr;
-	const bgfx::Memory* pVertexData = bgfx::copy(mesh.m_vertices.get(), mesh.GetSizeOfVertexData());
+	const bgfx::Memory* pIndexData = (mesh.GetNumIndices() != 0) ? bgfx::copy(mesh.m_spIndices.get(), mesh.GetSizeOfIndexData()) : nullptr;
+	const bgfx::Memory* pVertexData = bgfx::copy(mesh.m_spVertices.get(), mesh.GetSizeOfVertexData());
 
 	switch(mesh.GetType())
 	{
@@ -343,13 +343,13 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 
 	if(dynamicMesh.m_isIndicesDirty)
 	{
-		bgfx::update(pMeshRenderData->m_dynamicIndexBuffer, 0, bgfx::copy(dynamicMesh.m_indices.get(), dynamicMesh.GetSizeOfIndexData()));
+		bgfx::update(pMeshRenderData->m_dynamicIndexBuffer, 0, bgfx::copy(dynamicMesh.m_spIndices.get(), dynamicMesh.GetSizeOfIndexData()));
 		dynamicMesh.m_isIndicesDirty = false;
 	}
 
 	if(dynamicMesh.m_isVerticesDirty)
 	{
-		bgfx::update(pMeshRenderData->m_dynamicVertexBuffer, 0, bgfx::copy(dynamicMesh.m_vertices.get(), dynamicMesh.GetSizeOfVertexData()));
+		bgfx::update(pMeshRenderData->m_dynamicVertexBuffer, 0, bgfx::copy(dynamicMesh.m_spVertices.get(), dynamicMesh.GetSizeOfVertexData()));
 		dynamicMesh.m_isVerticesDirty = false;
 	}
 }
@@ -372,8 +372,8 @@ void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
 
 void BgfxRender::UpdateShaderParams(const Material& material)
 {
-	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(material.m_vertexShader->m_pRenderData);
-	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(material.m_pixelShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pVS = static_cast<const ShaderRenderDataBgfx*>(material.m_spVertexShader->m_pRenderData);
+	const ShaderRenderDataBgfx* pPS = static_cast<const ShaderRenderDataBgfx*>(material.m_spPixelShader->m_pRenderData);
 
 	for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 	{
@@ -394,7 +394,7 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
-		const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(textureInfo.m_texture->m_pRenderData);
+		const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(textureInfo.m_spTexture->m_pRenderData);
 
 		uint32_t flags = BGFX_TEXTURE_NONE;
 		switch(textureInfo.m_filterMode)
