@@ -2,10 +2,11 @@
 
 #include <map>
 
-class OSWindowImpl;
 class String;
 class WritableString;
+
 struct OSWindowCreationParams;
+struct OSWindowImpl;
 
 class OSWindow
 {
@@ -40,7 +41,7 @@ public:
 
 	void RegisterMessageHandler(int msgType, MessageHandler_t messageHandler);
 
-	void SetWindowTitle(const char* newTitle);
+	void SetWindowTitle(const char* pNewTitle);
 
 	// Change the OS cursor
 	void SetCursor(ECursor cursor);
@@ -54,12 +55,12 @@ private:
 
 	static constexpr uint16_t kWindowMinSize = 100;
 
-	uint16_t width;
-	uint16_t height;
-	bool isFullscreen = false;
-	bool isActive = false;
-	std::map<int, MessageHandler_t> additionalMessageHandlers;
-	std::unique_ptr<OSWindowImpl> impl;
+	uint16_t m_width;
+	uint16_t m_height;
+	bool m_isFullscreen = false;
+	bool m_isActive = false;
+	std::map<int, MessageHandler_t> m_additionalMessageHandlers;
+	std::unique_ptr<OSWindowImpl> m_spImpl;
 
-	friend class OSWindowImpl;
+	friend OSWindowImpl;
 };

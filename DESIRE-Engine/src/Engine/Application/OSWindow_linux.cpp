@@ -14,10 +14,9 @@
 //	OSWindowImpl
 // --------------------------------------------------------------------------------------------------------------------
 
-class OSWindowImpl
+struct OSWindowImpl
 {
-public:
-	Display* display;
+	Display* pDisplay = nullptr;
 	Window windowHandle;
 	Cursor cursors[OSWindow::NUM_CURSORS];
 };
@@ -27,19 +26,19 @@ public:
 // --------------------------------------------------------------------------------------------------------------------
 
 OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
-	: width(std::max(kWindowMinSize, creationParams.width))
-	, height(std::max(kWindowMinSize, creationParams.height))
-	, isFullscreen(creationParams.isFullscreen)
-	, impl(std::make_unique<OSWindowImpl>())
+	: m_width(std::max(kWindowMinSize, creationParams.width))
+	, m_height(std::max(kWindowMinSize, creationParams.height))
+	, m_isFullscreen(creationParams.isFullscreen)
+	, m_spImpl(std::make_unique<OSWindowm_spImpl>())
 {
 	for(int i = 0; i < NUM_CURSORS; ++i)
 	{
-		impl->cursors[i] = None;
+		m_spImpl->cursors[i] = None;
 	}
 
 	// Create local X Display connection
-	impl->display = XOpenDisplay(nullptr);
-	if(impl->display == nullptr)
+	m_spImpl->pDisplay = XOpenDisplay(nullptr);
+	if(m_spImpl->pDisplay == nullptr)
 	{
 		LOG_ERROR("Unable to open a connection to the X server");
 	}
@@ -47,51 +46,51 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 
 OSWindow::~OSWindow()
 {
-	if(impl->display != nullptr)
+	if(m_spImpl->pDisplay != nullptr)
 	{
 		for(int i = 0; i < NUM_CURSORS; ++i)
 		{
-			if(impl->cursors[i] != None)
+			if(m_spImpl->cursors[i] != None)
 			{
-				XFreeCursor(impl->display, impl->cursors[i]);
+				XFreeCursor(m_spImpl->pDisplay, m_spImpl->cursors[i]);
 			}
 		}
 
-		XCloseDisplay(impl->display);
-		impl->display = nullptr;
+		XCloseDisplay(m_spImpl->pDisplay);
+		m_spImpl->pDisplay = nullptr;
 	}
 }
 
 void OSWindow::HandleWindowMessages()
 {
-	if(impl->display == nullptr)
+	if(m_spImpl->pDisplay == nullptr)
 	{
 		return;
 	}
 
 	XEvent event;
-	while(XPending(impl->display) > 0)
+	while(XPending(m_spImpl->pDisplay) > 0)
 	{
-		XNextEvent(impl->display, &event);
+		XNextEvent(m_spImpl->pDisplay, &event);
 
 		if(isActive)
 		{
-			auto it = impl->additionalMessageHandlers.find(event.type);
-			if(it != impl->additionalMessageHandlers.end())
+			auto iter = m_spImpl->additionalMessageHandlers.find(event.type);
+			if(iter != m_spImpl->additionalMessageHandlers.end())
 			{
-				it->second(&event);
+				iter->second(&event);
 			}
 		}
 
 		switch(event.type)
 		{
 			case FocusIn:
-				isActive = true;
+				m_isActive = true;
 				Modules::Application->SendEvent(EAppEventType::Activate);
 				break;
 
 			case FocusOut:
-				isActive = false;
+				m_isActive = false;
 				Modules::Application->SendEvent(EAppEventType::Deactivate);
 				break;
 
@@ -140,61 +139,61 @@ void OSWindow::HandleWindowMessages()
 
 void* OSWindow::GetHandle() const
 {
-	return impl->windowHandle;
+	return m_spImpl->windowHandle;
 }
 
-void OSWindow::SetWindowTitle(const char* newTitle)
+void OSWindow::SetWindowTitle(const char* pNewTitle)
 {
-	if(impl->display == nullptr)
+	if(m_spImpl->pDisplay == nullptr)
 	{
 		return;
 	}
 
 	XTextProperty titleTextProp;
-	XStringListToTextProperty(const_cast<char**>(&newTitle), 1, &titleTextProp);
+	XStringListToTextProperty(const_cast<char**>(&pNewTitle), 1, &titleTextProp);
 
-	XSetWMName(impl->display, impl->windowHandle, &titleTextProp);
-	XSetWMIconName(impl->display, impl->windowHandle, &titleTextProp);
+	XSetWMName(m_spImpl->pDisplay, m_spImpl->windowHandle, &titleTextProp);
+	XSetWMIconName(m_spImpl->pDisplay, m_spImpl->windowHandle, &titleTextProp);
 
 	XFree(titleTextProp.value);
 }
 
 void OSWindow::SetCursor(ECursor cursor)
 {
-	if(impl->display == nullptr)
+	if(m_spImpl->pDisplay == nullptr)
 	{
 		return;
 	}
 
-	if(impl->cursors[cursor] == None)
+	if(m_spImpl->cursors[cursor] == None)
 	{
 		// X Font Cursors: http://tronche.com/gui/x/xlib/appendix/b/
 		switch(cursor)
 		{
-			case CURSOR_ARROW:				impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_left_ptr); break;
-			case CURSOR_MOVE:				impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_fleur); break;
-			case CURSOR_SIZE_BOTTOMLEFT:	impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_bottom_left_corner); break;
-			case CURSOR_SIZE_BOTTOMRIGHT:	impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_bottom_right_corner); break;
-			case CURSOR_SIZE_NS:			impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_sb_v_double_arrow); break;
-			case CURSOR_SIZE_WE:			impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_sb_h_double_arrow); break;
-			case CURSOR_HAND:				impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_hand2); break;
-			case CURSOR_IBEAM:				impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_xterm); break;
-			case CURSOR_UP:					impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_center_ptr); break;
-			case CURSOR_NOT_ALLOWED:		impl->cursors[cursor] = XCreateFontCursor(impl->display, XC_circle); break;
+			case CURSOR_ARROW:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_left_ptr); break;
+			case CURSOR_MOVE:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_fleur); break;
+			case CURSOR_SIZE_BOTTOMLEFT:	m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_bottom_left_corner); break;
+			case CURSOR_SIZE_BOTTOMRIGHT:	m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_bottom_right_corner); break;
+			case CURSOR_SIZE_NS:			m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_sb_v_double_arrow); break;
+			case CURSOR_SIZE_WE:			m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_sb_h_double_arrow); break;
+			case CURSOR_HAND:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_hand2); break;
+			case CURSOR_IBEAM:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_xterm); break;
+			case CURSOR_UP:					m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_center_ptr); break;
+			case CURSOR_NOT_ALLOWED:		m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_circle); break;
 			case NUM_CURSORS:				ASSERT(false); return;
 		}
 	}
 
-	XDefineCursor(impl->display, impl->windowHandle, impl->cursors[cursor]);
-	XFlush(impl->display);
+	XDefineCursor(m_spImpl->pDisplay, m_spImpl->windowHandle, m_spImpl->cursors[cursor]);
+	XFlush(m_spImpl->pDisplay);
 }
 
 bool OSWindow::SetClipboardString(const String& string)
 {
-	if(impl->display != nullptr)
+	if(m_spImpl->pDisplay != nullptr)
 	{
-		XSetSelectionOwner(impl->display, XA_PRIMARY, None, CurrentTime);
-		XStoreBytes(impl->display, string.Str(), string.Length());
+		XSetSelectionOwner(m_spImpl->pDisplay, XA_PRIMARY, None, CurrentTime);
+		XStoreBytes(m_spImpl->pDisplay, string.Str(), string.Length());
 		return true;
 	}
 
@@ -205,17 +204,17 @@ void OSWindow::GetClipboardString(WritableString& outString)
 {
 	outString.Clear();
 
-	if(impl->display == nullptr)
+	if(m_spImpl->pDisplay == nullptr)
 	{
 		return;
 	}
 
 	int size = 0;
-	char* ptr = XFetchBytes(impl->display, &size);
+	char* pStr = XFetchBytes(m_spImpl->pDisplay, &size);
 	if(ptr != nullptr)
 	{
-		outString.Assign(ptr, size);
-		XFree(ptr);
+		outString.Assign(pStr, size);
+		XFree(pStr);
 	}
 }
 

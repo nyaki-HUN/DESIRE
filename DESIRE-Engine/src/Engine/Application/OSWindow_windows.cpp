@@ -10,33 +10,37 @@
 //	OSWindowImpl
 // --------------------------------------------------------------------------------------------------------------------
 
-class OSWindowImpl
+struct OSWindowImpl
 {
-public:
+	HWND hWnd = 0;
+	HCURSOR cursors[OSWindow::NUM_CURSORS] = {};
+	OSWindow::ECursor currCursor = OSWindow::CURSOR_ARROW;
+	bool isInSizeMove = false;
+
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		if(msg == WM_CREATE)
 		{
 			// Store pointer to the WINDOWSWindow in user data area
-			CREATESTRUCT* createStruct = (CREATESTRUCT*)lParam;
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)createStruct->lpCreateParams);
+			CREATESTRUCT* pCreateStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
 			return 0;
 		}
 
 		// Get the window instance
-		OSWindow* window = reinterpret_cast<OSWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-		if(window == nullptr)
+		OSWindow* pWindow = reinterpret_cast<OSWindow*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+		if(pWindow == nullptr)
 		{
 			return DefWindowProc(hWnd, msg, wParam, lParam);
 		}
 
-		if(window->isActive)
+		if(pWindow->m_isActive)
 		{
-			auto it = window->additionalMessageHandlers.find(msg);
-			if(it != window->additionalMessageHandlers.end())
+			auto iter = pWindow->m_additionalMessageHandlers.find(msg);
+			if(iter != pWindow->m_additionalMessageHandlers.end())
 			{
 				const std::pair<WPARAM, LPARAM> paramPair(wParam, lParam);
-				it->second(&paramPair);
+				iter->second(&paramPair);
 			}
 		}
 
@@ -61,7 +65,7 @@ public:
 			case WM_SETCURSOR:			// Sent to a window if the mouse causes the cursor to move within a window and mouse input is not captured
 				if(LOWORD(lParam) == HTCLIENT)
 				{
-					window->impl->UpdateCursor();
+					pWindow->m_spImpl->UpdateCursor();
 					return TRUE;
 				}
 				break;
@@ -69,38 +73,38 @@ public:
 			case WM_ACTIVATE:			// Sent to both the window being activated and the window being deactivated
 				if(wParam == WA_INACTIVE)
 				{
-					window->isActive = false;
+					pWindow->m_isActive = false;
 					Modules::Application->SendEvent(EAppEventType::Deactivate);
 				}
 				else if(wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE)
 				{
-					window->isActive = true;
+					pWindow->m_isActive = true;
 					Modules::Application->SendEvent(EAppEventType::Activate);
 				}
 				break;
 
 			case WM_ENTERSIZEMOVE:		// Sent one time to a window after it enters the moving or sizing modal loop
-				window->impl->isInSizeMove = true;
+				pWindow->m_spImpl->isInSizeMove = true;
 				return 0;
 
 			case WM_EXITSIZEMOVE:		// Sent one time to a window, after it has exited the moving or sizing modal loop
 			{
-				window->impl->isInSizeMove = false;
+				pWindow->m_spImpl->isInSizeMove = false;
 
 				WINDOWINFO pwi;
 				GetWindowInfo(hWnd, &pwi);
-				window->SetSize(static_cast<uint16_t>(pwi.rcClient.right - pwi.rcClient.left), static_cast<uint16_t>(pwi.rcClient.bottom - pwi.rcClient.top));
+				pWindow->SetSize(static_cast<uint16_t>(pwi.rcClient.right - pwi.rcClient.left), static_cast<uint16_t>(pwi.rcClient.bottom - pwi.rcClient.top));
 				return 0;
 			}
 
 			case WM_SIZE:				// Sent to a window after its size has changed
-				if(!window->impl->isInSizeMove && wParam != SIZE_MINIMIZED)
+				if(!pWindow->m_spImpl->isInSizeMove && wParam != SIZE_MINIMIZED)
 				{
 					if(wParam == SIZE_MAXIMIZED)
 					{
-//						window->SetPosition(0, 0);
+//						pWindow->SetPosition(0, 0);
 					}
-					window->SetSize(static_cast<uint16_t>(lParam), static_cast<uint16_t>(lParam >> 16));
+					pWindow->SetSize(static_cast<uint16_t>(lParam), static_cast<uint16_t>(lParam >> 16));
 				}
 				return 0;
 
@@ -182,11 +186,6 @@ public:
 		const BOOL isInside = PtInRect(&area, screenPos);
 		return (isInside == TRUE);
 	}
-
-	HWND hWnd = 0;
-	HCURSOR cursors[OSWindow::NUM_CURSORS] = {};
-	OSWindow::ECursor currCursor = OSWindow::CURSOR_ARROW;
-	bool isInSizeMove = false;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -194,16 +193,16 @@ public:
 // --------------------------------------------------------------------------------------------------------------------
 
 OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
-	: width(std::max(kWindowMinSize, creationParams.width))
-	, height(std::max(kWindowMinSize, creationParams.height))
-	, isFullscreen(creationParams.isFullscreen)
-	, impl(std::make_unique<OSWindowImpl>())
+	: m_width(std::max(kWindowMinSize, creationParams.width))
+	, m_height(std::max(kWindowMinSize, creationParams.height))
+	, m_isFullscreen(creationParams.isFullscreen)
+	, m_spImpl(std::make_unique<OSWindowImpl>())
 {
 	int posX = 0;
 	int posY = 0;
 	DWORD windowStyleFlags = 0;
-	RECT rect = { 0, 0, width, height };
-	if(isFullscreen)
+	RECT rect = { 0, 0, m_width, m_height };
+	if(m_isFullscreen)
 	{
 		windowStyleFlags = WS_POPUP;
 	}
@@ -254,14 +253,14 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 	wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(101));
 	RegisterClassEx(&wc);
 
-	impl->hWnd = CreateWindowExA(0, "DESIRE_Wnd", "DESIRE", windowStyleFlags, posX, posY, rect.right - rect.left, rect.bottom - rect.top, GetDesktopWindow(), nullptr, hInstance, this);
+	m_spImpl->hWnd = CreateWindowExA(0, "DESIRE_Wnd", "DESIRE", windowStyleFlags, posX, posY, rect.right - rect.left, rect.bottom - rect.top, GetDesktopWindow(), nullptr, hInstance, this);
 
-	ShowWindow(impl->hWnd, SW_SHOW);
+	ShowWindow(m_spImpl->hWnd, SW_SHOW);
 }
 
 OSWindow::~OSWindow()
 {
-	SetWindowLongPtr(impl->hWnd, GWLP_USERDATA, NULL);
+	SetWindowLongPtr(m_spImpl->hWnd, GWLP_USERDATA, NULL);
 }
 
 void OSWindow::HandleWindowMessages()
@@ -276,26 +275,26 @@ void OSWindow::HandleWindowMessages()
 
 void* OSWindow::GetHandle() const
 {
-	return impl->hWnd;
+	return m_spImpl->hWnd;
 }
 
-void OSWindow::SetWindowTitle(const char* newTitle)
+void OSWindow::SetWindowTitle(const char* pNewTitle)
 {
-	SetWindowText(impl->hWnd, newTitle);
+	SetWindowText(m_spImpl->hWnd, pNewTitle);
 }
 
 void OSWindow::SetCursor(ECursor cursor)
 {
-	if(impl->currCursor == cursor)
+	if(m_spImpl->currCursor == cursor)
 	{
 		return;
 	}
 
-	impl->currCursor = cursor;
+	m_spImpl->currCursor = cursor;
 
-	if(impl->IsInsideClientArea())
+	if(m_spImpl->IsInsideClientArea())
 	{
-		impl->UpdateCursor();
+		m_spImpl->UpdateCursor();
 	}
 }
 
@@ -303,7 +302,7 @@ bool OSWindow::SetClipboardString(const String& string)
 {
 	bool success = false;
 
-	if(OpenClipboard(impl->hWnd))
+	if(OpenClipboard(m_spImpl->hWnd))
 	{
 		EmptyClipboard();
 
@@ -342,7 +341,7 @@ void OSWindow::GetClipboardString(WritableString& outString) const
 {
 	outString.Clear();
 
-	if(OpenClipboard(impl->hWnd))
+	if(OpenClipboard(m_spImpl->hWnd))
 	{
 		if(IsClipboardFormatAvailable(CF_UNICODETEXT))
 		{

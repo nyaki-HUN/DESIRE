@@ -5,38 +5,38 @@
 
 uint16_t OSWindow::GetWidth() const
 {
-	return width;
+	return m_width;
 }
 
 uint16_t OSWindow::GetHeight() const
 {
-	return height;
+	return m_height;
 }
 
 bool OSWindow::IsFullscreen() const
 {
-	return isFullscreen;
+	return m_isFullscreen;
 }
 
 bool OSWindow::IsActive() const
 {
-	return isActive;
+	return m_isActive;
 }
 
 void OSWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHandler)
 {
 	ASSERT(messageHandler != nullptr);
-	additionalMessageHandlers[msgType] = messageHandler;
+	m_additionalMessageHandlers[msgType] = messageHandler;
 }
 
-void OSWindow::SetSize(uint16_t i_width, uint16_t i_height)
+void OSWindow::SetSize(uint16_t width, uint16_t height)
 {
-	if(width == i_width && height == i_height)
+	if(m_width == width && m_height == height)
 	{
 		return;
 	}
 
-	width = i_width;
-	height = i_height;
+	m_width = width;
+	m_height = height;
 	Modules::Render->UpdateRenderWindow(*this);
 }
