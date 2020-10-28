@@ -196,8 +196,8 @@ RenderData* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
 	const Array<Mesh::VertexLayout>& vertexLayout = mesh.GetVertexLayout();
 	for(const Mesh::VertexLayout& layout : vertexLayout)
 	{
-		const bool isNormalized = (layout.m_type == Mesh::EAttribType::Uint8);
-		pMeshRenderData->m_vertexLayout.add(ToBgfx(layout.m_attrib), layout.m_count, ToBgfx(layout.m_type), isNormalized);
+		const bool isNormalized = (layout.type == Mesh::EAttribType::Uint8);
+		pMeshRenderData->m_vertexLayout.add(ToBgfx(layout.attrib), layout.count, ToBgfx(layout.type), isNormalized);
 	}
 	pMeshRenderData->m_vertexLayout.end();
 
@@ -377,10 +377,10 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 
 	for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 	{
-		const bgfx::UniformHandle* pUniform = pVS->m_uniforms.Find(shaderParam.m_name);
+		const bgfx::UniformHandle* pUniform = pVS->m_uniforms.Find(shaderParam.name);
 		if(pUniform == nullptr)
 		{
-			pUniform = pPS->m_uniforms.Find(shaderParam.m_name);
+			pUniform = pPS->m_uniforms.Find(shaderParam.name);
 		}
 
 		if(pUniform != nullptr && bgfx::isValid(*pUniform))
@@ -394,10 +394,10 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
-		const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(textureInfo.m_spTexture->m_pRenderData);
+		const TextureRenderDataBgfx* pTextureRenderData = static_cast<const TextureRenderDataBgfx*>(textureInfo.spTexture->m_pRenderData);
 
 		uint32_t flags = BGFX_TEXTURE_NONE;
-		switch(textureInfo.m_filterMode)
+		switch(textureInfo.filterMode)
 		{
 			case EFilterMode::Point:		flags |= BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_MIP_POINT; break;
 			case EFilterMode::Bilinear:		flags |= BGFX_SAMPLER_MIP_POINT; break;
@@ -405,7 +405,7 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 			case EFilterMode::Anisotropic:	flags |= BGFX_SAMPLER_MIN_ANISOTROPIC | BGFX_SAMPLER_MAG_ANISOTROPIC; break;
 		}
 
-		switch(textureInfo.m_addressMode)
+		switch(textureInfo.addressMode)
 		{
 			case EAddressMode::Repeat:			break;
 			case EAddressMode::Clamp:			flags |= BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_SAMPLER_W_CLAMP; break;

@@ -283,8 +283,8 @@ RenderData* Direct3D11Render::CreateRenderableRenderData(const Renderable& rende
 			for(size_t i = 0; i < vertexLayout.Size(); ++i)
 			{
 				const Mesh::VertexLayout& layout = vertexLayout[i];
-				vertexElementDesc[i] = ToD3D11(layout.m_attrib);
-				vertexElementDesc[i].Format = ToD3D11(layout.m_type, layout.m_count);
+				vertexElementDesc[i] = ToD3D11(layout.attrib);
+				vertexElementDesc[i].Format = ToD3D11(layout.type, layout.count);
 			}
 
 			HRESULT hr = m_pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), pVS->m_pShaderCode->GetBufferPointer(), pVS->m_pShaderCode->GetBufferSize(), &pRenderableRenderData->m_pInputLayout);
@@ -442,9 +442,9 @@ RenderData* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 	for(size_t i = 0; i < vertexLayout.Size(); ++i)
 	{
 		const Mesh::VertexLayout& layout = vertexLayout[i];
-		pMeshRenderData->m_vertexLayoutKey |= (uint64_t)layout.m_attrib			<< (i * 7 + 0);	// 4 bits
-		pMeshRenderData->m_vertexLayoutKey |= (uint64_t)layout.m_type			<< (i * 7 + 4);	// 1 bit
-		pMeshRenderData->m_vertexLayoutKey |= (uint64_t)(layout.m_count - 1)	<< (i * 7 + 5);	// 2 bits [0, 3]
+		pMeshRenderData->m_vertexLayoutKey |= static_cast<uint64_t>(layout.attrib)		<< (i * 7 + 0);	// 4 bits
+		pMeshRenderData->m_vertexLayoutKey |= static_cast<uint64_t>(layout.type)		<< (i * 7 + 4);	// 1 bit
+		pMeshRenderData->m_vertexLayoutKey |= static_cast<uint64_t>(layout.count - 1)	<< (i * 7 + 5);	// 2 bits [0, 3]
 	}
 
 	D3D11_BUFFER_DESC bufferDesc = {};
@@ -578,7 +578,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 
 			// Create constant buffer data
 			ShaderRenderDataD3D11::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
-			bufferData.m_data = MemoryBuffer(shaderBufferDesc.Size);
+			bufferData.data = MemoryBuffer(shaderBufferDesc.Size);
 
 			for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
 			{
@@ -602,7 +602,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 					typeDesc.Class == D3D_SVC_MATRIX_ROWS || typeDesc.Class == D3D_SVC_MATRIX_COLUMNS)
 				{
 					const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-					bufferData.m_variables.Insert(key, { bufferData.m_data.ptr.get() + varDesc.StartOffset, varDesc.Size });
+					bufferData.variables.Insert(key, { bufferData.data.ptr.get() + varDesc.StartOffset, varDesc.Size });
 				}
 			}
 		}
@@ -834,13 +834,13 @@ void Direct3D11Render::UpdateShaderParams(const Material& material)
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
-		const TextureRenderDataD3D11* pTextureRenderData = static_cast<const TextureRenderDataD3D11*>(textureInfo.m_spTexture->m_pRenderData);
+		const TextureRenderDataD3D11* pTextureRenderData = static_cast<const TextureRenderDataD3D11*>(textureInfo.spTexture->m_pRenderData);
 
 		m_pDeviceCtx->VSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
 		m_pDeviceCtx->PSSetShaderResources(samplerIdx, 1, &pTextureRenderData->m_pSRV);
 
 		D3D11_TEXTURE_ADDRESS_MODE addressMode = D3D11_TEXTURE_ADDRESS_WRAP;
-		switch(textureInfo.m_addressMode)
+		switch(textureInfo.addressMode)
 		{
 			case EAddressMode::Repeat:			addressMode = D3D11_TEXTURE_ADDRESS_WRAP; break;
 			case EAddressMode::Clamp:			addressMode = D3D11_TEXTURE_ADDRESS_CLAMP; break;
@@ -850,7 +850,7 @@ void Direct3D11Render::UpdateShaderParams(const Material& material)
 		}
 
 		D3D11_SAMPLER_DESC samplerDesc = {};
-		switch(textureInfo.m_filterMode)
+		switch(textureInfo.filterMode)
 		{
 			case EFilterMode::Point:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
 			case EFilterMode::Bilinear:		samplerDesc.Filter = D3D11_ENCODE_BASIC_FILTER(D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_LINEAR, D3D11_FILTER_TYPE_POINT, D3D11_FILTER_REDUCTION_TYPE_STANDARD); break;
@@ -872,7 +872,7 @@ void Direct3D11Render::UpdateShaderParams(const Material& material)
 
 void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRenderDataD3D11* pShaderRenderData)
 {
-	ShaderRenderDataD3D11::ConstantBufferData::Variable* pVariable = nullptr;
+	ShaderRenderDataD3D11::ConstantBufferVariable* pVariable = nullptr;
 
 	for(size_t i = 0; i < pShaderRenderData->m_constantBuffersData.Size(); ++i)
 	{
@@ -881,50 +881,50 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRender
 
 		for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 		{
-			pVariable = bufferData.m_variables.Find(shaderParam.m_name);
+			pVariable = bufferData.variables.Find(shaderParam.name);
 			if(pVariable != nullptr)
 			{
 				isChanged |= pVariable->CheckAndUpdate(shaderParam.GetValue());
 			}
 		}
 
-		pVariable = bufferData.m_variables.Find("matWorldView");
-		if(pVariable != nullptr && pVariable->m_size == sizeof(DirectX::XMMATRIX))
+		pVariable = bufferData.variables.Find("matWorldView");
+		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matWorldView.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("matWorldViewProj");
-		if(pVariable != nullptr && pVariable->m_size == sizeof(DirectX::XMMATRIX))
+		pVariable = bufferData.variables.Find("matWorldViewProj");
+		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, m_matProj);
 			isChanged |= pVariable->CheckAndUpdate(&matWorldViewProj.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("matView");
+		pVariable = bufferData.variables.Find("matView");
 		if(pVariable != nullptr)
 		{
 			isChanged |= pVariable->CheckAndUpdate(&m_matView.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("matViewInv");
+		pVariable = bufferData.variables.Find("matViewInv");
 		if(pVariable != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("camPos");
+		pVariable = bufferData.variables.Find("camPos");
 		if(pVariable != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[3]);
 		}
 
-		pVariable = bufferData.m_variables.Find("resolution");
-		if(pVariable != nullptr && pVariable->m_size == 2 * sizeof(float))
+		pVariable = bufferData.variables.Find("resolution");
+		if(pVariable != nullptr && pVariable->size == 2 * sizeof(float))
 		{
 			float resolution[2] = {};
 			if(m_pActiveRenderTarget != nullptr)
@@ -943,7 +943,7 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRender
 
 		if(isChanged)
 		{
-			m_pDeviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.m_data.ptr.get(), 0, 0);
+			m_pDeviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.data.ptr.get(), 0, 0);
 		}
 	}
 }

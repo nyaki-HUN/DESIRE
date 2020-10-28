@@ -21,27 +21,27 @@ public:
 		m_constantBuffers.Clear();
 	}
 
+	struct ConstantBufferVariable
+	{
+		void* pMemory = nullptr;
+		uint32_t size = 0;
+
+		inline bool CheckAndUpdate(const void* pValue)
+		{
+			if(memcmp(pMemory, pValue, size) == 0)
+			{
+				return false;
+			}
+
+			memcpy(pMemory, pValue, size);
+			return true;
+		}
+	};
+
 	struct ConstantBufferData
 	{
-		struct Variable
-		{
-			void* m_pMemory;
-			uint32_t m_size;
-
-			inline bool CheckAndUpdate(const void* pValue)
-			{
-				if(memcmp(m_pMemory, pValue, m_size) == 0)
-				{
-					return false;
-				}
-
-				memcpy(m_pMemory, pValue, m_size);
-				return true;
-			}
-		};
-
-		HashedStringMap<Variable> m_variables;
-		MemoryBuffer m_data;
+		HashedStringMap<ConstantBufferVariable> variables;
+		MemoryBuffer data;
 	};
 
 	union

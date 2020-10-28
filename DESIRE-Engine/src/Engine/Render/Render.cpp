@@ -101,9 +101,9 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 	// Textures
 	for(const Material::TextureInfo& textureInfo : renderable.m_spMaterial->GetTextures())
 	{
-		if(textureInfo.m_spTexture->m_pRenderData == nullptr)
+		if(textureInfo.spTexture->m_pRenderData == nullptr)
 		{
-			textureInfo.m_spTexture->m_pRenderData = CreateTextureRenderData(*textureInfo.m_spTexture);
+			textureInfo.spTexture->m_pRenderData = CreateTextureRenderData(*textureInfo.spTexture);
 		}
 	}
 

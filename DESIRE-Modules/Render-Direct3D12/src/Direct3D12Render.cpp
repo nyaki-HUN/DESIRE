@@ -403,8 +403,8 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 	for(size_t i = 0; i < vertexLayout.Size(); ++i)
 	{
 		const Mesh::VertexLayout& layout = vertexLayout[i];
-		vertexElementDesc[i] = ToD3D12(layout.m_attrib);
-		vertexElementDesc[i].Format = ToD3D12(layout.m_type, layout.m_count);
+		vertexElementDesc[i] = ToD3D12(layout.attrib);
+		vertexElementDesc[i].Format = ToD3D12(layout.type, layout.count);
 	}
 
 	psoDesc.InputLayout.pInputElementDescs = vertexElementDesc;
@@ -640,7 +640,7 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		{
 			// Create constant buffer data
 			ShaderRenderDataD3D12::ConstantBufferData& bufferData = pShaderRenderData->m_constantBuffersData[i];
-			bufferData.m_data = MemoryBuffer(shaderBufferDesc.Size);
+			bufferData.data = MemoryBuffer(shaderBufferDesc.Size);
 
 			for(uint32_t j = 0; j < shaderBufferDesc.Variables; ++j)
 			{
@@ -664,7 +664,7 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 					typeDesc.Class == D3D_SVC_MATRIX_ROWS || typeDesc.Class == D3D_SVC_MATRIX_COLUMNS)
 				{
 					const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-					bufferData.m_variables.Insert(key, { bufferData.m_data.ptr.get() + varDesc.StartOffset, varDesc.Size });
+					bufferData.variables.Insert(key, { bufferData.data.ptr.get() + varDesc.StartOffset, varDesc.Size });
 				}
 			}
 		}
@@ -890,7 +890,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 	UpdateShaderParams(material, pPS);
 
 	// TODO: support all textures
-	Texture* pFirstTexture = material.GetTextures().GetFirst().m_spTexture.get();
+	Texture* pFirstTexture = material.GetTextures().GetFirst().spTexture.get();
 	if(pFirstTexture != nullptr)
 	{
 		const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(pFirstTexture->m_pRenderData);
@@ -902,10 +902,10 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 	uint8_t samplerIdx = 0;
 	for(const Material::TextureInfo& textureInfo : material.GetTextures())
 	{
-		const TextureRenderDataD3D12* pTextureRenderData = static_cast<const TextureRenderDataD3D12*>(textureInfo.m_spTexture->m_pRenderData);
+		const TextureRenderDataD3D12* pTextureRenderData = static_cast<const TextureRenderDataD3D12*>(textureInfo.spTexture->m_pRenderData);
 
 		D3D12_TEXTURE_ADDRESS_MODE addressMode = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-		switch(textureInfo.m_addressMode)
+		switch(textureInfo.addressMode)
 		{
 			case EAddressMode::Repeat:			addressMode = D3D12_TEXTURE_ADDRESS_MODE_WRAP; break;
 			case EAddressMode::Clamp:			addressMode = D3D12_TEXTURE_ADDRESS_MODE_CLAMP; break;
@@ -915,7 +915,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 		}
 
 		D3D12_SAMPLER_DESC samplerDesc = {};
-		switch(textureInfo.m_filterMode)
+		switch(textureInfo.filterMode)
 		{
 			case EFilterMode::Point:		samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_POINT, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
 			case EFilterMode::Bilinear:		samplerDesc.Filter = D3D12_ENCODE_BASIC_FILTER(D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_LINEAR, D3D12_FILTER_TYPE_POINT, D3D12_FILTER_REDUCTION_TYPE_STANDARD); break;
@@ -937,7 +937,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 
 void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRenderDataD3D12* pShaderRenderData)
 {
-	ShaderRenderDataD3D12::ConstantBufferData::Variable* pVariable = nullptr;
+	ShaderRenderDataD3D12::ConstantBufferVariable* pVariable = nullptr;
 
 	for(size_t i = 0; i < pShaderRenderData->m_constantBuffersData.Size(); ++i)
 	{
@@ -946,50 +946,50 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRender
 
 		for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 		{
-			pVariable = bufferData.m_variables.Find(shaderParam.m_name);
+			pVariable = bufferData.variables.Find(shaderParam.name);
 			if(pVariable != nullptr)
 			{
 				isChanged |= pVariable->CheckAndUpdate(shaderParam.GetValue());
 			}
 		}
 
-		pVariable = bufferData.m_variables.Find("matWorldView");
-		if(pVariable != nullptr && pVariable->m_size == sizeof(DirectX::XMMATRIX))
+		pVariable = bufferData.variables.Find("matWorldView");
+		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matWorldView.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("matWorldViewProj");
-		if(pVariable != nullptr && pVariable->m_size == sizeof(DirectX::XMMATRIX))
+		pVariable = bufferData.variables.Find("matWorldViewProj");
+		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, m_matProj);
 			isChanged |= pVariable->CheckAndUpdate(&matWorldViewProj.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("matView");
+		pVariable = bufferData.variables.Find("matView");
 		if(pVariable != nullptr)
 		{
 			isChanged |= pVariable->CheckAndUpdate(&m_matView.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("matViewInv");
+		pVariable = bufferData.variables.Find("matViewInv");
 		if(pVariable != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[0]);
 		}
 
-		pVariable = bufferData.m_variables.Find("camPos");
+		pVariable = bufferData.variables.Find("camPos");
 		if(pVariable != nullptr)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[3]);
 		}
 
-		pVariable = bufferData.m_variables.Find("resolution");
-		if(pVariable != nullptr && pVariable->m_size == 2 * sizeof(float))
+		pVariable = bufferData.variables.Find("resolution");
+		if(pVariable != nullptr && pVariable->size == 2 * sizeof(float))
 		{
 			float resolution[2] = {};
 			if(m_pActiveRenderTarget != nullptr)
@@ -1006,8 +1006,8 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRender
 			isChanged |= pVariable->CheckAndUpdate(resolution);
 		}
 
-		uint32_t num32BitValuesToSet = static_cast<uint32_t>(bufferData.m_data.size / sizeof(float));
-		m_pCmdList->SetGraphicsRoot32BitConstants(0, num32BitValuesToSet, bufferData.m_data.ptr.get(), 0);
+		uint32_t num32BitValuesToSet = static_cast<uint32_t>(bufferData.data.size / sizeof(float));
+		m_pCmdList->SetGraphicsRoot32BitConstants(0, num32BitValuesToSet, bufferData.data.ptr.get(), 0);
 	}
 }
 

@@ -37,16 +37,16 @@ public:
 
 	struct VertexLayout
 	{
-		EAttrib m_attrib;
-		uint8_t m_count;
-		EAttribType m_type;
+		EAttrib attrib;
+		uint8_t count;
+		EAttribType type;
 
 		uint32_t GetSizeInBytes() const
 		{
-			switch(m_type)
+			switch(type)
 			{
-				case EAttribType::Float:	return m_count * sizeof(float);
-				case EAttribType::Uint8:	return m_count * sizeof(uint8_t);
+				case EAttribType::Float:	return count * sizeof(float);
+				case EAttribType::Uint8:	return count * sizeof(uint8_t);
 			}
 			return 0;
 		}

@@ -13,22 +13,22 @@ class Material
 public:
 	struct TextureInfo
 	{
-		std::shared_ptr<Texture> m_spTexture;
-		EFilterMode m_filterMode;
-		EAddressMode m_addressMode;
+		std::shared_ptr<Texture> spTexture;
+		EFilterMode filterMode;
+		EAddressMode addressMode;
 	};
 
 	struct ShaderParam
 	{
-		const HashedString m_name;
+		const HashedString name;
 
 		ShaderParam(HashedString name, const void* pParam);
 		ShaderParam(HashedString name, std::function<void(float*)>&& func);
 		const void* GetValue() const;
 
 	private:
-		const void* m_pParam = nullptr;
-		std::function<void(float*)> m_paramFunc = nullptr;
+		const void* pParam = nullptr;
+		std::function<void(float*)> paramFunc = nullptr;
 	};
 
 	Material();

@@ -2,28 +2,28 @@
 #include "Engine/Render/Material.h"
 
 Material::ShaderParam::ShaderParam(HashedString name, const void* pParam)
-	: m_name(name)
-	, m_pParam(pParam)
+	: name(name)
+	, pParam(pParam)
 {
 	ASSERT(pParam != nullptr);
 }
 
 Material::ShaderParam::ShaderParam(HashedString name, std::function<void(float*)>&& func)
-	: m_name(name)
-	, m_paramFunc(std::move(func))
+	: name(name)
+	, paramFunc(std::move(func))
 {
-	ASSERT(m_paramFunc != nullptr);
+	ASSERT(paramFunc != nullptr);
 }
 
 const void* Material::ShaderParam::GetValue() const
 {
-	if(m_pParam != nullptr)
+	if(pParam != nullptr)
 	{
-		return m_pParam;
+		return pParam;
 	}
 
 	static float s_value[16] = {};
-	m_paramFunc(s_value);
+	paramFunc(s_value);
 
 	return s_value;
 }
@@ -48,7 +48,7 @@ void Material::ChangeTexture(uint8_t idx, const std::shared_ptr<Texture>& spText
 		return;
 	}
 
-	m_textures[idx].m_spTexture = spTexture;
+	m_textures[idx].spTexture = spTexture;
 }
 
 const Array<Material::TextureInfo>& Material::GetTextures() const
