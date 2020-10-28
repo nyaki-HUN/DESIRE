@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Resource/ResourceManager.h"
+#include "Engine/Application/ResourceManager.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
@@ -201,7 +201,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 	}
 
 	LOG_ERROR("Failed to load texture from: %s", filename.Str());
-	return m_errorTexture;
+	return m_spErrorTexture;
 }
 
 void ResourceManager::CreateErrorTexture()
@@ -217,5 +217,5 @@ void ResourceManager::CreateErrorTexture()
 		pPixel++;
 	}
 
-	m_errorTexture = std::make_shared<Texture>(kTextureSize, kTextureSize, Texture::EFormat::RGBA8, std::move(data));
+	m_spErrorTexture = std::make_shared<Texture>(kTextureSize, kTextureSize, Texture::EFormat::RGBA8, std::move(data));
 }

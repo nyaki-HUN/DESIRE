@@ -5,6 +5,7 @@
 
 #include "Engine/Application/Application.h"
 #include "Engine/Application/OSWindow.h"
+#include "Engine/Application/ResourceManager.h"
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
@@ -20,8 +21,6 @@
 #include "Engine/Render/Renderable.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
-
-#include "Engine/Resource/ResourceManager.h"
 
 static int s_widgetCounter = 0;
 
@@ -82,8 +81,8 @@ void ImGuiUI::Init()
 
 	// Setup material
 	renderable->m_spMaterial = std::make_unique<Material>();
-	renderable->m_spMaterial->m_spVertexShader = Modules::ResourceManager->GetShader("vs_ocornut_imgui");
-	renderable->m_spMaterial->m_spPixelShader = Modules::ResourceManager->GetShader("fs_ocornut_imgui");
+	renderable->m_spMaterial->m_spVertexShader = Modules::Application->GetResourceManager().GetShader("vs_ocornut_imgui");
+	renderable->m_spMaterial->m_spPixelShader = Modules::Application->GetResourceManager().GetShader("fs_ocornut_imgui");
 	renderable->m_spMaterial->m_cullMode = ECullMode::None;
 	renderable->m_spMaterial->m_isBlendEnabled = true;
 	renderable->m_spMaterial->m_isDepthWriteEnabled = false;

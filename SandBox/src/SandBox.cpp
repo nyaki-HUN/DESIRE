@@ -3,6 +3,8 @@
 
 #include "SimpleRotateScript.h"
 
+#include "Engine/Application/ResourceManager.h"
+
 #include "Engine/Compression/FileSourceZip.h"
 
 #include "Engine/Core/Object.h"
@@ -15,8 +17,6 @@
 #include "Engine/Input/Input.h"
 
 #include "Engine/Render/Render.h"
-
-#include "Engine/Resource/ResourceManager.h"
 
 #include "Engine/Script/ScriptSystem.h"
 #include "Engine/Script/ScriptComponent.h"
@@ -53,9 +53,9 @@ void SandBox::Init()
 
 	//////////
 
-	scriptedObject = new Object();
-	Modules::ScriptSystem->CreateScriptComponentOnObject(*scriptedObject, "TestScript");
-	ScriptComponent* scriptComp = scriptedObject->GetComponent<ScriptComponent>();
+	m_pScriptedObject = new Object();
+	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_pScriptedObject, "TestScript");
+	ScriptComponent* scriptComp = m_pScriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
 	{
 		scriptComp->CallByType(ScriptComponent::EBuiltinFuncType::Init);
@@ -69,32 +69,32 @@ void SandBox::Init()
 
 	REGISTER_NATIVE_SCRIPT(SimpleRotateScript);
 
-	cubeObj = new Object();
-	Modules::ScriptSystem->CreateScriptComponentOnObject(*cubeObj, "SimpleRotateScript");
+	m_pCubeObj = new Object();
+	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_pCubeObj, "SimpleRotateScript");
 
 	//////////
 
-	std::shared_ptr<Mesh> mesh = Modules::ResourceManager->GetMesh("data/sibenik/sibenik.obj");
-	std::shared_ptr<Texture> texture = Modules::ResourceManager->GetTexture("data/sibenik/mramor6x6.png");
+	std::shared_ptr<Mesh> mesh = Modules::Application->GetResourceManager().GetMesh("data/sibenik/sibenik.obj");
+	std::shared_ptr<Texture> texture = Modules::Application->GetResourceManager().GetTexture("data/sibenik/mramor6x6.png");
 
 	//////////
 
 	for(const Keyboard& keyboard : Modules::Input->GetKeyboards())
 	{
-		inputMapping.MapButton(EAction::Exit, keyboard, KEY_ESCAPE);
-		inputMapping.MapButton(EAction::Fire, keyboard, KEY_SPACE);
+		m_inputMapping.MapButton(EAction::Exit, keyboard, KEY_ESCAPE);
+		m_inputMapping.MapButton(EAction::Fire, keyboard, KEY_SPACE);
 	}
 
 	for(const Mouse& mouse : Modules::Input->GetMouses())
 	{
-		inputMapping.MapButton(EAction::Fire, mouse, Mouse::Button_Left);
-		inputMapping.MapAxis(EAction::CameraYaw, mouse, Mouse::Axis_X);
-		inputMapping.MapAxis(EAction::CameraPitch, mouse, Mouse::Axis_Y);
+		m_inputMapping.MapButton(EAction::Fire, mouse, Mouse::Button_Left);
+		m_inputMapping.MapAxis(EAction::CameraYaw, mouse, Mouse::Axis_X);
+		m_inputMapping.MapAxis(EAction::CameraPitch, mouse, Mouse::Axis_Y);
 	}
 
 	for(const GameController& gamepad : Modules::Input->GetControllers())
 	{
-		inputMapping.MapButton(EAction::Fire, gamepad, GameController::BTN_X);
+		m_inputMapping.MapButton(EAction::Fire, gamepad, GameController::BTN_X);
 	}
 
 	//////////
@@ -102,7 +102,7 @@ void SandBox::Init()
 	StackString<DESIRE_MAX_PATH_LEN> dataDirPath = FileSystem::Get()->GetAppDirectory();
 	dataDirPath += "data";
 
-	dataDirWatcher = std::make_unique<FileSystemWatcher>(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)
+	m_spDataDirWatcher = std::make_unique<FileSystemWatcher>(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)
 	{
 		const char* strAction = "";
 		switch(action)
@@ -122,26 +122,26 @@ void SandBox::Init()
 
 void SandBox::Kill()
 {
-	delete scriptedObject;
-	scriptedObject = nullptr;
+	delete m_pScriptedObject;
+	m_pScriptedObject = nullptr;
 }
 
 void SandBox::Update()
 {
-	if(inputMapping.WasPressed(EAction::Exit))
+	if(m_inputMapping.WasPressed(EAction::Exit))
 	{
 		LOG_MESSAGE("!EXIT!");
 		return;
 	}
 
-	if(inputMapping.IsDown(EAction::Fire))
+	if(m_inputMapping.IsDown(EAction::Fire))
 	{
 		LOG_MESSAGE("Fire is down");
 	}
 
 	FileSystemWatcher::UpdateAll();
 
-	Modules::UI->NewFrame(*mainWindow);
+	Modules::UI->NewFrame(*m_spMainWindow);
 
 	// Variables for UI testing
 	if(Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600)))
@@ -197,7 +197,7 @@ void SandBox::Update()
 	Modules::UI->EndWindow();
 
 	// Render
-	Modules::Render->BeginFrame(*mainWindow);
+	Modules::Render->BeginFrame(*m_spMainWindow);
 
 	Modules::UI->Render();
 

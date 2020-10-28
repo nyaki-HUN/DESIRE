@@ -3,6 +3,7 @@
 
 #include "Engine/Application/CoreAppEvent.h"
 #include "Engine/Application/OSWindow.h"
+#include "Engine/Application/ResourceManager.h"
 
 #include "Engine/Core/Memory/MemorySystem.h"
 #include "Engine/Core/Timer.h"
@@ -12,7 +13,6 @@
 #include "Engine/Physics/Physics.h"
 
 #include "Engine/Render/Render.h"
-#include "Engine/Resource/ResourceManager.h"
 
 #include "Engine/Script/ScriptSystem.h"
 
@@ -24,7 +24,8 @@ bool Application::s_isMainLoopRunning = false;
 int Application::s_returnValue = 0;
 
 Application::Application()
-	: timer(std::make_unique<Timer>())
+	: m_spTimer(std::make_unique<Timer>())
+	, m_spResourceManager(std::make_unique<ResourceManager>())
 {
 }
 
@@ -34,7 +35,12 @@ Application::~Application()
 
 const Timer* Application::GetTimer() const
 {
-	return timer.get();
+	return m_spTimer.get();
+}
+
+ResourceManager& Application::GetResourceManager()
+{
+	return *m_spResourceManager;
 }
 
 void Application::SendEvent(const CoreAppEvent& event)
@@ -53,7 +59,7 @@ void Application::SendEvent(EAppEventType eventType)
 	SendEvent(CoreAppEvent(eventType));
 }
 
-int Application::Start(int argc, const char* const* argv)
+int Application::Start(int argc, const char* const* ppArgv)
 {
 	ASSERT(!s_isMainLoopRunning);
 
@@ -69,12 +75,12 @@ int Application::Start(int argc, const char* const* argv)
 
 	// Create main window
 	{
-		CreationParams params = Modules::Application->GetCreationParams(argc, argv);
-		Modules::Application->mainWindow = std::make_unique<OSWindow>(params.windowParams);
+		CreationParams params = Modules::Application->GetCreationParams(argc, ppArgv);
+		Modules::Application->m_spMainWindow = std::make_unique<OSWindow>(params.windowParams);
 	}
 
-	Modules::Render->Init(*Modules::Application->mainWindow);
-	Modules::Input->Init(*Modules::Application->mainWindow);
+	Modules::Render->Init(*Modules::Application->m_spMainWindow);
+	Modules::Input->Init(*Modules::Application->m_spMainWindow);
 	Modules::UI->Init();
 
 	Modules::Application->Run();
@@ -102,10 +108,10 @@ void Application::Run()
 	s_isMainLoopRunning = true;
 	while(s_isMainLoopRunning)
 	{
-		timer->Update();
+		m_spTimer->Update();
 		Modules::Input->Update();
 
-		mainWindow->HandleWindowMessages();
+		m_spMainWindow->HandleWindowMessages();
 
 		if(Modules::ScriptSystem != nullptr)
 		{
@@ -114,7 +120,7 @@ void Application::Run()
 
 		if(Modules::Physics != nullptr)
 		{
-			const float deltaTime = timer->GetSecDelta();
+			const float deltaTime = m_spTimer->GetSecDelta();
 			Modules::Physics->Update(deltaTime);
 		}
 
@@ -126,17 +132,16 @@ void Application::Run()
 	Kill();
 }
 
-Application::CreationParams Application::GetCreationParams(int argc, const char* const* argv)
+Application::CreationParams Application::GetCreationParams(int argc, const char* const* ppArgv)
 {
 	DESIRE_UNUSED(argc);
-	DESIRE_UNUSED(argv);
+	DESIRE_UNUSED(ppArgv);
 	return CreationParams();
 }
 
 void Application::CreateModules()
 {
 	Modules::Input = std::make_unique<Input>();
-	Modules::ResourceManager = std::make_unique<ResourceManager>();
 
 	if(s_physicsFactory != nullptr)
 	{
@@ -171,6 +176,5 @@ void Application::DestroyModules()
 	Modules::SoundSystem = nullptr;
 	Modules::Render = nullptr;
 	Modules::Physics = nullptr;
-	Modules::ResourceManager = nullptr;
 	Modules::Input = nullptr;
 }

@@ -39,7 +39,7 @@ private:
 	std::map<DynamicString, std::weak_ptr<Shader>> m_loadedShaders;
 	std::map<DynamicString, std::weak_ptr<Texture>> m_loadedTextures;
 
-	std::shared_ptr<Texture> m_errorTexture;
+	std::shared_ptr<Texture> m_spErrorTexture;
 
 	// The loaders should be initialized in modules.cpp
 	static const Array<MeshLoaderFunc_t> s_meshLoaders;

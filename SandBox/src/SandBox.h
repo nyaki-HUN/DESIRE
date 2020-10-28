@@ -17,10 +17,10 @@ public:
 	void Update() override;
 
 private:
-	std::unique_ptr<FileSystemWatcher> dataDirWatcher;
+	std::unique_ptr<FileSystemWatcher> m_spDataDirWatcher;
 
-	Object* scriptedObject = nullptr;
-	Object* cubeObj = nullptr;
+	Object* m_pScriptedObject = nullptr;
+	Object* m_pCubeObj = nullptr;
 
-	InputMapping inputMapping;
+	InputMapping m_inputMapping;
 };

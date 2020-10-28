@@ -7,6 +7,28 @@
 const Factory<Application>::Func_t Application::s_applicationFactory =
 	&Factory<Application>::Create<SandBox>;
 
+#include "Engine/Application/ResourceManager.h"
+
+#include "ResourceLoader-Assimp/include/AssimpLoader.h"
+const Array<ResourceManager::MeshLoaderFunc_t> ResourceManager::s_meshLoaders =
+{
+	&AssimpLoader::Load,
+};
+
+#include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
+const Array<ResourceManager::ShaderLoaderFunc_t> ResourceManager::s_shaderLoaders =
+{
+	&FileShaderLoader::Load,
+};
+
+#include "Engine/Resource/TextureLoader/TgaLoader.h"
+#include "Engine/Resource/TextureLoader/StbImageLoader.h"
+const Array<ResourceManager::TextureLoaderFunc_t> ResourceManager::s_textureLoaders =
+{
+	&TgaLoader::Load,
+	&StbImageLoader::Load,
+};
+
 // --------------------------------------------------------------------------------------------------------------------
 //	Compression
 // --------------------------------------------------------------------------------------------------------------------
@@ -49,31 +71,6 @@ const Factory<Render>::Func_t Application::s_renderFactory =
 //	&Factory<Render>::Create<BgfxRender>;
 	&Factory<Render>::Create<Direct3D11Render>;
 //	&Factory<Render>::Create<Direct3D12Render>;
-
-// --------------------------------------------------------------------------------------------------------------------
-//	Resource
-// --------------------------------------------------------------------------------------------------------------------
-#include "Engine/Resource/ResourceManager.h"
-
-#include "ResourceLoader-Assimp/include/AssimpLoader.h"
-const Array<ResourceManager::MeshLoaderFunc_t> ResourceManager::s_meshLoaders =
-{
-	&AssimpLoader::Load,
-};
-
-#include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
-const Array<ResourceManager::ShaderLoaderFunc_t> ResourceManager::s_shaderLoaders =
-{
-	&FileShaderLoader::Load,
-};
-
-#include "Engine/Resource/TextureLoader/TgaLoader.h"
-#include "Engine/Resource/TextureLoader/StbImageLoader.h"
-const Array<ResourceManager::TextureLoaderFunc_t> ResourceManager::s_textureLoaders =
-{
-	&TgaLoader::Load,
-	&StbImageLoader::Load,
-};
 
 // --------------------------------------------------------------------------------------------------------------------
 //	Script System

@@ -7,10 +7,12 @@ class CoreAppEvent;
 class OSWindow;
 class Physics;
 class Render;
+class ResourceManager;
 class ScriptSystem;
 class SoundSystem;
 class Timer;
 class UI;
+
 enum class EAppEventType;
 
 class Application
@@ -22,6 +24,7 @@ public:
 	virtual ~Application();
 
 	const Timer* GetTimer() const;
+	ResourceManager& GetResourceManager();
 
 	// Send application event
 	virtual void SendEvent(const CoreAppEvent& event);
@@ -33,7 +36,7 @@ public:
 	virtual void Kill() = 0;
 	virtual void Update() = 0;
 
-	static int Start(int argc, const char* const* argv);
+	static int Start(int argc, const char* const* ppArgv);
 	static void Stop(int returnValue = 0);
 
 protected:
@@ -42,13 +45,14 @@ protected:
 		OSWindowCreationParams windowParams;
 	};
 
-	std::unique_ptr<Timer> timer;
-	std::unique_ptr<OSWindow> mainWindow;
+	std::unique_ptr<Timer> m_spTimer;
+	std::unique_ptr<ResourceManager> m_spResourceManager;
+	std::unique_ptr<OSWindow> m_spMainWindow;
 
 private:
 	void Run();
 
-	virtual CreationParams GetCreationParams(int argc, const char* const* argv);
+	virtual CreationParams GetCreationParams(int argc, const char* const* ppArgv);
 
 	static void CreateModules();
 	static void DestroyModules();
