@@ -34,7 +34,7 @@ AngelScriptSystem::AngelScriptSystem()
 	asIScriptEngine& engine = *m_pEngine;
 
 	// Register Script API
-	RegisterStdString(engine);
+	RegisterStdString(m_pEngine);
 	RegisterCoreAPI_Math_AngelScript(engine);
 	RegisterCoreAPI_AngelScript(engine);
 	RegisterInputAPI_AngelScript(engine);

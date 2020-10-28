@@ -7,7 +7,7 @@
 
 SquirrelScriptComponent::SquirrelScriptComponent(Object& object, HSQUIRRELVM vm)
 	: ScriptComponent(object)
-	, m_vm(m_vm)
+	, m_vm(vm)
 {
 	sq_resetobject(&scriptObject);
 	for(auto i : Enumerator<EBuiltinFuncType>())

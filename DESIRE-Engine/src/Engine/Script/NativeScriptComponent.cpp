@@ -87,7 +87,7 @@ bool NativeScriptComponent::AddFunctionCallArg(bool arg)
 
 bool NativeScriptComponent::AddFunctionCallArg(void* pArg)
 {
-	ASSERT(numFunctionCallArgs < functionArgs.max_size());
+	ASSERT(m_numFunctionCallArgs < m_functionArgs.max_size());
 
 	m_functionArgs[m_numFunctionCallArgs].type = IScript::Arg::EType::VoidPtr;
 	m_functionArgs[m_numFunctionCallArgs].voidPtrVal = pArg;
@@ -97,7 +97,7 @@ bool NativeScriptComponent::AddFunctionCallArg(void* pArg)
 
 bool NativeScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	ASSERT(numFunctionCallArgs < functionArgs.max_size());
+	ASSERT(m_numFunctionCallArgs < m_functionArgs.max_size());
 
 	m_functionArgs[m_numFunctionCallArgs].type = IScript::Arg::EType::String;
 	m_functionArgs[m_numFunctionCallArgs].stringVal = arg.Str();

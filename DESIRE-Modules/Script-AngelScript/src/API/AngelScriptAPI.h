@@ -11,7 +11,7 @@
 	result = engine.RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST);	ASSERT(result >= asSUCCESS)
 
 // API register functions
-void RegisterStdString(asIScriptEngine& engine);
+void RegisterStdString(asIScriptEngine* pEngine);
 void RegisterCoreAPI_Math_AngelScript(asIScriptEngine& engine);
 void RegisterCoreAPI_AngelScript(asIScriptEngine& engine);
 void RegisterInputAPI_AngelScript(asIScriptEngine& engine);
