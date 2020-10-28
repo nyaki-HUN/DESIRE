@@ -1,7 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Application/Application.h"
 
-#include "Engine/Application/CoreAppEvent.h"
 #include "Engine/Application/OSWindow.h"
 #include "Engine/Application/ResourceManager.h"
 
@@ -43,20 +42,14 @@ ResourceManager& Application::GetResourceManager()
 	return *m_spResourceManager;
 }
 
-void Application::SendEvent(const CoreAppEvent& event)
+void Application::SendEvent(EAppEventType eventType, const void* pArg)
 {
-	if(event.eventType == EAppEventType::EnterBackground)
+	DESIRE_UNUSED(pArg);
+
+	if(eventType == EAppEventType::Deactivate)
 	{
 		Modules::Input->Reset();
 	}
-}
-
-void Application::SendEvent(EAppEventType eventType)
-{
-	ASSERT(eventType != EAppEventType::Notification && "Use NotificationEvent class");
-	ASSERT(eventType != EAppEventType::KeyboardWillShow && "Use KeyboardWillShowEvent class");
-
-	SendEvent(CoreAppEvent(eventType));
 }
 
 int Application::Start(int argc, const char* const* ppArgv)

@@ -4,7 +4,6 @@
 #if DESIRE_PLATFORM_LINUX
 
 #include "Engine/Application/Application.h"
-#include "Engine/Application/EAppEventType.h"
 
 #include "Engine/Core/String/WritableString.h"
 
@@ -88,12 +87,12 @@ void OSWindow::HandleWindowMessages()
 		{
 			case FocusIn:
 				isActive = true;
-				Modules::Application->SendEvent(EAppEventType::EnterForeground);
+				Modules::Application->SendEvent(EAppEventType::Activate);
 				break;
 
 			case FocusOut:
 				isActive = false;
-				Modules::Application->SendEvent(EAppEventType::EnterBackground);
+				Modules::Application->SendEvent(EAppEventType::Deactivate);
 				break;
 
 			case VisibilityNotify:

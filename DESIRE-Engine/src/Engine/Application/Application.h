@@ -13,7 +13,11 @@ class SoundSystem;
 class Timer;
 class UI;
 
-enum class EAppEventType;
+enum class EAppEventType
+{
+	Activate,
+	Deactivate
+};
 
 class Application
 {
@@ -26,11 +30,7 @@ public:
 	const Timer* GetTimer() const;
 	ResourceManager& GetResourceManager();
 
-	// Send application event
-	virtual void SendEvent(const CoreAppEvent& event);
-
-	// Send generic application event (without parameters) with 'eventType'
-	void SendEvent(EAppEventType eventType);
+	virtual void SendEvent(EAppEventType eventType, const void* pArg = nullptr);
 
 	virtual void Init() = 0;
 	virtual void Kill() = 0;

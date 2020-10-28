@@ -2,7 +2,6 @@
 #include "Engine/Application/OSWindow.h"
 
 #include "Engine/Application/Application.h"
-#include "Engine/Application/EAppEventType.h"
 
 #include "Engine/Core/String/WritableString.h"
 #include "Engine/Core/WINDOWS/os.h"
@@ -71,12 +70,12 @@ public:
 				if(wParam == WA_INACTIVE)
 				{
 					window->isActive = false;
-					Modules::Application->SendEvent(EAppEventType::EnterBackground);
+					Modules::Application->SendEvent(EAppEventType::Deactivate);
 				}
 				else if(wParam == WA_ACTIVE || wParam == WA_CLICKACTIVE)
 				{
 					window->isActive = true;
-					Modules::Application->SendEvent(EAppEventType::EnterForeground);
+					Modules::Application->SendEvent(EAppEventType::Activate);
 				}
 				break;
 
