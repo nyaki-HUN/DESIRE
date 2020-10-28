@@ -7,7 +7,7 @@
 
 SquirrelScriptComponent::SquirrelScriptComponent(Object& object, HSQUIRRELVM vm)
 	: ScriptComponent(object)
-	, vm(vm)
+	, m_vm(m_vm)
 {
 	sq_resetobject(&scriptObject);
 	for(auto i : Enumerator<EBuiltinFuncType>())
@@ -20,7 +20,7 @@ SquirrelScriptComponent::~SquirrelScriptComponent()
 {
 	if(!sq_isnull(scriptObject))
 	{
-		sq_release(vm, &scriptObject);
+		sq_release(m_vm, &scriptObject);
 		sq_resetobject(&scriptObject);
 	}
 
@@ -28,7 +28,7 @@ SquirrelScriptComponent::~SquirrelScriptComponent()
 	{
 		if(!sq_isnull(builtinFunctions[i]))
 		{
-			sq_release(vm, &builtinFunctions[i]);
+			sq_release(m_vm, &builtinFunctions[i]);
 			sq_resetobject(&builtinFunctions[i]);
 		}
 	}
@@ -42,13 +42,13 @@ void SquirrelScriptComponent::CallByType(EBuiltinFuncType funcType)
 	}
 
 	// Save the stack size before the call
-	savedStackTop = sq_gettop(vm);
+	m_savedStackTop = sq_gettop(m_vm);
 
-	sq_pushobject(vm, scriptObject);
-	sq_pushobject(vm, builtinFunctions[(size_t)funcType]);
+	sq_pushobject(m_vm, scriptObject);
+	sq_pushobject(m_vm, builtinFunctions[(size_t)funcType]);
 
-	sq_pushobject(vm, scriptObject);	// the 'this' parameter
-	numFunctionCallArgs = 1;
+	sq_pushobject(m_vm, scriptObject);	// the 'this' parameter
+	m_numFunctionCallArgs = 1;
 
 	ExecuteFunctionCall();
 }
@@ -59,7 +59,7 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 	const SQInteger argCount = sq_gettop(vm) - 2;
 
 	SquirrelScriptComponent* scriptComp = Sqrat::Var<SquirrelScriptComponent*>(vm, -2 - argCount).value;
-	ASSERT(vm == scriptComp->vm);
+	ASSERT(vm == scriptComp->m_vm);
 
 	const SQChar* functionName = nullptr;
 	SQInteger size = 0;
@@ -72,7 +72,7 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 		for(SQInteger i = 0; i < argCount; ++i)
 		{
 			sq_push(vm, argIdxOffsetFromTop);
-			scriptComp->numFunctionCallArgs++;
+			scriptComp->m_numFunctionCallArgs++;
 		}
 
 		scriptComp->ExecuteFunctionCall();
@@ -84,34 +84,34 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 bool SquirrelScriptComponent::PrepareFunctionCall(const String& functionName)
 {
 	// Save the stack size before the call
-	savedStackTop = sq_gettop(vm);
+	m_savedStackTop = sq_gettop(m_vm);
 
-	sq_pushobject(vm, scriptObject);
-	sq_pushstring(vm, functionName.Str(), functionName.Length());
-	if(SQ_FAILED(sq_get(vm, -2)))
+	sq_pushobject(m_vm, scriptObject);
+	sq_pushstring(m_vm, functionName.Str(), functionName.Length());
+	if(SQ_FAILED(sq_get(m_vm, -2)))
 	{
-		sq_settop(vm, savedStackTop);
+		sq_settop(m_vm, m_savedStackTop);
 		return false;
 	}
 
 	// Verify that the function exists
-	const SQObjectType type = sq_gettype(vm, -1);
+	const SQObjectType type = sq_gettype(m_vm, -1);
 	if(type != OT_CLOSURE && type != OT_NATIVECLOSURE)
 	{
-		sq_settop(vm, savedStackTop);
+		sq_settop(m_vm, m_savedStackTop);
 		return false;
 	}
 
-	sq_pushobject(vm, scriptObject);	// the 'this' parameter
-	numFunctionCallArgs = 1;
+	sq_pushobject(m_vm, scriptObject);	// the 'this' parameter
+	m_numFunctionCallArgs = 1;
 	return true;
 }
 
 void SquirrelScriptComponent::ExecuteFunctionCall()
 {
-	const SQRESULT result = sq_call(vm, numFunctionCallArgs, SQFalse, SQTrue);
+	const SQRESULT result = sq_call(m_vm, m_numFunctionCallArgs, SQFalse, SQTrue);
 	// Restore the original stack size
-	sq_settop(vm, savedStackTop);
+	sq_settop(m_vm, m_savedStackTop);
 
 	if(SQ_FAILED(result))
 	{
@@ -121,43 +121,44 @@ void SquirrelScriptComponent::ExecuteFunctionCall()
 
 bool SquirrelScriptComponent::AddFunctionCallArg(int arg)
 {
-	sq_pushinteger(vm, arg);
-	numFunctionCallArgs++;
+	sq_pushinteger(m_vm, arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool SquirrelScriptComponent::AddFunctionCallArg(float arg)
 {
-	sq_pushfloat(vm, arg);
-	numFunctionCallArgs++;
+	sq_pushfloat(m_vm, arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool SquirrelScriptComponent::AddFunctionCallArg(double arg)
 {
-	sq_pushfloat(vm, (SQFloat)arg);
-	numFunctionCallArgs++;
+	sq_pushfloat(m_vm, (SQFloat)arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool SquirrelScriptComponent::AddFunctionCallArg(bool arg)
 {
-	sq_pushbool(vm, (SQBool)arg);
-	numFunctionCallArgs++;
+	sq_pushbool(m_vm, (SQBool)arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
-bool SquirrelScriptComponent::AddFunctionCallArg(void* arg)
+bool SquirrelScriptComponent::AddFunctionCallArg(void* pArg)
 {
-	ASSERT(arg != nullptr);
-	sq_pushuserpointer(vm, arg);
-	numFunctionCallArgs++;
+	ASSERT(pArg != nullptr);
+
+	sq_pushuserpointer(m_vm, pArg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool SquirrelScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	sq_pushstring(vm, arg.Str(), static_cast<SQInteger>(arg.Length()));
-	numFunctionCallArgs++;
+	sq_pushstring(m_vm, arg.Str(), static_cast<SQInteger>(arg.Length()));
+	m_numFunctionCallArgs++;
 	return true;
 }

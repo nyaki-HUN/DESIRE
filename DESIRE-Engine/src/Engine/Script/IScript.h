@@ -8,7 +8,10 @@ class String;
 class IScript
 {
 protected:
-	IScript() {}
+	IScript(ScriptComponent& scriptComponent)
+		: self(scriptComponent)
+	{
+	}
 
 public:
 	struct Arg
@@ -46,8 +49,5 @@ public:
 	virtual std::function<void(std::array<IScript::Arg, 6>)> GetFunctionToCall(const String& functionName) = 0;
 
 protected:
-	ScriptComponent* self = nullptr;
-
-private:
-	friend class NativeScriptComponent;
+	ScriptComponent& self;
 };

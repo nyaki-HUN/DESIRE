@@ -13,20 +13,20 @@ ScriptSystem::~ScriptSystem()
 {
 }
 
-void ScriptSystem::RegisterScript(HashedString scriptName, Factory<IScript>::Func_t factory)
+void ScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory::Func_t factory)
 {
 	ASSERT(factory != nullptr);
 
-	scriptFactories.Insert(scriptName, factory);
+	m_scriptFactories.Insert(scriptName, factory);
 }
 
 ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, const String& scriptName)
 {
 	// Try to create as a native script 
-	Factory<IScript>::Func_t* scriptFactory = scriptFactories.Find(HashedString::CreateFromString(scriptName));
-	if(scriptFactory != nullptr)
+	ScriptFactory::Func_t* pScriptFactoryFunc = m_scriptFactories.Find(HashedString::CreateFromString(scriptName));
+	if(pScriptFactoryFunc != nullptr)
 	{
-		NativeScriptComponent& scriptComponent = object.AddComponent<NativeScriptComponent>((*scriptFactory)());
+		NativeScriptComponent& scriptComponent = object.AddComponent<NativeScriptComponent>(*pScriptFactoryFunc);
 		return &scriptComponent;
 	}
 
@@ -34,20 +34,20 @@ ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, con
 	return CreateScriptComponentOnObject_Internal(object, scriptName);
 }
 
-void ScriptSystem::OnScriptComponentCreated(ScriptComponent* component)
+void ScriptSystem::OnScriptComponentCreated(ScriptComponent* pScriptComponent)
 {
-	scriptComponents.Add(component);
+	m_scriptComponents.Add(pScriptComponent);
 }
 
-void ScriptSystem::OnScriptComponentDestroyed(ScriptComponent* component)
+void ScriptSystem::OnScriptComponentDestroyed(ScriptComponent* pScriptComponent)
 {
-	scriptComponents.RemoveFast(component);
+	m_scriptComponents.RemoveFast(pScriptComponent);
 }
 
 void ScriptSystem::Update()
 {
-	for(ScriptComponent* scriptComponent : scriptComponents)
+	for(ScriptComponent* pScriptComponent : m_scriptComponents)
 	{
-		scriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::Update);
+		pScriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::Update);
 	}
 }

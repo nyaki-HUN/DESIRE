@@ -74,16 +74,16 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 		}
 	}
 
-	SquirrelScriptComponent* scriptComponent = &object.AddComponent<SquirrelScriptComponent>(vm);
+	SquirrelScriptComponent* pScriptComponent = &object.AddComponent<SquirrelScriptComponent>(vm);
 
 	// Call the constructor
 	sq_pushroottable(vm);	// the 'this' parameter
-	Sqrat::PushVar(vm, scriptComponent);
+	Sqrat::PushVar(vm, pScriptComponent);
 	result = sq_call(vm, 2, true, true);
 	if(SQ_SUCCEEDED(result))
 	{
-		sq_getstackobj(vm, -1, &scriptComponent->scriptObject);
-		sq_addref(vm, &scriptComponent->scriptObject);
+		sq_getstackobj(vm, -1, &pScriptComponent->scriptObject);
+		sq_addref(vm, &pScriptComponent->scriptObject);
 
 		sq_pop(vm, 1);	// pop instance
 
@@ -102,8 +102,8 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 			result = sq_get(vm, -2);
 			if(SQ_SUCCEEDED(result) && sq_gettype(vm, -1) == OT_CLOSURE)
 			{
-				sq_getstackobj(vm, -1, &scriptComponent->builtinFunctions[i]);
-				sq_addref(vm, &scriptComponent->builtinFunctions[i]);
+				sq_getstackobj(vm, -1, &pScriptComponent->builtinFunctions[i]);
+				sq_addref(vm, &pScriptComponent->builtinFunctions[i]);
 
 				sq_pop(vm, 1);
 			}
@@ -111,13 +111,13 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 	}
 	else
 	{
-		object.RemoveComponent(scriptComponent);
-		scriptComponent = nullptr;
+		object.RemoveComponent(pScriptComponent);
+		pScriptComponent = nullptr;
 	}
 
 	sq_pop(vm, 2);	// pop class and root table
 
-	return scriptComponent;
+	return pScriptComponent;
 }
 
 void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM vm)

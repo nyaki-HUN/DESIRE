@@ -16,20 +16,22 @@ AngelScriptSystem::AngelScriptSystem()
 {
 	asSetGlobalMemoryFunctions(&AngelScriptCallbacks::MallocWrapper, &AngelScriptCallbacks::FreeWrapper);
 
-	engine = asCreateScriptEngine();
-	int result = engine->SetMessageCallback(asFUNCTION(AngelScriptCallbacks::MessageCallback), this, asCALL_CDECL);								ASSERT(result >= asSUCCESS);
-	result = engine->SetContextCallbacks(&AngelScriptCallbacks::RequestContextCallback, &AngelScriptCallbacks::ReturnContextCallback, this);	ASSERT(result >= asSUCCESS);
+	m_pEngine = asCreateScriptEngine();
+	int result = m_pEngine->SetMessageCallback(asFUNCTION(AngelScriptCallbacks::MessageCallback), this, asCALL_CDECL);							ASSERT(result >= asSUCCESS);
+	result = m_pEngine->SetContextCallbacks(&AngelScriptCallbacks::RequestContextCallback, &AngelScriptCallbacks::ReturnContextCallback, this);	ASSERT(result >= asSUCCESS);
 
-	result = engine->SetEngineProperty(asEEngineProp::asEP_REQUIRE_ENUM_SCOPE, false);															ASSERT(result >= asSUCCESS);
-	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_GLOBAL_VARS, true);															ASSERT(result >= asSUCCESS);
-	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE, true);											ASSERT(result >= asSUCCESS);
-	result = engine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_EMPTY_LIST_ELEMENTS, true);													ASSERT(result >= asSUCCESS);
+	result = m_pEngine->SetEngineProperty(asEEngineProp::asEP_REQUIRE_ENUM_SCOPE, false);														ASSERT(result >= asSUCCESS);
+	result = m_pEngine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_GLOBAL_VARS, true);														ASSERT(result >= asSUCCESS);
+	result = m_pEngine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_VALUE_ASSIGN_FOR_REF_TYPE, true);										ASSERT(result >= asSUCCESS);
+	result = m_pEngine->SetEngineProperty(asEEngineProp::asEP_DISALLOW_EMPTY_LIST_ELEMENTS, true);												ASSERT(result >= asSUCCESS);
 
 #if DESIRE_PUBLIC_BUILD
-	result = engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, true);														ASSERT(result >= asSUCCESS);
+	result = m_pEngine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, true);													ASSERT(result >= asSUCCESS);
 #else
-	result = engine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, false);														ASSERT(result >= asSUCCESS);
+	result = m_pEngine->SetEngineProperty(asEEngineProp::asEP_BUILD_WITHOUT_LINE_CUES, false);													ASSERT(result >= asSUCCESS);
 #endif
+
+	asIScriptEngine& engine = *m_pEngine;
 
 	// Register Script API
 	RegisterStdString(engine);
@@ -40,74 +42,74 @@ AngelScriptSystem::AngelScriptSystem()
 	RegisterRenderAPI_AngelScript(engine);
 	RegisterSoundAPI_AngelScript(engine);
 
-	result = engine->RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptCallbacks::PrintCallback), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
+	result = engine.RegisterGlobalFunction("void print(const string& in)", asFUNCTION(AngelScriptCallbacks::PrintCallback), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
 
 	// ScriptComponent
 	ANGELSCRIPT_API_REGISTER_COMPONENT(ScriptComponent);
-	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);										ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);								ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);							ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);					ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);			ASSERT(result >= asSUCCESS);
-	result = engine->RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);									ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);								ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);						ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);				ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);		ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("ScriptComponent", "void Call(const string& in, ?& in, ?& in, ?& in, ?& in, ?& in, ?& in)", asFUNCTION(AngelScriptComponent::CallFromScript), asCALL_GENERIC);	ASSERT(result >= asSUCCESS);
 }
 
 AngelScriptSystem::~AngelScriptSystem()
 {
-	for(asIScriptContext* ctx : contextPool)
+	for(asIScriptContext* pContext : m_contextPool)
 	{
-		ctx->Release();
+		pContext->Release();
 	}
-	contextPool.Clear();
+	m_contextPool.Clear();
 
-	engine->ShutDownAndRelease();
-	engine = nullptr;
+	m_pEngine->ShutDownAndRelease();
+	m_pEngine = nullptr;
 }
 
 ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName)
 {
-	asIScriptModule* module = engine->GetModule(scriptName.Str());
-	if(module == nullptr)
+	asIScriptModule* pModule = m_pEngine->GetModule(scriptName.Str());
+	if(pModule == nullptr)
 	{
-		module = CompileScript(scriptName, engine);
-		if(module == nullptr)
+		pModule = CompileScript(scriptName, *m_pEngine);
+		if(pModule == nullptr)
 		{
 			return nullptr;
 		}
 	}
 
 	// Get factory function
-	asIScriptFunction* factoryFunc = (asIScriptFunction*)module->GetUserData();
-	if(factoryFunc == nullptr)
+	asIScriptFunction* pFactoryFunc = static_cast<asIScriptFunction*>(pModule->GetUserData());
+	if(pFactoryFunc == nullptr)
 	{
 		return nullptr;
 	}
 
-	AngelScriptComponent* scriptComponent = &object.AddComponent<AngelScriptComponent>();
+	AngelScriptComponent* pScriptComponent = &object.AddComponent<AngelScriptComponent>();
 
 	// Call the constructor
-	asIScriptContext* ctx = engine->RequestContext();
-	ctx->Prepare(factoryFunc);
-	ctx->SetArgObject(0, scriptComponent);
-	int result = ctx->Execute();
+	asIScriptContext* pContext = m_pEngine->RequestContext();
+	pContext->Prepare(pFactoryFunc);
+	pContext->SetArgObject(0, pScriptComponent);
+	int result = pContext->Execute();
 	if(result == asEXECUTION_FINISHED)
 	{
 		// Get the object that was created and increase the reference, otherwise it would be destroyed when the context is reused or destroyed
-		scriptComponent->scriptObject = *(asIScriptObject * *)ctx->GetAddressOfReturnValue();
-		scriptComponent->scriptObject->AddRef();
+		pScriptComponent->m_pScriptObject = *static_cast<asIScriptObject**>(pContext->GetAddressOfReturnValue());
+		pScriptComponent->m_pScriptObject->AddRef();
 	}
 	else
 	{
-		object.RemoveComponent(scriptComponent);
-		scriptComponent = nullptr;
+		object.RemoveComponent(pScriptComponent);
+		pScriptComponent = nullptr;
 	}
 
-	engine->ReturnContext(ctx);
+	m_pEngine->ReturnContext(pContext);
 
-	return scriptComponent;
+	return pScriptComponent;
 }
 
-asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIScriptEngine* engine)
+asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIScriptEngine& engine)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.as", scriptName.Str());
 	DynamicString data = FileSystem::Get()->LoadTextFile(filename);
@@ -122,20 +124,20 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 	scriptSrc += data;
 	scriptSrc += "}";
 
-	asIScriptModule* module = engine->GetModule(scriptName.Str(), asGM_ALWAYS_CREATE);
-	module->AddScriptSection(scriptName.Str(), scriptSrc.Str(), scriptSrc.Length());
-	int result = module->Build();
+	asIScriptModule* pModule = engine.GetModule(scriptName.Str(), asGM_ALWAYS_CREATE);
+	pModule->AddScriptSection(scriptName.Str(), scriptSrc.Str(), scriptSrc.Length());
+	int result = pModule->Build();
 	if(result != asSUCCESS)
 	{
 		LOG_ERROR("Could not compile script: %s", filename.Str());
-		return module;
+		return pModule;
 	}
 
-	asITypeInfo* typeInfo = engine->GetTypeInfoById(module->GetTypeIdByDecl(scriptName.Str()));
+	asITypeInfo* pTypeInfo = engine.GetTypeInfoById(pModule->GetTypeIdByDecl(scriptName.Str()));
 
 	// Cache factory in the script module
-	asIScriptFunction* factoryFunc = typeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName.Str(), scriptName.Str()).Str());
-	module->SetUserData(factoryFunc);
+	asIScriptFunction* factoryFunc = pTypeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName.Str(), scriptName.Str()).Str());
+	pModule->SetUserData(factoryFunc);
 
 	// Cache built-in functions in the object type
 	const char* builtinFunctionNames[] =
@@ -148,18 +150,18 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 
 	for(auto i : Enumerator<ScriptComponent::EBuiltinFuncType>())
 	{
-		asIScriptFunction* func = typeInfo->GetMethodByName(builtinFunctionNames[i]);
-		typeInfo->SetUserData(func, i);
+		asIScriptFunction* pFunc = pTypeInfo->GetMethodByName(builtinFunctionNames[i]);
+		pTypeInfo->SetUserData(pFunc, i);
 	}
 
-	return module;
+	return pModule;
 }
 
-bool AngelScriptSystem::IsBreakpoint(const char* scriptSection, int line, asIScriptFunction* function) const
+bool AngelScriptSystem::IsBreakpoint(const char* pScriptSection, int line, asIScriptFunction* pFunction) const
 {
-	DESIRE_UNUSED(scriptSection);
+	DESIRE_UNUSED(pScriptSection);
 	DESIRE_UNUSED(line);
-	DESIRE_UNUSED(function);
+	DESIRE_UNUSED(pFunction);
 
 	DESIRE_TODO("Add debugging functionality");
 	return false;

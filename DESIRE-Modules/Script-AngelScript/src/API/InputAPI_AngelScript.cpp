@@ -3,10 +3,9 @@
 
 #include "Engine/Input/Input.h"
 
-void RegisterInputAPI_AngelScript(asIScriptEngine* engine)
+void RegisterInputAPI_AngelScript(asIScriptEngine& engine)
 {
-	Input* input = Modules::Input.get();
-	if(input == nullptr)
+	if(Modules::Input == nullptr)
 	{
 		return;
 	}
@@ -14,6 +13,6 @@ void RegisterInputAPI_AngelScript(asIScriptEngine* engine)
 	int result = asSUCCESS;
 
 	// Input
-	result = engine->RegisterObjectType("IInput", 0, asOBJ_REF | asOBJ_NOHANDLE);					ASSERT(result >= asSUCCESS);
-	result = engine->RegisterGlobalProperty("IInput Input", input);									ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectType("IInput", 0, asOBJ_REF | asOBJ_NOHANDLE);	ASSERT(result >= asSUCCESS);
+	result = engine.RegisterGlobalProperty("IInput Input", Modules::Input.get());	ASSERT(result >= asSUCCESS);
 }

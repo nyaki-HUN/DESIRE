@@ -12,45 +12,45 @@ AngelScriptComponent::AngelScriptComponent(Object& object)
 
 void AngelScriptComponent::CallByType(EBuiltinFuncType funcType)
 {
-	const asITypeInfo* typeInfo = scriptObject->GetObjectType();
-	asIScriptFunction* func = static_cast<asIScriptFunction*>(typeInfo->GetUserData((asPWORD)funcType));
-	if(func == nullptr)
+	const asITypeInfo* pTypeInfo = m_pScriptObject->GetObjectType();
+	asIScriptFunction* pFunction = static_cast<asIScriptFunction*>(pTypeInfo->GetUserData(static_cast<asPWORD>(funcType)));
+	if(pFunction == nullptr)
 	{
 		return;
 	}
 
-	asIScriptContext* ctx = scriptObject->GetEngine()->RequestContext();
-	int result = ctx->Prepare(func);
+	asIScriptContext* pContext = m_pScriptObject->GetEngine()->RequestContext();
+	int result = pContext->Prepare(pFunction);
 	if(result == asSUCCESS)
 	{
-		ctx->SetObject(scriptObject);
-		result = ctx->Execute();
+		pContext->SetObject(m_pScriptObject);
+		result = pContext->Execute();
 		ASSERT(result == asEXECUTION_FINISHED);
 	}
-	ctx->GetEngine()->ReturnContext(ctx);
+	pContext->GetEngine()->ReturnContext(pContext);
 }
 
-void AngelScriptComponent::CallFromScript(asIScriptGeneric* gen)
+void AngelScriptComponent::CallFromScript(asIScriptGeneric* pGeneric)
 {
-	AngelScriptComponent* scriptComp = static_cast<AngelScriptComponent*>(gen->GetObject());
+	AngelScriptComponent* pScriptComponent = static_cast<AngelScriptComponent*>(pGeneric->GetObject());
 
-	const String* functionName = static_cast<const String*>(gen->GetArgObject(0));
-	if(functionName == nullptr)
+	const String* pFunctionName = static_cast<const String*>(pGeneric->GetArgObject(0));
+	if(pFunctionName == nullptr)
 	{
 		return;
 	}
 
-	if(scriptComp->PrepareFunctionCall(*functionName))
+	if(pScriptComponent->PrepareFunctionCall(*pFunctionName))
 	{
 		// Set the args
-		for(asUINT i = 1; i < (asUINT)gen->GetArgCount(); ++i)
+		for(asUINT i = 1; i < static_cast<asUINT>(pGeneric->GetArgCount()); ++i)
 		{
 			int result = asERROR;
-			void* argPtr = gen->GetArgAddress(i);
-			const int typeId = gen->GetArgTypeId(i);
+			void* pArg = pGeneric->GetArgAddress(i);
+			const int typeId = pGeneric->GetArgTypeId(i);
 			if(typeId & asTYPEID_MASK_OBJECT)
 			{
-				result = scriptComp->functionCallCtx->SetArgAddress(scriptComp->numFunctionCallArgs, *(void**)argPtr);
+				result = pScriptComponent->m_pFunctionCallCtx->SetArgAddress(pScriptComponent->m_numFunctionCallArgs, *static_cast<void**>(pArg));
 			}
 			else
 			{
@@ -59,30 +59,30 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric* gen)
 					case asTYPEID_BOOL:
 					case asTYPEID_INT8:
 					case asTYPEID_UINT8:
-						result = scriptComp->functionCallCtx->SetArgByte(scriptComp->numFunctionCallArgs, *(asBYTE*)argPtr);
+						result = pScriptComponent->m_pFunctionCallCtx->SetArgByte(pScriptComponent->m_numFunctionCallArgs, *static_cast<asBYTE*>(pArg));
 						break;
 
 					case asTYPEID_INT16:
 					case asTYPEID_UINT16:
-						result = scriptComp->functionCallCtx->SetArgWord(scriptComp->numFunctionCallArgs, *(asWORD*)argPtr);
+						result = pScriptComponent->m_pFunctionCallCtx->SetArgWord(pScriptComponent->m_numFunctionCallArgs, *static_cast<asWORD*>(pArg));
 						break;
 
 					case asTYPEID_INT32:
 					case asTYPEID_UINT32:
-						result = scriptComp->functionCallCtx->SetArgDWord(scriptComp->numFunctionCallArgs, *(asDWORD*)argPtr);
+						result = pScriptComponent->m_pFunctionCallCtx->SetArgDWord(pScriptComponent->m_numFunctionCallArgs, *static_cast<asDWORD*>(pArg));
 						break;
 
 					case asTYPEID_INT64:
 					case asTYPEID_UINT64:
-						result = scriptComp->functionCallCtx->SetArgQWord(scriptComp->numFunctionCallArgs, *(asQWORD*)argPtr);
+						result = pScriptComponent->m_pFunctionCallCtx->SetArgQWord(pScriptComponent->m_numFunctionCallArgs, *static_cast<asQWORD*>(pArg));
 						break;
 
 					case asTYPEID_FLOAT:
-						result = scriptComp->functionCallCtx->SetArgFloat(scriptComp->numFunctionCallArgs, *(float*)argPtr);
+						result = pScriptComponent->m_pFunctionCallCtx->SetArgFloat(pScriptComponent->m_numFunctionCallArgs, *static_cast<float*>(pArg));
 						break;
 
 					case asTYPEID_DOUBLE:
-						result = scriptComp->functionCallCtx->SetArgDouble(scriptComp->numFunctionCallArgs, *(double*)argPtr);
+						result = pScriptComponent->m_pFunctionCallCtx->SetArgDouble(pScriptComponent->m_numFunctionCallArgs, *static_cast<double*>(pArg));
 						break;
 
 					default:
@@ -93,58 +93,58 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric* gen)
 
 			if(result != asSUCCESS)
 			{
-				LOG_ERROR("Failed to set arg%u for function: %s", scriptComp->numFunctionCallArgs, functionName->Str());
+				LOG_ERROR("Failed to set arg%u for function: %s", pScriptComponent->m_numFunctionCallArgs, pFunctionName->Str());
 			}
 
-			scriptComp->numFunctionCallArgs++;
+			pScriptComponent->m_numFunctionCallArgs++;
 		}
 
-		scriptComp->ExecuteFunctionCall();
+		pScriptComponent->ExecuteFunctionCall();
 	}
 }
 
 bool AngelScriptComponent::PrepareFunctionCall(const String& functionName)
 {
-	const asITypeInfo* typeInfo = scriptObject->GetObjectType();
-	asIScriptFunction* func = typeInfo->GetMethodByName(functionName.Str());
-	if(func == nullptr)
+	const asITypeInfo* pTypeInfo = m_pScriptObject->GetObjectType();
+	asIScriptFunction* pFunction = pTypeInfo->GetMethodByName(functionName.Str());
+	if(pFunction == nullptr)
 	{
 		return false;
 	}
 
-	ASSERT(functionCallCtx == nullptr);
-	functionCallCtx = scriptObject->GetEngine()->RequestContext();
-	if(functionCallCtx == nullptr)
+	ASSERT(m_pFunctionCallCtx == nullptr);
+	m_pFunctionCallCtx = m_pScriptObject->GetEngine()->RequestContext();
+	if(m_pFunctionCallCtx == nullptr)
 	{
 		return false;
 	}
 
-	int result = functionCallCtx->Prepare(func);
+	int result = m_pFunctionCallCtx->Prepare(pFunction);
 	if(result != asSUCCESS)
 	{
-		functionCallCtx->GetEngine()->ReturnContext(functionCallCtx);
-		functionCallCtx = nullptr;
+		m_pFunctionCallCtx->GetEngine()->ReturnContext(m_pFunctionCallCtx);
+		m_pFunctionCallCtx = nullptr;
 		return false;
 	}
 
-	functionCallCtx->SetObject(scriptObject);		// the 'this' parameter
-	numFunctionCallArgs = 0;
+	m_pFunctionCallCtx->SetObject(m_pScriptObject);		// the 'this' parameter
+	m_numFunctionCallArgs = 0;
 	return true;
 }
 
 void AngelScriptComponent::ExecuteFunctionCall()
 {
-	ASSERT(functionCallCtx != nullptr);
-	const int result = functionCallCtx->Execute();
-	functionCallCtx->GetEngine()->ReturnContext(functionCallCtx);
-	functionCallCtx = nullptr;
+	ASSERT(m_pFunctionCallCtx != nullptr);
+	const int result = m_pFunctionCallCtx->Execute();
+	m_pFunctionCallCtx->GetEngine()->ReturnContext(m_pFunctionCallCtx);
+	m_pFunctionCallCtx = nullptr;
 
-	asIStringFactory* stringFactory = GetStdStringFactorySingleton();
-	for(const void* stringArg : functionCallStringArgs)
+	asIStringFactory* pStringFactory = GetStdStringFactorySingleton();
+	for(const void* pStringArg : m_functionCallStringArgs)
 	{
-		stringFactory->ReleaseStringConstant(stringArg);
+		pStringFactory->ReleaseStringConstant(pStringArg);
 	}
-	functionCallStringArgs.Clear();
+	m_functionCallStringArgs.Clear();
 
 	switch(result)
 	{
@@ -158,40 +158,40 @@ void AngelScriptComponent::ExecuteFunctionCall()
 
 bool AngelScriptComponent::AddFunctionCallArg(int arg)
 {
-	int result = functionCallCtx->SetArgDWord(numFunctionCallArgs++, (asDWORD)arg);
+	int result = m_pFunctionCallCtx->SetArgDWord(m_numFunctionCallArgs++, (asDWORD)arg);
 	return (result == asSUCCESS);
 }
 
 bool AngelScriptComponent::AddFunctionCallArg(float arg)
 {
-	int result = functionCallCtx->SetArgFloat(numFunctionCallArgs++, arg);
+	int result = m_pFunctionCallCtx->SetArgFloat(m_numFunctionCallArgs++, arg);
 	return (result == asSUCCESS);
 }
 
 bool AngelScriptComponent::AddFunctionCallArg(double arg)
 {
-	int result = functionCallCtx->SetArgDouble(numFunctionCallArgs++, arg);
+	int result = m_pFunctionCallCtx->SetArgDouble(m_numFunctionCallArgs++, arg);
 	return (result == asSUCCESS);
 }
 
 bool AngelScriptComponent::AddFunctionCallArg(bool arg)
 {
-	int result = functionCallCtx->SetArgByte(numFunctionCallArgs++, (arg ? 1u : 0));
+	int result = m_pFunctionCallCtx->SetArgByte(m_numFunctionCallArgs++, (arg ? 1u : 0));
 	return (result == asSUCCESS);
 }
 
-bool AngelScriptComponent::AddFunctionCallArg(void* arg)
+bool AngelScriptComponent::AddFunctionCallArg(void* pArg)
 {
-	ASSERT(arg != nullptr);
+	ASSERT(pArg != nullptr);
 
-	int result = functionCallCtx->SetArgAddress(numFunctionCallArgs++, arg);
+	int result = m_pFunctionCallCtx->SetArgAddress(m_numFunctionCallArgs++, pArg);
 	return (result == asSUCCESS);
 }
 
 bool AngelScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	const void* stringArg = GetStdStringFactorySingleton()->GetStringConstant(arg.Str(), static_cast<asUINT>(arg.Length()));
-	functionCallStringArgs.Add(stringArg);
-	int result = functionCallCtx->SetArgObject(numFunctionCallArgs++, const_cast<void*>(stringArg));
+	const void* pStringArg = GetStdStringFactorySingleton()->GetStringConstant(arg.Str(), static_cast<asUINT>(arg.Length()));
+	m_functionCallStringArgs.Add(pStringArg);
+	int result = m_pFunctionCallCtx->SetArgObject(m_numFunctionCallArgs++, const_cast<void*>(pStringArg));
 	return (result == asSUCCESS);
 }

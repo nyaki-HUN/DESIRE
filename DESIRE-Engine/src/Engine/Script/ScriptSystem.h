@@ -11,22 +11,25 @@ class Object;
 class ScriptSystem
 {
 public:
+	typedef Factory<IScript, ScriptComponent&> ScriptFactory;
+
 	ScriptSystem();
 	virtual ~ScriptSystem();
 
 	void Update();
 
-	void RegisterScript(HashedString scriptName, Factory<IScript>::Func_t factory);
+	void RegisterScript(HashedString scriptName, ScriptFactory::Func_t factory);
 	ScriptComponent* CreateScriptComponentOnObject(Object& object, const String& scriptName);
 
-	void OnScriptComponentCreated(ScriptComponent* component);
-	void OnScriptComponentDestroyed(ScriptComponent* component);
+	void OnScriptComponentCreated(ScriptComponent* pScriptComponent);
+	void OnScriptComponentDestroyed(ScriptComponent* pScriptComponent);
 
 private:
 	virtual ScriptComponent* CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName) = 0;
 
-	Array<ScriptComponent*> scriptComponents;
-	HashedStringMap<Factory<IScript>::Func_t> scriptFactories;
+	Array<ScriptComponent*> m_scriptComponents;
+	HashedStringMap<ScriptFactory::Func_t> m_scriptFactories;
 };
 
-#define REGISTER_NATIVE_SCRIPT(SCRIPT)	Modules::ScriptSystem->RegisterScript(HashedString(#SCRIPT), &Factory<IScript>::Create<SCRIPT>)
+#define REGISTER_NATIVE_SCRIPT(SCRIPT)	Modules::ScriptSystem->RegisterScript(HashedString(#SCRIPT), &ScriptSystem::ScriptFactory::Create<SCRIPT>)
+

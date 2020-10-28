@@ -49,6 +49,6 @@ private:
 	virtual bool AddFunctionCallArg(float arg) = 0;
 	virtual bool AddFunctionCallArg(double arg) = 0;
 	virtual bool AddFunctionCallArg(bool arg) = 0;
-	virtual bool AddFunctionCallArg(void* arg) = 0;
+	virtual bool AddFunctionCallArg(void* pArg) = 0;
 	virtual bool AddFunctionCallArg(const String& string) = 0;
 };

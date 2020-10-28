@@ -3,11 +3,11 @@
 
 #include "Engine/Core/Memory/MemorySystem.h"
 
-void* LuaCallbacks::ReallocWrapper(void* userData, void* ptr, size_t oldSize, size_t newSize)
+void* LuaCallbacks::ReallocWrapper(void* pUserData, void* pMemory, size_t oldSize, size_t newSize)
 {
-	DESIRE_UNUSED(userData);
+	DESIRE_UNUSED(pUserData);
 	DESIRE_UNUSED(oldSize);
-	return MemorySystem::Realloc(ptr, newSize);
+	return MemorySystem::Realloc(pMemory, newSize);
 }
 
 int LuaCallbacks::LuaPanicFunc(lua_State* L)

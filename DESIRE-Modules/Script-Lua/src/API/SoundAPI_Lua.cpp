@@ -5,13 +5,12 @@
 
 void RegisterSoundAPI_Lua(sol::state_view& lua)
 {
-	SoundSystem* soundSystem = Modules::SoundSystem.get();
-	if(soundSystem == nullptr)
+	if(Modules::SoundSystem == nullptr)
 	{
 		return;
 	}
 
 	// SoundSystem
 	auto isoundsystem = lua.new_usertype<SoundSystem>("ISoundSystem");
-	lua["SoundSystem"] = soundSystem;
+	lua["SoundSystem"] = Modules::SoundSystem.get();
 }

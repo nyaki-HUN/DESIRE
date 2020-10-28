@@ -25,10 +25,10 @@ private:
 	bool AddFunctionCallArg(float arg) override;
 	bool AddFunctionCallArg(double arg) override;
 	bool AddFunctionCallArg(bool arg) override;
-	bool AddFunctionCallArg(void* arg) override;
+	bool AddFunctionCallArg(void* pArg) override;
 	bool AddFunctionCallArg(const String& string) override;
 
-	HSQUIRRELVM vm = nullptr;
-	SQInteger savedStackTop = 0;
-	SQInteger numFunctionCallArgs = 0;
+	HSQUIRRELVM m_vm = nullptr;
+	SQInteger m_savedStackTop = 0;
+	SQInteger m_numFunctionCallArgs = 0;
 };

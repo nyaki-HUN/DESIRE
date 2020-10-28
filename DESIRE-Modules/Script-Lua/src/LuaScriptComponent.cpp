@@ -5,9 +5,9 @@
 
 LuaScriptComponent::LuaScriptComponent(Object& object, lua_State* L)
 	: ScriptComponent(object)
-	, L(L)
+	, m_L(L)
 {
-	sol::state_view lua(L);
+	sol::state_view lua(m_L);
 	lua["self"] = this;
 }
 
@@ -39,16 +39,16 @@ int LuaScriptComponent::CallFromScript(sol::this_state ts)
 		const int argIdxOffsetFromTop = -argCount - 1;	// -1 because the function is pushed in PrepareFunctionCall()
 		for(int i = 0; i < argCount; ++i)
 		{
-			if(from_L == L)
+			if(from_L == m_L)
 			{
-				lua_pushvalue(L, argIdxOffsetFromTop);
+				lua_pushvalue(m_L, argIdxOffsetFromTop);
 			}
 			else
 			{
-				lua_xmove(from_L, L, argIdxOffsetFromTop);
+				lua_xmove(from_L, m_L, argIdxOffsetFromTop);
 			}
 
-			numFunctionCallArgs++;
+			m_numFunctionCallArgs++;
 		}
 
 		ExecuteFunctionCall();
@@ -59,69 +59,71 @@ int LuaScriptComponent::CallFromScript(sol::this_state ts)
 
 bool LuaScriptComponent::PrepareFunctionCall(const String& functionName)
 {
-	lua_getglobal(L, functionName.Str());
-	if(!lua_isfunction(L, -1))
+	lua_getglobal(m_L, functionName.Str());
+	if(!lua_isfunction(m_L, -1))
 	{
-		lua_pop(L, 1);
+		lua_pop(m_L, 1);
 		return false;
 	}
 
-	numFunctionCallArgs = 0;
+	m_numFunctionCallArgs = 0;
 	return true;
 }
 
 void LuaScriptComponent::ExecuteFunctionCall()
 {
-	const int statusCode = lua_pcall(L, numFunctionCallArgs, 0, 0);
+	const int statusCode = lua_pcall(m_L, m_numFunctionCallArgs, 0, 0);
 
 	switch(statusCode)
 	{
 		case LUA_OK:			break;
-		case LUA_ERRRUN:		LOG_ERROR("Execution error: %s", lua_tostring(L, -1)); break;
-		case LUA_ERRSYNTAX:		LOG_ERROR("Syntax error: %s", lua_tostring(L, -1)); break;
-		case LUA_ERRMEM:		LOG_ERROR("Memory error: %s", lua_tostring(L, -1)); break;
-		case LUA_ERRERR:		LOG_ERROR("Error in ERROR HANDLER: %s", lua_tostring(L, -1)); break;
+		case LUA_ERRRUN:		LOG_ERROR("Execution error: %s", lua_tostring(m_L, -1)); break;
+		case LUA_ERRSYNTAX:		LOG_ERROR("Syntax error: %s", lua_tostring(m_L, -1)); break;
+		case LUA_ERRMEM:		LOG_ERROR("Memory error: %s", lua_tostring(m_L, -1)); break;
+		case LUA_ERRERR:		LOG_ERROR("Error in ERROR HANDLER: %s", lua_tostring(m_L, -1)); break;
 	}
 }
 
 bool LuaScriptComponent::AddFunctionCallArg(int arg)
 {
-	lua_pushinteger(L, arg);
-	numFunctionCallArgs++;
+	lua_pushinteger(m_L, arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool LuaScriptComponent::AddFunctionCallArg(float arg)
 {
-	lua_pushnumber(L, arg);
-	numFunctionCallArgs++;
+	lua_pushnumber(m_L, arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool LuaScriptComponent::AddFunctionCallArg(double arg)
 {
-	lua_pushnumber(L, arg);
-	numFunctionCallArgs++;
+	lua_pushnumber(m_L, arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool LuaScriptComponent::AddFunctionCallArg(bool arg)
 {
-	lua_pushboolean(L, arg);
-	numFunctionCallArgs++;
+	lua_pushboolean(m_L, arg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
-bool LuaScriptComponent::AddFunctionCallArg(void* arg)
+bool LuaScriptComponent::AddFunctionCallArg(void* pArg)
 {
-	lua_pushlightuserdata(L, arg);
-	numFunctionCallArgs++;
+	ASSERT(pArg != nullptr);
+
+	lua_pushlightuserdata(m_L, pArg);
+	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool LuaScriptComponent::AddFunctionCallArg(const String& arg)
 {
-	lua_pushlstring(L, arg.Str(), arg.Length());
-	numFunctionCallArgs++;
+	lua_pushlstring(m_L, arg.Str(), arg.Length());
+	m_numFunctionCallArgs++;
 	return true;
 }

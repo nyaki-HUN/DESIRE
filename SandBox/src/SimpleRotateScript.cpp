@@ -9,7 +9,8 @@
 
 #include "Engine/Script/ScriptComponent.h"
 
-SimpleRotateScript::SimpleRotateScript()
+SimpleRotateScript::SimpleRotateScript(ScriptComponent& scriptComponent)
+	: IScript(scriptComponent)
 {
 }
 
@@ -25,7 +26,7 @@ void SimpleRotateScript::Update()
 {
 	rot += Modules::Application->GetTimer()->GetSecDelta();
 
-	self->GetObject().GetTransform().SetLocalRotation(Quat::CreateRotation(rot, Vector3::AxisX()));
+	self.GetObject().GetTransform().SetLocalRotation(Quat::CreateRotation(rot, Vector3::AxisX()));
 }
 
 std::function<void(std::array<IScript::Arg, 6>)> SimpleRotateScript::GetFunctionToCall(const String& functionName)

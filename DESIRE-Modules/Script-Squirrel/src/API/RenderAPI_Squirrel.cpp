@@ -8,8 +8,7 @@
 
 void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
-	Render* render = Modules::Render.get();
-	if(render == nullptr)
+	if(Modules::Render == nullptr)
 	{
 		return;
 	}
@@ -26,5 +25,5 @@ void RegisterRenderAPI_Squirrel(Sqrat::RootTable& rootTable)
 	// Render
 	rootTable.Bind("IRender", Sqrat::Class<Render, Sqrat::NoConstructor<Render>>(vm, "IRender")
 	);
-	rootTable.SetInstance("Render", render);
+	rootTable.SetInstance("Render", Modules::Render.get());
 }

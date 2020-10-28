@@ -8,8 +8,7 @@
 
 void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
-	Physics* physics = Modules::Physics.get();
-	if(physics == nullptr)
+	if(Modules::Physics == nullptr)
 	{
 		return;
 	}
@@ -27,5 +26,5 @@ void RegisterPhysicsAPI_Squirrel(Sqrat::RootTable& rootTable)
 	rootTable.Bind("IPhysics", Sqrat::Class<Physics, Sqrat::NoConstructor<Physics>>(vm, "IPhysics")
 		.Func("RaycastAny", &Physics::RaycastAny)
 	);
-	rootTable.SetInstance("Physics", physics);
+	rootTable.SetInstance("Physics", Modules::Physics.get());
 }

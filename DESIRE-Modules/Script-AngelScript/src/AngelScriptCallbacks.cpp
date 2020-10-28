@@ -10,101 +10,101 @@ void* AngelScriptCallbacks::MallocWrapper(size_t size)
 	return MemorySystem::Alloc(size);
 }
 
-void AngelScriptCallbacks::FreeWrapper(void* ptr)
+void AngelScriptCallbacks::FreeWrapper(void* pMemory)
 {
-	MemorySystem::Free(ptr);
+	MemorySystem::Free(pMemory);
 }
 
-void AngelScriptCallbacks::PrintCallback(asIScriptGeneric* gen)
+void AngelScriptCallbacks::PrintCallback(asIScriptGeneric* pGeneric)
 {
-	const std::string* message = static_cast<const std::string*>(gen->GetArgObject(0));
-	LOG_DEBUG("%s", message->c_str());
+	const std::string* pMessage = static_cast<const std::string*>(pGeneric->GetArgObject(0));
+	LOG_DEBUG("%s", pMessage->c_str());
 }
 
-void AngelScriptCallbacks::MessageCallback(const asSMessageInfo* msg, void* userData)
+void AngelScriptCallbacks::MessageCallback(const asSMessageInfo* pMessage, void* pUserData)
 {
-	DESIRE_UNUSED(userData);
+	DESIRE_UNUSED(pUserData);
 
-	switch(msg->type)
+	switch(pMessage->type)
 	{
 		case asMSGTYPE_ERROR:
-			LOG_ERROR("%s(%d, %d): %s", msg->section, msg->row, msg->col, msg->message);
+			LOG_ERROR("%s(%d, %d): %s", pMessage->section, pMessage->row, pMessage->col, pMessage->message);
 			break;
 		case asMSGTYPE_WARNING:
-			LOG_WARNING("%s(%d, %d): %s", msg->section, msg->row, msg->col, msg->message);
+			LOG_WARNING("%s(%d, %d): %s", pMessage->section, pMessage->row, pMessage->col, pMessage->message);
 			break;
 		case asMSGTYPE_INFORMATION:
-			LOG_MESSAGE("%s(%d, %d): %s", msg->section, msg->row, msg->col, msg->message);
+			LOG_MESSAGE("%s(%d, %d): %s", pMessage->section, pMessage->row, pMessage->col, pMessage->message);
 			break;
 	}
 }
 
-asIScriptContext* AngelScriptCallbacks::RequestContextCallback(asIScriptEngine* engine, void* userData)
+asIScriptContext* AngelScriptCallbacks::RequestContextCallback(asIScriptEngine* pEngine, void* pUserData)
 {
-	DESIRE_UNUSED(userData);
+	DESIRE_UNUSED(pUserData);
 
-	AngelScriptSystem* scriptSystem = static_cast<AngelScriptSystem*>(userData);
+	AngelScriptSystem* pScriptSystem = static_cast<AngelScriptSystem*>(pUserData);
 
-	asIScriptContext* ctx = nullptr;
-	if(scriptSystem->contextPool.IsEmpty())
+	asIScriptContext* pContext = nullptr;
+	if(pScriptSystem->m_contextPool.IsEmpty())
 	{
-		ctx = engine->CreateContext();
-		int result = ctx->SetExceptionCallback(asFUNCTION(&AngelScriptCallbacks::ExceptionCallback), scriptSystem, asCALL_CDECL);
+		pContext = pEngine->CreateContext();
+		int result = pContext->SetExceptionCallback(asFUNCTION(&AngelScriptCallbacks::ExceptionCallback), pScriptSystem, asCALL_CDECL);
 		ASSERT(result == asSUCCESS);
-		result = ctx->SetLineCallback(asFUNCTION(AngelScriptCallbacks::LineCallback), scriptSystem, asCALL_CDECL);
+		result = pContext->SetLineCallback(asFUNCTION(AngelScriptCallbacks::LineCallback), pScriptSystem, asCALL_CDECL);
 		ASSERT(result == asSUCCESS);
 	}
 	else
 	{
-		ctx = scriptSystem->contextPool.GetLast();
-		scriptSystem->contextPool.RemoveLast();
+		pContext = pScriptSystem->m_contextPool.GetLast();
+		pScriptSystem->m_contextPool.RemoveLast();
 	}
 
-	return ctx;
+	return pContext;
 }
 
-void AngelScriptCallbacks::ReturnContextCallback(asIScriptEngine* engine, asIScriptContext* ctx, void* userData)
+void AngelScriptCallbacks::ReturnContextCallback(asIScriptEngine* pEngine, asIScriptContext* pContext, void* pUserData)
 {
-	DESIRE_UNUSED(engine);
+	DESIRE_UNUSED(pEngine);
 
-	ctx->Unprepare();
+	pContext->Unprepare();
 
-	AngelScriptSystem* scriptSystem = static_cast<AngelScriptSystem*>(userData);
-	scriptSystem->contextPool.Add(ctx);
+	AngelScriptSystem* pScriptSystem = static_cast<AngelScriptSystem*>(pUserData);
+	pScriptSystem->m_contextPool.Add(pContext);
 }
 
-void AngelScriptCallbacks::ExceptionCallback(asIScriptContext* ctx, void* userData)
+void AngelScriptCallbacks::ExceptionCallback(asIScriptContext* pContext, void* pUserData)
 {
-	DESIRE_UNUSED(userData);
+	DESIRE_UNUSED(pUserData);
 
-	LOG_ERROR("Exception: %s", ctx->GetExceptionString());
-	const asIScriptFunction* function = ctx->GetExceptionFunction();
+	LOG_ERROR("Exception: %s", pContext->GetExceptionString());
+	const asIScriptFunction* function = pContext->GetExceptionFunction();
 	LOG_ERROR("module: %s", function->GetModuleName());
 	LOG_ERROR("func: %s", function->GetDeclaration());
 //	LOG_ERROR("section: %s", function->GetScriptSectionName());
-	LOG_ERROR("line: %d", ctx->GetExceptionLineNumber());
+	LOG_ERROR("line: %d", pContext->GetExceptionLineNumber());
 }
 
-void AngelScriptCallbacks::LineCallback(asIScriptContext* ctx, void* userData)
+void AngelScriptCallbacks::LineCallback(asIScriptContext* pContext, void* pUserData)
 {
-	AngelScriptSystem* scriptSystem = static_cast<AngelScriptSystem*>(userData);
+	AngelScriptSystem* pScriptSystem = static_cast<AngelScriptSystem*>(pUserData);
 
 	// Determine if we have reached a break point
 	int column;
-	const char* scriptSection;
-	int line = ctx->GetLineNumber(0, &column, &scriptSection);
-	asIScriptFunction* function = ctx->GetFunction();
-	if(scriptSystem->IsBreakpoint(scriptSection, line, function))
+	const char* pScriptSection = nullptr;
+	int line = pContext->GetLineNumber(0, &column, &pScriptSection);
+	asIScriptFunction* pFunction = pContext->GetFunction();
+	if(pScriptSystem->IsBreakpoint(pScriptSection, line, pFunction))
 	{
 		// A breakpoint has been reached so the execution of the script should be suspended
-		ctx->Suspend();
+		pContext->Suspend();
 
 		// Show the call stack
-		for(asUINT i = 0; i < ctx->GetCallstackSize(); ++i)
+		for(asUINT i = 0; i < pContext->GetCallstackSize(); ++i)
 		{
-			asIScriptFunction* func = ctx->GetFunction(i);
-			line = ctx->GetLineNumber(i, &column, &scriptSection);
-			LOG_MESSAGE("%s:%s:%d,%d\n", scriptSection, func->GetDeclaration(), line, column);
+			asIScriptFunction* func = pContext->GetFunction(i);
+			line = pContext->GetLineNumber(i, &column, &pScriptSection);
+			LOG_MESSAGE("%s:%s:%d,%d\n", pScriptSection, func->GetDeclaration(), line, column);
 		}
 	}
 }

@@ -19,9 +19,9 @@ private:
 	bool AddFunctionCallArg(float arg) override;
 	bool AddFunctionCallArg(double arg) override;
 	bool AddFunctionCallArg(bool arg) override;
-	bool AddFunctionCallArg(void* arg) override;
+	bool AddFunctionCallArg(void* pArg) override;
 	bool AddFunctionCallArg(const String& string) override;
 
-	lua_State* L = nullptr;
-	int numFunctionCallArgs = 0;
+	lua_State* m_L = nullptr;
+	int m_numFunctionCallArgs = 0;
 };

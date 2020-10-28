@@ -8,8 +8,7 @@
 
 void RegisterRenderAPI_Lua(sol::state_view& lua)
 {
-	Render* render = Modules::Render.get();
-	if(render == nullptr)
+	if(Modules::Render == nullptr)
 	{
 		return;
 	}
@@ -22,5 +21,5 @@ void RegisterRenderAPI_Lua(sol::state_view& lua)
 
 	// Render
 	auto irender = lua.new_usertype<Render>("IRender");
-	lua["Render"] = render;
+	lua["Render"] = Modules::Render.get();
 }

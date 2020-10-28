@@ -5,8 +5,7 @@
 
 void RegisterSoundAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
-	SoundSystem* soundSystem = Modules::SoundSystem.get();
-	if(soundSystem == nullptr)
+	if(Modules::SoundSystem == nullptr)
 	{
 		return;
 	}
@@ -16,5 +15,5 @@ void RegisterSoundAPI_Squirrel(Sqrat::RootTable& rootTable)
 	// SoundSystem
 	rootTable.Bind("ISoundSystem", Sqrat::Class<SoundSystem, Sqrat::NoConstructor<SoundSystem>>(vm, "ISoundSystem")
 	);
-	rootTable.SetInstance("SoundSystem", soundSystem);
+	rootTable.SetInstance("SoundSystem", Modules::SoundSystem.get());
 }

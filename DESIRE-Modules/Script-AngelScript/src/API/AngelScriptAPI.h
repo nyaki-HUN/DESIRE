@@ -4,59 +4,59 @@
 
 // Template function for registering a class derived from Component
 #define ANGELSCRIPT_API_REGISTER_COMPONENT(CLASS)																																				\
-	result = engine->RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeId);																				ASSERT(result >= asSUCCESS);	\
-	result = engine->RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																					ASSERT(result >= asSUCCESS);	\
-	result = engine->RegisterObjectMethod(#CLASS, "Object& get_object() const property", asMETHOD(Component, GetObject), asCALL_THISCALL);						ASSERT(result >= asSUCCESS);	\
-	result = engine->RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);	ASSERT(result >= asSUCCESS);	\
-	result = engine->RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST);	ASSERT(result >= asSUCCESS)
+	result = engine.RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeId);																					ASSERT(result >= asSUCCESS);	\
+	result = engine.RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																					ASSERT(result >= asSUCCESS);	\
+	result = engine.RegisterObjectMethod(#CLASS, "Object& get_object() const property", asMETHOD(Component, GetObject), asCALL_THISCALL);						ASSERT(result >= asSUCCESS);	\
+	result = engine.RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);		ASSERT(result >= asSUCCESS);	\
+	result = engine.RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST);	ASSERT(result >= asSUCCESS)
 
 // API register functions
-void RegisterStdString(asIScriptEngine* engine);
-void RegisterCoreAPI_Math_AngelScript(asIScriptEngine* engine);
-void RegisterCoreAPI_AngelScript(asIScriptEngine* engine);
-void RegisterInputAPI_AngelScript(asIScriptEngine* engine);
-void RegisterPhysicsAPI_AngelScript(asIScriptEngine* engine);
-void RegisterRenderAPI_AngelScript(asIScriptEngine* engine);
-void RegisterSoundAPI_AngelScript(asIScriptEngine* engine);
+void RegisterStdString(asIScriptEngine& engine);
+void RegisterCoreAPI_Math_AngelScript(asIScriptEngine& engine);
+void RegisterCoreAPI_AngelScript(asIScriptEngine& engine);
+void RegisterInputAPI_AngelScript(asIScriptEngine& engine);
+void RegisterPhysicsAPI_AngelScript(asIScriptEngine& engine);
+void RegisterRenderAPI_AngelScript(asIScriptEngine& engine);
+void RegisterSoundAPI_AngelScript(asIScriptEngine& engine);
 
 template<class T>
 class AngelScriptAPI
 {
 public:
 	// Functions to be registered as asBEHAVE_CONSTRUCT
-	static void Construct(T* ptr)
+	static void Construct(T* pPtr)
 	{
-		new(ptr) T();
+		new(pPtr) T();
 	}
 
 	template<class A1>
-	static void ConstructWithArgs(T* ptr, A1 a1)
+	static void ConstructWithArgs(T* pPtr, A1 a1)
 	{
-		new(ptr) T(a1);
+		new(pPtr) T(a1);
 	}
 
 	template<class A1, class A2>
-	static void ConstructWithArgs(A1 a1, A2 a2)
+	static void ConstructWithArgs(T* pPtr, A1 a1, A2 a2)
 	{
-		new(ptr) T(a1, a2);
+		new(pPtr) T(a1, a2);
 	}
 
 	template<class A1, class A2, class A3>
-	static void ConstructWithArgs(A1 a1, A2 a2, A3 a3)
+	static void ConstructWithArgs(T* pPtr, A1 a1, A2 a2, A3 a3)
 	{
-		new(ptr) T(a1, a2, a3);
+		new(pPtr) T(a1, a2, a3);
 	}
 
 	template<class A1, class A2, class A3, class A4>
-	static void ConstructWithArgs(A1 a1, A2 a2, A3 a3, A4 a4)
+	static void ConstructWithArgs(T* pPtr, A1 a1, A2 a2, A3 a3, A4 a4)
 	{
-		new(ptr) T(a1, a2, a3, a4);
+		new(pPtr) T(a1, a2, a3, a4);
 	}
 
 	// Function to be registered as asBEHAVE_DESTRUCT
-	static void Destruct(T* ptr)
+	static void Destruct(T* pPtr)
 	{
-		ptr->~T();
+		pPtr->~T();
 	}
 
 	// Functions to be registered as asBEHAVE_FACTORY
@@ -125,81 +125,81 @@ class AngelScriptGenericAPI
 {
 public:
 	template<const String& (T::*func)() const>
-	static void MakeStringRvFrom(asIScriptGeneric* gen)
+	static void MakeStringRvFrom(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 0);
-		const T* self = static_cast<const T*>(gen->GetObject());
-		const String& rv = (self->*func)();
-		new (gen->GetAddressOfReturnLocation()) std::string(rv.Str(), rv.Length());
+		ASSERT(pGeneric->GetArgCount() == 0);
+		const T* pSelf = static_cast<const T*>(pGeneric->GetObject());
+		const String& rv = (pSelf->*func)();
+		new (pGeneric->GetAddressOfReturnLocation()) std::string(rv.Str(), rv.Length());
 	}
 
 	template<T(*func)()>
-	static void StaticFunc(asIScriptGeneric* gen)
+	static void StaticFunc(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 0);
-		*static_cast<T**>(gen->GetAddressOfReturnLocation()) = new T(func());
+		ASSERT(pGeneric->GetArgCount() == 0);
+		*static_cast<T**>(pGeneric->GetAddressOfReturnLocation()) = new T(func());
 	}
 
 	template<class A0, T(*func)(A0)>
-	static void StaticFunc(asIScriptGeneric* gen)
+	static void StaticFunc(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 1);
-		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(gen->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(gen->GetAddressOfArg(0));
-		*static_cast<T**>(gen->GetAddressOfReturnLocation()) = new T(func(*a0));
+		ASSERT(pGeneric->GetArgCount() == 1);
+		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(pGeneric->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(pGeneric->GetAddressOfArg(0));
+		*static_cast<T**>(pGeneric->GetAddressOfReturnLocation()) = new T(func(*a0));
 	}
 
 	template<class A0, class A1, T(*func)(A0, A1)>
-	static void StaticFunc(asIScriptGeneric* gen)
+	static void StaticFunc(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 2);
-		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(gen->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(gen->GetAddressOfArg(0));
-		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(gen->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(gen->GetAddressOfArg(1));
-		*static_cast<T**>(gen->GetAddressOfReturnLocation()) = new T(func(*a0, *a1));
+		ASSERT(pGeneric->GetArgCount() == 2);
+		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(pGeneric->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(pGeneric->GetAddressOfArg(0));
+		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(pGeneric->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(pGeneric->GetAddressOfArg(1));
+		*static_cast<T**>(pGeneric->GetAddressOfReturnLocation()) = new T(func(*a0, *a1));
 	}
 
 	template<class A0, class A1, class A2, T(*func)(A0, A1, A2)>
-	static void StaticFunc(asIScriptGeneric* gen)
+	static void StaticFunc(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 3);
-		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(gen->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(gen->GetAddressOfArg(0));
-		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(gen->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(gen->GetAddressOfArg(1));
-		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(gen->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(gen->GetAddressOfArg(2));
-		*static_cast<T**>(gen->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2));
+		ASSERT(pGeneric->GetArgCount() == 3);
+		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(pGeneric->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(pGeneric->GetAddressOfArg(0));
+		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(pGeneric->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(pGeneric->GetAddressOfArg(1));
+		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(pGeneric->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(pGeneric->GetAddressOfArg(2));
+		*static_cast<T**>(pGeneric->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2));
 	}
 
 	template<class A0, class A1, class A2, class A3, T(*func)(A0, A1, A2, A3)>
-	static void StaticFunc(asIScriptGeneric* gen)
+	static void StaticFunc(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 4);
-		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(gen->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(gen->GetAddressOfArg(0));
-		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(gen->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(gen->GetAddressOfArg(1));
-		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(gen->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(gen->GetAddressOfArg(2));
-		std::remove_reference<A3>::type* a3 = std::is_reference<A3>::value ? *static_cast<std::remove_reference<A3>::type**>(gen->GetAddressOfArg(3)) : static_cast<std::remove_reference<A3>::type*>(gen->GetAddressOfArg(3));
-		*static_cast<T**>(gen->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2, *a3));
+		ASSERT(pGeneric->GetArgCount() == 4);
+		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(pGeneric->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(pGeneric->GetAddressOfArg(0));
+		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(pGeneric->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(pGeneric->GetAddressOfArg(1));
+		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(pGeneric->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(pGeneric->GetAddressOfArg(2));
+		std::remove_reference<A3>::type* a3 = std::is_reference<A3>::value ? *static_cast<std::remove_reference<A3>::type**>(pGeneric->GetAddressOfArg(3)) : static_cast<std::remove_reference<A3>::type*>(pGeneric->GetAddressOfArg(3));
+		*static_cast<T**>(pGeneric->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2, *a3));
 	}
 
 	template<class A0, class A1, class A2, class A3, class A4, T(*func)(A0, A1, A2, A3, A4)>
-	static void StaticFunc(asIScriptGeneric* gen)
+	static void StaticFunc(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 5);
-		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(gen->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(gen->GetAddressOfArg(0));
-		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(gen->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(gen->GetAddressOfArg(1));
-		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(gen->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(gen->GetAddressOfArg(2));
-		std::remove_reference<A3>::type* a3 = std::is_reference<A3>::value ? *static_cast<std::remove_reference<A3>::type**>(gen->GetAddressOfArg(3)) : static_cast<std::remove_reference<A3>::type*>(gen->GetAddressOfArg(3));
-		std::remove_reference<A4>::type* a4 = std::is_reference<A4>::value ? *static_cast<std::remove_reference<A4>::type**>(gen->GetAddressOfArg(4)) : static_cast<std::remove_reference<A4>::type*>(gen->GetAddressOfArg(4));
-		*static_cast<T**>(gen->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2, *a3, *a4));
+		ASSERT(pGeneric->GetArgCount() == 5);
+		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(pGeneric->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(pGeneric->GetAddressOfArg(0));
+		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(pGeneric->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(pGeneric->GetAddressOfArg(1));
+		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(pGeneric->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(pGeneric->GetAddressOfArg(2));
+		std::remove_reference<A3>::type* a3 = std::is_reference<A3>::value ? *static_cast<std::remove_reference<A3>::type**>(pGeneric->GetAddressOfArg(3)) : static_cast<std::remove_reference<A3>::type*>(pGeneric->GetAddressOfArg(3));
+		std::remove_reference<A4>::type* a4 = std::is_reference<A4>::value ? *static_cast<std::remove_reference<A4>::type**>(pGeneric->GetAddressOfArg(4)) : static_cast<std::remove_reference<A4>::type*>(pGeneric->GetAddressOfArg(4));
+		*static_cast<T**>(pGeneric->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2, *a3, *a4));
 	}
 
 	template<class A0, class A1, class A2, class A3, class A4, class A5, T(*func)(A0, A1, A2, A3, A4, A5)>
-	static void StaticFunc(asIScriptGeneric* gen)
+	static void StaticFunc(asIScriptGeneric* pGeneric)
 	{
-		ASSERT(gen->GetArgCount() == 6);
-		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(gen->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(gen->GetAddressOfArg(0));
-		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(gen->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(gen->GetAddressOfArg(1));
-		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(gen->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(gen->GetAddressOfArg(2));
-		std::remove_reference<A3>::type* a3 = std::is_reference<A3>::value ? *static_cast<std::remove_reference<A3>::type**>(gen->GetAddressOfArg(3)) : static_cast<std::remove_reference<A3>::type*>(gen->GetAddressOfArg(3));
-		std::remove_reference<A4>::type* a4 = std::is_reference<A4>::value ? *static_cast<std::remove_reference<A4>::type**>(gen->GetAddressOfArg(4)) : static_cast<std::remove_reference<A4>::type*>(gen->GetAddressOfArg(4));
-		std::remove_reference<A5>::type* a5 = std::is_reference<A5>::value ? *static_cast<std::remove_reference<A5>::type**>(gen->GetAddressOfArg(5)) : static_cast<std::remove_reference<A5>::type*>(gen->GetAddressOfArg(5));
-		*static_cast<T**>(gen->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2, *a3, *a4, *a5));
+		ASSERT(pGeneric->GetArgCount() == 6);
+		std::remove_reference<A0>::type* a0 = std::is_reference<A0>::value ? *static_cast<std::remove_reference<A0>::type**>(pGeneric->GetAddressOfArg(0)) : static_cast<std::remove_reference<A0>::type*>(pGeneric->GetAddressOfArg(0));
+		std::remove_reference<A1>::type* a1 = std::is_reference<A1>::value ? *static_cast<std::remove_reference<A1>::type**>(pGeneric->GetAddressOfArg(1)) : static_cast<std::remove_reference<A1>::type*>(pGeneric->GetAddressOfArg(1));
+		std::remove_reference<A2>::type* a2 = std::is_reference<A2>::value ? *static_cast<std::remove_reference<A2>::type**>(pGeneric->GetAddressOfArg(2)) : static_cast<std::remove_reference<A2>::type*>(pGeneric->GetAddressOfArg(2));
+		std::remove_reference<A3>::type* a3 = std::is_reference<A3>::value ? *static_cast<std::remove_reference<A3>::type**>(pGeneric->GetAddressOfArg(3)) : static_cast<std::remove_reference<A3>::type*>(pGeneric->GetAddressOfArg(3));
+		std::remove_reference<A4>::type* a4 = std::is_reference<A4>::value ? *static_cast<std::remove_reference<A4>::type**>(pGeneric->GetAddressOfArg(4)) : static_cast<std::remove_reference<A4>::type*>(pGeneric->GetAddressOfArg(4));
+		std::remove_reference<A5>::type* a5 = std::is_reference<A5>::value ? *static_cast<std::remove_reference<A5>::type**>(pGeneric->GetAddressOfArg(5)) : static_cast<std::remove_reference<A5>::type*>(pGeneric->GetAddressOfArg(5));
+		*static_cast<T**>(pGeneric->GetAddressOfReturnLocation()) = new T(func(*a0, *a1, *a2, *a3, *a4, *a5));
 	}
 };

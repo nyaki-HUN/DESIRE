@@ -8,8 +8,7 @@
 
 void RegisterPhysicsAPI_Lua(sol::state_view& lua)
 {
-	Physics* physics = Modules::Physics.get();
-	if(physics == nullptr)
+	if(Modules::Physics == nullptr)
 	{
 		return;
 	}
@@ -23,5 +22,5 @@ void RegisterPhysicsAPI_Lua(sol::state_view& lua)
 	// Physics
 	auto iphysics = lua.new_usertype<Physics>("IPhysics");
 	iphysics.set_function("RaycastAny", &Physics::RaycastAny);
-	lua["Physics"] = physics;
+	lua["Physics"] = Modules::Physics.get();
 }

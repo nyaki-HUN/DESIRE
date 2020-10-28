@@ -5,8 +5,7 @@
 
 void RegisterInputAPI_Lua(sol::state_view& lua)
 {
-	Input* input = Modules::Input.get();
-	if(input == nullptr)
+	if(Modules::Input == nullptr)
 	{
 		return;
 	}
@@ -14,5 +13,5 @@ void RegisterInputAPI_Lua(sol::state_view& lua)
 	// Input
 	auto iinput = lua.new_usertype<Input>("IInput");
 	iinput.set_function("GetOsMouseCursorPos", &Input::GetOsMouseCursorPos);
-	lua["Input"] = input;
+	lua["Input"] = Modules::Input.get();
 }

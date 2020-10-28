@@ -14,9 +14,9 @@ public:
 
 	void CallByType(EBuiltinFuncType funcType) override;
 
-	static void CallFromScript(asIScriptGeneric* gen);
+	static void CallFromScript(asIScriptGeneric* pGeneric);
 
-	asIScriptObject* scriptObject = nullptr;
+	asIScriptObject* m_pScriptObject = nullptr;
 
 private:
 	bool PrepareFunctionCall(const String& functionName) override;
@@ -26,10 +26,10 @@ private:
 	bool AddFunctionCallArg(float arg) override;
 	bool AddFunctionCallArg(double arg) override;
 	bool AddFunctionCallArg(bool arg) override;
-	bool AddFunctionCallArg(void* arg) override;
+	bool AddFunctionCallArg(void* pArg) override;
 	bool AddFunctionCallArg(const String& arg) override;
 
-	asIScriptContext* functionCallCtx = nullptr;
-	uint32_t numFunctionCallArgs = 0;
-	Array<const void*> functionCallStringArgs;
+	asIScriptContext* m_pFunctionCallCtx = nullptr;
+	uint32_t m_numFunctionCallArgs = 0;
+	Array<const void*> m_functionCallStringArgs;
 };
