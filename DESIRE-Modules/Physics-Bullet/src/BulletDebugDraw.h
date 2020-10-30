@@ -2,22 +2,21 @@
 
 #include "BulletVectormathExt.h"
 
-#include "Engine/Render/DebugDraw.h"
+#include "Engine/Core/String/String.h"
 
-#include "LinearMath/btIDebugDraw.h"
+#include "Engine/Render/DebugDraw.h"
 
 class BulletDebugDraw : public btIDebugDraw
 {
 public:
 	BulletDebugDraw(DebugDraw& debugDraw)
-		: debugDraw(debugDraw)
-		, debugMode(0)
+		: m_debugDraw(debugDraw)
 	{
 	}
 
 	void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override
 	{
-		debugDraw.AddLine(GetVector3(from), GetVector3(to), GetVector3(color));
+		m_debugDraw.AddLine(GetVector3(from), GetVector3(to), GetVector3(color));
 	}
 
 	void drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor) override
@@ -31,31 +30,31 @@ public:
 		DESIRE_UNUSED(normalOnB);
 		DESIRE_UNUSED(distance);
 		DESIRE_UNUSED(lifeTime);
-		debugDraw.AddPoint(GetVector3(PointOnB), 0.1f, GetVector3(color));
+		m_debugDraw.AddPoint(GetVector3(PointOnB), 0.1f, GetVector3(color));
 	}
 
-	void reportErrorWarning(const char* warningString) override
+	void reportErrorWarning(const char* pWarningString) override
 	{
-		LOG_ERROR("Bullet Error: %s", warningString);
+		LOG_ERROR("Bullet Error: %s", pWarningString);
 	}
 
-	void draw3dText(const btVector3& location, const char* textString) override
+	void draw3dText(const btVector3& location, const char* pTextString) override
 	{
-		debugDraw.AddText(GetVector3(location), textString);
+		m_debugDraw.AddText(GetVector3(location), String(pTextString, strlen(pTextString)));
 	}
 
-	void setDebugMode(int i_debugMode) override
+	void setDebugMode(int debugMode) override
 	{
-		debugMode = i_debugMode;
+		m_debugMode = debugMode;
 	}
 
 	int getDebugMode() const override
 	{
-		return debugMode;
+		return m_debugMode;
 	}
 
-	DebugDraw& debugDraw;
+	DebugDraw& m_debugDraw;
 
 private:
-	int debugMode;
+	int m_debugMode = 0;
 };

@@ -12,17 +12,17 @@
 
 BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	: PhysicsComponent(object)
-	, dynamic(dynamic)
+	, m_dynamic(dynamic)
 {
-	int* indices = nullptr;
-	float* vertices = nullptr;
+	int* pIndices = nullptr;
+	float* pVertices = nullptr;
 
 	uint32_t numIndices = 0;
 	uint32_t numVertices = 0;
 
 	int stride = 3;
 
-	btCollisionShape* collisionShape = nullptr;
+	btCollisionShape* pCollisionShape = nullptr;
 	btVector3 localInertia(0.0f, 0.0f, 0.0f);
 
 	if(dynamic)
@@ -30,92 +30,92 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 		AABB aabb(Vector3(FLT_MAX), Vector3(-FLT_MAX));
 		for(uint32_t i = 0; i < numVertices; i++)
 		{
-			aabb.AddPoint(Vector3(vertices[i * stride + 0], vertices[i * stride + 1], vertices[i * stride + 2]));
+			aabb.AddPoint(Vector3(pVertices[i * stride + 0], pVertices[i * stride + 1], pVertices[i * stride + 2]));
 		}
 
 		if(false)
 		{
-			collisionShape = new btBoxShape(GetBtVector3(aabb.GetSize() * 0.5f));
+			pCollisionShape = new btBoxShape(GetBtVector3(aabb.GetSize() * 0.5f));
 		}
 		else
 		{
 			const btVector3 cmassVec = GetBtVector3(aabb.GetCenter());
 
-			btConvexHullShape* convexHullShape = new btConvexHullShape();
+			btConvexHullShape* pConvexHullShape = new btConvexHullShape();
 			for(uint32_t i = 0; i < numIndices; ++i)
 			{
-				btVector3 v(vertices[indices[i] * stride], vertices[indices[i] * stride + 1], vertices[indices[i] * stride + 2]);
+				btVector3 v(pVertices[pIndices[i] * stride], pVertices[pIndices[i] * stride + 1], pVertices[pIndices[i] * stride + 2]);
 				v -= cmassVec;
-				convexHullShape->addPoint(v, false);
+				pConvexHullShape->addPoint(v, false);
 			}
-			convexHullShape->recalcLocalAabb();
+			pConvexHullShape->recalcLocalAabb();
 
-			collisionShape = convexHullShape;
+			pCollisionShape = pConvexHullShape;
 		}
 
-		collisionShape->calculateLocalInertia(10.0f, localInertia);
+		pCollisionShape->calculateLocalInertia(10.0f, localInertia);
 	}
 	else
 	{
 		btIndexedMesh mesh;
-		mesh.m_numTriangles = (int)numIndices / 3;
-		mesh.m_triangleIndexBase = (uint8_t*)indices;
+		mesh.m_numTriangles = static_cast<int>(numIndices) / 3;
+		mesh.m_triangleIndexBase = reinterpret_cast<uint8_t*>(pIndices);
 		mesh.m_triangleIndexStride = 3 * sizeof(int);
-		mesh.m_numVertices = (int)numVertices;
-		mesh.m_vertexBase = (uint8_t*)vertices;
-		mesh.m_vertexStride = (int)(stride * sizeof(float));
+		mesh.m_numVertices = static_cast<int>(numVertices);
+		mesh.m_vertexBase = reinterpret_cast<uint8_t*>(pVertices);
+		mesh.m_vertexStride = static_cast<int>(stride * sizeof(float));
 
-		triangleIndexVertexArrays = new btTriangleIndexVertexArray();
-		triangleIndexVertexArrays->addIndexedMesh(mesh);
+		m_pTriangleIndexVertexArrays = new btTriangleIndexVertexArray();
+		m_pTriangleIndexVertexArrays->addIndexedMesh(mesh);
 
-		btBvhTriangleMeshShape* trimeshShape = new btBvhTriangleMeshShape(triangleIndexVertexArrays, true);
-		btTriangleInfoMap* triangleInfoMap = new btTriangleInfoMap();
-		btGenerateInternalEdgeInfo(trimeshShape, triangleInfoMap);
+		btBvhTriangleMeshShape* pTrimeshShape = new btBvhTriangleMeshShape(m_pTriangleIndexVertexArrays, true);
+		btTriangleInfoMap* pTriangleInfoMap = new btTriangleInfoMap();
+		btGenerateInternalEdgeInfo(pTrimeshShape, pTriangleInfoMap);
 
-		collisionShape = trimeshShape;
+		pCollisionShape = pTrimeshShape;
 	}
 
-	motionState = new btDefaultMotionState();
-	btRigidBody::btRigidBodyConstructionInfo cInfo(0.0f, motionState, collisionShape, localInertia);
-	cInfo.m_friction = physicsMaterial.friction;
-	cInfo.m_restitution = physicsMaterial.bounciness;
-	body = new btRigidBody(cInfo);
-	body->setUserPointer(this);
+	m_pMotionState = new btDefaultMotionState();
+	btRigidBody::btRigidBodyConstructionInfo cInfo(0.0f, m_pMotionState, pCollisionShape, localInertia);
+	cInfo.m_friction = m_physicsMaterial.friction;
+	cInfo.m_restitution = m_physicsMaterial.bounciness;
+	m_pBody = new btRigidBody(cInfo);
+	m_pBody->setUserPointer(this);
 
-	btDynamicsWorld* world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
-	world->addRigidBody(body, 1 << (int)collisionLayer, Modules::Physics->GetMaskForCollisionLayer(collisionLayer));
+	btDynamicsWorld* pWorld = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
+	pWorld->addRigidBody(m_pBody, 1 << static_cast<int>(m_collisionLayer), Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer));
 
 	if(dynamic)
 	{
 		SetCollisionLayer(EPhysicsCollisionLayer::Dynamic);
-		body->setActivationState(ISLAND_SLEEPING);
+		m_pBody->setActivationState(ISLAND_SLEEPING);
 	}
 	else
 	{
 		SetCollisionLayer(EPhysicsCollisionLayer::Default);
-		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+		m_pBody->setCollisionFlags(m_pBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 	}
 }
 
 BulletPhysicsComponent::~BulletPhysicsComponent()
 {
-	btCollisionShape* collisionShape = body->getCollisionShape();
+	btCollisionShape* pCollisionShape = m_pBody->getCollisionShape();
 
-	btDynamicsWorld* world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
-	world->removeRigidBody(body);
-	delete body;
+	btDynamicsWorld* pWorld = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
+	pWorld->removeRigidBody(m_pBody);
+	delete m_pBody;
 
-	if(!dynamic)
+	if(!m_dynamic)
 	{
-		btBvhTriangleMeshShape* trimeshShape = static_cast<btBvhTriangleMeshShape*>(collisionShape);
-		btTriangleInfoMap* triangleInfoMap = trimeshShape->getTriangleInfoMap();
-		delete triangleInfoMap;
-		trimeshShape->setTriangleInfoMap(nullptr);
+		btBvhTriangleMeshShape* pTrimeshShape = static_cast<btBvhTriangleMeshShape*>(pCollisionShape);
+		btTriangleInfoMap* pTriangleInfoMap = pTrimeshShape->getTriangleInfoMap();
+		delete pTriangleInfoMap;
+		pTrimeshShape->setTriangleInfoMap(nullptr);
 	}
 
-	delete collisionShape;
-	delete motionState;
-	delete triangleIndexVertexArrays;
+	delete pCollisionShape;
+	delete m_pMotionState;
+	delete m_pTriangleIndexVertexArrays;
 }
 
 void BulletPhysicsComponent::SetEnabled(bool value)
@@ -126,25 +126,25 @@ void BulletPhysicsComponent::SetEnabled(bool value)
 	}
 
 	PhysicsComponent::SetEnabled(value);
-	body->forceActivationState(value ? ISLAND_SLEEPING : DISABLE_SIMULATION);
+	m_pBody->forceActivationState(value ? ISLAND_SLEEPING : DISABLE_SIMULATION);
 }
 
-void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
+void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer collisionLayer)
 {
-	collisionLayer = i_collisionLayer;
+	m_collisionLayer = collisionLayer;
 
-	if(collisionLayer == EPhysicsCollisionLayer::NoCollision)
+	if(m_collisionLayer == EPhysicsCollisionLayer::NoCollision)
 	{
-		body->forceActivationState(DISABLE_SIMULATION);
+		m_pBody->forceActivationState(DISABLE_SIMULATION);
 	}
-	else if(body->getActivationState() == DISABLE_SIMULATION)
+	else if(m_pBody->getActivationState() == DISABLE_SIMULATION)
 	{
-		body->forceActivationState(ISLAND_SLEEPING);
+		m_pBody->forceActivationState(ISLAND_SLEEPING);
 	}
 
-	btBroadphaseProxy* handle = body->getBroadphaseHandle();
-	handle->m_collisionFilterGroup = 1 << (int)collisionLayer;
-	handle->m_collisionFilterMask = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
+	btBroadphaseProxy* pHandle = m_pBody->getBroadphaseHandle();
+	pHandle->m_collisionFilterGroup = 1 << static_cast<int>(m_collisionLayer);
+	pHandle->m_collisionFilterMask = Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer);
 }
 
 void BulletPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode mode)
@@ -152,21 +152,21 @@ void BulletPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode m
 	switch(mode)
 	{
 		case ECollisionDetectionMode::Discrete:
-			body->setCcdMotionThreshold(0.0f);
-			body->setCcdSweptSphereRadius(0.0f);
+			m_pBody->setCcdMotionThreshold(0.0f);
+			m_pBody->setCcdSweptSphereRadius(0.0f);
 			break;
 
 		case ECollisionDetectionMode::Continuous:
 			// Enable CCD if the object moves more than 0.01 meter in one simulation frame
-			body->setCcdMotionThreshold(0.01);
-			body->setCcdSweptSphereRadius(0.5f);
+			m_pBody->setCcdMotionThreshold(0.01);
+			m_pBody->setCcdSweptSphereRadius(0.5f);
 			break;
 	}
 }
 
 PhysicsComponent::ECollisionDetectionMode BulletPhysicsComponent::GetCollisionDetectionMode() const
 {
-	return (body->getCcdMotionThreshold() > 0.0f) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
+	return (m_pBody->getCcdMotionThreshold() > 0.0f) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
 Array<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() const
@@ -178,7 +178,7 @@ Array<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() 
 
 void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
 {
-	int flags = body->getCollisionFlags();
+	int flags = m_pBody->getCollisionFlags();
 
 	// Remove flags
 	flags &= ~btCollisionObject::CF_KINEMATIC_OBJECT;
@@ -191,17 +191,17 @@ void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
 		case EBodyType::Kinematic:	flags |= btCollisionObject::CF_KINEMATIC_OBJECT; break;
 	}
 
-	body->setCollisionFlags(flags);
+	m_pBody->setCollisionFlags(flags);
 }
 
 PhysicsComponent::EBodyType BulletPhysicsComponent::GetBodyType() const
 {
-	if(body->isStaticObject())
+	if(m_pBody->isStaticObject())
 	{
 		return PhysicsComponent::EBodyType::Static;
 	}
 
-	if(body->isKinematicObject())
+	if(m_pBody->isKinematicObject())
 	{
 		return PhysicsComponent::EBodyType::Kinematic;
 	}
@@ -222,71 +222,71 @@ bool BulletPhysicsComponent::IsTrigger() const
 
 void BulletPhysicsComponent::SetMass(float mass)
 {
-	if(body->isStaticOrKinematicObject() == false)
+	if(m_pBody->isStaticOrKinematicObject() == false)
 	{
 		btVector3 localInertia;
-		body->getCollisionShape()->calculateLocalInertia(mass, localInertia);
-		body->setMassProps(mass, localInertia);
+		m_pBody->getCollisionShape()->calculateLocalInertia(mass, localInertia);
+		m_pBody->setMassProps(mass, localInertia);
 	}
 }
 
 float BulletPhysicsComponent::GetMass() const
 {
-	const float rv = body->getInvMass();
+	const float rv = m_pBody->getInvMass();
 	return (rv != 0.0f) ? 1.0f / rv : 0.0f;
 }
 
 Vector3 BulletPhysicsComponent::GetCenterOfMass() const
 {
-	return GetVector3(body->getCenterOfMassPosition());
+	return GetVector3(m_pBody->getCenterOfMassPosition());
 }
 
 void BulletPhysicsComponent::SetLinearDamping(float value)
 {
-	body->setDamping(value, body->getAngularDamping());
+	m_pBody->setDamping(value, m_pBody->getAngularDamping());
 }
 
 float BulletPhysicsComponent::GetLinearDamping() const
 {
-	return body->getLinearDamping();
+	return m_pBody->getLinearDamping();
 }
 
 void BulletPhysicsComponent::SetAngularDamping(float value)
 {
-	body->setDamping(body->getLinearDamping(), value);
+	m_pBody->setDamping(m_pBody->getLinearDamping(), value);
 }
 
 float BulletPhysicsComponent::GetAngularDamping() const
 {
-	return body->getAngularDamping();
+	return m_pBody->getAngularDamping();
 }
 
 void BulletPhysicsComponent::SetLinearVelocity(const Vector3& linearVelocity)
 {
-	body->setLinearVelocity(GetBtVector3(linearVelocity));
+	m_pBody->setLinearVelocity(GetBtVector3(linearVelocity));
 }
 
 Vector3 BulletPhysicsComponent::GetLinearVelocity() const
 {
-	return GetVector3(body->getLinearVelocity());
+	return GetVector3(m_pBody->getLinearVelocity());
 }
 
 void BulletPhysicsComponent::SetAngularVelocity(const Vector3& angularVelocity)
 {
-	body->setAngularVelocity(GetBtVector3(angularVelocity));
+	m_pBody->setAngularVelocity(GetBtVector3(angularVelocity));
 }
 
 Vector3 BulletPhysicsComponent::GetAngularVelocity() const
 {
-	return GetVector3(body->getAngularVelocity());
+	return GetVector3(m_pBody->getAngularVelocity());
 }
 
 void BulletPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::Force:		body->applyCentralForce(GetBtVector3(force)); break;
-		case EForceMode::Impulse:	body->applyCentralImpulse(GetBtVector3(force)); break;
+		case EForceMode::Force:		m_pBody->applyCentralForce(GetBtVector3(force)); break;
+		case EForceMode::Impulse:	m_pBody->applyCentralImpulse(GetBtVector3(force)); break;
 	}
 }
 
@@ -294,8 +294,8 @@ void BulletPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vect
 {
 	switch(mode)
 	{
-		case EForceMode::Force:		body->applyForce(GetBtVector3(force), GetBtVector3(position));
-		case EForceMode::Impulse:	body->applyImpulse(GetBtVector3(force), GetBtVector3(position));
+		case EForceMode::Force:		m_pBody->applyForce(GetBtVector3(force), GetBtVector3(position));
+		case EForceMode::Impulse:	m_pBody->applyImpulse(GetBtVector3(force), GetBtVector3(position));
 	}
 }
 
@@ -303,14 +303,14 @@ void BulletPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::Force:		body->applyTorque(GetBtVector3(torque)); break;
-		case EForceMode::Impulse:	body->applyTorqueImpulse(GetBtVector3(torque)); break;
+		case EForceMode::Force:		m_pBody->applyTorque(GetBtVector3(torque)); break;
+		case EForceMode::Impulse:	m_pBody->applyTorqueImpulse(GetBtVector3(torque)); break;
 	}
 }
 
 void BulletPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool axisZ)
 {
-	body->setLinearFactor(btVector3(
+	m_pBody->setLinearFactor(btVector3(
 		axisX ? 1.0f : 0.0f,
 		axisY ? 1.0f : 0.0f,
 		axisZ ? 1.0f : 0.0f
@@ -319,7 +319,7 @@ void BulletPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool ax
 
 void BulletPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool axisZ)
 {
-	body->setAngularFactor(btVector3(
+	m_pBody->setAngularFactor(btVector3(
 		axisX ? 1.0f : 0.0f,
 		axisY ? 1.0f : 0.0f,
 		axisZ ? 1.0f : 0.0f
@@ -328,13 +328,13 @@ void BulletPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool a
 
 bool BulletPhysicsComponent::IsSleeping() const
 {
-	return (body->getActivationState() == ISLAND_SLEEPING);
+	return (m_pBody->getActivationState() == ISLAND_SLEEPING);
 }
 
 void BulletPhysicsComponent::UpdateGameObjectTransform() const
 {
 	Transform& transform = object.GetTransform();
-	const btTransform& btTransform = body->getWorldTransform();
+	const btTransform& btTransform = m_pBody->getWorldTransform();
 	transform.SetPosition(GetVector3(btTransform.getOrigin()));
 	transform.SetRotation(GetQuat(btTransform.getRotation()));
 
@@ -343,7 +343,7 @@ void BulletPhysicsComponent::UpdateGameObjectTransform() const
 void BulletPhysicsComponent::SetTransformFromGameObject()
 {
 	const Transform& transform = object.GetTransform();
-	btTransform& btTransform = body->getWorldTransform();
+	btTransform& btTransform = m_pBody->getWorldTransform();
 	btTransform.setOrigin(GetBtVector3(transform.GetPosition()));
 	btTransform.setRotation(GetBtQuat(transform.GetRotation()));
 }

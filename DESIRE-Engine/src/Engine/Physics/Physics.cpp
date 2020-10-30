@@ -6,9 +6,9 @@
 Physics::Physics()
 {
 	// Setup collision masks
-	for(size_t i = 0; i < DESIRE_ASIZEOF(collisionMasks); i++)
+	for(size_t i = 0; i < DESIRE_ASIZEOF(m_collisionMasks); i++)
 	{
-		collisionMasks[i] = MASK_ALL;
+		m_collisionMasks[i] = MASK_ALL;
 
 		SetCollisionEnabled((EPhysicsCollisionLayer)i, EPhysicsCollisionLayer::Wheel, false);
 		SetCollisionEnabled((EPhysicsCollisionLayer)i, EPhysicsCollisionLayer::NoCollision, false);
@@ -20,24 +20,24 @@ Physics::~Physics()
 {
 }
 
-void Physics::OnPhysicsComponentCreated(PhysicsComponent* component)
+void Physics::OnPhysicsComponentCreated(PhysicsComponent* pPhysicsComponent)
 {
-	components.Add(component);
+	m_components.Add(pPhysicsComponent);
 }
 
-void Physics::OnPhysicsComponentDestroyed(PhysicsComponent* component)
+void Physics::OnPhysicsComponentDestroyed(PhysicsComponent* pPhysicsComponent)
 {
-	components.RemoveFast(component);
+	m_components.RemoveFast(pPhysicsComponent);
 }
 
 void Physics::SetFixedStepTime(float stepTime)
 {
-	fixedStepTime = stepTime;
+	m_fixedStepTime = stepTime;
 }
 
 float Physics::GetFixedStepTime() const
 {
-	return fixedStepTime;
+	return m_fixedStepTime;
 }
 
 void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLayer b, bool enabled)
@@ -45,42 +45,42 @@ void Physics::SetCollisionEnabled(EPhysicsCollisionLayer a, EPhysicsCollisionLay
 	ASSERT(a < EPhysicsCollisionLayer::Num);
 	ASSERT(b < EPhysicsCollisionLayer::Num);
 
-	const int layerA = (int)a;
-	const int layerB = (int)b;
+	const int layerA = static_cast<int>(a);
+	const int layerB = static_cast<int>(b);
 
 	if(enabled)
 	{
-		collisionMasks[layerA] |= (1 << layerB);
-		collisionMasks[layerB] |= (1 << layerA);
+		m_collisionMasks[layerA] |= (1 << layerB);
+		m_collisionMasks[layerB] |= (1 << layerA);
 	}
 	else
 	{
-		collisionMasks[layerA] &= ~(1 << layerB);
-		collisionMasks[layerB] &= ~(1 << layerA);
+		m_collisionMasks[layerA] &= ~(1 << layerB);
+		m_collisionMasks[layerB] &= ~(1 << layerA);
 	}
 
 	// Force refresh collision layer to apply changes in collision matrix
-	for(PhysicsComponent* component : components)
+	for(PhysicsComponent* pPhysicsComponent : m_components)
 	{
-		component->SetCollisionLayer(component->GetCollisionLayer());
+		pPhysicsComponent->SetCollisionLayer(pPhysicsComponent->GetCollisionLayer());
 	}
 }
 
 int Physics::GetMaskForCollisionLayer(EPhysicsCollisionLayer layer) const
 {
 	ASSERT(layer < EPhysicsCollisionLayer::Num);
-	return collisionMasks[(size_t)layer];
+	return m_collisionMasks[(size_t)layer];
 }
 
 void Physics::UpdateComponents()
 {
-	for(PhysicsComponent* component : components)
+	for(PhysicsComponent* pPhysicsComponent : m_components)
 	{
-		switch(component->GetBodyType())
+		switch(pPhysicsComponent->GetBodyType())
 		{
 			case PhysicsComponent::EBodyType::Static:		break;
-			case PhysicsComponent::EBodyType::Dynamic:		component->UpdateGameObjectTransform(); break;
-			case PhysicsComponent::EBodyType::Kinematic:	component->SetTransformFromGameObject(); break;
+			case PhysicsComponent::EBodyType::Dynamic:		pPhysicsComponent->UpdateGameObjectTransform(); break;
+			case PhysicsComponent::EBodyType::Kinematic:	pPhysicsComponent->SetTransformFromGameObject(); break;
 		}
 	}
 }

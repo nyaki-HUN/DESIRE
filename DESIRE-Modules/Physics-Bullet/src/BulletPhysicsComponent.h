@@ -60,9 +60,9 @@ public:
 	void SetTransformFromGameObject() override;
 
 private:
-	btRigidBody* body = nullptr;
-	btDefaultMotionState* motionState = nullptr;
-	btTriangleIndexVertexArray* triangleIndexVertexArrays = nullptr;
+	btRigidBody* m_pBody = nullptr;
+	btDefaultMotionState* m_pMotionState = nullptr;
+	btTriangleIndexVertexArray* m_pTriangleIndexVertexArrays = nullptr;
 
-	bool dynamic = false;
+	bool m_dynamic = false;
 };

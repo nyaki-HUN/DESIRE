@@ -3,17 +3,17 @@
 
 #include "Engine/Core/Memory/MemorySystem.h"
 
-void* PhysXCustomAllocator::allocate(size_t size, const char* typeName, const char* filename, int line)
+void* PhysXCustomAllocator::allocate(size_t size, const char* pTypeName, const char* pFilename, int line)
 {
-	DESIRE_UNUSED(typeName);
-	DESIRE_UNUSED(filename);
+	DESIRE_UNUSED(pTypeName);
+	DESIRE_UNUSED(pFilename);
 	DESIRE_UNUSED(line);
 
 	// 16-byte alignment is required by the SDK
 	return MemorySystem::Alloc(size, 16);
 }
 
-void PhysXCustomAllocator::deallocate(void* ptr)
+void PhysXCustomAllocator::deallocate(void* pMemory)
 {
-	MemorySystem::Free(ptr);
+	MemorySystem::Free(pMemory);
 }

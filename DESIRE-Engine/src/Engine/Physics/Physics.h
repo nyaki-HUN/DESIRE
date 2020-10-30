@@ -23,10 +23,10 @@ public:
 	enum EPhysicsCollisionLayerMask
 	{
 		MASK_NONE				= 0,
-		MASK_DEFAULT			= 1 << (int)EPhysicsCollisionLayer::Default,
-		MASK_DYNAMIC			= 1 << (int)EPhysicsCollisionLayer::Dynamic,
-		MASK_WHEEL				= 1 << (int)EPhysicsCollisionLayer::Wheel,
-		MASK_NO_COLLISION		= 1 << (int)EPhysicsCollisionLayer::NoCollision,
+		MASK_DEFAULT			= 1 << static_cast<int>(EPhysicsCollisionLayer::Default),
+		MASK_DYNAMIC			= 1 << static_cast<int>(EPhysicsCollisionLayer::Dynamic),
+		MASK_WHEEL				= 1 << static_cast<int>(EPhysicsCollisionLayer::Wheel),
+		MASK_NO_COLLISION		= 1 << static_cast<int>(EPhysicsCollisionLayer::NoCollision),
 		MASK_ALL				= 0xFFFFFFFF
 	};
 
@@ -37,8 +37,8 @@ public:
 
 	virtual PhysicsComponent& CreatePhysicsComponentOnObject(Object& object) = 0;
 
-	void OnPhysicsComponentCreated(PhysicsComponent* component);
-	void OnPhysicsComponentDestroyed(PhysicsComponent* component);
+	void OnPhysicsComponentCreated(PhysicsComponent* pPhysicsComponent);
+	void OnPhysicsComponentDestroyed(PhysicsComponent* pPhysicsComponent);
 
 	void SetFixedStepTime(float stepTime);
 	float GetFixedStepTime() const;
@@ -56,7 +56,7 @@ public:
 protected:
 	void UpdateComponents();
 
-	Array<PhysicsComponent*> components;
-	int collisionMasks[(size_t)EPhysicsCollisionLayer::Num];
-	float fixedStepTime = 1.0f / 60.0f;
+	Array<PhysicsComponent*> m_components;
+	int m_collisionMasks[(size_t)EPhysicsCollisionLayer::Num];
+	float m_fixedStepTime = 1.0f / 60.0f;
 };

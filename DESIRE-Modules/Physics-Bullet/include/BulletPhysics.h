@@ -31,13 +31,13 @@ public:
 	btDynamicsWorld* GetWorld() const;
 
 private:
-	std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld;
-	std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
-	std::unique_ptr<btCollisionDispatcher> dispatcher;
-	std::unique_ptr<btAxisSweep3> broadphase;
-	std::unique_ptr<btSequentialImpulseConstraintSolver> constraintSolver;
+	std::unique_ptr<btDiscreteDynamicsWorld> m_spDynamicsWorld;
+	std::unique_ptr<btDefaultCollisionConfiguration> m_spCollisionConfiguration;
+	std::unique_ptr<btCollisionDispatcher> m_spDispatcher;
+	std::unique_ptr<btAxisSweep3> m_spBroadphase;
+	std::unique_ptr<btSequentialImpulseConstraintSolver> m_spConstraintSolver;
 
-	std::unique_ptr<BulletDebugDraw> bulletDebugDraw;
+	std::unique_ptr<BulletDebugDraw> m_spBulletDebugDraw;
 
 	friend BulletCallbacks;
 };

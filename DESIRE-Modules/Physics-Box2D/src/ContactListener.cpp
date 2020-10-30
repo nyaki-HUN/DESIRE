@@ -3,40 +3,40 @@
 
 #include "Box2DPhysics.h"
 
-void ContactListener::BeginContact(b2Contact* contact)
+void ContactListener::BeginContact(b2Contact* pContact)
 {
-	Array<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsBegin;
-	Collision& collision = contacts.EmplaceAdd();
-	FillCollisionFromContact(collision, contact);
+	Array<Collision>& pContacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsBegin;
+	Collision& collision = pContacts.EmplaceAdd();
+	FillCollisionFromContact(collision, pContact);
 }
 
-void ContactListener::EndContact(b2Contact* contact)
+void ContactListener::EndContact(b2Contact* pContact)
 {
-	Array<Collision>& contacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsEnd;
-	Collision& collision = contacts.EmplaceAdd();
-	FillCollisionFromContact(collision, contact);
+	Array<Collision>& pContacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsEnd;
+	Collision& collision = pContacts.EmplaceAdd();
+	FillCollisionFromContact(collision, pContact);
 }
 
-void ContactListener::PreSolve(b2Contact* contact, const b2Manifold* oldManifold)
-{
-}
-
-void ContactListener::PostSolve(b2Contact* contact, const b2ContactImpulse* impulse)
+void ContactListener::PreSolve(b2Contact* pContact, const b2Manifold* oldManifold)
 {
 }
 
-void ContactListener::FillCollisionFromContact(Collision& collision, const b2Contact* contact)
+void ContactListener::PostSolve(b2Contact* pContact, const b2ContactImpulse* impulse)
 {
-	const b2Fixture* fixtureA = contact->GetFixtureA();
-	const b2Fixture* fixtureB = contact->GetFixtureB();
+}
 
-	collision.component = static_cast<PhysicsComponent*>(fixtureA->GetUserData());
-	collision.incomingComponent = static_cast<PhysicsComponent*>(fixtureB->GetUserData());
+void ContactListener::FillCollisionFromContact(Collision& collision, const b2Contact* pContact)
+{
+	const b2Fixture* pFixtureA = pContact->GetFixtureA();
+	const b2Fixture* pFixtureB = pContact->GetFixtureB();
+
+	collision.pComponent = static_cast<PhysicsComponent*>(pFixtureA->GetUserData());
+	collision.pIncomingComponent = static_cast<PhysicsComponent*>(pFixtureB->GetUserData());
 
 	b2WorldManifold worldManifold;
-	contact->GetWorldManifold(&worldManifold);
+	pContact->GetWorldManifold(&worldManifold);
 
-	collision.pointCount = std::min(contact->GetManifold()->pointCount, Collision::kMaxContactPoints);
+	collision.pointCount = std::min(pContact->GetManifold()->pointCount, Collision::kMaxContactPoints);
 	for(int i = 0; i < collision.pointCount; ++i)
 	{
 		collision.contactPoints[i] = Vector3(worldManifold.points[i].x, worldManifold.points[i].y, 0.0f);

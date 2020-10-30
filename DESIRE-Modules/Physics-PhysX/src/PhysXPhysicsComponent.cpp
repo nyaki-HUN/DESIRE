@@ -24,26 +24,26 @@ void PhysXPhysicsComponent::SetEnabled(bool value)
 	}
 
 	PhysicsComponent::SetEnabled(value);
-	body->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, value);
+	m_pBody->setActorFlag(physx::PxActorFlag::eDISABLE_SIMULATION, value);
 }
 
-void PhysXPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer i_collisionLayer)
+void PhysXPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer collisionLayer)
 {
-	collisionLayer = i_collisionLayer;
+	m_collisionLayer = collisionLayer;
 
 	physx::PxFilterData filterData;
-	filterData.word0 = 1 << (int)collisionLayer;
+	filterData.word0 = 1 << static_cast<int>(collisionLayer);
 	filterData.word1 = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
 void PhysXPhysicsComponent::SetCollisionDetectionMode(ECollisionDetectionMode mode)
 {
-	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, (mode == ECollisionDetectionMode::Continuous));
+	m_pBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, (mode == ECollisionDetectionMode::Continuous));
 }
 
 PhysicsComponent::ECollisionDetectionMode PhysXPhysicsComponent::GetCollisionDetectionMode() const
 {
-	return (body->getRigidBodyFlags() & physx::PxRigidBodyFlag::eENABLE_CCD) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
+	return (m_pBody->getRigidBodyFlags() & physx::PxRigidBodyFlag::eENABLE_CCD) ? ECollisionDetectionMode::Continuous : ECollisionDetectionMode::Discrete;
 }
 
 Array<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponents() const
@@ -53,25 +53,25 @@ Array<PhysicsComponent*> PhysXPhysicsComponent::GetActiveCollidingComponents() c
 	return collisions;
 }
 
-void PhysXPhysicsComponent::SetBodyType(EBodyType bodyType)
+void PhysXPhysicsComponent::SetBodyType(EBodyType m_pBodyType)
 {
-	switch(bodyType)
+	switch(m_pBodyType)
 	{
 		case EBodyType::Static:		ASSERT(false && "TODO");  break;
-		case EBodyType::Dynamic:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false); break;
-		case EBodyType::Kinematic:	body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true); break;
+		case EBodyType::Dynamic:	m_pBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, false); break;
+		case EBodyType::Kinematic:	m_pBody->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true); break;
 	}
 }
 
 PhysicsComponent::EBodyType PhysXPhysicsComponent::GetBodyType() const
 {
-	const physx::PxRigidBodyFlags flags = body->getRigidBodyFlags();
+	const physx::PxRigidBodyFlags flags = m_pBody->getRigidBodyFlags();
 	if(flags.isSet(physx::PxRigidBodyFlag::eKINEMATIC))
 	{
 		return PhysicsComponent::EBodyType::Kinematic;
 	}
 
-	if(dynamicBody != nullptr)
+	if(m_pDynamicBody != nullptr)
 	{
 		PhysicsComponent::EBodyType::Dynamic;
 	}
@@ -92,73 +92,73 @@ bool PhysXPhysicsComponent::IsTrigger() const
 
 void PhysXPhysicsComponent::SetMass(float mass)
 {
-	return body->setMass(mass);
+	return m_pBody->setMass(mass);
 }
 
 float PhysXPhysicsComponent::GetMass() const
 {
-	return body->getMass();
+	return m_pBody->getMass();
 }
 
 Vector3 PhysXPhysicsComponent::GetCenterOfMass() const
 {
-	body->getCMassLocalPose();
+	m_pBody->getCMassLocalPose();
 	ASSERT(false && "TODO");
 	return Vector3::Zero();
 }
 
 void PhysXPhysicsComponent::SetLinearDamping(float value)
 {
-	if(dynamicBody != nullptr)
+	if(m_pDynamicBody != nullptr)
 	{
-		dynamicBody->setLinearDamping(value);
+		m_pDynamicBody->setLinearDamping(value);
 	}
 }
 
 float PhysXPhysicsComponent::GetLinearDamping() const
 {
-	return (dynamicBody != nullptr) ? dynamicBody->getLinearDamping() : 0.0f;
+	return (m_pDynamicBody != nullptr) ? m_pDynamicBody->getLinearDamping() : 0.0f;
 }
 
 void PhysXPhysicsComponent::SetAngularDamping(float value)
 {
-	if(dynamicBody != nullptr)
+	if(m_pDynamicBody != nullptr)
 	{
-		dynamicBody->setAngularDamping(value);
+		m_pDynamicBody->setAngularDamping(value);
 	}
 }
 
 float PhysXPhysicsComponent::GetAngularDamping() const
 {
-	return (dynamicBody != nullptr) ? dynamicBody->getAngularDamping() : 0.0f;
+	return (m_pDynamicBody != nullptr) ? m_pDynamicBody->getAngularDamping() : 0.0f;
 }
 
 void PhysXPhysicsComponent::SetLinearVelocity(const Vector3& linearVelocity)
 {
-	body->setLinearVelocity(GetPxVec3(linearVelocity));
+	m_pBody->setLinearVelocity(GetPxVec3(linearVelocity));
 }
 
 Vector3 PhysXPhysicsComponent::GetLinearVelocity() const
 {
-	return GetVector3(body->getLinearVelocity());
+	return GetVector3(m_pBody->getLinearVelocity());
 }
 
 void PhysXPhysicsComponent::SetAngularVelocity(const Vector3& angularVelocity)
 {
-	body->setAngularVelocity(GetPxVec3(angularVelocity));
+	m_pBody->setAngularVelocity(GetPxVec3(angularVelocity));
 }
 
 Vector3 PhysXPhysicsComponent::GetAngularVelocity() const
 {
-	return GetVector3(body->getAngularVelocity());
+	return GetVector3(m_pBody->getAngularVelocity());
 }
 
 void PhysXPhysicsComponent::AddForce(const Vector3& force, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::Force:		body->addForce(GetPxVec3(force), physx::PxForceMode::eFORCE); break;
-		case EForceMode::Impulse:	body->addForce(GetPxVec3(force), physx::PxForceMode::eIMPULSE); break;
+		case EForceMode::Force:		m_pBody->addForce(GetPxVec3(force), physx::PxForceMode::eFORCE); break;
+		case EForceMode::Impulse:	m_pBody->addForce(GetPxVec3(force), physx::PxForceMode::eIMPULSE); break;
 	}
 }
 
@@ -166,8 +166,8 @@ void PhysXPhysicsComponent::AddForceAtPosition(const Vector3& force, const Vecto
 {
 	switch(mode)
 	{
-		case EForceMode::Force:		physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eFORCE);
-		case EForceMode::Impulse:	physx::PxRigidBodyExt::addForceAtPos(*body, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eIMPULSE);
+		case EForceMode::Force:		physx::PxRigidBodyExt::addForceAtPos(*m_pBody, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eFORCE); break;
+		case EForceMode::Impulse:	physx::PxRigidBodyExt::addForceAtPos(*m_pBody, GetPxVec3(force), GetPxVec3(position), physx::PxForceMode::eIMPULSE); break;
 	}
 }
 
@@ -175,40 +175,40 @@ void PhysXPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 {
 	switch(mode)
 	{
-		case EForceMode::Force:		body->addTorque(GetPxVec3(torque), physx::PxForceMode::eFORCE); break;
-		case EForceMode::Impulse:	body->addTorque(GetPxVec3(torque), physx::PxForceMode::eIMPULSE); break;
+		case EForceMode::Force:		m_pBody->addTorque(GetPxVec3(torque), physx::PxForceMode::eFORCE); break;
+		case EForceMode::Impulse:	m_pBody->addTorque(GetPxVec3(torque), physx::PxForceMode::eIMPULSE); break;
 	}
 }
 
 void PhysXPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool axisZ)
 {
-	if(dynamicBody != nullptr)
+	if(m_pDynamicBody != nullptr)
 	{
-		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, axisX);
-		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, axisY);
-		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, axisZ);
+		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, axisX);
+		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, axisY);
+		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Z, axisZ);
 	}
 }
 
 void PhysXPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool axisZ)
 {
-	if(dynamicBody != nullptr)
+	if(m_pDynamicBody != nullptr)
 	{
-		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, axisX);
-		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, axisY);
-		dynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, axisZ);
+		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, axisX);
+		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, axisY);
+		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, axisZ);
 	}
 }
 
 bool PhysXPhysicsComponent::IsSleeping() const
 {
-	return (dynamicBody != nullptr) ? dynamicBody->isSleeping() : true;
+	return (m_pDynamicBody != nullptr) ? m_pDynamicBody->isSleeping() : true;
 }
 
 void PhysXPhysicsComponent::UpdateGameObjectTransform() const
 {
 	Transform& transform = object.GetTransform();
-	const physx::PxTransform pxTransform = body->getGlobalPose();
+	const physx::PxTransform pxTransform = m_pBody->getGlobalPose();
 	transform.SetPosition(GetVector3(pxTransform.p));
 	transform.SetRotation(GetQuat(pxTransform.q));
 }
@@ -216,8 +216,8 @@ void PhysXPhysicsComponent::UpdateGameObjectTransform() const
 void PhysXPhysicsComponent::SetTransformFromGameObject()
 {
 	const Transform& transform = object.GetTransform();
-	physx::PxTransform pxTransform = body->getGlobalPose();
+	physx::PxTransform pxTransform = m_pBody->getGlobalPose();
 	pxTransform.p = GetPxVec3(transform.GetPosition());
 	pxTransform.q = GetPxQuat(transform.GetRotation());
-	body->setGlobalPose(pxTransform);
+	m_pBody->setGlobalPose(pxTransform);
 }

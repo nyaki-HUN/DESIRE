@@ -30,13 +30,13 @@ public:
 	Array<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
 
 private:
-	physx::PxFoundation* foundation = nullptr;
-	physx::PxPhysics* physics = nullptr;
-	physx::PxCooking* cooking = nullptr;
-	physx::PxScene* scene = nullptr;
+	physx::PxFoundation* m_pFoundation = nullptr;
+	physx::PxPhysics* m_pPhysics = nullptr;
+	physx::PxCooking* m_pCooking = nullptr;
+	physx::PxScene* m_pScene = nullptr;
 
-	std::unique_ptr<physx::PxAllocatorCallback> allocator;
-	std::unique_ptr<physx::PxErrorCallback> errorCallback;
+	std::unique_ptr<physx::PxAllocatorCallback> m_spAllocator;
+	std::unique_ptr<physx::PxErrorCallback> m_spErrorCallback;
 
-	float fixedUpdateTimeAccumulator = 0.0f;
+	float m_fixedUpdateTimeAccumulator = 0.0f;
 };

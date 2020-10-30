@@ -36,46 +36,46 @@ Box2DPhysics::Box2DPhysics()
 	contactsBegin.Reserve(32);
 	contactsEnd.Reserve(32);
 
-	contactListener = new ContactListener();
-	destructorListener = new DestructorListener();
+	m_pContactListener = new ContactListener();
+	m_pDestructorListener = new DestructorListener();
 
 	b2Vec2 gravity(0.0f, -9.8f);
-	world = new b2World(gravity);
-	world->SetContinuousPhysics(true);
-	world->SetContactListener(contactListener);
-	world->SetDestructionListener(destructorListener);
+	m_pWorld = new b2World(gravity);
+	m_pWorld->SetContinuousPhysics(true);
+	m_pWorld->SetContactListener(m_pContactListener);
+	m_pWorld->SetDestructionListener(m_pDestructorListener);
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2BodyType::b2_dynamicBody;
-	worldBody = world->CreateBody(&bodyDef);
+	m_pWorldBody = m_pWorld->CreateBody(&bodyDef);
 }
 
 Box2DPhysics::~Box2DPhysics()
 {
-	world->DestroyBody(worldBody);
-	worldBody = nullptr;
+	m_pWorld->DestroyBody(m_pWorldBody);
+	m_pWorldBody = nullptr;
 
-	delete world;
-	world = nullptr;
+	delete m_pWorld;
+	m_pWorld = nullptr;
 
-	delete destructorListener;
-	destructorListener = nullptr;
+	delete m_pDestructorListener;
+	m_pDestructorListener = nullptr;
 
-	delete contactListener;
-	contactListener = nullptr;
+	delete m_pContactListener;
+	m_pContactListener = nullptr;
 }
 
 void Box2DPhysics::Update(float deltaTime)
 {
-	fixedUpdateTimeAccumulator += deltaTime;
-	while(fixedUpdateTimeAccumulator >= fixedStepTime)
+	m_fixedUpdateTimeAccumulator += deltaTime;
+	while(m_fixedUpdateTimeAccumulator >= m_fixedStepTime)
 	{
-		fixedUpdateTimeAccumulator -= fixedStepTime;
+		m_fixedUpdateTimeAccumulator -= m_fixedStepTime;
 
 		contactsBegin.Clear();
 		contactsEnd.Clear();
 
-		world->Step(fixedStepTime, velocityIterations, positionIterations);
+		m_pWorld->Step(m_fixedStepTime, m_velocityIterations, m_positionIterations);
 
 		HandleCollisionEnds();
 		HandleCollisionBegins();
@@ -92,12 +92,12 @@ PhysicsComponent& Box2DPhysics::CreatePhysicsComponentOnObject(Object& object)
 
 void Box2DPhysics::SetGravity(const Vector3& gravity)
 {
-	world->SetGravity(b2Vec2(gravity.GetX(), gravity.GetY()));
+	m_pWorld->SetGravity(b2Vec2(gravity.GetX(), gravity.GetY()));
 }
 
 Vector3 Box2DPhysics::GetGravity() const
 {
-	const b2Vec2& gravity = world->GetGravity();
+	const b2Vec2& gravity = m_pWorld->GetGravity();
 	return Vector3(gravity.x, gravity.y, 0.0f);
 }
 
@@ -106,7 +106,7 @@ Collision Box2DPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int
 	const std::pair<b2Vec2, b2Vec2> ray = GetValidRay(p1, p2);
 
 	RaycastClosestCallback callback(layerMask);
-	world->RayCast(&callback, ray.first, ray.second);
+	m_pWorld->RayCast(&callback, ray.first, ray.second);
 
 	return callback.collision;
 }
@@ -116,7 +116,7 @@ bool Box2DPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMas
 	const std::pair<b2Vec2, b2Vec2> ray = GetValidRay(p1, p2);
 
 	RaycastAnyCallback callback(layerMask);
-	world->RayCast(&callback, ray.first, ray.second);
+	m_pWorld->RayCast(&callback, ray.first, ray.second);
 
 	return callback.hasHit;
 }
@@ -126,80 +126,80 @@ Array<Collision> Box2DPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, 
 	const std::pair<b2Vec2, b2Vec2> ray = GetValidRay(p1, p2);
 
 	RaycastAllCallback callback(layerMask);
-	world->RayCast(&callback, ray.first, ray.second);
+	m_pWorld->RayCast(&callback, ray.first, ray.second);
 
 	return callback.collisions;
 }
 
 void Box2DPhysics::SetVelocityIterations(int iterations)
 {
-	velocityIterations = iterations;
+	m_velocityIterations = iterations;
 }
 
 int Box2DPhysics::GetVelocityIterations() const
 {
-	return velocityIterations;
+	return m_velocityIterations;
 }
 
 void Box2DPhysics::SetPositionIterations(int iterations)
 {
-	positionIterations = iterations;
+	m_positionIterations = iterations;
 }
 
 int Box2DPhysics::GetPositionIterations() const
 {
-	return positionIterations;
+	return m_positionIterations;
 }
 
 b2World* Box2DPhysics::GetWorld() const
 {
-	return world;
+	return m_pWorld;
 }
 
 b2Body* Box2DPhysics::GetWorldBody() const
 {
-	return worldBody;
+	return m_pWorldBody;
 }
 
 void Box2DPhysics::HandleCollisionBegins()
 {
 	for(Collision& collision : contactsBegin)
 	{
-		if(collision.component->IsTrigger() || collision.incomingComponent->IsTrigger())
+		if(collision.pComponent->IsTrigger() || collision.pIncomingComponent->IsTrigger())
 		{
 			// Trigger event (only sent to triggers)
-			if(collision.component->IsTrigger())
+			if(collision.pComponent->IsTrigger())
 			{
-				ScriptComponent* scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				ScriptComponent* pScriptComponent = collision.pComponent->GetObject().GetComponent<ScriptComponent>();
+				if(pScriptComponent != nullptr)
 				{
-					scriptComponent->Call("OnTriggerEnter", collision.incomingComponent);
+					pScriptComponent->Call("OnTriggerEnter", collision.pIncomingComponent);
 				}
 			}
 
-			if(collision.incomingComponent->IsTrigger())
+			if(collision.pIncomingComponent->IsTrigger())
 			{
-				ScriptComponent* scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				ScriptComponent* pScriptComponent = collision.pIncomingComponent->GetObject().GetComponent<ScriptComponent>();
+				if(pScriptComponent != nullptr)
 				{
-					scriptComponent->Call("OnTriggerEnter", collision.component);
+					pScriptComponent->Call("OnTriggerEnter", collision.pComponent);
 				}
 			}
 		}
 		else
 		{
 			// Collision event (sent to both components)
-			ScriptComponent* scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			ScriptComponent* pScriptComponent = collision.pComponent->GetObject().GetComponent<ScriptComponent>();
+			if(pScriptComponent != nullptr)
 			{
-				scriptComponent->Call("OnCollisionEnter", &collision);
+				pScriptComponent->Call("OnCollisionEnter", &collision);
 			}
 
-			scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			pScriptComponent = collision.pIncomingComponent->GetObject().GetComponent<ScriptComponent>();
+			if(pScriptComponent != nullptr)
 			{
-				std::swap(collision.component, collision.incomingComponent);
-				scriptComponent->Call("OnCollisionEnter", &collision);
+				std::swap(collision.pComponent, collision.pIncomingComponent);
+				pScriptComponent->Call("OnCollisionEnter", &collision);
 			}
 		}
 	}
@@ -209,41 +209,41 @@ void Box2DPhysics::HandleCollisionEnds()
 {
 	for(Collision& collision : contactsEnd)
 	{
-		if(collision.component->IsTrigger() || collision.incomingComponent->IsTrigger())
+		if(collision.pComponent->IsTrigger() || collision.pIncomingComponent->IsTrigger())
 		{
 			// Trigger event (only sent to triggers)
-			if(collision.component->IsTrigger())
+			if(collision.pComponent->IsTrigger())
 			{
-				ScriptComponent* scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				ScriptComponent* pScriptComponent = collision.pComponent->GetObject().GetComponent<ScriptComponent>();
+				if(pScriptComponent != nullptr)
 				{
-					scriptComponent->Call("OnTriggerExit", collision.incomingComponent);
+					pScriptComponent->Call("OnTriggerExit", collision.pIncomingComponent);
 				}
 			}
 
-			if(collision.incomingComponent->IsTrigger())
+			if(collision.pIncomingComponent->IsTrigger())
 			{
-				ScriptComponent* scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-				if(scriptComponent != nullptr)
+				ScriptComponent* pScriptComponent = collision.pIncomingComponent->GetObject().GetComponent<ScriptComponent>();
+				if(pScriptComponent != nullptr)
 				{
-					scriptComponent->Call("OnTriggerExit", collision.component);
+					pScriptComponent->Call("OnTriggerExit", collision.pComponent);
 				}
 			}
 		}
 		else
 		{
 			// Collision event (sent to both components)
-			ScriptComponent* scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			ScriptComponent* pScriptComponent = collision.pComponent->GetObject().GetComponent<ScriptComponent>();
+			if(pScriptComponent != nullptr)
 			{
-				scriptComponent->Call("OnCollisionExit", &collision);
+				pScriptComponent->Call("OnCollisionExit", &collision);
 			}
 
-			scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-			if(scriptComponent != nullptr)
+			pScriptComponent = collision.pIncomingComponent->GetObject().GetComponent<ScriptComponent>();
+			if(pScriptComponent != nullptr)
 			{
-				std::swap(collision.component, collision.incomingComponent);
-				scriptComponent->Call("OnCollisionExit", &collision);
+				std::swap(collision.pComponent, collision.pIncomingComponent);
+				pScriptComponent->Call("OnCollisionExit", &collision);
 			}
 		}
 	}

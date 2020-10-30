@@ -13,15 +13,15 @@ uint32_t TaskManager::AddTask(std::function<void()> task, bool toFront)
 {
 	ASSERT(task != nullptr);
 
-	std::lock_guard<std::mutex> lock(taskQueueMutex);
-	const uint32_t taskId = taskUniqueId++;
+	std::lock_guard<std::mutex> lock(m_taskQueueMutex);
+	const uint32_t taskId = m_taskUniqueId++;
 	if(toFront)
 	{
-		taskQueue.emplace_front(taskId, task);
+		m_taskQueue.emplace_front(taskId, task);
 	}
 	else
 	{
-		taskQueue.emplace_back(taskId, task);
+		m_taskQueue.emplace_back(taskId, task);
 	}
 
 	return taskId;
@@ -29,12 +29,12 @@ uint32_t TaskManager::AddTask(std::function<void()> task, bool toFront)
 
 void TaskManager::CancelTask(uint32_t taskId)
 {
-	std::lock_guard<std::mutex> lock(taskQueueMutex);
-	for(auto it = taskQueue.begin(); it != taskQueue.end(); ++it)
+	std::lock_guard<std::mutex> lock(m_taskQueueMutex);
+	for(auto it = m_taskQueue.begin(); it != m_taskQueue.end(); ++it)
 	{
 		if(taskId == it->first)
 		{
-			taskQueue.erase(it);
+			m_taskQueue.erase(it);
 			return;
 		}
 	}
@@ -44,69 +44,69 @@ void TaskManager::AddDelayedTask(float delaySecs, std::function<void()> task)
 {
 	ASSERT(task != nullptr);
 
-	std::lock_guard<std::mutex> lock(taskQueueMutex);
-	timedTasks.push({ timer + delaySecs, task });
+	std::lock_guard<std::mutex> lock(m_taskQueueMutex);
+	m_timedTasks.push({ m_timer + delaySecs, task });
 }
 
 void TaskManager::Update(float deltaTime)
 {
 	// Check timed tasks
-	if(!timedTasks.empty())
+	if(!m_timedTasks.empty())
 	{
-		taskQueueMutex.lock();
+		m_taskQueueMutex.lock();
 
-		timer += deltaTime;
+		m_timer += deltaTime;
 
-		while(!timedTasks.empty() && timedTasks.top().time < timer)
+		while(!m_timedTasks.empty() && m_timedTasks.top().time < m_timer)
 		{
-			std::function<void()> task = timedTasks.top().task;
-			timedTasks.pop();
+			std::function<void()> task = m_timedTasks.top().task;
+			m_timedTasks.pop();
 
-			taskQueueMutex.unlock();
+			m_taskQueueMutex.unlock();
 			task();
-			taskQueueMutex.lock();
+			m_taskQueueMutex.lock();
 		}
 
-		// Reset timer if we run out of tasks
-		if(timedTasks.empty())
+		// Reset m_timer if we run out of tasks
+		if(m_timedTasks.empty())
 		{
-			timer = 0.0f;
+			m_timer = 0.0f;
 		}
 
-		taskQueueMutex.unlock();
+		m_taskQueueMutex.unlock();
 	}
 
 	// Check normal tasks
-	if(!taskQueue.empty())
+	if(!m_taskQueue.empty())
 	{
-		taskQueueMutex.lock();
+		m_taskQueueMutex.lock();
 
-		if(!taskQueue.empty())	// Just to be sure
+		if(!m_taskQueue.empty())	// Just to be sure
 		{
-			std::function<void()> task = taskQueue.front().second;
-			taskQueue.pop_front();
+			std::function<void()> task = m_taskQueue.front().second;
+			m_taskQueue.pop_front();
 
-			taskQueueMutex.unlock();
+			m_taskQueueMutex.unlock();
 			task();
 		}
 		else
 		{
-			taskQueueMutex.unlock();
+			m_taskQueueMutex.unlock();
 		}
 	}
 }
 
 void TaskManager::Clear()
 {
-	std::lock_guard<std::mutex> lock(taskQueueMutex);
+	std::lock_guard<std::mutex> lock(m_taskQueueMutex);
 
-	taskQueue.clear();
+	m_taskQueue.clear();
 
-	while(!timedTasks.empty())
+	while(!m_timedTasks.empty())
 	{
-		timedTasks.pop();
+		m_timedTasks.pop();
 	}
 
-	timer = 0.0f;
-	taskUniqueId = 0;
+	m_timer = 0.0f;
+	m_taskUniqueId = 0;
 }

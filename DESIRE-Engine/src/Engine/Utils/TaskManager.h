@@ -29,9 +29,9 @@ private:
 		}
 	};
 
-	std::mutex taskQueueMutex;
-	std::deque<std::pair<uint32_t, std::function<void()>>> taskQueue;
-	std::priority_queue<TimedTask, std::vector<TimedTask>, std::greater<TimedTask>> timedTasks;
-	float timer = 0.0f;
-	uint32_t taskUniqueId = 0;
+	std::mutex m_taskQueueMutex;
+	std::deque<std::pair<uint32_t, std::function<void()>>> m_taskQueue;
+	std::priority_queue<TimedTask, std::vector<TimedTask>, std::greater<TimedTask>> m_timedTasks;
+	float m_timer = 0.0f;
+	uint32_t m_taskUniqueId = 0;
 };

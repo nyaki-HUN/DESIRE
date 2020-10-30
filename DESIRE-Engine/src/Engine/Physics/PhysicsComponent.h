@@ -89,7 +89,7 @@ public:
 	virtual void SetTransformFromGameObject() = 0;
 
 protected:
-	EPhysicsCollisionLayer collisionLayer;
-	PhysicsMaterial physicsMaterial;
-	std::unique_ptr<ColliderShape> shape;
+	EPhysicsCollisionLayer m_collisionLayer;
+	PhysicsMaterial m_physicsMaterial;
+	std::unique_ptr<ColliderShape> m_spShape;
 };

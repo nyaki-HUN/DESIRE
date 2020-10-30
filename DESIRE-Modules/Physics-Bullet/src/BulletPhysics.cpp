@@ -14,21 +14,21 @@ BulletPhysics::BulletPhysics()
 	btAlignedAllocSetCustom(&BulletCallbacks::MallocWrapper, &BulletCallbacks::FreeWrapper);
 	btAlignedAllocSetCustomAligned(&BulletCallbacks::AlignedMallocWrapper, &BulletCallbacks::FreeWrapper);
 
-	collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
-	dispatcher = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
+	m_spCollisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
+	m_spDispatcher = std::make_unique<btCollisionDispatcher>(m_spCollisionConfiguration.get());
 
 	btVector3 worldMin(-1000.0f, -1000.0f, -1000.0f);
 	btVector3 worldMax(1000.0f, 1000.0f, 1000.0f);
-	broadphase = std::make_unique<btAxisSweep3>(worldMin, worldMax);
-	constraintSolver = std::make_unique<btSequentialImpulseConstraintSolver>();
-	dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(dispatcher.get(), broadphase.get(), constraintSolver.get(), collisionConfiguration.get());
-	dynamicsWorld->setGravity(btVector3(0.0f, -10.0f, 0.0f));
-	dynamicsWorld->setInternalTickCallback(&BulletCallbacks::SimulationTickCallback, this);
+	m_spBroadphase = std::make_unique<btAxisSweep3>(worldMin, worldMax);
+	m_spConstraintSolver = std::make_unique<btSequentialImpulseConstraintSolver>();
+	m_spDynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(m_spDispatcher.get(), m_spBroadphase.get(), m_spConstraintSolver.get(), m_spCollisionConfiguration.get());
+	m_spDynamicsWorld->setGravity(btVector3(0.0f, -10.0f, 0.0f));
+	m_spDynamicsWorld->setInternalTickCallback(&BulletCallbacks::SimulationTickCallback, this);
 
-	btDispatcherInfo& dispatchInfo = dynamicsWorld->getDispatchInfo();
+	btDispatcherInfo& dispatchInfo = m_spDynamicsWorld->getDispatchInfo();
 	dispatchInfo.m_useContinuous = true;
 
-	btContactSolverInfo& solverInfo = dynamicsWorld->getSolverInfo();
+	btContactSolverInfo& solverInfo = m_spDynamicsWorld->getSolverInfo();
 	// The following two lines increase the performance, with a little bit of loss of quality
 	solverInfo.m_solverMode |= SOLVER_ENABLE_FRICTION_DIRECTION_CACHING;
 	solverInfo.m_numIterations = 4;
@@ -36,32 +36,32 @@ BulletPhysics::BulletPhysics()
 	class DebugDraw* debugDraw = nullptr;
 	if(debugDraw != nullptr)
 	{
-		bulletDebugDraw = std::make_unique<BulletDebugDraw>(*debugDraw);
-		bulletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
+		m_spBulletDebugDraw = std::make_unique<BulletDebugDraw>(*debugDraw);
+		m_spBulletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
 	}
-	dynamicsWorld->setDebugDrawer(bulletDebugDraw.get());
+	m_spDynamicsWorld->setDebugDrawer(m_spBulletDebugDraw.get());
 }
 
 BulletPhysics::~BulletPhysics()
 {
-	bulletDebugDraw = nullptr;
-	dynamicsWorld->setDebugDrawer(nullptr);
+	m_spBulletDebugDraw = nullptr;
+	m_spDynamicsWorld->setDebugDrawer(nullptr);
 
-	dynamicsWorld = nullptr;
-	constraintSolver = nullptr;
-	broadphase = nullptr;
-	dispatcher = nullptr;
-	collisionConfiguration = nullptr;
+	m_spDynamicsWorld = nullptr;
+	m_spConstraintSolver = nullptr;
+	m_spBroadphase = nullptr;
+	m_spDispatcher = nullptr;
+	m_spCollisionConfiguration = nullptr;
 }
 
 void BulletPhysics::Update(float deltaTime)
 {
-	if(bulletDebugDraw != nullptr)
+	if(m_spBulletDebugDraw != nullptr)
 	{
-		bulletDebugDraw->debugDraw.Reset();
+		m_spBulletDebugDraw->m_debugDraw.Reset();
 	}
 
-	dynamicsWorld->stepSimulation(deltaTime, 7, fixedStepTime);
+	m_spDynamicsWorld->stepSimulation(deltaTime, 7, m_fixedStepTime);
 
 	UpdateComponents();
 }
@@ -74,12 +74,12 @@ PhysicsComponent& BulletPhysics::CreatePhysicsComponentOnObject(Object& object)
 
 void BulletPhysics::SetGravity(const Vector3& gravity)
 {
-	dynamicsWorld->setGravity(GetBtVector3(gravity));
+	m_spDynamicsWorld->setGravity(GetBtVector3(gravity));
 }
 
 Vector3 BulletPhysics::GetGravity() const
 {
-	const btVector3& gravity = dynamicsWorld->getGravity();
+	const btVector3& gravity = m_spDynamicsWorld->getGravity();
 	return GetVector3(gravity);
 }
 
@@ -92,7 +92,7 @@ Collision BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, in
 	rayCallback.m_collisionFilterMask = layerMask;
 	rayCallback.m_flags = btTriangleRaycastCallback::kF_FilterBackfaces;
 
-	dynamicsWorld->rayTest(from, to, rayCallback);
+	m_spDynamicsWorld->rayTest(from, to, rayCallback);
 
 	Collision collision;
 	if(rayCallback.hasHit())
@@ -120,7 +120,7 @@ Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2,
 	rayCallback.m_collisionFilterMask = layerMask;
 	rayCallback.m_flags = btTriangleRaycastCallback::kF_FilterBackfaces;
 
-	dynamicsWorld->rayTest(from, to, rayCallback);
+	m_spDynamicsWorld->rayTest(from, to, rayCallback);
 
 	Array<Collision> collisions;
 	if(rayCallback.hasHit())
@@ -140,5 +140,5 @@ Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2,
 
 btDynamicsWorld* BulletPhysics::GetWorld() const
 {
-	return dynamicsWorld.get();
+	return m_spDynamicsWorld.get();
 }

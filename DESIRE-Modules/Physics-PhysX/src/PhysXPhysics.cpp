@@ -21,11 +21,11 @@
 
 PhysXPhysics::PhysXPhysics()
 {
-	allocator = std::make_unique<PhysXCustomAllocator>();
-	errorCallback = std::make_unique<physx::PxDefaultErrorCallback>();
+	m_spAllocator = std::make_unique<PhysXCustomAllocator>();
+	m_spErrorCallback = std::make_unique<physx::PxDefaultErrorCallback>();
 
-	foundation = PxCreateFoundation(PX_FOUNDATION_VERSION, *allocator.get(), *errorCallback.get());
-	if(foundation == nullptr)
+	m_pFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, *m_spAllocator, *m_spErrorCallback);
+	if(m_pFoundation == nullptr)
 	{
 		LOG_ERROR("PxCreateFoundation failed!");
 		return;
@@ -33,8 +33,8 @@ PhysXPhysics::PhysXPhysics()
 
 	const bool recordMemoryAllocations = false;
 	physx::PxTolerancesScale scale;
-	physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, scale, recordMemoryAllocations);
-	if(physics == nullptr)
+	m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, scale, recordMemoryAllocations);
+	if(m_pPhysics == nullptr)
 	{
 		LOG_ERROR("PxCreatePhysics failed!");
 		return;
@@ -44,14 +44,14 @@ PhysXPhysics::PhysXPhysics()
 	params.meshWeldTolerance = 0.001f;
 	params.meshPreprocessParams = physx::PxMeshPreprocessingFlags(physx::PxMeshPreprocessingFlag::eWELD_VERTICES);
 	params.buildGPUData = true;
-	cooking = PxCreateCooking(PX_PHYSICS_VERSION, *foundation, params);
-	if(cooking == nullptr)
+	m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, params);
+	if(m_pCooking == nullptr)
 	{
 		LOG_ERROR("PxCreateCooking failed!");
 		return;
 	}
 
-	physx::PxSceneDesc sceneDesc(physics->getTolerancesScale());
+	physx::PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
 	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
 	sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 	sceneDesc.flags |= physx::PxSceneFlag::eENABLE_ACTIVE_ACTORS;
@@ -64,80 +64,80 @@ PhysXPhysics::PhysXPhysics()
 	sceneDesc.broadPhaseType = physx::PxBroadPhaseType::eGPU;
 	sceneDesc.gpuMaxNumPartitions = 8;
 
-	scene = physics->createScene(sceneDesc);
+	m_pScene = m_pPhysics->createScene(sceneDesc);
 }
 
 PhysXPhysics::~PhysXPhysics()
 {
-	if(scene != nullptr)
+	if(m_pScene != nullptr)
 	{
-		scene->release();
-		scene = nullptr;
+		m_pScene->release();
+		m_pScene = nullptr;
 	}
 
-	if(cooking != nullptr)
+	if(m_pCooking != nullptr)
 	{
-		cooking->release();
-		cooking = nullptr;
+		m_pCooking->release();
+		m_pCooking = nullptr;
 	}
 
-	if(physics != nullptr)
+	if(m_pPhysics != nullptr)
 	{
-		physics->release();
-		physics = nullptr;
+		m_pPhysics->release();
+		m_pPhysics = nullptr;
 	}
 
-	if(foundation != nullptr)
+	if(m_pFoundation != nullptr)
 	{
-		foundation->release();
-		foundation = nullptr;
+		m_pFoundation->release();
+		m_pFoundation = nullptr;
 	}
 }
 
 void PhysXPhysics::Update(float deltaTime)
 {
-	fixedUpdateTimeAccumulator += deltaTime;
-	while(fixedUpdateTimeAccumulator >= fixedStepTime)
+	m_fixedUpdateTimeAccumulator += deltaTime;
+	while(m_fixedUpdateTimeAccumulator >= m_fixedStepTime)
 	{
-		fixedUpdateTimeAccumulator -= fixedStepTime;
+		m_fixedUpdateTimeAccumulator -= m_fixedStepTime;
 
-		scene->simulate(fixedStepTime);
-		scene->fetchResults(true);
+		m_pScene->simulate(m_fixedStepTime);
+		m_pScene->fetchResults(true);
 
 		// Instead of calling the UpdateComponents() function we update only the dynamic bodies that moved
 		physx::PxU32 numActiveActors = 0;
-		physx::PxActor** activeActors = scene->getActiveActors(numActiveActors);
+		physx::PxActor** ppActiveActors = m_pScene->getActiveActors(numActiveActors);
 		for(physx::PxU32 i = 0; i < numActiveActors; ++i)
 		{
-			PhysXPhysicsComponent* component = static_cast<PhysXPhysicsComponent*>(activeActors[i]->userData);
-			component->SetTransformFromGameObject();
+			PhysXPhysicsComponent* pPhysicsComponent = static_cast<PhysXPhysicsComponent*>(ppActiveActors[i]->userData);
+			pPhysicsComponent->SetTransformFromGameObject();
 		}
 	}
 
 	// We still need to update all kinematic bodies
-	for(PhysicsComponent* component : components)
+	for(PhysicsComponent* pPhysicsComponent : m_components)
 	{
-		if(component->GetBodyType() == PhysicsComponent::EBodyType::Kinematic)
+		if(pPhysicsComponent->GetBodyType() == PhysicsComponent::EBodyType::Kinematic)
 		{
-			component->SetTransformFromGameObject();
+			pPhysicsComponent->SetTransformFromGameObject();
 		}
 	}
 }
 
 PhysicsComponent& PhysXPhysics::CreatePhysicsComponentOnObject(Object& object)
 {
-	PhysXPhysicsComponent& component = object.AddComponent<PhysXPhysicsComponent>();
-	return component;
+	PhysXPhysicsComponent& physicsComponent = object.AddComponent<PhysXPhysicsComponent>();
+	return physicsComponent;
 }
 
 void PhysXPhysics::SetGravity(const Vector3& gravity)
 {
-	return scene->setGravity(GetPxVec3(gravity));
+	return m_pScene->setGravity(GetPxVec3(gravity));
 }
 
 Vector3 PhysXPhysics::GetGravity() const
 {
-	return GetVector3(scene->getGravity());
+	return GetVector3(m_pScene->getGravity());
 }
 
 Collision PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)

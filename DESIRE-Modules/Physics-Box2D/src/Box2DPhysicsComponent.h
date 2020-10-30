@@ -72,9 +72,9 @@ private:
 	void CreateFixtures();
 	void ReleaseFixtures();
 
-	b2Body* body = nullptr;
-	Array<b2Fixture*> fixtures;
-	b2Filter filterData;
-	float density = 1.0f;
-	bool isTrigger = false;
+	b2Body* m_pBody = nullptr;
+	Array<b2Fixture*> m_fixtures;
+	b2Filter m_filterData;
+	float m_density = 1.0f;
+	bool m_isTrigger = false;
 };

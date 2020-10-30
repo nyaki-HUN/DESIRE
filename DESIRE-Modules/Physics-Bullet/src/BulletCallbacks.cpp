@@ -20,29 +20,29 @@ void* BulletCallbacks::AlignedMallocWrapper(size_t size, int alignment)
 	return MemorySystem::Alloc(size, alignment);
 }
 
-void BulletCallbacks::FreeWrapper(void* ptr)
+void BulletCallbacks::FreeWrapper(void* pMemory)
 {
-	MemorySystem::Free(ptr);
+	MemorySystem::Free(pMemory);
 }
 
-void BulletCallbacks::SimulationTickCallback(btDynamicsWorld* world, float timeStep)
+void BulletCallbacks::SimulationTickCallback(btDynamicsWorld* pWorld, float timeStep)
 {
 	DESIRE_UNUSED(timeStep);
 
-	BulletPhysics* physics = static_cast<BulletPhysics*>(world->getWorldUserInfo());
+	BulletPhysics& physics = *static_cast<BulletPhysics*>(pWorld->getWorldUserInfo());
 
-	const int numManifolds = physics->dispatcher->getNumManifolds();
+	const int numManifolds = physics.m_spDispatcher->getNumManifolds();
 	for(int manifoldIdx = 0; manifoldIdx < numManifolds; ++manifoldIdx)
 	{
 		Collision collision;
 
-		const btPersistentManifold* manifold = physics->dispatcher->getManifoldByIndexInternal(manifoldIdx);
-		const btRigidBody* body0 = static_cast<const btRigidBody*>(manifold->getBody0());
-		const btRigidBody* body1 = static_cast<const btRigidBody*>(manifold->getBody1());
-		collision.pointCount = std::min(manifold->getNumContacts(), Collision::kMaxContactPoints);
+		const btPersistentManifold* pManifold = physics.m_spDispatcher->getManifoldByIndexInternal(manifoldIdx);
+		const btRigidBody* pBody0 = static_cast<const btRigidBody*>(pManifold->getBody0());
+		const btRigidBody* pBody1 = static_cast<const btRigidBody*>(pManifold->getBody1());
+		collision.pointCount = std::min(pManifold->getNumContacts(), Collision::kMaxContactPoints);
 		for(int i = 0; i < collision.pointCount; ++i)
 		{
-			const btManifoldPoint& pt = manifold->getContactPoint(i);
+			const btManifoldPoint& pt = pManifold->getContactPoint(i);
 			if(pt.getDistance() < 0.0f)
 			{
 				collision.contactPoints[i] = GetVector3(pt.getPositionWorldOnB());
@@ -50,20 +50,20 @@ void BulletCallbacks::SimulationTickCallback(btDynamicsWorld* world, float timeS
 			}
 		}
 
-		collision.component = static_cast<BulletPhysicsComponent*>(body0->getUserPointer());;
-		collision.incomingComponent = static_cast<BulletPhysicsComponent*>(body1->getUserPointer());;
+		collision.pComponent = static_cast<BulletPhysicsComponent*>(pBody0->getUserPointer());;
+		collision.pIncomingComponent = static_cast<BulletPhysicsComponent*>(pBody1->getUserPointer());;
 
-		ScriptComponent* scriptComponent = collision.component->GetObject().GetComponent<ScriptComponent>();
-		if(scriptComponent != nullptr)
+		ScriptComponent* pScriptComponent = collision.pComponent->GetObject().GetComponent<ScriptComponent>();
+		if(pScriptComponent != nullptr)
 		{
-			scriptComponent->Call("OnCollisionEnter", &collision);
+			pScriptComponent->Call("OnCollisionEnter", &collision);
 		}
 
-		scriptComponent = collision.incomingComponent->GetObject().GetComponent<ScriptComponent>();
-		if(scriptComponent != nullptr)
+		pScriptComponent = collision.pIncomingComponent->GetObject().GetComponent<ScriptComponent>();
+		if(pScriptComponent != nullptr)
 		{
-			std::swap(collision.component, collision.incomingComponent);
-			scriptComponent->Call("OnCollisionEnter", &collision);
+			std::swap(collision.pComponent, collision.pIncomingComponent);
+			pScriptComponent->Call("OnCollisionEnter", &collision);
 		}
 	}
 }

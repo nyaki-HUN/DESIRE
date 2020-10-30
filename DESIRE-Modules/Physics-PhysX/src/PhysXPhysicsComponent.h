@@ -62,6 +62,6 @@ public:
 	void SetTransformFromGameObject() override;
 
 private:
-	physx::PxRigidBody* body = nullptr;
-	physx::PxRigidDynamic* dynamicBody = nullptr;
+	physx::PxRigidBody* m_pBody = nullptr;
+	physx::PxRigidDynamic* m_pDynamicBody = nullptr;
 };
