@@ -14,21 +14,21 @@
 
 TcpSocket::TcpSocket()
 {
-	socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	m_socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-	if(socketId != kInvalidSocketId)
+	if(m_socketId != kInvalidSocketId)
 	{
 		int optval = 1;
-		setsockopt(socketId, SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval));
+		setsockopt(m_socketId, SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval));
 	}
 }
 
 TcpSocket::~TcpSocket()
 {
-	if(socketId != kInvalidSocketId)
+	if(m_socketId != kInvalidSocketId)
 	{
-		close(socketId);
-		socketId = kInvalidSocketId;
+		close(m_socketId);
+		m_socketId = kInvalidSocketId;
 	}
 }
 
@@ -39,7 +39,7 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	addr.sin_port = htons(port);
 	inet_pton(AF_INET, address.Str(), &addr.sin_addr);
 
-	int result = connect(socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
+	int result = connect(m_socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
 	if(result < 0)
 	{
 		LOG_MESSAGE("Socket connection to %s:%u failed with status %d", address.Str(), port, errno);
@@ -49,31 +49,31 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	return true;
 }
 
-int TcpSocket::Send(const void* buffer, size_t size)
+int TcpSocket::Send(const void* pBuffer, size_t size)
 {
-	return send(socketId, buffer, size, 0);
+	return send(m_socketId, pBuffer, size, 0);
 }
 
 void TcpSocket::SetNoDelay(bool value)
 {
-	if(socketId == kInvalidSocketId)
+	if(m_socketId == kInvalidSocketId)
 	{
 		return;
 	}
 
 	int optval = value ? 1 : 0;
-	setsockopt(socketId, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
+	setsockopt(m_socketId, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
 }
 
 void TcpSocket::SetNonBlocking()
 {
-	if(socketId == kInvalidSocketId)
+	if(m_socketId == kInvalidSocketId)
 	{
 		return;
 	}
 
-	int flags = fcntl(socketId, F_GETFL, 0);
-	fcntl(socketId, F_SETFL, flags | O_NONBLOCK);
+	int flags = fcntl(m_socketId, F_GETFL, 0);
+	fcntl(m_socketId, F_SETFL, flags | O_NONBLOCK);
 }
 
 void TcpSocket::Initialize()

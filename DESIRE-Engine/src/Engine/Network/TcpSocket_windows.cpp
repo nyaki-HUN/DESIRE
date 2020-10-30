@@ -9,15 +9,15 @@
 
 TcpSocket::TcpSocket()
 {
-	socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	m_socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 }
 
 TcpSocket::~TcpSocket()
 {
-	if(socketId != kInvalidSocketId)
+	if(m_socketId != kInvalidSocketId)
 	{
-		closesocket(socketId);
-		socketId = kInvalidSocketId;
+		closesocket(m_socketId);
+		m_socketId = kInvalidSocketId;
 	}
 }
 
@@ -28,7 +28,7 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	addr.sin_port = htons(port);
 	inet_pton(AF_INET, address.Str(), &addr.sin_addr);
 
-	int result = connect(socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
+	int result = connect(m_socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
 	if(result < 0)
 	{
 		LOG_MESSAGE("Socket connection to %s:%u failed with status %d", address.Str(), port, WSAGetLastError());
@@ -38,32 +38,32 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	return true;
 }
 
-int TcpSocket::Send(const void* buffer, size_t size)
+int TcpSocket::Send(const void* pBuffer, size_t size)
 {
 	ASSERT(size <= INT_MAX);
-	return send(socketId, static_cast<const char*>(buffer), static_cast<int>(size), 0);
+	return send(m_socketId, static_cast<const char*>(pBuffer), static_cast<int>(size), 0);
 }
 
 void TcpSocket::SetNoDelay(bool value)
 {
-	if(socketId == kInvalidSocketId)
+	if(m_socketId == kInvalidSocketId)
 	{
 		return;
 	}
 
 	int optval = value ? 1 : 0;
-	setsockopt(socketId, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&optval), sizeof(optval));
+	setsockopt(m_socketId, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&optval), sizeof(optval));
 }
 
 void TcpSocket::SetNonBlocking()
 {
-	if(socketId == kInvalidSocketId)
+	if(m_socketId == kInvalidSocketId)
 	{
 		return;
 	}
 
 	u_long mode = 1;
-	ioctlsocket(socketId, FIONBIO, &mode);
+	ioctlsocket(m_socketId, FIONBIO, &mode);
 }
 
 void TcpSocket::Initialize()

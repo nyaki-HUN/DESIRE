@@ -9,7 +9,7 @@ public:
 	~TcpSocket();
 
 	bool Connect(const String& address, uint16_t port);
-	int Send(const void* buffer, size_t size);
+	int Send(const void* pBuffer, size_t size);
 
 	void SetNoDelay(bool value);
 	void SetNonBlocking();
@@ -26,5 +26,5 @@ private:
 	static constexpr NativeSocket kInvalidSocketId = -1;
 #endif
 
-	NativeSocket socketId = kInvalidSocketId;
+	NativeSocket m_socketId = kInvalidSocketId;
 };
