@@ -29,7 +29,7 @@ public:
 	void SetPositionIterations(int iterations);
 	int GetPositionIterations() const;
 
-	b2World* GetWorld() const;
+	b2World& GetWorld() const;
 	b2Body* GetWorldBody() const;
 
 	// Modified by ContactListener
@@ -40,12 +40,12 @@ private:
 	void HandleCollisionBegins();
 	void HandleCollisionEnds();
 
-	b2World* world = nullptr;
-	b2ContactListener* contactListener = nullptr;
-	b2DestructionListener* destructorListener = nullptr;
-	b2Body* worldBody = nullptr;
+	b2World* m_pWorld = nullptr;
+	b2ContactListener* m_pContactListener = nullptr;
+	b2DestructionListener* m_pDestructorListener = nullptr;
+	b2Body* m_pWorldBody = nullptr;
 
-	float fixedUpdateTimeAccumulator = 0.0f;
-	int velocityIterations = 8;
-	int positionIterations = 3;
+	float m_fixedUpdateTimeAccumulator = 0.0f;
+	int m_velocityIterations = 8;
+	int m_positionIterations = 3;
 };

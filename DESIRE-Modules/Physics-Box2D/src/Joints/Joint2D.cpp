@@ -27,31 +27,31 @@ bool Joint2D::IsCollisionEnabled() const
 
 Vector2 Joint2D::GetReactionForce(float timeStep) const
 {
-	ASSERT(joint != nullptr);
-	return GetVector2(joint->GetReactionForce(timeStep));
+	ASSERT(m_pJoint != nullptr);
+	return GetVector2(m_pJoint->GetReactionForce(timeStep));
 }
 
 float Joint2D::GetReactionTorque(float timeStep) const
 {
-	ASSERT(joint != nullptr);
-	return joint->GetReactionTorque(timeStep);
+	ASSERT(m_pJoint != nullptr);
+	return m_pJoint->GetReactionTorque(timeStep);
 }
 
-void Joint2D::CreateJointBetween(Box2DPhysicsComponent* anchoredComponent, Box2DPhysicsComponent* connectedComponent)
+void Joint2D::CreateJointBetween(Box2DPhysicsComponent* pAnchoredComponent, Box2DPhysicsComponent* pConnectedComponent)
 {
-	if(anchoredComponent == nullptr)
+	if(pAnchoredComponent == nullptr)
 	{
 		return;
 	}
 
-	GetJointDef().bodyA = anchoredComponent->GetBody();
-	GetJointDef().bodyB = (connectedComponent != nullptr) ? connectedComponent->GetBody() : static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorldBody();
+	GetJointDef().bodyA = pAnchoredComponent->GetBody();
+	GetJointDef().bodyB = (pConnectedComponent != nullptr) ? pConnectedComponent->GetBody() : static_cast<Box2DPhysics&>(*Modules::Physics).GetWorldBody();
 	CreateJoint();
 }
 
 void Joint2D::OnJointDestroyed()
 {
-	joint = nullptr;
+	m_pJoint = nullptr;
 }
 
 void Joint2D::CreateJoint()
@@ -64,16 +64,16 @@ void Joint2D::CreateJoint()
 		return;
 	}
 
-	b2World* world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
-	joint = world->CreateJoint(&jointDef);
+	b2World& world = static_cast<Box2DPhysics&>(*Modules::Physics).GetWorld();
+	m_pJoint = world.CreateJoint(&jointDef);
 }
 
 void Joint2D::DestroyJoint()
 {
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		b2World* world = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorld();
-		world->DestroyJoint(joint);
-		joint = nullptr;
+		b2World& world = static_cast<Box2DPhysics&>(*Modules::Physics).GetWorld();
+		world.DestroyJoint(m_pJoint);
+		m_pJoint = nullptr;
 	}
 }

@@ -2,8 +2,6 @@
 
 #include "Joints/Joint2D.h"
 
-#include "box2d/b2_mouse_joint.h"
-
 class TargetJoint2D : public Joint2D
 {
 public:
@@ -32,6 +30,6 @@ private:
 	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
 
-	b2MouseJointDef jointDef;
-	Vector2 anchorInLocalSpace = { 0.0f, 0.0f };
+	b2MouseJointDef m_jointDef;
+	Vector2 m_anchorInLocalSpace = { 0.0f, 0.0f };
 };

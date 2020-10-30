@@ -151,9 +151,9 @@ int Box2DPhysics::GetPositionIterations() const
 	return m_positionIterations;
 }
 
-b2World* Box2DPhysics::GetWorld() const
+b2World& Box2DPhysics::GetWorld() const
 {
-	return m_pWorld;
+	return *m_pWorld;
 }
 
 b2Body* Box2DPhysics::GetWorldBody() const

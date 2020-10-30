@@ -2,8 +2,6 @@
 
 #include "Joints/AnchoredJoint2D.h"
 
-#include "box2d/b2_distance_joint.h"
-
 class SpringJoint2D : public AnchoredJoint2D
 {
 public:
@@ -24,5 +22,5 @@ private:
 	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
 
-	b2DistanceJointDef jointDef;
+	b2DistanceJointDef m_jointDef;
 };

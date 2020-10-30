@@ -8,7 +8,7 @@ protected:
 	AnchoredJoint2D();
 
 public:
-	void SetConnectedComponent(Box2DPhysicsComponent* component);
+	void SetConnectedComponent(Box2DPhysicsComponent* pPhysicsComponent);
 	Box2DPhysicsComponent* GetConnectedComponent() const;
 
 	void SetAnchor(const Vector2& value);
@@ -18,9 +18,9 @@ public:
 	const Vector2& GetConnectedAnchor() const;
 
 private:
-	Box2DPhysicsComponent* anchoredComponent = nullptr;
-	Box2DPhysicsComponent* connectedComponent = nullptr;
+	Box2DPhysicsComponent* m_pAnchoredComponent = nullptr;
+	Box2DPhysicsComponent* m_pConnectedComponent = nullptr;
 
-	Vector2 anchorInLocalSpace = { 0.0f, 0.0f };
-	Vector2 connectedAnchorInLocalSpace = { 0.0f, 0.0f };
+	Vector2 m_anchorInLocalSpace = { 0.0f, 0.0f };
+	Vector2 m_connectedAnchorInLocalSpace = { 0.0f, 0.0f };
 };

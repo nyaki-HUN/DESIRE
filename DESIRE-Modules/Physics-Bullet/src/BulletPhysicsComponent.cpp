@@ -82,8 +82,8 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	m_pBody = new btRigidBody(cInfo);
 	m_pBody->setUserPointer(this);
 
-	btDynamicsWorld* pWorld = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
-	pWorld->addRigidBody(m_pBody, 1 << static_cast<int>(m_collisionLayer), Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer));
+	btDynamicsWorld& world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
+	world.addRigidBody(m_pBody, 1 << static_cast<int>(m_collisionLayer), Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer));
 
 	if(dynamic)
 	{
@@ -101,8 +101,8 @@ BulletPhysicsComponent::~BulletPhysicsComponent()
 {
 	btCollisionShape* pCollisionShape = m_pBody->getCollisionShape();
 
-	btDynamicsWorld* pWorld = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
-	pWorld->removeRigidBody(m_pBody);
+	btDynamicsWorld& world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
+	world.removeRigidBody(m_pBody);
 	delete m_pBody;
 
 	if(!m_dynamic)

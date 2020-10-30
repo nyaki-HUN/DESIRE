@@ -5,113 +5,113 @@
 
 SliderJoint2D::SliderJoint2D()
 {
-	jointDef.userData = this;
+	m_jointDef.userData = this;
 }
 
 void SliderJoint2D::SetUseMotor(bool value)
 {
-	jointDef.enableMotor = value;
+	m_jointDef.enableMotor = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2PrismaticJoint*>(joint)->EnableMotor(jointDef.enableMotor);
+		static_cast<b2PrismaticJoint*>(m_pJoint)->EnableMotor(m_jointDef.enableMotor);
 	}
 }
 
 bool SliderJoint2D::GetUseMotor() const
 {
-	return jointDef.enableMotor;
+	return m_jointDef.enableMotor;
 }
 
 void SliderJoint2D::SetMotor(const Motor& motor)
 {
-	jointDef.maxMotorForce = motor.maxMotorForce;
-	jointDef.motorSpeed = motor.motorSpeed;
+	m_jointDef.maxMotorForce = motor.maxMotorForce;
+	m_jointDef.motorSpeed = motor.motorSpeed;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2PrismaticJoint*>(joint)->SetMaxMotorForce(jointDef.maxMotorForce);
-		static_cast<b2PrismaticJoint*>(joint)->SetMotorSpeed(jointDef.motorSpeed);
+		static_cast<b2PrismaticJoint*>(m_pJoint)->SetMaxMotorForce(m_jointDef.maxMotorForce);
+		static_cast<b2PrismaticJoint*>(m_pJoint)->SetMotorSpeed(m_jointDef.motorSpeed);
 	}
 }
 
 Joint2D::Motor SliderJoint2D::GetMotor() const
 {
 	Motor motor;
-	motor.maxMotorForce = jointDef.maxMotorForce;
-	motor.motorSpeed = jointDef.motorSpeed;
+	motor.maxMotorForce = m_jointDef.maxMotorForce;
+	motor.motorSpeed = m_jointDef.motorSpeed;
 	return motor;
 }
 
 void SliderJoint2D::SetUseLimits(bool value)
 {
-	jointDef.enableLimit = value;
+	m_jointDef.enableLimit = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2PrismaticJoint*>(joint)->EnableLimit(jointDef.enableLimit);
+		static_cast<b2PrismaticJoint*>(m_pJoint)->EnableLimit(m_jointDef.enableLimit);
 	}
 }
 
 bool SliderJoint2D::GetUseLimits() const
 {
-	return jointDef.enableLimit;
+	return m_jointDef.enableLimit;
 }
 
 void SliderJoint2D::SetLimits(const TranslationLimits& limits)
 {
-	jointDef.lowerTranslation = limits.lowerTranslation;
-	jointDef.upperTranslation = limits.upperTranslation;
+	m_jointDef.lowerTranslation = limits.lowerTranslation;
+	m_jointDef.upperTranslation = limits.upperTranslation;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2PrismaticJoint*>(joint)->SetLimits(jointDef.lowerTranslation, jointDef.upperTranslation);
+		static_cast<b2PrismaticJoint*>(m_pJoint)->SetLimits(m_jointDef.lowerTranslation, m_jointDef.upperTranslation);
 	}
 }
 
 SliderJoint2D::TranslationLimits SliderJoint2D::GetLimits() const
 {
 	TranslationLimits limits;
-	limits.lowerTranslation = jointDef.lowerTranslation;
-	limits.upperTranslation = jointDef.upperTranslation;
+	limits.lowerTranslation = m_jointDef.lowerTranslation;
+	limits.upperTranslation = m_jointDef.upperTranslation;
 	return limits;
 }
 
 float SliderJoint2D::GetMotorForce(float timeStep) const
 {
-	ASSERT(joint != nullptr && "Only a simulated joint has this property");
-	return static_cast<b2PrismaticJoint*>(joint)->GetMotorForce(timeStep);
+	ASSERT(m_pJoint != nullptr && "Only a simulated joint has this property");
+	return static_cast<b2PrismaticJoint*>(m_pJoint)->GetMotorForce(timeStep);
 }
 
 float SliderJoint2D::GetJointTranslation() const
 {
-	ASSERT(joint != nullptr && "Only a simulated joint has this property");
-	return static_cast<b2PrismaticJoint*>(joint)->GetJointTranslation();
+	ASSERT(m_pJoint != nullptr && "Only a simulated joint has this property");
+	return static_cast<b2PrismaticJoint*>(m_pJoint)->GetJointTranslation();
 }
 
 float SliderJoint2D::GetJointSpeed() const
 {
-	ASSERT(joint != nullptr && "Only a simulated joint has this property");
-	return static_cast<b2PrismaticJoint*>(joint)->GetJointSpeed();
+	ASSERT(m_pJoint != nullptr && "Only a simulated joint has this property");
+	return static_cast<b2PrismaticJoint*>(m_pJoint)->GetJointSpeed();
 }
 
 void SliderJoint2D::CreateJoint()
 {
 	const b2Vec2 worldAxis(1.0f, 0.0f);
-	jointDef.localAxisA = jointDef.bodyA->GetLocalVector(worldAxis);
-	jointDef.referenceAngle = jointDef.bodyB->GetAngle() - jointDef.bodyA->GetAngle();
-	jointDef.localAnchorA = GetB2Vec2(GetAnchor());
-	jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
+	m_jointDef.localAxisA = m_jointDef.bodyA->GetLocalVector(worldAxis);
+	m_jointDef.referenceAngle = m_jointDef.bodyB->GetAngle() - m_jointDef.bodyA->GetAngle();
+	m_jointDef.localAnchorA = GetB2Vec2(GetAnchor());
+	m_jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
 
 	Joint2D::CreateJoint();
 }
 
 b2JointDef& SliderJoint2D::GetJointDef()
 {
-	return jointDef;
+	return m_jointDef;
 }
 
 const b2JointDef& SliderJoint2D::GetJointDef() const
 {
-	return jointDef;
+	return m_jointDef;
 }

@@ -7,111 +7,111 @@
 
 HingeJoint2D::HingeJoint2D()
 {
-	jointDef.userData = this;
+	m_jointDef.userData = this;
 }
 
 void HingeJoint2D::SetUseMotor(bool value)
 {
-	jointDef.enableMotor = value;
+	m_jointDef.enableMotor = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2RevoluteJoint*>(joint)->EnableMotor(jointDef.enableMotor);
+		static_cast<b2RevoluteJoint*>(m_pJoint)->EnableMotor(m_jointDef.enableMotor);
 	}
 }
 
 bool HingeJoint2D::GetUseMotor() const
 {
-	return jointDef.enableMotor;
+	return m_jointDef.enableMotor;
 }
 
 void HingeJoint2D::SetMotor(const Joint2D::Motor& motor)
 {
-	jointDef.maxMotorTorque = motor.maxMotorForce;
-	jointDef.motorSpeed = motor.motorSpeed;
+	m_jointDef.maxMotorTorque = motor.maxMotorForce;
+	m_jointDef.motorSpeed = motor.motorSpeed;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2RevoluteJoint*>(joint)->SetMaxMotorTorque(jointDef.maxMotorTorque);
-		static_cast<b2RevoluteJoint*>(joint)->SetMotorSpeed(jointDef.motorSpeed);
+		static_cast<b2RevoluteJoint*>(m_pJoint)->SetMaxMotorTorque(m_jointDef.maxMotorTorque);
+		static_cast<b2RevoluteJoint*>(m_pJoint)->SetMotorSpeed(m_jointDef.motorSpeed);
 	}
 }
 
 Joint2D::Motor HingeJoint2D::GetMotor() const
 {
 	Motor motor;
-	motor.maxMotorForce = jointDef.maxMotorTorque;
-	motor.motorSpeed = jointDef.motorSpeed;
+	motor.maxMotorForce = m_jointDef.maxMotorTorque;
+	motor.motorSpeed = m_jointDef.motorSpeed;
 	return motor;
 }
 
 void HingeJoint2D::SetUseLimits(bool value)
 {
-	jointDef.enableLimit = value;
+	m_jointDef.enableLimit = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2RevoluteJoint*>(joint)->EnableLimit(jointDef.enableLimit);
+		static_cast<b2RevoluteJoint*>(m_pJoint)->EnableLimit(m_jointDef.enableLimit);
 	}
 }
 
 bool HingeJoint2D::GetUseLimits() const
 {
-	return jointDef.enableLimit;
+	return m_jointDef.enableLimit;
 }
 
 void HingeJoint2D::SetLimits(const AngleLimits& limits)
 {
-	jointDef.lowerAngle = Math::DegToRad(limits.lowerAngle);
-	jointDef.upperAngle = Math::DegToRad(limits.upperAngle);
+	m_jointDef.lowerAngle = Math::DegToRad(limits.lowerAngle);
+	m_jointDef.upperAngle = Math::DegToRad(limits.upperAngle);
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2RevoluteJoint*>(joint)->SetLimits(jointDef.lowerAngle, jointDef.upperAngle);
+		static_cast<b2RevoluteJoint*>(m_pJoint)->SetLimits(m_jointDef.lowerAngle, m_jointDef.upperAngle);
 	}
 }
 
 HingeJoint2D::AngleLimits HingeJoint2D::GetLimits() const
 {
 	AngleLimits limits;
-	limits.lowerAngle = Math::RadToDeg(jointDef.lowerAngle);
-	limits.upperAngle = Math::RadToDeg(jointDef.upperAngle);
+	limits.lowerAngle = Math::RadToDeg(m_jointDef.lowerAngle);
+	limits.upperAngle = Math::RadToDeg(m_jointDef.upperAngle);
 	return limits;
 }
 
 float HingeJoint2D::GetMotorTorque(float timeStep) const
 {
-	ASSERT(joint != nullptr && "Only a simulated joint has this property");
-	return static_cast<b2RevoluteJoint*>(joint)->GetMotorTorque(timeStep);
+	ASSERT(m_pJoint != nullptr && "Only a simulated joint has this property");
+	return static_cast<b2RevoluteJoint*>(m_pJoint)->GetMotorTorque(timeStep);
 }
 
 float HingeJoint2D::GetJointAngle() const
 {
-	ASSERT(joint != nullptr && "Only a simulated joint has this property");
-	return Math::RadToDeg(static_cast<b2RevoluteJoint*>(joint)->GetJointAngle());
+	ASSERT(m_pJoint != nullptr && "Only a simulated joint has this property");
+	return Math::RadToDeg(static_cast<b2RevoluteJoint*>(m_pJoint)->GetJointAngle());
 }
 
 float HingeJoint2D::GetJointSpeed() const
 {
-	ASSERT(joint != nullptr && "Only a simulated joint has this property");
-	return static_cast<b2RevoluteJoint*>(joint)->GetJointSpeed();
+	ASSERT(m_pJoint != nullptr && "Only a simulated joint has this property");
+	return static_cast<b2RevoluteJoint*>(m_pJoint)->GetJointSpeed();
 }
 
 void HingeJoint2D::CreateJoint()
 {
-	jointDef.referenceAngle = jointDef.bodyB->GetAngle() - jointDef.bodyA->GetAngle();
-	jointDef.localAnchorA = GetB2Vec2(GetAnchor());
-	jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
+	m_jointDef.referenceAngle = m_jointDef.bodyB->GetAngle() - m_jointDef.bodyA->GetAngle();
+	m_jointDef.localAnchorA = GetB2Vec2(GetAnchor());
+	m_jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
 
 	Joint2D::CreateJoint();
 }
 
 b2JointDef& HingeJoint2D::GetJointDef()
 {
-	return jointDef;
+	return m_jointDef;
 }
 
 const b2JointDef& HingeJoint2D::GetJointDef() const
 {
-	return jointDef;
+	return m_jointDef;
 }

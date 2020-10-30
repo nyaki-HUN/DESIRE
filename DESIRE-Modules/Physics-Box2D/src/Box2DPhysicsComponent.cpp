@@ -11,12 +11,12 @@
 Box2DPhysicsComponent::Box2DPhysicsComponent(Object& object)
 	: PhysicsComponent(object)
 {
-	b2World* pWorld = static_cast<Box2DPhysics&>(*Modules::Physics).GetWorld();
+	b2World& world = static_cast<Box2DPhysics&>(*Modules::Physics).GetWorld();
 
 	b2BodyDef bodyDef;
 	bodyDef.angularDamping = 0.05f;
 	bodyDef.userData = this;
-	m_pBody = pWorld->CreateBody(&bodyDef);
+	m_pBody = world.CreateBody(&bodyDef);
 
 	m_filterData.categoryBits = 1 << static_cast<int>(m_collisionLayer);
 	m_filterData.maskBits = Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer);

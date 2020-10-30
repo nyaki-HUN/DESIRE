@@ -129,16 +129,16 @@ Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2,
 		collisions.Reserve(count);
 		for(int i = 0; i < count; ++i)
 		{
-			const btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
-			PhysicsComponent* component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
-			collisions.EmplaceAdd(component, GetVector3(rayCallback.m_hitPointWorld[i]), GetVector3(rayCallback.m_hitNormalWorld[i]));
+			const btRigidBody* pBody = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
+			PhysicsComponent* pPhysicsComponent = (pBody != nullptr && pBody->hasContactResponse()) ? static_cast<PhysicsComponent*>(pBody->getUserPointer()) : nullptr;
+			collisions.EmplaceAdd(pPhysicsComponent, GetVector3(rayCallback.m_hitPointWorld[i]), GetVector3(rayCallback.m_hitNormalWorld[i]));
 		}
 	}
 
 	return collisions;
 }
 
-btDynamicsWorld* BulletPhysics::GetWorld() const
+btDynamicsWorld& BulletPhysics::GetWorld() const
 {
-	return m_spDynamicsWorld.get();
+	return *m_spDynamicsWorld;
 }

@@ -5,41 +5,41 @@ AnchoredJoint2D::AnchoredJoint2D()
 {
 }
 
-void AnchoredJoint2D::SetConnectedComponent(Box2DPhysicsComponent* component)
+void AnchoredJoint2D::SetConnectedComponent(Box2DPhysicsComponent* pPhysicsComponent)
 {
-	if(anchoredComponent == connectedComponent)
+	if(m_pAnchoredComponent == m_pConnectedComponent)
 	{
 		// Not allowed to connect to self
 		return;
 	}
 
-	connectedComponent = component;
-	CreateJointBetween(anchoredComponent, connectedComponent);
+	m_pConnectedComponent = pPhysicsComponent;
+	CreateJointBetween(m_pAnchoredComponent, m_pConnectedComponent);
 }
 
 Box2DPhysicsComponent* AnchoredJoint2D::GetConnectedComponent() const
 {
-	return connectedComponent;
+	return m_pConnectedComponent;
 }
 
 void AnchoredJoint2D::SetAnchor(const Vector2& value)
 {
-	anchorInLocalSpace = value;
+	m_anchorInLocalSpace = value;
 	CreateJoint();
 }
 
 const Vector2& AnchoredJoint2D::GetAnchor() const
 {
-	return anchorInLocalSpace;
+	return m_anchorInLocalSpace;
 }
 
 void AnchoredJoint2D::SetConnectedAnchor(const Vector2& value)
 {
-	connectedAnchorInLocalSpace = value;
+	m_connectedAnchorInLocalSpace = value;
 	CreateJoint();
 }
 
 const Vector2& AnchoredJoint2D::GetConnectedAnchor() const
 {
-	return connectedAnchorInLocalSpace;
+	return m_connectedAnchorInLocalSpace;
 }

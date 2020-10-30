@@ -5,69 +5,69 @@
 
 SpringJoint2D::SpringJoint2D()
 {
-	jointDef.userData = this;
-	jointDef.length = 1.0f;
+	m_jointDef.userData = this;
+	m_jointDef.length = 1.0f;
 }
 
 void SpringJoint2D::SetDampingRatio(float value)
 {
-	jointDef.dampingRatio = value;
+	m_jointDef.dampingRatio = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2DistanceJoint*>(joint)->SetDampingRatio(jointDef.dampingRatio);
+		static_cast<b2DistanceJoint*>(m_pJoint)->SetDampingRatio(m_jointDef.dampingRatio);
 	}
 }
 
 float SpringJoint2D::GetDampingRatio() const
 {
-	return jointDef.dampingRatio;
+	return m_jointDef.dampingRatio;
 }
 
 void SpringJoint2D::SetFrequency(float value)
 {
-	jointDef.frequencyHz = value;
+	m_jointDef.frequencyHz = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2DistanceJoint*>(joint)->SetFrequency(jointDef.frequencyHz);
+		static_cast<b2DistanceJoint*>(m_pJoint)->SetFrequency(m_jointDef.frequencyHz);
 	}
 }
 
 float SpringJoint2D::GetFrequency() const
 {
-	return jointDef.frequencyHz;
+	return m_jointDef.frequencyHz;
 }
 
 void SpringJoint2D::SetDistance(float value)
 {
-	jointDef.length = value;
+	m_jointDef.length = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2DistanceJoint*>(joint)->SetLength(jointDef.length);
+		static_cast<b2DistanceJoint*>(m_pJoint)->SetLength(m_jointDef.length);
 	}
 }
 
 float SpringJoint2D::GetDistance() const
 {
-	return jointDef.length;
+	return m_jointDef.length;
 }
 
 void SpringJoint2D::CreateJoint()
 {
-	jointDef.localAnchorA = GetB2Vec2(GetAnchor());
-	jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
+	m_jointDef.localAnchorA = GetB2Vec2(GetAnchor());
+	m_jointDef.localAnchorB = GetB2Vec2(GetConnectedAnchor());
 
 	Joint2D::CreateJoint();
 }
 
 b2JointDef& SpringJoint2D::GetJointDef()
 {
-	return jointDef;
+	return m_jointDef;
 }
 
 const b2JointDef& SpringJoint2D::GetJointDef() const
 {
-	return jointDef;
+	return m_jointDef;
 }

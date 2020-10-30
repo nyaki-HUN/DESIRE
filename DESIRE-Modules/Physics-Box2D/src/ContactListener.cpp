@@ -5,14 +5,14 @@
 
 void ContactListener::BeginContact(b2Contact* pContact)
 {
-	Array<Collision>& pContacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsBegin;
+	Array<Collision>& pContacts = static_cast<Box2DPhysics&>(*Modules::Physics).contactsBegin;
 	Collision& collision = pContacts.EmplaceAdd();
 	FillCollisionFromContact(collision, pContact);
 }
 
 void ContactListener::EndContact(b2Contact* pContact)
 {
-	Array<Collision>& pContacts = static_cast<Box2DPhysics*>(Modules::Physics.get())->contactsEnd;
+	Array<Collision>& pContacts = static_cast<Box2DPhysics&>(*Modules::Physics).contactsEnd;
 	Collision& collision = pContacts.EmplaceAdd();
 	FillCollisionFromContact(collision, pContact);
 }

@@ -2,8 +2,6 @@
 
 #include "Joints/AnchoredJoint2D.h"
 
-#include "box2d/b2_revolute_joint.h"
-
 class HingeJoint2D : public AnchoredJoint2D
 {
 public:
@@ -37,5 +35,5 @@ private:
 	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
 
-	b2RevoluteJointDef jointDef;
+	b2RevoluteJointDef m_jointDef;
 };

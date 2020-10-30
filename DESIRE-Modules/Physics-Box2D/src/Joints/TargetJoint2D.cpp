@@ -7,87 +7,87 @@
 
 TargetJoint2D::TargetJoint2D()
 {
-	jointDef.userData = this;
+	m_jointDef.userData = this;
 }
 
 void TargetJoint2D::SetAnchor(Vector2 value)
 {
-	anchorInLocalSpace = value;
+	m_anchorInLocalSpace = value;
 	CreateJoint();
 }
 
 Vector2 TargetJoint2D::GetAnchor() const
 {
-	return anchorInLocalSpace;
+	return m_anchorInLocalSpace;
 }
 
 void TargetJoint2D::SetDumpingRatio(float value)
 {
-	jointDef.dampingRatio = value;
+	m_jointDef.dampingRatio = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2MouseJoint*>(joint)->SetDampingRatio(jointDef.dampingRatio);
+		static_cast<b2MouseJoint*>(m_pJoint)->SetDampingRatio(m_jointDef.dampingRatio);
 	}
 }
 
 float TargetJoint2D::GetDumpingRatio() const
 {
-	return jointDef.dampingRatio;
+	return m_jointDef.dampingRatio;
 }
 
 void TargetJoint2D::SetFrequency(float value)
 {
-	jointDef.frequencyHz = value;
+	m_jointDef.frequencyHz = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2MouseJoint*>(joint)->SetFrequency(jointDef.frequencyHz);
+		static_cast<b2MouseJoint*>(m_pJoint)->SetFrequency(m_jointDef.frequencyHz);
 	}
 }
 
 float TargetJoint2D::GetFrequency() const
 {
-	return jointDef.frequencyHz;
+	return m_jointDef.frequencyHz;
 }
 
 void TargetJoint2D::SetMaxForce(float value)
 {
-	jointDef.maxForce = value;
+	m_jointDef.maxForce = value;
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2MouseJoint*>(joint)->SetMaxForce(jointDef.maxForce);
+		static_cast<b2MouseJoint*>(m_pJoint)->SetMaxForce(m_jointDef.maxForce);
 	}
 }
 
 float TargetJoint2D::GetMaxForce() const
 {
-	return jointDef.maxForce;
+	return m_jointDef.maxForce;
 }
 
 void TargetJoint2D::SetTarget(Vector2 value)
 {
-	jointDef.target = GetB2Vec2(value);
+	m_jointDef.target = GetB2Vec2(value);
 
-	if(joint != nullptr)
+	if(m_pJoint != nullptr)
 	{
-		static_cast<b2MouseJoint*>(joint)->SetTarget(jointDef.target);
+		static_cast<b2MouseJoint*>(m_pJoint)->SetTarget(m_jointDef.target);
 	}
 }
 
 Vector2 TargetJoint2D::GetTarget() const
 {
-	b2Vec2 target = (joint != nullptr) ? static_cast<b2MouseJoint*>(joint)->GetTarget() : jointDef.target;
+	b2Vec2 target = (m_pJoint != nullptr) ? static_cast<b2MouseJoint*>(m_pJoint)->GetTarget() : m_jointDef.target;
 	Vector2 result = GetVector2(target);
 	return result;
 }
 
 void TargetJoint2D::CreateJointOnComponent(Box2DPhysicsComponent* anchoredComponent)
 {
-	jointDef.bodyA = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorldBody();
+	m_jointDef.bodyA = static_cast<Box2DPhysics*>(Modules::Physics.get())->GetWorldBody();
 	// bodyB is the body what we want to move
-	jointDef.bodyB = anchoredComponent->GetBody();
+	m_jointDef.bodyB = anchoredComponent->GetBody();
 	CreateJoint();
 }
 
@@ -99,22 +99,22 @@ void TargetJoint2D::CreateJoint()
 	// -bodyB is the body where the Anchor set up in local space. In order to setup this, we have to set the target temporary to the world position of the anchor. 
 	//  (According to the manual: "The target point initially coincides with the body’s anchor point")
 
-	b2Vec2 userDefinedTarget = jointDef.target;
+	b2Vec2 userDefinedTarget = m_jointDef.target;
 	b2Vec2 localAnchorOnB = GetB2Vec2(GetAnchor());
-	jointDef.target = b2Mul(jointDef.bodyB->GetTransform(), localAnchorOnB);
+	m_jointDef.target = b2Mul(m_jointDef.bodyB->GetTransform(), localAnchorOnB);
 
 	Joint2D::CreateJoint();
 
 	// Set the target which was defined by the user
-	static_cast<b2MouseJoint*>(joint)->SetTarget(userDefinedTarget);
+	static_cast<b2MouseJoint*>(m_pJoint)->SetTarget(userDefinedTarget);
 }
 
 b2JointDef& TargetJoint2D::GetJointDef()
 {
-	return jointDef;
+	return m_jointDef;
 }
 
 const b2JointDef& TargetJoint2D::GetJointDef() const
 {
-	return jointDef;
+	return m_jointDef;
 }

@@ -2,8 +2,6 @@
 
 #include "Joints/AnchoredJoint2D.h"
 
-#include "box2d/b2_prismatic_joint.h"
-
 class SliderJoint2D : public AnchoredJoint2D
 {
 public:
@@ -37,5 +35,5 @@ private:
 	b2JointDef& GetJointDef() override;
 	const b2JointDef& GetJointDef() const override;
 
-	b2PrismaticJointDef jointDef;
+	b2PrismaticJointDef m_jointDef;
 };
