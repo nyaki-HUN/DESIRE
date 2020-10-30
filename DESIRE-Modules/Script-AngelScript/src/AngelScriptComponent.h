@@ -4,19 +4,21 @@
 #include "Engine/Core/Container/Array.h"
 
 class asIScriptContext;
+class asIScriptFunction;
 class asIScriptGeneric;
 class asIScriptObject;
 
 class AngelScriptComponent : public ScriptComponent
 {
 public:
-	AngelScriptComponent(Object& object);
+	AngelScriptComponent(Object& object, asIScriptFunction& factoryFunc);
+	~AngelScriptComponent();
+
+	bool IsValid() const;
 
 	void CallByType(EBuiltinFuncType funcType) override;
 
 	static void CallFromScript(asIScriptGeneric* pGeneric);
-
-	asIScriptObject* m_pScriptObject = nullptr;
 
 private:
 	bool PrepareFunctionCall(const String& functionName) override;
@@ -29,6 +31,7 @@ private:
 	bool AddFunctionCallArg(void* pArg) override;
 	bool AddFunctionCallArg(const String& arg) override;
 
+	asIScriptObject* m_pScriptObject = nullptr;
 	asIScriptContext* m_pFunctionCallCtx = nullptr;
 	uint32_t m_numFunctionCallArgs = 0;
 	Array<const void*> m_functionCallStringArgs;

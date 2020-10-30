@@ -42,9 +42,9 @@ ResourceManager& Application::GetResourceManager()
 	return *m_spResourceManager;
 }
 
-void Application::SendEvent(EAppEventType eventType, const void* pArg)
+void Application::SendEvent(EAppEventType eventType, const void* pUserData)
 {
-	DESIRE_UNUSED(pArg);
+	DESIRE_UNUSED(pUserData);
 
 	if(eventType == EAppEventType::Deactivate)
 	{

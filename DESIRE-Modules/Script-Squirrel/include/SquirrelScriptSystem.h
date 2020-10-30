@@ -15,5 +15,5 @@ private:
 
 	static void CompileScript(const String& scriptName, HSQUIRRELVM vm);
 
-	HSQUIRRELVM vm = nullptr;
+	HSQUIRRELVM m_vm = nullptr;
 };

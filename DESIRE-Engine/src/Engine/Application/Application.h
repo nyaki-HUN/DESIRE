@@ -30,7 +30,7 @@ public:
 	const Timer* GetTimer() const;
 	ResourceManager& GetResourceManager();
 
-	virtual void SendEvent(EAppEventType eventType, const void* pArg = nullptr);
+	virtual void SendEvent(EAppEventType eventType, const void* pUserData = nullptr);
 
 	virtual void Init() = 0;
 	virtual void Kill() = 0;

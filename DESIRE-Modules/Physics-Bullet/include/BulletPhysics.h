@@ -2,6 +2,7 @@
 
 #include "Engine/Physics/Physics.h"
 
+class BulletCallbacks;
 class BulletDebugDraw;
 class btDiscreteDynamicsWorld;
 class btDynamicsWorld;
@@ -38,5 +39,5 @@ private:
 
 	std::unique_ptr<BulletDebugDraw> bulletDebugDraw;
 
-	friend class BulletCallbacks;
+	friend BulletCallbacks;
 };

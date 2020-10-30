@@ -20,7 +20,7 @@ void sq_vm_free(void* p, SQUnsignedInteger size)
 	MemorySystem::Free(p);
 }
 
-void SquirrelCallbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...)
+void SquirrelCallbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* pFormat, ...)
 {
 	DESIRE_UNUSED(vm);
 
@@ -30,14 +30,14 @@ void SquirrelCallbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 	logData.logType = "DBG";
 
 	va_list args;
-	va_start(args, format);
-	vsnprintf(logData.message, sizeof(logData.message), format, args);
+	va_start(args, pFormat);
+	vsnprintf(logData.message, sizeof(logData.message), pFormat, args);
 	va_end(args);
 
 	Log::LogWithData(logData);
 }
 
-void SquirrelCallbacks::ErrorCallback(HSQUIRRELVM vm, const SQChar* format, ...)
+void SquirrelCallbacks::ErrorCallback(HSQUIRRELVM vm, const SQChar* pFormat, ...)
 {
 	DESIRE_UNUSED(vm);
 
@@ -47,27 +47,27 @@ void SquirrelCallbacks::ErrorCallback(HSQUIRRELVM vm, const SQChar* format, ...)
 	logData.logType = "ERR";
 
 	va_list args;
-	va_start(args, format);
-	vsnprintf(logData.message, sizeof(logData.message), format, args);
+	va_start(args, pFormat);
+	vsnprintf(logData.message, sizeof(logData.message), pFormat, args);
 	va_end(args);
 
 	Log::LogWithData(logData);
 }
 
-void SquirrelCallbacks::CompilerErrorCallback(HSQUIRRELVM vm, const SQChar* desc, const SQChar* source, SQInteger line, SQInteger column)
+void SquirrelCallbacks::CompilerErrorCallback(HSQUIRRELVM vm, const SQChar* pDescription, const SQChar* pSourceName, SQInteger line, SQInteger column)
 {
 	DESIRE_UNUSED(vm);
 
-	LOG_ERROR("%s(%d, %d): %s", source, line, column, desc);
+	LOG_ERROR("%s(%d, %d): %s", pSourceName, line, column, pDescription);
 }
 
-void SquirrelCallbacks::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar* sourcename, SQInteger line, const SQChar* funcname)
+void SquirrelCallbacks::DebugHookCallback(HSQUIRRELVM vm, SQInteger type, const SQChar* pSourceName, SQInteger line, const SQChar* pFunctionName)
 {
 	DESIRE_UNUSED(vm);
 	DESIRE_UNUSED(type);
-	DESIRE_UNUSED(sourcename);
+	DESIRE_UNUSED(pSourceName);
 	DESIRE_UNUSED(line);
-	DESIRE_UNUSED(funcname);
+	DESIRE_UNUSED(pFunctionName);
 
 	DESIRE_TODO("Squirrel debugging");
 }

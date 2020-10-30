@@ -2,20 +2,17 @@
 
 #include "Engine/Script/ScriptComponent.h"
 
-#include "squirrel.h"
-
 class SquirrelScriptComponent : public ScriptComponent
 {
 public:
 	SquirrelScriptComponent(Object& object, HSQUIRRELVM vm);
 	~SquirrelScriptComponent() override;
 
+	bool IsValid() const;
+
 	void CallByType(EBuiltinFuncType funcType) override;
 
 	static SQInteger CallFromScript(HSQUIRRELVM vm);
-
-	HSQOBJECT scriptObject;
-	HSQOBJECT builtinFunctions[(size_t)EBuiltinFuncType::Num] = {};
 
 private:
 	bool PrepareFunctionCall(const String& functionName) override;
@@ -28,7 +25,9 @@ private:
 	bool AddFunctionCallArg(void* pArg) override;
 	bool AddFunctionCallArg(const String& string) override;
 
-	HSQUIRRELVM m_vm = nullptr;
+	HSQUIRRELVM m_vm;
+	HSQOBJECT m_scriptObject;
+	HSQOBJECT m_builtinFunctions[(size_t)EBuiltinFuncType::Num] = {};
 	SQInteger m_savedStackTop = 0;
 	SQInteger m_numFunctionCallArgs = 0;
 };

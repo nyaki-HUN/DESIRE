@@ -15,26 +15,26 @@
 SquirrelScriptSystem::SquirrelScriptSystem()
 {
 	// Create a VM with initial stack size 1024 
-	vm = sq_open(1024);
-	sq_setprintfunc(vm, &SquirrelCallbacks::PrintCallback, &SquirrelCallbacks::ErrorCallback);
+	m_vm = sq_open(1024);
+	sq_setprintfunc(m_vm, &SquirrelCallbacks::PrintCallback, &SquirrelCallbacks::ErrorCallback);
 
 #if DESIRE_PUBLIC_BUILD
-	sq_enabledebuginfo(vm, SQFalse);
+	sq_enabledebuginfo(m_vm, SQFalse);
 #else
-	sq_enabledebuginfo(vm, SQTrue);
-	sq_setnativedebughook(vm, &SquirrelCallbacks::DebugHookCallback);
+	sq_enabledebuginfo(m_vm, SQTrue);
+	sq_setnativedebughook(m_vm, &SquirrelCallbacks::DebugHookCallback);
 #endif
 
-	sq_pushroottable(vm);
+	sq_pushroottable(m_vm);
 
 	// Set error handlers
-	sq_newclosure(vm, &SquirrelCallbacks::RuntimeErrorHandler, 0);
-	sq_seterrorhandler(vm);
-	sq_setcompilererrorhandler(vm, &SquirrelCallbacks::CompilerErrorCallback);
-	sq_pop(vm, 1);
+	sq_newclosure(m_vm, &SquirrelCallbacks::RuntimeErrorHandler, 0);
+	sq_seterrorhandler(m_vm);
+	sq_setcompilererrorhandler(m_vm, &SquirrelCallbacks::CompilerErrorCallback);
+	sq_pop(m_vm, 1);
 
 	// Register Script API
-	Sqrat::RootTable rootTable(vm);
+	Sqrat::RootTable rootTable(m_vm);
 	RegisterCoreAPI_Math_Squirrel(rootTable);
 	RegisterCoreAPI_Squirrel(rootTable);
 	RegisterInputAPI_Squirrel(rootTable);
@@ -43,81 +43,45 @@ SquirrelScriptSystem::SquirrelScriptSystem()
 	RegisterSoundAPI_Squirrel(rootTable);
 
 	// ScriptComponent
-	rootTable.Bind("ScriptComponent", Sqrat::DerivedClass<SquirrelScriptComponent, Component, Sqrat::NoConstructor<SquirrelScriptComponent>>(vm, "ScriptComponent")
+	rootTable.Bind("ScriptComponent", Sqrat::DerivedClass<SquirrelScriptComponent, Component, Sqrat::NoConstructor<SquirrelScriptComponent>>(m_vm, "ScriptComponent")
 		.SquirrelFunc("Call", &SquirrelScriptComponent::CallFromScript)
 	);
 
-	Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(vm, "Object", false).Func<SquirrelScriptComponent* (Object::*)() const>("GetScriptComponent", &Object::GetComponent<SquirrelScriptComponent>);
+	Sqrat::Class<Object, Sqrat::NoConstructor<Object>>(m_vm, "Object", false).Func<SquirrelScriptComponent* (Object::*)() const>("GetScriptComponent", &Object::GetComponent<SquirrelScriptComponent>);
 }
 
 SquirrelScriptSystem::~SquirrelScriptSystem()
 {
-	sq_close(vm);
+	sq_close(m_vm);
 }
 
 ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Object& object, const String& scriptName)
 {
 	// Get factory function
-	sq_pushroottable(vm);
-	sq_pushstring(vm, scriptName.Str(), -1);
-	SQRESULT result = sq_get(vm, -2);
+	sq_pushroottable(m_vm);
+	sq_pushstring(m_vm, scriptName.Str(), -1);
+	SQRESULT result = sq_get(m_vm, -2);
 	if(SQ_FAILED(result))
 	{
-		CompileScript(scriptName, vm);
+		CompileScript(scriptName, m_vm);
 
-		sq_pushstring(vm, scriptName.Str(), -1);
-		result = sq_get(vm, -2);
+		sq_pushstring(m_vm, scriptName.Str(), -1);
+		result = sq_get(m_vm, -2);
 		if(SQ_FAILED(result))
 		{
-			sq_pop(vm, 1);	// pop root table
+			sq_pop(m_vm, 1);	// pop root table
 			return nullptr;
 		}
 	}
 
-	SquirrelScriptComponent* pScriptComponent = &object.AddComponent<SquirrelScriptComponent>(vm);
-
-	// Call the constructor
-	sq_pushroottable(vm);	// the 'this' parameter
-	Sqrat::PushVar(vm, pScriptComponent);
-	result = sq_call(vm, 2, true, true);
-	if(SQ_SUCCEEDED(result))
+	SquirrelScriptComponent& scriptComponent = object.AddComponent<SquirrelScriptComponent>(m_vm);
+	if(!scriptComponent.IsValid())
 	{
-		sq_getstackobj(vm, -1, &pScriptComponent->scriptObject);
-		sq_addref(vm, &pScriptComponent->scriptObject);
-
-		sq_pop(vm, 1);	// pop instance
-
-		// Cache built-in functions
-		const char* builtinFunctionNames[] =
-		{
-			"Update",
-			"Init",
-			"Kill",
-		};
-		DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType::Num);
-
-		for(auto i : Enumerator<ScriptComponent::EBuiltinFuncType>())
-		{
-			sq_pushstring(vm, builtinFunctionNames[i], -1);
-			result = sq_get(vm, -2);
-			if(SQ_SUCCEEDED(result) && sq_gettype(vm, -1) == OT_CLOSURE)
-			{
-				sq_getstackobj(vm, -1, &pScriptComponent->builtinFunctions[i]);
-				sq_addref(vm, &pScriptComponent->builtinFunctions[i]);
-
-				sq_pop(vm, 1);
-			}
-		}
-	}
-	else
-	{
-		object.RemoveComponent(pScriptComponent);
-		pScriptComponent = nullptr;
+		object.RemoveComponent(&scriptComponent);
+		return nullptr;
 	}
 
-	sq_pop(vm, 2);	// pop class and root table
-
-	return pScriptComponent;
+	return &scriptComponent;
 }
 
 void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM vm)

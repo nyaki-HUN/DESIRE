@@ -85,28 +85,14 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 		return nullptr;
 	}
 
-	AngelScriptComponent* pScriptComponent = &object.AddComponent<AngelScriptComponent>();
-
-	// Call the constructor
-	asIScriptContext* pContext = m_pEngine->RequestContext();
-	pContext->Prepare(pFactoryFunc);
-	pContext->SetArgObject(0, pScriptComponent);
-	int result = pContext->Execute();
-	if(result == asEXECUTION_FINISHED)
+	AngelScriptComponent& scriptComponent = object.AddComponent<AngelScriptComponent>(*pFactoryFunc);
+	if(!scriptComponent.IsValid())
 	{
-		// Get the object that was created and increase the reference, otherwise it would be destroyed when the context is reused or destroyed
-		pScriptComponent->m_pScriptObject = *static_cast<asIScriptObject**>(pContext->GetAddressOfReturnValue());
-		pScriptComponent->m_pScriptObject->AddRef();
-	}
-	else
-	{
-		object.RemoveComponent(pScriptComponent);
-		pScriptComponent = nullptr;
+		object.RemoveComponent(&scriptComponent);
+		return nullptr;
 	}
 
-	m_pEngine->ReturnContext(pContext);
-
-	return pScriptComponent;
+	return &scriptComponent;
 }
 
 asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIScriptEngine& engine)
@@ -136,8 +122,8 @@ asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIS
 	asITypeInfo* pTypeInfo = engine.GetTypeInfoById(pModule->GetTypeIdByDecl(scriptName.Str()));
 
 	// Cache factory in the script module
-	asIScriptFunction* factoryFunc = pTypeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName.Str(), scriptName.Str()).Str());
-	pModule->SetUserData(factoryFunc);
+	asIScriptFunction* pFactoryFunc = pTypeInfo->GetFactoryByDecl(StackString<512>::Format("%s@ %s(ScriptComponent @)", scriptName.Str(), scriptName.Str()).Str());
+	pModule->SetUserData(pFactoryFunc);
 
 	// Cache built-in functions in the object type
 	const char* builtinFunctionNames[] =

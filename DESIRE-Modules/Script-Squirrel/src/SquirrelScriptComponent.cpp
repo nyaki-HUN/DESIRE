@@ -9,34 +9,75 @@ SquirrelScriptComponent::SquirrelScriptComponent(Object& object, HSQUIRRELVM vm)
 	: ScriptComponent(object)
 	, m_vm(vm)
 {
-	sq_resetobject(&scriptObject);
+	sq_resetobject(&m_scriptObject);
 	for(auto i : Enumerator<EBuiltinFuncType>())
 	{
-		sq_resetobject(&builtinFunctions[i]);
+		sq_resetobject(&m_builtinFunctions[i]);
 	}
+
+	// Call the constructor
+	sq_pushroottable(m_vm);	// the 'this' parameter
+	Sqrat::PushVar(m_vm, this);
+	SQRESULT result = sq_call(m_vm, 2, true, true);
+	if(SQ_SUCCEEDED(result))
+	{
+		sq_getstackobj(m_vm, -1, &m_scriptObject);
+		sq_addref(m_vm, &m_scriptObject);
+
+		sq_pop(m_vm, 1);	// pop instance
+
+		// Cache built-in functions
+		const char* builtinFunctionNames[] =
+		{
+			"Update",
+			"Init",
+			"Kill",
+		};
+		DESIRE_CHECK_ARRAY_SIZE(builtinFunctionNames, ScriptComponent::EBuiltinFuncType::Num);
+
+		for(auto i : Enumerator<ScriptComponent::EBuiltinFuncType>())
+		{
+			sq_pushstring(m_vm, builtinFunctionNames[i], -1);
+			result = sq_get(m_vm, -2);
+			if(SQ_SUCCEEDED(result) && sq_gettype(m_vm, -1) == OT_CLOSURE)
+			{
+				sq_getstackobj(m_vm, -1, &m_builtinFunctions[i]);
+				sq_addref(m_vm, &m_builtinFunctions[i]);
+
+				sq_pop(m_vm, 1);
+			}
+		}
+	}
+
+	sq_pop(m_vm, 2);	// pop class and root table
 }
 
 SquirrelScriptComponent::~SquirrelScriptComponent()
 {
-	if(!sq_isnull(scriptObject))
+	if(!sq_isnull(m_scriptObject))
 	{
-		sq_release(m_vm, &scriptObject);
-		sq_resetobject(&scriptObject);
+		sq_release(m_vm, &m_scriptObject);
+		sq_resetobject(&m_scriptObject);
 	}
 
 	for(auto i : Enumerator<EBuiltinFuncType>())
 	{
-		if(!sq_isnull(builtinFunctions[i]))
+		if(!sq_isnull(m_builtinFunctions[i]))
 		{
-			sq_release(m_vm, &builtinFunctions[i]);
-			sq_resetobject(&builtinFunctions[i]);
+			sq_release(m_vm, &m_builtinFunctions[i]);
+			sq_resetobject(&m_builtinFunctions[i]);
 		}
 	}
 }
 
+bool SquirrelScriptComponent::IsValid() const
+{
+	return !sq_isnull(m_scriptObject);
+}
+
 void SquirrelScriptComponent::CallByType(EBuiltinFuncType funcType)
 {
-	if(sq_isnull(builtinFunctions[(size_t)funcType]))
+	if(!IsValid() || sq_isnull(m_builtinFunctions[(size_t)funcType]))
 	{
 		return;
 	}
@@ -44,10 +85,10 @@ void SquirrelScriptComponent::CallByType(EBuiltinFuncType funcType)
 	// Save the stack size before the call
 	m_savedStackTop = sq_gettop(m_vm);
 
-	sq_pushobject(m_vm, scriptObject);
-	sq_pushobject(m_vm, builtinFunctions[(size_t)funcType]);
+	sq_pushobject(m_vm, m_scriptObject);
+	sq_pushobject(m_vm, m_builtinFunctions[(size_t)funcType]);
 
-	sq_pushobject(m_vm, scriptObject);	// the 'this' parameter
+	sq_pushobject(m_vm, m_scriptObject);	// the 'this' parameter
 	m_numFunctionCallArgs = 1;
 
 	ExecuteFunctionCall();
@@ -58,24 +99,24 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 	// argCount is the number of arguments to call the script function with (-2 because we need to exclude the instance and the function name)
 	const SQInteger argCount = sq_gettop(vm) - 2;
 
-	SquirrelScriptComponent* scriptComp = Sqrat::Var<SquirrelScriptComponent*>(vm, -2 - argCount).value;
-	ASSERT(vm == scriptComp->m_vm);
+	SquirrelScriptComponent* pScriptComponent = Sqrat::Var<SquirrelScriptComponent*>(vm, -2 - argCount).value;
+	ASSERT(vm == pScriptComponent->m_vm);
 
-	const SQChar* functionName = nullptr;
+	const SQChar* pFunctionName = nullptr;
 	SQInteger size = 0;
-	sq_getstringandsize(vm, -1 - argCount, &functionName, &size);
+	sq_getstringandsize(vm, -1 - argCount, &pFunctionName, &size);
 
-	if(scriptComp->PrepareFunctionCall(String(functionName, size)))
+	if(pScriptComponent->PrepareFunctionCall(String(pFunctionName, size)))
 	{
 		// Push the args
 		const SQInteger argIdxOffsetFromTop = -argCount - 3;	// -3 because the object, the function and the 'this' parameter are pushed in PrepareFunctionCall()
 		for(SQInteger i = 0; i < argCount; ++i)
 		{
 			sq_push(vm, argIdxOffsetFromTop);
-			scriptComp->m_numFunctionCallArgs++;
+			pScriptComponent->m_numFunctionCallArgs++;
 		}
 
-		scriptComp->ExecuteFunctionCall();
+		pScriptComponent->ExecuteFunctionCall();
 	}
 
 	return 0;
@@ -83,10 +124,15 @@ SQInteger SquirrelScriptComponent::CallFromScript(HSQUIRRELVM vm)
 
 bool SquirrelScriptComponent::PrepareFunctionCall(const String& functionName)
 {
+	if(!IsValid())
+	{
+		return false;
+	}
+
 	// Save the stack size before the call
 	m_savedStackTop = sq_gettop(m_vm);
 
-	sq_pushobject(m_vm, scriptObject);
+	sq_pushobject(m_vm, m_scriptObject);
 	sq_pushstring(m_vm, functionName.Str(), functionName.Length());
 	if(SQ_FAILED(sq_get(m_vm, -2)))
 	{
@@ -102,7 +148,7 @@ bool SquirrelScriptComponent::PrepareFunctionCall(const String& functionName)
 		return false;
 	}
 
-	sq_pushobject(m_vm, scriptObject);	// the 'this' parameter
+	sq_pushobject(m_vm, m_scriptObject);	// the 'this' parameter
 	m_numFunctionCallArgs = 1;
 	return true;
 }
@@ -135,14 +181,14 @@ bool SquirrelScriptComponent::AddFunctionCallArg(float arg)
 
 bool SquirrelScriptComponent::AddFunctionCallArg(double arg)
 {
-	sq_pushfloat(m_vm, (SQFloat)arg);
+	sq_pushfloat(m_vm, static_cast<SQFloat>(arg));
 	m_numFunctionCallArgs++;
 	return true;
 }
 
 bool SquirrelScriptComponent::AddFunctionCallArg(bool arg)
 {
-	sq_pushbool(m_vm, (SQBool)arg);
+	sq_pushbool(m_vm, static_cast<SQBool>(arg));
 	m_numFunctionCallArgs++;
 	return true;
 }

@@ -5,13 +5,45 @@
 
 extern asIStringFactory* GetStdStringFactorySingleton();
 
-AngelScriptComponent::AngelScriptComponent(Object& object)
+AngelScriptComponent::AngelScriptComponent(Object& object, asIScriptFunction& factoryFunc)
 	: ScriptComponent(object)
 {
+	// Call the constructor
+	asIScriptContext* pContext = factoryFunc.GetEngine()->RequestContext();
+	pContext->Prepare(&factoryFunc);
+	pContext->SetArgObject(0, this);
+	int result = pContext->Execute();
+	if(result == asEXECUTION_FINISHED)
+	{
+		// Get the object that was created and increase the reference, otherwise it would be destroyed when the context is reused or destroyed
+		m_pScriptObject = *static_cast<asIScriptObject**>(pContext->GetAddressOfReturnValue());
+		m_pScriptObject->AddRef();
+	}
+
+	factoryFunc.GetEngine()->ReturnContext(pContext);
+}
+
+AngelScriptComponent::~AngelScriptComponent()
+{
+	if(m_pScriptObject)
+	{
+		m_pScriptObject->Release();
+		m_pScriptObject = nullptr;
+	}
+}
+
+bool AngelScriptComponent::IsValid() const
+{
+	return (m_pScriptObject != nullptr);
 }
 
 void AngelScriptComponent::CallByType(EBuiltinFuncType funcType)
 {
+	if(!IsValid())
+	{
+		return;
+	}
+
 	const asITypeInfo* pTypeInfo = m_pScriptObject->GetObjectType();
 	asIScriptFunction* pFunction = static_cast<asIScriptFunction*>(pTypeInfo->GetUserData(static_cast<asPWORD>(funcType)));
 	if(pFunction == nullptr)
@@ -105,6 +137,11 @@ void AngelScriptComponent::CallFromScript(asIScriptGeneric* pGeneric)
 
 bool AngelScriptComponent::PrepareFunctionCall(const String& functionName)
 {
+	if(!IsValid())
+	{
+		return false;
+	}
+
 	const asITypeInfo* pTypeInfo = m_pScriptObject->GetObjectType();
 	asIScriptFunction* pFunction = pTypeInfo->GetMethodByName(functionName.Str());
 	if(pFunction == nullptr)
@@ -135,6 +172,7 @@ bool AngelScriptComponent::PrepareFunctionCall(const String& functionName)
 void AngelScriptComponent::ExecuteFunctionCall()
 {
 	ASSERT(m_pFunctionCallCtx != nullptr);
+
 	const int result = m_pFunctionCallCtx->Execute();
 	m_pFunctionCallCtx->GetEngine()->ReturnContext(m_pFunctionCallCtx);
 	m_pFunctionCallCtx = nullptr;
