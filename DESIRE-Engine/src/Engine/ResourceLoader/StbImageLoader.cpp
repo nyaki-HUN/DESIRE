@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Resource/TextureLoader/StbImageLoader.h"
+#include "Engine/ResourceLoader/StbImageLoader.h"
 
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/Memory/MemorySystem.h"

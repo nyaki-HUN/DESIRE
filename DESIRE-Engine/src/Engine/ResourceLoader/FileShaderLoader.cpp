@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
+#include "Engine/ResourceLoader/FileShaderLoader.h"
 
 #include "Engine/Core/FS/IReadFile.h"
 #include "Engine/Core/String/StackString.h"

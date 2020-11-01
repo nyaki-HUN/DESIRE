@@ -1,5 +1,5 @@
 #include "Engine/stdafx.h"
-#include "Engine/Resource/TextureLoader/TgaLoader.h"
+#include "Engine/ResourceLoader/TgaLoader.h"
 
 #include "Engine/Core/FS/IReadFile.h"
 
@@ -13,13 +13,13 @@ struct TgaHeader
 {
 	enum class EImageType : uint8_t
 	{
-		ColorMapped = 1,
-		TrueColor = 2,
-		Grayscale = 3,
+		ColorMapped		= 1,
+		TrueColor		= 2,
+		Grayscale		= 3,
 		// RLE packed types
-		RLE_ColorMapped = 9,
-		RLE_TrueColor = 10,
-		RLE_Grayscale = 11,
+		RLE_ColorMapped	= 9,
+		RLE_TrueColor	= 10,
+		RLE_Grayscale	= 11,
 	};
 
 	enum EDescriptorFlag

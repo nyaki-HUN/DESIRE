@@ -15,14 +15,14 @@ const Array<ResourceManager::MeshLoaderFunc_t> ResourceManager::s_meshLoaders =
 	&AssimpLoader::Load,
 };
 
-#include "Engine/Resource/ShaderLoader/FileShaderLoader.h"
+#include "Engine/ResourceLoader/FileShaderLoader.h"
 const Array<ResourceManager::ShaderLoaderFunc_t> ResourceManager::s_shaderLoaders =
 {
 	&FileShaderLoader::Load,
 };
 
-#include "Engine/Resource/TextureLoader/TgaLoader.h"
-#include "Engine/Resource/TextureLoader/StbImageLoader.h"
+#include "Engine/ResourceLoader/TgaLoader.h"
+#include "Engine/ResourceLoader/StbImageLoader.h"
 const Array<ResourceManager::TextureLoaderFunc_t> ResourceManager::s_textureLoaders =
 {
 	&TgaLoader::Load,
