@@ -12,24 +12,24 @@ public:
 	{
 	public:
 		ScopeLock(SpinLock& spinLock)
-			: spinLock(spinLock)
+			: m_spinLock(spinLock)
 		{
 			spinLock.Lock();
 		}
 
 		~ScopeLock()
 		{
-			spinLock.Unlock();
+			m_spinLock.Unlock();
 		}
 
 	private:
 		DESIRE_NO_COPY_AND_MOVE(ScopeLock)
 
-		SpinLock& spinLock;
+		SpinLock& m_spinLock;
 	};
 
 private:
-	std::atomic<bool> locked = false;
+	std::atomic<bool> m_locked = false;
 
 	static constexpr int kMaxIterations = 16;
 };

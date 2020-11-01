@@ -4,43 +4,43 @@
 const String String::kEmptyString = "";
 
 String::String(const char* pStr, size_t numChars)
-	: pData(const_cast<char*>(pStr))
-	, size(numChars)
+	: m_pData(const_cast<char*>(pStr))
+	, m_size(numChars)
 {
-	ASSERT(pData != nullptr);
-	ASSERT(pData[size] == '\0');
+	ASSERT(m_pData != nullptr);
+	ASSERT(m_pData[m_size] == '\0');
 }
 
 size_t String::Find(const String& search, size_t pos) const
 {
-	if(search.size == 0 || pos >= size)
+	if(search.m_size == 0 || pos >= m_size)
 	{
 		return kInvalidPos;
 	}
 
-	const char* pFoundCh = strstr(pData + pos, search.pData);
-	return (pFoundCh != nullptr) ? pFoundCh - pData : kInvalidPos;
+	const char* pFoundCh = strstr(m_pData + pos, search.m_pData);
+	return (pFoundCh != nullptr) ? pFoundCh - m_pData : kInvalidPos;
 }
 
 size_t String::Find(char search, size_t pos) const
 {
-	if(pos >= size || search == '\0')
+	if(pos >= m_size || search == '\0')
 	{
 		return kInvalidPos;
 	}
 
-	const char* pFoundCh = strchr(pData + pos, search);
-	return (pFoundCh != nullptr) ? pFoundCh - pData : kInvalidPos;
+	const char* pFoundCh = strchr(m_pData + pos, search);
+	return (pFoundCh != nullptr) ? pFoundCh - m_pData : kInvalidPos;
 }
 
 size_t String::FindLast(const String& search) const
 {
-	const char* s = pData + size - search.size;
-	while(s >= pData)
+	const char* s = m_pData + m_size - search.m_size;
+	while(s >= m_pData)
 	{
-		if(memcmp(s, search.pData, search.size) == 0)
+		if(memcmp(s, search.m_pData, search.m_size) == 0)
 		{
-			return static_cast<size_t>(s - pData);
+			return static_cast<size_t>(s - m_pData);
 		}
 
 		s--;
@@ -51,12 +51,12 @@ size_t String::FindLast(const String& search) const
 
 size_t String::FindLast(char search) const
 {
-	const char* s = pData + size - 1;
-	while(s >= pData)
+	const char* s = m_pData + m_size - 1;
+	while(s >= m_pData)
 	{
 		if(*s == search)
 		{
-			return static_cast<size_t>(s - pData);
+			return static_cast<size_t>(s - m_pData);
 		}
 
 		s--;
@@ -67,18 +67,18 @@ size_t String::FindLast(char search) const
 
 const char* String::Str() const
 {
-	return pData;
+	return m_pData;
 }
 
 size_t String::Length() const
 {
-	return size;
+	return m_size;
 }
 
 size_t String::LengthUTF8() const
 {
 	size_t len = 0;
-	const char* pCh = pData;
+	const char* pCh = m_pData;
 	while(*pCh != '\0')
 	{
 		if(*pCh > 0)
@@ -103,55 +103,55 @@ size_t String::LengthUTF8() const
 
 bool String::IsEmpty() const
 {
-	return (size == 0);
+	return (m_size == 0);
 }
 
 int32_t String::AsInt32() const
 {
-	return std::strtol(pData, nullptr, 0);
+	return std::strtol(m_pData, nullptr, 0);
 }
 
 int64_t String::AsInt64() const
 {
-	return std::strtoll(pData, nullptr, 0);
+	return std::strtoll(m_pData, nullptr, 0);
 }
 
 uint32_t String::AsUint32() const
 {
-	return std::strtoul(pData, nullptr, 0);
+	return std::strtoul(m_pData, nullptr, 0);
 }
 
 uint64_t String::AsUint64() const
 {
-	return std::strtoull(pData, nullptr, 0);
+	return std::strtoull(m_pData, nullptr, 0);
 }
 
 float String::AsFloat() const
 {
-	return std::strtof(pData, nullptr);
+	return std::strtof(m_pData, nullptr);
 }
 
 double String::AsDouble() const
 {
-	return std::strtod(pData, nullptr);
+	return std::strtod(m_pData, nullptr);
 }
 
 int String::Compare(const String& string) const
 {
-	const int rv = memcmp(pData, string.pData, std::min(size, string.size));
-	return (rv != 0) ? rv : static_cast<int>(string.size) - static_cast<int>(size);
+	const int rv = memcmp(m_pData, string.m_pData, std::min(m_size, string.m_size));
+	return (rv != 0) ? rv : static_cast<int>(string.m_size) - static_cast<int>(m_size);
 }
 
 bool String::Equals(const String& string) const
 {
-	return (size == string.size) ? (memcmp(pData, string.pData, size) == 0) : false;
+	return (m_size == string.m_size) ? (memcmp(m_pData, string.m_pData, m_size) == 0) : false;
 }
 
 bool String::StartsWith(const String& prefix) const
 {
-	if(size >= prefix.size && prefix.size != 0)
+	if(m_size >= prefix.m_size && prefix.m_size != 0)
 	{
-		return (memcmp(pData, prefix.pData, prefix.size) == 0);
+		return (memcmp(m_pData, prefix.m_pData, prefix.m_size) == 0);
 	}
 
 	return false;
@@ -159,14 +159,14 @@ bool String::StartsWith(const String& prefix) const
 
 bool String::StartsWith(char prefix) const
 {
-	return (pData[0] == prefix);
+	return (m_pData[0] == prefix);
 }
 
 bool String::EndsWith(const String& suffix) const
 {
-	if(size >= suffix.size && suffix.size != 0)
+	if(m_size >= suffix.m_size && suffix.m_size != 0)
 	{
-		return (memcmp(&pData[size - suffix.size], suffix.pData, suffix.size) == 0);
+		return (memcmp(&m_pData[m_size - suffix.m_size], suffix.m_pData, suffix.m_size) == 0);
 	}
 
 	return false;
@@ -175,14 +175,14 @@ bool String::EndsWith(const String& suffix) const
 bool String::EndsWith(char suffix) const
 {
 	ASSERT(suffix != '\0');
-	return (size < 1) ? false : (pData[size - 1] == suffix);
+	return (m_size < 1) ? false : (m_pData[m_size - 1] == suffix);
 }
 
 String String::SubString(size_t pos) const
 {
-	if(pos < size)
+	if(pos < m_size)
 	{
-		return String(&pData[pos], size - pos);
+		return String(&m_pData[pos], m_size - pos);
 	}
 
 	return String();

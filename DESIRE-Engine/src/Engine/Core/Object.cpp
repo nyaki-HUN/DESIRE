@@ -5,141 +5,141 @@
 #include "Engine/Core/Math/Transform.h"
 
 static constexpr uint32_t kMaxNumTransforms = 10000;
-static Transform preallocatedTransforms[kMaxNumTransforms];
-static size_t numTransforms = 0;
+static Transform s_preallocatedTransforms[kMaxNumTransforms];
+static size_t s_numTransforms = 0;
 
 Object::Object()
 {
-	ASSERT(numTransforms < kMaxNumTransforms);
-	transform = &preallocatedTransforms[numTransforms++];
-	transform->owner = this;
-	transform->ResetToIdentity();
+	ASSERT(s_numTransforms < kMaxNumTransforms);
+	m_pTransform = &s_preallocatedTransforms[s_numTransforms++];
+	m_pTransform->owner = this;
+	m_pTransform->ResetToIdentity();
 }
 
 Object::~Object()
 {
 	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and no need to call SetParent()
-	if(transform->owner != nullptr)
+	if(m_pTransform->owner != nullptr)
 	{
 		SetParent(nullptr);
-		numTransforms -= numTransformsInHierarchy;
+		s_numTransforms -= m_numTransformsInHierarchy;
 	}
 
-	for(Object* child : children)
+	for(Object* pChild : m_children)
 	{
-		child->transform->owner = nullptr;
-		delete child;
+		pChild->m_pTransform->owner = nullptr;
+		delete pChild;
 	}
 
-	transform->parent = nullptr;
-	transform->owner = nullptr;
+	m_pTransform->parent = nullptr;
+	m_pTransform->owner = nullptr;
 }
 
 void Object::SetObjectName(const String& name)
 {
-	objectName = name;
+	m_objectName = name;
 }
 
 const String& Object::GetObjectName() const
 {
-	return objectName;
+	return m_objectName;
 }
 
 void Object::SetActive(bool active)
 {
-	isActive = active;
+	m_isActive = active;
 }
 
 bool Object::IsActiveSelf() const
 {
-	return isActive;
+	return m_isActive;
 }
 
 bool Object::IsActiveInHierarchy() const
 {
-	const Object* otmp = this;
-	while(otmp != nullptr)
+	const Object* pObj = this;
+	while(pObj != nullptr)
 	{
-		if(!otmp->IsActiveSelf())
+		if(!pObj->IsActiveSelf())
 		{
 			return false;
 		}
 
-		otmp = otmp->parent;
+		pObj = pObj->GetParent();
 	}
 
 	return true;
 }
 
-void Object::SetParent(Object* newParent)
+void Object::SetParent(Object* pNewParent)
 {
-	if(parent == newParent)
+	if(m_pParent == pNewParent)
 	{
 		return;
 	}
 
-	if(parent != nullptr)
+	if(m_pParent != nullptr)
 	{
-		parent->RemoveChild_Internal(this);
+		m_pParent->RemoveChild_Internal(this);
 	}
 
-	parent = newParent;
+	m_pParent = pNewParent;
 
-	Transform* oldTransform = transform;
-	if(parent != nullptr)
+	Transform* pOldTransform = m_pTransform;
+	if(m_pParent != nullptr)
 	{
-		transform = parent->transform + parent->numTransformsInHierarchy;
+		m_pTransform = m_pParent->m_pTransform + m_pParent->m_numTransformsInHierarchy;
 
 		// If the parent transform will be moved, we need to apply correction
-		if(parent->transform > oldTransform)
+		if(m_pParent->m_pTransform > pOldTransform)
 		{
-			transform -= numTransformsInHierarchy;
+			m_pTransform -= m_numTransformsInHierarchy;
 		}
 
-		parent->AddChild_Internal(this);
+		m_pParent->AddChild_Internal(this);
 	}
 	else
 	{
-		transform = &preallocatedTransforms[numTransforms];
+		m_pTransform = &s_preallocatedTransforms[s_numTransforms];
 	}
 
-	ptrdiff_t numToMove = oldTransform - transform;
+	ptrdiff_t numToMove = pOldTransform - m_pTransform;
 	if(numToMove != 0)
 	{
-		Transform* savedTransforms = &preallocatedTransforms[numTransforms];
-		ASSERT(numTransformsInHierarchy <= DESIRE_ASIZEOF(preallocatedTransforms) - numTransforms);
-		memcpy(savedTransforms, oldTransform, numTransformsInHierarchy * sizeof(Transform));
+		Transform* pSavedTransforms = &s_preallocatedTransforms[s_numTransforms];
+		ASSERT(m_numTransformsInHierarchy <= DESIRE_ASIZEOF(s_preallocatedTransforms) - s_numTransforms);
+		memcpy(pSavedTransforms, pOldTransform, m_numTransformsInHierarchy * sizeof(Transform));
 
-		Transform* movedTransformDst = nullptr;
-		Transform* movedTransformSrc = nullptr;
+		Transform* pMovedTransformDst = nullptr;
+		Transform* pMovedTransformSrc = nullptr;
 		if(numToMove < 0)
 		{
 			numToMove = std::abs(numToMove);
 			// Move data to the left in the array (our transforms will be placed after it)
-			movedTransformDst = oldTransform;
-			movedTransformSrc = oldTransform + numTransformsInHierarchy;
+			pMovedTransformDst = pOldTransform;
+			pMovedTransformSrc = pOldTransform + m_numTransformsInHierarchy;
 		}
 		else
 		{
 			// Move data to the right in the array (our transforms will be placed before it)
-			movedTransformDst = transform + numTransformsInHierarchy;
-			movedTransformSrc = transform;
+			pMovedTransformDst = m_pTransform + m_numTransformsInHierarchy;
+			pMovedTransformSrc = m_pTransform;
 		}
 
-		memmove(movedTransformDst, movedTransformSrc, numToMove * sizeof(Transform));
-		RefreshParentPointerInTransforms(movedTransformDst, numToMove);
+		memmove(pMovedTransformDst, pMovedTransformSrc, numToMove * sizeof(Transform));
+		RefreshParentPointerInTransforms(pMovedTransformDst, numToMove);
 
-		memcpy(transform, savedTransforms, numTransformsInHierarchy * sizeof(Transform));
-		RefreshParentPointerInTransforms(transform, numTransformsInHierarchy);
+		memcpy(m_pTransform, pSavedTransforms, m_numTransformsInHierarchy * sizeof(Transform));
+		RefreshParentPointerInTransforms(m_pTransform, m_numTransformsInHierarchy);
 	}
 
-	transform->flags |= Transform::WORLD_MATRIX_DIRTY;
+	m_pTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
 	MarkAllChildrenTransformDirty();
 }
 
 Object* Object::GetParent() const
 {
-	return parent;
+	return m_pParent;
 }
 
 Object& Object::CreateChildObject(const String& name)
@@ -152,116 +152,116 @@ Object& Object::CreateChildObject(const String& name)
 
 const Array<Object*>& Object::GetChildren() const
 {
-	return children;
+	return m_children;
 }
 
 bool Object::HasObjectInParentHierarchy(const Object* obj) const
 {
-	const Object* otmp = parent;
-	while(otmp != nullptr)
+	const Object* pObj = GetParent();
+	while(pObj != nullptr)
 	{
-		if(otmp == obj)
+		if(pObj == obj)
 		{
 			return true;
 		}
 
-		otmp = otmp->parent;
+		pObj = pObj->GetParent();
 	}
 
 	return false;
 }
 
-void Object::RemoveComponent(const Component* component)
+void Object::RemoveComponent(const Component* pComponent)
 {
-	const size_t idx = components.SpecializedFind([component](const std::unique_ptr<Component>& comp)
+	const size_t idx = m_components.SpecializedFind([pComponent](const std::unique_ptr<Component>& spComponent)
 	{
-		return (comp.get() == component);
+		return (spComponent.get() == pComponent);
 	});
 
 	if(idx != SIZE_MAX)
 	{
-		components.RemoveAt(idx);
+		m_components.RemoveAt(idx);
 	}
 }
 
 Component* Object::GetComponentByTypeId(int typeId) const
 {
 	// Binary find
-	auto it = std::lower_bound(components.begin(), components.end(), typeId, [](const std::unique_ptr<Component>& component, int id)
+	auto it = std::lower_bound(m_components.begin(), m_components.end(), typeId, [](const std::unique_ptr<Component>& component, int id)
 	{
 		return (component->GetTypeId() < id);
 	});
-	return (it != components.end() && !(typeId < (*it)->GetTypeId())) ? it->get() : nullptr;
+	return (it != m_components.end() && !(typeId < (*it)->GetTypeId())) ? it->get() : nullptr;
 }
 
 const Array<std::unique_ptr<Component>>& Object::GetComponents() const
 {
-	return components;
+	return m_components;
 }
 
 Transform& Object::GetTransform() const
 {
-	return *transform;
+	return *m_pTransform;
 }
 
 void Object::MarkAllChildrenTransformDirty()
 {
-	Transform* childTransform = transform + 1;
-	for(size_t i = 1; i < numTransformsInHierarchy; ++i)
+	Transform* childm_pTransform = m_pTransform + 1;
+	for(size_t i = 1; i < m_numTransformsInHierarchy; ++i)
 	{
-		childTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
-		childTransform++;
+		childm_pTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
+		childm_pTransform++;
 	}
 }
 
-Component& Object::AddComponent_Internal(std::unique_ptr<Component> component)
+Component& Object::AddComponent_Internal(std::unique_ptr<Component>&& component)
 {
-	std::unique_ptr<Component>& addedComponent = components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
+	std::unique_ptr<Component>& spAddedComponent = m_components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
 	{
 		return (a->GetTypeId() < b->GetTypeId());
 	});
-	return *(addedComponent.get());
+	return *spAddedComponent;
 }
 
-void Object::AddChild_Internal(Object* child)
+void Object::AddChild_Internal(Object* pChild)
 {
-	Object* obj = this;
+	Object* pObj = this;
 	do
 	{
-		obj->numTransformsInHierarchy += child->numTransformsInHierarchy;
-		obj = obj->parent;
-	} while(obj != nullptr);
+		pObj->m_numTransformsInHierarchy += pChild->m_numTransformsInHierarchy;
+		pObj = pObj->GetParent();
+	} while(pObj != nullptr);
 
-	children.Add(child);
+	m_children.Add(pChild);
 
-	child->transform->parent = transform;
+	pChild->m_pTransform->parent = m_pTransform;
 }
 
-void Object::RemoveChild_Internal(Object* child)
+void Object::RemoveChild_Internal(Object* pChild)
 {
-	Object* obj = this;
+	Object* pObj = this;
 	do
 	{
-		ASSERT(obj->numTransformsInHierarchy > child->numTransformsInHierarchy);
-		obj->numTransformsInHierarchy -= child->numTransformsInHierarchy;
-		obj = obj->parent;
-	} while(obj != nullptr);
+		ASSERT(pObj->m_numTransformsInHierarchy > pChild->m_numTransformsInHierarchy);
+		pObj->m_numTransformsInHierarchy -= pChild->m_numTransformsInHierarchy;
+		pObj = pObj->GetParent();
+	} while(pObj != nullptr);
 
-	children.Remove(child);
-	child->transform->parent = nullptr;
+	m_children.Remove(pChild);
+	pChild->m_pTransform->parent = nullptr;
 }
 
-void Object::RefreshParentPointerInTransforms(Transform* firstTransform, size_t transformCount)
+void Object::RefreshParentPointerInTransforms(Transform* pFirstTransform, size_t transformCount)
 {
-	Transform* transformTmp = firstTransform;
+	Transform* pTransformTmp = pFirstTransform;
 	for(size_t i = 0; i < transformCount; ++i)
 	{
-		transformTmp->owner->transform = transformTmp;
-		if(transformTmp->owner->parent != nullptr)
+		pTransformTmp->owner->m_pTransform = pTransformTmp;
+		if(pTransformTmp->owner->m_pParent != nullptr)
 		{
-			transformTmp->parent = &transformTmp->owner->parent->GetTransform();
+			pTransformTmp->parent = &pTransformTmp->owner->m_pParent->GetTransform();
 		}
 
-		transformTmp++;
+		pTransformTmp++;
 	}
 }

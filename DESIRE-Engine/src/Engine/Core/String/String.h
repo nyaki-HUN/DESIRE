@@ -64,8 +64,8 @@ public:
 protected:
 	String() {}
 
-	char* pData = nullptr;
-	size_t size = 0;
+	char* m_pData = nullptr;
+	size_t m_size = 0;
 
 private:
 	DESIRE_NO_COPY_AND_MOVE(String)

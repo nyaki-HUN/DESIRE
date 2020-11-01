@@ -5,18 +5,18 @@
 class ConfigValueFloat : public IConfigValue
 {
 public:
-	ConfigValueFloat(const char* name, const char* description, float initValue, float minValue = -FLT_MAX, float maxValue = FLT_MAX);
+	ConfigValueFloat(const char* pName, const char* pDescription, float initValue, float minValue = -FLT_MAX, float maxValue = FLT_MAX);
 
 	ConfigValueFloat& operator =(float newValue);
 
 	inline operator float() const
 	{
-		return value;
+		return m_value;
 	}
 
-	const float minValue;
-	const float maxValue;
+	const float m_minValue;
+	const float m_maxValue;
 
 private:
-	float value;
+	float m_value;
 };

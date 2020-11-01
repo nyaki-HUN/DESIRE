@@ -19,12 +19,12 @@ public:
 	bool IsActiveSelf() const;
 	bool IsActiveInHierarchy() const;
 
-	void SetParent(Object* newParent);
+	void SetParent(Object* pNewParent);
 	Object* GetParent() const;
 
 	Object& CreateChildObject(const String& name);
 	const Array<Object*>& GetChildren() const;
-	bool HasObjectInParentHierarchy(const Object* obj) const;
+	bool HasObjectInParentHierarchy(const Object* pObject) const;
 
 	template<class T, class... Args>
 	T& AddComponent(Args&&... args)
@@ -33,7 +33,7 @@ public:
 	}
 
 	// Removes and destroys a component
-	void RemoveComponent(const Component* component);
+	void RemoveComponent(const Component* pComponent);
 
 	// Get the component with the given typeID
 	Component* GetComponentByTypeId(int typeId) const;
@@ -55,20 +55,20 @@ public:
 	static constexpr size_t kMaxObjectNameLength = 32;
 
 private:
-	Component& AddComponent_Internal(std::unique_ptr<Component> component);
-	void AddChild_Internal(Object* child);
-	void RemoveChild_Internal(Object* child);
+	Component& AddComponent_Internal(std::unique_ptr<Component>&& component);
+	void AddChild_Internal(Object* pChild);
+	void RemoveChild_Internal(Object* pChild);
 
-	static void RefreshParentPointerInTransforms(Transform* firstTransform, size_t transformCount);
+	static void RefreshParentPointerInTransforms(Transform* pFirstTransform, size_t transformCount);
 
-	Array<std::unique_ptr<Component>> components;
-	Transform* transform = nullptr;
-	size_t numTransformsInHierarchy = 1;
+	Array<std::unique_ptr<Component>> m_components;
+	Transform* m_pTransform = nullptr;
+	size_t m_numTransformsInHierarchy = 1;
 
-	Object* parent = nullptr;
-	Array<Object*> children;
+	Object* m_pParent = nullptr;
+	Array<Object*> m_children;
 
-	bool isActive = true;
+	bool m_isActive = true;
 
-	StackString<kMaxObjectNameLength> objectName;
+	StackString<kMaxObjectNameLength> m_objectName;
 };

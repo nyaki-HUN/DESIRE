@@ -18,9 +18,6 @@ public:
 	static void LogWithData(const LogData& logData);
 	static void LogWithFormat(const char* file, int line, const char* logType, const char* format, ...);
 	static void SetUserDefinedLogFunction(LogFunction_t func);
-
-private:
-	static LogFunction_t userDefinedLogFunction;
 };
 
 // Log helper macros

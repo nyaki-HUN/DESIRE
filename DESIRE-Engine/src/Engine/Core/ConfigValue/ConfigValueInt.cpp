@@ -1,26 +1,25 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/ConfigValue/ConfigValueInt.h"
 
-ConfigValueInt::ConfigValueInt(const char* name, const char* description, int initValue, int minValue, int maxValue)
-	: IConfigValue(name, description)
-	, value(initValue)
-	, minValue(minValue)
-	, maxValue(maxValue)
+ConfigValueInt::ConfigValueInt(const char* pName, const char* pDescription, int initValue, int minValue, int maxValue)
+	: IConfigValue(pName, pDescription)
+	, m_value(initValue)
+	, m_minValue(minValue)
+	, m_maxValue(maxValue)
 {
-
 }
 
 ConfigValueInt& ConfigValueInt::operator =(int newValue)
 {
-	if(newValue < minValue)
+	if(newValue < m_minValue)
 	{
-		newValue = minValue;
+		newValue = m_minValue;
 	}
-	else if(newValue > maxValue)
+	else if(newValue > m_maxValue)
 	{
-		newValue = maxValue;
+		newValue = m_maxValue;
 	}
 
-	value = newValue;
+	m_value = newValue;
 	return *this;
 }

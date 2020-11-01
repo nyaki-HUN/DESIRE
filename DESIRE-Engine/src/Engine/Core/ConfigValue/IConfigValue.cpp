@@ -1,52 +1,52 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/ConfigValue/IConfigValue.h"
 
-IConfigValue* IConfigValue::s_listHead = nullptr;
-IConfigValue* IConfigValue::s_listTail = nullptr;
+IConfigValue* IConfigValue::s_pListHead = nullptr;
+IConfigValue* IConfigValue::s_pListTail = nullptr;
 
-IConfigValue::IConfigValue(const char* name, const char* description)
-	: next(nullptr)
-	, name(name)
-	, description(description)
+IConfigValue::IConfigValue(const char* pName, const char* pDescription)
+	: m_pNext(nullptr)
+	, m_pName(pName)
+	, m_pDescription(pDescription)
 {
-	ASSERT(name != nullptr);
+	ASSERT(m_pName != nullptr);
 
-	if(s_listHead == nullptr)
+	if(s_pListHead == nullptr)
 	{
-		s_listHead = this;
+		s_pListHead = this;
 	}
 	else
 	{
-		s_listTail->next = this;
+		s_pListTail->m_pNext = this;
 	}
 
-	s_listTail = this;
+	s_pListTail = this;
 }
 
 IConfigValue::~IConfigValue()
 {
-	if(this == s_listHead)
+	if(this == s_pListHead)
 	{
-		s_listHead = s_listHead->next;
+		s_pListHead = s_pListHead->m_pNext;
 		return;
 	}
 
-	IConfigValue* prevConfig = s_listHead;
-	while(this != prevConfig->next)
+	IConfigValue* pPrevConfig = s_pListHead;
+	while(this != pPrevConfig->m_pNext)
 	{
-		prevConfig = prevConfig->next;
+		pPrevConfig = pPrevConfig->m_pNext;
 	}
 
-	prevConfig->next = prevConfig->next->next;
+	pPrevConfig->m_pNext = pPrevConfig->m_pNext->m_pNext;
 }
 
-IConfigValue* IConfigValue::FindConfigValue(const char* name)
+IConfigValue* IConfigValue::FindConfigValue(const char* pName)
 {
-	IConfigValue* config = s_listHead;
-	while(config != nullptr && strcmp(config->name, name) != 0)
+	IConfigValue* pConfig = s_pListHead;
+	while(pConfig != nullptr && strcmp(pConfig->m_pName, pName) != 0)
 	{
-		config = config->next;
+		pConfig = pConfig->m_pNext;
 	}
 
-	return config;
+	return pConfig;
 }

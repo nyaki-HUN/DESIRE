@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Timer.h"
+
 #include "Engine/Core/Time.h"
 
 Timer::Timer()
@@ -13,43 +14,43 @@ Timer::~Timer()
 
 void Timer::Update()
 {
-	const uint64_t prevMicroSec = microSec;
-	microSec = Time::GetMicroTime();
-	microDelta = microSec - prevMicroSec;
+	const uint64_t prevMicroSec = m_microSec;
+	m_microSec = Time::GetMicroTime();
+	m_microDelta = m_microSec - prevMicroSec;
 
-	milliSec = static_cast<uint32_t>(microSec / 1000);
-	milliDelta = static_cast<uint32_t>(microDelta / 1000);
+	m_milliSec = static_cast<uint32_t>(m_microSec / 1000);
+	m_milliDelta = static_cast<uint32_t>(m_microDelta / 1000);
 
-	sec = static_cast<float>(milliSec) / 1000.0f;
-	secDelta = static_cast<float>(milliDelta) / 1000.0f;
+	m_sec = static_cast<float>(m_milliSec) / 1000.0f;
+	m_secDelta = static_cast<float>(m_milliDelta) / 1000.0f;
 }
 
 uint64_t Timer::GetTimeMicroSec() const
 {
-	return microSec;
+	return m_microSec;
 }
 
 uint32_t Timer::GetTimeMilliSec() const
 {
-	return milliSec;
+	return m_milliSec;
 }
 
 float Timer::GetTimeSec() const
 {
-	return sec;
+	return m_sec;
 }
 
 uint64_t Timer::GetMicroDelta() const
 {
-	return microDelta;
+	return m_microDelta;
 }
 
 uint32_t Timer::GetMilliDelta() const
 {
-	return milliDelta;
+	return m_milliDelta;
 }
 
 float Timer::GetSecDelta() const
 {
-	return secDelta;
+	return m_secDelta;
 }

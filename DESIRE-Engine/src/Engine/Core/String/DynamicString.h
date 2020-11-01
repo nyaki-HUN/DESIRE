@@ -30,5 +30,5 @@ public:
 	bool Reserve(size_t numChars) override;
 
 private:
-	size_t preallocatedSize = 0;
+	size_t m_preallocatedSize = 0;
 };

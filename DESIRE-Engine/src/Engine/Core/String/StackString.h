@@ -8,12 +8,12 @@ class StackString : public WritableString
 public:
 	StackString()
 	{
-		pData = charBuffer;
+		m_pData = m_charBuffer;
 	}
 
 	StackString(const char* pStr, size_t size)
 	{
-		pData = charBuffer;
+		m_pData = m_charBuffer;
 		Set(pStr, size);
 	}
 
@@ -42,5 +42,5 @@ private:
 		return (numChars < STACK_SIZE);
 	}
 
-	char charBuffer[STACK_SIZE] = {};
+	char m_charBuffer[STACK_SIZE] = {};
 };

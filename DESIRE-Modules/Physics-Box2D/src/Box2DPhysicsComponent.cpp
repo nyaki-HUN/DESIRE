@@ -258,7 +258,7 @@ bool Box2DPhysicsComponent::IsSleeping() const
 
 void Box2DPhysicsComponent::UpdateGameObjectTransform() const
 {
-	Transform& transform = object.GetTransform();
+	Transform& transform = m_object.GetTransform();
 	const b2Vec2& pos =  m_pBody->GetPosition();
 	const float rotAngle =  m_pBody->GetTransform().q.GetAngle();
 	transform.SetPosition(Vector3(pos.x, pos.y, transform.GetPosition().GetZ()));
@@ -267,7 +267,7 @@ void Box2DPhysicsComponent::UpdateGameObjectTransform() const
 
 void Box2DPhysicsComponent::SetTransformFromGameObject()
 {
-	const Transform& transform = object.GetTransform();
+	const Transform& transform = m_object.GetTransform();
 	const Vector3 pos = transform.GetPosition();
 	const float rotAngle = transform.GetRotation().EulerAngles().GetZ();
 	 m_pBody->SetTransform(GetB2Vec2(pos), rotAngle);

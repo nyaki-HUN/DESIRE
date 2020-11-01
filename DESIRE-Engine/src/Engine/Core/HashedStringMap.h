@@ -18,7 +18,7 @@ public:
 
 	HashedStringMap(HashedStringMap&& otherMap)
 	{
-		elements.Swap(otherMap.elements);
+		m_elements.Swap(otherMap.m_elements);
 	}
 
 	HashedStringMap(std::initializer_list<std::pair<HashedString, T>> initList)
@@ -31,40 +31,40 @@ public:
 
 	HashedStringMap& operator =(HashedStringMap&& otherMap)
 	{
-		elements.Swap(otherMap.elements);
+		m_elements.Swap(otherMap.m_elements);
 		return *this;
 	}
 
 	T* Insert(HashedString key, const T& value)
 	{
 		ASSERT(Find(key) == nullptr && "An other value is already added with this key");
-		return &elements.BinaryFindOrInsert(KeyValuePair(key, value)).value;
+		return &m_elements.BinaryFindOrInsert(KeyValuePair(key, value)).value;
 	}
 
 	T* Find(HashedString key)
 	{
 		// Binary find
-		auto it = std::lower_bound(elements.begin(), elements.end(), key, [](const KeyValuePair& pair, HashedString key)
+		auto it = std::lower_bound(m_elements.begin(), m_elements.end(), key, [](const KeyValuePair& pair, HashedString key)
 		{
 			return (pair.key < key);
 		});
-		return (it != elements.end() && !(key < it->key)) ? &it->value : nullptr;
+		return (it != m_elements.end() && !(key < it->key)) ? &it->value : nullptr;
 	}
 
 	const T* Find(HashedString key) const
 	{
 		// Binary find
-		auto it = std::lower_bound(elements.begin(), elements.end(), key, [](const KeyValuePair& pair, HashedString key)
+		auto it = std::lower_bound(m_elements.begin(), m_elements.end(), key, [](const KeyValuePair& pair, HashedString key)
 		{
 			return (pair.key < key);
 		});
-		return (it != elements.end() && !(key < it->key)) ? &it->value : nullptr;
+		return (it != m_elements.end() && !(key < it->key)) ? &it->value : nullptr;
 	}
 
 	// Remove all elements from the map
 	void Clear()
 	{
-		elements.Clear();
+		m_elements.Clear();
 	}
 
 private:
@@ -85,5 +85,5 @@ private:
 		}
 	};
 
-	Array<KeyValuePair> elements;
+	Array<KeyValuePair> m_elements;
 };

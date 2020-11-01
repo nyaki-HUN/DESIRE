@@ -207,7 +207,7 @@ bool PhysXPhysicsComponent::IsSleeping() const
 
 void PhysXPhysicsComponent::UpdateGameObjectTransform() const
 {
-	Transform& transform = object.GetTransform();
+	Transform& transform = m_object.GetTransform();
 	const physx::PxTransform pxTransform = m_pBody->getGlobalPose();
 	transform.SetPosition(GetVector3(pxTransform.p));
 	transform.SetRotation(GetQuat(pxTransform.q));
@@ -215,7 +215,7 @@ void PhysXPhysicsComponent::UpdateGameObjectTransform() const
 
 void PhysXPhysicsComponent::SetTransformFromGameObject()
 {
-	const Transform& transform = object.GetTransform();
+	const Transform& transform = m_object.GetTransform();
 	physx::PxTransform pxTransform = m_pBody->getGlobalPose();
 	pxTransform.p = GetPxVec3(transform.GetPosition());
 	pxTransform.q = GetPxQuat(transform.GetRotation());

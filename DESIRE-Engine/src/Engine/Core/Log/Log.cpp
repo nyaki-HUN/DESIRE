@@ -4,13 +4,13 @@
 #include "Engine/Core/Log/Logger.h"
 #include "Engine/Core/Log/LoggerPolicies.h"
 
-Log::LogFunction_t Log::userDefinedLogFunction = nullptr;
+Log::LogFunction_t s_userDefinedLogFunction = nullptr;
 
 void Log::LogWithData(const LogData& logData)
 {
-	if(userDefinedLogFunction != nullptr)
+	if(s_userDefinedLogFunction != nullptr)
 	{
-		userDefinedLogFunction(logData);
+		s_userDefinedLogFunction(logData);
 	}
 	else
 	{
@@ -48,5 +48,5 @@ void Log::LogWithFormat(const char* file, int line, const char* logType, const c
 
 void Log::SetUserDefinedLogFunction(LogFunction_t func)
 {
-	userDefinedLogFunction = func;
+	s_userDefinedLogFunction = func;
 }

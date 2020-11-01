@@ -20,25 +20,25 @@ public:
 		// h ^= h >> r;
 		// h *= m;
 		// h ^= h >> r;
-		hash = ((_h ^ (_h >> r)) * m) ^
-			(  ((_h ^ (_h >> r)) * m) >> r);
+		m_hash = ((_h ^ (_h >> r)) * m) ^
+				(((_h ^ (_h >> r)) * m) >> r);
 #undef _h
 		DESIRE_ENABLE_WARNINGS
 	}
 
 	explicit constexpr HashedString(uint64_t hash)
-		: hash(hash)
+		: m_hash(hash)
 	{
 	}
 
 	inline bool operator ==(HashedString other) const
 	{
-		return (hash == other.hash);
+		return (m_hash == other.m_hash);
 	}
 
 	inline operator uint64_t() const
 	{
-		return hash;
+		return m_hash;
 	}
 
 	static HashedString CreateFromString(const String& string)
@@ -152,5 +152,5 @@ private:
 #undef k
 	}
 
-	uint64_t hash = 0;
+	uint64_t m_hash = 0;
 };

@@ -333,7 +333,7 @@ bool BulletPhysicsComponent::IsSleeping() const
 
 void BulletPhysicsComponent::UpdateGameObjectTransform() const
 {
-	Transform& transform = object.GetTransform();
+	Transform& transform = m_object.GetTransform();
 	const btTransform& btTransform = m_pBody->getWorldTransform();
 	transform.SetPosition(GetVector3(btTransform.getOrigin()));
 	transform.SetRotation(GetQuat(btTransform.getRotation()));
@@ -342,7 +342,7 @@ void BulletPhysicsComponent::UpdateGameObjectTransform() const
 
 void BulletPhysicsComponent::SetTransformFromGameObject()
 {
-	const Transform& transform = object.GetTransform();
+	const Transform& transform = m_object.GetTransform();
 	btTransform& btTransform = m_pBody->getWorldTransform();
 	btTransform.setOrigin(GetBtVector3(transform.GetPosition()));
 	btTransform.setRotation(GetBtQuat(transform.GetRotation()));

@@ -22,12 +22,12 @@ class CombinedFilterPolicy
 {
 	inline bool Filter(const LogData& logData)
 	{
-		return (policy1.Filter(logData) && policy2.Filter(logData));
+		return (m_policy1.Filter(logData) && m_policy2.Filter(logData));
 	}
 
 private:
-	Policy1 policy1;
-	Policy2 policy2;
+	Policy1 m_policy1;
+	Policy2 m_policy2;
 };
 
 // --------------------------------------------------------------------------------------------------------------------

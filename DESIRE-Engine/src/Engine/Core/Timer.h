@@ -17,10 +17,10 @@ public:
 	float GetSecDelta() const;
 
 private:
-	uint64_t microSec = 0;
-	uint64_t microDelta = 0;
-	uint32_t milliSec = 0;
-	uint32_t milliDelta = 0;
-	float sec = 0.0f;
-	float secDelta = 0.0f;
+	uint64_t m_microSec = 0;
+	uint64_t m_microDelta = 0;
+	uint32_t m_milliSec = 0;
+	uint32_t m_milliDelta = 0;
+	float m_sec = 0.0f;
+	float m_secDelta = 0.0f;
 };

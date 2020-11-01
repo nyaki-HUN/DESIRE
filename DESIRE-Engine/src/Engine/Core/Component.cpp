@@ -1,9 +1,10 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Component.h"
+
 #include "Engine/Core/Object.h"
 
 Component::Component(Object& object)
-	: object(object)
+	: m_object(object)
 {
 }
 
@@ -13,20 +14,20 @@ Component::~Component()
 
 void Component::Destroy()
 {
-	object.RemoveComponent(this);
+	m_object.RemoveComponent(this);
 }
 
 void Component::SetEnabled(bool value)
 {
-	enabled = value;
+	m_enabled = value;
 }
 
 bool Component::IsEnabled() const
 {
-	return enabled;
+	return m_enabled;
 }
 
 Object& Component::GetObject() const
 {
-	return object;
+	return m_object;
 }

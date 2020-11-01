@@ -5,18 +5,18 @@
 class ConfigValueInt : public IConfigValue
 {
 public:
-	ConfigValueInt(const char* name, const char* description, int initValue, int minValue = INT32_MIN, int maxValue = INT32_MAX);
+	ConfigValueInt(const char* pName, const char* pDescription, int initValue, int minValue = INT32_MIN, int maxValue = INT32_MAX);
 
 	ConfigValueInt& operator =(int newValue);
 
 	inline operator int() const
 	{
-		return value;
+		return m_value;
 	}
 
-	const int minValue;
-	const int maxValue;
+	const int m_minValue;
+	const int m_maxValue;
 
 private:
-	int value;
+	int m_value;
 };

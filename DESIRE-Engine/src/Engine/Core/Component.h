@@ -35,8 +35,8 @@ public:
 	virtual EditorComponent* AsEditorComponent() { return nullptr; }
 
 protected:
-	Object& object;
+	Object& m_object;
 
 private:
-	bool enabled = true;
+	bool m_enabled = true;
 };

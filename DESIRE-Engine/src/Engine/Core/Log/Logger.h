@@ -16,13 +16,13 @@ public:
 
 	inline void Log(const LogData& logData)
 	{
-		if(filterPolicy.Filter(logData))
+		if(m_filterPolicy.Filter(logData))
 		{
-			outputPolicy.Process(logData);
+			m_outputPolicy.Process(logData);
 		}
 	}
 
 private:
-	FilterPolicy filterPolicy;
-	OutputPolicy outputPolicy;
+	FilterPolicy m_filterPolicy;
+	OutputPolicy m_outputPolicy;
 };

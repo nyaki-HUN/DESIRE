@@ -20,15 +20,15 @@ void SpinLock::Lock()
 
 bool SpinLock::TryLock()
 {
-	return !locked.load(std::memory_order_relaxed) && !locked.exchange(true, std::memory_order_acquire);
+	return !m_locked.load(std::memory_order_relaxed) && !m_locked.exchange(true, std::memory_order_acquire);
 }
 
 void SpinLock::Unlock()
 {
-	locked.store(false, std::memory_order_release);
+	m_locked.store(false, std::memory_order_release);
 }
 
 bool SpinLock::IsLocked() const
 {
-	return locked.load(std::memory_order_relaxed);
+	return m_locked.load(std::memory_order_relaxed);
 }

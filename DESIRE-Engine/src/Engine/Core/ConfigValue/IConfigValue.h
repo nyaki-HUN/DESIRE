@@ -3,18 +3,18 @@
 class IConfigValue
 {
 public:
-	IConfigValue(const char* name, const char* description);
+	IConfigValue(const char* pName, const char* pDescription);
 	~IConfigValue();
 
 	// Tries to find a config value
-	static IConfigValue* FindConfigValue(const char* name);
+	static IConfigValue* FindConfigValue(const char* pName);
 
-	IConfigValue* next;
-	const char* const name;
-	const char* const description;
+	IConfigValue* m_pNext;
+	const char* const m_pName;
+	const char* const m_pDescription;
 
-	static IConfigValue* s_listHead;
+	static IConfigValue* s_pListHead;
 
 private:
-	static IConfigValue* s_listTail;
+	static IConfigValue* s_pListTail;
 };
