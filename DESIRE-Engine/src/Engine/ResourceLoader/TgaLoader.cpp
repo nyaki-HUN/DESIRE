@@ -50,10 +50,10 @@ struct TgaHeader
 	#include <PopPack.h>
 #endif	// #if DESIRE_PLATFORM_WINDOWS
 
-std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& spFile)
 {
 	TgaHeader header;
-	size_t bytesRead = file->ReadBuffer(&header, sizeof(header));
+	size_t bytesRead = spFile->ReadBuffer(&header, sizeof(header));
 	if(bytesRead != sizeof(header) ||
 		header.colorMapType != 0 ||
 		(header.imageType != TgaHeader::EImageType::TrueColor && header.imageType != TgaHeader::EImageType::RLE_TrueColor) ||
@@ -66,12 +66,12 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 	const size_t numComponents = header.bitsPerPixel / 8;
 	const size_t dataSize = numComponents * header.width * header.height;
 
-	std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(dataSize);
+	std::unique_ptr<uint8_t[]> spData = std::make_unique<uint8_t[]>(dataSize);
 	switch(header.imageType)
 	{
 		case TgaHeader::EImageType::TrueColor:
 		{
-			bytesRead = file->ReadBuffer(data.get(), dataSize);
+			bytesRead = spFile->ReadBuffer(spData.get(), dataSize);
 			ASSERT(bytesRead == dataSize);
 			break;
 		}
@@ -79,11 +79,11 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 		case TgaHeader::EImageType::RLE_TrueColor:
 		{
 			uint8_t rlePacket[5];
-			uint8_t* pData = data.get();
+			uint8_t* pData = spData.get();
 			do
 			{
 				// Read the packed (header byte + color info)
-				bytesRead = file->ReadBuffer(rlePacket, numComponents + 1);
+				bytesRead = spFile->ReadBuffer(rlePacket, numComponents + 1);
 				if(bytesRead != numComponents + 1)
 				{
 					return nullptr;
@@ -108,10 +108,10 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 				{
 					// RAW packet
 					const size_t numRawColor = packetHeader;
-					file->ReadBuffer(pData, numRawColor * numComponents);
+					spFile->ReadBuffer(pData, numRawColor * numComponents);
 					pData += numRawColor * numComponents;
 				}
-			} while(pData < data.get() + dataSize);
+			} while(pData < spData.get() + dataSize);
 			break;
 		}
 
@@ -137,8 +137,8 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 		DESIRE_STACKALLOCATE_ARRAY(uint8_t, pTmp, rowSize);
 		for(uint16_t i = 0; i < header.height / 2; ++i)
 		{
-			uint8_t* pSrc = &data[i * rowSize];
-			uint8_t* pDst = &data[(header.height - i - 1) * rowSize];
+			uint8_t* pSrc = &spData[i * rowSize];
+			uint8_t* pDst = &spData[(header.height - i - 1) * rowSize];
 			memcpy(pTmp, pDst, rowSize);
 			memcpy(pDst, pSrc, rowSize);
 			memcpy(pSrc, pTmp, rowSize);
@@ -146,5 +146,5 @@ std::unique_ptr<Texture> TgaLoader::Load(const ReadFilePtr& file)
 	}
 
 	const Texture::EFormat format = (numComponents == 3) ? Texture::EFormat::RGB8 : Texture::EFormat::RGBA8;
-	return std::make_unique<Texture>(header.width, header.height, format, std::move(data));
+	return std::make_unique<Texture>(header.width, header.height, format, std::move(spData));
 }

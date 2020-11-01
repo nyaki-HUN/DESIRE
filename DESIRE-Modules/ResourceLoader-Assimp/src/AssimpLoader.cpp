@@ -8,14 +8,14 @@
 class AssimpIOStreamWrapper : public Assimp::IOStream
 {
 public:
-	AssimpIOStreamWrapper(const ReadFilePtr& file)
-		: file(file)
+	AssimpIOStreamWrapper(const ReadFilePtr& spFile)
+		: m_spFile(spFile)
 	{
 	}
 
 	size_t Read(void* pBuffer, size_t size, size_t count) override
 	{
-		return file->ReadBuffer(pBuffer, size * count);
+		return m_spFile->ReadBuffer(pBuffer, size * count);
 	}
 
 	size_t Write(const void* pBuffer, size_t size, size_t count) override
@@ -37,18 +37,18 @@ public:
 			IReadFile::ESeekOrigin::End,		// aiOrigin::aiOrigin_END
 		};
 
-		const bool result = file->Seek(static_cast<int64_t>(offset), mapping[origin]);
+		const bool result = m_spFile->Seek(static_cast<int64_t>(offset), mapping[origin]);
 		return result ? aiReturn_SUCCESS : aiReturn_FAILURE;
 	}
 
 	size_t Tell() const override
 	{
-		return static_cast<size_t>(file->Tell());
+		return static_cast<size_t>(m_spFile->Tell());
 	}
 
 	size_t FileSize() const override
 	{
-		return static_cast<size_t>(file->GetSize());
+		return static_cast<size_t>(m_spFile->GetSize());
 	}
 
 	void Flush() override
@@ -57,14 +57,14 @@ public:
 	}
 
 private:
-	const ReadFilePtr& file;
+	const ReadFilePtr& m_spFile;
 };
 
 class AssimpIOSystemWrapper : public Assimp::IOSystem
 {
 public:
-	AssimpIOSystemWrapper(const ReadFilePtr& file)
-		: file(file)
+	AssimpIOSystemWrapper(const ReadFilePtr& spFile)
+		: m_spFile(spFile)
 	{
 	}
 
@@ -87,7 +87,7 @@ public:
 			return nullptr;
 		}
 
-		return new AssimpIOStreamWrapper(file);
+		return new AssimpIOStreamWrapper(m_spFile);
 	}
 
 	void Close(Assimp::IOStream* pFile) override
@@ -95,16 +95,16 @@ public:
 		delete pFile;
 	}
 
-	static constexpr const char* kDummyFilename = "__DUMMY__";
+	static constexpr char* kDummyFilename = "__DUMMY__";
 
 private:
-	const ReadFilePtr& file;
+	const ReadFilePtr& m_spFile;
 };
 
-std::unique_ptr<Mesh> AssimpLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Mesh> AssimpLoader::Load(const ReadFilePtr& spFile)
 {
 	Assimp::Importer importer;
-	importer.SetIOHandler(new AssimpIOSystemWrapper(file));
+	importer.SetIOHandler(new AssimpIOSystemWrapper(spFile));
 
 //	const aiScene* pScene = importer.ReadFile(AssimpIOSystemWrapper::kDummyFilename, aiProcessPreset_TargetRealtime_Quality);
 	const aiScene* pScene = importer.ReadFile(AssimpIOSystemWrapper::kDummyFilename, aiProcess_CalcTangentSpace);

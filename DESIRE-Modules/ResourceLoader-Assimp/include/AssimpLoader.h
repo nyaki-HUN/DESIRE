@@ -7,5 +7,5 @@ class Mesh;
 class AssimpLoader
 {
 public:
-	static std::unique_ptr<Mesh> Load(const ReadFilePtr& file);
+	static std::unique_ptr<Mesh> Load(const ReadFilePtr& spFile);
 };

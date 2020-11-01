@@ -10,9 +10,8 @@ class ScriptSystem;
 class SoundSystem;
 class UI;
 
-class Modules
+struct Modules
 {
-public:
 	static std::unique_ptr<Application> Application;
 	static std::unique_ptr<Input> Input;
 	static std::unique_ptr<Physics> Physics;

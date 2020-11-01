@@ -17,7 +17,7 @@ DESIRE_DISABLE_WARNINGS
 #include "stb/stb_image.h"
 DESIRE_ENABLE_WARNINGS
 
-std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& spFile)
 {
 	stbi_io_callbacks callbacks;
 	callbacks.read = [](void* pFile, char* pData, int size)
@@ -36,17 +36,17 @@ std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& file)
 		return static_cast<IReadFile*>(pFile)->IsEof() ? 1 : 0;
 	};
 
-	std::unique_ptr<uint8_t[]> data = nullptr;
+	std::unique_ptr<uint8_t[]> spData = nullptr;
 	Texture::EFormat format = Texture::EFormat::RGBA8;
 
 	int width = 0;
 	int height = 0;
 	int numComponents = 0;
-	const bool isHDR = stbi_is_hdr_from_callbacks(&callbacks, file.get());
-	file->Seek(0, IReadFile::ESeekOrigin::Begin);
+	const bool isHDR = stbi_is_hdr_from_callbacks(&callbacks, spFile.get());
+	spFile->Seek(0, IReadFile::ESeekOrigin::Begin);
 	if(isHDR)
 	{
-		data = std::unique_ptr<uint8_t[]>(reinterpret_cast<uint8_t*>(stbi_loadf_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0)));
+		spData = std::unique_ptr<uint8_t[]>(reinterpret_cast<uint8_t*>(stbi_loadf_from_callbacks(&callbacks, spFile.get(), &width, &height, &numComponents, 0)));
 		switch(numComponents)
 		{
 			case 3:		format = Texture::EFormat::RGB32F; break;
@@ -56,7 +56,7 @@ std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& file)
 	}
 	else
 	{
-		data = std::unique_ptr<uint8_t[]>(stbi_load_from_callbacks(&callbacks, file.get(), &width, &height, &numComponents, 0));
+		spData = std::unique_ptr<uint8_t[]>(stbi_load_from_callbacks(&callbacks, spFile.get(), &width, &height, &numComponents, 0));
 		switch(numComponents)
 		{
 			case 1:		format = Texture::EFormat::R8; break;		// greyscale
@@ -72,5 +72,5 @@ std::unique_ptr<Texture> StbImageLoader::Load(const ReadFilePtr& file)
 		return nullptr;
 	}
 
-	return std::make_unique<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), format, std::move(data));
+	return std::make_unique<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), format, std::move(spData));
 }

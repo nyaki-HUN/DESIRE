@@ -6,9 +6,9 @@
 
 #include "Engine/Render/Shader.h"
 
-std::unique_ptr<Shader> FileShaderLoader::Load(const ReadFilePtr& file)
+std::unique_ptr<Shader> FileShaderLoader::Load(const ReadFilePtr& spFile)
 {
-	StackString<DESIRE_MAX_PATH_LEN> name = file->GetFilename();
+	StackString<DESIRE_MAX_PATH_LEN> name = spFile->GetFilename();
 
 	// Remove extension
 	size_t pos = name.FindLast('.');
@@ -24,8 +24,8 @@ std::unique_ptr<Shader> FileShaderLoader::Load(const ReadFilePtr& file)
 		name.RemoveFrom(0, pos + 1);
 	}
 
-	std::unique_ptr<Shader> shader = std::make_unique<Shader>(name);
-	shader->m_data = file->ReadAllAsBinary();
+	std::unique_ptr<Shader> spShader = std::make_unique<Shader>(name);
+	spShader->m_data = spFile->ReadAllAsBinary();
 
-	return shader;
+	return spShader;
 }

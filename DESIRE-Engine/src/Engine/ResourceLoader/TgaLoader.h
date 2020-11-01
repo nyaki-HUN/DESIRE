@@ -7,5 +7,5 @@ class Texture;
 class TgaLoader
 {
 public:
-	static std::unique_ptr<Texture> Load(const ReadFilePtr& file);
+	static std::unique_ptr<Texture> Load(const ReadFilePtr& spFile);
 };
