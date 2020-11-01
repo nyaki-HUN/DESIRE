@@ -1,5 +1,6 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Object.h"
+
 #include "Engine/Core/Component.h"
 #include "Engine/Core/Math/Transform.h"
 
@@ -141,12 +142,12 @@ Object* Object::GetParent() const
 	return parent;
 }
 
-Object* Object::CreateChildObject(const String& name)
+Object& Object::CreateChildObject(const String& name)
 {
-	Object* obj = new Object();
-	obj->SetObjectName(name);
-	obj->SetParent(this);
-	return obj;
+	Object* pObject = new Object();
+	pObject->SetObjectName(name);
+	pObject->SetParent(this);
+	return *pObject;
 }
 
 const Array<Object*>& Object::GetChildren() const

@@ -22,7 +22,7 @@ public:
 	void SetParent(Object* newParent);
 	Object* GetParent() const;
 
-	Object* CreateChildObject(const String& name);
+	Object& CreateChildObject(const String& name);
 	const Array<Object*>& GetChildren() const;
 	bool HasObjectInParentHierarchy(const Object* obj) const;
 
