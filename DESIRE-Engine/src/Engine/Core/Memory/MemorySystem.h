@@ -41,11 +41,6 @@ private:
 		uint32_t allocatedSize;
 		uint32_t offsetBetweenPtrAndAllocatedMemory;
 	};
-
-	static constexpr size_t kAllocatorStackSize = 16;
-
-	static thread_local Allocator* allocatorStack[kAllocatorStackSize];
-	static thread_local size_t allocatorStackIndex;
 };
 
 #define DESIRE_ALLOCATOR_SCOPE(ALLOCATOR)	MemorySystem::AllocatorScope DESIRE_CONCAT_MACRO(allocatorScope, __COUNTER__)(ALLOCATOR)

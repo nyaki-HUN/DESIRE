@@ -4,20 +4,9 @@
 #include "Engine/Core/Math/math.h"
 #include "Engine/Core/Memory/LinearAllocator.h"
 
-thread_local Allocator* MemorySystem::allocatorStack[kAllocatorStackSize] = {};
-thread_local size_t MemorySystem::allocatorStackIndex = 0;
-
-// Global operator new/delete overrides
-// Note: The behavior is undefined if more than one replacement is provided in the program or if a replacement is defined with the inline specifier.
-void* operator new  (size_t size)											{ return MemorySystem::Alloc(size, __STDCPP_DEFAULT_NEW_ALIGNMENT__); }
-void* operator new[](size_t size)											{ return MemorySystem::Alloc(size, __STDCPP_DEFAULT_NEW_ALIGNMENT__); }
-void* operator new  (size_t size, std::align_val_t alignment)				{ return MemorySystem::Alloc(size, static_cast<std::size_t>(alignment)); }
-void* operator new[](size_t size, std::align_val_t alignment)				{ return MemorySystem::Alloc(size, static_cast<std::size_t>(alignment)); }
-
-void operator delete  (void* pMemory) noexcept									{ MemorySystem::Free(pMemory); }
-void operator delete[](void* pMemory) noexcept									{ MemorySystem::Free(pMemory); }
-void operator delete  (void* pMemory, std::align_val_t /*alignment*/) noexcept	{ MemorySystem::Free(pMemory); }
-void operator delete[](void* pMemory, std::align_val_t /*alignment*/) noexcept	{ MemorySystem::Free(pMemory); }
+static constexpr size_t kAllocatorStackSize = 16;
+static thread_local Allocator* s_allocatorStack[kAllocatorStackSize] = {};
+static thread_local size_t s_allocatorStackIndex = 0;
 
 // Helper functions
 static void* OffsetVoidPtr(const void* pMemory, size_t offset)				{ return reinterpret_cast<void*>(reinterpret_cast<size_t>(pMemory) + offset); }
@@ -123,20 +112,20 @@ void MemorySystem::Free(void* pMemory)
 
 Allocator& MemorySystem::GetActiveAllocator()
 {
-	return (allocatorStackIndex > 0) ? *allocatorStack[allocatorStackIndex - 1] : Allocator::GetDefaultAllocator();
+	return (s_allocatorStackIndex > 0) ? *s_allocatorStack[s_allocatorStackIndex - 1] : Allocator::GetDefaultAllocator();
 }
 
 void MemorySystem::PushAllocator(Allocator& allocator)
 {
-	ASSERT(allocatorStackIndex < kAllocatorStackSize);
-	allocatorStack[allocatorStackIndex++] = &allocator;
+	ASSERT(s_allocatorStackIndex < kAllocatorStackSize);
+	s_allocatorStack[s_allocatorStackIndex++] = &allocator;
 }
 
 void MemorySystem::PopAllocator()
 {
-	if(allocatorStackIndex > 0)
+	if(s_allocatorStackIndex > 0)
 	{
-		allocatorStackIndex--;
+		s_allocatorStackIndex--;
 	}
 	else
 	{
