@@ -8,17 +8,17 @@ class ThreadSafeFreeList
 public:
 	void Push(void* element)
 	{
-		DESIRE_SCOPED_SPINLOCK(spinLock);
-		freeList.Push(element);
+		DESIRE_SCOPED_SPINLOCK(m_spinLock);
+		m_freeList.Push(element);
 	}
 
 	void* Pop()
 	{
-		DESIRE_SCOPED_SPINLOCK(spinLock);
-		return freeList.Pop();
+		DESIRE_SCOPED_SPINLOCK(m_spinLock);
+		return m_freeList.Pop();
 	}
 
 private:
-	SpinLock spinLock;
-	FreeList freeList;
+	SpinLock m_spinLock;
+	FreeList m_freeList;
 };

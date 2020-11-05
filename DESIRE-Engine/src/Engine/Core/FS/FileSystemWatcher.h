@@ -19,8 +19,8 @@ public:
 	static void UpdateAll();
 
 private:
-	std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback;
-	std::unique_ptr<FileSystemWatcherImpl> impl;
+	std::function<void(FileSystemWatcher::EAction action, const String& filename)> m_actionCallback;
+	std::unique_ptr<FileSystemWatcherImpl> m_spImpl;
 
 	friend class FileSystemWatcherImpl;
 };

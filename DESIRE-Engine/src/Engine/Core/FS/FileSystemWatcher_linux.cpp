@@ -24,8 +24,8 @@ public:
 // --------------------------------------------------------------------------------------------------------------------
 
 FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
-	: actionCallback(actionCallback)
-	, impl(std::make_unique<FileSystemWatcherImpl>())
+	: m_actionCallback(actionCallback)
+	, m_spImpl(std::make_unique<FileSystemWatcherImpl>())
 {
 	if(s_inotifyFD < 0)
 	{
@@ -43,14 +43,14 @@ FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void
 		return;
 	}
 
-	impl->wd = wd;
+	m_spImpl->wd = wd;
 }
 
 FileSystemWatcher::~FileSystemWatcher()
 {
-	if(impl->wd >= 0)
+	if(m_spImpl->wd >= 0)
 	{
-		inotify_rm_watch(s_inotifyFD, impl->wd);
+		inotify_rm_watch(s_inotifyFD, m_spImpl->wd);
 	}
 }
 
@@ -86,15 +86,15 @@ void FileSystemWatcher::UpdateAll()
 
 			if(event->mask & IN_MOVED_TO || event->mask & IN_CREATE)
 			{
-				watcher->actionCallback(FileSystemWatcher::EAction::ADDED, filename);
+				watcher->m_actionCallback(FileSystemWatcher::EAction::ADDED, filename);
 			}
 			else if(event->mask & IN_MOVED_FROM || event->mask & IN_DELETE)
 			{
-				watcher->actionCallback(FileSystemWatcher::EAction::DELETED, filename);
+				watcher->m_actionCallback(FileSystemWatcher::EAction::DELETED, filename);
 			}
 			else if(event->mask & IN_CLOSE_WRITE)
 			{
-				watcher->actionCallback(FileSystemWatcher::EAction::MODIFIED, filename);
+				watcher->m_actionCallback(FileSystemWatcher::EAction::MODIFIED, filename);
 			}
 
 			offset += sizeof(inotify_event) + event->len;

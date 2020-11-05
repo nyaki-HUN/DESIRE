@@ -51,7 +51,7 @@ public:
 			size_t offset = 0;
 			do
 			{
-				notify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(pWatcher->impl->buffer + offset);
+				notify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(pWatcher->m_spImpl->buffer + offset);
 
 				// Convert filename to UTF-8
 				const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
@@ -62,19 +62,19 @@ public:
 				{
 					case FILE_ACTION_ADDED:
 					case FILE_ACTION_RENAMED_NEW_NAME:
-						pWatcher->actionCallback(FileSystemWatcher::EAction::Added, filename);
+						pWatcher->m_actionCallback(FileSystemWatcher::EAction::Added, filename);
 						break;
 
 					case FILE_ACTION_REMOVED:
 					case FILE_ACTION_RENAMED_OLD_NAME:
-						pWatcher->actionCallback(FileSystemWatcher::EAction::Deleted, filename);
+						pWatcher->m_actionCallback(FileSystemWatcher::EAction::Deleted, filename);
 						break;
 
 					case FILE_ACTION_MODIFIED:
 						// Don't call for empty files to filter out duplicated notifications about file writes
 						if(notify->FileSize.QuadPart != 0)
 						{
-							pWatcher->actionCallback(FileSystemWatcher::EAction::Modified, filename);
+							pWatcher->m_actionCallback(FileSystemWatcher::EAction::Modified, filename);
 						}
 						break;
 				}
@@ -83,9 +83,9 @@ public:
 			} while(notify->NextEntryOffset != 0);
 		}
 
-		if(pWatcher->impl->isActive)
+		if(pWatcher->m_spImpl->isActive)
 		{
-			pWatcher->impl->RefreshWatch();
+			pWatcher->m_spImpl->RefreshWatch();
 		}
 	}
 
@@ -101,12 +101,12 @@ public:
 // --------------------------------------------------------------------------------------------------------------------
 
 FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void(FileSystemWatcher::EAction action, const String& filename)> actionCallback)
-	: actionCallback(actionCallback)
-	, impl(std::make_unique<FileSystemWatcherImpl>())
+	: m_actionCallback(actionCallback)
+	, m_spImpl(std::make_unique<FileSystemWatcherImpl>())
 {
-	impl->pOverlapped = new OVERLAPPED();		// Will be deleted in the CompletionCallback()
-	impl->pOverlapped->hEvent = this;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
-	impl->dirHandle = CreateFileA(
+	m_spImpl->pOverlapped = new OVERLAPPED();		// Will be deleted in the CompletionCallback()
+	m_spImpl->pOverlapped->hEvent = this;			// The hEvent member of the OVERLAPPED structure is not used by the system, so we can use it
+	m_spImpl->dirHandle = CreateFileA(
 		directory.Str(),
 		FILE_LIST_DIRECTORY,
 		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
@@ -115,33 +115,33 @@ FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void
 		FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
 		nullptr);
 
-	if(impl->dirHandle == INVALID_HANDLE_VALUE)
+	if(m_spImpl->dirHandle == INVALID_HANDLE_VALUE)
 	{
 		LOG_ERROR("FileSystemWatcher error: directory not found (%s)", directory.Str());
 		return;
 	}
 
-	impl->RefreshWatch();
+	m_spImpl->RefreshWatch();
 }
 
 FileSystemWatcher::~FileSystemWatcher()
 {
-	impl->pOverlapped->hEvent = nullptr;
+	m_spImpl->pOverlapped->hEvent = nullptr;
 
-	if(impl->isActive)
+	if(m_spImpl->isActive)
 	{
-		impl->isActive = false;
-		CancelIoEx(impl->dirHandle, impl->pOverlapped);
+		m_spImpl->isActive = false;
+		CancelIoEx(m_spImpl->dirHandle, m_spImpl->pOverlapped);
 	}
 	else
 	{
-		delete impl->pOverlapped;
-		impl->pOverlapped = nullptr;
+		delete m_spImpl->pOverlapped;
+		m_spImpl->pOverlapped = nullptr;
 	}
 
-	if(impl->dirHandle != INVALID_HANDLE_VALUE)
+	if(m_spImpl->dirHandle != INVALID_HANDLE_VALUE)
 	{
-		CloseHandle(impl->dirHandle);
+		CloseHandle(m_spImpl->dirHandle);
 	}
 }
 

@@ -1,23 +1,23 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Container/FreeList.h"
 
-void FreeList::Push(void* element)
+void FreeList::Push(void* pElement)
 {
-	ASSERT(element != nullptr);
+	ASSERT(pElement != nullptr);
 
 	// Put the element at the head of the list
-	ListElement* etmp = static_cast<ListElement*>(element);
-	etmp->next = head;
-	head = etmp;
+	ListElement* pEtmp = static_cast<ListElement*>(pElement);
+	pEtmp->pNext = m_pHead;
+	m_pHead = pEtmp;
 }
 
 void* FreeList::Pop()
 {
-	ListElement* element = head;
-	if(head != nullptr)
+	ListElement* pElement = m_pHead;
+	if(m_pHead)
 	{
-		head = head->next;
+		m_pHead = m_pHead->pNext;
 	}
 
-	return element;
+	return pElement;
 }

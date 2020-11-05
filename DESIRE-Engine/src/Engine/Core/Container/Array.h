@@ -15,7 +15,7 @@ public:
 		, reservedSize(otherArray.reservedSize)
 	{
 		ASSERT(false);
-		memcpy(data, otherArray.data, otherArray.size * sizeof(T));
+		std::memcpy(m_data, otherArray.data, otherArray.size * sizeof(T));
 	}
 
 	Array(Array&& otherArray)
@@ -36,136 +36,136 @@ public:
 	Array& operator =(const Array& otherArray)
 	{
 		ASSERT(false);
-		size = otherArray.size;
-		reservedSize = otherArray.reservedSize;
-		memcpy(data, otherArray.data, otherArray.size * sizeof(T));
+		m_size = otherArray.m_size;
+		m_reservedSize = otherArray.m_reservedSize;
+		std::memcpy(m_data, otherArray.m_data, otherArray.m_size * sizeof(T));
 		return *this;
 	}
 
 	Array& operator =(Array&& otherArray)
 	{
-		data = otherArray.data;
-		size = otherArray.size;
-		reservedSize = otherArray.reservedSize;
+		m_data = otherArray.m_data;
+		m_size = otherArray.m_size;
+		m_reservedSize = otherArray.m_reservedSize;
 
-		otherArray.data = nullptr;
-		otherArray.size = 0;
-		otherArray.reservedSize = 0;
+		otherArray.m_data = nullptr;
+		otherArray.m_size = 0;
+		otherArray.m_reservedSize = 0;
 
 		return *this;
 	}
 
 	T& operator [](size_t idx)
 	{
-		ASSERT(idx < size);
-		return data[idx];
+		ASSERT(idx < m_size);
+		return m_data[idx];
 	}
 	const T& operator [](size_t idx) const
 	{
-		ASSERT(idx < size);
-		return data[idx];
+		ASSERT(idx < m_size);
+		return m_data[idx];
 	}
 
 	T& GetAt(size_t idx)
 	{
-		ASSERT(idx < size);
-		return data[idx];
+		ASSERT(idx < m_size);
+		return m_data[idx];
 	}
 	const T& GetAt(size_t idx) const
 	{
-		ASSERT(idx < size);
-		return data[idx];
+		ASSERT(idx < m_size);
+		return m_data[idx];
 	}
 
 	T& GetFirst()
 	{
-		ASSERT(size != 0);
-		return data[0];
+		ASSERT(m_size != 0);
+		return m_data[0];
 	}
 	const T& GetFirst() const
 	{
-		ASSERT(size != 0);
-		return data[0];
+		ASSERT(m_size != 0);
+		return m_data[0];
 	}
 
 	T& GetLast()
 	{
-		ASSERT(size != 0);
-		return data[size - 1];
+		ASSERT(m_size != 0);
+		return m_data[size - 1];
 	}
 	const T& GetLast() const
 	{
-		ASSERT(size != 0);
-		return data[size - 1];
+		ASSERT(m_size != 0);
+		return m_data[size - 1];
 	}
 
 	T* Data()
 	{
-		return data;
+		return m_data;
 	}
 
 	const T* Data() const
 	{
-		return data;
+		return m_data;
 	}
 
 	// Iterators for supporting range-based for loop
-	T* begin()					{ return data; }
-	const T* begin() const		{ return data; }
-	T* end()					{ return data + size; }
-	const T* end() const		{ return data + size; }
+	T* begin()					{ return m_data; }
+	const T* begin() const		{ return m_data; }
+	T* end()					{ return m_data + m_size; }
+	const T* end() const		{ return m_data + m_size; }
 
 	bool IsEmpty() const
 	{
-		return (size == 0);
+		return (m_size == 0);
 	}
 
 	size_t Size() const
 	{
-		return size;
+		return m_size;
 	}
 
 	size_t SetSize(size_t newSize) const
 	{
 		ASSERT(false);
 //		Reserve(newSize);
-		size = newSize;
+		m_size = newSize;
 	}
 
 	void Reserve(size_t newReservedSize)
 	{
 		ASSERT(false);
-		reservedSize = newReservedSize;
+		m_reservedSize = newReservedSize;
 	}
 
 	// Erases all elements from the Array, but doesn't free its memory
 	void Clear()
 	{
 		DestructElements(0, size);
-		size = 0;
+		m_size = 0;
 	}
 
 	void Add(const T& value)
 	{
 		GrowIfNecessary();
-		new (data + size) T(value);
-		size++;
+		new (m_data + m_size) T(value);
+		m_size++;
 	}
 
 	void Add(T&& value)
 	{
 		GrowIfNecessary();
-		new (data + size) T(std::move(value));
-		size++;
+		new (m_data + m_size) T(std::move(value));
+		m_size++;
 	}
 
 	template<class... Args>
 	T& EmplaceAdd(Args&&... args)
 	{
 		GrowIfNecessary();
-		new (data + size) T(std::forward<Args>(args)...);
-		size++;
-		return data[size - 1];
+		new (m_data + m_size) T(std::forward<Args>(args)...);
+		m_size++;
+		return m_data[m_size - 1];
 	}
 
 	void Insert(size_t pos, const T& value)
@@ -180,9 +180,9 @@ public:
 
 	size_t Find(const T& value) const
 	{
-		for(size_t i = 0; i < size; ++i)
+		for(size_t i = 0; i < m_size; ++i)
 		{
-			if(data[i] == value)
+			if(m_data[i] == value)
 			{
 				return i;
 			}
@@ -193,9 +193,9 @@ public:
 
 	size_t SpecializedFind(std::function<bool(const T&)> compareFunc) const
 	{
-		for(size_t i = 0; i < size; ++i)
+		for(size_t i = 0; i < m_size; ++i)
 		{
-			if(compareFunc(data[i]))
+			if(compareFunc(m_data[i]))
 			{
 				return i;
 			}
@@ -218,21 +218,21 @@ public:
 
 	void RemoveAt(size_t idx)
 	{
-		ASSERT(idx < size);
+		ASSERT(idx < m_size);
 
 		DestructElements(idx, 1);
-		size--;
-		memmove(data + idx, data + idx + 1, sizeof(T) * (size - idx));
+		m_size--;
+		std::memmove(m_data + idx, m_data + idx + 1, sizeof(T) * (m_size - idx));
 	}
 
 	void RemoveRangeAt(size_t idx, size_t count)
 	{
-		ASSERT(idx < size);
+		ASSERT(idx < m_size);
 
-		count = std::min(count, size - idx);
+		count = std::min(count, m_size - idx);
 		DestructElements(idx, count);
-		memmove(data + idx, data + idx + count, sizeof(T) * (size - idx - count));
-		size -= count;
+		std::memmove(m_data + idx, m_data + idx + count, sizeof(T) * (m_size - idx - count));
+		m_size -= count;
 	}
 
 	// Removes an element by replacing it with the last element in the array and calling RemoveLast()
@@ -268,17 +268,17 @@ public:
 
 	void Swap(Array& otherArray)
 	{
-		const T* tmpData = data;
-		data = otherArray.data;
-		otherArray.data = tmpData;
+		const T* tmpData = m_data;
+		m_data = otherArray.m_data;
+		otherArray.m_data = tmpData;
 
-		const size_t tmpSize = size;
-		size = otherArray.size;
-		otherArray.size = tmpSize;
+		const size_t tmpSize = m_size;
+		m_size = otherArray.m_size;
+		otherArray.m_size = tmpSize;
 
-		const size_t tmpReservedSize = reservedSize;
-		reservedSize = otherArray.reservedSize;
-		otherArray.reservedSize = tmpReservedSize;
+		const size_t tmpReservedSize = m_reservedSize;
+		m_reservedSize = otherArray.m_reservedSize;
+		otherArray.m_reservedSize = tmpReservedSize;
 	}
 
 private:
@@ -286,24 +286,24 @@ private:
 
 	void GrowIfNecessary()
 	{
-		if(size == reservedSize)
+		if(m_size == m_reservedSize)
 		{
-			Reserve(reservedSize < kMaxReservedSizeIncrement) ? (reservedSize << 1) : reservedSize + kMaxReservedSizeIncrement);
+			Reserve(m_reservedSize < kMaxReservedSizeIncrement) ? (m_reservedSize << 1) : m_reservedSize + kMaxReservedSizeIncrement);
 		}
 	}
 
 	void DestructElements(size_t fromIdx, size_t count)
 	{
-		T* elements = data + fromIdx;
+		T* pElements = m_data + fromIdx;
 		for(size_t i = 0; i < count; ++i)
 		{
-			elements[i].~T();
+			pElements[i].~T();
 		}
 	}
 
-	T* data = nullptr;
-	size_t size = 0;
-	size_t reservedSize = 0;
+	T* m_data = nullptr;
+	size_t m_size = 0;
+	size_t m_reservedSize = 0;
 };
 
 #else
