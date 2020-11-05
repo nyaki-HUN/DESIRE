@@ -98,7 +98,7 @@ ScriptComponent* AngelScriptSystem::CreateScriptComponentOnObject_Internal(Objec
 asIScriptModule* AngelScriptSystem::CompileScript(const String& scriptName, asIScriptEngine& engine)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.as", scriptName.Str());
-	DynamicString data = FileSystem::Get()->LoadTextFile(filename);
+	DynamicString data = FileSystem::Get().LoadTextFile(filename);
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"

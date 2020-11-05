@@ -95,7 +95,7 @@ public:
 		delete pFile;
 	}
 
-	static constexpr char* kDummyFilename = "__DUMMY__";
+	static constexpr char kDummyFilename[] = "__DUMMY__";
 
 private:
 	const ReadFilePtr& m_spFile;

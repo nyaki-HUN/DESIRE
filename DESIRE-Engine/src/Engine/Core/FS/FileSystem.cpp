@@ -14,12 +14,12 @@ FileSystem::~FileSystem()
 {
 }
 
-FileSystem* FileSystem::Get()
+FileSystem& FileSystem::Get()
 {
 	//	Singleton behaviour using lazy initialization. In C++11 standard, this is thread safe. 
 	//	§6.7[stmt.dcl] p4: "If control enters the declaration concurrently while the variable is being initialized, the concurrent execution shall wait for completion of the initialization."
 	static FileSystem s_instance;
-	return &s_instance;
+	return s_instance;
 }
 
 ReadFilePtr FileSystem::Open(const String& filename)
@@ -29,16 +29,16 @@ ReadFilePtr FileSystem::Open(const String& filename)
 		return nullptr;
 	}
 
-	for(std::unique_ptr<IFileSource>& fileSource : fileSources)
+	for(std::unique_ptr<IFileSource>& spFileSource : m_fileSources)
 	{
-		ReadFilePtr file = fileSource->OpenFile(filename);
-		if(file != nullptr)
+		ReadFilePtr spFile = spFileSource->OpenFile(filename);
+		if(spFile)
 		{
-			return file;
+			return spFile;
 		}
 	}
 
-	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = appDir;
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = m_appDir;
 	filenameWithPath += filename;
 
 	return OpenNative(filenameWithPath);
@@ -46,10 +46,10 @@ ReadFilePtr FileSystem::Open(const String& filename)
 
 DynamicString FileSystem::LoadTextFile(const String& filename)
 {
-	ReadFilePtr file = Open(filename);
-	if(file != nullptr)
+	ReadFilePtr spFile = Open(filename);
+	if(spFile)
 	{
-		return file->ReadAllAsText();
+		return spFile->ReadAllAsText();
 	}
 
 	return DynamicString();
@@ -57,21 +57,21 @@ DynamicString FileSystem::LoadTextFile(const String& filename)
 
 MemoryBuffer FileSystem::LoadBinaryFile(const String& filename)
 {
-	ReadFilePtr file = Open(filename);
-	if(file != nullptr)
+	ReadFilePtr spFile = Open(filename);
+	if(spFile)
 	{
-		return file->ReadAllAsBinary();
+		return spFile->ReadAllAsBinary();
 	}
 
 	return MemoryBuffer();
 }
 
-void FileSystem::AddFileSource(std::unique_ptr<IFileSource> fileSource)
+void FileSystem::AddFileSource(std::unique_ptr<IFileSource> spFileSource)
 {
-	fileSources.Add(std::move(fileSource));
+	m_fileSources.Add(std::move(spFileSource));
 }
 
 const String& FileSystem::GetAppDirectory() const
 {
-	return appDir;
+	return m_appDir;
 }

@@ -87,7 +87,7 @@ ScriptComponent* SquirrelScriptSystem::CreateScriptComponentOnObject_Internal(Ob
 void SquirrelScriptSystem::CompileScript(const String& scriptName, HSQUIRRELVM vm)
 {
 	const StackString<DESIRE_MAX_PATH_LEN> filename = StackString<DESIRE_MAX_PATH_LEN>::Format("data/scripts/%s.nut", scriptName.Str());
-	DynamicString data = FileSystem::Get()->LoadTextFile(filename);
+	DynamicString data = FileSystem::Get().LoadTextFile(filename);
 	DynamicString scriptSrc;
 	scriptSrc.Sprintf(
 		"class %s"

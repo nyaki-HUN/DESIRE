@@ -37,19 +37,21 @@ SandBox::SandBox()
 
 void SandBox::Init()
 {
-	ReadFilePtr zipFile = FileSystem::Get()->Open("data/zip.zip");
-	if(zipFile != nullptr)
+	LOG_MESSAGE(u8"ûû");
+
+	ReadFilePtr spZipFile = FileSystem::Get().Open("data/zip.zip");
+	if(spZipFile)
 	{
-		std::unique_ptr<FileSourceZip> zipFileSource = std::make_unique<FileSourceZip>(std::move(zipFile), FileSystem::FILESOURCE_IGNORE_PATH | FileSystem::FILESOURCE_IGNORE_CASE);
-		if(zipFileSource->Load())
+		std::unique_ptr<FileSourceZip> spZipFileSource = std::make_unique<FileSourceZip>(std::move(spZipFile), FileSystem::FILESOURCE_IGNORE_PATH | FileSystem::FILESOURCE_IGNORE_CASE);
+		if(spZipFileSource->Load())
 		{
-			FileSystem::Get()->AddFileSource(std::move(zipFileSource));
+			FileSystem::Get().AddFileSource(std::move(spZipFileSource));
 		}
 	}
 
-	ReadFilePtr file = FileSystem::Get()->Open("asd.txt");
-	ReadFilePtr file2 = FileSystem::Get()->Open("qwe.txt");
-	ReadFilePtr file3 = FileSystem::Get()->Open("dir/qwe.txt");
+	ReadFilePtr file = FileSystem::Get().Open("asd.txt");
+	ReadFilePtr file2 = FileSystem::Get().Open("qwe.txt");
+	ReadFilePtr file3 = FileSystem::Get().Open("dir/qwe.txt");
 
 	//////////
 
@@ -99,7 +101,7 @@ void SandBox::Init()
 
 	//////////
 
-	StackString<DESIRE_MAX_PATH_LEN> dataDirPath = FileSystem::Get()->GetAppDirectory();
+	StackString<DESIRE_MAX_PATH_LEN> dataDirPath = FileSystem::Get().GetAppDirectory();
 	dataDirPath += "data";
 
 	m_spDataDirWatcher = std::make_unique<FileSystemWatcher>(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)

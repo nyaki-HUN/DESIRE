@@ -14,10 +14,10 @@ void ConsoleOutputPolicy::Process(const LogData& logData)
 
 FileOutputPolicy::FileOutputPolicy()
 {
-	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get().GetAppDirectory();
 	filenameWithPath += "log.txt";
 
-	m_spLogFile = FileSystem::Get()->CreateWriteFileNative(filenameWithPath);
+	m_spLogFile = FileSystem::Get().CreateWriteFileNative(filenameWithPath);
 	ASSERT(m_spLogFile != nullptr);
 }
 

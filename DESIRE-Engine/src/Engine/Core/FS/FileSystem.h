@@ -20,7 +20,7 @@ public:
 		FILESOURCE_IGNORE_CASE = 0x02
 	};
 
-	static FileSystem* Get();
+	static FileSystem& Get();
 
 	// Opens a file for reading
 	ReadFilePtr Open(const String& filename);
@@ -32,14 +32,14 @@ public:
 	// Creates a file for writing
 	WriteFilePtr CreateWriteFileNative(const String& filename);
 
-	void AddFileSource(std::unique_ptr<IFileSource> fileSource);
+	void AddFileSource(std::unique_ptr<IFileSource> spFileSource);
 
 	const String& GetAppDirectory() const;
 
 private:
 	void Setup();
 
-	Array<std::unique_ptr<IFileSource>> fileSources;
+	Array<std::unique_ptr<IFileSource>> m_fileSources;
 
-	DynamicString appDir;
+	DynamicString m_appDir;
 };

@@ -500,7 +500,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 		pShaderDefine++;
 	}
 
-	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
+	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get().GetAppDirectory();
 	AppendShaderFilenameWithPath(filenameWithPath, shader.m_name);
 
 	const bool isVertexShader = shader.m_name.StartsWith("vs_");

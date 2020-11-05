@@ -8,16 +8,16 @@ void* sq_vm_malloc(SQUnsignedInteger size)
 	return MemorySystem::Alloc(size);
 }
 
-void* sq_vm_realloc(void* p, SQUnsignedInteger oldSize, SQUnsignedInteger size)
+void* sq_vm_realloc(void* pMemory, SQUnsignedInteger oldSize, SQUnsignedInteger size)
 {
 	DESIRE_UNUSED(oldSize);
-	return MemorySystem::Realloc(p, size);
+	return MemorySystem::Realloc(pMemory, size);
 }
 
-void sq_vm_free(void* p, SQUnsignedInteger size)
+void sq_vm_free(void* pMemory, SQUnsignedInteger size)
 {
 	DESIRE_UNUSED(size);
-	MemorySystem::Free(p);
+	MemorySystem::Free(pMemory);
 }
 
 void SquirrelCallbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* pFormat, ...)
@@ -25,9 +25,9 @@ void SquirrelCallbacks::PrintCallback(HSQUIRRELVM vm, const SQChar* pFormat, ...
 	DESIRE_UNUSED(vm);
 
 	LogData logData;
-	logData.file = __FILE__;
+	logData.pFilename = __FILE__;
 	logData.line = __LINE__;
-	logData.logType = "DBG";
+	logData.pLogType = "DBG";
 
 	va_list args;
 	va_start(args, pFormat);
@@ -42,9 +42,9 @@ void SquirrelCallbacks::ErrorCallback(HSQUIRRELVM vm, const SQChar* pFormat, ...
 	DESIRE_UNUSED(vm);
 
 	LogData logData;
-	logData.file = __FILE__;
+	logData.pFilename = __FILE__;
 	logData.line = __LINE__;
-	logData.logType = "ERR";
+	logData.pLogType = "ERR";
 
 	va_list args;
 	va_start(args, pFormat);
