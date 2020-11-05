@@ -139,7 +139,8 @@ void Direct3D11Render::UpdateRenderWindow(OSWindow& window)
 
 	DX_CHECK_HRESULT(hr);
 
-	CreateFrameBuffers(window.GetWidth(), window.GetHeight());
+	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
+	ASSERT(succeeded);
 }
 
 void Direct3D11Render::Kill()

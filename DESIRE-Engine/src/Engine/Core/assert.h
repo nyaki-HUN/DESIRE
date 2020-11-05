@@ -4,5 +4,5 @@
 	#include <assert.h>
 	#define ASSERT(COND)		assert(COND)
 #else
-	#define ASSERT(COND)		((void)0)
+	#define ASSERT(COND)		{ if(false) { ((void)(COND)); } }
 #endif

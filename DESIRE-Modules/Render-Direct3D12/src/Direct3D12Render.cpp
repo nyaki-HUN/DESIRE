@@ -243,7 +243,8 @@ void Direct3D12Render::UpdateRenderWindow(OSWindow& window)
 	HRESULT hr = m_pSwapChain->ResizeBuffers(0, window.GetWidth(), window.GetHeight(), DXGI_FORMAT_UNKNOWN, 0);
 	DX_CHECK_HRESULT(hr);
 
-	CreateFrameBuffers(window.GetWidth(), window.GetHeight());
+	bool succeeded = CreateFrameBuffers(window.GetWidth(), window.GetHeight());
+	ASSERT(succeeded);
 }
 
 void Direct3D12Render::Kill()
