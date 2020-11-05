@@ -31,16 +31,16 @@ void Log::LogWithData(const LogData& logData)
 	}
 }
 
-void Log::LogWithFormat(const char* file, int line, const char* logType, const char* format, ...)
+void Log::LogWithFormat(const char* pFilename, int line, const char* pLogType, const char* pFormat, ...)
 {
 	LogData logData;
-	logData.file = file;
+	logData.pFilename = pFilename;
 	logData.line = line;
-	logData.logType = logType;
+	logData.pLogType = pLogType;
 
 	va_list args;
-	va_start(args, format);
-	vsnprintf(logData.message, sizeof(logData.message), format, args);
+	va_start(args, pFormat);
+	vsnprintf(logData.message, sizeof(logData.message), pFormat, args);
 	va_end(args);
 
 	Log::LogWithData(logData);

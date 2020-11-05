@@ -39,7 +39,7 @@
 #define DESIRE_TODO(STR)					DESIRE_PRAGMA(message(__FILE__ "(" DESIRE_STRINGIFY(__LINE__) "): TODO - " STR))
 
 // For unused variables
-#define DESIRE_UNUSED(X)					((void)X)
+#define DESIRE_UNUSED(X)					((void)(X))
 
 // Array sizeof which returns the number of elements in a static array
 template<typename T, uint32_t N>

@@ -22,8 +22,8 @@ void WritableString::Insert(size_t pos, const char* pStr, size_t numChars)
 		return;
 	}
 
-	memmove(m_pData + pos + numChars, m_pData + pos, m_size - pos + 1);
-	memcpy(m_pData + pos, pStr, numChars);
+	std::memmove(m_pData + pos + numChars, m_pData + pos, m_size - pos + 1);
+	std::memcpy(m_pData + pos, pStr, numChars);
 	m_size += numChars;
 }
 
@@ -36,7 +36,7 @@ void WritableString::RemoveFrom(size_t pos, size_t numChars)
 
 	numChars = std::min(numChars, m_size - pos);
 
-	memmove(m_pData + pos, m_pData + pos + numChars, m_size - pos - numChars + 1);
+	std::memmove(m_pData + pos, m_pData + pos + numChars, m_size - pos - numChars + 1);
 	m_size -= numChars;
 }
 
@@ -144,7 +144,7 @@ void WritableString::Append(const String& string)
 		return;
 	}
 
-	memcpy(m_pData + m_size, string.Str(), numChars);
+	std::memcpy(m_pData + m_size, string.Str(), numChars);
 	m_size += numChars;
 	m_pData[m_size] = '\0';
 }
@@ -240,7 +240,7 @@ void WritableString::Set(const char* pStr, size_t numChars)
 		return;
 	}
 
-	memcpy(m_pData, pStr, numChars);
+	std::memcpy(m_pData, pStr, numChars);
 	m_size = numChars;
 	m_pData[m_size] = '\0';
 }
@@ -269,7 +269,7 @@ void WritableString::Trim()
 	if(pCh != m_pData)
 	{
 		m_size -= pCh - m_pData;
-		memmove(m_pData, pCh, m_size + 1);
+		std::memmove(m_pData, pCh, m_size + 1);
 	}
 }
 
@@ -339,7 +339,7 @@ void WritableString::Sprintf_internal(size_t pos, const char* pFormatStr, std::v
 
 	std::va_list argsCopy;
 	va_copy(argsCopy, args);
-	const int requiredSize = vsnprintf(nullptr, 0, pFormatStr, argsCopy);
+	const int requiredSize = std::vsnprintf(nullptr, 0, pFormatStr, argsCopy);
 	va_end(argsCopy);
 
 	if(requiredSize <= 0)
@@ -351,14 +351,14 @@ void WritableString::Sprintf_internal(size_t pos, const char* pFormatStr, std::v
 	if(Reserve(newSize))
 	{
 		m_size = newSize;
-		vsnprintf(m_pData + pos, requiredSize + 1, pFormatStr, args);
+		std::vsnprintf(m_pData + pos, requiredSize + 1, pFormatStr, args);
 	}
 }
 
 void WritableString::Replace_Internal(size_t pos, size_t numChars, const String& replaceTo)
 {
-	memmove(m_pData + pos + replaceTo.Length(), m_pData + pos + numChars, m_size - pos - numChars + 1);
+	std::memmove(m_pData + pos + replaceTo.Length(), m_pData + pos + numChars, m_size - pos - numChars + 1);
 	m_size += replaceTo.Length() - numChars;
 
-	memcpy(m_pData + pos, replaceTo.Str(), replaceTo.Length());
+	std::memcpy(m_pData + pos, replaceTo.Str(), replaceTo.Length());
 }

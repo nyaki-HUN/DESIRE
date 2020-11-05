@@ -8,8 +8,9 @@ struct LogData;
 //	Default filter policies
 // --------------------------------------------------------------------------------------------------------------------
 
-struct NoFilterPolicy
+class NoFilterPolicy
 {
+public:
 	inline bool Filter(const LogData& logData)
 	{
 		DESIRE_UNUSED(logData);
@@ -20,6 +21,7 @@ struct NoFilterPolicy
 template<class Policy1, class Policy2>
 class CombinedFilterPolicy
 {
+public:
 	inline bool Filter(const LogData& logData)
 	{
 		return (m_policy1.Filter(logData) && m_policy2.Filter(logData));
@@ -34,17 +36,20 @@ private:
 //	Default output policies
 // --------------------------------------------------------------------------------------------------------------------
 
-struct ConsoleOutputPolicy
+class ConsoleOutputPolicy
 {
+public:
 	void Process(const LogData& logData);
 };
 
-struct FileOutputPolicy
+class FileOutputPolicy
 {
+public:
 	FileOutputPolicy();
 	void Process(const LogData& logData);
 
-	WriteFilePtr logFile;
+private:
+	WriteFilePtr m_spLogFile;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -53,33 +58,16 @@ struct FileOutputPolicy
 
 #if DESIRE_PLATFORM_WINDOWS
 
-struct ConsoleWindowOutputPolicy
+class ConsoleWindowOutputPolicy
 {
+public:
 	ConsoleWindowOutputPolicy();
 	void Process(const LogData& logData);
 };
 
-struct VisualStudioOutputPolicy
+class VisualStudioOutputPolicy
 {
-	void Process(const LogData& logData);
-};
-
-#elif DESIRE_PLATFORM_ANDROID
-
-struct LogCatOutputPolicy
-{
-	void Process(const LogData& logData);
-};
-
-#elif DESIRE_PLATFORM_IOS
-
-struct NSLogOutputPolicy
-{
-	void Process(const LogData& logData);
-};
-
-struct XcodeOutputPolicy
-{
+public:
 	void Process(const LogData& logData);
 };
 

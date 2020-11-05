@@ -8,7 +8,7 @@
 
 void ConsoleOutputPolicy::Process(const LogData& logData)
 {
-	printf("[%s] %s\n", logData.logType, logData.message);
+	printf("[%s] %s\n", logData.pLogType, logData.message);
 	fflush(0);
 }
 
@@ -17,13 +17,13 @@ FileOutputPolicy::FileOutputPolicy()
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath = FileSystem::Get()->GetAppDirectory();
 	filenameWithPath += "log.txt";
 
-	logFile = FileSystem::Get()->CreateWriteFileNative(filenameWithPath);
-	ASSERT(logFile != nullptr);
+	m_spLogFile = FileSystem::Get()->CreateWriteFileNative(filenameWithPath);
+	ASSERT(m_spLogFile != nullptr);
 }
 
 void FileOutputPolicy::Process(const LogData& logData)
 {
-	if(logFile == nullptr)
+	if(m_spLogFile == nullptr)
 	{
 		return;
 	}
@@ -33,7 +33,7 @@ void FileOutputPolicy::Process(const LogData& logData)
 	Time::GetLocalTime(std::chrono::system_clock::to_time_t(now), &timeInfo);
 
 	StackString<LogData::kMaxMessageLength> strLogLine;
-	strLogLine.Sprintf("%02d:%02d:%02d [%s] %s\n", timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec, logData.logType, logData.message);
+	strLogLine.Sprintf("%02d:%02d:%02d [%s] %s\n", timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec, logData.pLogType, logData.message);
 
-	logFile->WriteBuffer(strLogLine.Str(), strLogLine.Length());
+	m_spLogFile->WriteBuffer(strLogLine.Str(), strLogLine.Length());
 }
