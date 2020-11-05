@@ -2,21 +2,19 @@
 #include "Engine/Core/FS/IReadFile.h"
 
 IReadFile::IReadFile(int64_t fileSize, const String& filename)
-	: fileSize(fileSize)
-	, position(0)
-	, filename(filename)
+	: m_fileSize(fileSize)
+	, m_position(0)
+	, m_filename(filename)
 {
-
 }
 
 IReadFile::~IReadFile()
 {
-
 }
 
 const String& IReadFile::GetFilename() const
 {
-	return filename;
+	return m_filename;
 }
 
 void IReadFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
@@ -29,9 +27,9 @@ void IReadFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()>
 	callback();
 }
 
-bool IReadFile::ReadString(WritableString& out)
+bool IReadFile::ReadString(WritableString& string)
 {
-	out.Clear();
+	string.Clear();
 
 	uint16_t numChars = 0;
 	if(Read(numChars))
@@ -41,10 +39,10 @@ bool IReadFile::ReadString(WritableString& out)
 			return true;
 		}
 
-		char* str = out.AsCharBufferWithSize(numChars);
-		if(str != nullptr)
+		char* pData = string.AsCharBufferWithSize(numChars);
+		if(pData != nullptr)
 		{
-			const size_t numBytesRead = ReadBuffer(str, numChars * sizeof(char));
+			const size_t numBytesRead = ReadBuffer(pData, numChars * sizeof(char));
 			return numBytesRead == numChars * sizeof(char);
 		}
 	}
@@ -58,9 +56,9 @@ DynamicString IReadFile::ReadAllAsText()
 
 	if(!IsEof())
 	{
-		const size_t dataSize = static_cast<size_t>(fileSize - position);
-		char* data = string.AsCharBufferWithSize(dataSize);
-		const size_t numBytesRead = ReadBuffer(data, dataSize);
+		const size_t dataSize = static_cast<size_t>(m_fileSize - m_position);
+		char* pData = string.AsCharBufferWithSize(dataSize);
+		const size_t numBytesRead = ReadBuffer(pData, dataSize);
 		ASSERT(numBytesRead == dataSize);
 	}
 
@@ -71,7 +69,7 @@ MemoryBuffer IReadFile::ReadAllAsBinary()
 {
 	if(!IsEof())
 	{
-		const size_t dataSize = static_cast<size_t>(fileSize - position);
+		const size_t dataSize = static_cast<size_t>(m_fileSize - m_position);
 		MemoryBuffer buffer = MemoryBuffer(dataSize);
 		const size_t numBytesRead = ReadBuffer(buffer.ptr.get(), dataSize);
 		ASSERT(numBytesRead == dataSize);

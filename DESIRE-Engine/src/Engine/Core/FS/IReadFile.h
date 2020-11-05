@@ -20,13 +20,13 @@ public:
 
 	virtual bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::Current) = 0;
 
-	inline int64_t GetSize() const		{ return fileSize; }
-	inline int64_t Tell() const			{ return position; }
-	inline bool IsEof() const			{ return position >= fileSize; }
+	inline int64_t GetSize() const		{ return m_fileSize; }
+	inline int64_t Tell() const			{ return m_position; }
+	inline bool IsEof() const			{ return m_position >= m_fileSize; }
 
-	virtual void ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback);
-	virtual size_t ReadBuffer(void* buffer, size_t size) = 0;
-	bool ReadString(WritableString& out);
+	virtual void ReadBufferAsync(void* pBuffer, size_t size, std::function<void()> callback);
+	virtual size_t ReadBuffer(void* pBuffer, size_t size) = 0;
+	bool ReadString(WritableString& string);
 
 	template<typename T>
 	bool Read(T& val)
@@ -41,7 +41,7 @@ public:
 	MemoryBuffer ReadAllAsBinary();
 
 protected:
-	int64_t fileSize;
-	int64_t position;
-	DynamicString filename;
+	int64_t m_fileSize;
+	int64_t m_position;
+	DynamicString m_filename;
 };

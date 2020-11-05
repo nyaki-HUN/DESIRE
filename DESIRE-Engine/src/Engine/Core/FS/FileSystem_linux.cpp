@@ -44,7 +44,7 @@ public:
 			return false;
 		}
 
-		position = result;
+		m_position = result;
 		return true;
 	}
 
@@ -58,7 +58,7 @@ public:
 			return 0;
 		}
 
-		position += numBytesRead;
+		m_position += numBytesRead;
 		return numBytesRead;
 	}
 
@@ -72,7 +72,7 @@ public:
 			return 0;
 		}
 
-		position += numBytesWritten;
+		m_position += numBytesWritten;
 		return numBytesWritten;
 	}
 
@@ -125,24 +125,22 @@ void FileSystem::Setup()
 	char str[DESIRE_MAX_PATH_LEN] = {};
 	snprintf(str, sizeof(str), "/proc/%d/exe", getpid());
 	const int len = readlink(str, exePath, DESIRE_MAX_PATH_LEN - 1);
-	if(len > 0)
+	if(len < 0)
 	{
-		// readlink() doesn't null-terminate
-		exePath[len] = '\0';
-
-		char *slash = std::strrchr(exePath, '/');
-		if(slash != nullptr)
-		{
-			slash++;
-			*slash = '\0';
-		}
-	}
-	else
-	{
-		exePath[0] = '\0';
+		len = 0;
 	}
 
-	appDir = DynamicString(exePath, strlen(exePath));
+	// readlink() doesn't null-terminate
+	exePath[len] = '\0';
+
+	char* pSlash = std::strrchr(exePath, '/');
+	if(pSlash != nullptr)
+	{
+		pSlash++;
+		*pSlash = '\0';
+	}
+
+	m_appDir = DynamicString(exePath, len);
 }
 
 #endif	// #if DESIRE_PLATFORM_LINUX

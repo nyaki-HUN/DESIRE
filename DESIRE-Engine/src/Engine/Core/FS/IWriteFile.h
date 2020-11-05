@@ -8,7 +8,7 @@ public:
 	IWriteFile();
 	virtual ~IWriteFile();
 
-	virtual size_t WriteBuffer(const void* buffer, size_t size) = 0;
+	virtual size_t WriteBuffer(const void* pBuffer, size_t size) = 0;
 	bool WriteString(const String& string);
 
 	template<typename T>

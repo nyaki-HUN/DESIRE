@@ -41,7 +41,7 @@ public:
 			return false;
 		}
 
-		position = fileOffset.QuadPart;
+		m_position = fileOffset.QuadPart;
 		return true;
 	}
 
@@ -62,7 +62,7 @@ public:
 			return 0;
 		}
 
-		position += numBytesRead;
+		m_position += numBytesRead;
 		return numBytesRead;
 	}
 
@@ -77,7 +77,7 @@ public:
 			return 0;
 		}
 
-		position += numBytesWritten;
+		m_position += numBytesWritten;
 		return numBytesWritten;
 	}
 
@@ -98,15 +98,15 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 		return nullptr;
 	}
 
-	FILE_STANDARD_INFO finfo = {};
-	if(GetFileInformationByHandleEx(hFile, FileStandardInfo, &finfo, sizeof(finfo)) == 0)
+	FILE_STANDARD_INFO fileInfo = {};
+	if(GetFileInformationByHandleEx(hFile, FileStandardInfo, &fileInfo, sizeof(FILE_STANDARD_INFO)) == 0)
 	{
 		LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to get file size of %s", filename.Str());
 		CloseHandle(hFile);
 		return nullptr;
 	}
 
-	return std::make_unique<WINDOWSFile>(hFile, finfo.EndOfFile.QuadPart, filename);
+	return std::make_unique<WINDOWSFile>(hFile, fileInfo.EndOfFile.QuadPart, filename);
 }
 
 WriteFilePtr FileSystem::CreateWriteFileNative(const String& filename)
@@ -127,14 +127,14 @@ void FileSystem::Setup()
 	const DWORD len = GetModuleFileNameA(NULL, moduleFilename, DESIRE_MAX_PATH_LEN);
 
 	char exeFilenameWithPath[DESIRE_MAX_PATH_LEN] = {};
-	char* filenameBegin = nullptr;
-	GetFullPathNameA(moduleFilename, DESIRE_MAX_PATH_LEN, exeFilenameWithPath, &filenameBegin);
-	if(filenameBegin != nullptr)
+	char* pFilenameBegin = nullptr;
+	GetFullPathNameA(moduleFilename, DESIRE_MAX_PATH_LEN, exeFilenameWithPath, &pFilenameBegin);
+	if(pFilenameBegin != nullptr)
 	{
-		*filenameBegin = '\0';
+		*pFilenameBegin = '\0';
 	}
 
-	appDir = DynamicString(exeFilenameWithPath, strlen(exeFilenameWithPath));
+	m_appDir = DynamicString(exeFilenameWithPath, strnlen_s(exeFilenameWithPath, DESIRE_MAX_PATH_LEN));
 }
 
 #endif	// #if DESIRE_PLATFORM_WINDOWS
