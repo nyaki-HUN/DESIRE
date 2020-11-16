@@ -38,6 +38,7 @@ public:
 	WritableString& operator +=(int64_t number);
 	WritableString& operator +=(uint64_t number);
 	WritableString& operator +=(float number);
+	WritableString& operator +=(double number);
 
 	// Set a new value to the string, replacing its current contents
 	WritableString& operator =(const String& string);
