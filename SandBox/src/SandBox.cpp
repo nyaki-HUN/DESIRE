@@ -76,8 +76,8 @@ void SandBox::Init()
 
 	//////////
 
-	std::shared_ptr<Mesh> mesh = Modules::Application->GetResourceManager().GetMesh("data/sibenik/sibenik.obj");
-	std::shared_ptr<Texture> texture = Modules::Application->GetResourceManager().GetTexture("data/sibenik/mramor6x6.png");
+	std::shared_ptr<Mesh> spMesh = Modules::Application->GetResourceManager().GetMesh("data/sibenik/sibenik.obj");
+	std::shared_ptr<Texture> spTexture = Modules::Application->GetResourceManager().GetTexture("data/sibenik/mramor6x6.png");
 
 	//////////
 
@@ -106,14 +106,14 @@ void SandBox::Init()
 
 	m_spDataDirWatcher = std::make_unique<FileSystemWatcher>(dataDirPath, [](FileSystemWatcher::EAction action, const String& filename)
 	{
-		const char* strAction = "";
+		const char* pStrAction = "";
 		switch(action)
 		{
-			case FileSystemWatcher::EAction::Added:		strAction = "added";  break;
-			case FileSystemWatcher::EAction::Deleted:	strAction = "deleted"; break;
-			case FileSystemWatcher::EAction::Modified:	strAction = "modified"; break;
+			case FileSystemWatcher::EAction::Added:		pStrAction = "added";  break;
+			case FileSystemWatcher::EAction::Deleted:	pStrAction = "deleted"; break;
+			case FileSystemWatcher::EAction::Modified:	pStrAction = "modified"; break;
 		}
-		LOG_MESSAGE("%s %s", filename.Str(), strAction);
+		LOG_MESSAGE("%s %s", filename.Str(), pStrAction);
 	});
 
 	//////////
@@ -149,15 +149,15 @@ void SandBox::Update()
 	if(Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600)))
 	{
 		Modules::UI->Text("TextInput:");
-		static DynamicString textValue;
-		Modules::UI->TextInput(textValue);
+		static DynamicString s_textValue;
+		Modules::UI->TextInput(s_textValue);
 
 		Modules::UI->Button("Button");
 
 		Modules::UI->ArrowButton(UI::EArrowDir::Left);
 
-		static bool isCheckboxChecked = false;
-		Modules::UI->Checkbox(isCheckboxChecked, "Checkbox");
+		static bool s_isCheckboxChecked = false;
+		Modules::UI->Checkbox(s_isCheckboxChecked, "Checkbox");
 
 		enum class ERadioButtonOption
 		{
@@ -165,10 +165,10 @@ void SandBox::Update()
 			B,
 			C
 		};
-		static ERadioButtonOption radioButtonOption = ERadioButtonOption::A;
-		Modules::UI->RadioButton("RadioButton - A", radioButtonOption, ERadioButtonOption::A);
-		Modules::UI->RadioButton("RadioButton - B", radioButtonOption, ERadioButtonOption::B);
-		Modules::UI->RadioButton("RadioButton - C", radioButtonOption, ERadioButtonOption::C);
+		static ERadioButtonOption s_radioButtonOption = ERadioButtonOption::A;
+		Modules::UI->RadioButton("RadioButton - A", s_radioButtonOption, ERadioButtonOption::A);
+		Modules::UI->RadioButton("RadioButton - B", s_radioButtonOption, ERadioButtonOption::B);
+		Modules::UI->RadioButton("RadioButton - C", s_radioButtonOption, ERadioButtonOption::C);
 
 		constexpr float ratio[] = { 0.3f, 0.7f };
 		Modules::UI->LayoutColumns(2, ratio);
@@ -180,21 +180,21 @@ void SandBox::Update()
 		Modules::UI->Text("ProgressBar");
 		Modules::UI->ProgressBar(sliderValue);
 
-		static int32_t spinnerValue = 0;
+		static int32_t s_spinnerValue = 0;
 		Modules::UI->Text("ValueSpinner");
-		Modules::UI->ValueSpinner(spinnerValue);
+		Modules::UI->ValueSpinner(s_spinnerValue);
 
-		static float floatValue = 0.0f;
+		static float s_floatValue = 0.0f;
 		Modules::UI->Text("ValueEdit");
-		Modules::UI->ValueEdit(floatValue);
+		Modules::UI->ValueEdit(s_floatValue);
 
-		static Vector3 vec3 = Vector3::Zero();
+		static Vector3 s_vec3 = Vector3::Zero();
 		Modules::UI->Text("ValueEdit");
-		Modules::UI->ValueEdit(vec3);
+		Modules::UI->ValueEdit(s_vec3);
 
-		static 	float color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+		static float s_color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
 		Modules::UI->Text("ColorPicker");
-		Modules::UI->ColorPicker(color);
+		Modules::UI->ColorPicker(s_color);
 	}
 	Modules::UI->EndWindow();
 

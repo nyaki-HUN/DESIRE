@@ -7,7 +7,7 @@
 #include "Engine/Modules.h"
 
 // STD library
-#include <stdint.h>
+#include <cstdint>
 #include <cfloat>		// FLT_MIN, FLT_MAX, FLT_EPSILON
 #include <cmath>
 #include <cstdarg>		// std::va_list, va_start, va_end, va_copy

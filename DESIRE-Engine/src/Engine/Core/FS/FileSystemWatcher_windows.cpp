@@ -47,18 +47,18 @@ public:
 		if(dwErrorCode == ERROR_SUCCESS)
 		{
 			char str[DESIRE_MAX_PATH_LEN];
-			FILE_NOTIFY_EXTENDED_INFORMATION* notify = nullptr;
+			FILE_NOTIFY_EXTENDED_INFORMATION* pNotify = nullptr;
 			size_t offset = 0;
 			do
 			{
-				notify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(pWatcher->m_spImpl->buffer + offset);
+				pNotify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(pWatcher->m_spImpl->buffer + offset);
 
 				// Convert filename to UTF-8
-				const int count = WideCharToMultiByte(CP_UTF8, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
+				const int count = WideCharToMultiByte(CP_UTF8, 0, pNotify->FileName, pNotify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
 				StackString<DESIRE_MAX_PATH_LEN> filename(str, count);
 				filename.ReplaceAllChar('\\', '/');
 
-				switch(notify->Action)
+				switch(pNotify->Action)
 				{
 					case FILE_ACTION_ADDED:
 					case FILE_ACTION_RENAMED_NEW_NAME:
@@ -72,15 +72,15 @@ public:
 
 					case FILE_ACTION_MODIFIED:
 						// Don't call for empty files to filter out duplicated notifications about file writes
-						if(notify->FileSize.QuadPart != 0)
+						if(pNotify->FileSize.QuadPart != 0)
 						{
 							pWatcher->m_actionCallback(FileSystemWatcher::EAction::Modified, filename);
 						}
 						break;
 				}
 
-				offset += notify->NextEntryOffset;
-			} while(notify->NextEntryOffset != 0);
+				offset += pNotify->NextEntryOffset;
+			} while(pNotify->NextEntryOffset != 0);
 		}
 
 		if(pWatcher->m_spImpl->isActive)
