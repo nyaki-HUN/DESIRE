@@ -6,6 +6,7 @@ vs2019/
 [Rr]elease/
 
 # Visual Studio
+*.sln
 *.VC.db
 *.opendb
 *.suo
@@ -16,11 +17,3 @@ vs2019/
 *.pdb
 ipch/
 .vs/
-
-# Xcode and OS X
-xcuserdata
-.DS_Store
-
-# FastBuild files
-.fbcache/
-fbuild.fdb
