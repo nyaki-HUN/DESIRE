@@ -26,7 +26,7 @@ void* LinearAllocator::Alloc(size_t size)
 
 void* LinearAllocator::Realloc(void* pMemory, size_t newSize, size_t oldSize)
 {
-	if(!IsAllocationOwned(pMemory))
+	if(!IsMemoryFromThis(pMemory))
 	{
 		return m_fallbackAllocator.Realloc(pMemory, newSize, oldSize);
 	}
@@ -58,7 +58,7 @@ void* LinearAllocator::Realloc(void* pMemory, size_t newSize, size_t oldSize)
 
 void LinearAllocator::Free(void* pMemory, size_t size)
 {
-	if(!IsAllocationOwned(pMemory))
+	if(!IsMemoryFromThis(pMemory))
 	{
 		m_fallbackAllocator.Free(pMemory, size);
 		return;
@@ -76,9 +76,9 @@ void LinearAllocator::Reset()
 	m_allocatedBytes = 0;
 }
 
-bool LinearAllocator::IsAllocationOwned(const void* pMemory) const
+bool LinearAllocator::IsMemoryFromThis(const void* pMemory) const
 {
-	return (pMemory >= m_pMemoryStart && pMemory < m_pMemoryStart + m_memorySize);
+	return (m_pMemoryStart <= pMemory && pMemory < m_pMemoryStart + m_memorySize);
 }
 
 bool LinearAllocator::IsTheLastAllocation(const void* pMemory, size_t size) const

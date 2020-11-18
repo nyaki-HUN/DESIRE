@@ -22,5 +22,7 @@ private:
 	void operator delete(void*) = delete;
 	void operator delete[](void*) = delete;
 
-	uint8_t data[STACK_SIZE] = {};
+	DESIRE_DISABLE_WARNINGS
+	alignas(MemorySystem::kDefaultAlignment) uint8_t data[STACK_SIZE] = {};
+	DESIRE_ENABLE_WARNINGS
 };

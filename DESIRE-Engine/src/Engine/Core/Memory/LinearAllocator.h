@@ -19,8 +19,9 @@ public:
 	// Free everything in O(1)
 	void Reset();
 
+	bool IsMemoryFromThis(const void* pMemory) const;
+
 protected:
-	bool IsAllocationOwned(const void* pMemory) const;
 	bool IsTheLastAllocation(const void* pMemory, size_t size) const;
 
 	uint8_t* m_pMemoryStart = nullptr;
