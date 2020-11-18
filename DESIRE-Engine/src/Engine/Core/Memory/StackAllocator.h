@@ -13,7 +13,6 @@ public:
 	StackAllocator()
 		: LinearAllocator(data, STACK_SIZE)
 	{
-
 	}
 
 private:
@@ -23,5 +22,5 @@ private:
 	void operator delete(void*) = delete;
 	void operator delete[](void*) = delete;
 
-	char data[STACK_SIZE];
+	uint8_t data[STACK_SIZE] = {};
 };

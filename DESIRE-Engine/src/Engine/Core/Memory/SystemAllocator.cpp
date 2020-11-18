@@ -5,19 +5,19 @@
 
 void* SystemAllocator::Alloc(size_t size)
 {
-	allocatedBytes += size;
+	m_allocatedBytes += size;
 	return MemorySystem::SystemAlloc(size);
 }
 
-void* SystemAllocator::Realloc(void* ptr, size_t newSize, size_t oldSize)
+void* SystemAllocator::Realloc(void* pMemory, size_t newSize, size_t oldSize)
 {
-	allocatedBytes -= oldSize;
-	allocatedBytes += newSize;
-	return MemorySystem::SystemRealloc(ptr, newSize);
+	m_allocatedBytes -= oldSize;
+	m_allocatedBytes += newSize;
+	return MemorySystem::SystemRealloc(pMemory, newSize);
 }
 
-void SystemAllocator::Free(void* ptr, size_t size)
+void SystemAllocator::Free(void* pMemory, size_t size)
 {
-	allocatedBytes -= size;
-	return MemorySystem::SystemFree(ptr);
+	m_allocatedBytes -= size;
+	return MemorySystem::SystemFree(pMemory);
 }

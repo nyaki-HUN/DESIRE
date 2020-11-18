@@ -10,20 +10,20 @@
 class LinearAllocator : public Allocator
 {
 public:
-	LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator = Allocator::GetDefaultAllocator());
+	LinearAllocator(void* pMemoryStart, size_t memorySize, Allocator& fallbackAllocator = Allocator::GetDefaultAllocator());
 
 	void* Alloc(size_t size) final override;
-	void* Realloc(void* ptr, size_t newSize, size_t oldSize) final override;
-	void Free(void* ptr, size_t size) final override;
+	void* Realloc(void* pMemory, size_t newSize, size_t oldSize) final override;
+	void Free(void* pMemory, size_t size) final override;
 
 	// Free everything in O(1)
 	void Reset();
 
 protected:
-	bool IsAllocationOwned(const void* ptr) const;
-	bool IsTheLastAllocation(const void* ptr, size_t size) const;
+	bool IsAllocationOwned(const void* pMemory) const;
+	bool IsTheLastAllocation(const void* pMemory, size_t size) const;
 
-	char* memoryStart = nullptr;
-	size_t memorySize = 0;
-	Allocator& fallbackAllocator;
+	uint8_t* m_pMemoryStart = nullptr;
+	size_t m_memorySize = 0;
+	Allocator& m_fallbackAllocator;
 };

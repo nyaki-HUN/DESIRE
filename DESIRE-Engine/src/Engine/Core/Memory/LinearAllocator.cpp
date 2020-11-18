@@ -3,85 +3,85 @@
 
 #include "Engine/Core/Memory/MemorySystem.h"
 
-LinearAllocator::LinearAllocator(void* memoryStart, size_t memorySize, Allocator& fallbackAllocator)
-	: memoryStart(static_cast<char*>(memoryStart))
-	, memorySize(memorySize)
-	, fallbackAllocator(fallbackAllocator)
+LinearAllocator::LinearAllocator(void* pMemoryStart, size_t memorySize, Allocator& fallbackAllocator)
+	: m_pMemoryStart(static_cast<uint8_t*>(pMemoryStart))
+	, m_memorySize(memorySize)
+	, m_fallbackAllocator(fallbackAllocator)
 {
 }
 
 void* LinearAllocator::Alloc(size_t size)
 {
-	void* ptr = memoryStart + allocatedBytes;
-	size_t freeSpace = memorySize - allocatedBytes;
-	if(std::align(MemorySystem::kDefaultAlignment, size, ptr, freeSpace))
+	void* pMemory = m_pMemoryStart + m_allocatedBytes;
+	size_t bufferSize = m_memorySize - m_allocatedBytes;
+	if(std::align(MemorySystem::kDefaultAlignment, size, pMemory, bufferSize))
 	{
-		const size_t offset = (memorySize - allocatedBytes) - freeSpace;
-		allocatedBytes += offset + size;
-		return ptr;
+		const size_t offset = (m_memorySize - m_allocatedBytes) - bufferSize;
+		m_allocatedBytes += offset + size;
+		return pMemory;
 	}
 
-	return fallbackAllocator.Alloc(size);
+	return m_fallbackAllocator.Alloc(size);
 }
 
-void* LinearAllocator::Realloc(void* ptr, size_t newSize, size_t oldSize)
+void* LinearAllocator::Realloc(void* pMemory, size_t newSize, size_t oldSize)
 {
-	if(!IsAllocationOwned(ptr))
+	if(!IsAllocationOwned(pMemory))
 	{
-		return fallbackAllocator.Realloc(ptr, newSize, oldSize);
+		return m_fallbackAllocator.Realloc(pMemory, newSize, oldSize);
 	}
 
-	if(IsTheLastAllocation(ptr, oldSize))
+	if(IsTheLastAllocation(pMemory, oldSize))
 	{
 		if(newSize > oldSize)
 		{
 			// Try to grow the last allocation
 			const size_t sizeDiff = newSize - oldSize;
-			if(allocatedBytes + sizeDiff <= memorySize)
+			if(m_allocatedBytes + sizeDiff <= m_memorySize)
 			{
-				allocatedBytes += sizeDiff;
-				return ptr;
+				m_allocatedBytes += sizeDiff;
+				return pMemory;
 			}
 		}
 		else
 		{
 			// Shrink the last allocation
-			allocatedBytes -= oldSize - newSize;
-			return ptr;
+			m_allocatedBytes -= oldSize - newSize;
+			return pMemory;
 		}
 	}
 
 	void* newPtr = Alloc(newSize);
-	memcpy(newPtr, ptr, std::min(newSize, oldSize));
+	memcpy(newPtr, pMemory, std::min(newSize, oldSize));
 	return newPtr;
 }
 
-void LinearAllocator::Free(void* ptr, size_t size)
+void LinearAllocator::Free(void* pMemory, size_t size)
 {
-	if(!IsAllocationOwned(ptr))
+	if(!IsAllocationOwned(pMemory))
 	{
-		fallbackAllocator.Free(ptr, size);
+		m_fallbackAllocator.Free(pMemory, size);
 		return;
 	}
 
-	if(IsTheLastAllocation(ptr, size))
+	if(IsTheLastAllocation(pMemory, size))
 	{
-		ASSERT(allocatedBytes >= size);
-		allocatedBytes -= size;
+		ASSERT(m_allocatedBytes >= size);
+		m_allocatedBytes -= size;
 	}
 }
 
 void LinearAllocator::Reset()
 {
-	allocatedBytes = 0;
+	m_allocatedBytes = 0;
 }
 
-bool LinearAllocator::IsAllocationOwned(const void* ptr) const
+bool LinearAllocator::IsAllocationOwned(const void* pMemory) const
 {
-	return (ptr >= memoryStart && ptr < memoryStart + memorySize);
+	return (pMemory >= m_pMemoryStart && pMemory < m_pMemoryStart + m_memorySize);
 }
 
-bool LinearAllocator::IsTheLastAllocation(const void* ptr, size_t size) const
+bool LinearAllocator::IsTheLastAllocation(const void* pMemory, size_t size) const
 {
-	return (ptr == memoryStart + allocatedBytes - size);
+	return (pMemory == m_pMemoryStart + m_allocatedBytes - size);
 }

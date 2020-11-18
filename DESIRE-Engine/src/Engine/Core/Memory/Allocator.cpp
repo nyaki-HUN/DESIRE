@@ -3,17 +3,17 @@
 
 #include "Engine/Core/Memory/SystemAllocator.h"
 
-void* Allocator::Realloc(void* ptr, size_t newSize, size_t oldSize)
+void* Allocator::Realloc(void* pMemory, size_t newSize, size_t oldSize)
 {
-	void* newPtr = Alloc(newSize);
-	memcpy(newPtr, ptr, std::min(newSize, oldSize));
-	Free(ptr, oldSize);
-	return newPtr;
+	void* pNewMemory = Alloc(newSize);
+	memcpy(pNewMemory, pMemory, std::min(newSize, oldSize));
+	Free(pMemory, oldSize);
+	return pNewMemory;
 }
 
 uint64_t Allocator::GetAllocatedBytes() const
 {
-	return allocatedBytes;
+	return m_allocatedBytes;
 }
 
 Allocator& Allocator::GetDefaultAllocator()
