@@ -23,7 +23,7 @@ void ScriptSystem::RegisterScript(HashedString scriptName, ScriptFactory::Func_t
 ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, const String& scriptName)
 {
 	// Try to create as a native script 
-	ScriptFactory::Func_t* pScriptFactoryFunc = m_scriptFactories.Find(HashedString::CreateFromString(scriptName));
+	ScriptFactory::Func_t* pScriptFactoryFunc = m_scriptFactories.Find(scriptName);
 	if(pScriptFactoryFunc != nullptr)
 	{
 		NativeScriptComponent& scriptComponent = object.AddComponent<NativeScriptComponent>(*pScriptFactoryFunc);

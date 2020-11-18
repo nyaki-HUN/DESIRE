@@ -35,15 +35,15 @@ public:
 		return *this;
 	}
 
-	T* Insert(HashedString key, const T& value)
+	T& Insert(HashedString key, const T& value)
 	{
 		ASSERT(Find(key) == nullptr && "An other value is already added with this key");
-		return &m_elements.BinaryFindOrInsert(KeyValuePair(key, value)).value;
+		return m_elements.BinaryFindOrInsert(KeyValuePair(key, value)).value;
 	}
 
 	T* Find(HashedString key)
 	{
-		// Binary find
+		// Note: This is a custom variant of m_elements.BinaryFind() to compare KeyValuePair with HashedString
 		auto it = std::lower_bound(m_elements.begin(), m_elements.end(), key, [](const KeyValuePair& pair, HashedString key)
 		{
 			return (pair.key < key);
@@ -53,7 +53,7 @@ public:
 
 	const T* Find(HashedString key) const
 	{
-		// Binary find
+		// Note: This is a custom variant of m_elements.BinaryFind() to compare KeyValuePair with HashedString
 		auto it = std::lower_bound(m_elements.begin(), m_elements.end(), key, [](const KeyValuePair& pair, HashedString key)
 		{
 			return (pair.key < key);
@@ -61,7 +61,6 @@ public:
 		return (it != m_elements.end() && !(key < it->key)) ? &it->value : nullptr;
 	}
 
-	// Remove all elements from the map
 	void Clear()
 	{
 		m_elements.Clear();

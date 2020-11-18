@@ -286,7 +286,7 @@ RenderData* BgfxRender::CreateShaderRenderData(const Shader& shader)
 
 		bgfx::UniformInfo info;
 		bgfx::getUniformInfo(uniforms[i], info);
-		pShaderRenderData->m_uniforms.Insert(HashedString::CreateFromString(String(info.name, strlen(info.name))), uniforms[i]);
+		pShaderRenderData->m_uniforms.Insert(String(info.name, strlen(info.name)), uniforms[i]);
 	}
 
 	return pShaderRenderData;

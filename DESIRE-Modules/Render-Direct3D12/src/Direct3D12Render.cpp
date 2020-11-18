@@ -664,8 +664,7 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 					typeDesc.Class == D3D_SVC_VECTOR ||
 					typeDesc.Class == D3D_SVC_MATRIX_ROWS || typeDesc.Class == D3D_SVC_MATRIX_COLUMNS)
 				{
-					const HashedString key = HashedString::CreateFromString(String(varDesc.Name, strlen(varDesc.Name)));
-					bufferData.variables.Insert(key, { bufferData.data.ptr.get() + varDesc.StartOffset, varDesc.Size });
+					bufferData.variables.Insert(String(varDesc.Name, strlen(varDesc.Name)), { bufferData.data.ptr.get() + varDesc.StartOffset, varDesc.Size });
 				}
 			}
 		}
