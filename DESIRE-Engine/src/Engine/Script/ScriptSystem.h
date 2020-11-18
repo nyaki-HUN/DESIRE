@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Engine/Core/Factory.h"
 #include "Engine/Core/Container/Array.h"
-#include "Engine/Core/HashedStringMap.h"
+#include "Engine/Core/Container/HashedStringMap.h"
+#include "Engine/Core/Factory.h"
 
 class IScript;
 class ScriptComponent;
@@ -32,4 +32,3 @@ private:
 };
 
 #define REGISTER_NATIVE_SCRIPT(SCRIPT)	Modules::ScriptSystem->RegisterScript(HashedString(#SCRIPT), &ScriptSystem::ScriptFactory::Create<SCRIPT>)
-

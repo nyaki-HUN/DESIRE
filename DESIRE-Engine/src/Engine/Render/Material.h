@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Core/Container/Array.h"
-#include "Engine/Core/HashedString.h"
+#include "Engine/Core/String/HashedString.h"
 
 #include "Engine/Render/RenderEnums.h"
 

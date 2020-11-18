@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Engine/Core/HashedString.h"
 #include "Engine/Core/Container/Array.h"
+#include "Engine/Core/String/HashedString.h"
 
 // --------------------------------------------------------------------------------------------------------------------
 //	HashedStringMap is a sorted associative container that contains key-value pairs with unique HashedString keys.

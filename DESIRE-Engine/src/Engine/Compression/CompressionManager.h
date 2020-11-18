@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Engine/Compression/Compression.h"
-#include "Engine/Core/HashedStringMap.h"
+
+#include "Engine/Core/Container/HashedStringMap.h"
 #include "Engine/Core/Factory.h"
 
 class CompressionManager
