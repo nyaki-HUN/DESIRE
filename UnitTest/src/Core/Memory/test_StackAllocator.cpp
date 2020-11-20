@@ -74,7 +74,7 @@ TEST_CASE("StackAllocator", "[Core][memory]")
 		CHECK(a.GetAllocatedBytes() == 0);
 		void* pAlloc1 = a.Alloc(113);
 		CHECK(a.GetAllocatedBytes() == 113);
-		CHECK(a.IsAllocationFromThis(pAlloc1));
+		CHECK(a.IsMemoryFromThis(pAlloc1));
 
 		// Because of the default alignment the second allocation cannot be made inside the allocator regardless of the fact that the overall size would be only 128
 		void* pFallbackAlloc = a.Alloc(15);
