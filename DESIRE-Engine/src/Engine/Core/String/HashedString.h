@@ -13,14 +13,14 @@ public:
 	{
 	}
 
-	explicit HashedString(uint64_t hash)
-		: m_hash(hash)
+	inline bool operator <(HashedString other) const
 	{
+		return (m_hash < other.m_hash);
 	}
 
-	inline operator uint64_t() const
+	inline bool operator ==(HashedString other) const
 	{
-		return m_hash;
+		return (m_hash == other.m_hash);
 	}
 
 private:
