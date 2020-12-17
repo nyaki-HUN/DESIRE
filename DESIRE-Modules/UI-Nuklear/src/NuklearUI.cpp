@@ -21,7 +21,7 @@
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
 
-constexpr int kDefaultRowHeight = 25;
+constexpr float kDefaultRowHeight = 25.0f;
 
 static constexpr nk_draw_vertex_layout_element s_nkVertexLayout[] =
 {
@@ -89,8 +89,8 @@ void NuklearUI::Init()
 	nk_font_atlas_begin(m_spFontAtlas.get());
 
 	// Setup font texture
-	int width = 0;
-	int height = 0;
+	int32_t width = 0;
+	int32_t height = 0;
 	const void* pTextureData = nk_font_atlas_bake(m_spFontAtlas.get(), &width, &height, NK_FONT_ATLAS_RGBA32);
 	m_spFontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
 	m_spRenderable->m_spMaterial->AddTexture(m_spFontTexture);
@@ -168,8 +168,8 @@ void NuklearUI::NewFrame(OSWindow& window)
 
 	// Mouse
 	const Vector2& mousePos = Modules::Input->GetOsMouseCursorPos();
-	const int x = static_cast<int>(mousePos.GetX());
-	const int y = static_cast<int>(mousePos.GetY());
+	const int32_t x = static_cast<int>(mousePos.GetX());
+	const int32_t y = static_cast<int>(mousePos.GetY());
 	nk_input_motion(m_spContext.get(), x, y);
 	nk_input_button(m_spContext.get(), NK_BUTTON_LEFT, x, y, Modules::Input->IsMouseButtonDown(Mouse::Button_Left));
 	nk_input_button(m_spContext.get(), NK_BUTTON_MIDDLE, x, y, Modules::Input->IsMouseButtonDown(Mouse::Button_Middle));
@@ -254,7 +254,7 @@ bool NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, cons
 		nk_window_show(m_spContext.get(), label.Str(), (*pOpen) ? NK_SHOWN : NK_HIDDEN);
 	}
 
-	const bool isVisible = nk_begin(m_spContext.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), nkFlags);
+	const nk_bool isVisible = nk_begin(m_spContext.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), nkFlags);
 	if(isVisible)
 	{
 		nk_layout_row_dynamic(m_spContext.get(), kDefaultRowHeight, 1);
@@ -275,7 +275,7 @@ void NuklearUI::EndWindow()
 
 bool NuklearUI::BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio)
 {
-	const bool isVisible = nk_group_begin(m_spContext.get(), id.Str(), 0 & NK_WINDOW_NO_SCROLLBAR);
+	const nk_bool isVisible = nk_group_begin(m_spContext.get(), id.Str(), 0 & NK_WINDOW_NO_SCROLLBAR);
 	if(isVisible)
 	{
 		if(pInitialColumnsRatio != nullptr)
@@ -303,9 +303,9 @@ void NuklearUI::Text(const String& label)
 
 bool NuklearUI::TextInput(WritableString& value)
 {
-	constexpr int kMaxSize = 255;
+	constexpr int32_t kMaxSize = 255;
 	StackString<kMaxSize> string = value;
-	int len = static_cast<int>(value.Length());
+	int32_t len = static_cast<int>(value.Length());
 	const nk_flags result = nk_edit_string(m_spContext.get(), NK_EDIT_FIELD | NK_EDIT_AUTO_SELECT, string.AsCharBufferWithSize(kMaxSize - 1), &len, kMaxSize, nk_filter_default);
 	string.TruncateAt(len);
 	if(result == NK_EDIT_ACTIVE && !value.Equals(string))
@@ -325,7 +325,7 @@ bool NuklearUI::Button(const String& label, const Vector2& size)
 
 bool NuklearUI::ArrowButton(EArrowDir dir)
 {
-	int isPressed = nk_false;
+	nk_bool isPressed = nk_false;
 	switch(dir)
 	{
 		case EArrowDir::Left:	isPressed = nk_button_symbol(m_spContext.get(), NK_SYMBOL_TRIANGLE_LEFT); break;
@@ -339,7 +339,7 @@ bool NuklearUI::ArrowButton(EArrowDir dir)
 
 bool NuklearUI::Checkbox(bool& isChecked, const String& label)
 {
-	int active = isChecked ? 1 : 0;
+	nk_bool active = isChecked ? nk_true : nk_false;
 	if(nk_checkbox_text(m_spContext.get(), label.Str(), static_cast<int>(label.Length()), &active))
 	{
 		isChecked = (active != 0);
@@ -351,8 +351,12 @@ bool NuklearUI::Checkbox(bool& isChecked, const String& label)
 
 bool NuklearUI::RadioButtonOption(const String& label, bool isActive)
 {
-	int active = isActive ? 1 : 0;
-	return nk_radio_text(m_spContext.get(), label.Str(), static_cast<int>(label.Length()), &active) && active;
+	const bool wasActive = isActive;
+
+	nk_bool active = isActive ? nk_true : nk_false;
+	const nk_bool isPressed = nk_radio_text(m_spContext.get(), label.Str(), static_cast<int>(label.Length()), &active);
+
+	return isPressed && !wasActive;
 }
 
 void NuklearUI::ProgressBar(float progressPercent)

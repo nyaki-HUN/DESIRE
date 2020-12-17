@@ -426,11 +426,13 @@ bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 		ImGui::SetNextItemWidth(-FLT_MIN);
 	}
 
+	const bool wasActive = isActive;
+
 	ImGui::PushID(s_widgetCounter++);
-	const bool isPressed = ImGui::RadioButton(label.Str(), isActive) && !isActive;
+	const bool isPressed = ImGui::RadioButton(label.Str(), isActive);
 	ImGui::PopID();
 
-	return isPressed;
+	return isPressed && !wasActive;
 }
 
 bool ImGuiUI::ValueSpinner(int32_t& value, int32_t minValue, int32_t maxValue, float speed)
