@@ -21,7 +21,7 @@
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
 
-constexpr float kDefaultRowHeight = 25.0f;
+constexpr float kDefaultRowHeight = 0.0f;
 
 static constexpr nk_draw_vertex_layout_element s_nkVertexLayout[] =
 {
@@ -275,25 +275,42 @@ void NuklearUI::EndWindow()
 
 bool NuklearUI::BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio)
 {
-	const nk_bool isVisible = nk_group_begin(m_spContext.get(), id.Str(), 0 & NK_WINDOW_NO_SCROLLBAR);
-	if(isVisible)
+	const nk_panel* pPanel = nk_window_get_panel(m_spContext.get());
+	if(pPanel && pPanel->row.index != pPanel->row.columns)
 	{
-		if(pInitialColumnsRatio != nullptr)
+		nk_style_push_vec2(m_spContext.get(), &m_spContext->style.window.group_padding, nk_vec2(0.0f, 0.0f));
+		const nk_bool isVisible = nk_group_begin(m_spContext.get(), id.Str(), NK_WINDOW_NO_SCROLLBAR);
+		nk_style_pop_vec2(m_spContext.get());
+
+		if(!isVisible)
 		{
-			nk_layout_row(m_spContext.get(), NK_DYNAMIC, kDefaultRowHeight, numColumns, pInitialColumnsRatio);
-		}
-		else
-		{
-			nk_layout_row_dynamic(m_spContext.get(), kDefaultRowHeight, numColumns);
+			return false;
 		}
 	}
 
-	return isVisible;
+	if(pInitialColumnsRatio != nullptr)
+	{
+		nk_layout_row(m_spContext.get(), NK_DYNAMIC, kDefaultRowHeight, numColumns, pInitialColumnsRatio);
+	}
+	else
+	{
+		nk_layout_row_dynamic(m_spContext.get(), kDefaultRowHeight, numColumns);
+	}
+
+	return true;
 }
 
 void NuklearUI::EndTable()
 {
-	nk_group_end(m_spContext.get());
+	const nk_panel* pPanel = nk_window_get_panel(m_spContext.get());
+	if(pPanel && pPanel->parent != nullptr)
+	{
+		nk_group_end(m_spContext.get());
+	}
+	else
+	{
+		nk_layout_row_dynamic(m_spContext.get(), kDefaultRowHeight, 1);
+	}
 }
 
 void NuklearUI::Text(const String& label)
