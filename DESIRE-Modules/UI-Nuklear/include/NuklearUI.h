@@ -28,6 +28,10 @@ public:
 	bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) override;
 	void EndWindow() override;
 
+	// Table
+	bool BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio = nullptr) override;
+	void EndTable() override;
+
 	// Widgets
 	void Text(const String& label) override;
 	bool TextInput(WritableString& value) override;
@@ -53,16 +57,13 @@ public:
 	bool ColorPicker(float(&colorRGB)[3]) override;
 	bool ColorPicker(float(&colorRGBA)[4]) override;
 
-	// Layout
-	void LayoutColumns(uint8_t numColumns, const float* pRatio = nullptr) override;
-
 private:
-	std::unique_ptr<nk_context> ctx;
-	std::unique_ptr<nk_allocator> allocator;
-	std::unique_ptr<nk_buffer> cmdBuffer;
-	std::unique_ptr<nk_font_atlas> fontAtlas;
-	std::unique_ptr<nk_convert_config> convertConfig;
+	std::unique_ptr<nk_context> m_spContext;
+	std::unique_ptr<nk_allocator> m_spAllocator;
+	std::unique_ptr<nk_buffer> m_spCmdBuffer;
+	std::unique_ptr<nk_font_atlas> m_spFontAtlas;
+	std::unique_ptr<nk_convert_config> m_spConvertConfig;
 
-	std::unique_ptr<Renderable> renderable;
-	std::shared_ptr<Texture> fontTexture;
+	std::unique_ptr<Renderable> m_spRenderable;
+	std::shared_ptr<Texture> m_spFontTexture;
 };

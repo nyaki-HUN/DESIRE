@@ -159,6 +159,44 @@ void SandBox::Update()
 		static bool s_isCheckboxChecked = false;
 		Modules::UI->Checkbox(s_isCheckboxChecked, "Checkbox");
 
+		constexpr float kRatio[] = { 0.3f, 0.7f };
+		if(Modules::UI->BeginTable("Table", 2, kRatio))
+		{
+			static float s_sliderValue = 0.5f;
+			Modules::UI->Text("Slider");
+			Modules::UI->Slider(s_sliderValue, 0.0f, 1.0f);
+
+			Modules::UI->Text("ProgressBar");
+			Modules::UI->ProgressBar(s_sliderValue);
+
+			Modules::UI->Text("Embedded Table");
+			if(Modules::UI->BeginTable("Embedded Table", 2))
+			{
+				static float s_sliderValue2 = 0.0f;
+				Modules::UI->Slider(s_sliderValue2, 0.0f, 1.0f);
+				Modules::UI->ProgressBar(s_sliderValue2);
+				Modules::UI->EndTable();
+			}
+
+			static int32_t s_spinnerValue = 0;
+			Modules::UI->Text("ValueSpinner");
+			Modules::UI->ValueSpinner(s_spinnerValue);
+
+			static float s_floatValue = 0.0f;
+			Modules::UI->Text("ValueEdit");
+			Modules::UI->ValueEdit(s_floatValue);
+
+			static Vector3 s_vec3 = Vector3::Zero();
+			Modules::UI->Text("ValueEdit");
+			Modules::UI->ValueEdit(s_vec3);
+
+			static float s_color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
+			Modules::UI->Text("ColorPicker");
+			Modules::UI->ColorPicker(s_color);
+
+			Modules::UI->EndTable();
+		}
+
 		enum class ERadioButtonOption
 		{
 			A,
@@ -169,32 +207,6 @@ void SandBox::Update()
 		Modules::UI->RadioButton("RadioButton - A", s_radioButtonOption, ERadioButtonOption::A);
 		Modules::UI->RadioButton("RadioButton - B", s_radioButtonOption, ERadioButtonOption::B);
 		Modules::UI->RadioButton("RadioButton - C", s_radioButtonOption, ERadioButtonOption::C);
-
-		constexpr float ratio[] = { 0.3f, 0.7f };
-		Modules::UI->LayoutColumns(2, ratio);
-
-		static float sliderValue = 0.5f;
-		Modules::UI->Text("Slider");
-		Modules::UI->Slider(sliderValue, 0.0f, 1.0f);
-
-		Modules::UI->Text("ProgressBar");
-		Modules::UI->ProgressBar(sliderValue);
-
-		static int32_t s_spinnerValue = 0;
-		Modules::UI->Text("ValueSpinner");
-		Modules::UI->ValueSpinner(s_spinnerValue);
-
-		static float s_floatValue = 0.0f;
-		Modules::UI->Text("ValueEdit");
-		Modules::UI->ValueEdit(s_floatValue);
-
-		static Vector3 s_vec3 = Vector3::Zero();
-		Modules::UI->Text("ValueEdit");
-		Modules::UI->ValueEdit(s_vec3);
-
-		static float s_color[4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-		Modules::UI->Text("ColorPicker");
-		Modules::UI->ColorPicker(s_color);
 	}
 	Modules::UI->EndWindow();
 

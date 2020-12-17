@@ -66,7 +66,7 @@ void ImGuiUI::Init()
 	io.IniFilename = nullptr;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 
-	renderable = std::make_unique<Renderable>();
+	m_spRenderable = std::make_unique<Renderable>();
 
 	// Dynamic mesh for the draw list
 	const std::initializer_list<Mesh::VertexLayout> vertexLayout =
@@ -75,17 +75,17 @@ void ImGuiUI::Init()
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	renderable->m_spMesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
-	ASSERT(sizeof(ImDrawIdx) == renderable->m_spMesh->GetIndexSize() && "ImDrawIdx has changed");
-	ASSERT(sizeof(ImDrawVert) == renderable->m_spMesh->GetVertexSize() && "ImDrawVert has changed");
+	m_spRenderable->m_spMesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
+	ASSERT(sizeof(ImDrawIdx) == m_spRenderable->m_spMesh->GetIndexSize() && "ImDrawIdx has changed");
+	ASSERT(sizeof(ImDrawVert) == m_spRenderable->m_spMesh->GetVertexSize() && "ImDrawVert has changed");
 
 	// Setup material
-	renderable->m_spMaterial = std::make_unique<Material>();
-	renderable->m_spMaterial->m_spVertexShader = Modules::Application->GetResourceManager().GetShader("vs_ocornut_imgui");
-	renderable->m_spMaterial->m_spPixelShader = Modules::Application->GetResourceManager().GetShader("fs_ocornut_imgui");
-	renderable->m_spMaterial->m_cullMode = ECullMode::None;
-	renderable->m_spMaterial->m_isBlendEnabled = true;
-	renderable->m_spMaterial->m_isDepthWriteEnabled = false;
+	m_spRenderable->m_spMaterial = std::make_unique<Material>();
+	m_spRenderable->m_spMaterial->m_spVertexShader = Modules::Application->GetResourceManager().GetShader("vs_ocornut_imgui");
+	m_spRenderable->m_spMaterial->m_spPixelShader = Modules::Application->GetResourceManager().GetShader("fs_ocornut_imgui");
+	m_spRenderable->m_spMaterial->m_cullMode = ECullMode::None;
+	m_spRenderable->m_spMaterial->m_isBlendEnabled = true;
+	m_spRenderable->m_spMaterial->m_isDepthWriteEnabled = false;
 
 	// Setup fonts
 	io.Fonts->AddFontDefault();
@@ -95,9 +95,9 @@ void ImGuiUI::Init()
 	int width = 0;
 	int height = 0;
 	io.Fonts->GetTexDataAsRGBA32(&pTextureData, &width, &height);
-	fontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
-	renderable->m_spMaterial->AddTexture(fontTexture);
-	io.Fonts->TexID = &fontTexture;
+	m_spFontTexture = std::make_shared<Texture>(static_cast<uint16_t>(width), static_cast<uint16_t>(height), Texture::EFormat::RGBA8, pTextureData);
+	m_spRenderable->m_spMaterial->AddTexture(m_spFontTexture);
+	io.Fonts->TexID = &m_spFontTexture;
 
 	// Cleanup (don't clear the input data if you want to append new fonts later)
 	io.Fonts->ClearInputData();
@@ -108,8 +108,8 @@ void ImGuiUI::Kill()
 {
 	ImGui::DestroyContext();
 
-	fontTexture = nullptr;
-	renderable = nullptr;
+	m_spFontTexture = nullptr;
+	m_spRenderable = nullptr;
 }
 
 void ImGuiUI::NewFrame(OSWindow& window)
@@ -188,16 +188,16 @@ void ImGuiUI::Render()
 	}
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > renderable->m_spMesh->GetNumIndices() ||
-		static_cast<uint32_t>(pDrawData->TotalVtxCount) > renderable->m_spMesh->GetNumVertices())
+	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > m_spRenderable->m_spMesh->GetNumIndices() ||
+		static_cast<uint32_t>(pDrawData->TotalVtxCount) > m_spRenderable->m_spMesh->GetNumVertices())
 	{
 		// Skip rendering if we have too many indices or vertices
 		ASSERT(false && "DynamicMesh is too small");
 		return;
 	}
 
-	ImDrawIdx* pIndex = renderable->m_spMesh->m_spIndices.get();
-	ImDrawVert* pVertex = reinterpret_cast<ImDrawVert*>(renderable->m_spMesh->m_spVertices.get());
+	ImDrawIdx* pIndex = m_spRenderable->m_spMesh->m_spIndices.get();
+	ImDrawVert* pVertex = reinterpret_cast<ImDrawVert*>(m_spRenderable->m_spMesh->m_spVertices.get());
 	for(int i = 0; i < pDrawData->CmdListsCount; i++)
 	{
 		const ImDrawList* pDrawList = pDrawData->CmdLists[i];
@@ -207,8 +207,8 @@ void ImGuiUI::Render()
 		pVertex += pDrawList->VtxBuffer.Size;
 	}
 
-	static_cast<DynamicMesh*>(renderable->m_spMesh.get())->m_isIndicesDirty = true;
-	static_cast<DynamicMesh*>(renderable->m_spMesh.get())->m_isVerticesDirty = true;
+	static_cast<DynamicMesh*>(m_spRenderable->m_spMesh.get())->m_isIndicesDirty = true;
+	static_cast<DynamicMesh*>(m_spRenderable->m_spMesh.get())->m_isVerticesDirty = true;
 
 	// Because we merged all buffers into a single one, we maintain our own offset into them
 	uint32_t indexOffset = 0;
@@ -236,7 +236,7 @@ void ImGuiUI::Render()
 					continue;
 				}
 
-				renderable->m_spMaterial->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
+				m_spRenderable->m_spMaterial->ChangeTexture(0, *static_cast<const std::shared_ptr<Texture>*>(cmd.TextureId));
 
 				const uint16_t x = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.x));
 				const uint16_t y = static_cast<uint16_t>(std::max(0.0f, cmd.ClipRect.y));
@@ -244,7 +244,7 @@ void ImGuiUI::Render()
 				const uint16_t h = static_cast<uint16_t>(std::min<float>(cmd.ClipRect.w - cmd.ClipRect.y, UINT16_MAX));
 				Modules::Render->SetScissor(x, y, w, h);
 
-				Modules::Render->RenderRenderable(*renderable, cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
+				Modules::Render->RenderRenderable(*m_spRenderable, cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
 			}
 		}
 
@@ -305,18 +305,54 @@ void ImGuiUI::EndWindow()
 	ImGui::End();
 }
 
+bool ImGuiUI::BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio)
+{
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
+	bool isVisible = ImGui::BeginTable(id.Str(), numColumns, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoBordersInBodyUntilResize);
+	if(isVisible)
+	{
+		if(pInitialColumnsRatio != nullptr)
+		{
+			for(uint8_t i = 0; i < numColumns; ++i)
+			{
+				ImGui::TableSetupColumn(nullptr, ImGuiTableColumnFlags_None, pInitialColumnsRatio[i]);
+			}
+		}
+	}
+
+	return isVisible;
+}
+
+void ImGuiUI::EndTable()
+{
+	ImGui::EndTable();
+}
+
 void ImGuiUI::Text(const String& label)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::AlignTextToFramePadding();
 
 	ImGui::PushID(s_widgetCounter++);
 	ImGui::TextUnformatted(label.Str(), label.Str() + label.Length());
 	ImGui::PopID();
-	ImGui::NextColumn();
 }
 
 bool ImGuiUI::TextInput(WritableString& value)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	bool isValueChanged = false;
 
 	constexpr int kMaxSize = 255;
@@ -329,23 +365,31 @@ bool ImGuiUI::TextInput(WritableString& value)
 		isValueChanged = true;
 	}
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
 bool ImGuiUI::Button(const String& label, const Vector2& size)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isPressed = ImGui::Button(label.Str(), ImVec2(size.GetX(), size.GetY()));
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isPressed;
 }
 
 bool ImGuiUI::ArrowButton(EArrowDir dir)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	bool isPressed = false;
 
 	ImGui::PushID(s_widgetCounter++);
@@ -357,37 +401,48 @@ bool ImGuiUI::ArrowButton(EArrowDir dir)
 		case EArrowDir::Down:	isPressed = ImGui::ArrowButton("", ImGuiDir_Down); break;
 	}
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isPressed;
 }
 
 bool ImGuiUI::Checkbox(bool& isChecked, const String& label)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isPressed = ImGui::Checkbox(label.Str(), &isChecked);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isPressed;
 }
 
 bool ImGuiUI::RadioButtonOption(const String& label, bool isActive)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isPressed = ImGui::RadioButton(label.Str(), isActive) && !isActive;
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isPressed;
 }
 
 bool ImGuiUI::ValueSpinner(int32_t& value, int32_t minValue, int32_t maxValue, float speed)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_S32, &value, speed, &minValue, &maxValue, "%d", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	if(ImGui::IsItemActive())
 	{
@@ -399,10 +454,14 @@ bool ImGuiUI::ValueSpinner(int32_t& value, int32_t minValue, int32_t maxValue, f
 
 bool ImGuiUI::ValueSpinner(float& value, float minValue, float maxValue, float speed)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::DragScalar("", ImGuiDataType_Float, &value, speed, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	if(ImGui::IsItemActive())
 	{
@@ -414,16 +473,25 @@ bool ImGuiUI::ValueSpinner(float& value, float minValue, float maxValue, float s
 
 bool ImGuiUI::ValueEdit(float& value)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::InputScalar("", ImGuiDataType_Float, &value, nullptr, nullptr, "%.3f", ImGuiInputTextFlags_CharsDecimal);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
 bool ImGuiUI::ValueEdit(Vector3& value)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	bool isValueChanged = false;
 
 	float elements[3];
@@ -436,75 +504,73 @@ bool ImGuiUI::ValueEdit(Vector3& value)
 		isValueChanged = true;
 	}
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
 bool ImGuiUI::Slider(int32_t& value, int32_t minValue, int32_t maxValue)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_S32 , &value, &minValue, &maxValue, "%d", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
 bool ImGuiUI::Slider(float& value, float minValue, float maxValue)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::SliderScalar("", ImGuiDataType_Float, &value, &minValue, &maxValue, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
 void ImGuiUI::ProgressBar(float progress)
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f), nullptr);
-	ImGui::NextColumn();
 }
 
 bool ImGuiUI::ColorPicker(float(&colorRGB)[3])
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::ColorEdit3("", colorRGB, ImGuiColorEditFlags_None);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
 bool ImGuiUI::ColorPicker(float(&colorRGBA)[4])
 {
+	if(ImGui::TableNextColumn())
+	{
+		ImGui::SetNextItemWidth(-FLT_MIN);
+	}
+
 	ImGui::PushID(s_widgetCounter++);
 	const bool isValueChanged = ImGui::ColorEdit4("", colorRGBA, ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_AlphaPreview);
 	ImGui::PopID();
-	ImGui::NextColumn();
 
 	return isValueChanged;
 }
 
-void ImGuiUI::LayoutColumns(uint8_t numColumns, const float* pRatio)
-{
-	StackString<16> strId;
-	strId += s_widgetCounter++;
-
-	ImGuiStyle& style = ImGui::GetStyle();
-	const float itemSpacingX = style.ItemSpacing.x;
-	style.ItemSpacing.x = 0.0f;
-	ImGui::Columns(1);
-	ImGui::Columns(numColumns, strId.Str(), false);
-	style.ItemSpacing.x = itemSpacingX;
-
-	if(pRatio != nullptr)
-	{
-		const float width = ImGui::GetWindowWidth();
-		for(uint8_t i = 0; i < numColumns; ++i)
-		{
-			ImGui::SetColumnWidth(i, width * pRatio[i]);
-		}
-	}
-}

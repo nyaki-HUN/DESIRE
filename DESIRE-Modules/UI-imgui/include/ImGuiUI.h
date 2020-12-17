@@ -21,6 +21,10 @@ public:
 	bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) override;
 	void EndWindow() override;
 
+	// Table
+	bool BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio = nullptr) override;
+	void EndTable() override;
+
 	// Widgets
 	void Text(const String& label) override;
 	bool TextInput(WritableString& value) override;
@@ -46,10 +50,7 @@ public:
 	bool ColorPicker(float(&colorRGB)[3]) override;
 	bool ColorPicker(float(&colorRGBA)[4]) override;
 
-	// Layout
-	void LayoutColumns(uint8_t numColumns, const float* pRatio = nullptr) override;
-
 private:
-	std::unique_ptr<Renderable> renderable;
-	std::shared_ptr<Texture> fontTexture;
+	std::unique_ptr<Renderable> m_spRenderable;
+	std::shared_ptr<Texture> m_spFontTexture;
 };

@@ -38,6 +38,10 @@ public:
 	virtual bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) = 0;
 	virtual void EndWindow() = 0;
 
+	// Table
+	virtual bool BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio = nullptr) = 0;
+	virtual void EndTable() = 0;
+
 	// Widgets
 	virtual void Text(const String& label) = 0;
 	virtual bool TextInput(WritableString& value) = 0;
@@ -75,7 +79,4 @@ public:
 
 	virtual bool ColorPicker(float(&colorRGB)[3]) = 0;
 	virtual bool ColorPicker(float(&colorRGBA)[4]) = 0;
-
-	// Layout
-	virtual void LayoutColumns(uint8_t numColumns, const float* pRatio = nullptr) = 0;
 };
