@@ -228,6 +228,9 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	hr = m_pDevice->CreateRootSignature(0, spSignature->GetBufferPointer(), spSignature->GetBufferSize(), IID_PPV_ARGS(&m_pRootSignature));
 	DX_CHECK_HRESULT(hr);
 
+	m_spErrorVertexShader->m_pRenderData = CreateShaderRenderData(*m_spErrorVertexShader);
+	m_spErrorPixelShader->m_pRenderData = CreateShaderRenderData(*m_spErrorPixelShader);
+
 	return true;
 }
 

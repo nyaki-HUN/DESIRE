@@ -120,6 +120,9 @@ bool Direct3D11Render::Init(OSWindow& mainWindow)
 
 	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	m_spErrorVertexShader->m_pRenderData = CreateShaderRenderData(*m_spErrorVertexShader);
+	m_spErrorPixelShader->m_pRenderData = CreateShaderRenderData(*m_spErrorPixelShader);
+
 	return true;
 }
 
