@@ -145,12 +145,11 @@ void SandBox::Update()
 
 	Modules::UI->NewFrame(*m_spMainWindow);
 
-	// Variables for UI testing
 	if(Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600), nullptr, UI::WindowFlags_MenuBar))
 	{
 		if(Modules::UI->BeginMenuBar())
 		{
-			if(Modules::UI->BeginMenu("File"))
+			if(Modules::UI->BeginMenu("MENU"))
 			{
 				Modules::UI->MenuItem("Open");
 				Modules::UI->MenuItem("Close");
