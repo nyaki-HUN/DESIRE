@@ -274,6 +274,10 @@ bool ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const 
 	{
 		imguiFlags |= ImGuiWindowFlags_NoScrollbar;
 	}
+	if(flags & WindowFlags_MenuBar)
+	{
+		imguiFlags |= ImGuiWindowFlags_MenuBar;
+	}
 
 	ImGui::SetNextWindowPos(ImVec2(initialPos.GetX(), initialPos.GetY()), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(initialSize.GetX(), initialSize.GetY()), ImGuiCond_FirstUseEver);
@@ -303,6 +307,31 @@ bool ImGuiUI::BeginWindow(const String& label, const Vector2& initialPos, const 
 void ImGuiUI::EndWindow()
 {
 	ImGui::End();
+}
+
+bool ImGuiUI::BeginMenuBar()
+{
+	return ImGui::BeginMenuBar();
+}
+
+void ImGuiUI::EndMenuBar()
+{
+	ImGui::EndMenuBar();
+}
+
+bool ImGuiUI::BeginMenu(const String& label)
+{
+	return ImGui::BeginMenu(label.Str(), true);
+}
+
+void ImGuiUI::EndMenu()
+{
+	ImGui::EndMenu();
+}
+
+bool ImGuiUI::MenuItem(const String& label)
+{
+	return ImGui::MenuItem(label.Str(), nullptr, false, true);
 }
 
 bool ImGuiUI::BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio)

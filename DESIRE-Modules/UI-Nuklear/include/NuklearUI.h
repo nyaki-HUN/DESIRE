@@ -28,6 +28,15 @@ public:
 	bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) override;
 	void EndWindow() override;
 
+	// Menu
+	bool BeginMenuBar() override;
+	void EndMenuBar() override;
+
+	bool BeginMenu(const String& label) override;
+	void EndMenu() override;
+
+	bool MenuItem(const String& label) override;
+
 	// Table
 	bool BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio = nullptr) override;
 	void EndTable() override;
@@ -58,6 +67,8 @@ public:
 	bool ColorPicker(float(&colorRGBA)[4]) override;
 
 private:
+	void SetDefaultLayout();
+
 	std::unique_ptr<nk_context> m_spContext;
 	std::unique_ptr<nk_allocator> m_spAllocator;
 	std::unique_ptr<nk_buffer> m_spCmdBuffer;

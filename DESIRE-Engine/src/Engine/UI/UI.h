@@ -24,6 +24,7 @@ public:
 		WindowFlags_NoResize		= 1 << 1,
 		WindowFlags_NoMove			= 1 << 2,
 		WindowFlags_NoScrollbar		= 1 << 3,
+		WindowFlags_MenuBar			= 1 << 4,
 	};
 
 	virtual ~UI() {}
@@ -37,6 +38,15 @@ public:
 	// Window
 	virtual bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) = 0;
 	virtual void EndWindow() = 0;
+
+	// Menu
+	virtual bool BeginMenuBar() = 0;
+	virtual void EndMenuBar() = 0;
+
+	virtual bool BeginMenu(const String& label) = 0;
+	virtual void EndMenu() = 0;
+
+	virtual bool MenuItem(const String& label) = 0;
 
 	// Table
 	virtual bool BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio = nullptr) = 0;

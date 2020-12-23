@@ -146,8 +146,22 @@ void SandBox::Update()
 	Modules::UI->NewFrame(*m_spMainWindow);
 
 	// Variables for UI testing
-	if(Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600)))
+	if(Modules::UI->BeginWindow("Test Window", Vector2(100, 100), Vector2(350, 600), nullptr, UI::WindowFlags_MenuBar))
 	{
+		if(Modules::UI->BeginMenuBar())
+		{
+			if(Modules::UI->BeginMenu("File"))
+			{
+				Modules::UI->MenuItem("Open");
+				Modules::UI->MenuItem("Close");
+				Modules::UI->MenuItem("Exit");
+
+				Modules::UI->EndMenu();
+			}
+
+			Modules::UI->EndMenuBar();
+		}
+
 		Modules::UI->Text("TextInput:");
 		static DynamicString s_textValue;
 		Modules::UI->TextInput(s_textValue);

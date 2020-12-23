@@ -21,6 +21,15 @@ public:
 	bool BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen = nullptr, EWindowFlags flags = WindowFlags_None) override;
 	void EndWindow() override;
 
+	// Menu
+	bool BeginMenuBar() override;
+	void EndMenuBar() override;
+
+	bool BeginMenu(const String& label) override;
+	void EndMenu() override;
+
+	bool MenuItem(const String& label) override;
+
 	// Table
 	bool BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio = nullptr) override;
 	void EndTable() override;

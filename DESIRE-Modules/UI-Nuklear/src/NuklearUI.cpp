@@ -230,6 +230,7 @@ void NuklearUI::Render()
 bool NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, const Vector2& initialSize, bool* pOpen, EWindowFlags flags)
 {
 	nk_flags nkFlags = NK_WINDOW_BORDER;
+	bool hasMenuBar = false;
 	if(!(flags & WindowFlags_NoTitleBar))
 	{
 		nkFlags |= NK_WINDOW_TITLE;
@@ -246,6 +247,10 @@ bool NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, cons
 	{
 		nkFlags |= NK_WINDOW_NO_SCROLLBAR;
 	}
+	if(flags & WindowFlags_MenuBar)
+	{
+		hasMenuBar = true;
+	}
 
 	if(pOpen != nullptr)
 	{
@@ -255,9 +260,9 @@ bool NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, cons
 	}
 
 	const nk_bool isVisible = nk_begin(m_spContext.get(), label.Str(), nk_rect(initialPos.GetX(), initialPos.GetY(), initialSize.GetX(), initialSize.GetY()), nkFlags);
-	if(isVisible)
+	if(isVisible && !hasMenuBar)
 	{
-		nk_layout_row_dynamic(m_spContext.get(), kDefaultRowHeight, 1);
+		SetDefaultLayout();
 	}
 
 	if(pOpen != nullptr)
@@ -273,10 +278,44 @@ void NuklearUI::EndWindow()
 	nk_end(m_spContext.get());
 }
 
+bool NuklearUI::BeginMenuBar()
+{
+	nk_menubar_begin(m_spContext.get());
+	SetDefaultLayout();
+	return true;
+}
+
+void NuklearUI::EndMenuBar()
+{
+	nk_menubar_end(m_spContext.get());
+	SetDefaultLayout();
+}
+
+bool NuklearUI::BeginMenu(const String& label)
+{
+	const bool isVisible = nk_menu_begin_text(m_spContext.get(), label.Str(), static_cast<int>(label.Length()), NK_TEXT_LEFT, nk_vec2(100.0, 200.0f));
+	if(isVisible)
+	{
+		SetDefaultLayout();
+	}
+
+	return isVisible;
+}
+
+void NuklearUI::EndMenu()
+{
+	nk_menu_end(m_spContext.get());
+}
+
+bool NuklearUI::MenuItem(const String& label)
+{
+	return nk_menu_item_text(m_spContext.get(), label.Str(), static_cast<int>(label.Length()), NK_TEXT_LEFT);
+}
+
 bool NuklearUI::BeginTable(const String& id, uint8_t numColumns, const float* pInitialColumnsRatio)
 {
 	const nk_panel* pPanel = nk_window_get_panel(m_spContext.get());
-	if(pPanel && pPanel->row.index != pPanel->row.columns)
+	if(pPanel && pPanel->row.index < pPanel->row.columns)
 	{
 		nk_style_push_vec2(m_spContext.get(), &m_spContext->style.window.group_padding, nk_vec2(0.0f, 0.0f));
 		const nk_bool isVisible = nk_group_begin(m_spContext.get(), id.Str(), NK_WINDOW_NO_SCROLLBAR);
@@ -504,4 +543,9 @@ bool NuklearUI::ColorPicker(float(&colorRGBA)[4])
 	}
 
 	return result;
+}
+
+void NuklearUI::SetDefaultLayout()
+{
+	nk_layout_row_dynamic(m_spContext.get(), kDefaultRowHeight, 1);
 }
