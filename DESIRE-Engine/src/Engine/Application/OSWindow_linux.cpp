@@ -31,7 +31,7 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 	, m_isFullscreen(creationParams.isFullscreen)
 	, m_spImpl(std::make_unique<OSWindowm_spImpl>())
 {
-	for(int i = 0; i < NUM_CURSORS; ++i)
+	for(int32_t i = 0; i < NUM_CURSORS; ++i)
 	{
 		m_spImpl->cursors[i] = None;
 	}
@@ -48,7 +48,7 @@ OSWindow::~OSWindow()
 {
 	if(m_spImpl->pDisplay != nullptr)
 	{
-		for(int i = 0; i < NUM_CURSORS; ++i)
+		for(int32_t i = 0; i < NUM_CURSORS; ++i)
 		{
 			if(m_spImpl->cursors[i] != None)
 			{
@@ -209,7 +209,7 @@ void OSWindow::GetClipboardString(WritableString& outString)
 		return;
 	}
 
-	int size = 0;
+	int32_t size = 0;
 	char* pStr = XFetchBytes(m_spImpl->pDisplay, &size);
 	if(ptr != nullptr)
 	{

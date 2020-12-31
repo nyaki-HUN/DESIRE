@@ -20,7 +20,7 @@
 #include "Engine/UI/UI.h"
 
 bool Application::s_isMainLoopRunning = false;
-int Application::s_returnValue = 0;
+int32_t Application::s_returnValue = 0;
 
 Application::Application()
 	: m_spTimer(std::make_unique<Timer>())
@@ -52,7 +52,7 @@ void Application::SendEvent(EAppEventType eventType, const void* pUserData)
 	}
 }
 
-int Application::Start(int argc, const char* const* ppArgv)
+int32_t Application::Start(int32_t argc, const char* const* ppArgv)
 {
 	ASSERT(!s_isMainLoopRunning);
 
@@ -88,9 +88,9 @@ int Application::Start(int argc, const char* const* ppArgv)
 	return s_returnValue;
 }
 
-void Application::Stop(int i_returnValue)
+void Application::Stop(int32_t returnValue)
 {
-	s_returnValue = i_returnValue;
+	s_returnValue = returnValue;
 	s_isMainLoopRunning = false;
 }
 
@@ -125,7 +125,7 @@ void Application::Run()
 	Kill();
 }
 
-Application::CreationParams Application::GetCreationParams(int argc, const char* const* ppArgv)
+Application::CreationParams Application::GetCreationParams(int32_t argc, const char* const* ppArgv)
 {
 	DESIRE_UNUSED(argc);
 	DESIRE_UNUSED(ppArgv);

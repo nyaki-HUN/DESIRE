@@ -11,10 +11,10 @@ size_t ZlibCompression::GetMaxCompressionDataBufferSize(size_t dataSize) const
 	return compressBound(static_cast<uLong>(dataSize));
 }
 
-size_t ZlibCompression::CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize)
+size_t ZlibCompression::CompressBuffer(void* pCompressedDataBuffer, size_t compressedDataBufferSize, const void* pData, size_t dataSize)
 {
 	uLongf compressedSize = static_cast<unsigned long>(compressedDataBufferSize);
-	const int result = compress2(static_cast<Bytef*>(compressedDataBuffer), &compressedSize, static_cast<const Bytef*>(data), static_cast<uLong>(dataSize), compressionLevel);
+	const int32_t result = compress2(static_cast<Bytef*>(pCompressedDataBuffer), &compressedSize, static_cast<const Bytef*>(pData), static_cast<uLong>(dataSize), m_compressionLevel);
 	if(result != Z_OK)
 	{
 		LOG_ERROR("Error compressing - compress2 error: %d", result);
@@ -23,10 +23,10 @@ size_t ZlibCompression::CompressBuffer(void* compressedDataBuffer, size_t compre
 	return compressedSize;
 }
 
-size_t ZlibCompression::DecompressBuffer(void* dataBuffer, size_t dataBufferSize, const void* compressedData, size_t compressedDataSize)
+size_t ZlibCompression::DecompressBuffer(void* pDataBuffer, size_t dataBufferSize, const void* pCompressedData, size_t compressedDataSize)
 {
 	uLongf uncompressedSize = static_cast<uLongf>(dataBufferSize);
-	const int result = uncompress(static_cast<Bytef*>(dataBuffer), &uncompressedSize, static_cast<const Bytef*>(compressedData), static_cast<uLong>(compressedDataSize));
+	const int32_t result = uncompress(static_cast<Bytef*>(pDataBuffer), &uncompressedSize, static_cast<const Bytef*>(pCompressedData), static_cast<uLong>(compressedDataSize));
 	if(result != Z_OK)
 	{
 		LOG_ERROR("Error compressing - uncompress error: %d", result);

@@ -3,10 +3,10 @@
 
 std::unique_ptr<Compression> CompressionManager::CreateCompression(HashedString name)
 {
-	const Factory<Compression>::Func_t* factoryFunc = s_compressionFactories.Find(name);
-	if(factoryFunc != nullptr)
+	const Factory<Compression>::Func_t* pFactoryFunc = s_compressionFactories.Find(name);
+	if(pFactoryFunc != nullptr)
 	{
-		return (*factoryFunc)();
+		return (*pFactoryFunc)();
 	}
 
 	return nullptr;

@@ -6,9 +6,9 @@
 #include "Engine/Core/FS/MemoryFile.h"
 #include "Engine/Core/String/StackString.h"
 
-constexpr int kZipSignatureCentralDirectoryFileHeader	= 0x02014b50;	//'PK12'
-constexpr int kZipSignatureLocalFileHeader				= 0x04034b50;	//'PK34'
-constexpr int kZipSignatureEndOfCentralDirectory		= 0x06054b50;	//'PK56'
+constexpr int32_t kZipSignatureCentralDirectoryFileHeader	= 0x02014b50;	//'PK12'
+constexpr int32_t kZipSignatureLocalFileHeader				= 0x04034b50;	//'PK34'
+constexpr int32_t kZipSignatureEndOfCentralDirectory		= 0x06054b50;	//'PK56'
 
 #if DESIRE_PLATFORM_WINDOWS
 	#include <PshPack1.h>
@@ -30,7 +30,7 @@ constexpr int kZipSignatureEndOfCentralDirectory		= 0x06054b50;	//'PK56'
 
 struct ZipDataDescriptor
 {
-	int crc32;
+	int32_t crc32;
 	uint32_t compressedSize;
 	uint32_t uncompressedSize;
 } DESIRE_ATTRIBUTE_PACKED;
@@ -96,9 +96,9 @@ struct ZipEndOfCentralDirectoryRecord
 	#include <PopPack.h>
 #endif	// #if DESIRE_PLATFORM_WINDOWS
 
-FileSourceZip::FileSourceZip(ReadFilePtr zipFile, int flags)
-	: zipFile(std::move(zipFile))
-	, flags(flags)
+FileSourceZip::FileSourceZip(ReadFilePtr spm_spZipFile, int32_t flags)
+	: m_spZipFile(std::move(spm_spZipFile))
+	, m_flags(flags)
 {
 
 }
@@ -110,35 +110,35 @@ FileSourceZip::~FileSourceZip()
 
 bool FileSourceZip::Load()
 {
-	if(zipFile == nullptr)
+	if(m_spZipFile == nullptr)
 	{
 		return false;
 	}
 
 	// Load central directory record
-	zipFile->Seek(-(int64_t)sizeof(ZipEndOfCentralDirectoryRecord), IReadFile::ESeekOrigin::End);
+	m_spZipFile->Seek(-(int64_t)sizeof(ZipEndOfCentralDirectoryRecord), IReadFile::ESeekOrigin::End);
 	ZipEndOfCentralDirectoryRecord record;
-	zipFile->ReadBuffer(&record, sizeof(ZipEndOfCentralDirectoryRecord));
+	m_spZipFile->ReadBuffer(&record, sizeof(ZipEndOfCentralDirectoryRecord));
 	if(record.signature != kZipSignatureEndOfCentralDirectory)
 	{
 		LOG_ERROR("The zip file contains comment which is not supported");
 		return false;
 	}
 
-	zipFile->Seek(record.offsetOfcentralDirectoryStart, IReadFile::ESeekOrigin::Begin);
+	m_spZipFile->Seek(record.offsetOfcentralDirectoryStart, IReadFile::ESeekOrigin::Begin);
 
 	for(int16_t i = 0; i < record.numCentralDirectories; ++i)
 	{
 		// Process the Central Directory Header
 		ZipCentralDirectoryFileHeader centralDirHeader;
-		zipFile->ReadBuffer(&centralDirHeader, sizeof(ZipCentralDirectoryFileHeader));
+		m_spZipFile->ReadBuffer(&centralDirHeader, sizeof(ZipCentralDirectoryFileHeader));
 		ASSERT(centralDirHeader.signature == kZipSignatureCentralDirectoryFileHeader);
 		if(centralDirHeader.signature == kZipSignatureCentralDirectoryFileHeader)
 		{
-			const int64_t currPos = zipFile->Tell();
-			zipFile->Seek(centralDirHeader.offsetOfLocalHeader, IReadFile::ESeekOrigin::Begin);
+			const int64_t currPos = m_spZipFile->Tell();
+			m_spZipFile->Seek(centralDirHeader.offsetOfLocalHeader, IReadFile::ESeekOrigin::Begin);
 			ProcessLocalHeaders();
-			zipFile->Seek(currPos + centralDirHeader.filenameLength + centralDirHeader.extraFieldLength + centralDirHeader.commentLength, IReadFile::ESeekOrigin::Begin);
+			m_spZipFile->Seek(currPos + centralDirHeader.filenameLength + centralDirHeader.extraFieldLength + centralDirHeader.commentLength, IReadFile::ESeekOrigin::Begin);
 		}
 	}
 
@@ -150,8 +150,8 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 	StackString<DESIRE_MAX_PATH_LEN> filenameToFind = filename;
 	ConvertFilename(filenameToFind);
 
-	const auto it = fileList.find(filenameToFind);
-	if(it == fileList.end())
+	const auto it = m_fileList.find(filenameToFind);
+	if(it == m_fileList.end())
 	{
 		return nullptr;
 	}
@@ -187,8 +187,8 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 		{
 			ASSERT(entry.compressedSize == entry.uncompressedSize);
 
-			zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
-			return std::make_unique<MemoryFile>(zipFile, entry.uncompressedSize);
+			m_spZipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
+			return std::make_unique<MemoryFile>(m_spZipFile, entry.uncompressedSize);
 		}
 
 		case 8:		// Deflated
@@ -204,8 +204,8 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 					return nullptr;
 				}
 
-				zipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
-				zipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
+				m_spZipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
+				m_spZipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
 
 				const size_t decompressedSize = zlibRawDeflate->DecompressBuffer(decompressedData.get(), entry.uncompressedSize, compressedData.get(), entry.compressedSize);
 				ASSERT(decompressedSize == entry.uncompressedSize);
@@ -227,7 +227,7 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 void FileSourceZip::ProcessLocalHeaders()
 {
 	ZipLocalFileHeader header;
-	zipFile->ReadBuffer(&header, sizeof(header));
+	m_spZipFile->ReadBuffer(&header, sizeof(header));
 	if(header.signature != kZipSignatureLocalFileHeader ||
 		header.filenameLength == 0 ||
 		header.filenameLength >= DESIRE_MAX_PATH_LEN)
@@ -237,7 +237,7 @@ void FileSourceZip::ProcessLocalHeaders()
 
 	// Read filename
 	StackString<DESIRE_MAX_PATH_LEN> filename;
-	zipFile->ReadBuffer(filename.AsCharBufferWithSize(header.filenameLength), header.filenameLength);
+	m_spZipFile->ReadBuffer(filename.AsCharBufferWithSize(header.filenameLength), header.filenameLength);
 
 	// Skip if directory
 	if(filename.EndsWith('/'))
@@ -248,28 +248,28 @@ void FileSourceZip::ProcessLocalHeaders()
 	// Skip extra field
 	if(header.extraFieldLength != 0)
 	{
-		zipFile->Seek(header.extraFieldLength);
+		m_spZipFile->Seek(header.extraFieldLength);
 	}
 
 	// Read data descriptor
 	if(header.flags & ZipLocalFileHeader::FLAG_DATA_DESCRIPTOR)
 	{
-		zipFile->ReadBuffer(&header.dataDescriptor, sizeof(ZipDataDescriptor));
+		m_spZipFile->ReadBuffer(&header.dataDescriptor, sizeof(ZipDataDescriptor));
 	}
 
 	ZipFileEntry entry;
-	entry.offsetInFile = zipFile->Tell();
+	entry.offsetInFile = m_spZipFile->Tell();
 	entry.compressedSize = header.dataDescriptor.compressedSize;
 	entry.uncompressedSize = header.dataDescriptor.uncompressedSize;
 	entry.compressionMethod = header.compressionMethod;
 
 	ConvertFilename(filename);
-	fileList.insert_or_assign(std::move(DynamicString(filename)), std::move(entry));
+	m_fileList.insert_or_assign(std::move(DynamicString(filename)), std::move(entry));
 }
 
 void FileSourceZip::ConvertFilename(WritableString& filename)
 {
-	if(flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_PATH)
+	if(m_flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_PATH)
 	{
 		// Remove path
 		const size_t pos = filename.FindLast('/');
@@ -279,7 +279,7 @@ void FileSourceZip::ConvertFilename(WritableString& filename)
 		}
 	}
 
-	if(flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_CASE)
+	if(m_flags & FileSystem::EFileSourceFlags::FILESOURCE_IGNORE_CASE)
 	{
 		filename.ToLower();
 	}

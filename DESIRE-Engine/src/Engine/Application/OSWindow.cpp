@@ -23,7 +23,7 @@ bool OSWindow::IsActive() const
 	return m_isActive;
 }
 
-void OSWindow::RegisterMessageHandler(int msgType, MessageHandler_t messageHandler)
+void OSWindow::RegisterMessageHandler(int32_t msgType, MessageHandler_t messageHandler)
 {
 	ASSERT(messageHandler != nullptr);
 	m_additionalMessageHandlers[msgType] = messageHandler;

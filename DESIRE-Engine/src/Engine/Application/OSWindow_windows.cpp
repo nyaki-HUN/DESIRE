@@ -198,8 +198,8 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 	, m_isFullscreen(creationParams.isFullscreen)
 	, m_spImpl(std::make_unique<OSWindowImpl>())
 {
-	int posX = 0;
-	int posY = 0;
+	int32_t posX = 0;
+	int32_t posY = 0;
 	DWORD windowStyleFlags = 0;
 	RECT rect = { 0, 0, m_width, m_height };
 	if(m_isFullscreen)
@@ -223,8 +223,8 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 		long w = rect.right - rect.left;
 		long h = rect.bottom - rect.top;
 
-		int screenWidth = GetSystemMetrics(SM_CXSCREEN);
-		int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+		int32_t screenWidth = GetSystemMetrics(SM_CXSCREEN);
+		int32_t screenHeight = GetSystemMetrics(SM_CYSCREEN);
 		if(w > screenWidth)
 		{
 			rect.left = 0;
@@ -308,7 +308,7 @@ bool OSWindow::SetClipboardString(const String& string)
 
 		if(!string.IsEmpty())
 		{
-			const int wsize = MultiByteToWideChar(CP_UTF8, 0, string.Str(), static_cast<int>(string.Length()), nullptr, 0);
+			const int32_t wsize = MultiByteToWideChar(CP_UTF8, 0, string.Str(), static_cast<int>(string.Length()), nullptr, 0);
 			HGLOBAL stringHandle = GlobalAlloc(GMEM_MOVEABLE, static_cast<SIZE_T>(wsize + 1) * sizeof(wchar_t));
 			if(stringHandle != nullptr)
 			{
@@ -351,7 +351,7 @@ void OSWindow::GetClipboardString(WritableString& outString) const
 				const wchar_t* pWideStr = static_cast<const wchar_t*>(GlobalLock(stringHandle));
 				if(pWideStr != nullptr)
 				{
-					int size = WideCharToMultiByte(CP_UTF8, 0, pWideStr, -1, nullptr, 0, nullptr, nullptr);
+					int32_t size = WideCharToMultiByte(CP_UTF8, 0, pWideStr, -1, nullptr, 0, nullptr, nullptr);
 					char* pStr = outString.AsCharBufferWithSize(size);
 					if(pStr != nullptr)
 					{

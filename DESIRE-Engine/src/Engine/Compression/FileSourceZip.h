@@ -8,7 +8,7 @@
 class FileSourceZip : public IFileSource
 {
 public:
-	FileSourceZip(ReadFilePtr zipFile, int flags);
+	FileSourceZip(ReadFilePtr spZipFile, int32_t flags);
 	~FileSourceZip() override;
 
 	bool Load();
@@ -27,7 +27,7 @@ private:
 	void ProcessLocalHeaders();
 	void ConvertFilename(WritableString& filename);
 
-	std::map<DynamicString, ZipFileEntry> fileList;
-	ReadFilePtr zipFile;
-	int flags;
+	std::map<DynamicString, ZipFileEntry> m_fileList;
+	ReadFilePtr m_spZipFile;
+	int32_t m_flags;
 };

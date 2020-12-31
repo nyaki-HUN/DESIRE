@@ -10,16 +10,16 @@ ZstdCompression::ZstdCompression()
 
 ZstdCompression::~ZstdCompression()
 {
-	if(compressContext != nullptr)
+	if(m_pCompressContext != nullptr)
 	{
-		ZSTD_freeCCtx(compressContext);
-		compressContext = nullptr;
+		ZSTD_freeCCtx(m_pCompressContext);
+		m_pCompressContext = nullptr;
 	}
 
-	if(decompressContext != nullptr)
+	if(m_pDecompressContext != nullptr)
 	{
-		ZSTD_freeDCtx(decompressContext);
-		decompressContext = nullptr;
+		ZSTD_freeDCtx(m_pDecompressContext);
+		m_pDecompressContext = nullptr;
 	}
 }
 
@@ -28,9 +28,9 @@ size_t ZstdCompression::GetMaxCompressionDataBufferSize(size_t dataSize) const
 	return ZSTD_compressBound(dataSize);
 }
 
-size_t ZstdCompression::CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize)
+size_t ZstdCompression::CompressBuffer(void* pCompressedDataBuffer, size_t compressedDataBufferSize, const void* pData, size_t dataSize)
 {
-	if(compressContext == nullptr)
+	if(m_pCompressContext == nullptr)
 	{
 		const ZSTD_customMem customMem =
 		{
@@ -39,10 +39,10 @@ size_t ZstdCompression::CompressBuffer(void* compressedDataBuffer, size_t compre
 			this
 		};
 
-		compressContext = ZSTD_createCCtx_advanced(customMem);
+		m_pCompressContext = ZSTD_createCCtx_advanced(customMem);
 	}
 
-	return ZSTD_compressCCtx(compressContext, compressedDataBuffer, compressedDataBufferSize, data, dataSize, compressionLevel);
+	return ZSTD_compressCCtx(m_pCompressContext, pCompressedDataBuffer, compressedDataBufferSize, pData, dataSize, m_compressionLevel);
 }
 
 size_t ZstdCompression::GetMaxDecompressionDataBufferSize(const void* compressedData, size_t compressedDataSize) const
@@ -50,9 +50,9 @@ size_t ZstdCompression::GetMaxDecompressionDataBufferSize(const void* compressed
 	return ZSTD_getFrameContentSize(compressedData, compressedDataSize);
 }
 
-size_t ZstdCompression::DecompressBuffer(void* dataBuffer, size_t dataBufferSize, const void* compressedData, size_t compressedDataSize)
+size_t ZstdCompression::DecompressBuffer(void* pDataBuffer, size_t dataBufferSize, const void* pCompressedData, size_t compressedDataSize)
 {
-	if(decompressContext == nullptr)
+	if(m_pDecompressContext == nullptr)
 	{
 		const ZSTD_customMem customMem =
 		{
@@ -61,30 +61,30 @@ size_t ZstdCompression::DecompressBuffer(void* dataBuffer, size_t dataBufferSize
 			this
 		};
 
-		decompressContext = ZSTD_createDCtx_advanced(customMem);
+		m_pDecompressContext = ZSTD_createDCtx_advanced(customMem);
 	}
 
-	return ZSTD_decompressDCtx(decompressContext, dataBuffer, dataBufferSize, compressedData, compressedDataSize);
+	return ZSTD_decompressDCtx(m_pDecompressContext, pDataBuffer, dataBufferSize, pCompressedData, compressedDataSize);
 }
 
-int ZstdCompression::GetMinCompressionLevel() const
+int32_t ZstdCompression::GetMinCompressionLevel() const
 {
 	return ZSTD_minCLevel();
 }
 
-int ZstdCompression::GetMaxCompressionLevel() const
+int32_t ZstdCompression::GetMaxCompressionLevel() const
 {
 	return ZSTD_maxCLevel();
 }
 
-void* ZstdCompression::MallocWrapper(void* opaque, size_t size)
+void* ZstdCompression::MallocWrapper(void* pOpaque, size_t size)
 {
-	DESIRE_UNUSED(opaque);
+	DESIRE_UNUSED(pOpaque);
 	return MemorySystem::Alloc(size);
 }
 
-void ZstdCompression::FreeWrapper(void* opaque, void* address)
+void ZstdCompression::FreeWrapper(void* pOpaque, void* pAddress)
 {
-	DESIRE_UNUSED(opaque);
-	MemorySystem::Free(address);
+	DESIRE_UNUSED(pOpaque);
+	MemorySystem::Free(pAddress);
 }

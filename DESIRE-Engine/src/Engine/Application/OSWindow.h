@@ -39,7 +39,7 @@ public:
 	void HandleWindowMessages();
 	void* GetHandle() const;
 
-	void RegisterMessageHandler(int msgType, MessageHandler_t messageHandler);
+	void RegisterMessageHandler(int32_t msgType, MessageHandler_t messageHandler);
 
 	void SetWindowTitle(const char* pNewTitle);
 
@@ -59,7 +59,7 @@ private:
 	uint16_t m_height;
 	bool m_isFullscreen = false;
 	bool m_isActive = false;
-	std::map<int, MessageHandler_t> m_additionalMessageHandlers;
+	std::map<int32_t, MessageHandler_t> m_additionalMessageHandlers;
 	std::unique_ptr<OSWindowImpl> m_spImpl;
 
 	friend OSWindowImpl;

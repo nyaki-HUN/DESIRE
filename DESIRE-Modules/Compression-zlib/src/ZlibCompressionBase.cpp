@@ -3,9 +3,9 @@
 
 #include "Engine/Core/Memory/MemorySystem.h"
 
-ZlibCompressionBase::ZlibCompressionBase(int windowBits)
+ZlibCompressionBase::ZlibCompressionBase(int32_t windowBits)
 	: Compression(Z_DEFAULT_COMPRESSION)
-	, windowBits(windowBits)
+	, m_windowBits(windowBits)
 {
 }
 
@@ -20,7 +20,7 @@ size_t ZlibCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) con
 	z_stream stream = {};
 	StreamInit(stream);
 
-	int result = deflateInit2(&stream, compressionLevel, Z_DEFLATED, windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+	int32_t result = deflateInit2(&stream, m_compressionLevel, Z_DEFLATED, m_windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
 	if(result != Z_OK)
 	{
 		return 0;
@@ -33,7 +33,7 @@ size_t ZlibCompressionBase::GetMaxCompressionDataBufferSize(size_t dataSize) con
 	return maxSize;
 }
 
-size_t ZlibCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t compressedDataBufferSize, const void* data, size_t dataSize)
+size_t ZlibCompressionBase::CompressBuffer(void* pCompressedDataBuffer, size_t compressedDataBufferSize, const void* pData, size_t dataSize)
 {
 	if(dataSize > UINT32_MAX || compressedDataBufferSize > UINT32_MAX)
 	{
@@ -43,12 +43,12 @@ size_t ZlibCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t co
 
 	z_stream stream = {};
 	StreamInit(stream);
-	stream.next_in = static_cast<const Bytef*>(data);
+	stream.next_in = static_cast<const Bytef*>(pData);
 	stream.avail_in = static_cast<uInt>(dataSize);
-	stream.next_out = static_cast<Bytef*>(compressedDataBuffer);
+	stream.next_out = static_cast<Bytef*>(pCompressedDataBuffer);
 	stream.avail_out = static_cast<uInt>(compressedDataBufferSize);
 
-	int result = deflateInit2(&stream, compressionLevel, Z_DEFLATED, windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+	int32_t result = deflateInit2(&stream, m_compressionLevel, Z_DEFLATED, m_windowBits, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
 	if(result != Z_OK)
 	{
 		LOG_ERROR("Error compressing - deflateInit2 error: %d %s", result, (stream.msg != nullptr) ? stream.msg : "");
@@ -67,13 +67,13 @@ size_t ZlibCompressionBase::CompressBuffer(void* compressedDataBuffer, size_t co
 	return stream.total_out;
 }
 
-size_t ZlibCompressionBase::GetMaxDecompressionDataBufferSize(const void* compressedData, size_t compressedDataSize) const
+size_t ZlibCompressionBase::GetMaxDecompressionDataBufferSize(const void* pCompressedData, size_t pCompressedDataSize) const
 {
 	ASSERT(false && "Unimplemented");
 	return 0;
 }
 
-size_t ZlibCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBufferSize, const void* compressedData, size_t compressedDataSize)
+size_t ZlibCompressionBase::DecompressBuffer(void* pDataBuffer, size_t dataBufferSize, const void* pCompressedData, size_t compressedDataSize)
 {
 	if(compressedDataSize > UINT32_MAX || dataBufferSize > UINT32_MAX)
 	{
@@ -83,12 +83,12 @@ size_t ZlibCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBuffer
 
 	z_stream stream = {};
 	StreamInit(stream);
-	stream.next_in = static_cast<const Bytef*>(compressedData);
+	stream.next_in = static_cast<const Bytef*>(pCompressedData);
 	stream.avail_in = static_cast<uInt>(compressedDataSize);
-	stream.next_out = static_cast<Bytef*>(dataBuffer);
+	stream.next_out = static_cast<Bytef*>(pDataBuffer);
 	stream.avail_out = static_cast<uInt>(dataBufferSize);
 
-	int result = inflateInit2(&stream, windowBits);
+	int32_t result = inflateInit2(&stream, m_windowBits);
 	if(result != Z_OK)
 	{
 		LOG_ERROR("Error decompressing - inflateInit2 error: %d %s", result, (stream.msg != nullptr) ? stream.msg : "");
@@ -107,26 +107,26 @@ size_t ZlibCompressionBase::DecompressBuffer(void* dataBuffer, size_t dataBuffer
 	return stream.total_out;
 }
 
-int ZlibCompressionBase::GetMinCompressionLevel() const
+int32_t ZlibCompressionBase::GetMinCompressionLevel() const
 {
 	return Z_BEST_SPEED;
 }
 
-int ZlibCompressionBase::GetMaxCompressionLevel() const
+int32_t ZlibCompressionBase::GetMaxCompressionLevel() const
 {
 	return Z_BEST_COMPRESSION;
 }
 
-void* ZlibCompressionBase::MallocWrapper(void* opaque, uint32_t items, uint32_t size)
+void* ZlibCompressionBase::MallocWrapper(void* pOpaque, uint32_t items, uint32_t size)
 {
-	DESIRE_UNUSED(opaque);
+	DESIRE_UNUSED(pOpaque);
 	return MemorySystem::Alloc(static_cast<size_t>(items) * size);
 }
 
-void ZlibCompressionBase::FreeWrapper(void* opaque, void* address)
+void ZlibCompressionBase::FreeWrapper(void* pOpaque, void* pAddress)
 {
-	DESIRE_UNUSED(opaque);
-	MemorySystem::Free(address);
+	DESIRE_UNUSED(pOpaque);
+	MemorySystem::Free(pAddress);
 }
 
 void ZlibCompressionBase::StreamInit(z_stream& stream)

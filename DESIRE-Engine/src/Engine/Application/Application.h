@@ -36,8 +36,8 @@ public:
 	virtual void Kill() = 0;
 	virtual void Update() = 0;
 
-	static int Start(int argc, const char* const* ppArgv);
-	static void Stop(int returnValue = 0);
+	static int32_t Start(int32_t argc, const char* const* ppArgv);
+	static void Stop(int32_t returnValue = 0);
 
 protected:
 	struct CreationParams
@@ -52,7 +52,7 @@ protected:
 private:
 	void Run();
 
-	virtual CreationParams GetCreationParams(int argc, const char* const* ppArgv);
+	virtual CreationParams GetCreationParams(int32_t argc, const char* const* ppArgv);
 
 	static void CreateModules();
 	static void DestroyModules();
@@ -66,5 +66,5 @@ private:
 	static const Factory<UI>::Func_t s_uiFactory;
 
 	static bool s_isMainLoopRunning;
-	static int s_returnValue;
+	static int32_t s_returnValue;
 };

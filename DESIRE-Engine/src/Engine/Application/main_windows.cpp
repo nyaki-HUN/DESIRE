@@ -11,7 +11,7 @@
 int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nCmdShow*/)
 {
 #if defined(_DEBUG)
-	int debugFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
+	int32_t debugFlag = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
 	debugFlag |= _CRTDBG_ALLOC_MEM_DF;
 	debugFlag |= _CRTDBG_LEAK_CHECK_DF;
 //	debugFlag |= _CRTDBG_DELAY_FREE_MEM_DF;
