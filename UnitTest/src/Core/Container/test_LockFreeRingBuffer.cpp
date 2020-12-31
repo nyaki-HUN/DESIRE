@@ -3,15 +3,15 @@
 
 TEST_CASE("LockFreeRingBuffer", "[Core]")
 {
-	LockFreeRingBuffer<int, 10> ringBuffer;
+	LockFreeRingBuffer<uint32_t, 10> ringBuffer;
 
 	std::atomic<bool> thread2Running = true;
 	std::thread thread2([&ringBuffer, &thread2Running]()
 	{
-		int counter = 0;
+		uint32_t counter = 0;
 		while(thread2Running || !ringBuffer.empty())
 		{
-			int num;
+			uint32_t num;
 			if(ringBuffer.pop(num))
 			{
 				CHECK(num == counter);
@@ -22,7 +22,7 @@ TEST_CASE("LockFreeRingBuffer", "[Core]")
 		CHECK(counter == 15);
 	});
 
-	int i = 0;
+	uint32_t i = 0;
 	while(i < 15)
 	{
 		bool successful = ringBuffer.push(i);

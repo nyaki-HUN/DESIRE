@@ -5,8 +5,10 @@
 
 TEST_CASE("HashedStringMap", "[Core]")
 {
-	HashedStringMap<int> map;
+	HashedStringMap<int32_t> map;
+	CHECK(map.IsEmpty());
 	map.Insert("asdasdasd", 100);
+	CHECK_FALSE(map.IsEmpty());
 
 	SECTION("Insert()")
 	{
@@ -15,18 +17,7 @@ TEST_CASE("HashedStringMap", "[Core]")
 		map.Insert("three", 3);
 		map.Insert("four", 4);
 
-		// Hack to get access to elements
-		std::vector<std::pair<HashedString, int>>& elements = *reinterpret_cast<std::vector<std::pair<HashedString, int>>*>(&map);
-
-		CHECK(elements.size() == 5);
-		int totalValue = elements[0].second;
-		for(size_t i = 1; i < elements.size(); ++i)
-		{
-			totalValue += elements[i].second;
-			CHECK(elements[i - 1].first < elements[i].first);
-		}
-
-		CHECK(totalValue == 100 + 1 + 2 + 3 + 4);
+		CHECK(map.Size() == 5);
 	}
 
 	SECTION("Insert() fail")

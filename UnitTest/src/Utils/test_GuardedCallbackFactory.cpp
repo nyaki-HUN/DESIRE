@@ -4,7 +4,7 @@
 TEST_CASE("GuardedCallbackFactory", "[Utils]")
 {
 	std::function<void()> callback = nullptr;
-	int x = 0;
+	uint32_t x = 0;
 
 	// Add scope to also check the case when callbackFactory is destroyed
 	{

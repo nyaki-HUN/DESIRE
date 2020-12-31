@@ -9,7 +9,7 @@ public:
 	{
 	}
 
-	int value;
+	uint32_t value;
 };
 
 TEST_CASE("PoolAllocator", "[Core][memory]")
@@ -17,19 +17,19 @@ TEST_CASE("PoolAllocator", "[Core][memory]")
 	PoolAllocator<TestClass, 10> a;
 
 	TestClass* tmp[10];
-	for(int i = 0; i < 10; ++i)
+	for(uint32_t i = 0; i < 10; ++i)
 	{
 		tmp[i] = a.Alloc();
 		REQUIRE(tmp[i] != nullptr);
 		CHECK(tmp[i]->value == 123);
 	}
 
-	TestClass* elementAllocatedWhenPoolIsEmpty = a.Alloc();
+	TestClass* pElementAllocatedWhenPoolIsEmpty = a.Alloc();
 
-	a.Free(elementAllocatedWhenPoolIsEmpty);
-	elementAllocatedWhenPoolIsEmpty = nullptr;
+	a.Free(pElementAllocatedWhenPoolIsEmpty);
+	pElementAllocatedWhenPoolIsEmpty = nullptr;
 
-	for(int i = 0; i < 10; ++i)
+	for(uint32_t i = 0; i < 10; ++i)
 	{
 		a.Free(tmp[i]);
 		tmp[i] = nullptr;

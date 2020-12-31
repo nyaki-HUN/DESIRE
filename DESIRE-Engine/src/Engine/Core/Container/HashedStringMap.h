@@ -61,6 +61,16 @@ public:
 		return (it != m_elements.end() && !(key < it->key)) ? &it->value : nullptr;
 	}
 
+	bool IsEmpty() const
+	{
+		return m_elements.IsEmpty();
+	}
+
+	size_t Size() const
+	{
+		return m_elements.Size();
+	}
+
 	void Clear()
 	{
 		m_elements.Clear();

@@ -96,7 +96,7 @@ TEST_CASE("Matrix4", "[Core][math]")
 
 		mat.Invert();
 
-		for(int i = 0; i < 4; ++i)
+		for(uint32_t i = 0; i < 4; ++i)
 		{
 			float matVec[4];
 			mat.GetCol(i).StoreXYZW(matVec);
