@@ -24,6 +24,7 @@ public:
 
 	Object& CreateChildObject(const String& name);
 	const Array<Object*>& GetChildren() const;
+	Object* FindObjectByName(const String& name, bool isRecursiveSearch = false) const;
 	bool HasObjectInParentHierarchy(const Object* pObject) const;
 
 	template<class T, class... Args>

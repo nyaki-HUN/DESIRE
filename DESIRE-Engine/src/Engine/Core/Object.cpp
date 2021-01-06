@@ -155,6 +155,31 @@ const Array<Object*>& Object::GetChildren() const
 	return m_children;
 }
 
+Object* Object::FindObjectByName(const String& name, bool isRecursiveSearch) const
+{
+	for(Object* pChild : m_children)
+	{
+		if(name == pChild->GetObjectName())
+		{
+			return pChild;
+		}
+	}
+
+	if(isRecursiveSearch)
+	{
+		for(Object* pChild : m_children)
+		{
+			Object* pFoundObject = pChild->FindObjectByName(name, isRecursiveSearch);
+			if(pFoundObject)
+			{
+				return pFoundObject;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 bool Object::HasObjectInParentHierarchy(const Object* obj) const
 {
 	const Object* pObj = GetParent();
