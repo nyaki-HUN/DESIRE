@@ -9,47 +9,47 @@ class InputMapping
 public:
 	InputMapping();
 
-	void MapButton(int userActionId, const InputDevice& inputDevice, int buttonId);
-	void MapAxis(int userActionId, const InputDevice& inputDevice, int axisId);
-	bool IsMapped(int userActionId) const;
+	void MapButton(int32_t userActionId, const InputDevice& inputDevice, int32_t buttonId);
+	void MapAxis(int32_t userActionId, const InputDevice& inputDevice, int32_t axisId);
+	bool IsMapped(int32_t userActionId) const;
 
 	// Removes all mappings for the given user action
-	void Unmap(int userActionId);
+	void Unmap(int32_t userActionId);
 
-	bool IsDown(int userActionId) const;
-	bool WasPressed(int userActionId) const;
+	bool IsDown(int32_t userActionId) const;
+	bool WasPressed(int32_t userActionId) const;
 
 	// Returns how many times the action was triggered since the last frame
-	uint8_t GetPressedCount(int userActionId) const;
+	uint8_t GetPressedCount(int32_t userActionId) const;
 
-	float GetFloatState(int userActionId) const;
+	float GetFloatState(int32_t userActionId) const;
 
 private:
 	struct MappedInput
 	{
-		int id;
-		const void* inputDeviceHandle;
+		int32_t id = 0;
+		const void* pInputDeviceHandle = nullptr;
 	};
 
 	struct MappedAxis : public MappedInput
 	{
-		float deadZone;
+		float deadZone = 0.0f;
 	};
 
 	struct UserAction
 	{
-		int id;
+		int32_t id;
 		Array<MappedInput> mappedButtons;
 		Array<MappedAxis> mappedAxes;
 
-		UserAction(int userActionId)
+		UserAction(int32_t userActionId)
 			: id(userActionId)
 		{
 
 		}
 	};
 
-	UserAction& GetOrAddUserActionById(int userActionId);
+	UserAction& GetOrAddUserActionById(int32_t userActionId);
 
-	Array<UserAction> userActions;
+	Array<UserAction> m_userActions;
 };

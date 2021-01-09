@@ -55,16 +55,16 @@ private:
 	void Kill_internal();
 	void Update_internal();
 
-	Array<Keyboard> keyboards;
-	Array<Mouse> mouses;
-	Array<GameController> gameControllers;
+	Array<Keyboard> m_keyboards;
+	Array<Mouse> m_mouses;
+	Array<GameController> m_gameControllers;
 
 	static constexpr size_t kMaxNumTypingCharacters = 8;
-	StackString<kMaxNumTypingCharacters> typingCharacters;
+	StackString<kMaxNumTypingCharacters> m_typingCharacters;
 
-	Vector2 mouseCursorPos = Vector2::Zero();
-	bool isOsMouseCursorClipped = false;
-	bool isOsMouseCursorVisible = true;
+	Vector2 m_mouseCursorPos = Vector2::Zero();
+	bool m_isOsMouseCursorClipped = false;
+	bool m_isOsMouseCursorVisible = true;
 
 	friend class InputImpl;
 };

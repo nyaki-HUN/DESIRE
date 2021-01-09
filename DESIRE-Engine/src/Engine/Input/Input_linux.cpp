@@ -7,10 +7,10 @@
 
 #include <X11/Xlib.h>
 
-constexpr int kFirstMappedKeyCode = 96;
-constexpr int kLastMappedKeyCode = 126;
+constexpr int32_t kFirstMappedKeyCode = 96;
+constexpr int32_t kLastMappedKeyCode = 126;
 
-static Display* s_display = nullptr;
+static Display* s_pDisplay = nullptr;
 static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 1] = { (EKeyCode)0 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -20,19 +20,19 @@ static EKeyCode s_keyConversionTable[kLastMappedKeyCode - kFirstMappedKeyCode + 
 class InputImpl
 {
 public:
-	static void Handle_KeyPress_KeyRelease(const void* param)
+	static void Handle_KeyPress_KeyRelease(const void* pParam)
 	{
-		const XEvent& event = *static_cast<const XEvent*>(param);
+		const XEvent& event = *static_cast<const XEvent*>(pParam);
 		Keyboard& keyboard = Modules::Input->GetKeyboardByHandle(nullptr);
 
-		EKeyCode keyCode = (EKeyCode)0;
+		EKeyCode keyCode = static_cast<EKeyCode>(0);
 		if(event.xkey.keycode < kFirstMappedKeyCode)
 		{
 			keyCode = (EKeyCode)event.xkey.keycode;
 		}
 		else
 		{
-			int index = event.xkey.keycode - kFirstMappedKeyCode;
+			int32_t index = event.xkey.keycode - kFirstMappedKeyCode;
 			if(index < DESIRE_ASIZEOF(keyConversionTable))
 			{
 				keyCode = keyConversionTable[index];
@@ -46,15 +46,7 @@ public:
 			// Add typed UTF-8 character
 			char buffer[5] = {};
 			XLookupString(&event.xkey, buffer, DESIRE_ASIZEOF(buffer), nullptr, nullptr);
-
-			char* typingCharacters = Modules::Input->typingCharacters;
-			const size_t len = strlen(typingCharacters);
-			const size_t bufferLen = strlen(buffer);
-			if(len + bufferLen + 1 < Input::kMaxNumTypingCharacters)
-			{
-				memcpy(&typingCharacters[len], buffer, bufferLen);
-				typingCharacters[len + bufferLen + 1] = '\0';
-			}
+			Modules::Input->m_typingCharacters.Append(buffer);
 		}
 		else
 		{
@@ -62,9 +54,9 @@ public:
 		}
 	}
 
-	static void Handle_ButtonPress_ButtonRelease(const void* param)
+	static void Handle_ButtonPress_ButtonRelease(const void* pParam)
 	{
-		const XEvent& event = *static_cast<const XEvent*>(param);
+		const XEvent& event = *static_cast<const XEvent*>(pParam);
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 		const bool isDown = (event.type == ButtonPress);
 
@@ -90,15 +82,15 @@ public:
 		}
 	}
 
-	static void Handle_MotionNotify(const void* param)
+	static void Handle_MotionNotify(const void* pParam)
 	{
-		const XEvent& event = *static_cast<const XEvent*>(param);
+		const XEvent& event = *static_cast<const XEvent*>(pParam);
 		Mouse& mouse = Modules::Input->GetMouseByHandle(nullptr);
 
-		mouse.HandleAxisAbsolute(Mouse::Axis_X, (float)event.xmotion.x);
-		mouse.HandleAxisAbsolute(Mouse::Axis_Y, (float)event.xmotion.y);
+		mouse.HandleAxisAbsolute(Mouse::Axis_X, static_cast<float>(event.xmotion.x));
+		mouse.HandleAxisAbsolute(Mouse::Axis_Y, static_cast<float>(event.xmotion.y));
 
-		Modules::Input->mouseCursorPos = Vector2((float)event.xmotion.x, (float)event.xmotion.y);
+		Modules::Input->m_mouseCursorPos = Vector2(static_cast<float>(event.xmotion.x), static_cast<float>(event.xmotion.y));
 	}
 };
 
@@ -108,11 +100,11 @@ public:
 
 void Input::Init_internal(OSWindow& window)
 {
-	ASSERT(s_display == nullptr && "Input is already initialized");
+	ASSERT(s_pDisplay == nullptr && "Input is already initialized");
 
 	// Create local X Display connection
-	s_display = XOpenDisplay(nullptr);
-	if(s_display == nullptr)
+	s_pDisplay = XOpenDisplay(nullptr);
+	if(s_pDisplay == nullptr)
 	{
 		LOG_ERROR("Unable to open a connection to the X server");
 		return;
@@ -124,7 +116,7 @@ void Input::Init_internal(OSWindow& window)
 	window.RegisterMessageHandler(ButtonRelease, InputImpl::Handle_ButtonPress_ButtonRelease);
 	window.RegisterMessageHandler(MotionNotify, InputImpl::Handle_MotionNotify);
 
-	XSelectInput(s_display, static_cast<Window>(window.GetHandle()), KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
+	XSelectInput(s_pDisplay, static_cast<Window>(window.GetHandle()), KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask);
 
 	// Add a default keyboard and mouse
 	GetKeyboardByHandle(nullptr);
@@ -152,10 +144,10 @@ void Input::Init_internal(OSWindow& window)
 
 void Input::Kill_internal()
 {
-	if(s_display != nullptr)
+	if(s_pDisplay != nullptr)
 	{
-		XCloseDisplay(s_display);
-		s_display = nullptr;
+		XCloseDisplay(s_pDisplay);
+		s_pDisplay = nullptr;
 	}
 }
 
@@ -165,22 +157,22 @@ void Input::Update_internal()
 
 void Input::SetOsMouseCursorClipped(bool isClipped)
 {
-	if(isOsMouseCursorClipped == isClipped)
+	if(m_isOsMouseCursorClipped == isClipped)
 	{
 		return;
 	}
 
-	isOsMouseCursorClipped = isClipped;
+	m_isOsMouseCursorClipped = isClipped;
 }
 
 void Input::SetOsMouseCursorVisible(bool isVisible)
 {
-	if(isOsMouseCursorVisible == isVisible)
+	if(m_isOsMouseCursorVisible == isVisible)
 	{
 		return;
 	}
 
-	isOsMouseCursorVisible = isVisible;
+	m_isOsMouseCursorVisible = isVisible;
 }
 
 #endif	// #if DESIRE_PLATFORM_LINUX

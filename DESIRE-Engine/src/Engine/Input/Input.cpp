@@ -19,9 +19,9 @@ void Input::Kill()
 	Kill_internal();
 
 	// Reset input devices
-	keyboards.Clear();
-	mouses.Clear();
-	gameControllers.Clear();
+	m_keyboards.Clear();
+	m_mouses.Clear();
+	m_gameControllers.Clear();
 }
 
 void Input::Update()
@@ -29,42 +29,42 @@ void Input::Update()
 	Update_internal();
 
 	// Keyboard
-	for(Keyboard& keyboard : keyboards)
+	for(Keyboard& keyboard : m_keyboards)
 	{
 		keyboard.Update();
 	}
 
 	// Mouse
-	for(Mouse& mouse : mouses)
+	for(Mouse& mouse : m_mouses)
 	{
 		mouse.Update();
 	}
 
 	// Game Controller
-	for(GameController& gamepad : gameControllers)
+	for(GameController& gamepad : m_gameControllers)
 	{
 		gamepad.Update();
 	}
 
-	typingCharacters.Clear();
+	m_typingCharacters.Clear();
 }
 
 void Input::Reset()
 {
 	// Keyboard
-	for(Keyboard& keyboard : keyboards)
+	for(Keyboard& keyboard : m_keyboards)
 	{
 		keyboard.Reset();
 	}
 
 	// Mouse
-	for(Mouse& mouse : mouses)
+	for(Mouse& mouse : m_mouses)
 	{
 		mouse.Reset();
 	}
 
 	// Game Controller
-	for(GameController& gamepad : gameControllers)
+	for(GameController& gamepad : m_gameControllers)
 	{
 		gamepad.Reset();
 	}
@@ -72,40 +72,40 @@ void Input::Reset()
 
 const Array<Keyboard>& Input::GetKeyboards() const
 {
-	return keyboards;
+	return m_keyboards;
 }
 
 const Array<Mouse>& Input::GetMouses() const
 {
-	return mouses;
+	return m_mouses;
 }
 
 const Array<GameController>& Input::GetControllers() const
 {
-	return gameControllers;
+	return m_gameControllers;
 }
 
 const InputDevice* Input::GetInputDeviceByHandle(const void* pHandle) const
 {
-	for(const Keyboard& device : keyboards)
+	for(const Keyboard& device : m_keyboards)
 	{
-		if(device.handle == pHandle)
+		if(device.GetHandle() == pHandle)
 		{
 			return &device;
 		}
 	}
 
-	for(const Mouse& device : mouses)
+	for(const Mouse& device : m_mouses)
 	{
-		if(device.handle == pHandle)
+		if(device.GetHandle() == pHandle)
 		{
 			return &device;
 		}
 	}
 
-	for(const GameController& device : gameControllers)
+	for(const GameController& device : m_gameControllers)
 	{
-		if(device.handle == pHandle)
+		if(device.GetHandle() == pHandle)
 		{
 			return &device;
 		}
@@ -116,7 +116,7 @@ const InputDevice* Input::GetInputDeviceByHandle(const void* pHandle) const
 
 bool Input::IsKeyDown(EKeyCode keyCode, EKeyModifier modifier) const
 {
-	for(const Keyboard& keyboard : keyboards)
+	for(const Keyboard& keyboard : m_keyboards)
 	{
 		if(keyboard.IsDown(keyCode) && (modifier == EKeyModifier::DontCare || modifier == keyboard.GetActiveKeyModifier()))
 		{
@@ -129,7 +129,7 @@ bool Input::IsKeyDown(EKeyCode keyCode, EKeyModifier modifier) const
 
 bool Input::WasKeyPressed(EKeyCode keyCode, EKeyModifier modifier) const
 {
-	for(const Keyboard& keyboard : keyboards)
+	for(const Keyboard& keyboard : m_keyboards)
 	{
 		if(keyboard.WasPressed(keyCode) && (modifier == EKeyModifier::DontCare || modifier == keyboard.GetActiveKeyModifier()))
 		{
@@ -142,12 +142,12 @@ bool Input::WasKeyPressed(EKeyCode keyCode, EKeyModifier modifier) const
 
 const String& Input::GetTypingCharacters() const
 {
-	return typingCharacters;
+	return m_typingCharacters;
 }
 
 bool Input::IsMouseButtonDown(Mouse::EButton button) const
 {
-	for(const Mouse& mouse : mouses)
+	for(const Mouse& mouse : m_mouses)
 	{
 		if(mouse.IsDown(button))
 		{
@@ -160,7 +160,7 @@ bool Input::IsMouseButtonDown(Mouse::EButton button) const
 
 bool Input::WasMouseButtonPressed(Mouse::EButton button) const
 {
-	for(const Mouse& mouse : mouses)
+	for(const Mouse& mouse : m_mouses)
 	{
 		if(mouse.WasPressed(button))
 		{
@@ -174,7 +174,7 @@ bool Input::WasMouseButtonPressed(Mouse::EButton button) const
 float Input::GetMouseAxisDelta(Mouse::EAxis axis) const
 {
 	float delta = 0.0f;
-	for(const Mouse& mouse : mouses)
+	for(const Mouse& mouse : m_mouses)
 	{
 		delta += mouse.GetAxisDelta(axis);
 	}
@@ -184,45 +184,45 @@ float Input::GetMouseAxisDelta(Mouse::EAxis axis) const
 
 const Vector2& Input::GetOsMouseCursorPos() const
 {
-	return mouseCursorPos;
+	return m_mouseCursorPos;
 }
 
 bool Input::IsOsMouseCursorClipped() const
 {
-	return isOsMouseCursorClipped;
+	return m_isOsMouseCursorClipped;
 }
 
 bool Input::IsOsMouseCursorVisible() const
 {
-	return isOsMouseCursorVisible;
+	return m_isOsMouseCursorVisible;
 }
 
 Keyboard& Input::GetKeyboardByHandle(void* pHandle)
 {
-	for(Keyboard& keyboard : keyboards)
+	for(Keyboard& keyboard : m_keyboards)
 	{
-		if(keyboard.handle == pHandle)
+		if(keyboard.GetHandle() == pHandle)
 		{
 			return keyboard;
 		}
 	}
 
 	// New keyboard found
-	keyboards.Add(Keyboard(pHandle));
-	return keyboards.GetLast();
+	m_keyboards.Add(Keyboard(pHandle));
+	return m_keyboards.GetLast();
 }
 
 Mouse& Input::GetMouseByHandle(void* pHandle)
 {
-	for(Mouse& mouse : mouses)
+	for(Mouse& mouse : m_mouses)
 	{
-		if(mouse.handle == pHandle)
+		if(mouse.GetHandle() == pHandle)
 		{
 			return mouse;
 		}
 	}
 
 	// New mouse found
-	mouses.Add(Mouse(pHandle));
-	return mouses.GetLast();
+	m_mouses.Add(Mouse(pHandle));
+	return m_mouses.GetLast();
 }

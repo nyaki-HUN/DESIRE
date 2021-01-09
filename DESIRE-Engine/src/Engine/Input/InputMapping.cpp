@@ -7,12 +7,12 @@ InputMapping::InputMapping()
 {
 }
 
-void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, int buttonId)
+void InputMapping::MapButton(int32_t userActionId, const InputDevice& inputDevice, int32_t buttonId)
 {
 	UserAction& userAction = GetOrAddUserActionById(userActionId);
 	for(const MappedInput& mappedInput : userAction.mappedButtons)
 	{
-		if(mappedInput.id == buttonId && mappedInput.inputDeviceHandle == inputDevice.handle)
+		if(mappedInput.id == buttonId && mappedInput.pInputDeviceHandle == inputDevice.GetHandle())
 		{
 			// Already mapped
 			return;
@@ -21,16 +21,16 @@ void InputMapping::MapButton(int userActionId, const InputDevice& inputDevice, i
 
 	MappedInput button;
 	button.id = buttonId;
-	button.inputDeviceHandle = inputDevice.handle;
+	button.pInputDeviceHandle = inputDevice.GetHandle();
 	userAction.mappedButtons.Add(button);
 }
 
-void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int axisId)
+void InputMapping::MapAxis(int32_t userActionId, const InputDevice& inputDevice, int32_t axisId)
 {
 	UserAction& userAction = GetOrAddUserActionById(userActionId);
 	for(const MappedInput& mappedInput : userAction.mappedAxes)
 	{
-		if(mappedInput.id == axisId && mappedInput.inputDeviceHandle == inputDevice.handle)
+		if(mappedInput.id == axisId && mappedInput.pInputDeviceHandle == inputDevice.GetHandle())
 		{
 			// Already mapped
 			return;
@@ -39,14 +39,14 @@ void InputMapping::MapAxis(int userActionId, const InputDevice& inputDevice, int
 
 	MappedAxis axis;
 	axis.id = axisId;
-	axis.inputDeviceHandle = inputDevice.handle;
+	axis.pInputDeviceHandle = inputDevice.GetHandle();
 	axis.deadZone = 0;
 	userAction.mappedAxes.Add(axis);
 }
 
-bool InputMapping::IsMapped(int userActionId) const
+bool InputMapping::IsMapped(int32_t userActionId) const
 {
-	const size_t idx = userActions.SpecializedFind([userActionId](const UserAction& userAction)
+	const size_t idx = m_userActions.SpecializedFind([userActionId](const UserAction& userAction)
 	{
 		return (userAction.id == userActionId);
 	});
@@ -54,37 +54,37 @@ bool InputMapping::IsMapped(int userActionId) const
 	return (idx != SIZE_MAX);
 }
 
-void InputMapping::Unmap(int userActionId)
+void InputMapping::Unmap(int32_t userActionId)
 {
-	const size_t idx = userActions.SpecializedFind([userActionId](const UserAction& userAction)
+	const size_t idx = m_userActions.SpecializedFind([userActionId](const UserAction& userAction)
 	{
 		return (userAction.id == userActionId);
 	});
 
 	if(idx != SIZE_MAX)
 	{
-		userActions.RemoveFastAt(idx);
+		m_userActions.RemoveFastAt(idx);
 	}
 }
 
-bool InputMapping::IsDown(int userActionId) const
+bool InputMapping::IsDown(int32_t userActionId) const
 {
 	return GetFloatState(userActionId) > 0.0f;
 }
 
-bool InputMapping::WasPressed(int userActionId) const
+bool InputMapping::WasPressed(int32_t userActionId) const
 {
-	const size_t idx = userActions.SpecializedFind([userActionId](const UserAction& userAction)
+	const size_t idx = m_userActions.SpecializedFind([userActionId](const UserAction& userAction)
 	{
 		return (userAction.id == userActionId);
 	});
 
 	if(idx != SIZE_MAX)
 	{
-		for(const MappedInput& button : userActions[idx].mappedButtons)
+		for(const MappedInput& button : m_userActions[idx].mappedButtons)
 		{
-			const InputDevice* inputDevice = Modules::Input->GetInputDeviceByHandle(button.inputDeviceHandle);
-			if(inputDevice != nullptr && inputDevice->WasPressed(button.id))
+			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(button.pInputDeviceHandle);
+			if(pInputDevice != nullptr && pInputDevice->WasPressed(button.id))
 			{
 				return true;
 			}
@@ -94,23 +94,23 @@ bool InputMapping::WasPressed(int userActionId) const
 	return false;
 }
 
-uint8_t InputMapping::GetPressedCount(int userActionId) const
+uint8_t InputMapping::GetPressedCount(int32_t userActionId) const
 {
 	uint8_t pressedCount = 0;
 
-	const size_t idx = userActions.SpecializedFind([userActionId](const UserAction& userAction)
+	const size_t idx = m_userActions.SpecializedFind([userActionId](const UserAction& userAction)
 	{
 		return (userAction.id == userActionId);
 	});
 
 	if(idx != SIZE_MAX)
 	{
-		for(const MappedInput& button : userActions[idx].mappedButtons)
+		for(const MappedInput& button : m_userActions[idx].mappedButtons)
 		{
-			const InputDevice* inputDevice = Modules::Input->GetInputDeviceByHandle(button.inputDeviceHandle);
-			if(inputDevice != nullptr)
+			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(button.pInputDeviceHandle);
+			if(pInputDevice != nullptr)
 			{
-				pressedCount += inputDevice->GetPressedCount(button.id);
+				pressedCount += pInputDevice->GetPressedCount(button.id);
 			}
 		}
 	}
@@ -118,30 +118,30 @@ uint8_t InputMapping::GetPressedCount(int userActionId) const
 	return pressedCount;
 }
 
-float InputMapping::GetFloatState(int userActionId) const
+float InputMapping::GetFloatState(int32_t userActionId) const
 {
-	const size_t idx = userActions.SpecializedFind([userActionId](const UserAction& userAction)
+	const size_t idx = m_userActions.SpecializedFind([userActionId](const UserAction& userAction)
 	{
 		return (userAction.id == userActionId);
 	});
 
 	if(idx != SIZE_MAX)
 	{
-		for(const MappedInput& button : userActions[idx].mappedButtons)
+		for(const MappedInput& button : m_userActions[idx].mappedButtons)
 		{
-			const InputDevice* inputDevice = Modules::Input->GetInputDeviceByHandle(button.inputDeviceHandle);
-			if(inputDevice != nullptr && inputDevice->IsDown(button.id))
+			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(button.pInputDeviceHandle);
+			if(pInputDevice != nullptr && pInputDevice->IsDown(button.id))
 			{
 				return 1.0f;
 			}
 		}
 
-		for(const MappedAxis& axis : userActions[idx].mappedAxes)
+		for(const MappedAxis& axis : m_userActions[idx].mappedAxes)
 		{
-			const InputDevice* inputDevice = Modules::Input->GetInputDeviceByHandle(axis.inputDeviceHandle);
-			if(inputDevice != nullptr)
+			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(axis.pInputDeviceHandle);
+			if(pInputDevice != nullptr)
 			{
-				float pos = inputDevice->GetAxisPos(axis.id);
+				float pos = pInputDevice->GetAxisPos(axis.id);
 				if(pos > 0.0f)
 				{
 					if(axis.deadZone != 0.0f)
@@ -164,12 +164,12 @@ float InputMapping::GetFloatState(int userActionId) const
 	return 0.0f;
 }
 
-InputMapping::UserAction& InputMapping::GetOrAddUserActionById(int userActionId)
+InputMapping::UserAction& InputMapping::GetOrAddUserActionById(int32_t userActionId)
 {
-	const size_t idx = userActions.SpecializedFind([userActionId](const UserAction& userAction)
+	const size_t idx = m_userActions.SpecializedFind([userActionId](const UserAction& userAction)
 	{
 		return (userAction.id == userActionId);
 	});
 
-	return (idx != SIZE_MAX) ? userActions[idx] : userActions.EmplaceAdd(userActionId);
+	return (idx != SIZE_MAX) ? m_userActions[idx] : m_userActions.EmplaceAdd(userActionId);
 }

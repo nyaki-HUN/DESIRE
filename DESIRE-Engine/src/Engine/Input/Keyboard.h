@@ -5,13 +5,13 @@
 
 class Keyboard : public InputDevice
 {
-	Keyboard(void* handle);
+	Keyboard(void* pHandle);
 
 public:
 	EKeyModifier GetActiveKeyModifier() const;
 
 private:
-	uint8_t keyStates[256] = {};
+	uint8_t m_keyStates[256] = {};
 
 	friend class Input;
 	friend class InputImpl;

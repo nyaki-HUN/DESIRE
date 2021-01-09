@@ -22,10 +22,10 @@
 class InputImpl
 {
 public:
-	static void Handle_WM_INPUT(const void* param)
+	static void Handle_WM_INPUT(const void* pParam)
 	{
-		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->first;
-		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->second;
+		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(pParam)->first;
+		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(pParam)->second;
 
 		if(GET_RAWINPUT_CODE_WPARAM(wParam) == RIM_INPUT)
 		{
@@ -140,25 +140,25 @@ public:
 		}
 	}
 
-	static void Handle_WM_MOUSEMOVE(const void* param)
+	static void Handle_WM_MOUSEMOVE(const void* pParam)
 	{
-		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->second;
+		LPARAM lParam = static_cast<const std::pair<WPARAM, LPARAM>*>(pParam)->second;
 
-		Modules::Input->mouseCursorPos = Vector2((float)GET_MOUSE_X(lParam), (float)GET_MOUSE_Y(lParam));
+		Modules::Input->m_mouseCursorPos = Vector2((float)GET_MOUSE_X(lParam), (float)GET_MOUSE_Y(lParam));
 	}
 
-	static void Handle_WM_CHAR(const void* param)
+	static void Handle_WM_CHAR(const void* pParam)
 	{
-		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(param)->first;
+		WPARAM wParam = static_cast<const std::pair<WPARAM, LPARAM>*>(pParam)->first;
 
-		char ch = (char)wParam;
+		char ch = static_cast<char>(wParam);
 		if(ch >= 0 && ch < 32)
 		{
 			// Discard control chars
 			return;
 		}
 
-		Modules::Input->typingCharacters.AppendChar(ch);
+		Modules::Input->m_typingCharacters.AppendChar(ch);
 	}
 };
 
@@ -211,7 +211,7 @@ void Input::Init_internal(OSWindow& window)
 
 void Input::Kill_internal()
 {
-	RAWINPUTDEVICE rawInputDevices[2];
+	RAWINPUTDEVICE rawInputDevices[2] = {};
 	// Mouse
 	rawInputDevices[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
 	rawInputDevices[0].usUsage = HID_USAGE_GENERIC_MOUSE;
@@ -231,7 +231,7 @@ void Input::Update_internal()
 
 void Input::SetOsMouseCursorClipped(bool isClipped)
 {
-	if(isOsMouseCursorClipped == isClipped)
+	if(m_isOsMouseCursorClipped == isClipped)
 	{
 		return;
 	}
@@ -241,11 +241,7 @@ void Input::SetOsMouseCursorClipped(bool isClipped)
 		POINT pos;
 		GetCursorPos(&pos);
 
-		RECT clipRect;
-		clipRect.left = pos.x;
-		clipRect.top = pos.y;
-		clipRect.right = clipRect.left + 1;
-		clipRect.bottom = clipRect.top + 1;
+		const RECT clipRect = { pos.x, pos.y, clipRect.left + 1, clipRect.top + 1 };
 		ClipCursor(&clipRect);
 	}
 	else
@@ -253,18 +249,18 @@ void Input::SetOsMouseCursorClipped(bool isClipped)
 		ClipCursor(nullptr);
 	}
 
-	isOsMouseCursorClipped = isClipped;
+	m_isOsMouseCursorClipped = isClipped;
 }
 
 void Input::SetOsMouseCursorVisible(bool isVisible)
 {
-	if(isOsMouseCursorVisible == isVisible)
+	if(m_isOsMouseCursorVisible == isVisible)
 	{
 		return;
 	}
 
 	ShowCursor(isVisible);
-	isOsMouseCursorVisible = isVisible;
+	m_isOsMouseCursorVisible = isVisible;
 }
 
 #endif	// #if DESIRE_PLATFORM_WINDOWS

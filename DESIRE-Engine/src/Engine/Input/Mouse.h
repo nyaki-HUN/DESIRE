@@ -4,7 +4,7 @@
 
 class Mouse : public InputDevice
 {
-	Mouse(void* handle);
+	Mouse(void* pHandle);
 
 public:
 	enum EButton
@@ -30,8 +30,8 @@ public:
 	};
 
 private:
-	uint8_t buttons[Num_Buttons] = {};
-	AxisState axes[Num_Axis] = {};
+	uint8_t m_buttons[Num_Buttons] = {};
+	AxisState m_axes[Num_Axis] = {};
 
 	friend class Input;
 	friend class InputImpl;
