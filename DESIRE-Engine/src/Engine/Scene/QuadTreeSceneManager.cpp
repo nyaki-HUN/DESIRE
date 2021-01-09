@@ -10,139 +10,139 @@
 #include "Engine/Scene/QuadTreeLeaf.h"
 
 QuadTreeSceneManager::QuadTreeSceneManager()
-	: rootLeaf(new QuadTreeLeaf(0))
+	: m_pRootLeaf(new QuadTreeLeaf(0))
 {
-	visibleDynamicComponents.Reserve(512);
-	invisibleDynamicComponents.Reserve(512);
+	m_visibleDynamicComponents.Reserve(512);
+	m_invisibleDynamicComponents.Reserve(512);
 
-	visibleLeafList.Reserve(256);
-	tmpLeafList.Reserve(256);
+	m_visibleLeafList.Reserve(256);
+	m_tmpLeafList.Reserve(256);
 }
 
 QuadTreeSceneManager::~QuadTreeSceneManager()
 {
-	delete rootLeaf;
+	delete m_pRootLeaf;
 }
 
-void QuadTreeSceneManager::Add(RenderComponent* component, bool dynamic)
+void QuadTreeSceneManager::Add(RenderComponent* pRenderComponent, bool dynamic)
 {
 	if(dynamic)
 	{
-		visibleDynamicComponents.Add(component);
+		m_visibleDynamicComponents.Add(pRenderComponent);
 	}
 	else
 	{
-		rootLeaf->Add(component);
-		needToPlaceObjectsInsideQuadTree = true;
+		m_pRootLeaf->Add(pRenderComponent);
+		m_needToPlaceObjectsInsideQuadTree = true;
 	}
 
-	component->SetVisible(true);
+	pRenderComponent->SetVisible(true);
 }
 
-void QuadTreeSceneManager::Remove(RenderComponent* component)
+void QuadTreeSceneManager::Remove(RenderComponent* pRenderComponent)
 {
-	if(visibleDynamicComponents.Remove(component))
+	if(m_visibleDynamicComponents.Remove(pRenderComponent))
 	{
 		return;
 	}
 
-	if(invisibleDynamicComponents.Remove(component))
+	if(m_invisibleDynamicComponents.Remove(pRenderComponent))
 	{
 		return;
 	}
 
-	rootLeaf->Remove(component);
+	m_pRootLeaf->Remove(pRenderComponent);
 }
 
-void QuadTreeSceneManager::SetActiveCamera(Camera* camera)
+void QuadTreeSceneManager::SetActiveCamera(Camera* pCamera)
 {
-	activeCamera = camera;
+	m_pActiveCamera = pCamera;
 
 	// Set all dynamic objects visible
-	for(RenderComponent* component : invisibleDynamicComponents)
+	for(RenderComponent* pRenderComponent : m_invisibleDynamicComponents)
 	{
-		component->SetVisible(true);
-		visibleDynamicComponents.Add(component);
+		pRenderComponent->SetVisible(true);
+		m_visibleDynamicComponents.Add(pRenderComponent);
 	}
-	invisibleDynamicComponents.Clear();
+	m_invisibleDynamicComponents.Clear();
 
 	// Set all leafs visible
-	SetLeafsVisible_recursive(rootLeaf, true);
+	SetLeafsVisible_recursive(*m_pRootLeaf, true);
 
-	visibleLeafList.Clear();
-	doInvisibleLeafTest = true;
+	m_visibleLeafList.Clear();
+	m_doInvisibleLeafTest = true;
 }
 
 void QuadTreeSceneManager::Update()
 {
-	if(needToPlaceObjectsInsideQuadTree)
+	if(m_needToPlaceObjectsInsideQuadTree)
 	{
-		rootLeaf->Init();
-		needToPlaceObjectsInsideQuadTree = false;
+		m_pRootLeaf->Init();
+		m_needToPlaceObjectsInsideQuadTree = false;
 	}
 
-	if(debugDraw != nullptr && doInvisibleLeafTest)
+	if(m_pDebugDraw != nullptr && m_doInvisibleLeafTest)
 	{
-		debugDraw->Reset();
+		m_pDebugDraw->Reset();
 	}
 
-	uint8_t nNormal;
-	Vector3 normals[MAX_FURSTUM_NORMAL];
-	float pointDotNormal[MAX_FURSTUM_NORMAL];
-	uint8_t aabbNPVertex[MAX_FURSTUM_NORMAL][2];
-	CalcFrustumNormalsFromCamera(activeCamera, normals, nNormal, pointDotNormal, aabbNPVertex);
+	uint8_t numNormals;
+	Vector3 normals[kMaxFurstumNormal];
+	float pPointDotNormal[kMaxFurstumNormal];
+	uint8_t aabbNPVertex[kMaxFurstumNormal][2];
+	CalcFrustumNormalsFromCamera(m_pActiveCamera, normals, numNormals, pPointDotNormal, aabbNPVertex);
 
-	if(doInvisibleLeafTest)
+	if(m_doInvisibleLeafTest)
 	{
-		TestInvisibleLeafs(nNormal, normals, pointDotNormal, aabbNPVertex);
+		TestInvisibleLeafs(numNormals, normals, pPointDotNormal, aabbNPVertex);
 	}
 	else
 	{
-		TestVisibleLeafs(nNormal, normals, pointDotNormal, aabbNPVertex);
+		TestVisibleLeafs(numNormals, normals, pPointDotNormal, aabbNPVertex);
 	}
 
-	doInvisibleLeafTest = !doInvisibleLeafTest;
+	m_doInvisibleLeafTest = !m_doInvisibleLeafTest;
 }
 
 void QuadTreeSceneManager::Reset()
 {
-	delete rootLeaf;
-	rootLeaf = new QuadTreeLeaf(0);
+	delete m_pRootLeaf;
+	m_pRootLeaf = new QuadTreeLeaf(0);
 
-	visibleDynamicComponents.Clear();
-	invisibleDynamicComponents.Clear();
+	m_visibleDynamicComponents.Clear();
+	m_invisibleDynamicComponents.Clear();
 
-	visibleLeafList.Clear();
+	m_visibleLeafList.Clear();
 
-	doInvisibleLeafTest = true;
+	m_doInvisibleLeafTest = true;
 }
 
-void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* camera, Vector3* normals, uint8_t& nNormal, float(&pointDotNormal)[MAX_FURSTUM_NORMAL], uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* pCamera, Vector3* pNormals, uint8_t& numNormals, float(&pointDotNormal)[kMaxFurstumNormal], uint8_t(&aabbNPVertex)[kMaxFurstumNormal][2])
 {
-	nNormal = 0;
+	numNormals = 0;
 
 	Vector3 points[8];
-	camera->CalculateFrustum(points);
+	pCamera->CalculateFrustum(points);
 
-	if(debugDraw != nullptr)
+	if(m_pDebugDraw != nullptr)
 	{
 		const Vector3 color(0.5f, 0.0f, 1.0f);
 
 		// Far plane points
-		debugDraw->AddLine(points[0], points[1], color);
-		debugDraw->AddLine(points[1], points[3], color);
-		debugDraw->AddLine(points[2], points[0], color);
-		debugDraw->AddLine(points[3], points[2], color);
+		m_pDebugDraw->AddLine(points[0], points[1], color);
+		m_pDebugDraw->AddLine(points[1], points[3], color);
+		m_pDebugDraw->AddLine(points[2], points[0], color);
+		m_pDebugDraw->AddLine(points[3], points[2], color);
 		// Near plane points
-		debugDraw->AddLine(points[4], points[5], color);
-		debugDraw->AddLine(points[5], points[7], color);
-		debugDraw->AddLine(points[6], points[4], color);
-		debugDraw->AddLine(points[7], points[6], color);
+		m_pDebugDraw->AddLine(points[4], points[5], color);
+		m_pDebugDraw->AddLine(points[5], points[7], color);
+		m_pDebugDraw->AddLine(points[6], points[4], color);
+		m_pDebugDraw->AddLine(points[7], points[6], color);
 
-		debugDraw->AddLine(points[0], points[4], color);
-		debugDraw->AddLine(points[1], points[5], color);
-		debugDraw->AddLine(points[2], points[6], color);
-		debugDraw->AddLine(points[3], points[7], color);
+		m_pDebugDraw->AddLine(points[0], points[4], color);
+		m_pDebugDraw->AddLine(points[1], points[5], color);
+		m_pDebugDraw->AddLine(points[2], points[6], color);
+		m_pDebugDraw->AddLine(points[3], points[7], color);
 	}
 
 	for(uint8_t i = 0; i < 8; i++)
@@ -186,38 +186,38 @@ void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* camera, Vector3*
 			}
 
 			uint8_t normalIdx = 0;
-			for(; normalIdx < nNormal; normalIdx++)
+			for(; normalIdx < numNormals; normalIdx++)
 			{
-				if(normals[normalIdx].Dot(n) > 0.99f)
+				if(pNormals[normalIdx].Dot(n) > 0.99f)
 				{
 					break;
 				}
 			}
 
 			// Skip if already stored this normal
-			if(normalIdx != nNormal)
+			if(normalIdx != numNormals)
 			{
 				continue;
 			}
 
-			ASSERT(nNormal < MAX_FURSTUM_NORMAL);
-			normals[nNormal] = n;
-			pointDotNormal[nNormal] = n.Dot(points[i]);
-			nNormal++;
-			if(debugDraw != nullptr)
+			ASSERT(numNormals < kMaxFurstumNormal);
+			pNormals[numNormals] = n;
+			pointDotNormal[numNormals] = n.Dot(points[i]);
+			numNormals++;
+			if(m_pDebugDraw != nullptr)
 			{
 				const Vector3 colorWhite(1.0);
-				debugDraw->AddLine(points[i], points[i + 4], colorWhite);
-				debugDraw->AddLine(Vector3(points[i + 4] + (points[i] - points[i + 4]) / 2), Vector3(points[i + 4] + (points[i] - points[i + 4]) / 2 + n * 20.0f), colorWhite);
+				m_pDebugDraw->AddLine(points[i], points[i + 4], colorWhite);
+				m_pDebugDraw->AddLine(Vector3(points[i + 4] + (points[i] - points[i + 4]) / 2), Vector3(points[i + 4] + (points[i] - points[i + 4]) / 2 + n * 20.0f), colorWhite);
 			}
 		}
 	}
 
-	for(uint8_t i = 0; i < nNormal; i++)
+	for(uint8_t i = 0; i < numNormals; i++)
 	{
-		if(normals[i].GetX() > 0.0f)
+		if(pNormals[i].GetX() > 0.0f)
 		{
-			if(normals[i].GetZ() > 0.0f)
+			if(pNormals[i].GetZ() > 0.0f)
 			{
 				aabbNPVertex[i][0] = 0;
 				aabbNPVertex[i][1] = 3;
@@ -230,7 +230,7 @@ void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* camera, Vector3*
 		}
 		else
 		{
-			if(normals[i].GetZ() > 0.0f)
+			if(pNormals[i].GetZ() > 0.0f)
 			{
 				aabbNPVertex[i][0] = 2;
 				aabbNPVertex[i][1] = 1;
@@ -244,70 +244,70 @@ void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* camera, Vector3*
 	}
 }
 
-void QuadTreeSceneManager::TestVisibleLeafs(uint8_t nNormal, const Vector3* normals, const float* pointDotNormal, const uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+void QuadTreeSceneManager::TestVisibleLeafs(uint8_t numNormals, const Vector3* pNormals, const float* pPointDotNormal, const uint8_t(&aabbNPVertex)[kMaxFurstumNormal][2])
 {
-	for(QuadTreeLeaf* ltmp : visibleLeafList)
+	for(QuadTreeLeaf* pLeaf : m_visibleLeafList)
 	{
-		EState state = IsAabbVisible(ltmp->aabbPoints, nNormal, normals, pointDotNormal, aabbNPVertex);
+		EState state = IsAabbVisible(pLeaf->m_aabbPoints, numNormals, pNormals, pPointDotNormal, aabbNPVertex);
 		if(state == EState::Outside)
 		{
-			SetLeafsVisible_recursive(ltmp, false);
+			SetLeafsVisible_recursive(*pLeaf, false);
 		}
 	}
-	visibleLeafList.Clear();
+	m_visibleLeafList.Clear();
 
-	for(int i = 0; i < static_cast<int>(visibleDynamicComponents.Size()); ++i)
+	for(size_t i = 0; i < m_visibleDynamicComponents.Size(); ++i)
 	{
-		RenderComponent* component = visibleDynamicComponents[i];
+		RenderComponent* pRenderComponent = m_visibleDynamicComponents[i];
 
 		Vector3 points[4];
-		component->GetAABB().GetPoints2D(points);
+		pRenderComponent->GetAABB().GetPoints2D(points);
 
-		EState state = IsAabbVisible(points, nNormal, normals, pointDotNormal, aabbNPVertex);
+		EState state = IsAabbVisible(points, numNormals, pNormals, pPointDotNormal, aabbNPVertex);
 		if(state == EState::Outside)
 		{
-			component->SetVisible(false);
-			invisibleDynamicComponents.Add(component);
-			visibleDynamicComponents.RemoveFastAt(i);
+			pRenderComponent->SetVisible(false);
+			m_invisibleDynamicComponents.Add(pRenderComponent);
+			m_visibleDynamicComponents.RemoveFastAt(i);
 			i--;
 		}
 	}
 }
 
-void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3* normals, const float* pointDotNormal, const uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t numNormals, const Vector3* pNormals, const float* pPointDotNormal, const uint8_t(&aabbNPVertex)[kMaxFurstumNormal][2])
 {
-	ASSERT(visibleLeafList.IsEmpty());
-	ASSERT(tmpLeafList.IsEmpty());
-	QuadTreeLeaf* ltmp = rootLeaf;
+	ASSERT(m_visibleLeafList.IsEmpty());
+	ASSERT(m_tmpLeafList.IsEmpty());
+	QuadTreeLeaf* pLeaf = m_pRootLeaf;
 	for(;;)
 	{
-		EState state = IsAabbVisible(ltmp->aabbPoints, nNormal, normals, pointDotNormal, aabbNPVertex);
+		EState state = IsAabbVisible(pLeaf->m_aabbPoints, numNormals, pNormals, pPointDotNormal, aabbNPVertex);
 		if(state == EState::Inside)
 		{
-			visibleLeafList.Add(ltmp);
-			SetLeafsVisible_recursive(ltmp, true);
+			m_visibleLeafList.Add(pLeaf);
+			SetLeafsVisible_recursive(*pLeaf, true);
 		}
 		else if(state == EState::Intersect)
 		{
-			visibleLeafList.Add(ltmp);
+			m_visibleLeafList.Add(pLeaf);
 
 			// Set objects visible
-			for(RenderComponent* comp : ltmp->renderComponents)
+			for(RenderComponent* pRenderComponent : pLeaf->m_renderComponents)
 			{
-				comp->SetVisible(true);
+				pRenderComponent->SetVisible(true);
 			}
 
 			// Add child leafs to list
 			for(uint8_t i = 0; i < 4; i++)
 			{
-				if(ltmp->leafs[i] != nullptr)
+				if(pLeaf->m_leafs[i] != nullptr)
 				{
-					tmpLeafList.Add(ltmp->leafs[i]);
+					m_tmpLeafList.Add(pLeaf->m_leafs[i]);
 				}
 			}
 		}
 
-		if(debugDraw != nullptr)
+		if(m_pDebugDraw != nullptr)
 		{
 			Vector3 color;
 			switch(state)
@@ -319,8 +319,8 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3* no
 				case EState::Outside:
 					color = Vector3(0.4f, 0.4f, 0.4f);
 					// Draw a big X as well
-					debugDraw->AddLine(ltmp->aabbPoints[0], ltmp->aabbPoints[3], color);
-					debugDraw->AddLine(ltmp->aabbPoints[1], ltmp->aabbPoints[2], color);
+					m_pDebugDraw->AddLine(pLeaf->m_aabbPoints[0], pLeaf->m_aabbPoints[3], color);
+					m_pDebugDraw->AddLine(pLeaf->m_aabbPoints[1], pLeaf->m_aabbPoints[2], color);
 					break;
 
 				case EState::Intersect:
@@ -328,76 +328,76 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t nNormal, const Vector3* no
 					break;
 			}
 
-			debugDraw->AddLine(ltmp->aabbPoints[0], ltmp->aabbPoints[1], color);
-			debugDraw->AddLine(ltmp->aabbPoints[2], ltmp->aabbPoints[3], color);
-			debugDraw->AddLine(ltmp->aabbPoints[0], ltmp->aabbPoints[2], color);
-			debugDraw->AddLine(ltmp->aabbPoints[1], ltmp->aabbPoints[3], color);
+			m_pDebugDraw->AddLine(pLeaf->m_aabbPoints[0], pLeaf->m_aabbPoints[1], color);
+			m_pDebugDraw->AddLine(pLeaf->m_aabbPoints[2], pLeaf->m_aabbPoints[3], color);
+			m_pDebugDraw->AddLine(pLeaf->m_aabbPoints[0], pLeaf->m_aabbPoints[2], color);
+			m_pDebugDraw->AddLine(pLeaf->m_aabbPoints[1], pLeaf->m_aabbPoints[3], color);
 
 			if(state != EState::Outside)
 			{
 				const Vector3 objectColor(0.0f, 0.5f, 1.0f);
-				for(const RenderComponent* component : ltmp->renderComponents)
+				for(const RenderComponent* pRenderComponent : pLeaf->m_renderComponents)
 				{
-					debugDraw->AddAABB(component->GetAABB(), objectColor);
+					m_pDebugDraw->AddAABB(pRenderComponent->GetAABB(), objectColor);
 				}
 			}
 		}
 
-		if(tmpLeafList.IsEmpty())
+		if(m_tmpLeafList.IsEmpty())
 		{
 			break;
 		}
 
-		ltmp = tmpLeafList.GetLast();
-		tmpLeafList.RemoveLast();
+		pLeaf = m_tmpLeafList.GetLast();
+		m_tmpLeafList.RemoveLast();
 	}
 
-	for(int i = 0; i < static_cast<int>(invisibleDynamicComponents.Size()); ++i)
+	for(int32_t i = 0; i < static_cast<int>(m_invisibleDynamicComponents.Size()); ++i)
 	{
-		RenderComponent* component = invisibleDynamicComponents[i];
+		RenderComponent* pRenderComponent = m_invisibleDynamicComponents[i];
 		Vector3 points[4];
-		component->GetAABB().GetPoints2D(points);
+		pRenderComponent->GetAABB().GetPoints2D(points);
 
-		EState state = IsAabbVisible(points, nNormal, normals, pointDotNormal, aabbNPVertex);
+		EState state = IsAabbVisible(points, numNormals, pNormals, pPointDotNormal, aabbNPVertex);
 		if(state == EState::Inside || state == EState::Intersect)
 		{
-			component->SetVisible(true);
-			visibleDynamicComponents.Add(component);
-			invisibleDynamicComponents.RemoveFastAt(i);
+			pRenderComponent->SetVisible(true);
+			m_visibleDynamicComponents.Add(pRenderComponent);
+			m_invisibleDynamicComponents.RemoveFastAt(i);
 			i--;
 		}
 	}
 }
 
-void QuadTreeSceneManager::SetLeafsVisible_recursive(QuadTreeLeaf* leaf, bool visible)
+void QuadTreeSceneManager::SetLeafsVisible_recursive(QuadTreeLeaf& leaf, bool visible)
 {
-	for(RenderComponent* component : leaf->renderComponents)
+	for(RenderComponent* pRenderComponent : leaf.m_renderComponents)
 	{
-		component->SetVisible(visible);
+		pRenderComponent->SetVisible(visible);
 	}
 
 	for(uint8_t i = 0; i < 4; i++)
 	{
-		if(leaf->leafs[i] != nullptr)
+		if(leaf.m_leafs[i] != nullptr)
 		{
-			SetLeafsVisible_recursive(leaf->leafs[i], visible);
+			SetLeafsVisible_recursive(*leaf.m_leafs[i], visible);
 		}
 	}
 }
 
-QuadTreeSceneManager::EState QuadTreeSceneManager::IsAabbVisible(const Vector3* points, uint8_t nNormal, const Vector3* normals, const float* pointDotNormal, const uint8_t(&aabbNPVertex)[MAX_FURSTUM_NORMAL][2])
+QuadTreeSceneManager::EState QuadTreeSceneManager::IsAabbVisible(const Vector3* pPoints, uint8_t numNormals, const Vector3* pNormals, const float* pPointDotNormal, const uint8_t(&aabbNPVertex)[kMaxFurstumNormal][2])
 {
 	EState rv = EState::Inside;
-	for(uint8_t i = 0; i < nNormal; i++)
+	for(uint8_t i = 0; i < numNormals; i++)
 	{
-		float dot = normals[i].Dot(points[aabbNPVertex[i][0]]);
-		if((dot - pointDotNormal[i]) < 0.0f)
+		float dot = pNormals[i].Dot(pPoints[aabbNPVertex[i][0]]);
+		if((dot - pPointDotNormal[i]) < 0.0f)
 		{
 			return EState::Outside;
 		}
 
-		float dot2 = normals[i].Dot(points[aabbNPVertex[i][1]]);
-		if((dot2 - pointDotNormal[i]) < 0.0f)
+		float dot2 = pNormals[i].Dot(pPoints[aabbNPVertex[i][1]]);
+		if((dot2 - pPointDotNormal[i]) < 0.0f)
 		{
 			rv = EState::Intersect;
 		}

@@ -244,10 +244,12 @@ TEST_CASE("Object", "[Core]")
 		delete &child1_A;
 	}
 
-	const size_t traversedCount = SceneGraphTraversal::Traverse(pRootObj, [](Object* pObject)
-	{
-		pObject->GetTransform().SetScale(Vector3(5.0f));
-		return true;
-	});
+	const size_t traversedCount = SceneGraphTraversal::Traverse(*pRootObj,
+		[](Object& object)
+		{
+			object.GetTransform().SetScale(Vector3(5.0f));
+			return true;
+		}
+	);
 	CHECK(traversedCount == 3);
 }

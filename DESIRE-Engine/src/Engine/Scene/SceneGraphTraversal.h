@@ -10,14 +10,14 @@
 class SceneGraphTraversal
 {
 public:
-	static size_t Traverse(Object* rootObject, const std::function<bool(Object*)>& visitFunc)
+	static size_t Traverse(Object& rootObject, const std::function<bool(Object&)>& visitFunc)
 	{
 		size_t traversedNodeCount = 1;
 		if(visitFunc(rootObject))
 		{
-			for(Object* obj : rootObject->GetChildren())
+			for(Object* pObject : rootObject.GetChildren())
 			{
-				traversedNodeCount += Traverse(obj, visitFunc);
+				traversedNodeCount += Traverse(*pObject, visitFunc);
 			}
 		}
 		return traversedNodeCount;
