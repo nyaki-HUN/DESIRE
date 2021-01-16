@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(NEW_ARRAY)
+#include <vector>
 
 template<typename T>
 class Array
@@ -11,178 +11,104 @@ public:
 	}
 
 	Array(const Array& otherArray)
-		: size(otherArray.size)
-		, reservedSize(otherArray.reservedSize)
+		: m_vector(otherArray.m_vector)
 	{
-		ASSERT(false);
-		std::memcpy(m_data, otherArray.data, otherArray.size * sizeof(T));
 	}
 
 	Array(Array&& otherArray)
-		: data(otherArray.data)
-		, size(other.size)
-		, reservedSize(other.reservedSize)
+		: m_vector(std::move(otherArray.m_vector))
 	{
-		otherArray.data = nullptr;
-		otherArray.size = 0;
-		otherArray.reservedSize = 0;
 	}
 
 	Array(std::initializer_list<T> initList)
+		: m_vector(initList)
 	{
-
 	}
 
 	Array& operator =(const Array& otherArray)
 	{
-		ASSERT(false);
-		m_size = otherArray.m_size;
-		m_reservedSize = otherArray.m_reservedSize;
-		std::memcpy(m_data, otherArray.m_data, otherArray.m_size * sizeof(T));
+		m_vector = otherArray.m_vector;
 		return *this;
 	}
 
 	Array& operator =(Array&& otherArray)
 	{
-		m_data = otherArray.m_data;
-		m_size = otherArray.m_size;
-		m_reservedSize = otherArray.m_reservedSize;
-
-		otherArray.m_data = nullptr;
-		otherArray.m_size = 0;
-		otherArray.m_reservedSize = 0;
-
+		m_vector = std::move(otherArray.m_vector);
 		return *this;
 	}
 
-	T& operator [](size_t idx)
-	{
-		ASSERT(idx < m_size);
-		return m_data[idx];
-	}
-	const T& operator [](size_t idx) const
-	{
-		ASSERT(idx < m_size);
-		return m_data[idx];
-	}
+	// Element access
+	T& operator [](size_t idx)					{ return m_vector[idx]; }
+	const T& operator [](size_t idx) const		{ return m_vector[idx]; }
 
-	T& GetAt(size_t idx)
-	{
-		ASSERT(idx < m_size);
-		return m_data[idx];
-	}
-	const T& GetAt(size_t idx) const
-	{
-		ASSERT(idx < m_size);
-		return m_data[idx];
-	}
+	T& GetAt(size_t idx)						{ return m_vector[idx]; }
+	const T& GetAt(size_t idx) const			{ return m_vector[idx]; }
 
-	T& GetFirst()
-	{
-		ASSERT(m_size != 0);
-		return m_data[0];
-	}
-	const T& GetFirst() const
-	{
-		ASSERT(m_size != 0);
-		return m_data[0];
-	}
+	T& GetFirst()								{ return m_vector.front(); }
+	const T& GetFirst() const					{ return m_vector.front(); }
 
-	T& GetLast()
-	{
-		ASSERT(m_size != 0);
-		return m_data[size - 1];
-	}
-	const T& GetLast() const
-	{
-		ASSERT(m_size != 0);
-		return m_data[size - 1];
-	}
+	T& GetLast()								{ return m_vector.back(); }
+	const T& GetLast() const					{ return m_vector.back(); }
 
-	T* Data()
-	{
-		return m_data;
-	}
-
-	const T* Data() const
-	{
-		return m_data;
-	}
+	T* Data()									{ return m_vector.data(); }
+	const T* Data() const						{ return m_vector.data(); }
 
 	// Iterators for supporting range-based for loop
-	T* begin()					{ return m_data; }
-	const T* begin() const		{ return m_data; }
-	T* end()					{ return m_data + m_size; }
-	const T* end() const		{ return m_data + m_size; }
+	T* begin()									{ return Data(); }
+	const T* begin() const						{ return Data(); }
+	T* end()									{ return Data() + Size(); }
+	const T* end() const						{ return Data() + Size(); }
 
-	bool IsEmpty() const
-	{
-		return (m_size == 0);
-	}
-
-	size_t Size() const
-	{
-		return m_size;
-	}
-
-	size_t SetSize(size_t newSize) const
-	{
-		ASSERT(false);
-//		Reserve(newSize);
-		m_size = newSize;
-	}
-
-	void Reserve(size_t newReservedSize)
-	{
-		ASSERT(false);
-		m_reservedSize = newReservedSize;
-	}
+	// Capacity
+	bool IsEmpty() const						{ return m_vector.empty(); }
+	size_t Size() const							{ return m_vector.size(); }
+	void SetSize(size_t newSize)				{ m_vector.resize(newSize); }
+	size_t GetReservedSize() const				{ return m_vector.capacity(); }
+	void Reserve(size_t newReservedSize)		{ m_vector.reserve(newReservedSize); }
 
 	// Erases all elements from the Array, but doesn't free its memory
 	void Clear()
 	{
-		DestructElements(0, size);
-		m_size = 0;
+		m_vector.clear();
 	}
 
 	void Add(const T& value)
 	{
 		GrowIfNecessary();
-		new (m_data + m_size) T(value);
-		m_size++;
+		m_vector.push_back(value);
 	}
 
 	void Add(T&& value)
 	{
 		GrowIfNecessary();
-		new (m_data + m_size) T(std::move(value));
-		m_size++;
+		m_vector.push_back(std::move(value));
 	}
 
 	template<class... Args>
 	T& EmplaceAdd(Args&&... args)
 	{
 		GrowIfNecessary();
-		new (m_data + m_size) T(std::forward<Args>(args)...);
-		m_size++;
-		return m_data[m_size - 1];
+		return m_vector.emplace_back(std::forward<Args>(args)...);
 	}
 
-	void Insert(size_t pos, const T& value)
+	T& Insert(size_t pos, const T& value)
 	{
-
+		GrowIfNecessary();
+		return *m_vector.insert(m_vector.begin() + pos, value);
 	}
 
-	void Insert(size_t pos, T&& value)
+	T& Insert(size_t pos, T&& value)
 	{
-
+		GrowIfNecessary();
+		return *m_vector.insert(m_vector.begin() + pos, std::move(value));
 	}
 
 	size_t Find(const T& value) const
 	{
-		for(size_t i = 0; i < m_size; ++i)
+		const size_t size = Size();
+		for(size_t i = 0; i < size; ++i)
 		{
-			if(m_data[i] == value)
+			if(GetAt(i) == value)
 			{
 				return i;
 			}
@@ -193,15 +119,37 @@ public:
 
 	size_t SpecializedFind(std::function<bool(const T&)> compareFunc) const
 	{
-		for(size_t i = 0; i < m_size; ++i)
+		const size_t size = Size();
+		for(size_t i = 0; i < size; ++i)
 		{
-			if(compareFunc(m_data[i]))
+			if(compareFunc(GetAt(i)))
 			{
 				return i;
 			}
 		}
 
 		return SIZE_MAX;
+	}
+
+	// Do a binary search to find the index of a given element. The type U has to be comparable to type T.
+	template<class U>
+	size_t BinaryFind(const U& value) const
+	{
+		auto iter = std::lower_bound(m_vector.begin(), m_vector.end(), value);
+		return (iter != m_vector.end() && *iter == value) ? (iter - m_vector.begin()) : SIZE_MAX;
+	}
+
+	// Do a binary search to find an element by value or insert it into a sorted array
+	T& BinaryFindOrInsert(T&& value)
+	{
+		auto iter = std::lower_bound(m_vector.begin(), m_vector.end(), value);
+		return (iter != m_vector.end() && *iter == value) ? *iter : Insert(iter - m_vector.begin(), std::move(value));
+	}
+
+	T& BinaryFindOrInsert(T&& value, bool(*compareFunc)(const T&, const T&))
+	{
+		auto iter = std::lower_bound(m_vector.begin(), m_vector.end(), value, compareFunc);
+		return (iter != m_vector.end() && !compareFunc(value, *iter)) ? *iter : Insert(iter - m_vector.begin(), std::move(value));
 	}
 
 	bool Remove(const T& value)
@@ -218,21 +166,15 @@ public:
 
 	void RemoveAt(size_t idx)
 	{
-		ASSERT(idx < m_size);
-
-		DestructElements(idx, 1);
-		m_size--;
-		std::memmove(m_data + idx, m_data + idx + 1, sizeof(T) * (m_size - idx));
+		m_vector.erase(m_vector.begin() + idx);
 	}
 
 	void RemoveRangeAt(size_t idx, size_t count)
 	{
-		ASSERT(idx < m_size);
+		ASSERT(idx < Size());
 
-		count = std::min(count, m_size - idx);
-		DestructElements(idx, count);
-		std::memmove(m_data + idx, m_data + idx + count, sizeof(T) * (m_size - idx - count));
-		m_size -= count;
+		count = std::min(count, Size() - idx);
+		m_vector.erase(m_vector.begin() + idx, m_vector.begin() + idx + count);
 	}
 
 	// Removes an element by replacing it with the last element in the array and calling RemoveLast()
@@ -257,28 +199,15 @@ public:
 
 	void RemoveLast()
 	{
-		if(size == 0)
+		if(!IsEmpty())
 		{
-			return;
+			m_vector.pop_back();
 		}
-
-		DestructElements(size - 1, 1);
-		size--;
 	}
 
 	void Swap(Array& otherArray)
 	{
-		const T* tmpData = m_data;
-		m_data = otherArray.m_data;
-		otherArray.m_data = tmpData;
-
-		const size_t tmpSize = m_size;
-		m_size = otherArray.m_size;
-		otherArray.m_size = tmpSize;
-
-		const size_t tmpReservedSize = m_reservedSize;
-		m_reservedSize = otherArray.m_reservedSize;
-		otherArray.m_reservedSize = tmpReservedSize;
+		m_vector.swap(otherArray.m_vector);
 	}
 
 private:
@@ -286,28 +215,13 @@ private:
 
 	void GrowIfNecessary()
 	{
-		if(m_size == m_reservedSize)
+		const size_t reservedSize = GetReservedSize();
+		if(Size() == reservedSize)
 		{
-			Reserve(m_reservedSize < kMaxReservedSizeIncrement) ? (m_reservedSize << 1) : m_reservedSize + kMaxReservedSizeIncrement);
+			const size_t newReservedSize = (reservedSize < kMaxReservedSizeIncrement) ? (reservedSize << 1) : (reservedSize + kMaxReservedSizeIncrement);
+			Reserve(newReservedSize);
 		}
 	}
 
-	void DestructElements(size_t fromIdx, size_t count)
-	{
-		T* pElements = m_data + fromIdx;
-		for(size_t i = 0; i < count; ++i)
-		{
-			pElements[i].~T();
-		}
-	}
-
-	T* m_data = nullptr;
-	size_t m_size = 0;
-	size_t m_reservedSize = 0;
+	std::vector<T> m_vector;
 };
-
-#else
-
-#include "Engine/Core/Container/ArrayAsVector.inl"
-
-#endif

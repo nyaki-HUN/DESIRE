@@ -18,6 +18,9 @@
 #include <new>
 #include <utility>		// std::move()
 
+// Containers
+#include <vector>
+
 // Thread support
 #include <atomic>
 #include <condition_variable>

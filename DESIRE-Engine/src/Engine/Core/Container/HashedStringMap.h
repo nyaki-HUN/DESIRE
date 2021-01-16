@@ -43,22 +43,14 @@ public:
 
 	T* Find(HashedString key)
 	{
-		// Note: This is a custom variant of m_elements.BinaryFind() to compare KeyValuePair with HashedString
-		auto it = std::lower_bound(m_elements.begin(), m_elements.end(), key, [](const KeyValuePair& pair, HashedString key)
-		{
-			return (pair.key < key);
-		});
-		return (it != m_elements.end() && !(key < it->key)) ? &it->value : nullptr;
+		const size_t idx = m_elements.BinaryFind(key);
+		return (idx != SIZE_MAX) ? &m_elements[idx].value : nullptr;
 	}
 
 	const T* Find(HashedString key) const
 	{
-		// Note: This is a custom variant of m_elements.BinaryFind() to compare KeyValuePair with HashedString
-		auto it = std::lower_bound(m_elements.begin(), m_elements.end(), key, [](const KeyValuePair& pair, HashedString key)
-		{
-			return (pair.key < key);
-		});
-		return (it != m_elements.end() && !(key < it->key)) ? &it->value : nullptr;
+		const size_t idx = m_elements.BinaryFind(key);
+		return (idx != SIZE_MAX) ? &m_elements[idx].value : nullptr;
 	}
 
 	bool IsEmpty() const
@@ -88,10 +80,11 @@ private:
 		{
 		}
 
-		bool operator <(const KeyValuePair& other) const
-		{
-			return (key < other.key);
-		}
+		bool operator <(const KeyValuePair& other) const		{ return (key < other.key); }
+		bool operator ==(const KeyValuePair& other) const		{ return (key == other.key); }
+
+		bool operator <(const HashedString& otherKey) const		{ return (key < otherKey); }
+		bool operator ==(const HashedString& otherKey) const	{ return (key == otherKey); }
 	};
 
 	Array<KeyValuePair> m_elements;
