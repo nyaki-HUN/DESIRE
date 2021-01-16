@@ -180,12 +180,12 @@ Object* Object::FindObjectByName(const String& name, bool isRecursiveSearch) con
 	return nullptr;
 }
 
-bool Object::HasObjectInParentHierarchy(const Object* obj) const
+bool Object::HasObjectInParentHierarchy(const Object* pObject) const
 {
 	const Object* pObj = GetParent();
 	while(pObj != nullptr)
 	{
-		if(pObj == obj)
+		if(pObj == pObject)
 		{
 			return true;
 		}
@@ -209,14 +209,14 @@ void Object::RemoveComponent(const Component* pComponent)
 	}
 }
 
-Component* Object::GetComponentByTypeId(int typeId) const
+Component* Object::GetComponentByTypeId(int32_t typeId) const
 {
 	// Binary find
-	auto it = std::lower_bound(m_components.begin(), m_components.end(), typeId, [](const std::unique_ptr<Component>& component, int id)
+	auto iter = std::lower_bound(m_components.begin(), m_components.end(), typeId, [](const std::unique_ptr<Component>& spComponent, int32_t typeId)
 	{
-		return (component->GetTypeId() < id);
+		return (spComponent->GetTypeId() < typeId);
 	});
-	return (it != m_components.end() && !(typeId < (*it)->GetTypeId())) ? it->get() : nullptr;
+	return (iter != m_components.end() && (*iter)->GetTypeId() == typeId) ? iter->get() : nullptr;
 }
 
 const Array<std::unique_ptr<Component>>& Object::GetComponents() const
@@ -231,19 +231,19 @@ Transform& Object::GetTransform() const
 
 void Object::MarkAllChildrenTransformDirty()
 {
-	Transform* childm_pTransform = m_pTransform + 1;
+	Transform* pChildTransform = m_pTransform + 1;
 	for(size_t i = 1; i < m_numTransformsInHierarchy; ++i)
 	{
-		childm_pTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
-		childm_pTransform++;
+		pChildTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
+		pChildTransform++;
 	}
 }
 
-Component& Object::AddComponent_Internal(std::unique_ptr<Component>&& component)
+Component& Object::AddComponent_Internal(std::unique_ptr<Component>&& spComponent)
 {
-	std::unique_ptr<Component>& spAddedComponent = m_components.BinaryFindOrInsert(std::move(component), [](const std::unique_ptr<Component>& a, const std::unique_ptr<Component>& b)
+	std::unique_ptr<Component>& spAddedComponent = m_components.BinaryFindOrInsert(std::move(spComponent), [](const std::unique_ptr<Component>& spLeft, const std::unique_ptr<Component>& spRight)
 	{
-		return (a->GetTypeId() < b->GetTypeId());
+		return (spLeft->GetTypeId() < spRight->GetTypeId());
 	});
 	return *spAddedComponent;
 }

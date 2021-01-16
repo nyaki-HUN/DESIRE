@@ -6,10 +6,10 @@
 class ThreadSafeFreeList
 {
 public:
-	void Push(void* element)
+	void Push(void* pElement)
 	{
 		DESIRE_SCOPED_SPINLOCK(m_spinLock);
-		m_freeList.Push(element);
+		m_freeList.Push(pElement);
 	}
 
 	void* Pop()

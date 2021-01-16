@@ -31,7 +31,7 @@ public:
 private:
 	std::atomic<bool> m_locked = false;
 
-	static constexpr int kMaxIterations = 16;
+	static constexpr uint32_t kMaxIterations = 16;
 };
 
 #define DESIRE_SCOPED_SPINLOCK(LOCK)	SpinLock::ScopeLock DESIRE_CONCAT_MACRO(scopeLock, __LINE__) (LOCK)

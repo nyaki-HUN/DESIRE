@@ -17,13 +17,13 @@ const String& IReadFile::GetFilename() const
 	return m_filename;
 }
 
-void IReadFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
+void IReadFile::ReadBufferAsync(void* pBuffer, size_t size, std::function<void()> callback)
 {
-	ASSERT(buffer != nullptr);
+	ASSERT(pBuffer != nullptr);
 	ASSERT(callback != nullptr);
 
 	// Fallback to blocking read
-	ReadBuffer(buffer, size);
+	ReadBuffer(pBuffer, size);
 	callback();
 }
 
@@ -71,7 +71,7 @@ MemoryBuffer IReadFile::ReadAllAsBinary()
 	{
 		const size_t dataSize = static_cast<size_t>(m_fileSize - m_position);
 		MemoryBuffer buffer = MemoryBuffer(dataSize);
-		const size_t numBytesRead = ReadBuffer(buffer.ptr.get(), dataSize);
+		const size_t numBytesRead = ReadBuffer(buffer.GetData(), dataSize);
 		ASSERT(numBytesRead == dataSize);
 		return buffer;
 	}

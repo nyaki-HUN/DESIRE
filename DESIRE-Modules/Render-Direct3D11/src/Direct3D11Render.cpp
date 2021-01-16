@@ -511,8 +511,8 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 /**/compileFlags = D3DCOMPILE_SKIP_OPTIMIZATION;
 
 	ComPtr<ID3DBlob> spErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),	// pSrcData
-		shader.m_data.size,								// SrcDataSize
+	HRESULT hr = D3DCompile(shader.m_data.GetData(),	// pSrcData
+		shader.m_data.GetSize(),						// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
 		shaderDefines,									// pDefines
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
@@ -605,7 +605,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 					typeDesc.Class == D3D_SVC_VECTOR ||
 					typeDesc.Class == D3D_SVC_MATRIX_ROWS || typeDesc.Class == D3D_SVC_MATRIX_COLUMNS)
 				{
-					bufferData.variables.Insert(String(varDesc.Name, strlen(varDesc.Name)), { bufferData.data.ptr.get() + varDesc.StartOffset, varDesc.Size });
+					bufferData.variables.Insert(String(varDesc.Name, strlen(varDesc.Name)), { bufferData.data.GetData() + varDesc.StartOffset, varDesc.Size });
 				}
 			}
 		}
@@ -946,7 +946,7 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRender
 
 		if(isChanged)
 		{
-			m_pDeviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.data.ptr.get(), 0, 0);
+			m_pDeviceCtx->UpdateSubresource(pShaderRenderData->m_constantBuffers[i], 0, nullptr, bufferData.data.GetData(), 0, 0);
 		}
 	}
 }

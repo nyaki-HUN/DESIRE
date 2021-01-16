@@ -595,8 +595,8 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 	UINT compileFlags = 0;
 
 	ComPtr<ID3DBlob> spErrorBlob = nullptr;
-	HRESULT hr = D3DCompile(shader.m_data.ptr.get(),	// pSrcData
-		shader.m_data.size,								// SrcDataSize
+	HRESULT hr = D3DCompile(shader.m_data.GetData(),	// pSrcData
+		shader.m_data.GetSize(),						// SrcDataSize
 		filenameWithPath.Str(),							// pSourceName
 		shaderDefines,									// pDefines
 		D3D_COMPILE_STANDARD_FILE_INCLUDE,				// pInclude
@@ -667,7 +667,7 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 					typeDesc.Class == D3D_SVC_VECTOR ||
 					typeDesc.Class == D3D_SVC_MATRIX_ROWS || typeDesc.Class == D3D_SVC_MATRIX_COLUMNS)
 				{
-					bufferData.variables.Insert(String(varDesc.Name, strlen(varDesc.Name)), { bufferData.data.ptr.get() + varDesc.StartOffset, varDesc.Size });
+					bufferData.variables.Insert(String(varDesc.Name, strlen(varDesc.Name)), { bufferData.data.GetData() + varDesc.StartOffset, varDesc.Size });
 				}
 			}
 		}
@@ -1009,8 +1009,8 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRender
 			isChanged |= pVariable->CheckAndUpdate(resolution);
 		}
 
-		uint32_t num32BitValuesToSet = static_cast<uint32_t>(bufferData.data.size / sizeof(float));
-		m_pCmdList->SetGraphicsRoot32BitConstants(0, num32BitValuesToSet, bufferData.data.ptr.get(), 0);
+		uint32_t num32BitValuesToSet = static_cast<uint32_t>(bufferData.data.GetSize() / sizeof(float));
+		m_pCmdList->SetGraphicsRoot32BitConstants(0, num32BitValuesToSet, bufferData.data.GetData(), 0);
 	}
 }
 

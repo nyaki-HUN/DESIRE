@@ -37,7 +37,7 @@ public:
 	void RemoveComponent(const Component* pComponent);
 
 	// Get the component with the given typeID
-	Component* GetComponentByTypeId(int typeId) const;
+	Component* GetComponentByTypeId(int32_t typeId) const;
 
 	// Get the component with the given template type
 	template<class T>

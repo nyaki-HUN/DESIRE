@@ -235,7 +235,7 @@ RenderData* BgfxRender::CreateShaderRenderData(const Shader& shader)
 	const bgfx::Memory* pShaderData = nullptr;
 	if(shader.m_defines.empty())
 	{
-		pShaderData = bgfx::makeRef(shader.m_data.ptr.get(), static_cast<uint32_t>(shader.m_data.size));
+		pShaderData = bgfx::makeRef(shader.m_data.GetData(), static_cast<uint32_t>(shader.m_data.GetSize()));
 	}
 	else
 	{
@@ -245,7 +245,7 @@ RenderData* BgfxRender::CreateShaderRenderData(const Shader& shader)
 			totalDefinesLength += 8 + define.Length() + 3;	// "#define ASD 1\n"
 		}
 
-		pShaderData = bgfx::alloc(static_cast<uint32_t>(totalDefinesLength + shader.m_data.size));
+		pShaderData = bgfx::alloc(static_cast<uint32_t>(totalDefinesLength + shader.m_data.GetSize()));
 		uint8_t* ptr = pShaderData->data;
 		for(const String& define : shader.m_defines)
 		{
@@ -256,7 +256,7 @@ RenderData* BgfxRender::CreateShaderRenderData(const Shader& shader)
 			memcpy(ptr, " 1\n", 3);
 			ptr += 3;
 		}
-		memcpy(ptr, shader.m_data.ptr.get(), shader.m_data.size);
+		memcpy(ptr, shader.m_data.GetData(), shader.m_data.GetSize());
 	}
 
 	pShaderRenderData->m_shaderHandle = bgfx::createShader(pShaderData);

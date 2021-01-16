@@ -4,7 +4,7 @@
 void SpinLock::Lock()
 {
 	// Loop until we acquire the lock
-	for(int spinCount = 0; !TryLock(); ++spinCount)
+	for(uint32_t spinCount = 0; !TryLock(); ++spinCount)
 	{
 		if(spinCount < kMaxIterations)
 		{
