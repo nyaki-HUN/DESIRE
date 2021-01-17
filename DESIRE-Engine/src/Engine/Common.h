@@ -1,11 +1,5 @@
 #pragma once
 
-#include "Engine/Core/platform.h"
-#include "Engine/Core/assert.h"
-#include "Engine/Core/Log/Log.h"
-
-#include "Engine/Modules.h"
-
 // STD library
 #include <cstdint>
 #include <cfloat>		// FLT_MIN, FLT_MAX, FLT_EPSILON
@@ -15,6 +9,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <memory>
 #include <new>
 #include <utility>		// std::move()
 
@@ -28,6 +23,13 @@
 #include <mutex>
 #include <shared_mutex>
 #include <thread>
+
+// Engine headers
+#include "Engine/Core/platform.h"
+#include "Engine/Core/assert.h"
+#include "Engine/Core/Log/Log.h"
+
+#include "Engine/Modules.h"
 
 // Use stack memory to allocate an array with the give type and size
 #define DESIRE_STACKALLOCATE_ARRAY(T, NAME, SIZE)	T* NAME(reinterpret_cast<T*>(reinterpret_cast<size_t>(alloca(sizeof(T) * (SIZE)	+ alignof(T))) & ~(alignof(T) - 1)))
