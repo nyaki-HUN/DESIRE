@@ -125,13 +125,14 @@ public:
     ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     Object& operator=(const Object& so) {
-        if(release) {
-            Release();
+        if( this != &so ) {
+          if(release) {
+              Release();
+          }
+          vm = so.vm;
+          obj = so.obj;
+          sq_addref(vm, &GetObject());
         }
-        vm = so.vm;
-        obj = so.obj;
-        release = so.release;
-        sq_addref(vm, &GetObject());
         return *this;
     }
 
