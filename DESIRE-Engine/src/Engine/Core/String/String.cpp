@@ -136,9 +136,9 @@ double String::AsDouble() const
 	return std::strtod(m_pData, nullptr);
 }
 
-int String::Compare(const String& string) const
+int32_t String::Compare(const String& string) const
 {
-	const int rv = memcmp(m_pData, string.m_pData, std::min(m_size, string.m_size));
+	const int32_t rv = memcmp(m_pData, string.m_pData, std::min(m_size, string.m_size));
 	return (rv != 0) ? rv : static_cast<int>(string.m_size) - static_cast<int>(m_size);
 }
 

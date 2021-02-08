@@ -16,7 +16,7 @@
 class LINUXFile : public IReadFile, public IWriteFile
 {
 public:
-	LINUXFile(int fileDesc, int64_t fileSize, const String& filename)
+	LINUXFile(int32_t fileDesc, int64_t fileSize, const String& filename)
 		: IReadFile(fileSize, filename)
 		, fileDesc(fileDesc)
 	{
@@ -30,13 +30,13 @@ public:
 
 	bool Seek(int64_t offset, ESeekOrigin origin) override
 	{
-		const int mapping[] =
+		const int32_t mapping[] =
 		{
 			SEEK_SET,
 			SEEK_CUR,
 			SEEK_END
 		};
-		const int whence = mapping[static_cast<size_t>(origin)];
+		const int32_t whence = mapping[static_cast<size_t>(origin)];
 
 		off64_t result = lseek64(fileDesc, offset, whence);
 		if(result == -1)
@@ -77,7 +77,7 @@ public:
 	}
 
 private:
-	int fileDesc = -1;
+	int32_t fileDesc = -1;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ private:
 
 ReadFilePtr FileSystem::OpenNative(const String& filename)
 {
-	int fileDesc = open64(filename.Str(), O_RDONLY);
+	int32_t fileDesc = open64(filename.Str(), O_RDONLY);
 	if(fileDesc == -1)
 	{
 		LOG_ERROR("Failed to open file %s (Error: %d)", filename.Str(), errno);
@@ -107,7 +107,7 @@ ReadFilePtr FileSystem::OpenNative(const String& filename)
 WriteFilePtr FileSystem::CreateWriteFileNative(const String& filename)
 {
 	// 0644 - RW for owner, R for group and others
-	int fileDesc = creat64(filename.Str(), 0644);
+	int32_t fileDesc = creat64(filename.Str(), 0644);
 	if(fileDesc == -1)
 	{
 		LOG_ERROR("Failed to open file %s (Error: %d)", filename.Str(), errno);
@@ -124,7 +124,7 @@ void FileSystem::Setup()
 	// Find the real executable by reading the process symlink
 	char str[DESIRE_MAX_PATH_LEN] = {};
 	snprintf(str, sizeof(str), "/proc/%d/exe", getpid());
-	const int len = readlink(str, exePath, DESIRE_MAX_PATH_LEN - 1);
+	const int32_t len = readlink(str, exePath, DESIRE_MAX_PATH_LEN - 1);
 	if(len < 0)
 	{
 		len = 0;

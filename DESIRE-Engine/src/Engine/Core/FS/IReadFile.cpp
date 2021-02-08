@@ -17,6 +17,21 @@ const String& IReadFile::GetFilename() const
 	return m_filename;
 }
 
+int64_t IReadFile::GetSize() const
+{
+	return m_fileSize;
+}
+
+int64_t IReadFile::Tell() const
+{
+	return m_position;
+}
+
+bool IReadFile::IsEof() const
+{
+	return m_position >= m_fileSize;
+}
+
 void IReadFile::ReadBufferAsync(void* pBuffer, size_t size, std::function<void()> callback)
 {
 	ASSERT(pBuffer != nullptr);

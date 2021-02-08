@@ -13,15 +13,8 @@ public:
 	{
 	}
 
-	inline bool operator <(HashedString other) const
-	{
-		return (m_hash < other.m_hash);
-	}
-
-	inline bool operator ==(HashedString other) const
-	{
-		return (m_hash == other.m_hash);
-	}
+	bool operator <(HashedString other) const	{ return (m_hash < other.m_hash); }
+	bool operator ==(HashedString other) const	{ return (m_hash == other.m_hash); }
 
 private:
 	HashedString(const void* pData, size_t size);

@@ -12,14 +12,14 @@ Object::Object()
 {
 	ASSERT(s_numTransforms < kMaxNumTransforms);
 	m_pTransform = &s_preallocatedTransforms[s_numTransforms++];
-	m_pTransform->owner = this;
+	m_pTransform->m_pOwner = this;
 	m_pTransform->ResetToIdentity();
 }
 
 Object::~Object()
 {
 	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and no need to call SetParent()
-	if(m_pTransform->owner != nullptr)
+	if(m_pTransform->m_pOwner != nullptr)
 	{
 		SetParent(nullptr);
 		s_numTransforms -= m_numTransformsInHierarchy;
@@ -27,12 +27,12 @@ Object::~Object()
 
 	for(Object* pChild : m_children)
 	{
-		pChild->m_pTransform->owner = nullptr;
+		pChild->m_pTransform->m_pOwner = nullptr;
 		delete pChild;
 	}
 
-	m_pTransform->parent = nullptr;
-	m_pTransform->owner = nullptr;
+	m_pTransform->m_pParent = nullptr;
+	m_pTransform->m_pOwner = nullptr;
 }
 
 void Object::SetObjectName(const String& name)
@@ -133,7 +133,7 @@ void Object::SetParent(Object* pNewParent)
 		RefreshParentPointerInTransforms(m_pTransform, m_numTransformsInHierarchy);
 	}
 
-	m_pTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
+	m_pTransform->m_flags |= Transform::WORLD_MATRIX_DIRTY;
 	MarkAllChildrenTransformDirty();
 }
 
@@ -234,7 +234,7 @@ void Object::MarkAllChildrenTransformDirty()
 	Transform* pChildTransform = m_pTransform + 1;
 	for(size_t i = 1; i < m_numTransformsInHierarchy; ++i)
 	{
-		pChildTransform->flags |= Transform::WORLD_MATRIX_DIRTY;
+		pChildTransform->m_flags |= Transform::WORLD_MATRIX_DIRTY;
 		pChildTransform++;
 	}
 }
@@ -259,7 +259,7 @@ void Object::AddChild_Internal(Object* pChild)
 
 	m_children.Add(pChild);
 
-	pChild->m_pTransform->parent = m_pTransform;
+	pChild->m_pTransform->m_pParent = m_pTransform;
 }
 
 void Object::RemoveChild_Internal(Object* pChild)
@@ -273,7 +273,7 @@ void Object::RemoveChild_Internal(Object* pChild)
 	} while(pObj != nullptr);
 
 	m_children.Remove(pChild);
-	pChild->m_pTransform->parent = nullptr;
+	pChild->m_pTransform->m_pParent = nullptr;
 }
 
 void Object::RefreshParentPointerInTransforms(Transform* pFirstTransform, size_t transformCount)
@@ -281,10 +281,10 @@ void Object::RefreshParentPointerInTransforms(Transform* pFirstTransform, size_t
 	Transform* pTransformTmp = pFirstTransform;
 	for(size_t i = 0; i < transformCount; ++i)
 	{
-		pTransformTmp->owner->m_pTransform = pTransformTmp;
-		if(pTransformTmp->owner->m_pParent != nullptr)
+		pTransformTmp->m_pOwner->m_pTransform = pTransformTmp;
+		if(pTransformTmp->m_pOwner->m_pParent != nullptr)
 		{
-			pTransformTmp->parent = &pTransformTmp->owner->m_pParent->GetTransform();
+			pTransformTmp->m_pParent = &pTransformTmp->m_pOwner->m_pParent->GetTransform();
 		}
 
 		pTransformTmp++;

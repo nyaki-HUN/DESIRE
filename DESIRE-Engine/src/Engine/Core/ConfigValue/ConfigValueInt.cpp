@@ -1,7 +1,7 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/ConfigValue/ConfigValueInt.h"
 
-ConfigValueInt::ConfigValueInt(const char* pName, const char* pDescription, int initValue, int minValue, int maxValue)
+ConfigValueInt::ConfigValueInt(const char* pName, const char* pDescription, int32_t initValue, int32_t minValue, int32_t maxValue)
 	: IConfigValue(pName, pDescription)
 	, m_value(initValue)
 	, m_minValue(minValue)
@@ -9,7 +9,7 @@ ConfigValueInt::ConfigValueInt(const char* pName, const char* pDescription, int 
 {
 }
 
-ConfigValueInt& ConfigValueInt::operator =(int newValue)
+ConfigValueInt& ConfigValueInt::operator =(int32_t newValue)
 {
 	if(newValue < m_minValue)
 	{

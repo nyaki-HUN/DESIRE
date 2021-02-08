@@ -24,58 +24,24 @@ public:
 		explicit Iterator(ENUM value)
 			: enumVal(value)
 		{
-
 		}
 
 		explicit Iterator(typename std::underlying_type<ENUM>::type value)
 			: intVal(value)
 		{
-
 		}
 
-		inline operator ENUM() const
-		{
-			return enumVal;
-		}
+		operator ENUM() const					{ return enumVal; }
+		operator int64_t() const				{ return intVal;}
+		operator size_t() const					{ return static_cast<size_t>(intVal); }
 
-		inline operator int64_t() const
-		{
-			return intVal;
-		}
+		bool operator !=(Iterator rhs) const	{ return intVal != rhs.intVal; }
+		bool operator !=(ENUM other) const		{ return enumVal != other; }
 
-		inline operator size_t() const
-		{
-			return (size_t)intVal;
-		}
-
-		inline bool operator !=(Iterator rhs) const
-		{
-			return intVal != rhs.intVal;
-		}
-
-		inline bool operator !=(ENUM other) const
-		{
-			return enumVal != other;
-		}
-
-		inline void operator ++()
-		{
-			++intVal;
-		}
-
-		inline Iterator operator *() const
-		{
-			return *this;
-		}
+		void operator ++()						{ ++intVal; }
+		Iterator operator *() const				{ return *this; }
 	};
 
-	inline Iterator begin() const
-	{
-		return Iterator(0);
-	}
-
-	inline Iterator end() const
-	{
-		return Iterator(ENUM::Num);
-	}
+	Iterator begin() const	{ return Iterator(0); }
+	Iterator end() const	{ return Iterator(ENUM::Num); }
 };

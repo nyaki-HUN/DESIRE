@@ -11,10 +11,7 @@ template<typename FilterPolicy, typename OutputPolicy>
 class Logger
 {
 public:
-	Logger() {}
-	~Logger() {}
-
-	inline void Log(const LogData& logData)
+	void Log(const LogData& logData)
 	{
 		if(m_filterPolicy.Filter(logData))
 		{

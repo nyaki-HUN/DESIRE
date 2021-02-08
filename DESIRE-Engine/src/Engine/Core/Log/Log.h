@@ -5,7 +5,7 @@ struct LogData
 	static constexpr size_t kMaxMessageLength = 2048;
 
 	const char* pFilename;
-	int line;
+	int32_t line;
 	const char* pLogType;
 	char message[kMaxMessageLength];
 };
@@ -16,7 +16,7 @@ public:
 	typedef void(*LogFunction_t)(const LogData& logData);
 
 	static void LogWithData(const LogData& logData);
-	static void LogWithFormat(const char* pFilename, int line, const char* pLogType, const char* pFormat, ...);
+	static void LogWithFormat(const char* pFilename, int32_t line, const char* pLogType, const char* pFormat, ...);
 	static void SetUserDefinedLogFunction(LogFunction_t func);
 };
 

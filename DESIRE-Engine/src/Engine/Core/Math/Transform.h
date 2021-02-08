@@ -7,11 +7,11 @@ class Object;
 class Transform
 {
 public:
-	Transform();
+	Transform() = default;
 
-	inline const Vector3& GetLocalPosition() const	{ return localPosition; }
-	inline const Quat& GetLocalRotation() const		{ return localRotation; }
-	inline const Vector3& GetLocalScale() const		{ return localScale; }
+	const Vector3& GetLocalPosition() const;
+	const Quat& GetLocalRotation() const;
+	const Vector3& GetLocalScale() const;
 
 	void SetLocalPosition(const Vector3& position);
 	void SetLocalRotation(const Quat& rotation);
@@ -50,15 +50,15 @@ private:
 		WORLD_MATRIX_DIRTY	= (POSITION_CHANGED | ROTATION_CHANGED | SCALE_CHANGED)
 	};
 
-	Vector3 localPosition = Vector3::Zero();
-	Quat localRotation = Quat::Identity();
-	Vector3 localScale = Vector3::One();
+	Vector3 m_localPosition = Vector3::Zero();
+	Quat m_localRotation = Quat::Identity();
+	Vector3 m_localScale = Vector3::One();
 
-	mutable Matrix4 worldMatrix = Matrix4::Identity();
-	mutable uint8_t flags = 0;
+	mutable Matrix4 m_worldMatrix = Matrix4::Identity();
+	mutable uint8_t m_flags = 0;
 
-	Transform* parent = nullptr;
-	Object* owner = nullptr;
+	Transform* m_pParent = nullptr;
+	Object* m_pOwner = nullptr;
 
 	friend class Object;
 };

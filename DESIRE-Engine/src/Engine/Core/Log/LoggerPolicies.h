@@ -11,7 +11,7 @@ struct LogData;
 class NoFilterPolicy
 {
 public:
-	inline bool Filter(const LogData& logData)
+	bool Filter(const LogData& logData)
 	{
 		DESIRE_UNUSED(logData);
 		return true;
@@ -22,7 +22,7 @@ template<class Policy1, class Policy2>
 class CombinedFilterPolicy
 {
 public:
-	inline bool Filter(const LogData& logData)
+	bool Filter(const LogData& logData)
 	{
 		return (m_policy1.Filter(logData) && m_policy2.Filter(logData));
 	}

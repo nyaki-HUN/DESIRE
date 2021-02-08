@@ -167,7 +167,7 @@ void WritableString::AppendChar(char ch)
 WritableString& WritableString::operator +=(int32_t number)
 {
 	char str[10 + 2];
-	const int len = snprintf(str, sizeof(str), "%" PRIi32, number);
+	const int32_t len = snprintf(str, sizeof(str), "%" PRIi32, number);
 	if(len > 0)
 	{
 		Append(String(str, len));
@@ -178,7 +178,7 @@ WritableString& WritableString::operator +=(int32_t number)
 WritableString& WritableString::operator +=(uint32_t number)
 {
 	char str[10 + 2];
-	const int len = snprintf(str, sizeof(str), "%" PRIu32, number);
+	const int32_t len = snprintf(str, sizeof(str), "%" PRIu32, number);
 	if(len > 0)
 	{
 		Append(String(str, len));
@@ -189,7 +189,7 @@ WritableString& WritableString::operator +=(uint32_t number)
 WritableString& WritableString::operator +=(int64_t number)
 {
 	char str[20 + 2];
-	const int len = snprintf(str, sizeof(str), "%" PRIi64, number);
+	const int32_t len = snprintf(str, sizeof(str), "%" PRIi64, number);
 	if(len > 0)
 	{
 		Append(String(str, len));
@@ -200,7 +200,7 @@ WritableString& WritableString::operator +=(int64_t number)
 WritableString& WritableString::operator +=(uint64_t number)
 {
 	char str[20 + 2];
-	const int len = snprintf(str, sizeof(str), "%" PRIu64, number);
+	const int32_t len = snprintf(str, sizeof(str), "%" PRIu64, number);
 	if(len > 0)
 	{
 		Append(String(str, len));
@@ -211,7 +211,7 @@ WritableString& WritableString::operator +=(uint64_t number)
 WritableString& WritableString::operator +=(float number)
 {
 	char str[32];
-	const int len = snprintf(str, sizeof(str), "%.3f", number);
+	const int32_t len = snprintf(str, sizeof(str), "%.3f", number);
 	if(len > 0)
 	{
 		Append(String(str, len));
@@ -222,7 +222,7 @@ WritableString& WritableString::operator +=(float number)
 WritableString& WritableString::operator +=(double number)
 {
 	char str[32];
-	const int len = snprintf(str, sizeof(str), "%.3f", number);
+	const int32_t len = snprintf(str, sizeof(str), "%.3f", number);
 	if(len > 0)
 	{
 		Append(String(str, len));
@@ -352,7 +352,7 @@ void WritableString::Sprintf_internal(size_t pos, const char* pFormatStr, std::v
 
 	std::va_list argsCopy;
 	va_copy(argsCopy, args);
-	const int requiredSize = vsnprintf(nullptr, 0, pFormatStr, argsCopy);
+	const int32_t requiredSize = vsnprintf(nullptr, 0, pFormatStr, argsCopy);
 	va_end(argsCopy);
 
 	if(requiredSize <= 0)

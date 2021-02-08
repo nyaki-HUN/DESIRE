@@ -44,22 +44,22 @@ bool MemoryFile::Seek(int64_t offset, ESeekOrigin origin)
 	return true;
 }
 
-void MemoryFile::ReadBufferAsync(void* buffer, size_t size, std::function<void()> callback)
+void MemoryFile::ReadBufferAsync(void* pBuffer, size_t size, std::function<void()> callback)
 {
-	ASSERT(buffer != nullptr);
+	ASSERT(pBuffer != nullptr);
 	ASSERT(callback != nullptr);
 
 	// Data is already in memory so we can do blocking read (which will just copy it)
-	ReadBuffer(buffer, size);
+	ReadBuffer(pBuffer, size);
 	callback();
 }
 
-size_t MemoryFile::ReadBuffer(void* buffer, size_t size)
+size_t MemoryFile::ReadBuffer(void* pBuffer, size_t size)
 {
 	const size_t remainingSize = static_cast<size_t>(m_fileSize - m_position);
 	size = std::min(size, remainingSize);
 
-	std::memcpy(buffer, m_spData.get() + m_position, size);
+	std::memcpy(pBuffer, m_spData.get() + m_position, size);
 	m_position += size;
 	return size;
 }

@@ -9,10 +9,7 @@ public:
 
 	ConfigValueFloat& operator =(float newValue);
 
-	inline operator float() const
-	{
-		return m_value;
-	}
+	operator float() const	{ return m_value; }
 
 	const float m_minValue;
 	const float m_maxValue;

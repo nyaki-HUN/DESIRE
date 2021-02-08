@@ -54,7 +54,7 @@ public:
 				pNotify = reinterpret_cast<FILE_NOTIFY_EXTENDED_INFORMATION*>(pWatcher->m_spImpl->buffer + offset);
 
 				// Convert filename to UTF-8
-				const int count = WideCharToMultiByte(CP_UTF8, 0, pNotify->FileName, pNotify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
+				const int32_t count = WideCharToMultiByte(CP_UTF8, 0, pNotify->FileName, pNotify->FileNameLength / sizeof(WCHAR), str, DESIRE_MAX_PATH_LEN - 1, nullptr, nullptr);
 				StackString<DESIRE_MAX_PATH_LEN> filename(str, count);
 				filename.ReplaceAllChar('\\', '/');
 

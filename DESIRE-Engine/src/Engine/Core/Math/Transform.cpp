@@ -4,69 +4,80 @@
 #include "Engine/Core/Math/math.h"
 #include "Engine/Core/Object.h"
 
-Transform::Transform()
+const Vector3& Transform::GetLocalPosition() const
+{ 
+	return m_localPosition;
+}
+
+const Quat& Transform::GetLocalRotation() const
+{ 
+	return m_localRotation;
+}
+
+const Vector3& Transform::GetLocalScale() const
 {
+	return m_localScale;
 }
 
 void Transform::SetLocalPosition(const Vector3& position)
 {
-	localPosition = position;
-	flags |= POSITION_CHANGED;
+	m_localPosition = position;
+	m_flags |= POSITION_CHANGED;
 
-	if(owner != nullptr)
+	if(m_pOwner)
 	{
-		owner->MarkAllChildrenTransformDirty();
+		m_pOwner->MarkAllChildrenTransformDirty();
 	}
 }
 
 void Transform::SetLocalRotation(const Quat& rotation)
 {
-	localRotation = rotation;
-	flags |= ROTATION_CHANGED;
+	m_localRotation = rotation;
+	m_flags |= ROTATION_CHANGED;
 
-	if(owner != nullptr)
+	if(m_pOwner)
 	{
-		owner->MarkAllChildrenTransformDirty();
+		m_pOwner->MarkAllChildrenTransformDirty();
 	}
 }
 
 void Transform::SetLocalScale(const Vector3& scale)
 {
-	localScale = scale;
-	flags |= SCALE_CHANGED;
+	m_localScale = scale;
+	m_flags |= SCALE_CHANGED;
 
-	if(owner != nullptr)
+	if(m_pOwner)
 	{
-		owner->MarkAllChildrenTransformDirty();
+		m_pOwner->MarkAllChildrenTransformDirty();
 	}
 }
 
 Matrix4 Transform::ConstructLocalMatrix() const
 {
-	Matrix4 mat = Matrix4(localRotation, localPosition);
-	mat.AppendScale(localScale);
+	Matrix4 mat = Matrix4(m_localRotation, m_localPosition);
+	mat.AppendScale(m_localScale);
 	return mat;
 }
 
 void Transform::CopyTo(Transform& other) const
 {
-	other.SetLocalPosition(localPosition);
-	other.SetLocalRotation(localRotation);
-	other.SetLocalScale(localScale);
+	other.SetLocalPosition(m_localPosition);
+	other.SetLocalRotation(m_localRotation);
+	other.SetLocalScale(m_localScale);
 }
 
 void Transform::ResetToIdentity()
 {
-	localPosition = Vector3::Zero();
-	localRotation = Quat::Identity();
-	localScale = Vector3(1.0f);
+	m_localPosition = Vector3::Zero();
+	m_localRotation = Quat::Identity();
+	m_localScale = Vector3(1.0f);
 
-	worldMatrix = (parent != nullptr) ? parent->GetWorldMatrix() : Matrix4::Identity();
-	flags &= ~WORLD_MATRIX_DIRTY;
+	m_worldMatrix = m_pParent ? m_pParent->GetWorldMatrix() : Matrix4::Identity();
+	m_flags &= ~WORLD_MATRIX_DIRTY;
 
-	if(owner != nullptr)
+	if(m_pOwner)
 	{
-		owner->MarkAllChildrenTransformDirty();
+		m_pOwner->MarkAllChildrenTransformDirty();
 	}
 }
 
@@ -77,9 +88,9 @@ Vector3 Transform::GetPosition() const
 
 void Transform::SetPosition(const Vector3& position)
 {
-	if(parent != nullptr)
+	if(m_pParent)
 	{
-		Matrix4 mat = parent->GetWorldMatrix();
+		Matrix4 mat = m_pParent->GetWorldMatrix();
 		mat.Invert();
 		mat *= Matrix4::CreateTranslation(position);
 		SetLocalPosition(mat.GetTranslation());
@@ -101,9 +112,9 @@ Quat Transform::GetRotation() const
 
 void Transform::SetRotation(const Quat& rotation)
 {
-	if(parent != nullptr)
+	if(m_pParent)
 	{
-		const Quat parentRotation = parent->GetRotation();
+		const Quat parentRotation = m_pParent->GetRotation();
 		SetLocalRotation(parentRotation.Conjugate() * rotation);
 	}
 	else
@@ -120,9 +131,9 @@ Vector3 Transform::GetScale() const
 
 void Transform::SetScale(const Vector3& scale)
 {
-	if(parent != nullptr)
+	if(m_pParent)
 	{
-		const Vector3 parentScale = parent->GetScale();
+		const Vector3 parentScale = m_pParent->GetScale();
 		SetLocalScale(scale / parentScale);
 	}
 	else
@@ -133,16 +144,16 @@ void Transform::SetScale(const Vector3& scale)
 
 const Matrix4& Transform::GetWorldMatrix() const
 {
-	if(flags & WORLD_MATRIX_DIRTY)
+	if(m_flags & WORLD_MATRIX_DIRTY)
 	{
-		worldMatrix = ConstructLocalMatrix();
-		if(parent != nullptr)
+		m_worldMatrix = ConstructLocalMatrix();
+		if(m_pParent)
 		{
-			worldMatrix = parent->GetWorldMatrix() * worldMatrix;
+			m_worldMatrix = m_pParent->GetWorldMatrix() * m_worldMatrix;
 		}
 
-		flags &= ~WORLD_MATRIX_DIRTY;
+		m_flags &= ~WORLD_MATRIX_DIRTY;
 	}
 
-	return worldMatrix;
+	return m_worldMatrix;
 }

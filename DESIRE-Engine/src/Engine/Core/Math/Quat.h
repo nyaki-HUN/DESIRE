@@ -82,15 +82,14 @@ public:
 
 	// Spherical linear interpolation
 	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
-	static inline Quat Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1);
+	static inline Quat Slerp(const Quat& unitQuat0, const Quat& unitQuat1, float t);
 
 	// Spherical quadrangle interpolation
 	static inline Quat Squad(float t, const Quat& unitQuat0, const Quat& unitQuat1, const Quat& unitQuat2, const Quat& unitQuat3)
 	{
-		return Quat::Slerp(
-			(2.0f * t) * (1.0f - t),
-			Quat::Slerp(t, unitQuat0, unitQuat3),
-			Quat::Slerp(t, unitQuat1, unitQuat2)
+		return Quat::Slerp(	Quat::Slerp(unitQuat0, unitQuat3, t),
+							Quat::Slerp(unitQuat1, unitQuat2, t),
+							(2.0f * t) * (1.0f - t)
 		);
 	}
 
@@ -169,7 +168,7 @@ inline Quat Quat::Conjugate() const
 }
 
 // Spherical linear interpolation between two quaternions
-inline Quat Quat::Slerp(float t, const Quat& unitQuat0, const Quat& unitQuat1)
+inline Quat Quat::Slerp(const Quat& unitQuat0, const Quat& unitQuat1, float t)
 {
 #if DESIRE_USE_SSE
 	__m128 cosAngle = SIMD::Dot4(unitQuat0, unitQuat1);

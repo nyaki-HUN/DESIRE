@@ -43,7 +43,7 @@ public:
 	double AsDouble() const;
 
 	// Compare strings
-	int Compare(const String& string) const;
+	int32_t Compare(const String& string) const;
 	bool Equals(const String& string) const;
 
 	bool operator ==(const String& string) const		{ return Equals(string); }

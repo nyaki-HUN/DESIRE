@@ -20,9 +20,9 @@ public:
 
 	virtual bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::Current) = 0;
 
-	inline int64_t GetSize() const		{ return m_fileSize; }
-	inline int64_t Tell() const			{ return m_position; }
-	inline bool IsEof() const			{ return m_position >= m_fileSize; }
+	int64_t GetSize() const;
+	int64_t Tell() const;
+	bool IsEof() const;
 
 	virtual void ReadBufferAsync(void* pBuffer, size_t size, std::function<void()> callback);
 	virtual size_t ReadBuffer(void* pBuffer, size_t size) = 0;

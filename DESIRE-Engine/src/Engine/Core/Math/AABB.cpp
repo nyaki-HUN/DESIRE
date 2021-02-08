@@ -1,51 +1,51 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/Math/AABB.h"
 
-AABB::AABB(const Vector3& minEdge, const Vector3& maxEdge)
-	: minEdge(minEdge)
-	, maxEdge(maxEdge)
+AABB::AABB(const Vector3& m_minEdge, const Vector3& m_maxEdge)
+	: m_minEdge(m_minEdge)
+	, m_maxEdge(m_maxEdge)
 {
 	// Make sure it is valid
-	ASSERT(minEdge <= maxEdge);
+	ASSERT(m_minEdge <= m_maxEdge);
 }
 
 bool AABB::IntersectsWithAABB(const AABB& other) const
 {
-	return (minEdge <= other.maxEdge && maxEdge >= other.minEdge);
+	return (m_minEdge <= other.m_maxEdge && m_maxEdge >= other.m_minEdge);
 }
 
 bool AABB::IntersectsWithAABB2D(const AABB& other) const
 {
-	return (minEdge.GetX() <= other.maxEdge.GetX() && minEdge.GetZ() <= other.maxEdge.GetZ() &&
-			maxEdge.GetX() >= other.minEdge.GetX() && maxEdge.GetZ() >= other.minEdge.GetZ());
+	return (m_minEdge.GetX() <= other.m_maxEdge.GetX() && m_minEdge.GetZ() <= other.m_maxEdge.GetZ() &&
+			m_maxEdge.GetX() >= other.m_minEdge.GetX() && m_maxEdge.GetZ() >= other.m_minEdge.GetZ());
 }
 
 bool AABB::IsAABBFullyInside(const AABB& other) const
 {
-	return (minEdge >= other.minEdge && maxEdge <= other.maxEdge);
+	return (m_minEdge >= other.m_minEdge && m_maxEdge <= other.m_maxEdge);
 }
 
 bool AABB::IsAABBFullyInside2D(const AABB& other) const
 {
-	return (minEdge.GetX() >= other.minEdge.GetX() && minEdge.GetZ() >= other.minEdge.GetZ() &&
-			maxEdge.GetX() <= other.maxEdge.GetX() && maxEdge.GetZ() <= other.maxEdge.GetZ());
+	return (m_minEdge.GetX() >= other.m_minEdge.GetX() && m_minEdge.GetZ() >= other.m_minEdge.GetZ() &&
+			m_maxEdge.GetX() <= other.m_maxEdge.GetX() && m_maxEdge.GetZ() <= other.m_maxEdge.GetZ());
 }
 
 bool AABB::IsPointInside(const Vector3& point) const
 {
-	return (minEdge <= point && point <= maxEdge);
+	return (m_minEdge <= point && point <= m_maxEdge);
 }
 
 bool AABB::IsPointInside2D(const Vector3& point) const
 {
-	return (minEdge.GetX() <= point.GetX() && point.GetX() <= maxEdge.GetX() &&
-			minEdge.GetZ() <= point.GetZ() && point.GetZ() <= maxEdge.GetZ());
+	return (m_minEdge.GetX() <= point.GetX() && point.GetX() <= m_maxEdge.GetX() &&
+			m_minEdge.GetZ() <= point.GetZ() && point.GetZ() <= m_maxEdge.GetZ());
 }
 
 void AABB::GetPoints(Vector3(&points)[8]) const
 {
 	const Vector3 center = GetCenter();
-	const Vector3 diag = center - maxEdge;
+	const Vector3 diag = center - m_maxEdge;
 
 /*	Edges are stored in this way:
 	   6---------7
@@ -58,14 +58,14 @@ void AABB::GetPoints(Vector3(&points)[8]) const
 	0---------1
 */
 
-	points[0] = minEdge;
-	points[1] = Vector3(maxEdge.GetX(), minEdge.GetY(), minEdge.GetZ());
-	points[2] = Vector3(minEdge.GetX(), minEdge.GetY(), maxEdge.GetZ());
-	points[3] = Vector3(maxEdge.GetX(), minEdge.GetY(), maxEdge.GetZ());
-	points[4] = Vector3(minEdge.GetX(), maxEdge.GetY(), minEdge.GetZ());
-	points[5] = Vector3(maxEdge.GetX(), maxEdge.GetY(), minEdge.GetZ());
-	points[6] = Vector3(minEdge.GetX(), maxEdge.GetY(), maxEdge.GetZ());
-	points[7] = maxEdge;
+	points[0] = m_minEdge;
+	points[1] = Vector3(m_maxEdge.GetX(), m_minEdge.GetY(), m_minEdge.GetZ());
+	points[2] = Vector3(m_minEdge.GetX(), m_minEdge.GetY(), m_maxEdge.GetZ());
+	points[3] = Vector3(m_maxEdge.GetX(), m_minEdge.GetY(), m_maxEdge.GetZ());
+	points[4] = Vector3(m_minEdge.GetX(), m_maxEdge.GetY(), m_minEdge.GetZ());
+	points[5] = Vector3(m_maxEdge.GetX(), m_maxEdge.GetY(), m_minEdge.GetZ());
+	points[6] = Vector3(m_minEdge.GetX(), m_maxEdge.GetY(), m_maxEdge.GetZ());
+	points[7] = m_maxEdge;
 }
 
 void AABB::GetPoints2D(Vector3(&points)[4]) const
@@ -77,8 +77,40 @@ void AABB::GetPoints2D(Vector3(&points)[4]) const
 	0---------1
 */
 
-	points[0] = Vector3(minEdge.GetX(), 0.0f, minEdge.GetZ());
-	points[1] = Vector3(maxEdge.GetX(), 0.0f, minEdge.GetZ());
-	points[2] = Vector3(minEdge.GetX(), 0.0f, maxEdge.GetZ());
-	points[3] = Vector3(maxEdge.GetX(), 0.0f, maxEdge.GetZ());
+	points[0] = Vector3(m_minEdge.GetX(), 0.0f, m_minEdge.GetZ());
+	points[1] = Vector3(m_maxEdge.GetX(), 0.0f, m_minEdge.GetZ());
+	points[2] = Vector3(m_minEdge.GetX(), 0.0f, m_maxEdge.GetZ());
+	points[3] = Vector3(m_maxEdge.GetX(), 0.0f, m_maxEdge.GetZ());
+}
+
+Vector3 AABB::GetCenter() const
+{
+	return (m_minEdge + m_maxEdge) * 0.5f; 
+}
+
+Vector3 AABB::GetSize() const
+{
+	return m_maxEdge - m_minEdge; 
+}
+
+const Vector3& AABB::GetMinEdge() const
+{
+	return m_minEdge;
+}
+
+const Vector3& AABB::GetMaxEdge() const
+{
+	return m_maxEdge;
+}
+
+void AABB::AddPoint(const Vector3& other)
+{
+	m_minEdge = Vector3::MinPerElem(m_minEdge, other);
+	m_maxEdge = Vector3::MaxPerElem(m_maxEdge, other);
+}
+
+void AABB::AddAABB(const AABB& other)
+{
+	AddPoint(other.m_minEdge);
+	AddPoint(other.m_maxEdge);
 }

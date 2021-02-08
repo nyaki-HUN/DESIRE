@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-static int s_inotifyFD = -1;		// inotify file descriptor
+static int32_t s_inotifyFD = -1;		// inotify file descriptor
 
 // --------------------------------------------------------------------------------------------------------------------
 //	FileSystemWatcherImpl
@@ -16,7 +16,7 @@ static int s_inotifyFD = -1;		// inotify file descriptor
 class FileSystemWatcherImpl
 {
 public:
-	int wd = -1;
+	int32_t wd = -1;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ FileSystemWatcher::FileSystemWatcher(const String& directory, std::function<void
 		}
 	}
 
-	int wd = inotify_add_watch(s_inotifyFD, directory.Str(), IN_CLOSE_WRITE | IN_MOVED_FROM | IN_MOVED_TO | IN_CREATE | IN_DELETE);
+	int32_t wd = inotify_add_watch(s_inotifyFD, directory.Str(), IN_CLOSE_WRITE | IN_MOVED_FROM | IN_MOVED_TO | IN_CREATE | IN_DELETE);
 	if(wd < 0)
 	{
 		LOG_ERROR("FileSystemWatcher error: %s", strerror(errno));
@@ -64,7 +64,7 @@ void FileSystemWatcher::UpdateAll()
 	FD_ZERO(&read);
 	FD_SET(s_inotifyFD, &read);
 
-	int ret = select(s_inotifyFD + 1, &read, nullptr, nullptr, &timeout);
+	int32_t ret = select(s_inotifyFD + 1, &read, nullptr, nullptr, &timeout);
 	if(ret < 0)
 	{
 		LOG_ERROR("Error calling select() in FileSystemWatcher");

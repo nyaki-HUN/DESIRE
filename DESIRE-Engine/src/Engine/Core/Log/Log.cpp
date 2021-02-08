@@ -31,9 +31,9 @@ void Log::LogWithData(const LogData& logData)
 	}
 }
 
-void Log::LogWithFormat(const char* pFilename, int line, const char* pLogType, const char* pFormat, ...)
+void Log::LogWithFormat(const char* pFilename, int32_t line, const char* pLogType, const char* pFormat, ...)
 {
-	LogData logData;
+	LogData logData = {};
 	logData.pFilename = pFilename;
 	logData.line = line;
 	logData.pLogType = pLogType;
