@@ -17,7 +17,7 @@ void RegisterCoreAPI_Lua(sol::state_view& lua)
 
 	// Object
 	auto object = lua.new_usertype<Object>("Object");
-	object.set_function("GetObjectName", &Object::GetObjectName);
+//	object.set_function("GetObjectName", &Object::GetObjectName);
 	object.set_function("SetActive", &Object::SetActive);
 	object.set_function("IsActiveSelf", &Object::IsActiveSelf);
 	object.set_function("IsActiveInHierarchy", &Object::IsActiveInHierarchy);

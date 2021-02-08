@@ -37,14 +37,14 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	vector3.set_function("AbsPerElem", &Vector3::AbsPerElem);
 	vector3.set_function("GetMaxElem", &Vector3::GetMaxElem);
 	vector3.set_function("GetMinElem", &Vector3::GetMinElem);
-	vector3.set_function("MaxPerElem", &Vector3::MaxPerElem);
-	vector3.set_function("MinPerElem", &Vector3::MinPerElem);
-	vector3.set_function("Slerp", &Vector3::Slerp);
-	vector3.set_function("Zero", &Vector3::Zero);
-	vector3.set_function("One", &Vector3::One);
-	vector3.set_function("AxisX", &Vector3::AxisX);
-	vector3.set_function("AxisY", &Vector3::AxisY);
-	vector3.set_function("AxisZ", &Vector3::AxisZ);
+	vector3.set("MaxPerElem", &Vector3::MaxPerElem);
+	vector3.set("MinPerElem", &Vector3::MinPerElem);
+	vector3.set("Slerp", &Vector3::Slerp);
+	vector3.set("Zero", &Vector3::Zero);
+	vector3.set("One", &Vector3::One);
+	vector3.set("AxisX", &Vector3::AxisX);
+	vector3.set("AxisY", &Vector3::AxisY);
+	vector3.set("AxisZ", &Vector3::AxisZ);
 
 	// Vector4
 	auto vector4 = lua.new_usertype<Vector4>("Vector4", sol::constructors<
@@ -80,13 +80,13 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	vector4.set_function("AbsPerElem", &Vector4::AbsPerElem);
 	vector4.set_function("GetMaxElem", &Vector4::GetMaxElem);
 	vector4.set_function("GetMinElem", &Vector4::GetMinElem);
-	vector4.set_function("MaxPerElem", &Vector4::MaxPerElem);
-	vector4.set_function("MinPerElem", &Vector4::MinPerElem);
-	vector4.set_function("Slerp", &Vector4::Slerp);
-	vector4.set_function("AxisX", &Vector4::AxisX);
-	vector4.set_function("AxisY", &Vector4::AxisY);
-	vector4.set_function("AxisZ", &Vector4::AxisZ);
-	vector4.set_function("AxisZ", &Vector4::AxisW);
+	vector4.set("MaxPerElem", &Vector4::MaxPerElem);
+	vector4.set("MinPerElem", &Vector4::MinPerElem);
+	vector4.set("Slerp", &Vector4::Slerp);
+	vector4.set("AxisX", &Vector4::AxisX);
+	vector4.set("AxisY", &Vector4::AxisY);
+	vector4.set("AxisZ", &Vector4::AxisZ);
+	vector4.set("AxisZ", &Vector4::AxisW);
 
 	// Quat
 	auto quat = lua.new_usertype<Quat>("Quat", sol::constructors<
@@ -105,14 +105,14 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	quat.set_function("RotateVec", &Quat::RotateVec);
 	quat.set_function("Normalize", &Quat::Normalize);
 	quat.set_function("Normalized", &Quat::Normalized);
-	quat.set_function("Slerp", &Quat::Slerp);
-	quat.set_function("Squad", &Quat::Squad);
-	quat.set_function("Identity", &Quat::Identity);
-	quat.set_function("CreateRotation", &Quat::CreateRotation);
-	quat.set_function("CreateRotationX", &Quat::CreateRotationX);
-	quat.set_function("CreateRotationY", &Quat::CreateRotationY);
-	quat.set_function("CreateRotationZ", &Quat::CreateRotationZ);
-	quat.set_function("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles);
+	quat.set("Slerp", &Quat::Slerp);
+	quat.set("Squad", &Quat::Squad);
+	quat.set("Identity", &Quat::Identity);
+	quat.set("CreateRotationX", &Quat::CreateRotationX);
+	quat.set("CreateRotationY", &Quat::CreateRotationY);
+	quat.set("CreateRotationZ", &Quat::CreateRotationZ);
+	quat.set("CreateRotation", &Quat::CreateRotation);
+	quat.set("CreateRotationFromEulerAngles", &Quat::CreateRotationFromEulerAngles);
 
 	// Matrix3
 	auto matrix3 = lua.new_usertype<Matrix3>("Matrix3", sol::constructors<
@@ -138,13 +138,13 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	matrix3.set_function("Transpose", &Matrix3::Transpose);
 	matrix3.set_function("Invert", &Matrix3::Invert);
 	matrix3.set_function("CalculateDeterminant", &Matrix3::CalculateDeterminant);
-	matrix3.set_function("Identity", &Matrix3::Identity);
-	matrix3.set_function("CreateRotationX", &Matrix3::CreateRotationX);
-	matrix3.set_function("CreateRotationY", &Matrix3::CreateRotationY);
-	matrix3.set_function("CreateRotationZ", &Matrix3::CreateRotationZ);
-	matrix3.set_function("CreateRotationZYX", &Matrix3::CreateRotationZYX);
-	matrix3.set_function("CreateRotation", &Matrix3::CreateRotation);
-	matrix3.set_function("CreateScale", &Matrix3::CreateScale);
+	matrix3.set("Identity", &Matrix3::Identity);
+	matrix3.set("CreateRotationX", &Matrix3::CreateRotationX);
+	matrix3.set("CreateRotationY", &Matrix3::CreateRotationY);
+	matrix3.set("CreateRotationZ", &Matrix3::CreateRotationZ);
+	matrix3.set("CreateRotationZYX", &Matrix3::CreateRotationZYX);
+	matrix3.set("CreateRotation", &Matrix3::CreateRotation);
+	matrix3.set("CreateScale", &Matrix3::CreateScale);
 
 	// Matrix4
 	auto matrix4 = lua.new_usertype<Matrix4>("Matrix4", sol::constructors<
@@ -179,13 +179,14 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	matrix4.set_function("AffineInvert", &Matrix4::AffineInvert);
 	matrix4.set_function("OrthoInvert", &Matrix4::OrthoInvert);
 	matrix4.set_function("CalculateDeterminant", &Matrix4::CalculateDeterminant);
-	matrix4.set_function("CreateTranslation", &Matrix4::CreateTranslation);
-	matrix4.set_function("CreateRotationX", &Matrix4::CreateRotationX);
-	matrix4.set_function("CreateRotationY", &Matrix4::CreateRotationY);
-	matrix4.set_function("CreateRotationZ", &Matrix4::CreateRotationZ);
-	matrix4.set_function("CreateRotationZYX", &Matrix4::CreateRotationZYX);
-	matrix4.set_function("CreateRotation", &Matrix4::CreateRotation);
-	matrix4.set_function("CreateScale", &Matrix4::CreateScale);
+	matrix4.set("Identity", &Matrix4::Identity);
+	matrix4.set("CreateTranslation", &Matrix4::CreateTranslation);
+	matrix4.set("CreateRotationX", &Matrix4::CreateRotationX);
+	matrix4.set("CreateRotationY", &Matrix4::CreateRotationY);
+	matrix4.set("CreateRotationZ", &Matrix4::CreateRotationZ);
+	matrix4.set("CreateRotationZYX", &Matrix4::CreateRotationZYX);
+	matrix4.set("CreateRotation", &Matrix4::CreateRotation);
+	matrix4.set("CreateScale", &Matrix4::CreateScale);
 
 	// Transform
 	auto transform = lua.new_usertype<Transform>("Transform");
