@@ -23,8 +23,9 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 
 	// Component
 	rootTable.Bind("Component", Sqrat::Class<Component, Sqrat::NoConstructor<Component>>(vm, "Component")
-		.Prop("enabled", &Component::IsEnabled, &Component::SetEnabled)
-		.Prop("object", &Component::GetObject)
+		.Func("IsEnabled", &Component::IsEnabled)
+		.Func("SetEnabled", &Component::SetEnabled)
+		.Func("GetObject", &Component::GetObject)
 	);
 
 	// Object
@@ -35,8 +36,9 @@ void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 		.Func("IsActiveInHierarchy", &Object::IsActiveInHierarchy)
 		.Func("RemoveComponent", &Object::RemoveComponent)
 		.Func("GetComponent", &Object::GetComponentByTypeId)
-		.Prop("transform", &Object::GetTransform)
-		.Prop("parent", &Object::GetParent, &Object::SetParent)
+		.Func("GetTransform", &Object::GetTransform)
+		.Func("GetParent", &Object::GetParent)
+		.Func("SetParent", &Object::SetParent)
 	);
 
 	// Timer

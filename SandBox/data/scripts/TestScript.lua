@@ -28,20 +28,21 @@ function Update()
 	pos = pos + pos2;
 	pos = -pos;
 
-	local renderComp = self.object:GetRenderComponent();
+	local object = self:GetObject();
+	local renderComp = object:GetRenderComponent();
 	if(renderComp ~= nil) then
 		
 	end
 
-	self.object.transform.position = pos;
-	print("x = ", self.object.transform.position.x);
+	object:GetTransform().position = pos;
+	print("x = ", object:GetTransform().position.x);
 
 	-- Static function test
 	local mat = Matrix4.CreateTranslation(Vector3.new(100.0, 2.0, 0.0));
 end
 
 function TestCallFromOtherScript(caller)
-	print("TestCallFromOtherScript called by ", caller.object:GetObjectName());
+	print("TestCallFromOtherScript called by ", caller:GetObject():GetObjectName());
 end
 
 function TestCallFromOtherScript2(arg1, arg2)

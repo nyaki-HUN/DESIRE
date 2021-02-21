@@ -33,14 +33,15 @@ void Update()
 	pos += pos2;
 	pos = -pos;
 
-	RenderComponent@ renderComp = self.object.GetComponent(kRenderComponent);
+	Object@ object = self.GetObject();
+	RenderComponent@ renderComp = object.GetComponent(kRenderComponent);
 	if(@renderComp != null)
 	{
 		
 	}
 
-	self.object.transform.position = pos;
-	print("x = " + self.object.transform.position.x);
+	object.GetTransform().position = pos;
+	print("x = " + object.GetTransform().position.x);
 
 	// Static function test
 	Matrix4 mat = Matrix4::CreateTranslation(Vector3(100.0, 2.0, 0.0));
@@ -48,7 +49,7 @@ void Update()
 
 void TestCallFromOtherScript(ScriptComponent@ caller)
 {
-	print("TestCallFromOtherScript called by " + caller.object.GetObjectName());
+	print("TestCallFromOtherScript called by " + caller.GetObject().GetObjectName());
 }
 
 void TestCallFromOtherScript2(int arg1, float arg2)

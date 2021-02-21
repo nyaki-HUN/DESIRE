@@ -6,7 +6,7 @@
 #define ANGELSCRIPT_API_REGISTER_COMPONENT(CLASS)																																				\
 	result = engine.RegisterEnumValue("EComponent", "k"#CLASS, CLASS::kTypeId);																					ASSERT(result >= asSUCCESS);	\
 	result = engine.RegisterObjectType(#CLASS, 0, asOBJ_REF | asOBJ_NOCOUNT);																					ASSERT(result >= asSUCCESS);	\
-	result = engine.RegisterObjectMethod(#CLASS, "Object& get_object() const property", asMETHOD(Component, GetObject), asCALL_THISCALL);						ASSERT(result >= asSUCCESS);	\
+	result = engine.RegisterObjectMethod(#CLASS, "Object& GetObject() const", asMETHOD(Component, GetObject), asCALL_THISCALL);									ASSERT(result >= asSUCCESS);	\
 	result = engine.RegisterObjectMethod(#CLASS, "Component@ opImplCast()", asFUNCTION((AngelScriptAPI<CLASS>::RefCast<Component>)), asCALL_CDECL_OBJLAST);		ASSERT(result >= asSUCCESS);	\
 	result = engine.RegisterObjectMethod("Component", #CLASS"@ opImplCast()", asFUNCTION((AngelScriptAPI<Component>::RefCast<CLASS>)), asCALL_CDECL_OBJLAST);	ASSERT(result >= asSUCCESS)
 

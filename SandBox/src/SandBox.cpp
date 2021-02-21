@@ -56,6 +56,7 @@ void SandBox::Init()
 	//////////
 
 	m_pScriptedObject = new Object();
+	m_pScriptedObject->SetObjectName("TestObject");
 	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_pScriptedObject, "TestScript");
 	ScriptComponent* scriptComp = m_pScriptedObject->GetComponent<ScriptComponent>();
 	if(scriptComp != nullptr)
