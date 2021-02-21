@@ -12,8 +12,8 @@ void RegisterCoreAPI_Lua(sol::state_view& lua)
 {
 	// Component
 	auto component = lua.new_usertype<Component>("Component");
-	component.set_function("IsEnabled", &Component::IsEnabled);
 	component.set_function("SetEnabled", &Component::SetEnabled);
+	component.set_function("IsEnabled", &Component::IsEnabled);
 	component.set_function("GetObject", &Component::GetObject);
 
 	// Object
@@ -22,11 +22,11 @@ void RegisterCoreAPI_Lua(sol::state_view& lua)
 	object.set_function("SetActive", &Object::SetActive);
 	object.set_function("IsActiveSelf", &Object::IsActiveSelf);
 	object.set_function("IsActiveInHierarchy", &Object::IsActiveInHierarchy);
+	object.set_function("SetParent", &Object::SetParent);
+	object.set_function("GetParent", &Object::GetParent);
 	object.set_function("RemoveComponent", &Object::RemoveComponent);
 	object.set_function("GetComponent", &Object::GetComponentByTypeId);
 	object.set_function("GetTransform", &Object::GetTransform);
-	object.set_function("GetParent", &Object::GetParent);
-	object.set_function("SetParent", &Object::SetParent);
 
 	// Timer
 	auto timer = lua.new_usertype<Timer>("ITimer");

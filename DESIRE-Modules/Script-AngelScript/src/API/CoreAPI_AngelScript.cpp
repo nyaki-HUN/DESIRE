@@ -16,8 +16,8 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine& engine)
 
 	// Component
 	result = engine.RegisterInterface("Component");																							ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectMethod("Component", "bool IsEnabled() const", asMETHOD(Component, IsEnabled), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Component", "void SetEnabled(bool)", asMETHOD(Component, SetEnabled), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("Component", "bool IsEnabled() const", asMETHOD(Component, IsEnabled), asCALL_THISCALL);			ASSERT(result >= asSUCCESS);
 	result = engine.RegisterInterfaceMethod("Component", "Object& GetObject() const");														ASSERT(result >= asSUCCESS);
 
 	// Object
@@ -25,11 +25,11 @@ void RegisterCoreAPI_AngelScript(asIScriptEngine& engine)
 	result = engine.RegisterObjectMethod("Object", "void SetActive(bool)", asMETHOD(Object, SetActive), asCALL_THISCALL);																	ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Object", "bool IsActiveSelf() const", asMETHOD(Object, IsActiveSelf), asCALL_THISCALL);															ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Object", "bool IsActiveInHierarchy() const", asMETHOD(Object, IsActiveInHierarchy), asCALL_THISCALL);												ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("Object", "void SetParent(Object@)", asMETHOD(Object, SetParent), asCALL_THISCALL);																ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHOD(Object, GetParent), asCALL_THISCALL);																ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Object", "void RemoveComponent(Component@)", asMETHOD(Object, RemoveComponent), asCALL_THISCALL);													ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Object", "Component@ GetComponent(EComponent) const", asMETHOD(Object, GetComponentByTypeId), asCALL_THISCALL);									ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Object", "Transform& GetTransform() const", asMETHOD(Object, GetTransform), asCALL_THISCALL);														ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectMethod("Object", "Object@ GetParent() const", asMETHOD(Object, GetParent), asCALL_THISCALL);																ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectMethod("Object", "void SetParent(Object@)", asMETHOD(Object, SetParent), asCALL_THISCALL);																ASSERT(result >= asSUCCESS);
 
 	// Timer
 	result = engine.RegisterObjectType("ITimer", 0, asOBJ_REF | asOBJ_NOHANDLE);															ASSERT(result >= asSUCCESS);
