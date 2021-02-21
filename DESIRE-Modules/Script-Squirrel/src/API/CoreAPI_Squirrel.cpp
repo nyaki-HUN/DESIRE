@@ -8,15 +8,6 @@
 #include "Engine/Core/Object.h"
 #include "Engine/Core/Timer.h"
 
-template<>
-struct Sqrat::Var<const String&>
-{
-	static void push(HSQUIRRELVM vm, const String& string)
-	{
-		sq_pushstring(vm, string.Str(), string.Length());
-	}
-};
-
 void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable)
 {
 	HSQUIRRELVM vm = rootTable.GetVM();

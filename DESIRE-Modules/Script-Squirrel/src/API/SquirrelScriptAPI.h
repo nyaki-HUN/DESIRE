@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Core/String/String.h"
+
 // Engine API register functions
 void RegisterCoreAPI_Math_Squirrel(Sqrat::RootTable& rootTable);
 void RegisterCoreAPI_Squirrel(Sqrat::RootTable& rootTable);
@@ -113,5 +115,14 @@ private:
 
 		Sqrat::PushVar(vm, thisVar.value / otherVar.value);
 		return true;
+	}
+};
+
+template<>
+struct Sqrat::Var<const String&>
+{
+	static void push(HSQUIRRELVM vm, const String& string)
+	{
+		sq_pushstring(vm, string.Str(), string.Length());
 	}
 };
