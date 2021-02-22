@@ -10,17 +10,14 @@ public:
 	inline Vector3(float x, float y, float z)	: m_vec128(SIMD::Construct(x, y, z))	{}
 
 	// Load x, y, and z elements from the first three elements of a float array
-	inline void LoadXYZ(const float *fptr)
-	{
-		*this = Vector3(fptr[0], fptr[1], fptr[2]);
-	}
+	inline void LoadXYZ(const float* pValues)				{ *this = Vector3(pValues[0], pValues[1], pValues[2]); }
 
 	// Store x, y, and z elements in the first three elements of a float array
-	inline void StoreXYZ(float *fptr) const
+	inline void StoreXYZ(float* pValues) const
 	{
-		fptr[0] = GetX();
-		fptr[1] = GetY();
-		fptr[2] = GetZ();
+		pValues[0] = GetX();
+		pValues[1] = GetY();
+		pValues[2] = GetZ();
 	}
 
 	inline void SetX(float x)								{ m_vec128 = SIMD::SetX(*this, x); }

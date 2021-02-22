@@ -7,30 +7,30 @@ class Matrix3;
 class Quat
 {
 public:
-	inline Quat()																			{}
-	inline Quat(simd128_t vec)						: vec128(vec)							{}
-	inline Quat(float x, float y, float z, float w) : vec128(SIMD::Construct(x, y, z, w))	{}
+	inline Quat() = default;
+	inline Quat(simd128_t vec)						: m_vec128(vec)							{}
+	inline Quat(float x, float y, float z, float w) : m_vec128(SIMD::Construct(x, y, z, w))	{}
 	explicit inline Quat(const Matrix3& rotMat);
 
 	// Load x, y, z, and w elements from the first four elements of a float array
-	inline void LoadXYZW(const float *fptr)					{ vec128 = SIMD::LoadXYZW(fptr); }
+	inline void LoadXYZW(const float* pValues)					{ m_vec128 = SIMD::LoadXYZW(pValues); }
 
 	// Store x, y, z, and w elements in the first four elements of a float array
-	inline void StoreXYZW(float *fptr) const				{ SIMD::StoreXYZW(*this, fptr); }
+	inline void StoreXYZW(float* pValues) const				{ SIMD::StoreXYZW(*this, pValues); }
 
-	inline void SetX(float x)								{ vec128 = SIMD::SetX(*this, x); }
-	inline void SetY(float y)								{ vec128 = SIMD::SetY(*this, y); }
-	inline void SetZ(float z)								{ vec128 = SIMD::SetZ(*this, z); }
-	inline void SetW(float w)								{ vec128 = SIMD::SetW(*this, w); }
+	inline void SetX(float x)								{ m_vec128 = SIMD::SetX(*this, x); }
+	inline void SetY(float y)								{ m_vec128 = SIMD::SetY(*this, y); }
+	inline void SetZ(float z)								{ m_vec128 = SIMD::SetZ(*this, z); }
+	inline void SetW(float w)								{ m_vec128 = SIMD::SetW(*this, w); }
 
 	inline float GetX() const								{ return SIMD::GetX(*this); }
 	inline float GetY() const								{ return SIMD::GetY(*this); }
 	inline float GetZ() const								{ return SIMD::GetZ(*this); }
 	inline float GetW() const								{ return SIMD::GetW(*this); }
 
-	inline operator simd128_t() const						{ return vec128; }
+	inline operator simd128_t() const						{ return m_vec128; }
 
-	inline Quat& operator =(const Quat& quat)				{ vec128 = quat; return *this; }
+	inline Quat& operator =(const Quat& quat)				{ m_vec128 = quat; return *this; }
 
 	inline Quat operator -() const							{ return SIMD::Negate(*this); }
 	inline Quat operator +(const Quat& quat) const			{ return SIMD::Add(*this, quat); }
@@ -106,7 +106,7 @@ public:
 	static inline Quat CreateRotationFromEulerAngles(const Vector3& radiansXYZ);
 
 private:
-	simd128_t vec128;
+	simd128_t m_vec128;
 };
 
 // --------------------------------------------------------------------------------------------------------------------

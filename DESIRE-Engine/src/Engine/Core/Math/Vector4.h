@@ -12,10 +12,10 @@ public:
 	explicit inline Vector4(const Vector3& vec)			: Vector4(vec, 0.0f)					{}
 
 	// Load x, y, z, and w elements from the first four elements of a float array
-	inline void LoadXYZW(const float *fptr)					{ m_vec128 = SIMD::LoadXYZW(fptr); }
+	inline void LoadXYZW(const float* pValues)				{ m_vec128 = SIMD::LoadXYZW(pValues); }
 
 	// Store x, y, z, and w elements in the first four elements of a float array
-	inline void StoreXYZW(float *fptr) const				{ SIMD::StoreXYZW(*this, fptr); }
+	inline void StoreXYZW(float* pValues) const				{ SIMD::StoreXYZW(*this, pValues); }
 
 	inline void SetXYZ(const Vector3& vec)					{ m_vec128 = SIMD::Blend_W(vec, *this); }
 	inline Vector3 GetXYZ() const							{ return m_vec128; }
