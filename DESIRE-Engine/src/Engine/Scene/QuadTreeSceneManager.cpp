@@ -204,9 +204,9 @@ void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* pCamera, Vector3
 			pNormals[numNormals] = n;
 			pointDotNormal[numNormals] = n.Dot(points[i]);
 			numNormals++;
-			if(m_pDebugDraw != nullptr)
+			if(m_pDebugDraw)
 			{
-				const Vector3 colorWhite(1.0);
+				const Vector3 colorWhite = Vector3::One();
 				m_pDebugDraw->AddLine(points[i], points[i + 4], colorWhite);
 				m_pDebugDraw->AddLine(Vector3(points[i + 4] + (points[i] - points[i + 4]) / 2), Vector3(points[i + 4] + (points[i] - points[i + 4]) / 2 + n * 20.0f), colorWhite);
 			}

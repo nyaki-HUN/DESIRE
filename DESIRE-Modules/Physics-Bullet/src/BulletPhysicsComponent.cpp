@@ -14,20 +14,20 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	: PhysicsComponent(object)
 	, m_dynamic(dynamic)
 {
-	int* pIndices = nullptr;
+	int32_t* pIndices = nullptr;
 	float* pVertices = nullptr;
 
 	uint32_t numIndices = 0;
 	uint32_t numVertices = 0;
 
-	int stride = 3;
+	int32_t stride = 3;
 
 	btCollisionShape* pCollisionShape = nullptr;
 	btVector3 localInertia(0.0f, 0.0f, 0.0f);
 
 	if(dynamic)
 	{
-		AABB aabb(Vector3(FLT_MAX), Vector3(-FLT_MAX));
+		AABB aabb(Vector3(FLT_MAX, FLT_MAX, FLT_MAX), Vector3(-FLT_MAX, -FLT_MAX, -FLT_MAX));
 		for(uint32_t i = 0; i < numVertices; i++)
 		{
 			aabb.AddPoint(Vector3(pVertices[i * stride + 0], pVertices[i * stride + 1], pVertices[i * stride + 2]));
@@ -58,12 +58,12 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	else
 	{
 		btIndexedMesh mesh;
-		mesh.m_numTriangles = static_cast<int>(numIndices) / 3;
+		mesh.m_numTriangles = static_cast<int32_t>(numIndices) / 3;
 		mesh.m_triangleIndexBase = reinterpret_cast<uint8_t*>(pIndices);
-		mesh.m_triangleIndexStride = 3 * sizeof(int);
-		mesh.m_numVertices = static_cast<int>(numVertices);
+		mesh.m_triangleIndexStride = 3 * sizeof(int32_t);
+		mesh.m_numVertices = static_cast<int32_t>(numVertices);
 		mesh.m_vertexBase = reinterpret_cast<uint8_t*>(pVertices);
-		mesh.m_vertexStride = static_cast<int>(stride * sizeof(float));
+		mesh.m_vertexStride = static_cast<int32_t>(stride * sizeof(float));
 
 		m_pTriangleIndexVertexArrays = new btTriangleIndexVertexArray();
 		m_pTriangleIndexVertexArrays->addIndexedMesh(mesh);
@@ -83,7 +83,7 @@ BulletPhysicsComponent::BulletPhysicsComponent(Object& object, bool dynamic)
 	m_pBody->setUserPointer(this);
 
 	btDynamicsWorld& world = static_cast<BulletPhysics*>(Modules::Physics.get())->GetWorld();
-	world.addRigidBody(m_pBody, 1 << static_cast<int>(m_collisionLayer), Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer));
+	world.addRigidBody(m_pBody, 1 << static_cast<int32_t>(m_collisionLayer), Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer));
 
 	if(dynamic)
 	{
@@ -143,7 +143,7 @@ void BulletPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer collisionL
 	}
 
 	btBroadphaseProxy* pHandle = m_pBody->getBroadphaseHandle();
-	pHandle->m_collisionFilterGroup = 1 << static_cast<int>(m_collisionLayer);
+	pHandle->m_collisionFilterGroup = 1 << static_cast<int32_t>(m_collisionLayer);
 	pHandle->m_collisionFilterMask = Modules::Physics->GetMaskForCollisionLayer(m_collisionLayer);
 }
 
@@ -178,7 +178,7 @@ Array<PhysicsComponent*> BulletPhysicsComponent::GetActiveCollidingComponents() 
 
 void BulletPhysicsComponent::SetBodyType(EBodyType bodyType)
 {
-	int flags = m_pBody->getCollisionFlags();
+	int32_t flags = m_pBody->getCollisionFlags();
 
 	// Remove flags
 	flags &= ~btCollisionObject::CF_KINEMATIC_OBJECT;

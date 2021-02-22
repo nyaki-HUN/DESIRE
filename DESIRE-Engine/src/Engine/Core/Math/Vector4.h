@@ -5,26 +5,25 @@
 class Vector4
 {
 public:
-	inline Vector4()																			{}
-	inline Vector4(simd128_t vec)						: vec128(vec)							{}
-	inline Vector4(float x, float y, float z, float w)	: vec128(SIMD::Construct(x, y, z, w))	{}
-	explicit inline Vector4(float scalar)				: vec128(SIMD::Construct(scalar))		{}
-	inline Vector4(const Vector3& xyz, float w)			: vec128(SIMD::SetW(xyz, w))			{}
+	inline Vector4() = default;
+	inline Vector4(simd128_t vec)						: m_vec128(vec)							{}
+	inline Vector4(float x, float y, float z, float w)	: m_vec128(SIMD::Construct(x, y, z, w))	{}
+	inline Vector4(const Vector3& xyz, float w)			: m_vec128(SIMD::SetW(xyz, w))			{}
 	explicit inline Vector4(const Vector3& vec)			: Vector4(vec, 0.0f)					{}
 
 	// Load x, y, z, and w elements from the first four elements of a float array
-	inline void LoadXYZW(const float *fptr)					{ vec128 = SIMD::LoadXYZW(fptr); }
+	inline void LoadXYZW(const float *fptr)					{ m_vec128 = SIMD::LoadXYZW(fptr); }
 
 	// Store x, y, z, and w elements in the first four elements of a float array
 	inline void StoreXYZW(float *fptr) const				{ SIMD::StoreXYZW(*this, fptr); }
 
-	inline void SetXYZ(const Vector3& vec)					{ vec128 = SIMD::Blend_W(vec, *this); }
-	inline Vector3 GetXYZ() const							{ return vec128; }
+	inline void SetXYZ(const Vector3& vec)					{ m_vec128 = SIMD::Blend_W(vec, *this); }
+	inline Vector3 GetXYZ() const							{ return m_vec128; }
 
-	inline void SetX(float x)								{ vec128 = SIMD::SetX(*this, x); }
-	inline void SetY(float y)								{ vec128 = SIMD::SetY(*this, y); }
-	inline void SetZ(float z)								{ vec128 = SIMD::SetZ(*this, z); }
-	inline void SetW(float w)								{ vec128 = SIMD::SetW(*this, w); }
+	inline void SetX(float x)								{ m_vec128 = SIMD::SetX(*this, x); }
+	inline void SetY(float y)								{ m_vec128 = SIMD::SetY(*this, y); }
+	inline void SetZ(float z)								{ m_vec128 = SIMD::SetZ(*this, z); }
+	inline void SetW(float w)								{ m_vec128 = SIMD::SetW(*this, w); }
 
 	inline float GetX() const								{ return SIMD::GetX(*this); }
 	inline float GetY() const								{ return SIMD::GetY(*this); }
@@ -36,9 +35,9 @@ public:
 	inline Vector4 WithZ(float z) const						{ return SIMD::SetZ(*this, z); }
 	inline Vector4 WithW(float w) const						{ return SIMD::SetW(*this, w); }
 
-	inline operator simd128_t() const						{ return vec128; }
+	inline operator simd128_t() const						{ return m_vec128; }
 
-	inline Vector4& operator =(const Vector4& vec)			{ vec128 = vec; return *this; }
+	inline Vector4& operator =(const Vector4& vec)			{ m_vec128 = vec; return *this; }
 
 	inline Vector4 operator -() const						{ return SIMD::Negate(*this); }
 	inline Vector4 operator +(const Vector4& vec) const		{ return SIMD::Add(*this, vec); }
@@ -92,14 +91,15 @@ public:
 		return unitVec0 * scale0 + unitVec1 * scale1;
 	}
 
-	static inline Vector4 Zero()		{ return Vector4(0.0f); }
+	static inline Vector4 Zero()		{ return SIMD::Construct(0.0f); }
+	static inline Vector4 One()			{ return SIMD::Construct(1.0f); }
 	static inline Vector4 AxisX()		{ return Vector4(1.0f, 0.0f, 0.0f, 0.0f); }
 	static inline Vector4 AxisY()		{ return Vector4(0.0f, 1.0f, 0.0f, 0.0f); }
 	static inline Vector4 AxisZ()		{ return Vector4(0.0f, 0.0f, 1.0f, 0.0f); }
 	static inline Vector4 AxisW()		{ return Vector4(0.0f, 0.0f, 0.0f, 1.0f); }
 
 private:
-	simd128_t vec128;
+	simd128_t m_vec128;
 };
 
 inline Vector4 operator *(float scalar, const Vector4& vec)

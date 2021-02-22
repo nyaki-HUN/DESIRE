@@ -70,7 +70,7 @@ void Transform::ResetToIdentity()
 {
 	m_localPosition = Vector3::Zero();
 	m_localRotation = Quat::Identity();
-	m_localScale = Vector3(1.0f);
+	m_localScale = Vector3::One();
 
 	m_worldMatrix = m_pParent ? m_pParent->GetWorldMatrix() : Matrix4::Identity();
 	m_flags &= ~WORLD_MATRIX_DIRTY;

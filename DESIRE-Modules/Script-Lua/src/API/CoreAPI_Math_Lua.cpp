@@ -11,11 +11,15 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	// Vector3
 	auto vector3 = lua.new_usertype<Vector3>("Vector3", sol::constructors<
 		Vector3(),
-		Vector3(float, float, float),
-		Vector3(float) >());
-	vector3.set("x", sol::property(&Vector3::GetX, &Vector3::SetX));
-	vector3.set("y", sol::property(&Vector3::GetY, &Vector3::SetY));
-	vector3.set("z", sol::property(&Vector3::GetZ, &Vector3::SetZ));
+		Vector3(Vector3),
+		Vector3(float, float, float)
+		>());
+	vector3.set_function("SetX", &Vector3::SetX);
+	vector3.set_function("SetY", &Vector3::SetY);
+	vector3.set_function("SetZ", &Vector3::SetZ);
+	vector3.set_function("GetX", &Vector3::GetX);
+	vector3.set_function("GetY", &Vector3::GetY);
+	vector3.set_function("GetZ", &Vector3::GetZ);
 	vector3.set_function("WithX", &Vector3::WithX);
 	vector3.set_function("WithY", &Vector3::WithY);
 	vector3.set_function("WithZ", &Vector3::WithZ);
@@ -50,15 +54,20 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	auto vector4 = lua.new_usertype<Vector4>("Vector4", sol::constructors<
 		Vector4(),
 		Vector4(float, float, float, float),
-		Vector4(float),
+		Vector4(Vector4),
 		Vector4(const Vector3&, float),
-		Vector4(const Vector3&) >());
+		Vector4(const Vector3&)
+		>());
 	vector4.set_function("SetXYZ", &Vector4::SetXYZ);
 	vector4.set_function("GetXYZ", &Vector4::GetXYZ);
-	vector4.set("x", sol::property(&Vector4::GetX, &Vector4::SetX));
-	vector4.set("y", sol::property(&Vector4::GetY, &Vector4::SetY));
-	vector4.set("z", sol::property(&Vector4::GetZ, &Vector4::SetZ));
-	vector4.set("w", sol::property(&Vector4::GetW, &Vector4::SetW));
+	vector4.set_function("SetX", &Vector4::SetX);
+	vector4.set_function("SetY", &Vector4::SetY);
+	vector4.set_function("SetZ", &Vector4::SetZ);
+	vector4.set_function("SetW", &Vector4::SetW);
+	vector4.set_function("GetX", &Vector4::GetX);
+	vector4.set_function("GetY", &Vector4::GetY);
+	vector4.set_function("GetZ", &Vector4::GetZ);
+	vector4.set_function("GetW", &Vector4::GetW);
 	vector4.set_function("WithX", &Vector4::WithX);
 	vector4.set_function("WithY", &Vector4::WithY);
 	vector4.set_function("WithZ", &Vector4::WithZ);
@@ -190,12 +199,18 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 
 	// Transform
 	auto transform = lua.new_usertype<Transform>("Transform");
-	transform.set("localPosition", sol::property(&Transform::GetLocalPosition, &Transform::SetLocalPosition));
-	transform.set("localRotation", sol::property(&Transform::GetLocalRotation, &Transform::SetLocalRotation));
-	transform.set("localScale", sol::property(&Transform::GetLocalScale, &Transform::SetLocalScale));
-	transform.set("position", sol::property(&Transform::GetPosition, &Transform::SetPosition));
-	transform.set("rotation", sol::property(&Transform::GetRotation, &Transform::SetRotation));
-	transform.set("scale", sol::property(&Transform::GetScale, &Transform::SetScale));
+	transform.set_function("SetLocalPosition", &Transform::SetLocalPosition);
+	transform.set_function("SetLocalRotation", &Transform::SetLocalRotation);
+	transform.set_function("SetLocalScale", &Transform::SetLocalScale);
+	transform.set_function("SetPosition", &Transform::SetPosition);
+	transform.set_function("SetRotation", &Transform::SetRotation);
+	transform.set_function("SetScale", &Transform::SetScale);
+	transform.set_function("GetLocalPosition", &Transform::GetLocalPosition);
+	transform.set_function("GetLocalRotation", &Transform::GetLocalRotation);
+	transform.set_function("GetLocalScale", &Transform::GetLocalScale);
+	transform.set_function("GetPosition", &Transform::GetPosition);
+	transform.set_function("GetRotation", &Transform::GetRotation);
+	transform.set_function("GetScale", &Transform::GetScale);
 
 	// Rand
 	auto rand = lua.new_usertype<Rand>("Rand");

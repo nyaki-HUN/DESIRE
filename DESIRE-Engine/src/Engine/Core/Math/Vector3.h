@@ -5,10 +5,9 @@
 class Vector3
 {
 public:
-	inline Vector3()																{}
-	inline Vector3(simd128_t vec)				: vec128(vec)						{}
-	inline Vector3(float x, float y, float z)	: vec128(SIMD::Construct(x, y, z))	{}
-	explicit inline Vector3(float scalar)		: vec128(SIMD::Construct(scalar))	{}
+	inline Vector3() = default;
+	inline Vector3(simd128_t vec)				: m_vec128(vec)						{}
+	inline Vector3(float x, float y, float z)	: m_vec128(SIMD::Construct(x, y, z))	{}
 
 	// Load x, y, and z elements from the first three elements of a float array
 	inline void LoadXYZ(const float *fptr)
@@ -24,9 +23,9 @@ public:
 		fptr[2] = GetZ();
 	}
 
-	inline void SetX(float x)								{ vec128 = SIMD::SetX(*this, x); }
-	inline void SetY(float y)								{ vec128 = SIMD::SetY(*this, y); }
-	inline void SetZ(float z)								{ vec128 = SIMD::SetZ(*this, z); }
+	inline void SetX(float x)								{ m_vec128 = SIMD::SetX(*this, x); }
+	inline void SetY(float y)								{ m_vec128 = SIMD::SetY(*this, y); }
+	inline void SetZ(float z)								{ m_vec128 = SIMD::SetZ(*this, z); }
 
 	inline float GetX() const								{ return SIMD::GetX(*this); }
 	inline float GetY() const								{ return SIMD::GetY(*this); }
@@ -36,9 +35,9 @@ public:
 	inline Vector3 WithY(float y) const						{ return SIMD::SetY(*this, y); }
 	inline Vector3 WithZ(float z) const						{ return SIMD::SetZ(*this, z); }
 
-	inline operator simd128_t() const						{ return vec128; }
+	inline operator simd128_t() const						{ return m_vec128; }
 
-	inline Vector3& operator =(const Vector3& vec)			{ vec128 = vec; return *this; }
+	inline Vector3& operator =(const Vector3& vec)			{ m_vec128 = vec; return *this; }
 
 	inline Vector3 operator -() const						{ return SIMD::Negate(*this); }
 	inline Vector3 operator +(const Vector3& vec) const		{ return SIMD::Add(*this, vec); }
@@ -98,14 +97,14 @@ public:
 		return unitVec0 * scale0 + unitVec1 * scale1;
 	}
 
-	static inline Vector3 Zero()		{ return Vector3(0.0f); }
-	static inline Vector3 One()			{ return Vector3(1.0f); }
+	static inline Vector3 Zero()		{ return SIMD::Construct(0.0f); }
+	static inline Vector3 One()			{ return SIMD::Construct(1.0f); }
 	static inline Vector3 AxisX()		{ return Vector3(1.0f, 0.0f, 0.0f); }
 	static inline Vector3 AxisY()		{ return Vector3(0.0f, 1.0f, 0.0f); }
 	static inline Vector3 AxisZ()		{ return Vector3(0.0f, 0.0f, 1.0f); }
 
 private:
-	simd128_t vec128;
+	simd128_t m_vec128;
 };
 
 inline Vector3 operator *(float scalar, const Vector3& vec)

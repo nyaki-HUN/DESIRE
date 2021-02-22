@@ -126,9 +126,9 @@ TEST_CASE("Vector3", "[Core][math]")
 
 		CHECK((vec0 > vec0) == func(vec0, vec0));
 		CHECK((vec0 > vec1) == func(vec0, vec1));
-		CHECK((vec0 > Vector3(2.0f)) == func(vec0, Vector3(2.0f)));
-		CHECK((vec0 > Vector3(-10.0f)) == func(vec0, Vector3(-10.0f)));
-		CHECK((vec0 > Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
+		CHECK((vec0 > Vector3(2.0f, 2.0f, 2.0f)) == func(vec0, Vector3(2.0f, 2.0f, 2.0f)));
+		CHECK((vec0 > Vector3(-10.0f, -10.0f, -10.0f)) == func(vec0, Vector3(-10.0f, -10.0f, -10.0f)));
+		CHECK((vec0 > Vector3(100.0f, 100.0f, 100.0f)) == func(vec0, Vector3(100.0f, 100.0f, 100.0f)));
 	}
 
 	SECTION("operator <()")
@@ -143,9 +143,9 @@ TEST_CASE("Vector3", "[Core][math]")
 
 		CHECK((vec0 < vec0) == func(vec0, vec0));
 		CHECK((vec0 < vec1) == func(vec0, vec1));
-		CHECK((vec0 < Vector3(2.0f)) == func(vec0, Vector3(2.0f)));
-		CHECK((vec0 < Vector3(-10.0f)) == func(vec0, Vector3(-10.0f)));
-		CHECK((vec0 < Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
+		CHECK((vec0 < Vector3(2.0f, 2.0f, 2.0f)) == func(vec0, Vector3(2.0f, 2.0f, 2.0f)));
+		CHECK((vec0 < Vector3(-10.0f, -10.0f, -10.0f)) == func(vec0, Vector3(-10.0f, -10.0f, -10.0f)));
+		CHECK((vec0 < Vector3(100.0f, 100.0f, 100.0f)) == func(vec0, Vector3(100.0f, 100.0f, 100.0f)));
 	}
 
 	SECTION("operator >=()")
@@ -160,9 +160,9 @@ TEST_CASE("Vector3", "[Core][math]")
 
 		CHECK((vec0 >= vec0) == func(vec0, vec0));
 		CHECK((vec0 >= vec1) == func(vec0, vec1));
-		CHECK((vec0 >= Vector3(2.0f)) == func(vec0, Vector3(2.0f)));
-		CHECK((vec0 >= Vector3(-10.0f)) == func(vec0, Vector3(-10.0f)));
-		CHECK((vec0 >= Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
+		CHECK((vec0 >= Vector3(2.0f, 2.0f, 2.0f)) == func(vec0, Vector3(2.0f, 2.0f, 2.0f)));
+		CHECK((vec0 >= Vector3(-10.0f, 10.0f, 10.0f)) == func(vec0, Vector3(-10.0f, 10.0f, 10.0f)));
+		CHECK((vec0 >= Vector3(100.0f, 100.0f, 100.0f)) == func(vec0, Vector3(100.0f, 100.0f, 100.0f)));
 	}
 
 	SECTION("operator <=()")
@@ -177,9 +177,9 @@ TEST_CASE("Vector3", "[Core][math]")
 
 		CHECK((vec0 <= vec0) == func(vec0, vec0));
 		CHECK((vec0 <= vec1) == func(vec0, vec1));
-		CHECK((vec0 <= Vector3(2.0f)) == func(vec0, Vector3(2.0f)));
-		CHECK((vec0 <= Vector3(-10.0f)) == func(vec0, Vector3(-10.0f)));
-		CHECK((vec0 <= Vector3(100.0f)) == func(vec0, Vector3(100.0f)));
+		CHECK((vec0 <= Vector3(2.0f, 2.0f, 2.0f)) == func(vec0, Vector3(2.0f, 2.0f, 2.0f)));
+		CHECK((vec0 <= Vector3(-10.0f, -10.0f, -10.0f)) == func(vec0, Vector3(-10.0f, -10.0f, -10.0f)));
+		CHECK((vec0 <= Vector3(100.0f, 100.0f, 100.0f)) == func(vec0, Vector3(100.0f, 100.0f, 100.0f)));
 	}
 
 	SECTION("Dot()")
@@ -245,7 +245,7 @@ TEST_CASE("Vector3", "[Core][math]")
 		result = (result > vec1.GetZ()) ? result : vec1.GetZ();
 		CHECK(vec1.GetMaxElem() == Approx(result));
 
-		CHECK(Vector3(-1.0f).GetMaxElem() == Approx(-1.0f));
+		CHECK(Vector3(-1.0f, -1.0f, -1.0f).GetMaxElem() == Approx(-1.0f));
 	}
 
 	SECTION("GetMinElem()")

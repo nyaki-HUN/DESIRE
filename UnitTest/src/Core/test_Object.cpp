@@ -198,13 +198,13 @@ TEST_CASE("Object", "[Core]")
 
 	// Absolut position update in hierarchy
 	{
-		child2.GetTransform().SetLocalPosition(Vector3(2.0f));
+		child2.GetTransform().SetLocalPosition(Vector3(2.0f, 2.0f, 2.0f));
 		Vector3 worldPos = child2.GetTransform().GetPosition();
 		CHECK(worldPos.GetX() == Approx(2.0f));
 		CHECK(worldPos.GetY() == Approx(2.0f));
 		CHECK(worldPos.GetZ() == Approx(2.0f));
 
-		pRootObj->GetTransform().SetLocalPosition(Vector3(1.0f));
+		pRootObj->GetTransform().SetLocalPosition(Vector3(1.0f, 1.0f, 1.0f));
 		worldPos = pRootObj->GetTransform().GetPosition();
 		CHECK(worldPos.GetX() == Approx(1.0f));
 		CHECK(worldPos.GetY() == Approx(1.0f));
@@ -235,7 +235,7 @@ TEST_CASE("Object", "[Core]")
 		CHECK(worldPos.GetY() == Approx(1.0f));
 		CHECK(worldPos.GetZ() == Approx(1.0f));
 
-		child1_B.GetTransform().SetLocalPosition(Vector3(10.0f));
+		child1_B.GetTransform().SetLocalPosition(Vector3(10.0f, 10.0f, 10.0f));
 		worldPos = child1_B.GetTransform().GetPosition();
 		CHECK(worldPos.GetX() == Approx(11.0f));
 		CHECK(worldPos.GetY() == Approx(11.0f));
@@ -247,7 +247,7 @@ TEST_CASE("Object", "[Core]")
 	const size_t traversedCount = SceneGraphTraversal::Traverse(*pRootObj,
 		[](Object& object)
 		{
-			object.GetTransform().SetScale(Vector3(5.0f));
+			object.GetTransform().SetScale(Vector3(5.0f, 5.0f, 5.0f));
 			return true;
 		}
 	);
