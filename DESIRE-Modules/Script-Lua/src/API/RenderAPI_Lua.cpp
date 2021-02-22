@@ -15,7 +15,10 @@ void RegisterRenderAPI_Lua(sol::state_view& lua)
 
 	// RenderComponent
 	auto renderComponent = lua.new_usertype<RenderComponent>("RenderComponent", sol::base_classes, sol::bases<Component>());
-	renderComponent.set("layer", sol::property(&RenderComponent::GetLayer, &RenderComponent::SetLayer));
+	renderComponent.set("SetLayer", &RenderComponent::SetLayer);
+	renderComponent.set("GetLayer", &RenderComponent::GetLayer);
+	renderComponent.set("SetVisible", &RenderComponent::SetVisible);
+	renderComponent.set("IsVisible", &RenderComponent::IsVisible);
 
 	lua["Object"]["GetRenderComponent"] = &Object::GetComponent<RenderComponent>;
 

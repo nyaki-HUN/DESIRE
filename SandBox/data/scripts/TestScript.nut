@@ -9,7 +9,6 @@ function Init()
 
 function Kill()
 {
-
 }
 
 function Update()
@@ -27,9 +26,10 @@ function Update()
 	}
 
 	local pos = Vector3(1, 2, 3);
-	local pos2 = pos;
-	pos2.x = 4;
-	pos = pos2 * 4;
+	local pos2 = Vector3(pos);
+	pos2.SetX(4);
+	pos2 = pos2 * 10;
+	pos = pos * pos2;
 	pos += pos2;
 	pos = -pos;
 
@@ -40,8 +40,8 @@ function Update()
 		
 	}
 
-	object.GetTransform().position = pos;
-	print("x = " + object.GetTransform().position.x);
+	object.GetTransform().SetPosition(pos);
+	print("x = " + object.GetTransform().GetPosition().GetX());
 
 	// Static function test
 	local mat = Matrix4.CreateTranslation(Vector3(100.0, 2.0, 0.0));

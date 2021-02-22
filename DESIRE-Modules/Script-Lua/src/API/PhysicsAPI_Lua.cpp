@@ -15,7 +15,8 @@ void RegisterPhysicsAPI_Lua(sol::state_view& lua)
 
 	// PhysicsComponent
 	auto physicsComponent = lua.new_usertype<PhysicsComponent>("PhysicsComponent", sol::base_classes, sol::bases<Component>());
-	physicsComponent.set("mass", sol::property(&PhysicsComponent::GetMass, &PhysicsComponent::SetMass));
+	physicsComponent.set_function("SetMass", &PhysicsComponent::SetMass);
+	physicsComponent.set_function("GetMass", &PhysicsComponent::GetMass);
 
 	lua["Object"]["GetPhysicsComponent"] = &Object::GetComponent<PhysicsComponent>;
 

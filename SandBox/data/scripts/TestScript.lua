@@ -7,7 +7,6 @@ function Init()
 end
 
 function Kill()
-
 end
 
 function Update()
@@ -22,9 +21,10 @@ function Update()
 	end
 
 	local pos = Vector3.new(1, 2, 3);
-	local pos2 = pos;
-	pos2.x = 4;
-	pos = pos2 * 4;
+	local pos2 = Vector3.new(pos);
+	pos2:SetX(4);
+	pos2 = pos2 * 10;
+	pos = pos * pos2;
 	pos = pos + pos2;
 	pos = -pos;
 
@@ -34,8 +34,8 @@ function Update()
 		
 	end
 
-	object:GetTransform().position = pos;
-	print("x = ", object:GetTransform().position.x);
+	object:GetTransform():SetPosition(pos);
+	print("x = ", object:GetTransform():GetPosition():GetX());
 
 	-- Static function test
 	local mat = Matrix4.CreateTranslation(Vector3.new(100.0, 2.0, 0.0));
