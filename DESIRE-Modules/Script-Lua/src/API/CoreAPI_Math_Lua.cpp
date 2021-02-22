@@ -53,8 +53,8 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	// Vector4
 	auto vector4 = lua.new_usertype<Vector4>("Vector4", sol::constructors<
 		Vector4(),
-		Vector4(float, float, float, float),
 		Vector4(Vector4),
+		Vector4(float, float, float, float),
 		Vector4(const Vector3&, float),
 		Vector4(const Vector3&)
 		>());
@@ -100,8 +100,10 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	// Quat
 	auto quat = lua.new_usertype<Quat>("Quat", sol::constructors<
 		Quat(),
+		Quat(Quat),
 		Quat(float, float, float, float),
-		Quat(const Matrix3&) >());
+		Quat(const Matrix3&)
+		>());
 	quat.set_function(sol::meta_function::unary_minus, sol::resolve<Quat() const>(&Quat::operator -));
 	quat.set_function(sol::meta_function::addition, &Quat::operator +);
 	quat.set_function(sol::meta_function::subtraction, sol::resolve<Quat(const Quat&) const>(&Quat::operator -));
@@ -126,8 +128,10 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	// Matrix3
 	auto matrix3 = lua.new_usertype<Matrix3>("Matrix3", sol::constructors<
 		Matrix3(),
+		Matrix3(const Matrix3&),
 		Matrix3(const Vector3&, const Vector3&, const Vector3&),
-		Matrix3(const Quat&) >());
+		Matrix3(const Quat&)
+		>());
 	matrix3.set("col0", &Matrix3::col0);
 	matrix3.set("col1", &Matrix3::col1);
 	matrix3.set("col2", &Matrix3::col2);
@@ -158,9 +162,11 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	// Matrix4
 	auto matrix4 = lua.new_usertype<Matrix4>("Matrix4", sol::constructors<
 		Matrix4(),
+		Matrix4(const Matrix4&),
 		Matrix4(const Vector4&, const Vector4&, const Vector4&, const Vector4&),
 		Matrix4(const Matrix3&, const Vector3&),
-		Matrix4(const Quat&, const Vector3&) >());
+		Matrix4(const Quat&, const Vector3&)
+		>());
 	matrix4.set_function("SetUpper3x3", &Matrix4::SetUpper3x3);
 	matrix4.set_function("GetUpper3x3", &Matrix4::GetUpper3x3);
 	matrix4.set_function("SetTranslation", &Matrix4::SetTranslation);
