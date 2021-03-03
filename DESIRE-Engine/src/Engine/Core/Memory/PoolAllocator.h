@@ -8,30 +8,30 @@ class PoolAllocator
 public:
 	PoolAllocator()
 	{
-		char* ptr = static_cast<char*>(data);
+		char* pMemory = static_cast<char*>(data);
 		for(size_t i = 0; i < NUM_ELEMENTS; ++i)
 		{
-			list.Push(ptr);
-			ptr += kElementSize;
+			list.Push(pMemory);
+			pMemory += kElementSize;
 		}
 	}
 
 	T* Alloc()
 	{
-		void* memory = list.Pop();
-		return (memory != nullptr) ? new (memory) T() : new T();
+		void* pMemory = list.Pop();
+		return pMemory ? new (pMemory) T() : new T();
 	}
 
-	void Free(T* ptr)
+	void Free(T* pMemory)
 	{
-		if(data <= reinterpret_cast<char*>(ptr) && reinterpret_cast<char*>(ptr) <= data + (NUM_ELEMENTS - 1) * kElementSize)
+		if(data <= reinterpret_cast<char*>(pMemory) && reinterpret_cast<char*>(pMemory) <= data + (NUM_ELEMENTS - 1) * kElementSize)
 		{
-			ptr->~T();
-			list.Push(ptr);
+			pMemory->~T();
+			list.Push(pMemory);
 		}
 		else
 		{
-			delete ptr;
+			delete pMemory;
 		}
 	}
 

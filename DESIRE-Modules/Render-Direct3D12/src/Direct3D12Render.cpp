@@ -217,7 +217,7 @@ bool Direct3D12Render::Init(OSWindow& mainWindow)
 	hr = D3D12SerializeVersionedRootSignature(&rootSignatureDesc, spSignature.GetAddressOf(), spErrorBlob.GetAddressOf());
 	if(FAILED(hr))
 	{
-		if(spErrorBlob != nullptr)
+		if(spErrorBlob)
 		{
 			LOG_ERROR("Root signature serialize error:\n%s", static_cast<const char*>(spErrorBlob->GetBufferPointer()));
 		}
@@ -331,10 +331,10 @@ void Direct3D12Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 		((clearColorRGBA >>  0) & 0xFF) / 255.0f,
 	};
 
-	if(m_pActiveRenderTarget != nullptr)
+	if(m_pActiveRenderTarget)
 	{
 		RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(m_pActiveRenderTarget->m_pRenderData);
-		if(pRenderTargetRenderData != nullptr)
+		if(pRenderTargetRenderData)
 		{
 			for(uint32_t i = 0; i < pRenderTargetRenderData->m_numRTVs; ++i)
 			{
@@ -608,7 +608,7 @@ RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
 		spErrorBlob.GetAddressOf());					// ppErrorMsgs
 	if(FAILED(hr))
 	{
-		if(spErrorBlob != nullptr)
+		if(spErrorBlob)
 		{
 			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(spErrorBlob->GetBufferPointer()));
 		}
@@ -842,7 +842,7 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
 	D3D12_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(m_pActiveWindow->GetWidth()), static_cast<FLOAT>(m_pActiveWindow->GetHeight()), 0.0f, 1.0f };
 
-	if(pRenderTarget != nullptr)
+	if(pRenderTarget)
 	{
 		const RenderTargetRenderDataD3D12* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D12*>(pRenderTarget->m_pRenderData);
 		m_pCmdList->OMSetRenderTargets(pRenderTargetRenderData->m_numRTVs, pRenderTargetRenderData->m_RTVs, TRUE, &pRenderTargetRenderData->m_DSV);
@@ -894,7 +894,7 @@ void Direct3D12Render::UpdateShaderParams(const Material& material)
 
 	// TODO: support all textures
 	Texture* pFirstTexture = material.GetTextures().GetFirst().spTexture.get();
-	if(pFirstTexture != nullptr)
+	if(pFirstTexture)
 	{
 		const TextureRenderDataD3D12* pTextureRenderData = static_cast<TextureRenderDataD3D12*>(pFirstTexture->m_pRenderData);
 		ID3D12DescriptorHeap* heaps[] = { pTextureRenderData->m_pHeapForSRV };
@@ -950,21 +950,21 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRender
 		for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 		{
 			pVariable = bufferData.variables.Find(shaderParam.name);
-			if(pVariable != nullptr)
+			if(pVariable)
 			{
 				isChanged |= pVariable->CheckAndUpdate(shaderParam.GetValue());
 			}
 		}
 
 		pVariable = bufferData.variables.Find("matWorldView");
-		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
+		if(pVariable && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matWorldView.r[0]);
 		}
 
 		pVariable = bufferData.variables.Find("matWorldViewProj");
-		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
+		if(pVariable && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, m_matProj);
@@ -972,35 +972,35 @@ void Direct3D12Render::UpdateShaderParams(const Material& material, ShaderRender
 		}
 
 		pVariable = bufferData.variables.Find("matView");
-		if(pVariable != nullptr)
+		if(pVariable)
 		{
 			isChanged |= pVariable->CheckAndUpdate(&m_matView.r[0]);
 		}
 
 		pVariable = bufferData.variables.Find("matViewInv");
-		if(pVariable != nullptr)
+		if(pVariable)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[0]);
 		}
 
 		pVariable = bufferData.variables.Find("camPos");
-		if(pVariable != nullptr)
+		if(pVariable)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[3]);
 		}
 
 		pVariable = bufferData.variables.Find("resolution");
-		if(pVariable != nullptr && pVariable->size == 2 * sizeof(float))
+		if(pVariable && pVariable->size == 2 * sizeof(float))
 		{
 			float resolution[2] = {};
-			if(m_pActiveRenderTarget != nullptr)
+			if(m_pActiveRenderTarget)
 			{
 				resolution[0] = m_pActiveRenderTarget->GetWidth();
 				resolution[1] = m_pActiveRenderTarget->GetHeight();
 			}
-			else if(m_pActiveWindow != nullptr)
+			else if(m_pActiveWindow)
 			{
 				resolution[0] = m_pActiveWindow->GetWidth();
 				resolution[1] = m_pActiveWindow->GetHeight();

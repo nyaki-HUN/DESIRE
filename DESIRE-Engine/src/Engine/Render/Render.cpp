@@ -119,7 +119,7 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 
 void Render::SetActiveRenderTarget(RenderTarget* pRenderTarget)
 {
-	if(pRenderTarget != nullptr && pRenderTarget->m_pRenderData == nullptr)
+	if(pRenderTarget && pRenderTarget->m_pRenderData == nullptr)
 	{
 		const uint8_t textureCount = pRenderTarget->GetTextureCount();
 		for(uint8_t i = 0; i < textureCount; ++i)

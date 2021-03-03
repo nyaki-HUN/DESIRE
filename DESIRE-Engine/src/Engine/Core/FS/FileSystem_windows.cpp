@@ -51,11 +51,12 @@ public:
 		IReadFile::ReadBufferAsync(buffer, size, callback);
 	}
 
-	size_t ReadBuffer(void* buffer, size_t size) override
+	size_t ReadBuffer(void* pBuffer, size_t size) override
 	{
-		ASSERT(buffer != nullptr);
+		ASSERT(pBuffer != nullptr);
+
 		DWORD numBytesRead = 0;
-		BOOL result = ReadFile(hFile, buffer, (DWORD)size, &numBytesRead, nullptr);
+		BOOL result = ReadFile(hFile, pBuffer, (DWORD)size, &numBytesRead, nullptr);
 		if(result == FALSE)
 		{
 			LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to read from file");
@@ -66,11 +67,12 @@ public:
 		return numBytesRead;
 	}
 
-	size_t WriteBuffer(const void* buffer, size_t size) override
+	size_t WriteBuffer(const void* pBuffer, size_t size) override
 	{
-		ASSERT(buffer != nullptr);
+		ASSERT(pBuffer != nullptr);
+
 		DWORD numBytesWritten = 0;
-		BOOL result = WriteFile(hFile, buffer, (DWORD)size, &numBytesWritten, nullptr);
+		BOOL result = WriteFile(hFile, pBuffer, (DWORD)size, &numBytesWritten, nullptr);
 		if(result == FALSE)
 		{
 			LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to write to file");
@@ -129,7 +131,7 @@ void FileSystem::Setup()
 	char exeFilenameWithPath[DESIRE_MAX_PATH_LEN] = {};
 	char* pFilenameBegin = nullptr;
 	GetFullPathNameA(moduleFilename, DESIRE_MAX_PATH_LEN, exeFilenameWithPath, &pFilenameBegin);
-	if(pFilenameBegin != nullptr)
+	if(pFilenameBegin)
 	{
 		*pFilenameBegin = '\0';
 	}

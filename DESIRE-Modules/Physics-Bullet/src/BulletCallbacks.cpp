@@ -54,13 +54,13 @@ void BulletCallbacks::SimulationTickCallback(btDynamicsWorld* pWorld, float time
 		collision.pIncomingComponent = static_cast<BulletPhysicsComponent*>(pBody1->getUserPointer());;
 
 		ScriptComponent* pScriptComponent = collision.pComponent->GetObject().GetComponent<ScriptComponent>();
-		if(pScriptComponent != nullptr)
+		if(pScriptComponent)
 		{
 			pScriptComponent->Call("OnCollisionEnter", &collision);
 		}
 
 		pScriptComponent = collision.pIncomingComponent->GetObject().GetComponent<ScriptComponent>();
-		if(pScriptComponent != nullptr)
+		if(pScriptComponent)
 		{
 			std::swap(collision.pComponent, collision.pIncomingComponent);
 			pScriptComponent->Call("OnCollisionEnter", &collision);

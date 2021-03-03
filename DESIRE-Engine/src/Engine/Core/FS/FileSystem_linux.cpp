@@ -48,10 +48,11 @@ public:
 		return true;
 	}
 
-	size_t ReadBuffer(void* buffer, size_t size) override
+	size_t ReadBuffer(void* pBuffer, size_t size) override
 	{
-		ASSERT(buffer != nullptr);
-		ssize_t numBytesRead = read(fileDesc, buffer, size);
+		ASSERT(pBuffer != nullptr);
+
+		ssize_t numBytesRead = read(fileDesc, pBuffer, size);
 		if(numBytesRead < 0)
 		{
 			LOG_ERROR("Failed to read from file (Error: %d)", errno);
@@ -62,10 +63,11 @@ public:
 		return numBytesRead;
 	}
 
-	size_t WriteBuffer(const void* buffer, size_t size) override
+	size_t WriteBuffer(const void* pBuffer, size_t size) override
 	{
-		ASSERT(buffer != nullptr);
-		ssize_t numBytesWritten = write(fileDesc, buffer, size);
+		ASSERT(pBuffer != nullptr);
+
+		ssize_t numBytesWritten = write(fileDesc, pBuffer, size);
 		if(numBytesWritten < 0)
 		{
 			LOG_ERROR("Failed to write to file (Error: %d)", errno);
@@ -134,7 +136,7 @@ void FileSystem::Setup()
 	exePath[len] = '\0';
 
 	char* pSlash = std::strrchr(exePath, '/');
-	if(pSlash != nullptr)
+	if(pSlash)
 	{
 		pSlash++;
 		*pSlash = '\0';

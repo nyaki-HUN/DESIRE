@@ -109,7 +109,7 @@ std::unique_ptr<Mesh> AssimpLoader::Load(const ReadFilePtr& spFile)
 //	const aiScene* pScene = importer.ReadFile(AssimpIOSystemWrapper::kDummyFilename, aiProcessPreset_TargetRealtime_Quality);
 	const aiScene* pScene = importer.ReadFile(AssimpIOSystemWrapper::kDummyFilename, aiProcess_CalcTangentSpace);
 
-	if(pScene != nullptr && pScene->HasMeshes())
+	if(pScene && pScene->HasMeshes())
 	{
 		for(uint32_t i = 0; i < pScene->mNumMeshes; ++i)
 		{

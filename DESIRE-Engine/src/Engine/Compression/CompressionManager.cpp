@@ -4,7 +4,7 @@
 std::unique_ptr<Compression> CompressionManager::CreateCompression(HashedString name)
 {
 	const Factory<Compression>::Func_t* pFactoryFunc = s_compressionFactories.Find(name);
-	if(pFactoryFunc != nullptr)
+	if(pFactoryFunc)
 	{
 		return (*pFactoryFunc)();
 	}

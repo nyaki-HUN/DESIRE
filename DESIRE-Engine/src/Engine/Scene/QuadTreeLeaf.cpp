@@ -35,7 +35,7 @@ bool QuadTreeLeaf::Remove(RenderComponent* pRenderComponent)
 
 	for(QuadTreeLeaf* pChildLeaf : m_leafs)
 	{
-		if(pChildLeaf != nullptr && pChildLeaf->Remove(pRenderComponent))
+		if(pChildLeaf && pChildLeaf->Remove(pRenderComponent))
 		{
 			return true;
 		}

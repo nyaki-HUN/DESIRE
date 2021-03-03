@@ -10,13 +10,13 @@ ZstdCompression::ZstdCompression()
 
 ZstdCompression::~ZstdCompression()
 {
-	if(m_pCompressContext != nullptr)
+	if(m_pCompressContext)
 	{
 		ZSTD_freeCCtx(m_pCompressContext);
 		m_pCompressContext = nullptr;
 	}
 
-	if(m_pDecompressContext != nullptr)
+	if(m_pDecompressContext)
 	{
 		ZSTD_freeDCtx(m_pDecompressContext);
 		m_pDecompressContext = nullptr;

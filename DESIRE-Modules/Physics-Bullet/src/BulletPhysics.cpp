@@ -33,10 +33,10 @@ BulletPhysics::BulletPhysics()
 	solverInfo.m_solverMode |= SOLVER_ENABLE_FRICTION_DIRECTION_CACHING;
 	solverInfo.m_numIterations = 4;
 
-	class DebugDraw* debugDraw = nullptr;
-	if(debugDraw != nullptr)
+	class DebugDraw* pDebugDraw = nullptr;
+	if(pDebugDraw)
 	{
-		m_spBulletDebugDraw = std::make_unique<BulletDebugDraw>(*debugDraw);
+		m_spBulletDebugDraw = std::make_unique<BulletDebugDraw>(*pDebugDraw);
 		m_spBulletDebugDraw->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawNormals);
 	}
 	m_spDynamicsWorld->setDebugDrawer(m_spBulletDebugDraw.get());
@@ -56,7 +56,7 @@ BulletPhysics::~BulletPhysics()
 
 void BulletPhysics::Update(float deltaTime)
 {
-	if(m_spBulletDebugDraw != nullptr)
+	if(m_spBulletDebugDraw)
 	{
 		m_spBulletDebugDraw->m_debugDraw.Reset();
 	}
@@ -83,7 +83,7 @@ Vector3 BulletPhysics::GetGravity() const
 	return GetVector3(gravity);
 }
 
-Collision BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)
+Collision BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int32_t layerMask)
 {
 	const btVector3 from = GetBtVector3(p1);
 	const btVector3 to = GetBtVector3(p2);
@@ -97,21 +97,21 @@ Collision BulletPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, in
 	Collision collision;
 	if(rayCallback.hasHit())
 	{
-		const btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
-		PhysicsComponent* component = (body != nullptr && body->hasContactResponse()) ? static_cast<PhysicsComponent*>(body->getUserPointer()) : nullptr;
-		collision = Collision(component, GetVector3(rayCallback.m_hitPointWorld), GetVector3(rayCallback.m_hitNormalWorld));
+		const btRigidBody* pBody = btRigidBody::upcast(rayCallback.m_collisionObject);
+		PhysicsComponent* pPhysicsComponent = pBody && pBody->hasContactResponse() ? static_cast<PhysicsComponent*>(pBody->getUserPointer()) : nullptr;
+		collision = Collision(pPhysicsComponent, GetVector3(rayCallback.m_hitPointWorld), GetVector3(rayCallback.m_hitNormalWorld));
 	}
 
 	return collision;
 }
 
-bool BulletPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask)
+bool BulletPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int32_t layerMask)
 {
 	ASSERT(false && "TODO implement");
 	return false;
 }
 
-Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
+Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int32_t layerMask)
 {
 	const btVector3 from = GetBtVector3(p1);
 	const btVector3 to = GetBtVector3(p2);
@@ -125,12 +125,12 @@ Array<Collision> BulletPhysics::RaycastAll(const Vector3& p1, const Vector3& p2,
 	Array<Collision> collisions;
 	if(rayCallback.hasHit())
 	{
-		const int count = rayCallback.m_collisionObjects.size();
+		const int32_t count = rayCallback.m_collisionObjects.size();
 		collisions.Reserve(count);
-		for(int i = 0; i < count; ++i)
+		for(int32_t i = 0; i < count; ++i)
 		{
 			const btRigidBody* pBody = btRigidBody::upcast(rayCallback.m_collisionObjects[i]);
-			PhysicsComponent* pPhysicsComponent = (pBody != nullptr && pBody->hasContactResponse()) ? static_cast<PhysicsComponent*>(pBody->getUserPointer()) : nullptr;
+			PhysicsComponent* pPhysicsComponent = pBody && pBody->hasContactResponse() ? static_cast<PhysicsComponent*>(pBody->getUserPointer()) : nullptr;
 			collisions.EmplaceAdd(pPhysicsComponent, GetVector3(rayCallback.m_hitPointWorld[i]), GetVector3(rayCallback.m_hitNormalWorld[i]));
 		}
 	}

@@ -207,7 +207,7 @@ RenderData* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
 	switch(mesh.GetType())
 	{
 		case Mesh::EType::Static:
-			if(pIndexData != nullptr)
+			if(pIndexData)
 			{
 				pMeshRenderData->m_indexBuffer = bgfx::createIndexBuffer(pIndexData, (mesh.GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
 			}
@@ -216,7 +216,7 @@ RenderData* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
 			break;
 
 		case Mesh::EType::Dynamic:
-			if(pIndexData != nullptr)
+			if(pIndexData)
 			{
 				pMeshRenderData->m_dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pIndexData, (mesh.GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
 			}
@@ -356,7 +356,7 @@ void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
 
 void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
 {
-	if(pRenderTarget != nullptr)
+	if(pRenderTarget)
 	{
 		RenderTargetRenderDataBgfx* pRenderTargetRenderData = static_cast<RenderTargetRenderDataBgfx*>(pRenderTarget->m_pRenderData);
 		ASSERT(pRenderTargetRenderData->m_id < BGFX_CONFIG_MAX_VIEWS);
@@ -383,7 +383,7 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 			pUniform = pPS->m_uniforms.Find(shaderParam.name);
 		}
 
-		if(pUniform != nullptr && bgfx::isValid(*pUniform))
+		if(pUniform && bgfx::isValid(*pUniform))
 		{
 			const void* pValue = shaderParam.GetValue();
 			bgfx::setUniform(*pUniform, pValue);

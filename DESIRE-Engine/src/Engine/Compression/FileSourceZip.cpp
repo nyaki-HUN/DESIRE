@@ -193,8 +193,8 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 
 		case 8:		// Deflated
 		{
-			std::unique_ptr<Compression> zlibRawDeflate = CompressionManager::CreateCompression("deflate");
-			if(zlibRawDeflate != nullptr)
+			std::unique_ptr<Compression> spZlibRawDeflate = CompressionManager::CreateCompression("deflate");
+			if(spZlibRawDeflate)
 			{
 				std::unique_ptr<uint8_t[]> compressedData = std::make_unique<uint8_t[]>(entry.compressedSize);
 				std::unique_ptr<uint8_t[]> decompressedData = std::make_unique<uint8_t[]>(entry.uncompressedSize);
@@ -207,7 +207,7 @@ ReadFilePtr FileSourceZip::OpenFile(const String& filename)
 				m_spZipFile->Seek(entry.offsetInFile, IReadFile::ESeekOrigin::Begin);
 				m_spZipFile->ReadBuffer(compressedData.get(), entry.compressedSize);
 
-				const size_t decompressedSize = zlibRawDeflate->DecompressBuffer(decompressedData.get(), entry.uncompressedSize, compressedData.get(), entry.compressedSize);
+				const size_t decompressedSize = spZlibRawDeflate->DecompressBuffer(decompressedData.get(), entry.uncompressedSize, compressedData.get(), entry.compressedSize);
 				ASSERT(decompressedSize == entry.uncompressedSize);
 				return std::make_unique<MemoryFile>(std::move(decompressedData), decompressedSize);
 			}

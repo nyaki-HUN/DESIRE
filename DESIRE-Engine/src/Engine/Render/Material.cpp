@@ -17,7 +17,7 @@ Material::ShaderParam::ShaderParam(HashedString name, std::function<void(float*)
 
 const void* Material::ShaderParam::GetValue() const
 {
-	if(pParam != nullptr)
+	if(pParam)
 	{
 		return pParam;
 	}

@@ -278,9 +278,9 @@ void* OSWindow::GetHandle() const
 	return m_spImpl->hWnd;
 }
 
-void OSWindow::SetWindowTitle(const char* pNewTitle)
+void OSWindow::SetWindowTitle(const String& newTitle)
 {
-	SetWindowText(m_spImpl->hWnd, pNewTitle);
+	SetWindowText(m_spImpl->hWnd, newTitle.Str());
 }
 
 void OSWindow::SetCursor(ECursor cursor)
@@ -313,7 +313,7 @@ bool OSWindow::SetClipboardString(const String& string)
 			if(stringHandle != nullptr)
 			{
 				wchar_t* pWideStr = static_cast<wchar_t*>(GlobalLock(stringHandle));
-				if(pWideStr != nullptr)
+				if(pWideStr)
 				{
 					MultiByteToWideChar(CP_UTF8, 0, string.Str(), static_cast<int>(string.Length()), pWideStr, wsize);
 					pWideStr[wsize] = '\0';
@@ -349,11 +349,11 @@ void OSWindow::GetClipboardString(WritableString& outString) const
 			if(stringHandle != nullptr)
 			{
 				const wchar_t* pWideStr = static_cast<const wchar_t*>(GlobalLock(stringHandle));
-				if(pWideStr != nullptr)
+				if(pWideStr)
 				{
 					int32_t size = WideCharToMultiByte(CP_UTF8, 0, pWideStr, -1, nullptr, 0, nullptr, nullptr);
 					char* pStr = outString.AsCharBufferWithSize(size);
-					if(pStr != nullptr)
+					if(pStr)
 					{
 						WideCharToMultiByte(CP_UTF8, 0, pWideStr, -1, pStr, size, nullptr, nullptr);
 					}
@@ -368,7 +368,7 @@ void OSWindow::GetClipboardString(WritableString& outString) const
 			if(stringHandle != nullptr)
 			{
 				const char* pStr = static_cast<const char*>(GlobalLock(stringHandle));
-				if(pStr != nullptr)
+				if(pStr)
 				{
 					outString.Set(pStr, strlen(pStr));
 					GlobalUnlock(stringHandle);

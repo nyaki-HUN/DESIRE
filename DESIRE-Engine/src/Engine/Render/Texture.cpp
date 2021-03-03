@@ -19,7 +19,7 @@ Texture::Texture(uint16_t width, uint16_t height, EFormat format, const void* pD
 	, m_format(format)
 	, m_numMipLevels(numMipLevels)
 {
-	if(pDataToCopy != nullptr)
+	if(pDataToCopy)
 	{
 		m_spData = std::make_unique<uint8_t[]>(GetDataSize());
 		memcpy(m_spData.get(), pDataToCopy, GetDataSize());

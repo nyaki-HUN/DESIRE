@@ -144,7 +144,7 @@ void Input::Init_internal(OSWindow& window)
 
 void Input::Kill_internal()
 {
-	if(s_pDisplay != nullptr)
+	if(s_pDisplay)
 	{
 		XCloseDisplay(s_pDisplay);
 		s_pDisplay = nullptr;

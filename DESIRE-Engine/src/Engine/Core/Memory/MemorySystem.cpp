@@ -27,15 +27,15 @@ void* MemorySystem::Alloc(size_t size, size_t alignment)
 		const size_t totalSize = size + std::max(kDefaultAlignment, alignment);
 		Allocator& allocator = GetActiveAllocator();
 		void* pAllocatedMemory = allocator.Alloc(totalSize);
-		if(pAllocatedMemory != nullptr)
+		if(pAllocatedMemory)
 		{
 			// Make room for the header and apply alignment
 			void* pMemory = Align(OffsetVoidPtr(pAllocatedMemory, sizeof(AllocationHeader)), alignment);
 
-			AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(pMemory);
-			header->pAllocator = &allocator;
-			header->allocatedSize = Math::SafeSizeToUint32(totalSize);
-			header->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(pMemory) - reinterpret_cast<size_t>(pAllocatedMemory));
+			AllocationHeader* pHeader = OffsetVoidPtrBackwards<AllocationHeader>(pMemory);
+			pHeader->pAllocator = &allocator;
+			pHeader->allocatedSize = Math::SafeSizeToUint32(totalSize);
+			pHeader->offsetBetweenPtrAndAllocatedMemory = Math::SafeSizeToUint32(reinterpret_cast<size_t>(pMemory) - reinterpret_cast<size_t>(pAllocatedMemory));
 
 			return pMemory;
 		}
@@ -49,7 +49,7 @@ void* MemorySystem::Alloc(size_t size, size_t alignment)
 void* MemorySystem::Calloc(size_t num, size_t size)
 {
 	void* pMemory = MemorySystem::Alloc(num * size);
-	if(pMemory != nullptr)
+	if(pMemory)
 	{
 		memset(pMemory, 0, num * size);
 	}
@@ -80,16 +80,16 @@ void* MemorySystem::Realloc(void* pMemory, size_t size)
 		return pMemory;
 	}
 
-	void* allocatedMemory = oldHeader.pAllocator->Realloc(oldAllocatedMemory, totalSize, oldHeader.allocatedSize);
-	if(allocatedMemory != nullptr)
+	void* pAllocatedMemory = oldHeader.pAllocator->Realloc(oldAllocatedMemory, totalSize, oldHeader.allocatedSize);
+	if(pAllocatedMemory)
 	{
-		void* newPtr = OffsetVoidPtr(allocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
+		void* pNewPtr = OffsetVoidPtr(pAllocatedMemory, oldHeader.offsetBetweenPtrAndAllocatedMemory);
 
 		// Only need to update the size in the header because the allocator's Realloc() is responsible for copying all the contents of the memory
-		AllocationHeader* pHeader = OffsetVoidPtrBackwards<AllocationHeader>(newPtr);
+		AllocationHeader* pHeader = OffsetVoidPtrBackwards<AllocationHeader>(pNewPtr);
 		pHeader->allocatedSize = Math::SafeSizeToUint32(totalSize);
 
-		return newPtr;
+		return pNewPtr;
 	}
 
 	ASSERT(false && "Out of memory");
@@ -103,11 +103,11 @@ void MemorySystem::Free(void* pMemory)
 		return;
 	}
 
-	const AllocationHeader* header = OffsetVoidPtrBackwards<AllocationHeader>(pMemory);
-	ASSERT(header->offsetBetweenPtrAndAllocatedMemory != 0xFDFDFDFD && "Windows Debug Heap's NoMansLand buffer detected. The memory was not allocated by the MemorySystem");
-	void* allocatedMemory = OffsetVoidPtrBackwards(pMemory, header->offsetBetweenPtrAndAllocatedMemory);
+	const AllocationHeader* pHeader = OffsetVoidPtrBackwards<AllocationHeader>(pMemory);
+	ASSERT(pHeader->offsetBetweenPtrAndAllocatedMemory != 0xFDFDFDFD && "Windows Debug Heap's NoMansLand buffer detected. The memory was not allocated by the MemorySystem");
+	void* pAllocatedMemory = OffsetVoidPtrBackwards(pMemory, pHeader->offsetBetweenPtrAndAllocatedMemory);
 
-	header->pAllocator->Free(allocatedMemory, header->allocatedSize);
+	pHeader->pAllocator->Free(pAllocatedMemory, pHeader->allocatedSize);
 }
 
 Allocator& MemorySystem::GetActiveAllocator()

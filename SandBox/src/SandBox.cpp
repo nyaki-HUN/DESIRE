@@ -58,14 +58,14 @@ void SandBox::Init()
 	m_pScriptedObject = new Object();
 	m_pScriptedObject->SetObjectName("TestObject");
 	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_pScriptedObject, "TestScript");
-	ScriptComponent* scriptComp = m_pScriptedObject->GetComponent<ScriptComponent>();
-	if(scriptComp != nullptr)
+	ScriptComponent* pScriptComponent = m_pScriptedObject->GetComponent<ScriptComponent>();
+	if(pScriptComponent != nullptr)
 	{
-		scriptComp->CallByType(ScriptComponent::EBuiltinFuncType::Init);
+		pScriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::Init);
 
-		scriptComp->Call("Function1");
-		scriptComp->Call("Function2", 12.3f, 100);
-		scriptComp->Call("Function3", String("TEST"));
+		pScriptComponent->Call("Function1");
+		pScriptComponent->Call("Function2", 12.3f, 100);
+		pScriptComponent->Call("Function3", String("TEST"));
 	}
 
 	//////////

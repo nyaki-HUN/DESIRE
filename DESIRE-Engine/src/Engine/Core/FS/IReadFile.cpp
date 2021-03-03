@@ -55,7 +55,7 @@ bool IReadFile::ReadString(WritableString& string)
 		}
 
 		char* pData = string.AsCharBufferWithSize(numChars);
-		if(pData != nullptr)
+		if(pData)
 		{
 			const size_t numBytesRead = ReadBuffer(pData, numChars * sizeof(char));
 			return numBytesRead == numChars * sizeof(char);

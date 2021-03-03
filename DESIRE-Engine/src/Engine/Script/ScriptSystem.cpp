@@ -24,7 +24,7 @@ ScriptComponent* ScriptSystem::CreateScriptComponentOnObject(Object& object, con
 {
 	// Try to create as a native script 
 	ScriptFactory::Func_t* pScriptFactoryFunc = m_scriptFactories.Find(scriptName);
-	if(pScriptFactoryFunc != nullptr)
+	if(pScriptFactoryFunc)
 	{
 		NativeScriptComponent& scriptComponent = object.AddComponent<NativeScriptComponent>(*pScriptFactoryFunc);
 		return &scriptComponent;

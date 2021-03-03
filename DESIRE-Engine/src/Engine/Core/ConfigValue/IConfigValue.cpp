@@ -43,7 +43,7 @@ IConfigValue::~IConfigValue()
 IConfigValue* IConfigValue::FindConfigValue(const char* pName)
 {
 	IConfigValue* pConfig = s_pListHead;
-	while(pConfig != nullptr && strcmp(pConfig->m_pName, pName) != 0)
+	while(pConfig && strcmp(pConfig->m_pName, pName) != 0)
 	{
 		pConfig = pConfig->m_pNext;
 	}

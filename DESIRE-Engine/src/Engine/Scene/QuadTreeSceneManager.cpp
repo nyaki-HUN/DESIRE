@@ -81,7 +81,7 @@ void QuadTreeSceneManager::Update()
 		m_needToPlaceObjectsInsideQuadTree = false;
 	}
 
-	if(m_pDebugDraw != nullptr && m_doInvisibleLeafTest)
+	if(m_pDebugDraw && m_doInvisibleLeafTest)
 	{
 		m_pDebugDraw->Reset();
 	}
@@ -124,7 +124,7 @@ void QuadTreeSceneManager::CalcFrustumNormalsFromCamera(Camera* pCamera, Vector3
 	Vector3 points[8];
 	pCamera->CalculateFrustum(points);
 
-	if(m_pDebugDraw != nullptr)
+	if(m_pDebugDraw)
 	{
 		const Vector3 color(0.5f, 0.0f, 1.0f);
 
@@ -307,7 +307,7 @@ void QuadTreeSceneManager::TestInvisibleLeafs(uint8_t numNormals, const Vector3*
 			}
 		}
 
-		if(m_pDebugDraw != nullptr)
+		if(m_pDebugDraw)
 		{
 			Vector3 color;
 			switch(state)

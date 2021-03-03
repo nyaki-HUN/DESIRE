@@ -252,7 +252,7 @@ bool NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, cons
 		hasMenuBar = true;
 	}
 
-	if(pOpen != nullptr)
+	if(pOpen)
 	{
 		nkFlags |= NK_WINDOW_CLOSABLE;
 
@@ -265,7 +265,7 @@ bool NuklearUI::BeginWindow(const String& label, const Vector2& initialPos, cons
 		SetDefaultLayout();
 	}
 
-	if(pOpen != nullptr)
+	if(pOpen)
 	{
 		*pOpen = isVisible;
 	}
@@ -327,7 +327,7 @@ bool NuklearUI::BeginTable(const String& id, uint8_t numColumns, const float* pI
 		}
 	}
 
-	if(pInitialColumnsRatio != nullptr)
+	if(pInitialColumnsRatio)
 	{
 		nk_layout_row(m_spContext.get(), NK_DYNAMIC, kDefaultRowHeight, numColumns, pInitialColumnsRatio);
 	}

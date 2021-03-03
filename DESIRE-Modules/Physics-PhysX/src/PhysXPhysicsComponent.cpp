@@ -32,7 +32,7 @@ void PhysXPhysicsComponent::SetCollisionLayer(EPhysicsCollisionLayer collisionLa
 	m_collisionLayer = collisionLayer;
 
 	physx::PxFilterData filterData;
-	filterData.word0 = 1 << static_cast<int>(collisionLayer);
+	filterData.word0 = 1 << static_cast<int32_t>(collisionLayer);
 	filterData.word1 = Modules::Physics->GetMaskForCollisionLayer(collisionLayer);
 }
 
@@ -71,7 +71,7 @@ PhysicsComponent::EBodyType PhysXPhysicsComponent::GetBodyType() const
 		return PhysicsComponent::EBodyType::Kinematic;
 	}
 
-	if(m_pDynamicBody != nullptr)
+	if(m_pDynamicBody)
 	{
 		PhysicsComponent::EBodyType::Dynamic;
 	}
@@ -109,7 +109,7 @@ Vector3 PhysXPhysicsComponent::GetCenterOfMass() const
 
 void PhysXPhysicsComponent::SetLinearDamping(float value)
 {
-	if(m_pDynamicBody != nullptr)
+	if(m_pDynamicBody)
 	{
 		m_pDynamicBody->setLinearDamping(value);
 	}
@@ -117,12 +117,12 @@ void PhysXPhysicsComponent::SetLinearDamping(float value)
 
 float PhysXPhysicsComponent::GetLinearDamping() const
 {
-	return (m_pDynamicBody != nullptr) ? m_pDynamicBody->getLinearDamping() : 0.0f;
+	return m_pDynamicBody ? m_pDynamicBody->getLinearDamping() : 0.0f;
 }
 
 void PhysXPhysicsComponent::SetAngularDamping(float value)
 {
-	if(m_pDynamicBody != nullptr)
+	if(m_pDynamicBody)
 	{
 		m_pDynamicBody->setAngularDamping(value);
 	}
@@ -130,7 +130,7 @@ void PhysXPhysicsComponent::SetAngularDamping(float value)
 
 float PhysXPhysicsComponent::GetAngularDamping() const
 {
-	return (m_pDynamicBody != nullptr) ? m_pDynamicBody->getAngularDamping() : 0.0f;
+	return m_pDynamicBody ? m_pDynamicBody->getAngularDamping() : 0.0f;
 }
 
 void PhysXPhysicsComponent::SetLinearVelocity(const Vector3& linearVelocity)
@@ -182,7 +182,7 @@ void PhysXPhysicsComponent::AddTorque(const Vector3& torque, EForceMode mode)
 
 void PhysXPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool axisZ)
 {
-	if(m_pDynamicBody != nullptr)
+	if(m_pDynamicBody)
 	{
 		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_X, axisX);
 		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_LINEAR_Y, axisY);
@@ -192,7 +192,7 @@ void PhysXPhysicsComponent::SetLinearMotionLock(bool axisX, bool axisY, bool axi
 
 void PhysXPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool axisZ)
 {
-	if(m_pDynamicBody != nullptr)
+	if(m_pDynamicBody)
 	{
 		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, axisX);
 		m_pDynamicBody->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, axisY);
@@ -202,7 +202,7 @@ void PhysXPhysicsComponent::SetAngularMotionLock(bool axisX, bool axisY, bool ax
 
 bool PhysXPhysicsComponent::IsSleeping() const
 {
-	return (m_pDynamicBody != nullptr) ? m_pDynamicBody->isSleeping() : true;
+	return m_pDynamicBody ? m_pDynamicBody->isSleeping() : true;
 }
 
 void PhysXPhysicsComponent::UpdateGameObjectTransform() const

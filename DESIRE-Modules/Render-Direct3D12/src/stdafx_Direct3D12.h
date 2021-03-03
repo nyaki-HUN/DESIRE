@@ -10,7 +10,7 @@
 using Microsoft::WRL::ComPtr;
 
 #define DX_SAFE_RELEASE(pPtr)	\
-	if(pPtr != nullptr)			\
+	if(pPtr)					\
 	{							\
 		pPtr->Release();		\
 		pPtr = nullptr;			\

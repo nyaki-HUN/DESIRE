@@ -69,25 +69,25 @@ PhysXPhysics::PhysXPhysics()
 
 PhysXPhysics::~PhysXPhysics()
 {
-	if(m_pScene != nullptr)
+	if(m_pScene)
 	{
 		m_pScene->release();
 		m_pScene = nullptr;
 	}
 
-	if(m_pCooking != nullptr)
+	if(m_pCooking)
 	{
 		m_pCooking->release();
 		m_pCooking = nullptr;
 	}
 
-	if(m_pPhysics != nullptr)
+	if(m_pPhysics)
 	{
 		m_pPhysics->release();
 		m_pPhysics = nullptr;
 	}
 
-	if(m_pFoundation != nullptr)
+	if(m_pFoundation)
 	{
 		m_pFoundation->release();
 		m_pFoundation = nullptr;
@@ -140,18 +140,18 @@ Vector3 PhysXPhysics::GetGravity() const
 	return GetVector3(m_pScene->getGravity());
 }
 
-Collision PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask)
+Collision PhysXPhysics::RaycastClosest(const Vector3& p1, const Vector3& p2, int32_t layerMask)
 {
 	Collision collision;
 	return collision;
 }
 
-bool PhysXPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask)
+bool PhysXPhysics::RaycastAny(const Vector3& p1, const Vector3& p2, int32_t layerMask)
 {
 	return false;
 }
 
-Array<Collision> PhysXPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask)
+Array<Collision> PhysXPhysics::RaycastAll(const Vector3& p1, const Vector3& p2, int32_t layerMask)
 {
 	Array<Collision> collisions;
 	return collisions;

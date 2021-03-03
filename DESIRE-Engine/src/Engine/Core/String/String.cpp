@@ -19,7 +19,7 @@ size_t String::Find(const String& search, size_t pos) const
 	}
 
 	const char* pFoundCh = strstr(m_pData + pos, search.m_pData);
-	return (pFoundCh != nullptr) ? pFoundCh - m_pData : kInvalidPos;
+	return pFoundCh ? pFoundCh - m_pData : kInvalidPos;
 }
 
 size_t String::Find(char search, size_t pos) const
@@ -30,7 +30,7 @@ size_t String::Find(char search, size_t pos) const
 	}
 
 	const char* pFoundCh = strchr(m_pData + pos, search);
-	return (pFoundCh != nullptr) ? pFoundCh - m_pData : kInvalidPos;
+	return pFoundCh ? pFoundCh - m_pData : kInvalidPos;
 }
 
 size_t String::FindLast(const String& search) const
@@ -144,7 +144,7 @@ int32_t String::Compare(const String& string) const
 
 bool String::Equals(const String& string) const
 {
-	return (m_size == string.m_size) ? (memcmp(m_pData, string.m_pData, m_size) == 0) : false;
+	return (m_size == string.m_size && memcmp(m_pData, string.m_pData, m_size) == 0);
 }
 
 bool String::StartsWith(const String& prefix) const

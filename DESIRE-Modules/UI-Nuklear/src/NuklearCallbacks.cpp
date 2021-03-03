@@ -21,7 +21,7 @@ void NuklearCallbacks::FreeWrapper(nk_handle userHandle, void* pMemory)
 void NuklearCallbacks::ClipboardCopy(nk_handle userHandle, const char* pText, int len)
 {
     OSWindow* pWindow = static_cast<OSWindow*>(userHandle.ptr);
-    if(pWindow != nullptr)
+    if(pWindow)
     {
         pWindow->SetClipboardString(String(pText, len));
     }
@@ -30,7 +30,7 @@ void NuklearCallbacks::ClipboardCopy(nk_handle userHandle, const char* pText, in
 void NuklearCallbacks::ClipboardPaste(nk_handle userHandle, nk_text_edit* pEdit)
 {
     OSWindow* pWindow = static_cast<OSWindow*>(userHandle.ptr);
-    if(pWindow != nullptr)
+    if(pWindow)
     {
         DynamicString string;
         pWindow->GetClipboardString(string);

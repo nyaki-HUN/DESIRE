@@ -214,17 +214,17 @@ void Direct3D11Render::Clear(uint32_t clearColorRGBA, float depth, uint8_t stenc
 		((clearColorRGBA >>  0) & 0xFF) / 255.0f,
 	};
 
-	if(m_pActiveRenderTarget != nullptr)
+	if(m_pActiveRenderTarget)
 	{
 		RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(m_pActiveRenderTarget->m_pRenderData);
-		if(pRenderTargetRenderData != nullptr)
+		if(pRenderTargetRenderData)
 		{
 			for(uint32_t i = 0; i < pRenderTargetRenderData->m_numRTVs; ++i)
 			{
 				m_pDeviceCtx->ClearRenderTargetView(pRenderTargetRenderData->m_RTVs[i], clearColor);
 			}
 
-			if(pRenderTargetRenderData->m_pDSV != nullptr)
+			if(pRenderTargetRenderData->m_pDSV)
 			{
 				m_pDeviceCtx->ClearDepthStencilView(pRenderTargetRenderData->m_pDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
 			}
@@ -524,7 +524,7 @@ RenderData* Direct3D11Render::CreateShaderRenderData(const Shader& shader)
 		spErrorBlob.GetAddressOf());					// ppErrorMsgs
 	if(FAILED(hr))
 	{
-		if(spErrorBlob != nullptr)
+		if(spErrorBlob)
 		{
 			LOG_ERROR("Shader compile error:\n%s", static_cast<const char*>(spErrorBlob->GetBufferPointer()));
 		}
@@ -809,7 +809,7 @@ void Direct3D11Render::SetRenderTarget(RenderTarget* pRenderTarget)
 {
 	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, static_cast<FLOAT>(m_pActiveWindow->GetWidth()), static_cast<FLOAT>(m_pActiveWindow->GetHeight()), 0.0f, 1.0f };
 
-	if(pRenderTarget != nullptr)
+	if(pRenderTarget)
 	{
 		const RenderTargetRenderDataD3D11* pRenderTargetRenderData = static_cast<RenderTargetRenderDataD3D11*>(pRenderTarget->m_pRenderData);
 		m_pDeviceCtx->OMSetRenderTargets(pRenderTargetRenderData->m_numRTVs, pRenderTargetRenderData->m_RTVs, pRenderTargetRenderData->m_pDSV);
@@ -885,21 +885,21 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRender
 		for(const Material::ShaderParam& shaderParam : material.GetShaderParams())
 		{
 			pVariable = bufferData.variables.Find(shaderParam.name);
-			if(pVariable != nullptr)
+			if(pVariable)
 			{
 				isChanged |= pVariable->CheckAndUpdate(shaderParam.GetValue());
 			}
 		}
 
 		pVariable = bufferData.variables.Find("matWorldView");
-		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
+		if(pVariable && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matWorldView.r[0]);
 		}
 
 		pVariable = bufferData.variables.Find("matWorldViewProj");
-		if(pVariable != nullptr && pVariable->size == sizeof(DirectX::XMMATRIX))
+		if(pVariable && pVariable->size == sizeof(DirectX::XMMATRIX))
 		{
 			const DirectX::XMMATRIX matWorldView = DirectX::XMMatrixMultiply(m_matWorld, m_matView);
 			const DirectX::XMMATRIX matWorldViewProj = DirectX::XMMatrixMultiply(matWorldView, m_matProj);
@@ -907,35 +907,35 @@ void Direct3D11Render::UpdateShaderParams(const Material& material, ShaderRender
 		}
 
 		pVariable = bufferData.variables.Find("matView");
-		if(pVariable != nullptr)
+		if(pVariable)
 		{
 			isChanged |= pVariable->CheckAndUpdate(&m_matView.r[0]);
 		}
 
 		pVariable = bufferData.variables.Find("matViewInv");
-		if(pVariable != nullptr)
+		if(pVariable)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[0]);
 		}
 
 		pVariable = bufferData.variables.Find("camPos");
-		if(pVariable != nullptr)
+		if(pVariable)
 		{
 			const DirectX::XMMATRIX matViewInv = DirectX::XMMatrixInverse(nullptr, m_matView);
 			isChanged |= pVariable->CheckAndUpdate(&matViewInv.r[3]);
 		}
 
 		pVariable = bufferData.variables.Find("resolution");
-		if(pVariable != nullptr && pVariable->size == 2 * sizeof(float))
+		if(pVariable && pVariable->size == 2 * sizeof(float))
 		{
 			float resolution[2] = {};
-			if(m_pActiveRenderTarget != nullptr)
+			if(m_pActiveRenderTarget)
 			{
 				resolution[0] = m_pActiveRenderTarget->GetWidth();
 				resolution[1] = m_pActiveRenderTarget->GetHeight();
 			}
-			else if(m_pActiveWindow != nullptr)
+			else if(m_pActiveWindow)
 			{
 				resolution[0] = m_pActiveWindow->GetWidth();
 				resolution[1] = m_pActiveWindow->GetHeight();

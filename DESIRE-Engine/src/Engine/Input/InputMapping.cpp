@@ -84,7 +84,7 @@ bool InputMapping::WasPressed(int32_t userActionId) const
 		for(const MappedInput& button : m_userActions[idx].mappedButtons)
 		{
 			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(button.pInputDeviceHandle);
-			if(pInputDevice != nullptr && pInputDevice->WasPressed(button.id))
+			if(pInputDevice && pInputDevice->WasPressed(button.id))
 			{
 				return true;
 			}
@@ -108,7 +108,7 @@ uint8_t InputMapping::GetPressedCount(int32_t userActionId) const
 		for(const MappedInput& button : m_userActions[idx].mappedButtons)
 		{
 			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(button.pInputDeviceHandle);
-			if(pInputDevice != nullptr)
+			if(pInputDevice)
 			{
 				pressedCount += pInputDevice->GetPressedCount(button.id);
 			}
@@ -130,7 +130,7 @@ float InputMapping::GetFloatState(int32_t userActionId) const
 		for(const MappedInput& button : m_userActions[idx].mappedButtons)
 		{
 			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(button.pInputDeviceHandle);
-			if(pInputDevice != nullptr && pInputDevice->IsDown(button.id))
+			if(pInputDevice && pInputDevice->IsDown(button.id))
 			{
 				return 1.0f;
 			}
@@ -139,7 +139,7 @@ float InputMapping::GetFloatState(int32_t userActionId) const
 		for(const MappedAxis& axis : m_userActions[idx].mappedAxes)
 		{
 			const InputDevice* pInputDevice = Modules::Input->GetInputDeviceByHandle(axis.pInputDeviceHandle);
-			if(pInputDevice != nullptr)
+			if(pInputDevice)
 			{
 				float pos = pInputDevice->GetAxisPos(axis.id);
 				if(pos > 0.0f)

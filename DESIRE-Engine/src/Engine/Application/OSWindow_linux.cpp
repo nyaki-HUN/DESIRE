@@ -46,7 +46,7 @@ OSWindow::OSWindow(const OSWindowCreationParams& creationParams)
 
 OSWindow::~OSWindow()
 {
-	if(m_spImpl->pDisplay != nullptr)
+	if(m_spImpl->pDisplay)
 	{
 		for(int32_t i = 0; i < NUM_CURSORS; ++i)
 		{
@@ -142,55 +142,51 @@ void* OSWindow::GetHandle() const
 	return m_spImpl->windowHandle;
 }
 
-void OSWindow::SetWindowTitle(const char* pNewTitle)
+void OSWindow::SetWindowTitle(const String& newTitle)
 {
-	if(m_spImpl->pDisplay == nullptr)
+	if(m_spImpl->pDisplay)
 	{
-		return;
+		XTextProperty titleTextProp;
+		XStringListToTextProperty(const_cast<char**>(&newTitle.Str()), 1, &titleTextProp);
+
+		XSetWMName(m_spImpl->pDisplay, m_spImpl->windowHandle, &titleTextProp);
+		XSetWMIconName(m_spImpl->pDisplay, m_spImpl->windowHandle, &titleTextProp);
+
+		XFree(titleTextProp.value);
 	}
-
-	XTextProperty titleTextProp;
-	XStringListToTextProperty(const_cast<char**>(&pNewTitle), 1, &titleTextProp);
-
-	XSetWMName(m_spImpl->pDisplay, m_spImpl->windowHandle, &titleTextProp);
-	XSetWMIconName(m_spImpl->pDisplay, m_spImpl->windowHandle, &titleTextProp);
-
-	XFree(titleTextProp.value);
 }
 
 void OSWindow::SetCursor(ECursor cursor)
 {
-	if(m_spImpl->pDisplay == nullptr)
+	if(m_spImpl->pDisplay)
 	{
-		return;
-	}
-
-	if(m_spImpl->cursors[cursor] == None)
-	{
-		// X Font Cursors: http://tronche.com/gui/x/xlib/appendix/b/
-		switch(cursor)
+		if(m_spImpl->cursors[cursor] == None)
 		{
-			case CURSOR_ARROW:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_left_ptr); break;
-			case CURSOR_MOVE:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_fleur); break;
-			case CURSOR_SIZE_BOTTOMLEFT:	m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_bottom_left_corner); break;
-			case CURSOR_SIZE_BOTTOMRIGHT:	m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_bottom_right_corner); break;
-			case CURSOR_SIZE_NS:			m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_sb_v_double_arrow); break;
-			case CURSOR_SIZE_WE:			m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_sb_h_double_arrow); break;
-			case CURSOR_HAND:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_hand2); break;
-			case CURSOR_IBEAM:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_xterm); break;
-			case CURSOR_UP:					m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_center_ptr); break;
-			case CURSOR_NOT_ALLOWED:		m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_circle); break;
-			case NUM_CURSORS:				ASSERT(false); return;
+			// X Font Cursors: http://tronche.com/gui/x/xlib/appendix/b/
+			switch(cursor)
+			{
+				case CURSOR_ARROW:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_left_ptr); break;
+				case CURSOR_MOVE:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_fleur); break;
+				case CURSOR_SIZE_BOTTOMLEFT:	m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_bottom_left_corner); break;
+				case CURSOR_SIZE_BOTTOMRIGHT:	m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_bottom_right_corner); break;
+				case CURSOR_SIZE_NS:			m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_sb_v_double_arrow); break;
+				case CURSOR_SIZE_WE:			m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_sb_h_double_arrow); break;
+				case CURSOR_HAND:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_hand2); break;
+				case CURSOR_IBEAM:				m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_xterm); break;
+				case CURSOR_UP:					m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_center_ptr); break;
+				case CURSOR_NOT_ALLOWED:		m_spImpl->cursors[cursor] = XCreateFontCursor(m_spImpl->pDisplay, XC_circle); break;
+				case NUM_CURSORS:				ASSERT(false); return;
+			}
 		}
-	}
 
-	XDefineCursor(m_spImpl->pDisplay, m_spImpl->windowHandle, m_spImpl->cursors[cursor]);
-	XFlush(m_spImpl->pDisplay);
+		XDefineCursor(m_spImpl->pDisplay, m_spImpl->windowHandle, m_spImpl->cursors[cursor]);
+		XFlush(m_spImpl->pDisplay);
+	}
 }
 
 bool OSWindow::SetClipboardString(const String& string)
 {
-	if(m_spImpl->pDisplay != nullptr)
+	if(m_spImpl->pDisplay)
 	{
 		XSetSelectionOwner(m_spImpl->pDisplay, XA_PRIMARY, None, CurrentTime);
 		XStoreBytes(m_spImpl->pDisplay, string.Str(), string.Length());
@@ -204,17 +200,15 @@ void OSWindow::GetClipboardString(WritableString& outString)
 {
 	outString.Clear();
 
-	if(m_spImpl->pDisplay == nullptr)
+	if(m_spImpl->pDisplay)
 	{
-		return;
-	}
-
-	int32_t size = 0;
-	char* pStr = XFetchBytes(m_spImpl->pDisplay, &size);
-	if(ptr != nullptr)
-	{
-		outString.Assign(pStr, size);
-		XFree(pStr);
+		int32_t size = 0;
+		char8_t* pStr = XFetchBytes(m_spImpl->pDisplay, &size);
+		if(pStr)
+		{
+			outString.Assign(pStr, size);
+			XFree(pStr);
+		}
 	}
 }
 

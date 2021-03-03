@@ -19,7 +19,7 @@ void* BulletVehicleRaycaster::castRay(const btVector3& from, const btVector3& to
 	if(rayCallback.hasHit())
 	{
 		const btRigidBody* pBody = btRigidBody::upcast(rayCallback.m_collisionObject);
-		if(pBody != nullptr && pBody->hasContactResponse())
+		if(pBody && pBody->hasContactResponse())
 		{
 			result.m_hitPointInWorld = rayCallback.m_hitPointWorld;
 			result.m_hitNormalInWorld = rayCallback.m_hitNormalWorld;

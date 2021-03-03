@@ -24,9 +24,9 @@ public:
 	void SetGravity(const Vector3& gravity) override;
 	Vector3 GetGravity() const override;
 
-	Collision RaycastClosest(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
-	bool RaycastAny(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
-	Array<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int layerMask = Physics::MASK_ALL) override;
+	Collision RaycastClosest(const Vector3& p1, const Vector3& p2, int32_t layerMask = Physics::MASK_ALL) override;
+	bool RaycastAny(const Vector3& p1, const Vector3& p2, int32_t layerMask = Physics::MASK_ALL) override;
+	Array<Collision> RaycastAll(const Vector3& p1, const Vector3& p2, int32_t layerMask = Physics::MASK_ALL) override;
 
 	btDynamicsWorld& GetWorld() const;
 

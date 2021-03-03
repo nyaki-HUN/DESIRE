@@ -41,7 +41,7 @@ public:
 
 	void RegisterMessageHandler(int32_t msgType, MessageHandler_t messageHandler);
 
-	void SetWindowTitle(const char* pNewTitle);
+	void SetWindowTitle(const String& newTitle);
 
 	// Change the OS cursor
 	void SetCursor(ECursor cursor);

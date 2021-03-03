@@ -19,7 +19,7 @@ int RoundUp(float x, int roundFactor)
 float Sqrt(float x)
 {
 #if DESIRE_USE_SSE
-	return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ps1(x)));
+	return _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(x)));
 #else
 	return std::sqrt(x);
 #endif

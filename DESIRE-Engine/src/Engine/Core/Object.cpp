@@ -19,7 +19,7 @@ Object::Object()
 Object::~Object()
 {
 	// If the owner of the transform is set to nullptr we are called from a parent object's destructor and no need to call SetParent()
-	if(m_pTransform->m_pOwner != nullptr)
+	if(m_pTransform->m_pOwner)
 	{
 		SetParent(nullptr);
 		s_numTransforms -= m_numTransformsInHierarchy;
@@ -58,7 +58,7 @@ bool Object::IsActiveSelf() const
 bool Object::IsActiveInHierarchy() const
 {
 	const Object* pObj = this;
-	while(pObj != nullptr)
+	while(pObj)
 	{
 		if(!pObj->IsActiveSelf())
 		{
@@ -78,7 +78,7 @@ void Object::SetParent(Object* pNewParent)
 		return;
 	}
 
-	if(m_pParent != nullptr)
+	if(m_pParent)
 	{
 		m_pParent->RemoveChild_Internal(this);
 	}
@@ -86,7 +86,7 @@ void Object::SetParent(Object* pNewParent)
 	m_pParent = pNewParent;
 
 	Transform* pOldTransform = m_pTransform;
-	if(m_pParent != nullptr)
+	if(m_pParent)
 	{
 		m_pTransform = m_pParent->m_pTransform + m_pParent->m_numTransformsInHierarchy;
 
@@ -183,7 +183,7 @@ Object* Object::FindObjectByName(const String& name, bool isRecursiveSearch) con
 bool Object::HasObjectInParentHierarchy(const Object* pObject) const
 {
 	const Object* pObj = GetParent();
-	while(pObj != nullptr)
+	while(pObj)
 	{
 		if(pObj == pObject)
 		{
@@ -255,7 +255,7 @@ void Object::AddChild_Internal(Object* pChild)
 	{
 		pObj->m_numTransformsInHierarchy += pChild->m_numTransformsInHierarchy;
 		pObj = pObj->GetParent();
-	} while(pObj != nullptr);
+	} while(pObj);
 
 	m_children.Add(pChild);
 
@@ -270,7 +270,7 @@ void Object::RemoveChild_Internal(Object* pChild)
 		ASSERT(pObj->m_numTransformsInHierarchy > pChild->m_numTransformsInHierarchy);
 		pObj->m_numTransformsInHierarchy -= pChild->m_numTransformsInHierarchy;
 		pObj = pObj->GetParent();
-	} while(pObj != nullptr);
+	} while(pObj);
 
 	m_children.Remove(pChild);
 	pChild->m_pTransform->m_pParent = nullptr;
@@ -282,7 +282,7 @@ void Object::RefreshParentPointerInTransforms(Transform* pFirstTransform, size_t
 	for(size_t i = 0; i < transformCount; ++i)
 	{
 		pTransformTmp->m_pOwner->m_pTransform = pTransformTmp;
-		if(pTransformTmp->m_pOwner->m_pParent != nullptr)
+		if(pTransformTmp->m_pOwner->m_pParent)
 		{
 			pTransformTmp->m_pParent = &pTransformTmp->m_pOwner->m_pParent->GetTransform();
 		}
