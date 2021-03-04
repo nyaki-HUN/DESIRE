@@ -17,10 +17,10 @@ public:
 	}
 
 	inline Matrix4(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3)
-		: m_col0(m_col0)
-		, m_col1(m_col1)
-		, m_col2(m_col2)
-		, m_col3(m_col3)
+		: m_col0(col0)
+		, m_col1(col1)
+		, m_col2(col2)
+		, m_col3(col3)
 	{
 	}
 

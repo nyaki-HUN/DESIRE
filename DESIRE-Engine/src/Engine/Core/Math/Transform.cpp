@@ -104,9 +104,9 @@ void Transform::SetPosition(const Vector3& position)
 Quat Transform::GetRotation() const
 {
 	Matrix3 mat = GetWorldMatrix().GetUpper3x3();
-	mat.col0.Normalize();
-	mat.col1.Normalize();
-	mat.col2.Normalize();
+	mat.m_col0.Normalize();
+	mat.m_col1.Normalize();
+	mat.m_col2.Normalize();
 	return Quat(mat).Normalized();
 }
 
@@ -126,7 +126,7 @@ void Transform::SetRotation(const Quat& rotation)
 Vector3 Transform::GetScale() const
 {
 	const Matrix3 mat = GetWorldMatrix().GetUpper3x3();
-	return Vector3(mat.col0.Length(), mat.col1.Length(), mat.col2.Length());
+	return Vector3(mat.m_col0.Length(), mat.m_col1.Length(), mat.m_col2.Length());
 }
 
 void Transform::SetScale(const Vector3& scale)

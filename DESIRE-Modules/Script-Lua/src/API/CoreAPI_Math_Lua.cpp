@@ -132,9 +132,9 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 		Matrix3(const Vector3&, const Vector3&, const Vector3&),
 		Matrix3(const Quat&)
 		>());
-	matrix3.set("col0", &Matrix3::col0);
-	matrix3.set("col1", &Matrix3::col1);
-	matrix3.set("col2", &Matrix3::col2);
+	matrix3.set("m_col0", &Matrix3::m_col0);
+	matrix3.set("m_col1", &Matrix3::m_col1);
+	matrix3.set("m_col2", &Matrix3::m_col2);
 	matrix3.set_function("SetCol", &Matrix3::SetCol);
 	matrix3.set_function("GetCol", &Matrix3::GetCol);
 	matrix3.set_function("SetRow0", &Matrix3::SetRow0);
@@ -171,10 +171,10 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	matrix4.set_function("GetUpper3x3", &Matrix4::GetUpper3x3);
 	matrix4.set_function("SetTranslation", &Matrix4::SetTranslation);
 	matrix4.set_function("GetTranslation", &Matrix4::GetTranslation);
-	matrix4.set("col0", &Matrix4::col0);
-	matrix4.set("col1", &Matrix4::col1);
-	matrix4.set("col2", &Matrix4::col2);
-	matrix4.set("col3", &Matrix4::col3);
+	matrix4.set("m_col0", &Matrix4::m_col0);
+	matrix4.set("m_col1", &Matrix4::m_col1);
+	matrix4.set("m_col2", &Matrix4::m_col2);
+	matrix4.set("m_col3", &Matrix4::m_col3);
 	matrix4.set_function("SetCol", &Matrix4::SetCol);
 	matrix4.set_function("GetCol", &Matrix4::GetCol);
 	matrix4.set_function("SetRow0", &Matrix4::SetRow0);

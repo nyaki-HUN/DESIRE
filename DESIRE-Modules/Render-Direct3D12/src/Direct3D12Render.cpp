@@ -360,23 +360,23 @@ void Direct3D12Render::SetScissor(uint16_t x, uint16_t y, uint16_t width, uint16
 
 void Direct3D12Render::SetWorldMatrix(const Matrix4& matrix)
 {
-	m_matWorld.r[0] = GetXMVECTOR(matrix.col0);
-	m_matWorld.r[1] = GetXMVECTOR(matrix.col1);
-	m_matWorld.r[2] = GetXMVECTOR(matrix.col2);
-	m_matWorld.r[3] = GetXMVECTOR(matrix.col3);
+	m_matWorld.r[0] = GetXMVECTOR(matrix.m_col0);
+	m_matWorld.r[1] = GetXMVECTOR(matrix.m_col1);
+	m_matWorld.r[2] = GetXMVECTOR(matrix.m_col2);
+	m_matWorld.r[3] = GetXMVECTOR(matrix.m_col3);
 }
 
 void Direct3D12Render::SetViewProjectionMatrices(const Matrix4& viewMatrix, const Matrix4& projMatrix)
 {
-	m_matView.r[0] = GetXMVECTOR(viewMatrix.col0);
-	m_matView.r[1] = GetXMVECTOR(viewMatrix.col1);
-	m_matView.r[2] = GetXMVECTOR(viewMatrix.col2);
-	m_matView.r[3] = GetXMVECTOR(viewMatrix.col3);
+	m_matView.r[0] = GetXMVECTOR(viewMatrix.m_col0);
+	m_matView.r[1] = GetXMVECTOR(viewMatrix.m_col1);
+	m_matView.r[2] = GetXMVECTOR(viewMatrix.m_col2);
+	m_matView.r[3] = GetXMVECTOR(viewMatrix.m_col3);
 
-	m_matProj.r[0] = GetXMVECTOR(projMatrix.col0);
-	m_matProj.r[1] = GetXMVECTOR(projMatrix.col1);
-	m_matProj.r[2] = GetXMVECTOR(projMatrix.col2);
-	m_matProj.r[3] = GetXMVECTOR(projMatrix.col3);
+	m_matProj.r[0] = GetXMVECTOR(projMatrix.m_col0);
+	m_matProj.r[1] = GetXMVECTOR(projMatrix.m_col1);
+	m_matProj.r[2] = GetXMVECTOR(projMatrix.m_col2);
+	m_matProj.r[3] = GetXMVECTOR(projMatrix.m_col3);
 }
 
 RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& renderable)

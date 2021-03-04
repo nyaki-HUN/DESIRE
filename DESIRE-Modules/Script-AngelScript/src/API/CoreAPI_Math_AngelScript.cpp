@@ -149,9 +149,9 @@ void RegisterCoreAPI_Math_AngelScript(asIScriptEngine& engine)
 	result = engine.RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f(const Matrix3& in)", asFUNCTION(AngelScriptAPI<Matrix3>::FactoryWithArgs<const Matrix3&>), asCALL_CDECL);																			ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f(const Vector3& in, const Vector3& in, const Vector3& in)", asFUNCTION((AngelScriptAPI<Matrix3>::FactoryWithArgs<const Vector3&, const Vector3&, const Vector3&>)), asCALL_CDECL);	ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectBehaviour("Matrix3", asBEHAVE_FACTORY, "Matrix3@ f(const Quat& in)", asFUNCTION(AngelScriptAPI<Matrix3>::FactoryWithArgs<const Quat&>), asCALL_CDECL);																				ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectProperty("Matrix3", "Vector3& col0", asOFFSET(Matrix3, col0));																																										ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectProperty("Matrix3", "Vector3& col1", asOFFSET(Matrix3, col1));																																										ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectProperty("Matrix3", "Vector3& col2", asOFFSET(Matrix3, col2));																																										ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectProperty("Matrix3", "Vector3& m_col0", asOFFSET(Matrix3, m_col0));																																									ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectProperty("Matrix3", "Vector3& m_col1", asOFFSET(Matrix3, m_col1));																																									ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectProperty("Matrix3", "Vector3& m_col2", asOFFSET(Matrix3, m_col2));																																									ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Matrix3", "void SetCol(int, const Vector3& in)", asMETHOD(Matrix3, SetCol), asCALL_THISCALL);																																	ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Matrix3", "Vector3& GetCol(int) const", asMETHOD(Matrix3, GetCol), asCALL_THISCALL);																																			ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Matrix3", "void SetRow0(const Vector3& in)", asMETHOD(Matrix3, SetRow0), asCALL_THISCALL);																																	ASSERT(result >= asSUCCESS);
@@ -197,10 +197,10 @@ void RegisterCoreAPI_Math_AngelScript(asIScriptEngine& engine)
 //	Matrix3 GetUpper3x3() const																																																											ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Matrix4", "void SetTranslation(const Vector3& in)", asMETHOD(Matrix4, SetTranslation), asCALL_THISCALL);																														ASSERT(result >= asSUCCESS);
 //	Vector3 GetTranslation() const																																																										ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectProperty("Matrix4", "Vector4& col0", asOFFSET(Matrix4, col0));																																										ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectProperty("Matrix4", "Vector4& col1", asOFFSET(Matrix4, col1));																																										ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectProperty("Matrix4", "Vector4& col2", asOFFSET(Matrix4, col2));																																										ASSERT(result >= asSUCCESS);
-	result = engine.RegisterObjectProperty("Matrix4", "Vector4& col3", asOFFSET(Matrix4, col3));																																										ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectProperty("Matrix4", "Vector4& m_col0", asOFFSET(Matrix4, m_col0));																																									ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectProperty("Matrix4", "Vector4& m_col1", asOFFSET(Matrix4, m_col1));																																									ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectProperty("Matrix4", "Vector4& m_col2", asOFFSET(Matrix4, m_col2));																																									ASSERT(result >= asSUCCESS);
+	result = engine.RegisterObjectProperty("Matrix4", "Vector4& m_col3", asOFFSET(Matrix4, m_col3));																																									ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Matrix4", "void SetCol(int, const Vector4& in)", asMETHOD(Matrix4, SetCol), asCALL_THISCALL);																																	ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Matrix4", "Vector4& GetCol(int) const", asMETHOD(Matrix4, GetCol), asCALL_THISCALL);																																			ASSERT(result >= asSUCCESS);
 	result = engine.RegisterObjectMethod("Matrix4", "void SetRow0(const Vector4& in)", asMETHOD(Matrix4, SetRow0), asCALL_THISCALL);																																	ASSERT(result >= asSUCCESS);
