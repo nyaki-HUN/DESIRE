@@ -49,10 +49,7 @@
 	#define DESIRE_USE_SSE	1
 	#define DESIRE_USE_NEON	0
 
-	// Enable SSE 4.1
-	#if !defined(__SSE4_1__)
-		#define __SSE4_1__
-	#endif
+	#include <immintrin.h>
 
 	// Header files for SIMD intrinsics:
 	//	<immintrin.h>	AVX			Intel(R) Architecture intrinsic functions
@@ -66,14 +63,6 @@
 	//	<emmintrin.h>	SSE2
 	//	<xmmintrin.h>	SSE
 	//	<mmintrin.h>	MMX
-
-	#if defined(__SSE4_1__)
-		#include <smmintrin.h>
-	#else
-		// We are safe to use SSE3 because an x64 CPU with no SSE3 support is the 'first-generation' 64-bit which
-		// isn't supported by Windows 8.1 x64 native due to the requirements for CMPXCHG16b, PrefetchW, and LAHF/SAHF
-		#include <pmmintrin.h>
-	#endif
 #elif DESIRE_PLATFORM_NX
 	#define DESIRE_USE_SSE	0
 	#define DESIRE_USE_NEON	1

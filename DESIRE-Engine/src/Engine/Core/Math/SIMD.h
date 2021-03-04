@@ -102,14 +102,7 @@ public:
 	static inline simd128_t SetY(simd128_t vec, float y)
 	{
 #if DESIRE_USE_SSE
-		const __m128 y000 = _mm_set_ss(y);
-	#if defined(__SSE4_1__)
-		return _mm_insert_ps(vec, y000, 0x10);
-	#else
-		__m128 yxzw = SIMD::Swizzle_YXZW(vec);
-		yxzw = _mm_move_ss(yxzw, y000);
-		return SIMD::Swizzle_YXZW(yxzw);
-	#endif
+		return _mm_insert_ps(vec, _mm_set_ss(y), 0x10);
 #elif DESIRE_USE_NEON
 		return vsetq_lane_f32(y, vec, 1);
 #else
@@ -121,14 +114,7 @@ public:
 	static inline simd128_t SetZ(simd128_t vec, float z)
 	{
 #if DESIRE_USE_SSE
-		const __m128 z000 = _mm_set_ss(z);
-	#if defined(__SSE4_1__)
-		return _mm_insert_ps(vec, z000, 0x20);
-	#else
-		__m128 zyxw = SIMD::Swizzle_ZYXW(vec);
-		zyxw = _mm_move_ss(zyxw, z000);
-		return SIMD::Swizzle_ZYXW(zyxw);
-	#endif
+		return _mm_insert_ps(vec, _mm_set_ss(z), 0x20);
 #elif DESIRE_USE_NEON
 		return vsetq_lane_f32(z, vec, 2);
 #else
@@ -140,14 +126,7 @@ public:
 	static inline simd128_t SetW(simd128_t vec, float w)
 	{
 #if DESIRE_USE_SSE
-		const __m128 w000 = _mm_set_ss(w);
-	#if defined(__SSE4_1__)
-		return _mm_insert_ps(vec, w000, 0x30);
-	#else
-		__m128 wyzx = SIMD::Swizzle_WYZX(vec);
-		wyzx = _mm_move_ss(wyzx, w000);
-		return SIMD::Swizzle_WYZX(wyzx);
-	#endif
+		return _mm_insert_ps(vec, _mm_set_ss(w), 0x30);
 #elif DESIRE_USE_NEON
 		return vsetq_lane_f32(w, vec, 3);
 #else
@@ -285,7 +264,9 @@ public:
 	// Per component multiplication and addition of the three inputs: c + (a * b)
 	static inline simd128_t MulAdd(simd128_t a, simd128_t b, simd128_t c)
 	{
-#if DESIRE_USE_NEON
+#if DESIRE_USE_SSE
+		return _mm_fmadd_ps(a, b, c);
+#elif DESIRE_USE_NEON
 		return vfmaq_f32(c, a, b);
 #else
 		return SIMD::Add(c, SIMD::Mul(a, b));
@@ -295,7 +276,9 @@ public:
 	// Per component multiplication and subtraction of the three inputs: c - (a * b)
 	static inline simd128_t MulSub(simd128_t a, simd128_t b, simd128_t c)
 	{
-#if DESIRE_USE_NEON
+#if DESIRE_USE_SSE
+		return _mm_fnmadd_ps(a, b, c);
+#elif DESIRE_USE_NEON
 		return vfmsq_f32(c, a, b);
 #else
 		return SIMD::Sub(c, SIMD::Mul(a, b));
@@ -471,15 +454,7 @@ public:
 	static inline simd128_t Dot3(simd128_t a, simd128_t b)
 	{
 #if DESIRE_USE_SSE
-	#if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0x7F);
-	#else
-		__m128 ab = SIMD::Mul(a, b);
-		alignas(16) const uint32_t mask_xyz[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 };
-		ab = _mm_and_ps(ab, _mm_load_ps(reinterpret_cast<const float*>(mask_xyz));
-		__m128 xy_z_xy_z = _mm_hadd_ps(ab, ab);
-		return _mm_hadd_ps(xy_z_xy_z, xy_z_xy_z);
-	#endif
 #elif DESIRE_USE_NEON
 		float32x4_t ab = SIMD::Mul(a, b);
 		float32x2_t xy = vget_low_f32(ab);
@@ -500,13 +475,7 @@ public:
 	static inline simd128_t Dot4(simd128_t a, simd128_t b)
 	{
 #if DESIRE_USE_SSE
-	#if defined(__SSE4_1__)
 		return _mm_dp_ps(a, b, 0xFF);
-	#else
-		__m128 ab = SIMD::Mul(a, b);
-		__m128 xy_zw_xy_zw = _mm_hadd_ps(ab, ab);
-		return _mm_hadd_ps(xy_zw_xy_zw, xy_zw_xy_zw);
-	#endif
 #elif DESIRE_USE_NEON
 		float32x4_t ab = SIMD::Mul(a, b);
 		float32x2_t xz_yw = vadd_f32(vget_low_f32(ab), vget_high_f32(ab));
@@ -640,11 +609,7 @@ public:
 	static inline simd128_t Blend(simd128_t a, simd128_t b, simd128_t mask)
 	{
 #if DESIRE_USE_SSE
-	#if defined(__SSE4_1__)
 		return _mm_blendv_ps(a, b, mask);
-	#else
-		return _mm_or_ps(_mm_and_ps(mask, b), _mm_andnot_ps(mask, a));
-	#endif
 #elif DESIRE_USE_NEON
 		return vbslq_f32(reinterpret_cast<uint32x4_t>(mask), b, a);
 #else
