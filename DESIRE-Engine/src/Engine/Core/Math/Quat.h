@@ -13,7 +13,7 @@ public:
 	explicit inline Quat(const Matrix3& rotMat);
 
 	// Load x, y, z, and w elements from the first four elements of a float array
-	inline void LoadXYZW(const float* pValues)					{ m_vec128 = SIMD::LoadXYZW(pValues); }
+	inline void LoadXYZW(const float* pValues)				{ m_vec128 = SIMD::LoadXYZW(pValues); }
 
 	// Store x, y, z, and w elements in the first four elements of a float array
 	inline void StoreXYZW(float* pValues) const				{ SIMD::StoreXYZW(*this, pValues); }
@@ -49,26 +49,7 @@ public:
 	inline Quat Conjugate() const;
 
 	// Compute the Euler angle representation of the rotation in radians
-	inline Vector3 EulerAngles() const
-	{
-		const simd128_t vecSq2 = SIMD::Mul(SIMD::Mul(*this, *this), 2.0f);
-		const float tmpX1 = 1.0f - (SIMD::GetX(vecSq2) + SIMD::GetY(vecSq2));
-		const float tmpX2 = 1.0f - (SIMD::GetY(vecSq2) + SIMD::GetZ(vecSq2));
-
-		const float x = GetX();
-		const float y = GetY();
-		const float z = GetZ();
-		const float w = GetW();
-		const float t1 = 2.0f * (w * x + y * z);
-		const float t2 = 2.0f * (w * y - z * x);
-		const float t3 = 2.0f * (w * z + x * y);
-
-		return Vector3(
-			std::atan2(t1, tmpX1),
-			std::asin(t2 < -1.0f ? -1.0f : (t2 > 1.0f ? 1.0f : t2)),
-			std::atan2(t3, tmpX2)
-		); 
-	}
+	inline Vector3 EulerAngles() const;
 
 	// Rotate a 3-D vector with this unit-length quaternion
 	inline Vector3 RotateVec(const Vector3& vec) const
@@ -167,6 +148,28 @@ inline Quat Quat::Conjugate() const
 #endif
 }
 
+// Compute the Euler angle representation of the rotation in radians
+inline Vector3 Quat::EulerAngles() const
+{
+	const simd128_t vecSq2 = SIMD::Mul(SIMD::Mul(*this, *this), 2.0f);
+	const float tmpX1 = 1.0f - (SIMD::GetX(vecSq2) + SIMD::GetY(vecSq2));
+	const float tmpX2 = 1.0f - (SIMD::GetY(vecSq2) + SIMD::GetZ(vecSq2));
+
+	const float x = GetX();
+	const float y = GetY();
+	const float z = GetZ();
+	const float w = GetW();
+	const float t1 = 2.0f * (w * x + y * z);
+	const float t2 = 2.0f * (w * y - z * x);
+	const float t3 = 2.0f * (w * z + x * y);
+
+	return Vector3(
+		std::atan2(t1, tmpX1),
+		std::asin(t2 < -1.0f ? -1.0f : (t2 > 1.0f ? 1.0f : t2)),
+		std::atan2(t3, tmpX2)
+	);
+}
+
 // Spherical linear interpolation between two quaternions
 inline Quat Quat::Slerp(const Quat& unitQuat0, const Quat& unitQuat1, float t)
 {
@@ -190,7 +193,7 @@ inline Quat Quat::Slerp(const Quat& unitQuat0, const Quat& unitQuat1, float t)
 #else
 	Quat start;
 	float scale0, scale1;
-	float cosAngle = unitQuat0.Dot(unitQuat1);
+	const float cosAngle = unitQuat0.Dot(unitQuat1);
 	if(cosAngle < 0.0f)
 	{
 		cosAngle = -cosAngle;

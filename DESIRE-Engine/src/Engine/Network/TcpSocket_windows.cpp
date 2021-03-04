@@ -28,7 +28,7 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	addr.sin_port = htons(port);
 	inet_pton(AF_INET, address.Str(), &addr.sin_addr);
 
-	int result = connect(m_socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
+	int32_t result = connect(m_socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
 	if(result < 0)
 	{
 		LOG_MESSAGE("Socket connection to %s:%u failed with status %d", address.Str(), port, WSAGetLastError());
@@ -38,7 +38,7 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	return true;
 }
 
-int TcpSocket::Send(const void* pBuffer, size_t size)
+int32_t TcpSocket::Send(const void* pBuffer, size_t size)
 {
 	ASSERT(size <= INT_MAX);
 	return send(m_socketId, static_cast<const char*>(pBuffer), static_cast<int>(size), 0);
@@ -51,7 +51,7 @@ void TcpSocket::SetNoDelay(bool value)
 		return;
 	}
 
-	int optval = value ? 1 : 0;
+	int32_t optval = value ? 1 : 0;
 	setsockopt(m_socketId, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char*>(&optval), sizeof(optval));
 }
 

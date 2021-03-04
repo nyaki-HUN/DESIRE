@@ -18,7 +18,7 @@ TcpSocket::TcpSocket()
 
 	if(m_socketId != kInvalidSocketId)
 	{
-		int optval = 1;
+		int32_t optval = 1;
 		setsockopt(m_socketId, SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval));
 	}
 }
@@ -39,7 +39,7 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	addr.sin_port = htons(port);
 	inet_pton(AF_INET, address.Str(), &addr.sin_addr);
 
-	int result = connect(m_socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
+	int32_t result = connect(m_socketId, reinterpret_cast<const sockaddr*>(&addr), sizeof(sockaddr_in));
 	if(result < 0)
 	{
 		LOG_MESSAGE("Socket connection to %s:%u failed with status %d", address.Str(), port, errno);
@@ -49,7 +49,7 @@ bool TcpSocket::Connect(const String& address, uint16_t port)
 	return true;
 }
 
-int TcpSocket::Send(const void* pBuffer, size_t size)
+int32_t TcpSocket::Send(const void* pBuffer, size_t size)
 {
 	return send(m_socketId, pBuffer, size, 0);
 }
@@ -61,7 +61,7 @@ void TcpSocket::SetNoDelay(bool value)
 		return;
 	}
 
-	int optval = value ? 1 : 0;
+	int32_t optval = value ? 1 : 0;
 	setsockopt(m_socketId, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(optval));
 }
 
@@ -72,7 +72,7 @@ void TcpSocket::SetNonBlocking()
 		return;
 	}
 
-	int flags = fcntl(m_socketId, F_GETFL, 0);
+	int32_t flags = fcntl(m_socketId, F_GETFL, 0);
 	fcntl(m_socketId, F_SETFL, flags | O_NONBLOCK);
 }
 

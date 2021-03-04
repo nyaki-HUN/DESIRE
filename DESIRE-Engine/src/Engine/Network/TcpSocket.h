@@ -22,7 +22,7 @@ private:
 	typedef uintptr_t NativeSocket;
 	static constexpr NativeSocket kInvalidSocketId = UINTPTR_MAX;
 #else
-	typedef int NativeSocket;
+	typedef int32_t NativeSocket;
 	static constexpr NativeSocket kInvalidSocketId = -1;
 #endif
 

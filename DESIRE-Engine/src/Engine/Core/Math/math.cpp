@@ -4,16 +4,16 @@
 namespace Math
 {
 
-int Round32(float x)
+int32_t Round32(float x)
 {
-	return (int)std::round(x);
+	return static_cast<int32_t>(std::round(x));
 }
 
-int RoundUp(float x, int roundFactor)
+int32_t RoundUp(float x, int32_t roundFactor)
 {
 	ASSERT(roundFactor != 0);
 	x -= 0.01f;
-	return (int)std::ceil(x / roundFactor) * roundFactor;
+	return static_cast<int32_t>(std::ceil(x / roundFactor) * roundFactor);
 }
 
 float Sqrt(float x)
@@ -50,11 +50,21 @@ uint32_t IntPow(uint32_t a, uint32_t e)
 	return ret;
 }
 
-int IntSel(int condition, int x, int y)
+int32_t IntSel(int32_t condition, int32_t x, int32_t y)
 {
 	// Set mask to 0xffffffff if condition < 0 and 0x00000000 otherwise (arithmetic shift right, splat out the sign bit)
-	const int mask = condition >> 31;
+	const int32_t mask = condition >> 31;
 	return x + ((y - x) & mask);
+}
+
+float FloatsAreEqual(float a, float b, float tolerance)
+{
+	return std::abs(a - b) < tolerance;
+}
+
+float FloatIsZero(float x, float tolerance)
+{
+	return std::abs(x) < tolerance;
 }
 
 }	// namespace Math

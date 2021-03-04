@@ -8,8 +8,8 @@ constexpr float Tau = 2.0f * Pi;
 constexpr float Pi_2 = Pi / 2.0f;
 constexpr float Pi_4 = Pi / 4.0f;
 
-int Round32(float x);
-int RoundUp(float x, int roundFactor);
+int32_t Round32(float x);
+int32_t RoundUp(float x, int32_t roundFactor);
 
 float Sqrt(float x);
 
@@ -21,17 +21,10 @@ uint32_t IntPow(uint32_t a, uint32_t e);
 
 // Integer select functions to avoid branches, which makes performance much better (especially for consoles)
 // Returns 'x' if cond >= 0 and 'y' otherwise
-inline int IntSel(int condition, int x, int y);
+int32_t IntSel(int32_t condition, int32_t x, int32_t y);
 
-inline float FloatsAreEqual(float a, float b, float epsilon = FLT_EPSILON)
-{
-	return std::abs(a - b) < epsilon;
-}
-
-inline float FloatIsZero(float x, float tolerance = FLT_EPSILON)
-{
-	return std::abs(x) < tolerance;
-}
+float FloatsAreEqual(float a, float b, float tolerance = FLT_EPSILON);
+float FloatIsZero(float x, float tolerance = FLT_EPSILON);
 
 template<typename T>
 constexpr T DegToRad(T deg)

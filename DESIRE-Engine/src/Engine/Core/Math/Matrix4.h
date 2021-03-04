@@ -6,112 +6,109 @@
 class Matrix4
 {
 public:
-	inline Matrix4()
-	{
-		// No initialization
-	}
+	inline Matrix4() = default;
 
 	inline Matrix4(const Matrix4& mat)
-		: col0(mat.col0)
-		, col1(mat.col1)
-		, col2(mat.col2)
-		, col3(mat.col3)
+		: m_col0(mat.m_col0)
+		, m_col1(mat.m_col1)
+		, m_col2(mat.m_col2)
+		, m_col3(mat.m_col3)
 	{
 	}
 
 	inline Matrix4(const Vector4& col0, const Vector4& col1, const Vector4& col2, const Vector4& col3)
-		: col0(col0)
-		, col1(col1)
-		, col2(col2)
-		, col3(col3)
+		: m_col0(m_col0)
+		, m_col1(m_col1)
+		, m_col2(m_col2)
+		, m_col3(m_col3)
 	{
 	}
 
 	inline Matrix4(const Matrix3& mat, const Vector3& translateVec)
-		: col0(mat.col0, 0.0f)
-		, col1(mat.col1, 0.0f)
-		, col2(mat.col2, 0.0f)
-		, col3(translateVec, 1.0f)
+		: m_col0(mat.m_col0, 0.0f)
+		, m_col1(mat.m_col1, 0.0f)
+		, m_col2(mat.m_col2, 0.0f)
+		, m_col3(translateVec, 1.0f)
 	{
 	}
 
 	inline Matrix4(const Quat& unitQuat, const Vector3& translateVec)
-		: col3(translateVec, 1.0f)
+		: m_col3(translateVec, 1.0f)
 	{
 		Matrix3 mat = Matrix3(unitQuat);
-		col0 = Vector4(mat.col0, 0.0f);
-		col1 = Vector4(mat.col1, 0.0f);
-		col2 = Vector4(mat.col2, 0.0f);
+		m_col0 = Vector4(mat.m_col0, 0.0f);
+		m_col1 = Vector4(mat.m_col1, 0.0f);
+		m_col2 = Vector4(mat.m_col2, 0.0f);
 	}
 
 	inline Matrix4(const float(&fptr)[16])
 	{
-		col0.LoadXYZW(&fptr[0]);
-		col1.LoadXYZW(&fptr[4]);
-		col2.LoadXYZW(&fptr[8]);
-		col3.LoadXYZW(&fptr[12]);
+		m_col0.LoadXYZW(&fptr[0]);
+		m_col1.LoadXYZW(&fptr[4]);
+		m_col2.LoadXYZW(&fptr[8]);
+		m_col3.LoadXYZW(&fptr[12]);
 	}
 
 	inline void Store(float(&fptr)[16]) const
 	{
-		col0.StoreXYZW(&fptr[0]);
-		col1.StoreXYZW(&fptr[4]);
-		col2.StoreXYZW(&fptr[8]);
-		col3.StoreXYZW(&fptr[12]);
+		m_col0.StoreXYZW(&fptr[0]);
+		m_col1.StoreXYZW(&fptr[4]);
+		m_col2.StoreXYZW(&fptr[8]);
+		m_col3.StoreXYZW(&fptr[12]);
 	}
 
 	inline Matrix4& SetUpper3x3(const Matrix3& mat3)
 	{
-		col0.SetXYZ(mat3.col0);
-		col1.SetXYZ(mat3.col1);
-		col2.SetXYZ(mat3.col2);
+		m_col0.SetXYZ(mat3.m_col0);
+		m_col1.SetXYZ(mat3.m_col1);
+		m_col2.SetXYZ(mat3.m_col2);
 		return *this;
 	}
 
 	inline Matrix3 GetUpper3x3() const
 	{
 		return Matrix3(
-			col0.GetXYZ(),
-			col1.GetXYZ(),
-			col2.GetXYZ()
+			m_col0.GetXYZ(),
+			m_col1.GetXYZ(),
+			m_col2.GetXYZ()
 		);
 	}
 
-	inline Matrix4& SetTranslation(const Vector3& translateVec)	{ col3.SetXYZ(translateVec); return *this; }
-	inline Vector3 GetTranslation() const						{ return col3.GetXYZ(); }
+	inline Matrix4& SetTranslation(const Vector3& translateVec)	{ m_col3.SetXYZ(translateVec); return *this; }
+	inline Vector3 GetTranslation() const						{ return m_col3.GetXYZ(); }
 
-	inline void SetCol(int idx, const Vector4& vec)				{ *(&col0 + idx) = vec; }
-	inline const Vector4& GetCol(int idx) const					{ return *(&col0 + idx); }
+	inline void SetCol(int32_t idx, const Vector4& vec)			{ *(&m_col0 + idx) = vec; }
+	inline const Vector4& GetCol(int32_t idx) const				{ return *(&m_col0 + idx); }
 
 	inline void SetRow0(const Vector4& vec)
 	{
-		col0.SetX(vec.GetX());
-		col1.SetX(vec.GetY());
-		col2.SetX(vec.GetZ());
-		col3.SetX(vec.GetW());
+		m_col0.SetX(vec.GetX());
+		m_col1.SetX(vec.GetY());
+		m_col2.SetX(vec.GetZ());
+		m_col3.SetX(vec.GetW());
 	}
 
-	inline Vector4 GetRow0() const								{ return Vector4(col0.GetX(), col1.GetX(), col2.GetX(), col3.GetX()); }
-	inline Vector4 GetRow1() const								{ return Vector4(col0.GetY(), col1.GetY(), col2.GetY(), col3.GetY()); }
-	inline Vector4 GetRow2() const								{ return Vector4(col0.GetZ(), col1.GetZ(), col2.GetZ(), col3.GetZ()); }
-	inline Vector4 GetRow3() const								{ return Vector4(col0.GetW(), col1.GetW(), col2.GetW(), col3.GetW()); }
+	inline Vector4 GetRow0() const								{ return Vector4(m_col0.GetX(), m_col1.GetX(), m_col2.GetX(), m_col3.GetX()); }
+	inline Vector4 GetRow1() const								{ return Vector4(m_col0.GetY(), m_col1.GetY(), m_col2.GetY(), m_col3.GetY()); }
+	inline Vector4 GetRow2() const								{ return Vector4(m_col0.GetZ(), m_col1.GetZ(), m_col2.GetZ(), m_col3.GetZ()); }
+	inline Vector4 GetRow3() const								{ return Vector4(m_col0.GetW(), m_col1.GetW(), m_col2.GetW(), m_col3.GetW()); }
 
 	inline Matrix4& operator =(const Matrix4& mat)
 	{
-		col0 = mat.col0;
-		col1 = mat.col1;
-		col2 = mat.col2;
-		col3 = mat.col3;
+		m_col0 = mat.m_col0;
+		m_col1 = mat.m_col1;
+		m_col2 = mat.m_col2;
+		m_col3 = mat.m_col3;
 		return *this;
 	}
 
-	inline Matrix4 operator -() const							{ return Matrix4(-col0, -col1, -col2, -col3); }
-	inline Matrix4 operator +(const Matrix4& mat) const			{ return Matrix4(col0 + mat.col0, col1 + mat.col1, col2 + mat.col2, col3 + mat.col3); }
-	inline Matrix4 operator -(const Matrix4& mat) const			{ return Matrix4(col0 - mat.col0, col1 - mat.col1, col2 - mat.col2, col3 - mat.col3); }
-	inline Matrix4 operator *(const Matrix4& mat) const			{ return Matrix4( *this * mat.col0, *this * mat.col1, *this * mat.col2, *this * mat.col3); }
+	inline Matrix4 operator -() const							{ return Matrix4(-m_col0, -m_col1, -m_col2, -m_col3); }
+	inline Matrix4 operator +(const Matrix4& mat) const			{ return Matrix4(m_col0 + mat.m_col0, m_col1 + mat.m_col1, m_col2 + mat.m_col2, m_col3 + mat.m_col3); }
+	inline Matrix4 operator -(const Matrix4& mat) const			{ return Matrix4(m_col0 - mat.m_col0, m_col1 - mat.m_col1, m_col2 - mat.m_col2, m_col3 - mat.m_col3); }
+	inline Matrix4 operator *(const Matrix4& mat) const			{ return Matrix4(*this * mat.m_col0, *this * mat.m_col1, *this * mat.m_col2, *this * mat.m_col3); }
 	inline Vector4 operator *(const Vector4& vec) const;
 	inline Vector4 operator *(const Vector3& vec) const;
-	inline Matrix4 operator *(float scalar) const				{ return Matrix4(col0 * scalar, col1 * scalar, col2 * scalar, col3 * scalar); }
+	inline Matrix4 operator *(float scalar) const				{ return Matrix4(m_col0 * scalar, m_col1 * scalar, m_col2 * scalar, m_col3 * scalar); }
 
 	inline Matrix4& operator +=(const Matrix4& mat)				{ *this = *this + mat;		return *this; }
 	inline Matrix4& operator -=(const Matrix4& mat)				{ *this = *this - mat;		return *this; }
@@ -122,9 +119,9 @@ public:
 	// NOTE: Faster than creating and multiplying a scale transformation matrix
 	inline Matrix4& AppendScale(const Vector3& scaleVec)
 	{
-		col0 *= scaleVec.GetX();
-		col1 *= scaleVec.GetY();
-		col2 *= scaleVec.GetZ();
+		m_col0 *= scaleVec.GetX();
+		m_col1 *= scaleVec.GetY();
+		m_col2 *= scaleVec.GetZ();
 		return *this;
 	}
 
@@ -133,10 +130,10 @@ public:
 	inline Matrix4& PrependScale(const Vector3& scaleVec)
 	{
 		const Vector4 scaleVec4(scaleVec, 1.0f);
-		col0 *= scaleVec4;
-		col1 *= scaleVec4;
-		col2 *= scaleVec4;
-		col3 *= scaleVec4;
+		m_col0 *= scaleVec4;
+		m_col1 *= scaleVec4;
+		m_col2 *= scaleVec4;
+		m_col3 *= scaleVec4;
 		return *this;
 	}
 
@@ -174,7 +171,7 @@ public:
 	static inline Matrix4 CreateRotationZYX(const Vector3& radiansXYZ);
 
 	// Construct a 4x4 matrix to rotate around a unit-length 3-D vector
-	static inline Matrix4 CreateRotation(float radians, const Vector3& unitVec);
+	static inline Matrix4 CreateRotation(float radians, const Vector3& unitVec)	{ return Matrix4(Matrix3::CreateRotation(radians, unitVec), Vector3::Zero()); }
 
 	static inline Matrix4 CreateScale(const Vector3& scaleVec)
 	{
@@ -187,10 +184,10 @@ public:
 		);
 	}
 
-	Vector4 col0;
-	Vector4 col1;
-	Vector4 col2;
-	Vector4 col3;
+	Vector4 m_col0;
+	Vector4 m_col1;
+	Vector4 m_col2;
+	Vector4 m_col3;
 };
 
 inline Matrix4 operator *(float scalar, const Matrix4& mat)
@@ -204,26 +201,26 @@ inline Vector4 Matrix4::operator *(const Vector4& vec) const
 {
 #if DESIRE_USE_SSE
 	__m128 result;
-	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
-	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
-	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
-	result = SIMD::MulAdd(col3, SIMD::Swizzle_WWWW(vec), result);
+	result = SIMD::Mul(m_col0, SIMD::Swizzle_XXXX(vec));
+	result = SIMD::MulAdd(m_col1, SIMD::Swizzle_YYYY(vec), result);
+	result = SIMD::MulAdd(m_col2, SIMD::Swizzle_ZZZZ(vec), result);
+	result = SIMD::MulAdd(m_col3, SIMD::Swizzle_WWWW(vec), result);
 	return result;
 #elif DESIRE_USE_NEON
 	float32x4_t result;
 	const float32x2_t vecLow = vget_low_f32(vec);
-	result = vmulq_lane_f32(col0, vecLow, 0);
-	result = vmlaq_lane_f32(result, col1, vecLow, 1);
+	result = vmulq_lane_f32(m_col0, vecLow, 0);
+	result = vmlaq_lane_f32(result, m_col1, vecLow, 1);
 	const float32x2_t vecHigh = vget_high_f32(vec);
-	result = vmlaq_lane_f32(result, col2, vecHigh, 0);
-	result = vmlaq_lane_f32(result, col3, vecHigh, 1);
+	result = vmlaq_lane_f32(result, m_col2, vecHigh, 0);
+	result = vmlaq_lane_f32(result, m_col3, vecHigh, 1);
 	return result;
 #else
 	return Vector4(
-		col0.GetX() * vec.GetX() + col1.GetX() * vec.GetY() + col2.GetX() * vec.GetZ() + col3.GetX() * vec.GetW(),
-		col0.GetY() * vec.GetX() + col1.GetY() * vec.GetY() + col2.GetY() * vec.GetZ() + col3.GetY() * vec.GetW(),
-		col0.GetZ() * vec.GetX() + col1.GetZ() * vec.GetY() + col2.GetZ() * vec.GetZ() + col3.GetZ() * vec.GetW(),
-		col0.GetW() * vec.GetX() + col1.GetW() * vec.GetY() + col2.GetW() * vec.GetZ() + col3.GetW() * vec.GetW()
+		m_col0.GetX() * vec.GetX() + m_col1.GetX() * vec.GetY() + m_col2.GetX() * vec.GetZ() + m_col3.GetX() * vec.GetW(),
+		m_col0.GetY() * vec.GetX() + m_col1.GetY() * vec.GetY() + m_col2.GetY() * vec.GetZ() + m_col3.GetY() * vec.GetW(),
+		m_col0.GetZ() * vec.GetX() + m_col1.GetZ() * vec.GetY() + m_col2.GetZ() * vec.GetZ() + m_col3.GetZ() * vec.GetW(),
+		m_col0.GetW() * vec.GetX() + m_col1.GetW() * vec.GetY() + m_col2.GetW() * vec.GetZ() + m_col3.GetW() * vec.GetW()
 	);
 #endif
 }
@@ -232,24 +229,24 @@ inline Vector4 Matrix4::operator *(const Vector3& vec) const
 {
 #if DESIRE_USE_SSE
 	__m128 result;
-	result = SIMD::Mul(col0, SIMD::Swizzle_XXXX(vec));
-	result = SIMD::MulAdd(col1, SIMD::Swizzle_YYYY(vec), result);
-	result = SIMD::MulAdd(col2, SIMD::Swizzle_ZZZZ(vec), result);
+	result = SIMD::Mul(m_col0, SIMD::Swizzle_XXXX(vec));
+	result = SIMD::MulAdd(m_col1, SIMD::Swizzle_YYYY(vec), result);
+	result = SIMD::MulAdd(m_col2, SIMD::Swizzle_ZZZZ(vec), result);
 	return result;
 #elif DESIRE_USE_NEON
 	float32x4_t result;
 	const float32x2_t vecLow = vget_low_f32(vec);
-	result = vmulq_lane_f32(col0, vecLow, 0);
-	result = vmlaq_lane_f32(result, col1, vecLow, 1);
+	result = vmulq_lane_f32(m_col0, vecLow, 0);
+	result = vmlaq_lane_f32(result, m_col1, vecLow, 1);
 	const float32x2_t vecHigh = vget_high_f32(vec);
-	result = vmlaq_lane_f32(result, col2, vecHigh, 0);
+	result = vmlaq_lane_f32(result, m_col2, vecHigh, 0);
 	return result;
 #else
 	return Vector4(
-		col0.GetX() * vec.GetX() + col1.GetX() * vec.GetY() + col2.GetX() * vec.GetZ(),
-		col0.GetY() * vec.GetX() + col1.GetY() * vec.GetY() + col2.GetY() * vec.GetZ(),
-		col0.GetZ() * vec.GetX() + col1.GetZ() * vec.GetY() + col2.GetZ() * vec.GetZ(),
-		col0.GetW() * vec.GetX() + col1.GetW() * vec.GetY() + col2.GetW() * vec.GetZ()
+		m_col0.GetX() * vec.GetX() + m_col1.GetX() * vec.GetY() + m_col2.GetX() * vec.GetZ(),
+		m_col0.GetY() * vec.GetX() + m_col1.GetY() * vec.GetY() + m_col2.GetY() * vec.GetZ(),
+		m_col0.GetZ() * vec.GetX() + m_col1.GetZ() * vec.GetY() + m_col2.GetZ() * vec.GetZ(),
+		m_col0.GetW() * vec.GetX() + m_col1.GetW() * vec.GetY() + m_col2.GetW() * vec.GetZ()
 	);
 #endif
 }
@@ -257,23 +254,23 @@ inline Vector4 Matrix4::operator *(const Vector3& vec) const
 inline void Matrix4::Transpose()
 {
 #if DESIRE_USE_SSE
-	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
-	__m128 tmp1 = _mm_unpacklo_ps(col1, col3);
-	__m128 tmp2 = _mm_unpackhi_ps(col0, col2);
-	__m128 tmp3 = _mm_unpackhi_ps(col1, col3);
-	col0 = _mm_unpacklo_ps(tmp0, tmp1);
-	col1 = _mm_unpackhi_ps(tmp0, tmp1);
-	col2 = _mm_unpacklo_ps(tmp2, tmp3);
-	col3 = _mm_unpackhi_ps(tmp2, tmp3);
+	__m128 tmp0 = _mm_unpacklo_ps(m_col0, m_col2);
+	__m128 tmp1 = _mm_unpacklo_ps(m_col1, m_col3);
+	__m128 tmp2 = _mm_unpackhi_ps(m_col0, m_col2);
+	__m128 tmp3 = _mm_unpackhi_ps(m_col1, m_col3);
+	m_col0 = _mm_unpacklo_ps(tmp0, tmp1);
+	m_col1 = _mm_unpackhi_ps(tmp0, tmp1);
+	m_col2 = _mm_unpacklo_ps(tmp2, tmp3);
+	m_col3 = _mm_unpackhi_ps(tmp2, tmp3);
 #else
-	const Vector4 tmp0(col0.GetX(), col1.GetX(), col2.GetX(), col3.GetX());
-	const Vector4 tmp1(col0.GetY(), col1.GetY(), col2.GetY(), col3.GetY());
-	const Vector4 tmp2(col0.GetZ(), col1.GetZ(), col2.GetZ(), col3.GetZ());
-	const Vector4 tmp3(col0.GetW(), col1.GetW(), col2.GetW(), col3.GetW());
-	col0 = tmp0;
-	col1 = tmp1;
-	col2 = tmp2;
-	col3 = tmp3;
+	const Vector4 tmp0(m_col0.GetX(), m_col1.GetX(), m_col2.GetX(), m_col3.GetX());
+	const Vector4 tmp1(m_col0.GetY(), m_col1.GetY(), m_col2.GetY(), m_col3.GetY());
+	const Vector4 tmp2(m_col0.GetZ(), m_col1.GetZ(), m_col2.GetZ(), m_col3.GetZ());
+	const Vector4 tmp3(m_col0.GetW(), m_col1.GetW(), m_col2.GetW(), m_col3.GetW());
+	m_col0 = tmp0;
+	m_col1 = tmp1;
+	m_col2 = tmp2;
+	m_col3 = tmp3;
 #endif
 }
 
@@ -281,25 +278,25 @@ inline void Matrix4::Invert()
 {
 #if DESIRE_USE_SSE
 	// Calculating the minterms for the first line
-	__m128 tt2 = _mm_ror_ps(col2, 1);
-	__m128 Vc = SIMD::Mul(tt2, col3);									// V3' dot V4
-	__m128 Va = SIMD::Mul(tt2, _mm_ror_ps(col3, 2));					// V3' dot V4"
-	__m128 Vb = SIMD::Mul(tt2, _mm_ror_ps(col3, 3));					// V3' dot V4^
+	__m128 tt2 = _mm_ror_ps(m_col2, 1);
+	__m128 Vc = SIMD::Mul(tt2, m_col3);									// V3' dot V4
+	__m128 Va = SIMD::Mul(tt2, _mm_ror_ps(m_col3, 2));					// V3' dot V4"
+	__m128 Vb = SIMD::Mul(tt2, _mm_ror_ps(m_col3, 3));					// V3' dot V4^
 
 	__m128 r1 = SIMD::Sub(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));		// V3" dot V4^ - V3^ dot V4"
 	__m128 r2 = SIMD::Sub(_mm_ror_ps(Vb, 2), Vb);						// V3^ dot V4' - V3' dot V4^
 	__m128 r3 = SIMD::Sub(Va, _mm_ror_ps(Vc, 1));						// V3' dot V4" - V3" dot V4'
 
 	__m128 sum;
-	Va = _mm_ror_ps(col1, 1);
+	Va = _mm_ror_ps(m_col1, 1);
 	sum = SIMD::Mul(Va, r1);
-	Vb = _mm_ror_ps(col1, 2);
+	Vb = _mm_ror_ps(m_col1, 2);
 	sum = SIMD::MulAdd(Vb, r2, sum);
-	Vc = _mm_ror_ps(col1, 3);
+	Vc = _mm_ror_ps(m_col1, 3);
 	sum = SIMD::MulAdd(Vc, r3, sum);
 
 	// Calculating the determinant
-	__m128 det = SIMD::Mul(sum, col0);
+	__m128 det = SIMD::Mul(sum, m_col0);
 	det = SIMD::Add(det, _mm_movehl_ps(det, det));
 
 	// Testing the determinant
@@ -312,7 +309,7 @@ inline void Matrix4::Invert()
 	__m128 mtL1 = _mm_xor_ps(sum, Sign_PNPN);
 
 	// Calculating the minterms of the second line (using previous results)
-	__m128 tt = _mm_ror_ps(col0, 1);
+	__m128 tt = _mm_ror_ps(m_col0, 1);
 	sum = SIMD::Mul(tt, r1);
 	tt = _mm_ror_ps(tt, 1);
 	sum = SIMD::MulAdd(tt, r2, sum);
@@ -321,16 +318,16 @@ inline void Matrix4::Invert()
 	__m128 mtL2 = _mm_xor_ps(sum, Sign_NPNP);
 
 	// Calculating the minterms of the third line
-	tt = _mm_ror_ps(col0, 1);
+	tt = _mm_ror_ps(m_col0, 1);
 	Va = SIMD::Mul(tt, Vb);												// V1' dot V2"
 	Vb = SIMD::Mul(tt, Vc);												// V1' dot V2^
-	Vc = SIMD::Mul(tt, col1);											// V1' dot V2
+	Vc = SIMD::Mul(tt, m_col1);											// V1' dot V2
 
 	r1 = SIMD::Sub(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));				// V1" dot V2^ - V1^ dot V2"
 	r2 = SIMD::Sub(_mm_ror_ps(Vb, 2), Vb);								// V1^ dot V2' - V1' dot V2^
 	r3 = SIMD::Sub(Va, _mm_ror_ps(Vc, 1));								// V1' dot V2" - V1" dot V2'
 
-	tt = _mm_ror_ps(col3, 1);
+	tt = _mm_ror_ps(m_col3, 1);
 	sum = SIMD::Mul(tt, r1);
 	tt = _mm_ror_ps(tt, 1);
 	sum = SIMD::MulAdd(tt, r2, sum);
@@ -349,7 +346,7 @@ inline void Matrix4::Invert()
 	mtL3 = SIMD::Mul(mtL3, rDet);
 
 	// Calculate the minterms of the forth line and devide by the determinant
-	tt = _mm_ror_ps(col2, 1);
+	tt = _mm_ror_ps(m_col2, 1);
 	sum = SIMD::Mul(tt, r1);
 	tt = _mm_ror_ps(tt, 1);
 	sum = SIMD::MulAdd(tt, r2, sum);
@@ -363,49 +360,49 @@ inline void Matrix4::Invert()
 	__m128 trns1 = _mm_unpacklo_ps(mtL3, mtL4);
 	__m128 trns2 = _mm_unpackhi_ps(mtL1, mtL2);
 	__m128 trns3 = _mm_unpackhi_ps(mtL3, mtL4);
-	col0 = _mm_movelh_ps(trns0, trns1);
-	col1 = _mm_movehl_ps(trns1, trns0);
-	col2 = _mm_movelh_ps(trns2, trns3);
-	col3 = _mm_movehl_ps(trns3, trns2);
+	m_col0 = _mm_movelh_ps(trns0, trns1);
+	m_col1 = _mm_movehl_ps(trns1, trns0);
+	m_col2 = _mm_movelh_ps(trns2, trns3);
+	m_col3 = _mm_movehl_ps(trns3, trns2);
 #else
-	float tmp0 = col2.GetZ() * col0.GetW() - col0.GetZ() * col2.GetW();
-	float tmp1 = col3.GetZ() * col1.GetW() - col1.GetZ() * col3.GetW();
-	float tmp2 = col0.GetY() * col2.GetZ() - col2.GetY() * col0.GetZ();
-	float tmp3 = col1.GetY() * col3.GetZ() - col3.GetY() * col1.GetZ();
-	float tmp4 = col2.GetY() * col0.GetW() - col0.GetY() * col2.GetW();
-	float tmp5 = col3.GetY() * col1.GetW() - col1.GetY() * col3.GetW();
+	float tmp0 = m_col2.GetZ() * m_col0.GetW() - m_col0.GetZ() * m_col2.GetW();
+	float tmp1 = m_col3.GetZ() * m_col1.GetW() - m_col1.GetZ() * m_col3.GetW();
+	float tmp2 = m_col0.GetY() * m_col2.GetZ() - m_col2.GetY() * m_col0.GetZ();
+	float tmp3 = m_col1.GetY() * m_col3.GetZ() - m_col3.GetY() * m_col1.GetZ();
+	float tmp4 = m_col2.GetY() * m_col0.GetW() - m_col0.GetY() * m_col2.GetW();
+	float tmp5 = m_col3.GetY() * m_col1.GetW() - m_col1.GetY() * m_col3.GetW();
 	const Vector4 res0(
-		col2.GetY() * tmp1 - col2.GetW() * tmp3 - col2.GetZ() * tmp5,
-		col3.GetY() * tmp0 - col3.GetW() * tmp2 - col3.GetZ() * tmp4,
-		col0.GetW() * tmp3 + col0.GetZ() * tmp5 - col0.GetY() * tmp1,
-		col1.GetW() * tmp2 + col1.GetZ() * tmp4 - col1.GetY() * tmp0
+		m_col2.GetY() * tmp1 - m_col2.GetW() * tmp3 - m_col2.GetZ() * tmp5,
+		m_col3.GetY() * tmp0 - m_col3.GetW() * tmp2 - m_col3.GetZ() * tmp4,
+		m_col0.GetW() * tmp3 + m_col0.GetZ() * tmp5 - m_col0.GetY() * tmp1,
+		m_col1.GetW() * tmp2 + m_col1.GetZ() * tmp4 - m_col1.GetY() * tmp0
 	);
-	const float invDet = 1.0f / ((((col0.GetX() * res0.GetX()) + (col1.GetX() * res0.GetY())) + (col2.GetX() * res0.GetZ())) + (col3.GetX() * res0.GetW()));
-	Vector4 res1(col2.GetX() * tmp1, col3.GetX() * tmp0, col0.GetX() * tmp1, col1.GetX() * tmp0);
-	Vector4 res3(col2.GetX() * tmp3, col3.GetX() * tmp2, col0.GetX() * tmp3, col1.GetX() * tmp2);
-	Vector4 res2(col2.GetX() * tmp5, col3.GetX() * tmp4, col0.GetX() * tmp5, col1.GetX() * tmp4);
-	tmp0 = col2.GetX() * col0.GetY() - col0.GetX() * col2.GetY();
-	tmp1 = col3.GetX() * col1.GetY() - col1.GetX() * col3.GetY();
-	tmp2 = col2.GetX() * col0.GetW() - col0.GetX() * col2.GetW();
-	tmp3 = col3.GetX() * col1.GetW() - col1.GetX() * col3.GetW();
-	tmp4 = col2.GetX() * col0.GetZ() - col0.GetX() * col2.GetZ();
-	tmp5 = col3.GetX() * col1.GetZ() - col1.GetX() * col3.GetZ();
-	res2.SetX(col2.GetW() * tmp1 - col2.GetY() * tmp3 + res2.GetX());
-	res2.SetY(col3.GetW() * tmp0 - col3.GetY() * tmp2 + res2.GetY());
-	res2.SetZ(col0.GetY() * tmp3 - col0.GetW() * tmp1 - res2.GetZ());
-	res2.SetW(col1.GetY() * tmp2 - col1.GetW() * tmp0 - res2.GetW());
-	res3.SetX(col2.GetY() * tmp5 - col2.GetZ() * tmp1 + res3.GetX());
-	res3.SetY(col3.GetY() * tmp4 - col3.GetZ() * tmp0 + res3.GetY());
-	res3.SetZ(col0.GetZ() * tmp1 - col0.GetY() * tmp5 - res3.GetZ());
-	res3.SetW(col1.GetZ() * tmp0 - col1.GetY() * tmp4 - res3.GetW());
-	res1.SetX(col2.GetZ() * tmp3 - col2.GetW() * tmp5 - res1.GetX());
-	res1.SetY(col3.GetZ() * tmp2 - col3.GetW() * tmp4 - res1.GetY());
-	res1.SetZ(col0.GetW() * tmp5 - col0.GetZ() * tmp3 + res1.GetZ());
-	res1.SetW(col1.GetW() * tmp4 - col1.GetZ() * tmp2 + res1.GetW());
-	col0 = res0 * invDet;
-	col1 = res1 * invDet;
-	col2 = res2 * invDet;
-	col3 = res3 * invDet;
+	const float invDet = 1.0f / ((((m_col0.GetX() * res0.GetX()) + (m_col1.GetX() * res0.GetY())) + (m_col2.GetX() * res0.GetZ())) + (m_col3.GetX() * res0.GetW()));
+	Vector4 res1(m_col2.GetX() * tmp1, m_col3.GetX() * tmp0, m_col0.GetX() * tmp1, m_col1.GetX() * tmp0);
+	Vector4 res3(m_col2.GetX() * tmp3, m_col3.GetX() * tmp2, m_col0.GetX() * tmp3, m_col1.GetX() * tmp2);
+	Vector4 res2(m_col2.GetX() * tmp5, m_col3.GetX() * tmp4, m_col0.GetX() * tmp5, m_col1.GetX() * tmp4);
+	tmp0 = m_col2.GetX() * m_col0.GetY() - m_col0.GetX() * m_col2.GetY();
+	tmp1 = m_col3.GetX() * m_col1.GetY() - m_col1.GetX() * m_col3.GetY();
+	tmp2 = m_col2.GetX() * m_col0.GetW() - m_col0.GetX() * m_col2.GetW();
+	tmp3 = m_col3.GetX() * m_col1.GetW() - m_col1.GetX() * m_col3.GetW();
+	tmp4 = m_col2.GetX() * m_col0.GetZ() - m_col0.GetX() * m_col2.GetZ();
+	tmp5 = m_col3.GetX() * m_col1.GetZ() - m_col1.GetX() * m_col3.GetZ();
+	res2.SetX(m_col2.GetW() * tmp1 - m_col2.GetY() * tmp3 + res2.GetX());
+	res2.SetY(m_col3.GetW() * tmp0 - m_col3.GetY() * tmp2 + res2.GetY());
+	res2.SetZ(m_col0.GetY() * tmp3 - m_col0.GetW() * tmp1 - res2.GetZ());
+	res2.SetW(m_col1.GetY() * tmp2 - m_col1.GetW() * tmp0 - res2.GetW());
+	res3.SetX(m_col2.GetY() * tmp5 - m_col2.GetZ() * tmp1 + res3.GetX());
+	res3.SetY(m_col3.GetY() * tmp4 - m_col3.GetZ() * tmp0 + res3.GetY());
+	res3.SetZ(m_col0.GetZ() * tmp1 - m_col0.GetY() * tmp5 - res3.GetZ());
+	res3.SetW(m_col1.GetZ() * tmp0 - m_col1.GetY() * tmp4 - res3.GetW());
+	res1.SetX(m_col2.GetZ() * tmp3 - m_col2.GetW() * tmp5 - res1.GetX());
+	res1.SetY(m_col3.GetZ() * tmp2 - m_col3.GetW() * tmp4 - res1.GetY());
+	res1.SetZ(m_col0.GetW() * tmp5 - m_col0.GetZ() * tmp3 + res1.GetZ());
+	res1.SetW(m_col1.GetW() * tmp4 - m_col1.GetZ() * tmp2 + res1.GetW());
+	m_col0 = res0 * invDet;
+	m_col1 = res1 * invDet;
+	m_col2 = res2 * invDet;
+	m_col3 = res3 * invDet;
 #endif
 }
 
@@ -413,11 +410,11 @@ inline void Matrix4::AffineInvert()
 {
 #if DESIRE_USE_SSE
 	__m128 inv0, inv1, inv2, inv3;
-	const __m128 tmp2 = col0.GetXYZ().Cross(col1.GetXYZ());
-	const __m128 tmp0 = col1.GetXYZ().Cross(col2.GetXYZ());
-	const __m128 tmp1 = col2.GetXYZ().Cross(col0.GetXYZ());
-	inv3 = SIMD::Negate(col3);
-	__m128 dot = SIMD::Dot3(tmp2, col2);
+	const __m128 tmp2 = m_col0.GetXYZ().Cross(m_col1.GetXYZ());
+	const __m128 tmp0 = m_col1.GetXYZ().Cross(m_col2.GetXYZ());
+	const __m128 tmp1 = m_col2.GetXYZ().Cross(m_col0.GetXYZ());
+	inv3 = SIMD::Negate(m_col3);
+	__m128 dot = SIMD::Dot3(tmp2, m_col2);
 	const __m128 invDet = _mm_rcp_ps(dot);
 	const __m128 tmp3 = _mm_unpacklo_ps(tmp0, tmp2);
 	const __m128 tmp4 = _mm_unpackhi_ps(tmp0, tmp2);
@@ -436,22 +433,22 @@ inline void Matrix4::AffineInvert()
 	inv1 = SIMD::Mul(inv1, invDet);
 	inv2 = SIMD::Mul(inv2, invDet);
 	inv3 = SIMD::Mul(inv3, invDet);
-	col0 = Vector4(Vector3(inv0), 0.0f);
-	col1 = Vector4(Vector3(inv1), 0.0f);
-	col2 = Vector4(Vector3(inv2), 0.0f);
-	col3 = Vector4(Vector3(inv3), 1.0f);
+	m_col0 = Vector4(Vector3(inv0), 0.0f);
+	m_col1 = Vector4(Vector3(inv1), 0.0f);
+	m_col2 = Vector4(Vector3(inv2), 0.0f);
+	m_col3 = Vector4(Vector3(inv3), 1.0f);
 #else
-	const Vector3 tmp0 = col1.GetXYZ().Cross(col2.GetXYZ());
-	const Vector3 tmp1 = col2.GetXYZ().Cross(col0.GetXYZ());
-	const Vector3 tmp2 = col0.GetXYZ().Cross(col1.GetXYZ());
-	const float invDet = 1.0f / col2.GetXYZ().Dot(tmp2);
+	const Vector3 tmp0 = m_col1.GetXYZ().Cross(m_col2.GetXYZ());
+	const Vector3 tmp1 = m_col2.GetXYZ().Cross(m_col0.GetXYZ());
+	const Vector3 tmp2 = m_col0.GetXYZ().Cross(m_col1.GetXYZ());
+	const float invDet = 1.0f / m_col2.GetXYZ().Dot(tmp2);
 	const Vector3 inv0(tmp0.GetX() * invDet, tmp1.GetX() * invDet, tmp2.GetX() * invDet);
 	const Vector3 inv1(tmp0.GetY() * invDet, tmp1.GetY() * invDet, tmp2.GetY() * invDet);
 	const Vector3 inv2(tmp0.GetZ() * invDet, tmp1.GetZ() * invDet, tmp2.GetZ() * invDet);
-	col0 = Vector4(inv0, 0.0f);
-	col1 = Vector4(inv1, 0.0f);
-	col2 = Vector4(inv2, 0.0f);
-	col3 = Vector4(-((inv0 * col3.GetX()) + ((inv1 * col3.GetY()) + (inv2 * col3.GetZ()))), 1.0f);
+	m_col0 = Vector4(inv0, 0.0f);
+	m_col1 = Vector4(inv1, 0.0f);
+	m_col2 = Vector4(inv2, 0.0f);
+	m_col3 = Vector4(-((inv0 * m_col3.GetX()) + ((inv1 * m_col3.GetY()) + (inv2 * m_col3.GetZ()))), 1.0f);
 #endif
 }
 
@@ -460,73 +457,73 @@ inline void Matrix4::OrthoInvert()
 	Vector3 inv0, inv1, inv2, inv3;
 
 #if DESIRE_USE_SSE
-	__m128 tmp0 = _mm_unpacklo_ps(col0, col2);
-	__m128 tmp1 = _mm_unpackhi_ps(col0, col2);
-	inv3 = SIMD::Negate(col3);
-	inv0 = _mm_unpacklo_ps(tmp0, col1);
+	__m128 tmp0 = _mm_unpacklo_ps(m_col0, m_col2);
+	__m128 tmp1 = _mm_unpackhi_ps(m_col0, m_col2);
+	inv3 = SIMD::Negate(m_col3);
+	inv0 = _mm_unpacklo_ps(tmp0, m_col1);
 	const __m128 xxxx = SIMD::Swizzle_XXXX(inv3);
 	inv1 = SIMD::Swizzle_ZZWX(tmp0);
-	inv1 = SIMD::Blend_Y(inv1, col1);
+	inv1 = SIMD::Blend_Y(inv1, m_col1);
 	inv2 = SIMD::Swizzle_XYYX(tmp1);
-	inv2 = SIMD::Blend_Y(inv2, SIMD::Swizzle_ZZZZ(col1));
+	inv2 = SIMD::Blend_Y(inv2, SIMD::Swizzle_ZZZZ(m_col1));
 	const __m128 yyyy = SIMD::Swizzle_YYYY(inv3);
 	const __m128 zzzz = SIMD::Swizzle_ZZZZ(inv3);
 	inv3 = SIMD::Mul(inv0, xxxx);
 	inv3 = SIMD::MulAdd(inv1, yyyy, inv3);
 	inv3 = SIMD::MulAdd(inv2, zzzz, inv3);
 #else
-	inv0 = Vector3(col0.GetX(), col1.GetX(), col2.GetX());
-	inv1 = Vector3(col0.GetY(), col1.GetY(), col2.GetY());
-	inv2 = Vector3(col0.GetZ(), col1.GetZ(), col2.GetZ());
-	inv3 = Vector3(-(inv0 * col3.GetX() + inv1 * col3.GetY() + inv2 * col3.GetZ()));
+	inv0 = Vector3(m_col0.GetX(), m_col1.GetX(), m_col2.GetX());
+	inv1 = Vector3(m_col0.GetY(), m_col1.GetY(), m_col2.GetY());
+	inv2 = Vector3(m_col0.GetZ(), m_col1.GetZ(), m_col2.GetZ());
+	inv3 = Vector3(-(inv0 * m_col3.GetX() + inv1 * m_col3.GetY() + inv2 * m_col3.GetZ()));
 #endif
 
-	col0 = Vector4(inv0, 0.0f);
-	col1 = Vector4(inv1, 0.0f);
-	col2 = Vector4(inv2, 0.0f);
-	col3 = Vector4(inv3, 1.0f);
+	m_col0 = Vector4(inv0, 0.0f);
+	m_col1 = Vector4(inv1, 0.0f);
+	m_col2 = Vector4(inv2, 0.0f);
+	m_col3 = Vector4(inv3, 1.0f);
 }
 
 inline float Matrix4::CalculateDeterminant() const
 {
 #if DESIRE_USE_SSE
 	// Calculating the minterms for the first line
-	__m128 tt2 = _mm_ror_ps(col2, 1);
-	__m128 Vc = SIMD::Mul(tt2, col3);									// V3' dot V4
-	__m128 Va = SIMD::Mul(tt2, _mm_ror_ps(col3, 2));					// V3' dot V4"
-	__m128 Vb = SIMD::Mul(tt2, _mm_ror_ps(col3, 3));					// V3' dot V4^
+	__m128 tt2 = _mm_ror_ps(m_col2, 1);
+	__m128 Vc = SIMD::Mul(tt2, m_col3);									// V3' dot V4
+	__m128 Va = SIMD::Mul(tt2, _mm_ror_ps(m_col3, 2));					// V3' dot V4"
+	__m128 Vb = SIMD::Mul(tt2, _mm_ror_ps(m_col3, 3));					// V3' dot V4^
 
 	__m128 r1 = SIMD::Sub(_mm_ror_ps(Va, 1), _mm_ror_ps(Vc, 2));		// V3" dot V4^ - V3^ dot V4"
 	__m128 r2 = SIMD::Sub(_mm_ror_ps(Vb, 2), Vb);						// V3^ dot V4' - V3' dot V4^
 	__m128 r3 = SIMD::Sub(Va, _mm_ror_ps(Vc, 1));						// V3' dot V4" - V3" dot V4'
 
 	__m128 sum;
-	Va = _mm_ror_ps(col1, 1);
+	Va = _mm_ror_ps(m_col1, 1);
 	sum = SIMD::Mul(Va, r1);
-	Vb = _mm_ror_ps(col1, 2);
+	Vb = _mm_ror_ps(m_col1, 2);
 	sum = SIMD::MulAdd(Vb, r2, sum);
-	Vc = _mm_ror_ps(col1, 3);
+	Vc = _mm_ror_ps(m_col1, 3);
 	sum = SIMD::MulAdd(Vc, r3, sum);
 
 	// Calculating the determinant
-	__m128 det = SIMD::Mul(sum, col0);
+	__m128 det = SIMD::Mul(sum, m_col0);
 	det = SIMD::Add(det, _mm_movehl_ps(det, det));
 
 	// Testing the determinant
 	det = _mm_sub_ss(det, _mm_shuffle_ps(det, det, 1));
-	return _mm_cvtss_f32(det);
+	return SIMD::GetX(det);
 #else
-	const float tmp0 = col2.GetZ() * col0.GetW() - col0.GetZ() * col2.GetW();
-	const float tmp1 = col3.GetZ() * col1.GetW() - col1.GetZ() * col3.GetW();
-	const float tmp2 = col0.GetY() * col2.GetZ() - col2.GetY() * col0.GetZ();
-	const float tmp3 = col1.GetY() * col3.GetZ() - col3.GetY() * col1.GetZ();
-	const float tmp4 = col2.GetY() * col0.GetW() - col0.GetY() * col2.GetW();
-	const float tmp5 = col3.GetY() * col1.GetW() - col1.GetY() * col3.GetW();
-	const float dx = col2.GetY() * tmp1 - col2.GetW() * tmp3 - col2.GetZ() * tmp5;
-	const float dy = col3.GetY() * tmp0 - col3.GetW() * tmp2 - col3.GetZ() * tmp4;
-	const float dz = col0.GetW() * tmp3 + col0.GetZ() * tmp5 - col0.GetY() * tmp1;
-	const float dw = col1.GetW() * tmp2 + col1.GetZ() * tmp4 - col1.GetY() * tmp0;
-	return col0.GetX() * dx + col1.GetX() * dy + col2.GetX() * dz + col3.GetX() * dw;
+	const float tmp0 = m_col2.GetZ() * m_col0.GetW() - m_col0.GetZ() * m_col2.GetW();
+	const float tmp1 = m_col3.GetZ() * m_col1.GetW() - m_col1.GetZ() * m_col3.GetW();
+	const float tmp2 = m_col0.GetY() * m_col2.GetZ() - m_col2.GetY() * m_col0.GetZ();
+	const float tmp3 = m_col1.GetY() * m_col3.GetZ() - m_col3.GetY() * m_col1.GetZ();
+	const float tmp4 = m_col2.GetY() * m_col0.GetW() - m_col0.GetY() * m_col2.GetW();
+	const float tmp5 = m_col3.GetY() * m_col1.GetW() - m_col1.GetY() * m_col3.GetW();
+	const float dx = m_col2.GetY() * tmp1 - m_col2.GetW() * tmp3 - m_col2.GetZ() * tmp5;
+	const float dy = m_col3.GetY() * tmp0 - m_col3.GetW() * tmp2 - m_col3.GetZ() * tmp4;
+	const float dz = m_col0.GetW() * tmp3 + m_col0.GetZ() * tmp5 - m_col0.GetY() * tmp1;
+	const float dw = m_col1.GetW() * tmp2 + m_col1.GetZ() * tmp4 - m_col1.GetY() * tmp0;
+	return m_col0.GetX() * dx + m_col1.GetX() * dy + m_col2.GetX() * dz + m_col3.GetX() * dw;
 #endif
 }
 
@@ -603,23 +600,5 @@ inline Matrix4 Matrix4::CreateRotationZYX(const Vector3& radiansXYZ)
 		Vector4((tmp0 * cX) + (sZ * sX), (tmp1 * cX) - (cZ * sX), cY * cX, 0.0f),
 		Vector4::AxisW()
 	);
-#endif
-}
-
-inline Matrix4 Matrix4::CreateRotation(float radians, const Vector3& unitVec)
-{
-	Matrix3 rotationMat = Matrix3::CreateRotation(radians, unitVec);
-
-#if DESIRE_USE_SSE
-	alignas(16) const uint32_t _mask_xyz[4] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 };
-	const __m128 mask_xyz = _mm_load_ps(reinterpret_cast<const float*>(_mask_xyz));
-	return Matrix4(
-		_mm_and_ps(rotationMat.col0, mask_xyz),
-		_mm_and_ps(rotationMat.col1, mask_xyz),
-		_mm_and_ps(rotationMat.col2, mask_xyz),
-		Vector4::AxisW()
-	);
-#else
-	return Matrix4(rotationMat, Vector3::Zero());
 #endif
 }
