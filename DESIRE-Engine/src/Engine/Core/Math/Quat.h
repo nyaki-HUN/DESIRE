@@ -61,19 +61,6 @@ public:
 	inline void Normalize()									{ *this = Normalized(); }
 	inline Quat Normalized() const							{ return SIMD::Mul(*this, SIMD::InvSqrt(SIMD::Dot4(*this, *this))); }
 
-	// Spherical linear interpolation
-	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
-	static inline Quat Slerp(const Quat& unitQuat0, const Quat& unitQuat1, float t);
-
-	// Spherical quadrangle interpolation
-	static inline Quat Squad(float t, const Quat& unitQuat0, const Quat& unitQuat1, const Quat& unitQuat2, const Quat& unitQuat3)
-	{
-		return Quat::Slerp(	Quat::Slerp(unitQuat0, unitQuat3, t),
-							Quat::Slerp(unitQuat1, unitQuat2, t),
-							(2.0f * t) * (1.0f - t)
-		);
-	}
-
 	static inline Quat Identity()							{ return Quat(0.0f, 0.0f, 0.0f, 1.0f); }
 
 	static inline Quat CreateRotationX(float radians);
@@ -168,57 +155,6 @@ inline Vector3 Quat::EulerAngles() const
 		std::asin(t2 < -1.0f ? -1.0f : (t2 > 1.0f ? 1.0f : t2)),
 		std::atan2(t3, tmpX2)
 	);
-}
-
-// Spherical linear interpolation between two quaternions
-inline Quat Quat::Slerp(const Quat& unitQuat0, const Quat& unitQuat1, float t)
-{
-#if DESIRE_USE_SSE
-	__m128 cosAngle = SIMD::Dot4(unitQuat0, unitQuat1);
-	__m128 selectMask = _mm_cmpgt_ps(_mm_setzero_ps(), cosAngle);
-	cosAngle = SIMD::Blend(cosAngle, SIMD::Negate(cosAngle), selectMask);
-	const __m128 start = SIMD::Blend(unitQuat0, SIMD::Negate(unitQuat0), selectMask);
-	selectMask = _mm_cmpgt_ps(SIMD::Construct(0.999f), cosAngle);
-	const __m128 angle = acosf4(cosAngle);
-	const __m128 tttt = SIMD::Construct(t);
-	const __m128 oneMinusT = _mm_sub_ps(SIMD::Construct(1.0f), tttt);
-	__m128 angles = _mm_unpacklo_ps(SIMD::Construct(1.0f), tttt);
-	angles = _mm_unpacklo_ps(angles, oneMinusT);
-	angles = SIMD::Mul(angles, angle);
-	const __m128 sines = sinf4(angles);
-	const __m128 scales = SIMD::Div(sines, SIMD::Swizzle_XXXX(sines));
-	const __m128 scale0 = SIMD::Blend(oneMinusT, SIMD::Swizzle_YYYY(scales), selectMask);
-	const __m128 scale1 = SIMD::Blend(tttt, SIMD::Swizzle_ZZZZ(scales), selectMask);
-	return SIMD::MulAdd(start, scale0, SIMD::Mul(unitQuat1, scale1));
-#else
-	Quat start;
-	float scale0, scale1;
-	const float cosAngle = unitQuat0.Dot(unitQuat1);
-	if(cosAngle < 0.0f)
-	{
-		cosAngle = -cosAngle;
-		start = -unitQuat0;
-	}
-	else
-	{
-		start = unitQuat0;
-	}
-
-	if(cosAngle < 0.999f)
-	{
-		const float angle = std::acos(cosAngle);
-		const float recipSinAngle = 1.0f / std::sin(angle);
-		scale0 = std::sin((1.0f - t) * angle) * recipSinAngle;
-		scale1 = std::sin(t * angle) * recipSinAngle;
-	}
-	else
-	{
-		scale0 = 1.0f - t;
-		scale1 = t;
-	}
-
-	return start * scale0 + unitQuat1 * scale1;
-#endif
 }
 
 inline Quat Quat::CreateRotationX(float radians)

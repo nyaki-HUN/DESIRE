@@ -277,6 +277,9 @@ inline void Matrix4::Transpose()
 inline void Matrix4::Invert()
 {
 #if DESIRE_USE_SSE
+
+#define _mm_ror_ps(vec, i)	_mm_shuffle_ps(vec, vec, _MM_SHUFFLE((uint8_t)(i + 3) % 4,(uint8_t)(i + 2) % 4,(uint8_t)(i + 1) % 4,(uint8_t)(i + 0) % 4))
+
 	// Calculating the minterms for the first line
 	__m128 tt2 = _mm_ror_ps(m_col2, 1);
 	__m128 Vc = SIMD::Mul(tt2, m_col3);									// V3' dot V4

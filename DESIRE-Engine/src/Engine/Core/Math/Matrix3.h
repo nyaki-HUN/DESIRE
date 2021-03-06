@@ -405,7 +405,7 @@ inline Quat::Quat(const Matrix3& rotMat)
 	const __m128 zz = SIMD::Swizzle_ZZZZ(rotMat.m_col2);
 	__m128 res = SIMD::Blend(res0, res1, _mm_cmpgt_ps(yy, xx));
 	res = SIMD::Blend(res, res2, _mm_and_ps(_mm_cmpgt_ps(zz, xx), _mm_cmpgt_ps(zz, yy)));
-	res = SIMD::Blend(res, res3, _mm_cmpgt_ps(SIMD::Swizzle_XXXX(diagSum), _mm_setzero_ps()));
+	res = SIMD::Blend(res, res3, _mm_cmpgt_ps(SIMD::Swizzle_XXXX(diagSum), SIMD::ConstructZero()));
 	*this = res;
 #else
 	float q[4];

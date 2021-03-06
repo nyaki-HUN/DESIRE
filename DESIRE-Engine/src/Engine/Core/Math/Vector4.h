@@ -70,28 +70,7 @@ public:
 	static inline Vector4 MaxPerElem(const Vector4& a, const Vector4& b)	{ return SIMD::MaxPerElem(a, b); }
 	static inline Vector4 MinPerElem(const Vector4& a, const Vector4& b)	{ return SIMD::MinPerElem(a, b); }
 
-	// Spherical linear interpolation
-	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
-	static inline Vector4 Slerp(float t, const Vector4& unitVec0, const Vector4& unitVec1)
-	{
-		float scale0, scale1;
-		const float cosAngle = unitVec0.Dot(unitVec1);
-		if(cosAngle < 0.999f)
-		{
-			const float angle = std::acos(cosAngle);
-			const float recipSinAngle = 1.0f / std::sin(angle);
-			scale0 = std::sin((1.0f - t) * angle) * recipSinAngle;
-			scale1 = std::sin(t * angle) * recipSinAngle;
-		}
-		else
-		{
-			scale0 = 1.0f - t;
-			scale1 = t;
-		}
-		return unitVec0 * scale0 + unitVec1 * scale1;
-	}
-
-	static inline Vector4 Zero()		{ return SIMD::Construct(0.0f); }
+	static inline Vector4 Zero()		{ return SIMD::ConstructZero(); }
 	static inline Vector4 One()			{ return SIMD::Construct(1.0f); }
 	static inline Vector4 AxisX()		{ return Vector4(1.0f, 0.0f, 0.0f, 0.0f); }
 	static inline Vector4 AxisY()		{ return Vector4(0.0f, 1.0f, 0.0f, 0.0f); }

@@ -43,7 +43,6 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	vector3.set_function("GetMinElem", &Vector3::GetMinElem);
 	vector3.set("MaxPerElem", &Vector3::MaxPerElem);
 	vector3.set("MinPerElem", &Vector3::MinPerElem);
-	vector3.set("Slerp", &Vector3::Slerp);
 	vector3.set("Zero", &Vector3::Zero);
 	vector3.set("One", &Vector3::One);
 	vector3.set("AxisX", &Vector3::AxisX);
@@ -91,7 +90,6 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	vector4.set_function("GetMinElem", &Vector4::GetMinElem);
 	vector4.set("MaxPerElem", &Vector4::MaxPerElem);
 	vector4.set("MinPerElem", &Vector4::MinPerElem);
-	vector4.set("Slerp", &Vector4::Slerp);
 	vector4.set("AxisX", &Vector4::AxisX);
 	vector4.set("AxisY", &Vector4::AxisY);
 	vector4.set("AxisZ", &Vector4::AxisZ);
@@ -116,8 +114,6 @@ void RegisterCoreAPI_Math_Lua(sol::state_view& lua)
 	quat.set_function("RotateVec", &Quat::RotateVec);
 	quat.set_function("Normalize", &Quat::Normalize);
 	quat.set_function("Normalized", &Quat::Normalized);
-	quat.set("Slerp", &Quat::Slerp);
-	quat.set("Squad", &Quat::Squad);
 	quat.set("Identity", &Quat::Identity);
 	quat.set("CreateRotationX", &Quat::CreateRotationX);
 	quat.set("CreateRotationY", &Quat::CreateRotationY);

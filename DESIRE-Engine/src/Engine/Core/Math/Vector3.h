@@ -6,7 +6,7 @@ class Vector3
 {
 public:
 	inline Vector3() = default;
-	inline Vector3(simd128_t vec)				: m_vec128(vec)						{}
+	inline Vector3(simd128_t vec)				: m_vec128(vec)							{}
 	inline Vector3(float x, float y, float z)	: m_vec128(SIMD::Construct(x, y, z))	{}
 
 	// Load x, y, and z elements from the first three elements of a float array
@@ -73,28 +73,7 @@ public:
 	static inline Vector3 MaxPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MaxPerElem(a, b); }
 	static inline Vector3 MinPerElem(const Vector3& a, const Vector3& b)	{ return SIMD::MinPerElem(a, b); }
 
-	// Spherical linear interpolation
-	// NOTE: The result is unpredictable if the vectors point in opposite directions. Doesn't clamp t between 0 and 1.
-	static inline Vector3 Slerp(float t, const Vector3& unitVec0, const Vector3& unitVec1)
-	{
-		float scale0, scale1;
-		const float cosAngle = unitVec0.Dot(unitVec1);
-		if(cosAngle < 0.999f)
-		{
-			const float angle = std::acos(cosAngle);
-			const float recipSinAngle = 1.0f / std::sin(angle);
-			scale0 = std::sin((1.0f - t) * angle) * recipSinAngle;
-			scale1 = std::sin(t * angle) * recipSinAngle;
-		}
-		else
-		{
-			scale0 = 1.0f - t;
-			scale1 = t;
-		}
-		return unitVec0 * scale0 + unitVec1 * scale1;
-	}
-
-	static inline Vector3 Zero()		{ return SIMD::Construct(0.0f); }
+	static inline Vector3 Zero()		{ return SIMD::ConstructZero(); }
 	static inline Vector3 One()			{ return SIMD::Construct(1.0f); }
 	static inline Vector3 AxisX()		{ return Vector3(1.0f, 0.0f, 0.0f); }
 	static inline Vector3 AxisY()		{ return Vector3(0.0f, 1.0f, 0.0f); }
