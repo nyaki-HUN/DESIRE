@@ -10,24 +10,24 @@ project "ResourceLoader-Assimp"
 
 	defines
 	{
-		"OPENDDL_STATIC_LIBARY",
 		"_SCL_SECURE_NO_WARNINGS",
 		"ASSIMP_BUILD_NO_OWN_ZLIB",
 		"ASSIMP_BUILD_NO_EXPORT",
 		"ASSIMP_BUILD_NO_C4D_IMPORTER",
 		"ASSIMP_BUILD_NO_IFC_IMPORTER",
-		"ASSIMP_BUILD_NO_STEP_IMPORTER",
+		"OPENDDL_STATIC_LIBARY",
+		"RAPIDJSON_HAS_STDSTRING",
 	}
 
 	includedirs
 	{
 		"../Externals/Assimp/",
 		"../Externals/Assimp/code",
-		"../Externals/Assimp/include",
 		"../Externals/Assimp/contrib",
-		"../Externals/Assimp/contrib/irrXML",
 		"../Externals/Assimp/contrib/openddlparser/include",
+		"../Externals/Assimp/contrib/pugixml/src",
 		"../Externals/Assimp/contrib/unzip",
+		"../Externals/Assimp/include",
 		"../../Compression-zlib/Externals/zlib",
 		"../../../DESIRE-Engine/3rdparty/rapidjson/include",
 	}
@@ -36,6 +36,7 @@ project "ResourceLoader-Assimp"
 	{
 		"../Externals/**.h",
 		"../Externals/**.hpp",
+		"../Externals/**.inl",
 		"../Externals/**.c",
 		"../Externals/**.cpp",
 	}
