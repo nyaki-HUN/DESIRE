@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
-
+Copyright (c) 2006-2021, assimp team
 
 All rights reserved.
 
@@ -50,7 +49,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef GLTFASSET_H_INC
 #define GLTFASSET_H_INC
 
-#ifndef ASSIMP_BUILD_NO_GLTF_IMPORTER
+#if !defined(ASSIMP_BUILD_NO_GLTF_IMPORTER) && !defined(ASSIMP_BUILD_NO_GLTF1_IMPORTER)
 
 #include <assimp/Exceptional.h>
 
@@ -61,10 +60,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <algorithm>
 #include <stdexcept>
 
-#define RAPIDJSON_HAS_STDSTRING 1
+#if (__GNUC__ == 8 && __GNUC_MINOR__ >= 0)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wclass-memaccess"
+#endif
+
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
 #include <rapidjson/error/en.h>
+
+#if (__GNUC__ == 8 && __GNUC_MINOR__ >= 0)
+#pragma GCC diagnostic pop
+#endif
 
 #ifdef ASSIMP_API
 #   include <memory>
@@ -92,7 +99,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #   endif
 #endif
 
-#include "glTF/glTFCommon.h"
+#include "AssetLib/glTF/glTFCommon.h"
 
 namespace glTF
 {
@@ -183,7 +190,7 @@ namespace glTF
                 return 1;
             default:
                 std::string err = "GLTF: Unsupported Component Type ";
-                err += t;
+                err += std::to_string( t );
                 throw DeadlyImportError(err);
         }
     }
@@ -191,6 +198,7 @@ namespace glTF
     //! Values for the BufferView::target field
     enum BufferViewTarget
     {
+        BufferViewTarget_NONE = 0,
         BufferViewTarget_ARRAY_BUFFER = 34962,
         BufferViewTarget_ELEMENT_ARRAY_BUFFER = 34963
     };
@@ -362,8 +370,8 @@ namespace glTF
         ComponentType componentType; //!< The datatype of components in the attribute. (required)
         unsigned int count;          //!< The number of attributes referenced by this accessor. (required)
         AttribType::Value type;      //!< Specifies if the attribute is a scalar, vector, or matrix. (required)
-        std::vector<float> max;      //!< Maximum value of each component in this attribute.
-        std::vector<float> min;      //!< Minimum value of each component in this attribute.
+        std::vector<double> max;     //!< Maximum value of each component in this attribute.
+        std::vector<double> min;     //!< Minimum value of each component in this attribute.
 
         unsigned int GetNumComponents();
         unsigned int GetBytesPerComponent();
@@ -381,7 +389,12 @@ namespace glTF
         {
             friend struct Accessor;
 
-            Accessor& accessor;
+        // This field is reported as not used, making it protectd is the easiest way to work around it without going to the bottom of what the problem is:
+        // ../code/glTF2/glTF2Asset.h:392:19: error: private field 'accessor' is not used [-Werror,-Wunused-private-field]
+        protected:
+            Accessor &accessor;
+
+        private:
             uint8_t* data;
             size_t elemSize, stride;
 
@@ -749,7 +762,7 @@ namespace glTF
 		/// \fn void Read(Value& pJSON_Object, Asset& pAsset_Root)
 		/// Get mesh data from JSON-object and place them to root asset.
 		/// \param [in] pJSON_Object - reference to pJSON-object from which data are read.
-		/// \param [out] pAsset_Root - reference to root assed where data will be stored.
+		/// \param [out] pAsset_Root - reference to root asset where data will be stored.
 		void Read(Value& pJSON_Object, Asset& pAsset_Root);
 
 		#ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC

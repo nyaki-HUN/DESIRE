@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -54,6 +54,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "FBXImportSettings.h"
 #include "FBXDocumentUtil.h"
 #include "FBXProperties.h"
+
+#include <assimp/DefaultLogger.hpp>
 
 #include <memory>
 #include <functional>
@@ -219,7 +221,7 @@ const Object* LazyObject::Get(bool dieOnError)
         if(!DefaultLogger::isNullLogger()) {
             ASSIMP_LOG_ERROR(ex.what());
         }
-        return NULL;
+        return nullptr;
     }
 
     if (!object.get()) {
@@ -264,6 +266,8 @@ Document::Document(const Parser& parser, const ImportSettings& settings)
 : settings(settings)
 , parser(parser)
 {
+	ASSIMP_LOG_DEBUG("Creating FBX Document");
+
     // Cannot use array default initialization syntax because vc8 fails on it
     for (auto &timeStamp : creationTimeStamp) {
         timeStamp = 0;
@@ -308,6 +312,7 @@ void Document::ReadHeader() {
 
     const Scope& shead = *ehead->Compound();
     fbxVersion = ParseTokenAsInt(GetRequiredToken(GetRequiredElement(shead,"FBXVersion",ehead),0));
+	ASSIMP_LOG_DEBUG_F("FBX Version: ", fbxVersion);
 
     // While we may have some success with newer files, we don't support
     // the older 6.n fbx format
@@ -428,8 +433,8 @@ void Document::ReadPropertyTemplates()
     const ElementCollection otypes = sdefs.GetCollection("ObjectType");
     for(ElementMap::const_iterator it = otypes.first; it != otypes.second; ++it) {
         const Element& el = *(*it).second;
-        const Scope* sc = el.Compound();
-        if(!sc) {
+        const Scope* curSc = el.Compound();
+        if (!curSc) {
             DOMWarning("expected nested scope in ObjectType, ignoring",&el);
             continue;
         }
@@ -442,27 +447,27 @@ void Document::ReadPropertyTemplates()
 
         const std::string& oname = ParseTokenAsString(*tok[0]);
 
-        const ElementCollection templs = sc->GetCollection("PropertyTemplate");
-        for(ElementMap::const_iterator it = templs.first; it != templs.second; ++it) {
-            const Element& el = *(*it).second;
-            const Scope* sc = el.Compound();
-            if(!sc) {
+        const ElementCollection templs = curSc->GetCollection("PropertyTemplate");
+        for (ElementMap::const_iterator elemIt = templs.first; elemIt != templs.second; ++elemIt) {
+            const Element &innerEl = *(*elemIt).second;
+            const Scope *innerSc = innerEl.Compound();
+            if (!innerSc) {
                 DOMWarning("expected nested scope in PropertyTemplate, ignoring",&el);
                 continue;
             }
 
-            const TokenList& tok = el.Tokens();
-            if(tok.empty()) {
+            const TokenList &curTok = innerEl.Tokens();
+            if (curTok.empty()) {
                 DOMWarning("expected name for PropertyTemplate element, ignoring",&el);
                 continue;
             }
 
-            const std::string& pname = ParseTokenAsString(*tok[0]);
+            const std::string &pname = ParseTokenAsString(*curTok[0]);
 
-            const Element* Properties70 = (*sc)["Properties70"];
+            const Element *Properties70 = (*innerSc)["Properties70"];
             if(Properties70) {
                 std::shared_ptr<const PropertyTable> props = std::make_shared<const PropertyTable>(
-                    *Properties70,std::shared_ptr<const PropertyTable>(static_cast<const PropertyTable*>(NULL))
+                        *Properties70, std::shared_ptr<const PropertyTable>(static_cast<const PropertyTable *>(nullptr))
                 );
 
                 templates[oname+"."+pname] = props;
@@ -529,8 +534,8 @@ const std::vector<const AnimationStack*>& Document::AnimationStacks() const
     animationStacksResolved.reserve(animationStacks.size());
     for(uint64_t id : animationStacks) {
         LazyObject* const lazy = GetObject(id);
-        const AnimationStack* stack;
-        if(!lazy || !(stack = lazy->Get<AnimationStack>())) {
+        const AnimationStack *stack = lazy->Get<AnimationStack>();
+        if(!lazy || nullptr == stack ) {
             DOMWarning("failed to read AnimationStack object");
             continue;
         }

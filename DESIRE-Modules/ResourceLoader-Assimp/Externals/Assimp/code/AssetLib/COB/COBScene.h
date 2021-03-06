@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -75,10 +75,10 @@ struct Face
 
 // ------------------
 /** COB chunk header information */
+const unsigned int NO_SIZE = UINT_MAX;
+
 struct ChunkInfo
 {
-    enum {NO_SIZE=UINT_MAX};
-
     ChunkInfo ()
         :   id        (0)
         ,   parent_id (0)

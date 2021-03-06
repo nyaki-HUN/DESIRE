@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -46,7 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef AI_GLTF2EXPORTER_H_INC
 #define AI_GLTF2EXPORTER_H_INC
 
-#ifndef ASSIMP_BUILD_NO_GLTF_IMPORTER
+#if !defined(ASSIMP_BUILD_NO_GLTF_IMPORTER) && !defined(ASSIMP_BUILD_NO_GLTF2_IMPORTER)
 
 #include <assimp/types.h>
 #include <assimp/material.h>
@@ -74,6 +74,7 @@ namespace glTF2
     struct Texture;
 
     // Vec/matrix types, as raw float arrays
+	typedef float (vec2)[2];
     typedef float (vec3)[3];
     typedef float (vec4)[4];
 }

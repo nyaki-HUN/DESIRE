@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -113,14 +113,14 @@ private:
         {}
 
         aiColor3D color,diffuse,specular,ambient,emissive;
-        float refracti;
+        ai_real refracti;
 
         std::string texFile;
 
         // For NFF2
         bool twoSided;
         bool shaded;
-        float opacity, shininess;
+        ai_real opacity, shininess;
 
         std::string name;
 
@@ -155,7 +155,7 @@ private:
         {}
 
         aiVector3D position;
-        float intensity;
+        ai_real intensity;
         aiColor3D color;
     };
 
@@ -185,8 +185,8 @@ private:
 
         // for spheres, cones and cylinders: center point of the object
         aiVector3D center, radius, dir;
-
-        char name[128];
+        static const size_t MaxNameLen = 128;
+        char name[MaxNameLen];
 
         std::vector<aiVector3D> vertices, normals, uvs;
         std::vector<unsigned int> faces;

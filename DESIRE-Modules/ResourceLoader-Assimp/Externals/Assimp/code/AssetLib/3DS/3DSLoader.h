@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -65,14 +65,10 @@ using namespace D3DS;
 // ---------------------------------------------------------------------------------
 /** Importer class for 3D Studio r3 and r4 3DS files
  */
-class Discreet3DSImporter : public BaseImporter
-{
+class Discreet3DSImporter : public BaseImporter {
 public:
-
     Discreet3DSImporter();
     ~Discreet3DSImporter();
-
-public:
 
     // -------------------------------------------------------------------
     /** Returns whether the class can handle the format of the given file.

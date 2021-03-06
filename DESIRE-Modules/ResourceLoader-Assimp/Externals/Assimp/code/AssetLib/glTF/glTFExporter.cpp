@@ -1,8 +1,8 @@
-﻿/*
+/*
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -42,10 +42,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef ASSIMP_BUILD_NO_EXPORT
 #ifndef ASSIMP_BUILD_NO_GLTF_EXPORTER
 
-#include "glTF/glTFExporter.h"
-#include "glTF/glTFAssetWriter.h"
+#include "AssetLib/glTF/glTFExporter.h"
+#include "AssetLib/glTF/glTFAssetWriter.h"
 #include "PostProcessing/SplitLargeMeshes.h"
 
+#include <assimp/commonMetaData.h>
 #include <assimp/Exceptional.h>
 #include <assimp/StringComparison.h>
 #include <assimp/ByteSwapper.h>
@@ -58,6 +59,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Header files, standard library.
 #include <memory>
+#include <limits>
 #include <inttypes.h>
 
 #ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
@@ -98,17 +100,16 @@ glTFExporter::glTFExporter(const char* filename, IOSystem* pIOSystem, const aiSc
 {
     aiScene* sceneCopy_tmp;
     SceneCombiner::CopyScene(&sceneCopy_tmp, pScene);
-    aiScene *sceneCopy(sceneCopy_tmp);
 
     SplitLargeMeshesProcess_Triangle tri_splitter;
     tri_splitter.SetLimit(0xffff);
-    tri_splitter.Execute(sceneCopy);
+    tri_splitter.Execute(sceneCopy_tmp);
 
     SplitLargeMeshesProcess_Vertex vert_splitter;
     vert_splitter.SetLimit(0xffff);
-    vert_splitter.Execute(sceneCopy);
+    vert_splitter.Execute(sceneCopy_tmp);
 
-    mScene = sceneCopy;
+    mScene.reset(sceneCopy_tmp);
 
     mAsset.reset( new glTF::Asset( pIOSystem ) );
 
@@ -159,10 +160,7 @@ static void CopyValue(const aiMatrix4x4& v, glTF::mat4& o)
 
 static void CopyValue(const aiMatrix4x4& v, aiMatrix4x4& o)
 {
-    o.a1 = v.a1; o.a2 = v.a2; o.a3 = v.a3; o.a4 = v.a4;
-    o.b1 = v.b1; o.b2 = v.b2; o.b3 = v.b3; o.b4 = v.b4;
-    o.c1 = v.c1; o.c2 = v.c2; o.c3 = v.c3; o.c4 = v.c4;
-    o.d1 = v.d1; o.d2 = v.d2; o.d3 = v.d3; o.d4 = v.d4;
+    memcpy(&o, &v, sizeof(aiMatrix4x4));
 }
 
 static void IdentityMatrix4(glTF::mat4& o)
@@ -173,9 +171,64 @@ static void IdentityMatrix4(glTF::mat4& o)
     o[12] = 0; o[13] = 0; o[14] = 0; o[15] = 1;
 }
 
-inline Ref<Accessor> ExportData(Asset& a, std::string& meshName, Ref<Buffer>& buffer,
-    unsigned int count, void* data, AttribType::Value typeIn, AttribType::Value typeOut, ComponentType compType, bool isIndices = false)
+template<typename T>
+void SetAccessorRange(Ref<Accessor> acc, void* data, unsigned int count,
+	unsigned int numCompsIn, unsigned int numCompsOut)
 {
+	ai_assert(numCompsOut <= numCompsIn);
+
+	// Allocate and initialize with large values.
+	for (unsigned int i = 0 ; i < numCompsOut ; i++) {
+		acc->min.push_back( std::numeric_limits<double>::max());
+		acc->max.push_back(-std::numeric_limits<double>::max());
+	}
+
+	size_t totalComps = count * numCompsIn;
+	T* buffer_ptr = static_cast<T*>(data);
+	T* buffer_end = buffer_ptr + totalComps;
+
+	// Search and set extreme values.
+	for (; buffer_ptr < buffer_end ; buffer_ptr += numCompsIn) {
+		for (unsigned int j = 0 ; j < numCompsOut ; j++) {
+			double valueTmp = buffer_ptr[j];
+
+			if (valueTmp < acc->min[j]) {
+				acc->min[j] = valueTmp;
+			}
+			if (valueTmp > acc->max[j]) {
+				acc->max[j] = valueTmp;
+			}
+		}
+	}
+}
+
+inline void SetAccessorRange(ComponentType compType, Ref<Accessor> acc, void* data,
+		unsigned int count, unsigned int numCompsIn, unsigned int numCompsOut)
+{
+	switch (compType) {
+		case ComponentType_SHORT:
+			SetAccessorRange<short>(acc, data, count, numCompsIn, numCompsOut);
+			return;
+		case ComponentType_UNSIGNED_SHORT:
+			SetAccessorRange<unsigned short>(acc, data, count, numCompsIn, numCompsOut);
+			return;
+		case ComponentType_UNSIGNED_INT:
+			SetAccessorRange<unsigned int>(acc, data, count, numCompsIn, numCompsOut);
+			return;
+		case ComponentType_FLOAT:
+			SetAccessorRange<float>(acc, data, count, numCompsIn, numCompsOut);
+			return;
+		case ComponentType_BYTE:
+			SetAccessorRange<int8_t>(acc, data, count, numCompsIn, numCompsOut);
+			return;
+		case ComponentType_UNSIGNED_BYTE:
+			SetAccessorRange<uint8_t>(acc, data, count, numCompsIn, numCompsOut);
+			return;
+	}
+}
+
+inline Ref<Accessor> ExportData(Asset &a, std::string &meshName, Ref<Buffer> &buffer,
+        unsigned int count, void *data, AttribType::Value typeIn, AttribType::Value typeOut, ComponentType compType, BufferViewTarget target = BufferViewTarget_NONE) {
     if (!count || !data) return Ref<Accessor>();
 
     unsigned int numCompsIn = AttribType::GetNumComponents(typeIn);
@@ -194,7 +247,7 @@ inline Ref<Accessor> ExportData(Asset& a, std::string& meshName, Ref<Buffer>& bu
     bv->buffer = buffer;
     bv->byteOffset = unsigned(offset);
     bv->byteLength = length; //! The target that the WebGL buffer should be bound to.
-    bv->target = isIndices ? BufferViewTarget_ELEMENT_ARRAY_BUFFER : BufferViewTarget_ARRAY_BUFFER;
+    bv->target = target;
 
     // accessor
     Ref<Accessor> acc = a.accessors.Create(a.FindUniqueID(meshName, "accessor"));
@@ -206,33 +259,7 @@ inline Ref<Accessor> ExportData(Asset& a, std::string& meshName, Ref<Buffer>& bu
     acc->type = typeOut;
 
     // calculate min and max values
-    {
-        // Allocate and initialize with large values.
-        float float_MAX = 10000000000000.0f;
-        for (unsigned int i = 0 ; i < numCompsOut ; i++) {
-            acc->min.push_back( float_MAX);
-            acc->max.push_back(-float_MAX);
-        }
-
-        // Search and set extreme values.
-        float valueTmp;
-        for (unsigned int i = 0 ; i < count       ; i++) {
-            for (unsigned int j = 0 ; j < numCompsOut ; j++) {
-                if (numCompsOut == 1) {
-                  valueTmp = static_cast<unsigned short*>(data)[i];
-                } else {
-                  valueTmp = static_cast<aiVector3D*>(data)[i][j];
-                }
-
-                if (valueTmp < acc->min[j]) {
-                    acc->min[j] = valueTmp;
-                }
-                if (valueTmp > acc->max[j]) {
-                    acc->max[j] = valueTmp;
-                }
-            }
-        }
-    }
+	SetAccessorRange(compType, acc, data, count, numCompsIn, numCompsOut);
 
     // copy the data
     acc->WriteData(count, data, numCompsIn*bytesPerComp);
@@ -320,18 +347,19 @@ void glTFExporter::GetMatColorOrTex(const aiMaterial* mat, glTF::TexProperty& pr
                     prop.texture->source = mAsset->images.Create(imgId);
 
                     if (path[0] == '*') { // embedded
-                        aiTexture* tex = mScene->mTextures[atoi(&path[1])];
+                        aiTexture* curTex = mScene->mTextures[atoi(&path[1])];
 
-                        uint8_t* data = reinterpret_cast<uint8_t*>(tex->pcData);
-                        prop.texture->source->SetData(data, tex->mWidth, *mAsset);
+                        prop.texture->source->name = curTex->mFilename.C_Str();
 
-                        if (tex->achFormatHint[0]) {
+                        uint8_t *data = reinterpret_cast<uint8_t *>(curTex->pcData);
+                        prop.texture->source->SetData(data, curTex->mWidth, *mAsset);
+
+                        if (curTex->achFormatHint[0]) {
                             std::string mimeType = "image/";
-                            mimeType += (memcmp(tex->achFormatHint, "jpg", 3) == 0) ? "jpeg" : tex->achFormatHint;
+                            mimeType += (memcmp(curTex->achFormatHint, "jpg", 3) == 0) ? "jpeg" : curTex->achFormatHint;
                             prop.texture->source->mimeType = mimeType;
                         }
-                    }
-                    else {
+                    } else {
                         prop.texture->source->uri = path;
                     }
 
@@ -497,6 +525,12 @@ void ExportSkin(Asset& mAsset, const aiMesh* aimesh, Ref<Mesh>& meshRef, Ref<Buf
     delete[] vertexJointData;
 }
 
+#if defined(__has_warning)
+#if __has_warning("-Wunused-but-set-variable")
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
+#endif
+
 void glTFExporter::ExportMeshes()
 {
     // Not for
@@ -508,10 +542,12 @@ void glTFExporter::ExportMeshes()
 
     // Variables needed for compression. BEGIN.
     // Indices, not pointers - because pointer to buffer is changing while writing to it.
+#ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
     size_t idx_srcdata_begin = 0; // Index of buffer before writing mesh data. Also, index of begin of coordinates array in buffer.
     size_t idx_srcdata_normal = SIZE_MAX;// Index of begin of normals array in buffer. SIZE_MAX - mean that mesh has no normals.
-    std::vector<size_t> idx_srcdata_tc;// Array of indices. Every index point to begin of texture coordinates array in buffer.
     size_t idx_srcdata_ind;// Index of begin of coordinates indices array in buffer.
+#endif
+    std::vector<size_t> idx_srcdata_tc;// Array of indices. Every index point to begin of texture coordinates array in buffer.
     bool comp_allow;// Point that data of current mesh can be compressed.
     // Variables needed for compression. END.
 
@@ -581,15 +617,19 @@ void glTFExporter::ExportMeshes()
 
 		/******************* Vertices ********************/
 		// If compression is used then you need parameters of uncompressed region: begin and size. At this step "begin" is stored.
+#ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
 		if(comp_allow) idx_srcdata_begin = b->byteLength;
+#endif
 
-        Ref<Accessor> v = ExportData(*mAsset, meshId, b, aim->mNumVertices, aim->mVertices, AttribType::VEC3, AttribType::VEC3, ComponentType_FLOAT);
+        Ref<Accessor> v = ExportData(*mAsset, meshId, b, aim->mNumVertices, aim->mVertices, AttribType::VEC3, AttribType::VEC3, ComponentType_FLOAT, BufferViewTarget_ARRAY_BUFFER);
 		if (v) p.attributes.position.push_back(v);
 
 		/******************** Normals ********************/
+#ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
 		if(comp_allow && (aim->mNormals != 0)) idx_srcdata_normal = b->byteLength;// Store index of normals array.
+#endif
 
-		Ref<Accessor> n = ExportData(*mAsset, meshId, b, aim->mNumVertices, aim->mNormals, AttribType::VEC3, AttribType::VEC3, ComponentType_FLOAT);
+		Ref<Accessor> n = ExportData(*mAsset, meshId, b, aim->mNumVertices, aim->mNormals, AttribType::VEC3, AttribType::VEC3, ComponentType_FLOAT, BufferViewTarget_ARRAY_BUFFER);
 		if (n) p.attributes.normal.push_back(n);
 
 		/************** Texture coordinates **************/
@@ -606,13 +646,15 @@ void glTFExporter::ExportMeshes()
 
 				if(comp_allow) idx_srcdata_tc.push_back(b->byteLength);// Store index of texture coordinates array.
 
-				Ref<Accessor> tc = ExportData(*mAsset, meshId, b, aim->mNumVertices, aim->mTextureCoords[i], AttribType::VEC3, type, ComponentType_FLOAT, false);
+				Ref<Accessor> tc = ExportData(*mAsset, meshId, b, aim->mNumVertices, aim->mTextureCoords[i], AttribType::VEC3, type, ComponentType_FLOAT, BufferViewTarget_ARRAY_BUFFER);
 				if (tc) p.attributes.texcoord.push_back(tc);
 			}
 		}
 
 		/*************** Vertices indices ****************/
+#ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
 		idx_srcdata_ind = b->byteLength;// Store index of indices array.
+#endif
 
 		if (aim->mNumFaces > 0) {
 			std::vector<IndicesType> indices;
@@ -624,7 +666,7 @@ void glTFExporter::ExportMeshes()
                 }
             }
 
-			p.indices = ExportData(*mAsset, meshId, b, unsigned(indices.size()), &indices[0], AttribType::SCALAR, AttribType::SCALAR, ComponentType_UNSIGNED_SHORT, true);
+			p.indices = ExportData(*mAsset, meshId, b, unsigned(indices.size()), &indices[0], AttribType::SCALAR, AttribType::SCALAR, ComponentType_UNSIGNED_SHORT, BufferViewTarget_ELEMENT_ARRAY_BUFFER);
 		}
 
         switch (aim->mPrimitiveTypes) {
@@ -649,7 +691,7 @@ void glTFExporter::ExportMeshes()
 		{
 #ifdef ASSIMP_IMPORTER_GLTF_USE_OPEN3DGC
 			// Only one type of compression supported at now - Open3DGC.
-			//
+		//
 			o3dgc::BinaryStream bs;
 			o3dgc::SC3DMCEncoder<IndicesType> encoder;
 			o3dgc::IndexedFaceSet<IndicesType> comp_o3dgc_ifs;
@@ -765,6 +807,12 @@ void glTFExporter::ExportMeshes()
     }
 }
 
+#if defined(__has_warning)
+#if __has_warning("-Wunused-but-set-variable")
+#pragma GCC diagnostic pop
+#endif
+#endif
+
 /*
  * Export the root node of the node hierarchy.
  * Calls ExportNode for all children.
@@ -838,10 +886,16 @@ void glTFExporter::ExportMetadata()
     asset.version = "1.0";
 
     char buffer[256];
-    ai_snprintf(buffer, 256, "Open Asset Import Library (assimp v%d.%d.%d)",
+    ai_snprintf(buffer, 256, "Open Asset Import Library (assimp v%d.%d.%x)",
         aiGetVersionMajor(), aiGetVersionMinor(), aiGetVersionRevision());
 
     asset.generator = buffer;
+
+	// Copyright
+	aiString copyright_str;
+	if (mScene->mMetaData != nullptr && mScene->mMetaData->Get(AI_METADATA_SOURCE_COPYRIGHT, copyright_str)) {
+		asset.copyright = copyright_str.C_Str();
+	}
 }
 
 inline void ExtractAnimationData(Asset& mAsset, std::string& animId, Ref<Animation>& animRef, Ref<Buffer>& buffer, const aiNodeAnim* nodeChannel, float ticksPerSecond)
@@ -958,7 +1012,7 @@ void glTFExporter::ExportAnimations()
 
             for (unsigned int j = 0; j < 3; ++j) {
                 std::string channelType;
-                int channelSize;
+                int channelSize=0;
                 switch (j) {
                     case 0:
                         channelType = "rotation";

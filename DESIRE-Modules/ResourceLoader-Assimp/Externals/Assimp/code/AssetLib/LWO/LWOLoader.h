@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -76,16 +76,12 @@ public:
     LWOImporter();
     ~LWOImporter();
 
-
-public:
-
     // -------------------------------------------------------------------
     /** Returns whether the class can handle the format of the given file.
      * See BaseImporter::CanRead() for details.
      */
     bool CanRead( const std::string& pFile, IOSystem* pIOHandler,
         bool checkSig) const;
-
 
     // -------------------------------------------------------------------
     /** Called prior to ReadFile().
@@ -309,7 +305,7 @@ private:
     /** Add children to a node
      *  @param node Node to become a father
      *  @param parent Index of the node
-     *  @param apcNodes Flat list of nodes - used nodes are set to NULL.
+     *  @param apcNodes Flat list of nodes - used nodes are set to nullptr.
     */
     void AddChildren(aiNode* node, uint16_t parent,
         std::vector<aiNode*>& apcNodes);
@@ -389,7 +385,7 @@ protected:
     unsigned int fileSize;
 
     /** Output scene */
-    aiScene* pScene;
+    aiScene* mScene;
 
     /** Configuration option: speed flag set? */
     bool configSpeedFlag;
@@ -406,8 +402,8 @@ protected:
 
 
 // ------------------------------------------------------------------------------------------------
-inline float LWOImporter::GetF4()
-{
+inline
+float LWOImporter::GetF4() {
     float f;
     ::memcpy(&f, mFileBuffer, 4);
     mFileBuffer += 4;

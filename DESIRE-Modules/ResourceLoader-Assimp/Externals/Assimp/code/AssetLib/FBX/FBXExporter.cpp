@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 All rights reserved.
 
@@ -81,8 +81,8 @@ using namespace Assimp::FBX;
 // some constants that we'll use for writing metadata
 namespace Assimp {
 namespace FBX {
-    const std::string EXPORT_VERSION_STR = "7.4.0";
-    const uint32_t EXPORT_VERSION_INT = 7400; // 7.4 == 2014/2015
+    const std::string EXPORT_VERSION_STR = "7.5.0";
+    const uint32_t EXPORT_VERSION_INT = 7500; // 7.5 == 2016+
     // FBX files have some hashed values that depend on the creation time field,
     // but for now we don't actually know how to generate these.
     // what we can do is set them to a known-working version.
@@ -400,6 +400,65 @@ void FBXExporter::WriteHeaderExtension ()
     );
 }
 
+// WriteGlobalSettings helpers
+
+void WritePropInt(const aiScene* scene, FBX::Node& p, const std::string& key, int defaultValue)
+{
+    int value;
+    if (scene->mMetaData != nullptr && scene->mMetaData->Get(key, value)) {
+        p.AddP70int(key, value);
+    } else {
+        p.AddP70int(key, defaultValue);
+    }
+}
+
+void WritePropDouble(const aiScene* scene, FBX::Node& p, const std::string& key, double defaultValue)
+{
+    double value;
+    if (scene->mMetaData != nullptr && scene->mMetaData->Get(key, value)) {
+        p.AddP70double(key, value);
+    } else {
+        // fallback lookup float instead
+        float floatValue;
+        if (scene->mMetaData != nullptr && scene->mMetaData->Get(key, floatValue)) {
+            p.AddP70double(key, (double)floatValue);
+        } else {
+            p.AddP70double(key, defaultValue);
+        }
+    }
+}
+
+void WritePropEnum(const aiScene* scene, FBX::Node& p, const std::string& key, int defaultValue)
+{
+    int value;
+    if (scene->mMetaData != nullptr && scene->mMetaData->Get(key, value)) {
+        p.AddP70enum(key, value);
+    } else {
+        p.AddP70enum(key, defaultValue);
+    }
+}
+
+void WritePropColor(const aiScene* scene, FBX::Node& p, const std::string& key, const aiVector3D& defaultValue)
+{
+    aiVector3D value;
+    if (scene->mMetaData != nullptr && scene->mMetaData->Get(key, value)) {
+        // ai_real can be float or double, cast to avoid warnings
+        p.AddP70color(key, (double)value.x, (double)value.y, (double)value.z);
+    } else {
+        p.AddP70color(key, (double)defaultValue.x, (double)defaultValue.y, (double)defaultValue.z);
+    }
+}
+
+void WritePropString(const aiScene* scene, FBX::Node& p, const std::string& key, const std::string& defaultValue)
+{
+    aiString value; // MetaData doesn't hold std::string
+    if (scene->mMetaData != nullptr && scene->mMetaData->Get(key, value)) {
+        p.AddP70string(key, value.C_Str());
+    } else {
+        p.AddP70string(key, defaultValue);
+    }
+}
+
 void FBXExporter::WriteGlobalSettings ()
 {
     if (!binary) {
@@ -409,26 +468,26 @@ void FBXExporter::WriteGlobalSettings ()
     gs.AddChild("Version", int32_t(1000));
 
     FBX::Node p("Properties70");
-    p.AddP70int("UpAxis", 1);
-    p.AddP70int("UpAxisSign", 1);
-    p.AddP70int("FrontAxis", 2);
-    p.AddP70int("FrontAxisSign", 1);
-    p.AddP70int("CoordAxis", 0);
-    p.AddP70int("CoordAxisSign", 1);
-    p.AddP70int("OriginalUpAxis", 1);
-    p.AddP70int("OriginalUpAxisSign", 1);
-    p.AddP70double("UnitScaleFactor", 1.0);
-    p.AddP70double("OriginalUnitScaleFactor", 1.0);
-    p.AddP70color("AmbientColor", 0.0, 0.0, 0.0);
-    p.AddP70string("DefaultCamera", "Producer Perspective");
-    p.AddP70enum("TimeMode", 11);
-    p.AddP70enum("TimeProtocol", 2);
-    p.AddP70enum("SnapOnFrameMode", 0);
+    WritePropInt(mScene, p, "UpAxis", 1);
+    WritePropInt(mScene, p, "UpAxisSign", 1);
+    WritePropInt(mScene, p, "FrontAxis", 2);
+    WritePropInt(mScene, p, "FrontAxisSign", 1);
+    WritePropInt(mScene, p, "CoordAxis", 0);
+    WritePropInt(mScene, p, "CoordAxisSign", 1);
+    WritePropInt(mScene, p, "OriginalUpAxis", 1);
+    WritePropInt(mScene, p, "OriginalUpAxisSign", 1);
+    WritePropDouble(mScene, p, "UnitScaleFactor", 1.0);
+    WritePropDouble(mScene, p, "OriginalUnitScaleFactor", 1.0);
+    WritePropColor(mScene, p, "AmbientColor", aiVector3D((ai_real)0.0, (ai_real)0.0, (ai_real)0.0));
+    WritePropString(mScene, p,"DefaultCamera", "Producer Perspective");
+    WritePropEnum(mScene, p, "TimeMode", 11);
+    WritePropEnum(mScene, p, "TimeProtocol", 2);
+    WritePropEnum(mScene, p, "SnapOnFrameMode", 0);
     p.AddP70time("TimeSpanStart", 0); // TODO: animation support
     p.AddP70time("TimeSpanStop", FBX::SECOND); // TODO: animation support
-    p.AddP70double("CustomFrameRate", -1.0);
+    WritePropDouble(mScene, p, "CustomFrameRate", -1.0);
     p.AddP70("TimeMarker", "Compound", "", ""); // not sure what this is
-    p.AddP70int("CurrentTimeMarker", -1);
+    WritePropInt(mScene, p, "CurrentTimeMarker", -1);
     gs.AddChild(p);
 
     gs.Dump(outfile, binary, 0);
@@ -944,7 +1003,9 @@ void FBXExporter::WriteDefinitions ()
     FBX::Node defs("Definitions");
     defs.AddChild("Version", int32_t(100));
     defs.AddChild("Count", int32_t(total_count));
-    for (auto &n : object_nodes) { defs.AddChild(n); }
+    for (auto &on : object_nodes) {
+        defs.AddChild(on);
+    }
     defs.Dump(outfile, binary, 0);
 }
 
@@ -1119,10 +1180,10 @@ void FBXExporter::WriteObjects ()
             for (size_t fi = 0; fi < m->mNumFaces; ++fi) {
                 const aiFace &f = m->mFaces[fi];
                 for (size_t pvi = 0; pvi < f.mNumIndices; ++pvi) {
-                    const aiVector3D &n = m->mNormals[f.mIndices[pvi]];
-                    normal_data.push_back(n.x);
-                    normal_data.push_back(n.y);
-                    normal_data.push_back(n.z);
+                    const aiVector3D &curN = m->mNormals[f.mIndices[pvi]];
+                    normal_data.push_back(curN.x);
+                    normal_data.push_back(curN.y);
+                    normal_data.push_back(curN.z);
                 }
             }
             FBX::Node::WritePropertyNode(
@@ -1226,14 +1287,14 @@ void FBXExporter::WriteObjects ()
             for (size_t fi = 0; fi < m->mNumFaces; ++fi) {
                 const aiFace &f = m->mFaces[fi];
                 for (size_t pvi = 0; pvi < f.mNumIndices; ++pvi) {
-                    const aiVector3D &uv =
+                    const aiVector3D &curUv =
                         m->mTextureCoords[uvi][f.mIndices[pvi]];
-                    auto elem = index_by_uv.find(uv);
+                    auto elem = index_by_uv.find(curUv);
                     if (elem == index_by_uv.end()) {
-                        index_by_uv[uv] = index;
+                        index_by_uv[curUv] = index;
                         uv_indices.push_back(index);
                         for (unsigned int x = 0; x < m->mNumUVComponents[uvi]; ++x) {
-                            uv_data.push_back(uv[x]);
+                            uv_data.push_back(curUv[x]);
                         }
                         ++index;
                     } else {
@@ -1860,6 +1921,7 @@ void FBXExporter::WriteObjects ()
             sdnode.AddChild("Version", int32_t(100));
             sdnode.AddChild("UserData", "", "");
 
+            std::set<int32_t> setWeightedVertex;
             // add indices and weights, if any
             if (b) {
                 std::vector<int32_t> subdef_indices;
@@ -1867,7 +1929,8 @@ void FBXExporter::WriteObjects ()
                 int32_t last_index = -1;
                 for (size_t wi = 0; wi < b->mNumWeights; ++wi) {
                     int32_t vi = vertex_indices[b->mWeights[wi].mVertexId];
-                    if (vi == last_index) {
+                    bool bIsWeightedAlready = (setWeightedVertex.find(vi) != setWeightedVertex.end());
+                    if (vi == last_index || bIsWeightedAlready) {
                         // only for vertices we exported to fbx
                         // TODO, FIXME: this assumes identically-located vertices
                         // will always deform in the same way.
@@ -1877,6 +1940,7 @@ void FBXExporter::WriteObjects ()
                         // identical vertex.
                         continue;
                     }
+                    setWeightedVertex.insert(vi);
                     subdef_indices.push_back(vi);
                     subdef_weights.push_back(b->mWeights[wi].mWeight);
                     last_index = vi;
@@ -2243,7 +2307,7 @@ const std::map<std::string,std::pair<std::string,char>> transform_types = {
 // write a single model node to the stream
 void FBXExporter::WriteModelNode(
     StreamWriterLE& outstream,
-    bool binary,
+    bool,
     const aiNode* node,
     int64_t node_uid,
     const std::string& type,
@@ -2296,16 +2360,13 @@ void FBXExporter::WriteModelNode(
                 err << item.first;
                 throw DeadlyExportError(err.str());
             }
-            const std::string &name = elem->second.first;
+            const std::string &cur_name = elem->second.first;
             const aiVector3D &v = item.second;
-            if (name.compare(0, 4, "Lcl ") == 0) {
+            if (cur_name.compare(0, 4, "Lcl ") == 0) {
                 // special handling for animatable properties
-                p.AddP70(
-                    name, name, "", "A",
-                    double(v.x), double(v.y), double(v.z)
-                );
+                p.AddP70( cur_name, cur_name, "", "A", double(v.x), double(v.y), double(v.z) );
             } else {
-                p.AddP70vector(name, v.x, v.y, v.z);
+                p.AddP70vector(cur_name, v.x, v.y, v.z);
             }
         }
     }

@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 
@@ -48,8 +48,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef ASSIMP_BUILD_NO_DXF_IMPORTER
 
-#include "DXF/DXFLoader.h"
-#include "DXF/DXFHelper.h"
+#include "AssetLib/DXF/DXFLoader.h"
+#include "AssetLib/DXF/DXFHelper.h"
 #include "PostProcessing/ConvertToLHProcess.h"
 
 #include <assimp/ParsingUtils.h>
@@ -152,7 +152,7 @@ void DXFImporter::InternReadFile( const std::string& filename, aiScene* pScene, 
 
     // Check whether we can read the file
     if( file.get() == nullptr ) {
-        throw DeadlyImportError( "Failed to open DXF file " + filename + "");
+        throw DeadlyImportError( "Failed to open DXF file ", filename, "");
     }
 
     // Check whether this is a binary DXF file - we can't read binary DXF files :-(
@@ -241,7 +241,7 @@ void DXFImporter::ConvertMeshes(aiScene* pScene, DXF::FileData& output) {
             }
         }
 
-        ASSIMP_LOG_DEBUG_F("DXF: Unexpanded polycount is ", icount, ", vertex count is ", vcount);
+        ASSIMP_LOG_VERBOSE_DEBUG_F("DXF: Unexpanded polycount is ", icount, ", vertex count is ", vcount);
     }
 
     if (! output.blocks.size()  ) {
@@ -473,7 +473,7 @@ void DXFImporter::ParseBlocks(DXF::LineReader& reader, DXF::FileData& output) {
         ++reader;
     }
 
-    ASSIMP_LOG_DEBUG_F("DXF: got ", output.blocks.size()," entries in BLOCKS" );
+    ASSIMP_LOG_VERBOSE_DEBUG_F("DXF: got ", output.blocks.size()," entries in BLOCKS" );
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -549,7 +549,7 @@ void DXFImporter::ParseEntities(DXF::LineReader& reader, DXF::FileData& output) 
         ++reader;
     }
 
-    ASSIMP_LOG_DEBUG_F( "DXF: got ", block.lines.size()," polylines and ", block.insertions.size(), 
+    ASSIMP_LOG_VERBOSE_DEBUG_F( "DXF: got ", block.lines.size()," polylines and ", block.insertions.size(), 
         " inserted blocks in ENTITIES" );
 }
 

@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -72,7 +72,7 @@ void ExportSceneSTL(const char* pFile,IOSystem* pIOSystem, const aiScene* pScene
     
     // we're still here - export successfully completed. Write the file.
     std::unique_ptr<IOStream> outfile (pIOSystem->Open(pFile,"wt"));
-    if(outfile == NULL) {
+    if (outfile == nullptr) {
         throw DeadlyExportError("could not open output .stl file: " + std::string(pFile));
     }
 
@@ -91,7 +91,7 @@ void ExportSceneSTLBinary(const char* pFile,IOSystem* pIOSystem, const aiScene* 
     
     // we're still here - export successfully completed. Write the file.
     std::unique_ptr<IOStream> outfile (pIOSystem->Open(pFile,"wb"));
-    if(outfile == NULL) {
+    if (outfile == nullptr) {
         throw DeadlyExportError("could not open output .stl file: " + std::string(pFile));
     }
 
@@ -147,7 +147,7 @@ STLExporter::STLExporter(const char* _filename, const aiScene* pScene, bool expo
         for(unsigned int i = 0; i < pScene->mNumMeshes; ++i) {
             WriteMesh(pScene->mMeshes[ i ]);
         }
-        mOutput << EndSolidToken << name << endl;
+        mOutput << EndSolidToken << " " << name << endl;
     }
 }
 

@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -69,30 +69,51 @@ Property::~Property()
 
 namespace {
 
+void checkTokenCount(const TokenList& tok, unsigned int expectedCount)
+{
+    ai_assert(expectedCount >= 2);
+    if (tok.size() < expectedCount) {
+        const std::string& s = ParseTokenAsString(*tok[1]);
+        if (tok[1]->IsBinary()) {
+            throw DeadlyImportError("Not enough tokens for property of type ", s, " at offset ", tok[1]->Offset());
+        }
+        else {
+            throw DeadlyImportError("Not enough tokens for property of type ", s, " at line ", tok[1]->Line());
+        }
+    }
+}
+
 // ------------------------------------------------------------------------------------------------
-// read a typed property out of a FBX element. The return value is NULL if the property cannot be read.
+// read a typed property out of a FBX element. The return value is nullptr if the property cannot be read.
 Property* ReadTypedProperty(const Element& element)
 {
     ai_assert(element.KeyToken().StringContents() == "P");
 
     const TokenList& tok = element.Tokens();
-    ai_assert(tok.size() >= 5);
+    if (tok.size() < 2) {
+        return nullptr;
+    }
 
     const std::string& s = ParseTokenAsString(*tok[1]);
     const char* const cs = s.c_str();
     if (!strcmp(cs,"KString")) {
+        checkTokenCount(tok, 5);
         return new TypedProperty<std::string>(ParseTokenAsString(*tok[4]));
     }
     else if (!strcmp(cs,"bool") || !strcmp(cs,"Bool")) {
+        checkTokenCount(tok, 5);
         return new TypedProperty<bool>(ParseTokenAsInt(*tok[4]) != 0);
     }
-    else if (!strcmp(cs, "int") || !strcmp(cs, "Int") || !strcmp(cs, "enum") || !strcmp(cs, "Enum")) {
+    else if (!strcmp(cs, "int") || !strcmp(cs, "Int") || !strcmp(cs, "enum") || !strcmp(cs, "Enum") || !strcmp(cs, "Integer")) {
+        checkTokenCount(tok, 5);
         return new TypedProperty<int>(ParseTokenAsInt(*tok[4]));
     }
     else if (!strcmp(cs, "ULongLong")) {
+        checkTokenCount(tok, 5);
         return new TypedProperty<uint64_t>(ParseTokenAsID(*tok[4]));
     }
     else if (!strcmp(cs, "KTime")) {
+        checkTokenCount(tok, 5);
         return new TypedProperty<int64_t>(ParseTokenAsInt64(*tok[4]));
     }
     else if (!strcmp(cs,"Vector3D") ||
@@ -103,6 +124,7 @@ Property* ReadTypedProperty(const Element& element)
         !strcmp(cs,"Lcl Rotation") ||
         !strcmp(cs,"Lcl Scaling")
         ) {
+        checkTokenCount(tok, 7);
         return new TypedProperty<aiVector3D>(aiVector3D(
             ParseTokenAsFloat(*tok[4]),
             ParseTokenAsFloat(*tok[5]),
@@ -110,9 +132,19 @@ Property* ReadTypedProperty(const Element& element)
         );
     }
     else if (!strcmp(cs,"double") || !strcmp(cs,"Number") || !strcmp(cs,"Float") || !strcmp(cs,"FieldOfView") || !strcmp( cs, "UnitScaleFactor" ) ) {
+        checkTokenCount(tok, 5);
         return new TypedProperty<float>(ParseTokenAsFloat(*tok[4]));
     }
-    return NULL;
+    else if (!strcmp(cs, "ColorAndAlpha")) {
+        checkTokenCount(tok, 8);
+        return new TypedProperty<aiColor4D>(aiColor4D(
+            ParseTokenAsFloat(*tok[4]),
+            ParseTokenAsFloat(*tok[5]),
+            ParseTokenAsFloat(*tok[6]),
+            ParseTokenAsFloat(*tok[7]))
+        );
+    }
+    return nullptr;
 }
 
 
@@ -197,7 +229,7 @@ const Property* PropertyTable::Get(const std::string& name) const
                 return templateProps->Get(name);
             }
 
-            return NULL;
+            return nullptr;
         }
     }
 
@@ -209,21 +241,25 @@ DirectPropertyMap PropertyTable::GetUnparsedProperties() const
     DirectPropertyMap result;
 
     // Loop through all the lazy properties (which is all the properties)
-    for(const LazyPropertyMap::value_type& element : lazyProps) {
+    for(const LazyPropertyMap::value_type& currentElement : lazyProps) {
 
         // Skip parsed properties
-        if (props.end() != props.find(element.first)) continue;
+        if (props.end() != props.find(currentElement.first)) {
+            continue;
+        }
 
         // Read the element's value.
         // Wrap the naked pointer (since the call site is required to acquire ownership)
         // std::unique_ptr from C++11 would be preferred both as a wrapper and a return value.
-        std::shared_ptr<Property> prop = std::shared_ptr<Property>(ReadTypedProperty(*element.second));
+        std::shared_ptr<Property> prop = std::shared_ptr<Property>(ReadTypedProperty(*currentElement.second));
 
         // Element could not be read. Skip it.
-        if (!prop) continue;
+        if (!prop) {
+            continue;
+        }
 
         // Add to result
-        result[element.first] = prop;
+        result[currentElement.first] = prop;
     }
 
     return result;

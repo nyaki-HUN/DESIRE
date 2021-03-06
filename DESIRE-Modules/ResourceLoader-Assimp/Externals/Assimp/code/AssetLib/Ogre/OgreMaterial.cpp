@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -175,7 +175,7 @@ aiMaterial* OgreImporter::ReadMaterial(const std::string &pFile, Assimp::IOSyste
             if (materialFile) {
                 break;
             }
-            ASSIMP_LOG_DEBUG_F( "Source file for material '", materialName, "' ", potentialFiles[i], " does not exist");
+            ASSIMP_LOG_VERBOSE_DEBUG_F( "Source file for material '", materialName, "' ", potentialFiles[i], " does not exist");
         }
         if (!materialFile)
         {
@@ -201,13 +201,13 @@ aiMaterial* OgreImporter::ReadMaterial(const std::string &pFile, Assimp::IOSyste
         ss << &data[0];
     }
 
-    ASSIMP_LOG_DEBUG_F("Reading material '", materialName, "'");
+    ASSIMP_LOG_VERBOSE_DEBUG_F("Reading material '", materialName, "'");
 
     aiMaterial *material = new aiMaterial();
     m_textures.clear();
 
-    aiString ts(materialName);
-    material->AddProperty(&ts, AI_MATKEY_NAME);
+    aiString matName(materialName);
+    material->AddProperty(&matName, AI_MATKEY_NAME);
 
     // The stringstream will push words from a line until newline.
     // It will also trim whitespace from line start and between words.
@@ -245,7 +245,7 @@ aiMaterial* OgreImporter::ReadMaterial(const std::string &pFile, Assimp::IOSyste
             return material;
         }
 
-        ASSIMP_LOG_DEBUG_F("material '", materialName, "'");
+        ASSIMP_LOG_VERBOSE_DEBUG_F("material '", materialName, "'");
 
         while(linePart != partBlockEnd)
         {
@@ -279,14 +279,14 @@ aiMaterial* OgreImporter::ReadMaterial(const std::string &pFile, Assimp::IOSyste
                 else if (linePart=="$colormap")
                 {
                     ss >> linePart;
-                    aiString ts(linePart);
-                    material->AddProperty(&ts, AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0));
+                    aiString cm(linePart);
+                    material->AddProperty(&cm, AI_MATKEY_TEXTURE(aiTextureType_DIFFUSE, 0));
                 }
                 else if (linePart=="$normalmap")
                 {
                     ss >> linePart;
-                    aiString ts(linePart);
-                    material->AddProperty(&ts, AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0));
+                    aiString nm(linePart);
+                    material->AddProperty(&nm, AI_MATKEY_TEXTURE(aiTextureType_NORMALS, 0));
                 }
                 else if (linePart=="$shininess_strength")
                 {
@@ -353,7 +353,7 @@ bool OgreImporter::ReadTechnique(const std::string &techniqueName, stringstream 
         return false;
     }
 
-    ASSIMP_LOG_DEBUG_F(" technique '", techniqueName, "'");
+    ASSIMP_LOG_VERBOSE_DEBUG_F(" technique '", techniqueName, "'");
 
     const string partPass  = "pass";
 
@@ -389,7 +389,7 @@ bool OgreImporter::ReadPass(const std::string &passName, stringstream &ss, aiMat
         return false;
     }
 
-    ASSIMP_LOG_DEBUG_F("  pass '", passName, "'");
+    ASSIMP_LOG_VERBOSE_DEBUG_F("  pass '", passName, "'");
 
     const string partAmbient     = "ambient";
     const string partDiffuse     = "diffuse";
@@ -416,7 +416,7 @@ bool OgreImporter::ReadPass(const std::string &passName, stringstream &ss, aiMat
             ss >> r >> g >> b;
             const aiColor3D color(r, g, b);
 
-            ASSIMP_LOG_DEBUG_F( "   ", linePart, " ", r, " ", g, " ", b);
+            ASSIMP_LOG_VERBOSE_DEBUG_F( "   ", linePart, " ", r, " ", g, " ", b);
 
             if (linePart == partAmbient)
             {
@@ -455,7 +455,7 @@ bool OgreImporter::ReadTextureUnit(const std::string &textureUnitName, stringstr
         return false;
     }
 
-    ASSIMP_LOG_DEBUG_F("   texture_unit '", textureUnitName, "'");
+    ASSIMP_LOG_VERBOSE_DEBUG_F("   texture_unit '", textureUnitName, "'");
 
     const string partTexture      = "texture";
     const string partTextCoordSet = "tex_coord_set";
@@ -490,7 +490,7 @@ bool OgreImporter::ReadTextureUnit(const std::string &textureUnitName, stringstr
                 if (posSuffix != string::npos && posUnderscore != string::npos && posSuffix > posUnderscore)
                 {
                     string identifier = Ogre::ToLower(textureRef.substr(posUnderscore, posSuffix - posUnderscore));
-                    ASSIMP_LOG_DEBUG_F( "Detecting texture type from filename postfix '", identifier, "'");
+                    ASSIMP_LOG_VERBOSE_DEBUG_F( "Detecting texture type from filename postfix '", identifier, "'");
 
                     if (identifier == "_n" || identifier == "_nrm" || identifier == "_nrml" || identifier == "_normal" || identifier == "_normals" || identifier == "_normalmap")
                     {
@@ -580,7 +580,7 @@ bool OgreImporter::ReadTextureUnit(const std::string &textureUnitName, stringstr
     unsigned int textureTypeIndex = m_textures[textureType];
     m_textures[textureType]++;
 
-    ASSIMP_LOG_DEBUG_F( "    texture '", textureRef, "' type ", textureType,
+    ASSIMP_LOG_VERBOSE_DEBUG_F( "    texture '", textureRef, "' type ", textureType,
         " index ", textureTypeIndex, " UV ", uvCoord);
 
     aiString assimpTextureRef(textureRef);

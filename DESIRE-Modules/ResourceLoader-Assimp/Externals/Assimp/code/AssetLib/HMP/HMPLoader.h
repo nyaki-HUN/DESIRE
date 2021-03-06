@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
+Copyright (c) 2006-2021, assimp team
 
 
 All rights reserved.
@@ -49,8 +49,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // internal headers
 #include <assimp/BaseImporter.h>
 
-#include "MDL/MDLLoader.h"
-#include "HMP/HMPFileData.h"
+#include "AssetLib/MDL/MDLLoader.h"
+#include "AssetLib/HMP/HMPFileData.h"
 
 namespace Assimp {
 using namespace HMP;

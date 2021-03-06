@@ -2,8 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2019, assimp team
-
+Copyright (c) 2006-2021, assimp team
 
 All rights reserved.
 
@@ -111,13 +110,13 @@ protected:
     const char* mBuffer;
 
     /** Size of the file, in bytes */
-    unsigned int fileSize;
+    unsigned int mFileSize;
 
     /** Output scene */
-    aiScene* pScene;
+    aiScene* mScene;
 
     /** Default vertex color */
-    aiColor4D clrColorDefault;
+    aiColor4D mClrColorDefault;
 };
 
 } // end of namespace Assimp
