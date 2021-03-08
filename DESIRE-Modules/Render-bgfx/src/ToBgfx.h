@@ -10,6 +10,7 @@ inline bgfx::Attrib::Enum ToBgfx(Mesh::EAttrib attrib)
 	{
 		case Mesh::EAttrib::Position:	return bgfx::Attrib::Position;
 		case Mesh::EAttrib::Normal:		return bgfx::Attrib::Normal;
+		case Mesh::EAttrib::Tangent:	return bgfx::Attrib::Tangent;
 		case Mesh::EAttrib::Color:		return bgfx::Attrib::Color0;
 		case Mesh::EAttrib::Texcoord0:	return bgfx::Attrib::TexCoord0;
 		case Mesh::EAttrib::Texcoord1:	return bgfx::Attrib::TexCoord1;
@@ -19,6 +20,7 @@ inline bgfx::Attrib::Enum ToBgfx(Mesh::EAttrib attrib)
 		case Mesh::EAttrib::Texcoord5:	return bgfx::Attrib::TexCoord5;
 		case Mesh::EAttrib::Texcoord6:	return bgfx::Attrib::TexCoord6;
 		case Mesh::EAttrib::Texcoord7:	return bgfx::Attrib::TexCoord7;
+		case Mesh::EAttrib::Num:		break;
 	}
 
 	ASSERT(false);

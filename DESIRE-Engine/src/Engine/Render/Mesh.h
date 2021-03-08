@@ -17,6 +17,7 @@ public:
 	{
 		Position,
 		Normal,
+		Tangent,
 		Color,
 		Texcoord0,
 		Texcoord1,
@@ -52,7 +53,7 @@ public:
 		}
 	};
 
-	Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount);
+	Mesh(Array<VertexLayout>&& vertexLayout, uint32_t indexCount, uint32_t vertexCount);
 	~Mesh();
 
 	Mesh& operator =(Mesh&& otherMesh);

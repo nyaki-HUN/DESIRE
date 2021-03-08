@@ -3,8 +3,8 @@
 
 #include "Engine/Render/Render.h"
 
-Mesh::Mesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount)
-	: m_vertexLayout(vertexLayoutInitList)
+Mesh::Mesh(Array<VertexLayout>&& vertexLayout, uint32_t indexCount, uint32_t vertexCount)
+	: m_vertexLayout(std::move(vertexLayout))
 	, m_numIndices(indexCount)
 	, m_numVertices(vertexCount)
 {
