@@ -14,8 +14,8 @@
 class AssimpIOStreamWrapper : public Assimp::IOStream
 {
 public:
-	AssimpIOStreamWrapper(const ReadFilePtr& spFile)
-		: m_spFile(spFile)
+	AssimpIOStreamWrapper(ReadFilePtr spFile)
+		: m_spFile(std::move(spFile))
 	{
 	}
 
@@ -63,7 +63,7 @@ public:
 	}
 
 private:
-	const ReadFilePtr& m_spFile;
+	ReadFilePtr m_spFile;
 };
 
 class AssimpIOSystemWrapper : public Assimp::IOSystem
@@ -71,7 +71,8 @@ class AssimpIOSystemWrapper : public Assimp::IOSystem
 public:
 	bool Exists(const char* pFile) const override
 	{
-		return false;
+		// TODO: Proper exists function
+		return pFile && FileSystem::Get().Open(String(pFile, strlen(pFile))) != nullptr;
 	}
 
 	char getOsSeparator() const override
@@ -83,13 +84,8 @@ public:
 	{
 		DESIRE_UNUSED(pMode);
 
-		if(!Exists(pFile))
-		{
-			return nullptr;
-		}
-
 		ReadFilePtr spFile = FileSystem::Get().Open(String(pFile, strlen(pFile)));
-		return new AssimpIOStreamWrapper(spFile);
+		return spFile ? new AssimpIOStreamWrapper(std::move(spFile)) : nullptr;
 	}
 
 	void Close(Assimp::IOStream* pFile) override
