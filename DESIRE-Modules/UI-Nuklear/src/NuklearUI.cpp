@@ -55,13 +55,15 @@ void NuklearUI::Init()
 	m_spRenderable = std::make_unique<Renderable>();
 
 	// Dynamic mesh for the draw list
-	const std::initializer_list<Mesh::VertexLayout> vertexLayout =
+	Array<Mesh::VertexLayout> vertexLayout =
 	{
 		{ Mesh::EAttrib::Position,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	m_spRenderable->m_spMesh = std::make_shared<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
+	m_spRenderable->m_spMesh = std::make_shared<DynamicMesh>(std::move(vertexLayout));
+	m_spRenderable->m_spMesh->SetNumIndices(128 * 1024);
+	m_spRenderable->m_spMesh->SetNumVertices(256 * 1024);
 	static_assert(sizeof(nk_draw_index) == sizeof(uint16_t), "Conversion is required for index buffer");
 
 	m_spConvertConfig = std::make_unique<nk_convert_config>();

@@ -6,10 +6,10 @@
 class MemoryFile : public IReadFile
 {
 public:
-	// Create MemoryFile from a buffer (the buffer will be deleted by MemoryFile)
-	MemoryFile(std::unique_ptr<uint8_t[]> spData, int64_t dataSize);
-	// Create MemoryFile by loading the given amount of data from the file into memory (when size is -1 the entire file is loaded)
-	MemoryFile(ReadFilePtr& spFile, int64_t size = -1);
+	// Create MemoryFile from a buffer
+	MemoryFile(std::unique_ptr<uint8_t[]> spData, size_t dataSize);
+	// Create MemoryFile by loading the given amount of data from the file into memory (or the entire file if sizeToRead is not specified)
+	MemoryFile(ReadFilePtr& spFile, size_t sizeToRead = SIZE_MAX);
 
 	bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::Current) override;
 

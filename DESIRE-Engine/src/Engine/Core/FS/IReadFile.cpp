@@ -1,9 +1,8 @@
 #include "Engine/stdafx.h"
 #include "Engine/Core/FS/IReadFile.h"
 
-IReadFile::IReadFile(int64_t fileSize, const String& filename)
+IReadFile::IReadFile(size_t fileSize, const String& filename)
 	: m_fileSize(fileSize)
-	, m_position(0)
 	, m_filename(filename)
 {
 }
@@ -17,12 +16,12 @@ const String& IReadFile::GetFilename() const
 	return m_filename;
 }
 
-int64_t IReadFile::GetSize() const
+size_t IReadFile::GetSize() const
 {
 	return m_fileSize;
 }
 
-int64_t IReadFile::Tell() const
+size_t IReadFile::Tell() const
 {
 	return m_position;
 }
@@ -71,7 +70,7 @@ DynamicString IReadFile::ReadAllAsText()
 
 	if(!IsEof())
 	{
-		const size_t dataSize = static_cast<size_t>(m_fileSize - m_position);
+		const size_t dataSize = m_fileSize - m_position;
 		char* pData = string.AsCharBufferWithSize(dataSize);
 		const size_t numBytesRead = ReadBuffer(pData, dataSize);
 		ASSERT(numBytesRead == dataSize);
@@ -84,7 +83,7 @@ MemoryBuffer IReadFile::ReadAllAsBinary()
 {
 	if(!IsEof())
 	{
-		const size_t dataSize = static_cast<size_t>(m_fileSize - m_position);
+		const size_t dataSize = m_fileSize - m_position;
 		MemoryBuffer buffer = MemoryBuffer(dataSize);
 		const size_t numBytesRead = ReadBuffer(buffer.GetData(), dataSize);
 		ASSERT(numBytesRead == dataSize);

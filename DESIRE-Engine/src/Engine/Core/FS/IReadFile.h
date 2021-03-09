@@ -13,15 +13,15 @@ public:
 		End
 	};
 
-	IReadFile(int64_t fileSize, const String& filename = String::kEmptyString);
+	IReadFile(size_t fileSize, const String& filename = String::kEmptyString);
 	virtual ~IReadFile();
 
 	const String& GetFilename() const;
 
 	virtual bool Seek(int64_t offset, ESeekOrigin origin = ESeekOrigin::Current) = 0;
 
-	int64_t GetSize() const;
-	int64_t Tell() const;
+	size_t GetSize() const;
+	size_t Tell() const;
 	bool IsEof() const;
 
 	virtual void ReadBufferAsync(void* pBuffer, size_t size, std::function<void()> callback);
@@ -41,7 +41,7 @@ public:
 	MemoryBuffer ReadAllAsBinary();
 
 protected:
-	int64_t m_fileSize;
-	int64_t m_position;
+	size_t m_fileSize = 0;
+	size_t m_position = 0;
 	DynamicString m_filename;
 };

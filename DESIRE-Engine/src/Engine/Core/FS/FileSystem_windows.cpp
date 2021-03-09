@@ -24,16 +24,17 @@ public:
 
 	bool Seek(int64_t offset, ESeekOrigin origin) override
 	{
-		const DWORD mapping[] =
-		{
-			FILE_BEGIN,
-			FILE_CURRENT,
-			FILE_END
-		};
-		const DWORD moveMethod = mapping[static_cast<size_t>(origin)];
-
-		LARGE_INTEGER fileOffset;
+		LARGE_INTEGER fileOffset = {};
 		fileOffset.QuadPart = offset;
+
+		DWORD moveMethod = FILE_CURRENT;
+		switch(origin)
+		{
+			case ESeekOrigin::Begin:	moveMethod = FILE_BEGIN; break;
+			case ESeekOrigin::Current:	moveMethod = FILE_CURRENT; break;
+			case ESeekOrigin::End:		moveMethod = FILE_END; break;
+		}
+
 		BOOL succeeded = SetFilePointerEx(hFile, fileOffset, &fileOffset, moveMethod);
 		if(!succeeded)
 		{
@@ -56,7 +57,7 @@ public:
 		ASSERT(pBuffer != nullptr);
 
 		DWORD numBytesRead = 0;
-		BOOL result = ReadFile(hFile, pBuffer, (DWORD)size, &numBytesRead, nullptr);
+		BOOL result = ReadFile(hFile, pBuffer, static_cast<DWORD>(size), &numBytesRead, nullptr);
 		if(result == FALSE)
 		{
 			LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to read from file");
@@ -72,7 +73,7 @@ public:
 		ASSERT(pBuffer != nullptr);
 
 		DWORD numBytesWritten = 0;
-		BOOL result = WriteFile(hFile, pBuffer, (DWORD)size, &numBytesWritten, nullptr);
+		BOOL result = WriteFile(hFile, pBuffer, static_cast<DWORD>(size), &numBytesWritten, nullptr);
 		if(result == FALSE)
 		{
 			LOG_ERROR_WITH_WIN32_ERRORCODE("Failed to write to file");

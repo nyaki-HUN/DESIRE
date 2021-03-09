@@ -30,13 +30,13 @@ public:
 
 	bool Seek(int64_t offset, ESeekOrigin origin) override
 	{
-		const int32_t mapping[] =
+		int32_t whence = SEEK_CUR;
+		switch(origin)
 		{
-			SEEK_SET,
-			SEEK_CUR,
-			SEEK_END
-		};
-		const int32_t whence = mapping[static_cast<size_t>(origin)];
+			case ESeekOrigin::Begin:	whence = SEEK_SET; break;
+			case ESeekOrigin::Current:	whence = SEEK_CUR; break;
+			case ESeekOrigin::End:		whence = SEEK_END; break;
+		}
 
 		off64_t result = lseek64(fileDesc, offset, whence);
 		if(result == -1)
