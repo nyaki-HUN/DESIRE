@@ -69,13 +69,13 @@ void ImGuiUI::Init()
 	m_spRenderable = std::make_unique<Renderable>();
 
 	// Dynamic mesh for the draw list
-	const std::initializer_list<Mesh::VertexLayout> vertexLayout =
+	Array<Mesh::VertexLayout> vertexLayout =
 	{
 		{ Mesh::EAttrib::Position,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	m_spRenderable->m_spMesh = std::make_unique<DynamicMesh>(vertexLayout, 128 * 1024, 256 * 1024);
+	m_spRenderable->m_spMesh = std::make_unique<DynamicMesh>(std::move(vertexLayout), 128 * 1024, 256 * 1024);
 	ASSERT(sizeof(ImDrawIdx) == m_spRenderable->m_spMesh->GetIndexSize() && "ImDrawIdx has changed");
 	ASSERT(sizeof(ImDrawVert) == m_spRenderable->m_spMesh->GetVertexSize() && "ImDrawVert has changed");
 
@@ -244,7 +244,7 @@ void ImGuiUI::Render()
 				const uint16_t h = static_cast<uint16_t>(std::min<float>(cmd.ClipRect.w - cmd.ClipRect.y, UINT16_MAX));
 				Modules::Render->SetScissor(x, y, w, h);
 
-				Modules::Render->RenderRenderable(*m_spRenderable, cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
+				Modules::Render->RenderRenderable(*m_spRenderable, indexOffset + cmd.IdxOffset, vertexOffset + cmd.VtxOffset, cmd.ElemCount);
 			}
 		}
 
@@ -344,7 +344,7 @@ bool ImGuiUI::BeginTable(const String& id, uint8_t numColumns, const float* pIni
 	bool isVisible = ImGui::BeginTable(id.Str(), numColumns, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoBordersInBodyUntilResize);
 	if(isVisible)
 	{
-		if(pInitialColumnsRatio != nullptr)
+		if(pInitialColumnsRatio)
 		{
 			for(uint8_t i = 0; i < numColumns; ++i)
 			{

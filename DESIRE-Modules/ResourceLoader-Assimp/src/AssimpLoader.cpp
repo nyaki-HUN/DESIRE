@@ -5,6 +5,8 @@
 #include "Engine/Application/ResourceManager.h"
 
 #include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/FS/FileSystem.h"
+#include "Engine/Core/Object.h"
 
 #include "Engine/Render/Material.h"
 #include "Engine/Render/Mesh.h"
@@ -67,14 +69,9 @@ private:
 class AssimpIOSystemWrapper : public Assimp::IOSystem
 {
 public:
-	AssimpIOSystemWrapper(const ReadFilePtr& spFile)
-		: m_spFile(spFile)
-	{
-	}
-
 	bool Exists(const char* pFile) const override
 	{
-		return (strcmp(pFile, kDummyFilename) == 0);
+		return false;
 	}
 
 	char getOsSeparator() const override
@@ -91,24 +88,20 @@ public:
 			return nullptr;
 		}
 
-		return new AssimpIOStreamWrapper(m_spFile);
+		ReadFilePtr spFile = FileSystem::Get().Open(String(pFile, strlen(pFile)));
+		return new AssimpIOStreamWrapper(spFile);
 	}
 
 	void Close(Assimp::IOStream* pFile) override
 	{
 		delete pFile;
 	}
-
-	static constexpr char kDummyFilename[] = "__DUMMY__";
-
-private:
-	const ReadFilePtr& m_spFile;
 };
 
-std::unique_ptr<Mesh> AssimpLoader::Load(const ReadFilePtr& spFile)
+std::unique_ptr<Object> AssimpLoader::Load(const String& filename)
 {
 	Assimp::Importer importer;
-	importer.SetIOHandler(new AssimpIOSystemWrapper(spFile));
+	importer.SetIOHandler(new AssimpIOSystemWrapper());
 
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBBC_MAX_BONES, 24);
 
@@ -118,7 +111,9 @@ std::unique_ptr<Mesh> AssimpLoader::Load(const ReadFilePtr& spFile)
 		aiProcess_SplitByBoneCount;
 //		aiProcess_OptimizeGraph;
 
-	const aiScene* pScene = importer.ReadFile(AssimpIOSystemWrapper::kDummyFilename, loadFlags);
+	const aiScene* pScene = importer.ReadFile(filename.Str(), loadFlags);
+
+	std::unique_ptr<Object> spObject = std::make_unique<Object>();
 
 	if(pScene && pScene->HasMeshes())
 	{
@@ -276,5 +271,5 @@ std::unique_ptr<Mesh> AssimpLoader::Load(const ReadFilePtr& spFile)
 
 	importer.FreeScene();
 
-	return nullptr;
+	return spObject;
 }

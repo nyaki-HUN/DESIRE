@@ -55,10 +55,10 @@ void SandBox::Init()
 
 	//////////
 
-	m_pScriptedObject = new Object();
-	m_pScriptedObject->SetObjectName("TestObject");
-	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_pScriptedObject, "TestScript");
-	ScriptComponent* pScriptComponent = m_pScriptedObject->GetComponent<ScriptComponent>();
+	m_spScriptedObject = std::make_unique<Object>();
+	m_spScriptedObject->SetObjectName("TestObject");
+	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_spScriptedObject, "TestScript");
+	ScriptComponent* pScriptComponent = m_spScriptedObject->GetComponent<ScriptComponent>();
 	if(pScriptComponent != nullptr)
 	{
 		pScriptComponent->CallByType(ScriptComponent::EBuiltinFuncType::Init);
@@ -72,13 +72,10 @@ void SandBox::Init()
 
 	REGISTER_NATIVE_SCRIPT(SimpleRotateScript);
 
-	m_pCubeObj = new Object();
-	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_pCubeObj, "SimpleRotateScript");
+	m_spTestObject = GetResourceManager().CreateObjectFromFile("data/duck.zae");
+//	m_spTestObject = GetResourceManager().CreateObjectFromFile("data/sibenik/sibenik.obj");
 
-	//////////
-
-	std::shared_ptr<Mesh> spMesh = Modules::Application->GetResourceManager().GetMesh("data/sibenik/sibenik.obj");
-	std::shared_ptr<Texture> spTexture = Modules::Application->GetResourceManager().GetTexture("data/sibenik/mramor6x6.png");
+	Modules::ScriptSystem->CreateScriptComponentOnObject(*m_spTestObject, "SimpleRotateScript");
 
 	//////////
 
@@ -125,8 +122,8 @@ void SandBox::Init()
 
 void SandBox::Kill()
 {
-	delete m_pScriptedObject;
-	m_pScriptedObject = nullptr;
+	m_spScriptedObject = nullptr;
+	m_spTestObject = nullptr;
 }
 
 void SandBox::Update()

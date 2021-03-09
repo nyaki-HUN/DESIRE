@@ -23,7 +23,7 @@
 
 constexpr float kDefaultRowHeight = 0.0f;
 
-static constexpr nk_draw_vertex_layout_element s_nkVertexLayout[] =
+static const nk_draw_vertex_layout_element s_nkVertexLayout[] =
 {
 	{ NK_VERTEX_POSITION, NK_FORMAT_FLOAT, 0 },
 	{ NK_VERTEX_TEXCOORD, NK_FORMAT_FLOAT, 2 * sizeof(float) },
@@ -61,10 +61,8 @@ void NuklearUI::Init()
 		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
 		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
 	};
-	m_spRenderable->m_spMesh = std::make_shared<DynamicMesh>(std::move(vertexLayout));
-	m_spRenderable->m_spMesh->SetNumIndices(128 * 1024);
-	m_spRenderable->m_spMesh->SetNumVertices(256 * 1024);
-	static_assert(sizeof(nk_draw_index) == sizeof(uint16_t), "Conversion is required for index buffer");
+	m_spRenderable->m_spMesh = std::make_unique<DynamicMesh>(std::move(vertexLayout), 128 * 1024, 256 * 1024);
+	ASSERT(sizeof(nk_draw_index) == m_spRenderable->m_spMesh->GetIndexSize() && "nk_draw_index has changed");
 
 	m_spConvertConfig = std::make_unique<nk_convert_config>();
 	m_spConvertConfig->vertex_layout = s_nkVertexLayout;

@@ -56,8 +56,6 @@ public:
 	Mesh(Array<VertexLayout>&& vertexLayout, uint32_t indexCount, uint32_t vertexCount);
 	~Mesh();
 
-	Mesh& operator =(Mesh&& otherMesh);
-
 	EType GetType() const;
 	uint32_t GetNumIndices() const;
 	uint32_t GetNumVertices() const;
@@ -77,6 +75,9 @@ protected:
 	EType m_type = EType::Static;
 
 private:
+	void SetNumIndices(uint32_t numIndices);
+	void SetNumVertices(uint32_t numVertices);
+
 	uint32_t m_numIndices = 0;
 	uint32_t m_numVertices = 0;
 	uint32_t m_vertexSize = 0;
@@ -86,8 +87,8 @@ private:
 class DynamicMesh : public Mesh
 {
 public:
-	DynamicMesh::DynamicMesh(std::initializer_list<Mesh::VertexLayout> vertexLayoutInitList, uint32_t indexCount, uint32_t vertexCount)
-		: Mesh(vertexLayoutInitList, indexCount, vertexCount)
+	DynamicMesh::DynamicMesh(Array<VertexLayout>&& vertexLayout, uint32_t indexCount, uint32_t vertexCount)
+		: Mesh(std::move(vertexLayout), indexCount, vertexCount)
 	{
 		m_type = Mesh::EType::Dynamic;
 	}

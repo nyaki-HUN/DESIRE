@@ -10,7 +10,7 @@ const Factory<Application>::Func_t Application::s_applicationFactory =
 #include "Engine/Application/ResourceManager.h"
 
 #include "ResourceLoader-Assimp/include/AssimpLoader.h"
-const Array<ResourceManager::MeshLoaderFunc_t> ResourceManager::s_meshLoaders =
+const Array<ResourceManager::ObjectLoaderFunc_t> ResourceManager::s_objectLoaders =
 {
 	&AssimpLoader::Load,
 };

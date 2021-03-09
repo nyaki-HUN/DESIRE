@@ -27,6 +27,7 @@ public:
 	Texture(uint16_t width, uint16_t height, EFormat format, const void* pDataToCopy = nullptr, uint8_t numMipLevels = 1);
 	~Texture();
 
+	Texture& operator =(const Texture& otherTexture);
 	Texture& operator =(Texture&& otherTexture);
 
 	uint16_t GetWidth() const;

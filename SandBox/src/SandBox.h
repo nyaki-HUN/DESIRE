@@ -19,8 +19,8 @@ public:
 private:
 	std::unique_ptr<FileSystemWatcher> m_spDataDirWatcher;
 
-	Object* m_pScriptedObject = nullptr;
-	Object* m_pCubeObj = nullptr;
+	std::unique_ptr<Object> m_spScriptedObject;
+	std::unique_ptr<Object> m_spTestObject;
 
 	InputMapping m_inputMapping;
 };

@@ -3,9 +3,9 @@
 
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/FS/IReadFile.h"
+#include "Engine/Core/Object.h"
 #include "Engine/Core/String/StackString.h"
 
-#include "Engine/Render/Mesh.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
@@ -19,26 +19,10 @@ ResourceManager::~ResourceManager()
 {
 }
 
-std::shared_ptr<Mesh> ResourceManager::GetMesh(const String& filename)
+std::unique_ptr<Object> ResourceManager::CreateObjectFromFile(const String& filename)
 {
-	auto it = m_loadedMeshes.find(filename);
-	if(it != m_loadedMeshes.end() && !it->second.expired())
-	{
-		return it->second.lock();
-	}
-
-	std::shared_ptr<Mesh> mesh = LoadMesh(filename);
-
-	if(it != m_loadedMeshes.end())
-	{
-		it->second = mesh;
-	}
-	else
-	{
-		m_loadedMeshes.emplace(filename, mesh);
-	}
-
-	return mesh;
+	std::unique_ptr<Object> spObejct = LoadObject(filename);
+	return spObejct;
 }
 
 std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const String& defines)
@@ -55,18 +39,22 @@ std::shared_ptr<Shader> ResourceManager::GetShader(const String& filename, const
 		return it->second.lock();
 	}
 
-	std::shared_ptr<Shader> shader = LoadShader(filename);
+	std::shared_ptr<Shader> spShader = LoadShader(filename);
+	if(!spShader)
+	{
+		spShader = std::make_unique<Shader>(filename);
+	}
 
 	if(it != m_loadedShaders.end())
 	{
-		it->second = shader;
+		it->second = spShader;
 	}
 	else
 	{
-		m_loadedShaders.emplace(std::move(shaderNameWithDefines), shader);
+		m_loadedShaders.emplace(std::move(shaderNameWithDefines), spShader);
 	}
 
-	return shader;
+	return spShader;
 }
 
 std::shared_ptr<Texture> ResourceManager::GetTexture(const String& filename)
@@ -77,34 +65,22 @@ std::shared_ptr<Texture> ResourceManager::GetTexture(const String& filename)
 		return it->second.lock();
 	}
 
-	std::shared_ptr<Texture> texture = LoadTexture(filename);
+	std::shared_ptr<Texture> spTexture = LoadTexture(filename);
+	if(!spTexture)
+	{
+		spTexture = m_spErrorTexture;
+	}
 
 	if(it != m_loadedTextures.end())
 	{
-		it->second = texture;
+		it->second = spTexture;
 	}
 	else
 	{
-		m_loadedTextures.emplace(filename, texture);
+		m_loadedTextures.emplace(filename, spTexture);
 	}
 
-	return texture;
-}
-
-void ResourceManager::ReloadMesh(const String& filename)
-{
-	auto it = m_loadedMeshes.find(filename);
-	if(it == m_loadedMeshes.end())
-	{
-		return;
-	}
-
-	std::shared_ptr<Mesh> spMesh = it->second.lock();
-	if(spMesh)
-	{
-		std::shared_ptr<Mesh> newMesh = LoadMesh(filename);
-		*spMesh = std::move(*newMesh);
-	}
+	return spTexture;
 }
 
 void ResourceManager::ReloadTexture(const String& filename)
@@ -118,8 +94,15 @@ void ResourceManager::ReloadTexture(const String& filename)
 	std::shared_ptr<Texture> spTexture = it->second.lock();
 	if(spTexture)
 	{
-		std::shared_ptr<Texture> newTexture = LoadTexture(filename);
-		*spTexture = std::move(*newTexture);
+		std::unique_ptr<Texture> spNewTexture = LoadTexture(filename);
+		if(spNewTexture)
+		{
+			*spTexture = std::move(*spNewTexture);
+		}
+		else
+		{
+			*spTexture = *m_spErrorTexture;
+		}
 	}
 }
 
@@ -132,34 +115,35 @@ void ResourceManager::ReloadShader(const String& filename)
 		{
 			Modules::Render->Unbind(*spShader);
 
-			std::shared_ptr<Shader> spNewShader = LoadShader(filename);
-			spShader->m_data = std::move(spNewShader->m_data);
+			std::unique_ptr<Shader> spNewShader = LoadShader(filename);
+			if(spNewShader)
+			{
+				spShader->m_data = std::move(spNewShader->m_data);
+			}
+			else
+			{
+				spShader->m_data = MemoryBuffer();
+			}
 		}
 	}
 }
 
-std::shared_ptr<Mesh> ResourceManager::LoadMesh(const String& filename)
+std::unique_ptr<Object> ResourceManager::LoadObject(const String& filename)
 {
-	ReadFilePtr spFile = FileSystem::Get().Open(filename);
-	if(spFile)
+	for(ObjectLoaderFunc_t loaderFunc : s_objectLoaders)
 	{
-		for(MeshLoaderFunc_t loaderFunc : s_meshLoaders)
+		std::unique_ptr<Object> spObject = loaderFunc(filename);
+		if(spObject)
 		{
-			std::unique_ptr<Mesh> spMesh = loaderFunc(spFile);
-			if(spMesh)
-			{
-				return std::move(spMesh);
-			}
-
-			spFile->Seek(0, IReadFile::ESeekOrigin::Begin);
+			return spObject;
 		}
 	}
 
-	LOG_ERROR("Failed to load mesh from: %s", filename.Str());
+	LOG_ERROR("Failed to load object from: %s", filename.Str());
 	return nullptr;
 }
 
-std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
+std::unique_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 {
 	StackString<DESIRE_MAX_PATH_LEN> filenameWithPath;
 	Modules::Render->AppendShaderFilenameWithPath(filenameWithPath, filename);
@@ -172,7 +156,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 			std::unique_ptr<Shader> spShader = loaderFunc(spFile);
 			if(spShader)
 			{
-				return std::move(spShader);
+				return spShader;
 			}
 
 			spFile->Seek(0, IReadFile::ESeekOrigin::Begin);
@@ -180,10 +164,10 @@ std::shared_ptr<Shader> ResourceManager::LoadShader(const String& filename)
 	}
 
 	LOG_ERROR("Failed to load shader from: %s", filenameWithPath.Str());
-	return std::make_shared<Shader>(filename);
+	return nullptr;
 }
 
-std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
+std::unique_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 {
 	ReadFilePtr spFile = FileSystem::Get().Open(filename);
 	if(spFile)
@@ -193,7 +177,7 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 			std::unique_ptr<Texture> spTexture = loaderFunc(spFile);
 			if(spTexture)
 			{
-				return std::move(spTexture);
+				return spTexture;
 			}
 
 			spFile->Seek(0, IReadFile::ESeekOrigin::Begin);
@@ -201,21 +185,21 @@ std::shared_ptr<Texture> ResourceManager::LoadTexture(const String& filename)
 	}
 
 	LOG_ERROR("Failed to load texture from: %s", filename.Str());
-	return m_spErrorTexture;
+	return nullptr;
 }
 
 void ResourceManager::CreateErrorTexture()
 {
 	constexpr uint16_t kTextureSize = 128;
-	constexpr uint32_t dataSize = kTextureSize * kTextureSize * Texture::GetBytesPerPixelForFormat(Texture::EFormat::RGBA8);
-	std::unique_ptr<uint8_t[]> data = std::make_unique<uint8_t[]>(dataSize);
+	constexpr uint32_t kDataSize = kTextureSize * kTextureSize * Texture::GetBytesPerPixelForFormat(Texture::EFormat::RGBA8);
+	std::unique_ptr<uint8_t[]> spData = std::make_unique<uint8_t[]>(kDataSize);
 
-	uint32_t* pPixel = reinterpret_cast<uint32_t*>(data.get());
+	uint32_t* pPixel = reinterpret_cast<uint32_t*>(spData.get());
 	for(uint16_t i = 0; i < kTextureSize * kTextureSize; ++i)
 	{
 		*pPixel = ((i % 26) < 14) ? 0xFFFF8000 : 0xFF000000;
 		pPixel++;
 	}
 
-	m_spErrorTexture = std::make_shared<Texture>(kTextureSize, kTextureSize, Texture::EFormat::RGBA8, std::move(data));
+	m_spErrorTexture = std::make_shared<Texture>(kTextureSize, kTextureSize, Texture::EFormat::RGBA8, std::move(spData));
 }

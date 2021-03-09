@@ -31,6 +31,21 @@ Texture::~Texture()
 	Modules::Render->Unbind(*this);
 }
 
+Texture& Texture::operator =(const Texture& otherTexture)
+{
+	Modules::Render->Unbind(*this);
+
+	m_pRenderData = otherTexture.m_pRenderData;
+	m_width = otherTexture.m_width;
+	m_height = otherTexture.m_height;
+	m_format = otherTexture.m_format;
+	m_numMipLevels = otherTexture.m_numMipLevels;
+	m_spData = std::make_unique<uint8_t[]>(otherTexture.GetDataSize());
+	memcpy(m_spData.get(), otherTexture.m_spData.get(), otherTexture.GetDataSize());
+
+	return *this;
+}
+
 Texture& Texture::operator =(Texture&& otherTexture)
 {
 	Modules::Render->Unbind(*this);

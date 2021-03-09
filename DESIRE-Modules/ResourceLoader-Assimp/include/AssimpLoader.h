@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Engine/Core/FS/FilePtr_fwd.h"
-
-class Mesh;
+class Object;
+class String;
 
 class AssimpLoader
 {
 public:
-	static std::unique_ptr<Mesh> Load(const ReadFilePtr& spFile);
+	static std::unique_ptr<Object> Load(const String& filename);
 };

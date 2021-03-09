@@ -9,7 +9,7 @@ class Renderable
 public:
 	~Renderable();
 
-	std::shared_ptr<Mesh> m_spMesh;
+	std::unique_ptr<Mesh> m_spMesh;
 	std::shared_ptr<Material> m_spMaterial;
 
 	// Render engine specific data set at bind
