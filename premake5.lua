@@ -2,6 +2,7 @@ configurations { "Debug", "Release" }
 architecture "x86_64"
 language "C++"
 cppdialect "C++17"
+vectorextensions "AVX"
 characterset "MBCS"
 stringpooling "On"
 floatingpoint "Fast"

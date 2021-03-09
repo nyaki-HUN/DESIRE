@@ -276,7 +276,7 @@ public:
 	// Per component multiplication and addition of the three inputs: c + (a * b)
 	static inline simd128_t MulAdd(simd128_t a, simd128_t b, simd128_t c)
 	{
-#if DESIRE_USE_SSE
+#if DESIRE_USE_SSE_WITH_FMA
 		return _mm_fmadd_ps(a, b, c);
 #elif DESIRE_USE_NEON
 		return vfmaq_f32(c, a, b);
@@ -288,7 +288,7 @@ public:
 	// Per component multiplication and subtraction of the three inputs: c - (a * b)
 	static inline simd128_t MulSub(simd128_t a, simd128_t b, simd128_t c)
 	{
-#if DESIRE_USE_SSE
+#if DESIRE_USE_SSE_WITH_FMA
 		return _mm_fnmadd_ps(a, b, c);
 #elif DESIRE_USE_NEON
 		return vfmsq_f32(c, a, b);
