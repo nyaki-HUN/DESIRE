@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/Render/Render.h"
-#include "Engine/Utils/stl_utils.h"
 
 #include <DirectXMath.h>
 #include <unordered_map>
@@ -81,7 +80,7 @@ private:
 	DirectX::XMMATRIX m_matView;
 	DirectX::XMMATRIX m_matProj;
 
-	std::unordered_map<std::pair<uint64_t, uint64_t>, ID3D11InputLayout*, stl_utils::hash_pair<uint64_t, uint64_t>> m_inputLayoutCache;
+	std::unordered_map<uint64_t, ID3D11InputLayout*> m_inputLayoutCache;
 	std::unordered_map<uint64_t, ID3D11DepthStencilState*> m_depthStencilStateCache;
 	std::unordered_map<uint64_t, ID3D11RasterizerState*> m_rasterizerStateCache;
 	std::unordered_map<uint64_t, ID3D11BlendState*> m_blendStateCache;

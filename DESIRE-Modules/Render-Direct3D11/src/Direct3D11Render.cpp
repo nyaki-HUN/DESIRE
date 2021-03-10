@@ -270,9 +270,22 @@ RenderData* Direct3D11Render::CreateRenderableRenderData(const Renderable& rende
 
 	// Input Layout
 	{
-		const MeshRenderDataD3D11* pMeshRenderData = static_cast<const MeshRenderDataD3D11*>(renderable.m_spMesh->m_pRenderData);
 		const ShaderRenderDataD3D11* pVS = static_cast<const ShaderRenderDataD3D11*>(renderable.m_spMaterial->m_spVertexShader->m_pRenderData);
-		pRenderableRenderData->m_inputLayoutKey = std::pair(pMeshRenderData->m_vertexLayoutKey, reinterpret_cast<uint64_t>(pVS));
+
+		const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_spMesh->GetVertexLayout();
+		ASSERT(vertexLayout.Size() <= 9 && "It is possible to encode maximum of 9 vertex layouts into 64-bit");
+		D3D11_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
+		pRenderableRenderData->m_inputLayoutKey = 0;
+		for(size_t i = 0; i < vertexLayout.Size(); ++i)
+		{
+			const Mesh::VertexLayout& layout = vertexLayout[i];
+			vertexElementDesc[i] = ToD3D11(layout.attrib);
+			vertexElementDesc[i].Format = ToD3D11(layout.type, layout.count);
+
+			pRenderableRenderData->m_inputLayoutKey |= static_cast<uint64_t>(layout.attrib)		<< (i * 7 + 0);	// 4 bits
+			pRenderableRenderData->m_inputLayoutKey |= static_cast<uint64_t>(layout.count - 1)	<< (i * 7 + 4);	// 2 bits [0, 3]
+			pRenderableRenderData->m_inputLayoutKey |= static_cast<uint64_t>(layout.type)		<< (i * 7 + 6);	// 1 bit
+		}
 
 		auto iter = m_inputLayoutCache.find(pRenderableRenderData->m_inputLayoutKey);
 		if(iter != m_inputLayoutCache.end())
@@ -282,15 +295,6 @@ RenderData* Direct3D11Render::CreateRenderableRenderData(const Renderable& rende
 		}
 		else
 		{
-			const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_spMesh->GetVertexLayout();
-			D3D11_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
-			for(size_t i = 0; i < vertexLayout.Size(); ++i)
-			{
-				const Mesh::VertexLayout& layout = vertexLayout[i];
-				vertexElementDesc[i] = ToD3D11(layout.attrib);
-				vertexElementDesc[i].Format = ToD3D11(layout.type, layout.count);
-			}
-
 			HRESULT hr = m_pDevice->CreateInputLayout(vertexElementDesc, static_cast<UINT>(vertexLayout.Size()), pVS->m_pShaderCode->GetBufferPointer(), pVS->m_pShaderCode->GetBufferSize(), &pRenderableRenderData->m_pInputLayout);
 			DX_CHECK_HRESULT(hr);
 
@@ -440,16 +444,6 @@ RenderData* Direct3D11Render::CreateRenderableRenderData(const Renderable& rende
 RenderData* Direct3D11Render::CreateMeshRenderData(const Mesh& mesh)
 {
 	MeshRenderDataD3D11* pMeshRenderData = new MeshRenderDataD3D11();
-
-	const Array<Mesh::VertexLayout>& vertexLayout = mesh.GetVertexLayout();
-	ASSERT(vertexLayout.Size() <= 9 && "It is possible to encode maximum of 9 vertex layouts into 64-bit");
-	for(size_t i = 0; i < vertexLayout.Size(); ++i)
-	{
-		const Mesh::VertexLayout& layout = vertexLayout[i];
-		pMeshRenderData->m_vertexLayoutKey |= static_cast<uint64_t>(layout.attrib)		<< (i * 7 + 0);	// 4 bits
-		pMeshRenderData->m_vertexLayoutKey |= static_cast<uint64_t>(layout.type)		<< (i * 7 + 4);	// 1 bit
-		pMeshRenderData->m_vertexLayoutKey |= static_cast<uint64_t>(layout.count - 1)	<< (i * 7 + 5);	// 2 bits [0, 3]
-	}
 
 	D3D11_BUFFER_DESC bufferDesc = {};
 	switch(mesh.GetType())
