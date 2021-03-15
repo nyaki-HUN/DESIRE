@@ -54,6 +54,11 @@ public:
 	inline Vector4& operator /=(const Vector4& vec)			{ *this = *this / vec;		return *this; }
 	inline Vector4& operator /=(float scalar)				{ *this = *this / scalar;	return *this; }
 
+	inline bool operator >(const Vector4& vec) const		{ return SIMD::OpCmp_GT(*this, vec); }
+	inline bool operator <(const Vector4& vec) const		{ return SIMD::OpCmp_LT(*this, vec); }
+	inline bool operator >=(const Vector4& vec) const		{ return SIMD::OpCmp_GE(*this, vec); }
+	inline bool operator <=(const Vector4& vec) const		{ return SIMD::OpCmp_LE(*this, vec); }
+
 	inline float Dot(const Vector4& vec) const				{ return SIMD::GetX(SIMD::Dot4(*this, vec)); }
 
 	inline float LengthSqr() const							{ return Dot(*this); }
