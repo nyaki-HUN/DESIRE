@@ -1,11 +1,12 @@
 #include "stdafx_bgfx.h"
 #include "BgfxRender.h"
 
-#include "MeshRenderDataBgfx.h"
-#include "RenderableRenderDataBgfx.h"
-#include "RenderTargetRenderDataBgfx.h"
-#include "ShaderRenderDataBgfx.h"
-#include "TextureRenderDataBgfx.h"
+#include "RenderData/IndexBufferRenderDataBgfx.h"
+#include "RenderData/RenderableRenderDataBgfx.h"
+#include "RenderData/RenderTargetRenderDataBgfx.h"
+#include "RenderData/ShaderRenderDataBgfx.h"
+#include "RenderData/TextureRenderDataBgfx.h"
+#include "RenderData/VertexBufferRenderDataBgfx.h"
 #include "ToBgfx.h"
 
 #include "Engine/Application/OSWindow.h"
@@ -13,12 +14,13 @@
 #include "Engine/Core/Math/Matrix4.h"
 #include "Engine/Core/String/StackString.h"
 
+#include "Engine/Render/IndexBuffer.h"
 #include "Engine/Render/Material.h"
-#include "Engine/Render/Mesh.h"
 #include "Engine/Render/Renderable.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
+#include "Engine/Render/VertexBuffer.h"
 
 #include "bgfx/../../src/config.h"
 
@@ -72,7 +74,8 @@ void BgfxRender::UpdateRenderWindow(OSWindow& window)
 void BgfxRender::Kill()
 {
 	m_pActiveWindow = nullptr;
-	m_pActiveMesh = nullptr;
+	m_pActiveIndexBuffer = nullptr;
+	m_pActiveVertexBuffer = nullptr;
 	m_pActiveRenderTarget = nullptr;
 
 	for(bgfx::UniformHandle& uniform : m_samplerUniforms)
@@ -188,44 +191,55 @@ RenderData* BgfxRender::CreateRenderableRenderData(const Renderable& renderable)
 	return pRenderableRenderData;
 }
 
-RenderData* BgfxRender::CreateMeshRenderData(const Mesh& mesh)
+RenderData* BgfxRender::CreateIndexBufferRenderData(const IndexBuffer& indexBuffer)
 {
-	MeshRenderDataBgfx* pMeshRenderData = new MeshRenderDataBgfx();
+	IndexBufferRenderDataBgfx* pIndexBufferRenderData = new IndexBufferRenderDataBgfx();
 
-	pMeshRenderData->m_vertexLayout.begin();
-	const Array<Mesh::VertexLayout>& vertexLayout = mesh.GetVertexLayout();
-	for(const Mesh::VertexLayout& layout : vertexLayout)
+	const bgfx::Memory* pData = bgfx::copy(indexBuffer.GetData(), indexBuffer.GetDataSize());
+	uint16_t flags = BGFX_BUFFER_NONE;
+	if(indexBuffer.GetIndexSize() == sizeof(uint32_t))
 	{
-		const bool isNormalized = (layout.type == Mesh::EAttribType::Uint8);
-		pMeshRenderData->m_vertexLayout.add(ToBgfx(layout.attrib), layout.count, ToBgfx(layout.type), isNormalized);
-	}
-	pMeshRenderData->m_vertexLayout.end();
-
-	const bgfx::Memory* pIndexData = (mesh.GetNumIndices() != 0) ? bgfx::copy(mesh.m_spIndices.get(), mesh.GetSizeOfIndexData()) : nullptr;
-	const bgfx::Memory* pVertexData = bgfx::copy(mesh.m_spVertices.get(), mesh.GetSizeOfVertexData());
-
-	switch(mesh.GetType())
-	{
-		case Mesh::EType::Static:
-			if(pIndexData)
-			{
-				pMeshRenderData->m_indexBuffer = bgfx::createIndexBuffer(pIndexData, (mesh.GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
-			}
-
-			pMeshRenderData->m_vertexBuffer = bgfx::createVertexBuffer(pVertexData, pMeshRenderData->m_vertexLayout, BGFX_BUFFER_NONE);
-			break;
-
-		case Mesh::EType::Dynamic:
-			if(pIndexData)
-			{
-				pMeshRenderData->m_dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pIndexData, (mesh.GetIndexSize() == sizeof(uint16_t)) ? BGFX_BUFFER_NONE : BGFX_BUFFER_INDEX32);
-			}
-
-			pMeshRenderData->m_dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(pVertexData, pMeshRenderData->m_vertexLayout, BGFX_BUFFER_NONE);
-			break;
+		flags |= BGFX_BUFFER_INDEX32;
 	}
 
-	return pMeshRenderData;
+	if(indexBuffer.GetFlags() & DeviceBuffer::EFlags::STATIC)
+	{
+		pIndexBufferRenderData->m_indexBuffer = bgfx::createIndexBuffer(pData, flags);
+	}
+	else
+	{
+		pIndexBufferRenderData->m_dynamicIndexBuffer = bgfx::createDynamicIndexBuffer(pData, flags);
+	}
+
+	return pIndexBufferRenderData;
+}
+
+RenderData* BgfxRender::CreateVertexBufferRenderData(const VertexBuffer& vertexBuffer)
+{
+	VertexBufferRenderDataBgfx* pVertexBufferRenderData = new VertexBufferRenderDataBgfx();
+
+	pVertexBufferRenderData->m_vertexLayout.begin();
+	const Array<VertexBuffer::Layout>& vertexLayout = vertexBuffer.GetVertexLayout();
+	for(const VertexBuffer::Layout& layout : vertexLayout)
+	{
+		const bool isNormalized = (layout.type == VertexBuffer::EAttribType::Uint8);
+		pVertexBufferRenderData->m_vertexLayout.add(ToBgfx(layout.attrib), layout.count, ToBgfx(layout.type), isNormalized);
+	}
+	pVertexBufferRenderData->m_vertexLayout.end();
+
+	const bgfx::Memory* pData = bgfx::copy(vertexBuffer.GetData(), vertexBuffer.GetDataSize());
+	uint16_t flags = BGFX_BUFFER_NONE;
+
+	if(vertexBuffer.GetFlags() & DeviceBuffer::STATIC)
+	{
+		pVertexBufferRenderData->m_vertexBuffer = bgfx::createVertexBuffer(pData, pVertexBufferRenderData->m_vertexLayout, flags);
+	}
+	else
+	{
+		pVertexBufferRenderData->m_dynamicVertexBuffer = bgfx::createDynamicVertexBuffer(pData, pVertexBufferRenderData->m_vertexLayout, flags);
+	}
+
+	return pVertexBufferRenderData;
 }
 
 RenderData* BgfxRender::CreateShaderRenderData(const Shader& shader)
@@ -331,27 +345,16 @@ RenderData* BgfxRender::CreateRenderTargetRenderData(const RenderTarget& renderT
 	return pRenderTargetRenderData;
 }
 
-void BgfxRender::SetMesh(Mesh& mesh)
+void BgfxRender::SetIndexBuffer(IndexBuffer& indexBuffer)
 {
-	DESIRE_UNUSED(mesh);
+	DESIRE_UNUSED(indexBuffer);
 	// No-op
 }
 
-void BgfxRender::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
+void BgfxRender::SetVertexBuffer(VertexBuffer& vertexBuffer)
 {
-	MeshRenderDataBgfx* pMeshRenderData = static_cast<MeshRenderDataBgfx*>(dynamicMesh.m_pRenderData);
-
-	if(dynamicMesh.m_isIndicesDirty)
-	{
-		bgfx::update(pMeshRenderData->m_dynamicIndexBuffer, 0, bgfx::copy(dynamicMesh.m_spIndices.get(), dynamicMesh.GetSizeOfIndexData()));
-		dynamicMesh.m_isIndicesDirty = false;
-	}
-
-	if(dynamicMesh.m_isVerticesDirty)
-	{
-		bgfx::update(pMeshRenderData->m_dynamicVertexBuffer, 0, bgfx::copy(dynamicMesh.m_spVertices.get(), dynamicMesh.GetSizeOfVertexData()));
-		dynamicMesh.m_isVerticesDirty = false;
-	}
+	DESIRE_UNUSED(vertexBuffer);
+	// No-op
 }
 
 void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
@@ -368,6 +371,22 @@ void BgfxRender::SetRenderTarget(RenderTarget* pRenderTarget)
 		m_activeViewId = 0;
 		bgfx::setViewRect(m_activeViewId, 0, 0, m_pActiveWindow->GetWidth(), m_pActiveWindow->GetHeight());
 	}
+}
+
+void BgfxRender::UpdateDeviceBuffer(DeviceBuffer& deviceBuffer)
+{
+/*	DeviceBufferRenderDataBgfx* pDeviceBufferRenderData = static_cast<DeviceBufferRenderDataBgfx*>(deviceBuffer.m_pRenderData);
+
+	bgfx::update(pMeshRenderData->m_dynamicIndexBuffer, 0, bgfx::copy(dynamicMesh.m_spIndices.get(), dynamicMesh.GetSizeOfIndexData()));
+	dynamicMesh.m_isIndicesDirty = false;
+	}
+
+	if(dynamicMesh.m_isVerticesDirty)
+	{
+		bgfx::update(pMeshRenderData->m_dynamicVertexBuffer, 0, bgfx::copy(dynamicMesh.m_spVertices.get(), dynamicMesh.GetSizeOfVertexData()));
+		dynamicMesh.m_isVerticesDirty = false;
+	}
+*/
 }
 
 void BgfxRender::UpdateShaderParams(const Material& material)
@@ -422,26 +441,38 @@ void BgfxRender::UpdateShaderParams(const Material& material)
 void BgfxRender::DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
 	RenderableRenderDataBgfx* pRenderableRenderData = static_cast<RenderableRenderDataBgfx*>(renderable.m_pRenderData);
+	bgfx::setState(pRenderableRenderData->m_renderState, m_blendFactor);
 
-	MeshRenderDataBgfx* pMeshRenderData = static_cast<MeshRenderDataBgfx*>(m_pActiveMesh->m_pRenderData);
-	switch(m_pActiveMesh->GetType())
+	if(m_pActiveIndexBuffer)
 	{
-		case Mesh::EType::Static:
+		IndexBufferRenderDataBgfx* pIndexBufferRenderData = static_cast<IndexBufferRenderDataBgfx*>(m_pActiveIndexBuffer->m_pRenderData);
+		if(bgfx::isValid(pIndexBufferRenderData->m_indexBuffer))
 		{
-			bgfx::setIndexBuffer(pMeshRenderData->m_indexBuffer, indexOffset, numIndices);
-			bgfx::setVertexBuffer(0, pMeshRenderData->m_vertexBuffer, vertexOffset, numVertices);
-			break;
+			bgfx::setIndexBuffer(pIndexBufferRenderData->m_indexBuffer, indexOffset, numIndices);
 		}
-
-		case Mesh::EType::Dynamic:
+		else if(bgfx::isValid(pIndexBufferRenderData->m_dynamicIndexBuffer))
 		{
-			bgfx::setIndexBuffer(pMeshRenderData->m_dynamicIndexBuffer, indexOffset, numIndices);
-			bgfx::setVertexBuffer(0, pMeshRenderData->m_dynamicVertexBuffer, vertexOffset, numVertices);
-			break;
+			bgfx::setIndexBuffer(pIndexBufferRenderData->m_dynamicIndexBuffer, indexOffset, numIndices);
+		}
+		else
+		{
+			ASSERT(false);
 		}
 	}
 
-	bgfx::setState(pRenderableRenderData->m_renderState, m_blendFactor);
+	VertexBufferRenderDataBgfx* pVertexBufferRenderData = static_cast<VertexBufferRenderDataBgfx*>(m_pActiveVertexBuffer->m_pRenderData);
+	if(bgfx::isValid(pVertexBufferRenderData->m_vertexBuffer))
+	{
+		bgfx::setVertexBuffer(0, pVertexBufferRenderData->m_vertexBuffer, vertexOffset, numVertices);
+	}
+	else if(bgfx::isValid(pVertexBufferRenderData->m_dynamicVertexBuffer))
+	{
+		bgfx::setVertexBuffer(0, pVertexBufferRenderData->m_dynamicVertexBuffer, vertexOffset, numVertices);
+	}
+	else
+	{
+		ASSERT(false);
+	}
 
 	bgfx::submit(m_activeViewId, pRenderableRenderData->m_shaderProgram, 0, BGFX_DISCARD_NONE);
 }

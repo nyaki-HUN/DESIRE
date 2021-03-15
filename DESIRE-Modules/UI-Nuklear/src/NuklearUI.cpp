@@ -14,12 +14,13 @@
 
 #include "Engine/Input/Input.h"
 
+#include "Engine/Render/IndexBuffer.h"
 #include "Engine/Render/Material.h"
-#include "Engine/Render/Mesh.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/Renderable.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
+#include "Engine/Render/VertexBuffer.h"
 
 constexpr float kDefaultRowHeight = 0.0f;
 
@@ -55,18 +56,19 @@ void NuklearUI::Init()
 	m_spRenderable = std::make_unique<Renderable>();
 
 	// Dynamic mesh for the draw list
-	Array<Mesh::VertexLayout> vertexLayout =
+	Array<VertexBuffer::Layout> vertexLayout =
 	{
-		{ Mesh::EAttrib::Position,	2, Mesh::EAttribType::Float },
-		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
-		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
+		{ VertexBuffer::EAttrib::Position,	2, VertexBuffer::EAttribType::Float },
+		{ VertexBuffer::EAttrib::Texcoord0,	2, VertexBuffer::EAttribType::Float },
+		{ VertexBuffer::EAttrib::Color,		4, VertexBuffer::EAttribType::Uint8 }
 	};
-	m_spRenderable->m_spMesh = std::make_unique<DynamicMesh>(std::move(vertexLayout), 128 * 1024, 256 * 1024);
-	ASSERT(sizeof(nk_draw_index) == m_spRenderable->m_spMesh->GetIndexSize() && "nk_draw_index has changed");
+	m_spRenderable->m_spIndexBuffer = std::make_shared<IndexBuffer>(128 * 1024, DeviceBuffer::DYNAMIC);
+	m_spRenderable->m_spVertexBuffer = std::make_shared<VertexBuffer>(256 * 1024, std::move(vertexLayout), DeviceBuffer::DYNAMIC);
+	ASSERT(sizeof(nk_draw_index) == m_spRenderable->m_spIndexBuffer->GetIndexSize() && "nk_draw_index has changed");
 
 	m_spConvertConfig = std::make_unique<nk_convert_config>();
 	m_spConvertConfig->vertex_layout = s_nkVertexLayout;
-	m_spConvertConfig->vertex_size = m_spRenderable->m_spMesh->GetVertexSize();
+	m_spConvertConfig->vertex_size = m_spRenderable->m_spVertexBuffer->GetVertexSize();
 	m_spConvertConfig->vertex_alignment = NK_ALIGNOF(float);
 	m_spConvertConfig->global_alpha = 1.0f;
 	m_spConvertConfig->shape_AA = NK_ANTI_ALIASING_ON;
@@ -187,8 +189,8 @@ void NuklearUI::Render()
 	// Update mesh with packed buffers for contiguous indices and vertices
 	nk_buffer indexBuffer;
 	nk_buffer vertexBuffer;
-	nk_buffer_init_fixed(&indexBuffer, m_spRenderable->m_spMesh->m_spIndices.get(), m_spRenderable->m_spMesh->GetNumIndices());
-	nk_buffer_init_fixed(&vertexBuffer, m_spRenderable->m_spMesh->m_spVertices.get(), m_spRenderable->m_spMesh->GetNumVertices());
+	nk_buffer_init_fixed(&indexBuffer, m_spRenderable->m_spIndexBuffer->m_spIndices.get(), m_spRenderable->m_spIndexBuffer->GetNumIndices());
+	nk_buffer_init_fixed(&vertexBuffer, m_spRenderable->m_spVertexBuffer->m_spVertices.get(), m_spRenderable->m_spVertexBuffer->GetNumVertices());
 	nk_flags result = nk_convert(m_spContext.get(), m_spCmdBuffer.get(), &vertexBuffer, &indexBuffer, m_spConvertConfig.get());
 	if(result != NK_CONVERT_SUCCESS)
 	{
@@ -197,8 +199,8 @@ void NuklearUI::Render()
 		return;
 	}
 
-	static_cast<DynamicMesh*>(m_spRenderable->m_spMesh.get())->m_isIndicesDirty = true;
-	static_cast<DynamicMesh*>(m_spRenderable->m_spMesh.get())->m_isVerticesDirty = true;
+	m_spRenderable->m_spIndexBuffer->SetDirty();
+	m_spRenderable->m_spVertexBuffer->SetDirty();
 
 	uint32_t indexOffset = 0;
 	const nk_draw_command* pCmd = nullptr;

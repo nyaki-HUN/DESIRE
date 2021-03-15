@@ -15,12 +15,13 @@
 
 #include "Engine/Input/Input.h"
 
+#include "Engine/Render/IndexBuffer.h"
 #include "Engine/Render/Material.h"
-#include "Engine/Render/Mesh.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/Renderable.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
+#include "Engine/Render/VertexBuffer.h"
 
 static int s_widgetCounter = 0;
 
@@ -69,15 +70,16 @@ void ImGuiUI::Init()
 	m_spRenderable = std::make_unique<Renderable>();
 
 	// Dynamic mesh for the draw list
-	Array<Mesh::VertexLayout> vertexLayout =
+	Array<VertexBuffer::Layout> vertexLayout =
 	{
-		{ Mesh::EAttrib::Position,	2, Mesh::EAttribType::Float },
-		{ Mesh::EAttrib::Texcoord0,	2, Mesh::EAttribType::Float },
-		{ Mesh::EAttrib::Color,		4, Mesh::EAttribType::Uint8 }
+		{ VertexBuffer::EAttrib::Position,	2, VertexBuffer::EAttribType::Float },
+		{ VertexBuffer::EAttrib::Texcoord0,	2, VertexBuffer::EAttribType::Float },
+		{ VertexBuffer::EAttrib::Color,		4, VertexBuffer::EAttribType::Uint8 }
 	};
-	m_spRenderable->m_spMesh = std::make_unique<DynamicMesh>(std::move(vertexLayout), 128 * 1024, 256 * 1024);
-	ASSERT(sizeof(ImDrawIdx) == m_spRenderable->m_spMesh->GetIndexSize() && "ImDrawIdx has changed");
-	ASSERT(sizeof(ImDrawVert) == m_spRenderable->m_spMesh->GetVertexSize() && "ImDrawVert has changed");
+	m_spRenderable->m_spIndexBuffer = std::make_shared<IndexBuffer>(128 * 1024, DeviceBuffer::DYNAMIC);
+	m_spRenderable->m_spVertexBuffer = std::make_shared<VertexBuffer>(256 * 1024, std::move(vertexLayout), DeviceBuffer::DYNAMIC);
+	ASSERT(sizeof(ImDrawIdx) == m_spRenderable->m_spIndexBuffer->GetIndexSize() && "ImDrawIdx has changed");
+	ASSERT(sizeof(ImDrawVert) == m_spRenderable->m_spVertexBuffer->GetVertexSize() && "ImDrawVert has changed");
 
 	// Setup material
 	m_spRenderable->m_spMaterial = std::make_unique<Material>();
@@ -188,16 +190,16 @@ void ImGuiUI::Render()
 	}
 
 	// Update mesh with packed buffers for contiguous indices and vertices
-	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > m_spRenderable->m_spMesh->GetNumIndices() ||
-		static_cast<uint32_t>(pDrawData->TotalVtxCount) > m_spRenderable->m_spMesh->GetNumVertices())
+	if(static_cast<uint32_t>(pDrawData->TotalIdxCount) > m_spRenderable->m_spIndexBuffer->GetNumIndices() ||
+		static_cast<uint32_t>(pDrawData->TotalVtxCount) > m_spRenderable->m_spVertexBuffer->GetNumVertices())
 	{
 		// Skip rendering if we have too many indices or vertices
-		ASSERT(false && "DynamicMesh is too small");
+		ASSERT(false && "The buffers are too small");
 		return;
 	}
 
-	ImDrawIdx* pIndex = m_spRenderable->m_spMesh->m_spIndices.get();
-	ImDrawVert* pVertex = reinterpret_cast<ImDrawVert*>(m_spRenderable->m_spMesh->m_spVertices.get());
+	ImDrawIdx* pIndex = m_spRenderable->m_spIndexBuffer->m_spIndices.get();
+	ImDrawVert* pVertex = reinterpret_cast<ImDrawVert*>(m_spRenderable->m_spVertexBuffer->m_spVertices.get());
 	for(int i = 0; i < pDrawData->CmdListsCount; i++)
 	{
 		const ImDrawList* pDrawList = pDrawData->CmdLists[i];
@@ -207,8 +209,8 @@ void ImGuiUI::Render()
 		pVertex += pDrawList->VtxBuffer.Size;
 	}
 
-	static_cast<DynamicMesh*>(m_spRenderable->m_spMesh.get())->m_isIndicesDirty = true;
-	static_cast<DynamicMesh*>(m_spRenderable->m_spMesh.get())->m_isVerticesDirty = true;
+	m_spRenderable->m_spIndexBuffer->SetDirty();
+	m_spRenderable->m_spVertexBuffer->SetDirty();
 
 	// Because we merged all buffers into a single one, we maintain our own offset into them
 	uint32_t indexOffset = 0;
@@ -244,7 +246,7 @@ void ImGuiUI::Render()
 				const uint16_t h = static_cast<uint16_t>(std::min<float>(cmd.ClipRect.w - cmd.ClipRect.y, UINT16_MAX));
 				Modules::Render->SetScissor(x, y, w, h);
 
-				Modules::Render->RenderRenderable(*m_spRenderable, indexOffset + cmd.IdxOffset, vertexOffset + cmd.VtxOffset, cmd.ElemCount);
+				Modules::Render->RenderRenderable(*m_spRenderable, cmd.IdxOffset + indexOffset, cmd.VtxOffset + vertexOffset, cmd.ElemCount);
 			}
 		}
 

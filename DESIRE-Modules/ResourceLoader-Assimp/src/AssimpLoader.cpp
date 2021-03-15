@@ -8,8 +8,11 @@
 #include "Engine/Core/FS/FileSystem.h"
 #include "Engine/Core/Object.h"
 
+#include "Engine/Render/IndexBuffer.h"
 #include "Engine/Render/Material.h"
-#include "Engine/Render/Mesh.h"
+#include "Engine/Render/Renderable.h"
+#include "Engine/Render/RenderComponent.h"
+#include "Engine/Render/VertexBuffer.h"
 
 class AssimpIOStreamWrapper : public Assimp::IOStream
 {
@@ -107,11 +110,16 @@ std::unique_ptr<Object> AssimpLoader::Load(const String& filename)
 		aiProcess_SplitByBoneCount;
 //		aiProcess_OptimizeGraph;
 
-	const aiScene* pScene = importer.ReadFile(filename.Str(), loadFlags);
-
 	std::unique_ptr<Object> spObject = std::make_unique<Object>();
+	spObject->SetObjectName(filename);
 
-	if(pScene && pScene->HasMeshes())
+	const aiScene* pScene = importer.ReadFile(filename.Str(), loadFlags);
+	if(!pScene || !pScene->mRootNode || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE)
+	{
+		return spObject;
+	}
+
+	if(pScene->HasMeshes())
 	{
 		for(uint32_t meshIdx = 0; meshIdx < pScene->mNumMeshes; ++meshIdx)
 		{
@@ -121,38 +129,50 @@ std::unique_ptr<Object> AssimpLoader::Load(const String& filename)
 				continue;
 			}
 
-			Array<Mesh::VertexLayout> vertexLayout;
-			vertexLayout.Add({ Mesh::EAttrib::Position, 3, Mesh::EAttribType::Float });
+			Renderable* pRenderable = new Renderable();
+
+			Array<VertexBuffer::Layout> vertexLayout;
+			vertexLayout.Add({ VertexBuffer::EAttrib::Position, 3, VertexBuffer::EAttribType::Float });
 
 			if(pSceneMesh->mNormals != nullptr)
 			{
-				vertexLayout.Add({ Mesh::EAttrib::Normal, 3, Mesh::EAttribType::Float });
+				vertexLayout.Add({ VertexBuffer::EAttrib::Normal, 3, VertexBuffer::EAttribType::Float });
 			}
 
 			if(pSceneMesh->mTangents != nullptr)
 			{
-				vertexLayout.Add({ Mesh::EAttrib::Tangent, 3, Mesh::EAttribType::Float });
+				vertexLayout.Add({ VertexBuffer::EAttrib::Tangent, 3, VertexBuffer::EAttribType::Float });
 			}
 
 			const uint32_t numColorChannels = pSceneMesh->GetNumUVChannels();
 			if(numColorChannels > 0)
 			{
-				vertexLayout.Add({ Mesh::EAttrib::Color, 4, Mesh::EAttribType::Float });
+				vertexLayout.Add({ VertexBuffer::EAttrib::Color, 4, VertexBuffer::EAttribType::Float });
 			}
 
 			const uint32_t numUvChannels = pSceneMesh->GetNumUVChannels();
 			for(uint32_t i = 0; i < numUvChannels; ++i)
 			{
-				const Mesh::EAttrib attrib = static_cast<Mesh::EAttrib>(static_cast<uint32_t>(Mesh::EAttrib::Texcoord0) + i);
-				ASSERT(attrib < Mesh::EAttrib::Num);
+				const VertexBuffer::EAttrib attrib = static_cast<VertexBuffer::EAttrib>(static_cast<uint32_t>(VertexBuffer::EAttrib::Texcoord0) + i);
+				ASSERT(attrib < VertexBuffer::EAttrib::Num);
 				const uint8_t count = static_cast<uint8_t>(pSceneMesh->mNumUVComponents[i]);
-				vertexLayout.Add({ attrib, count, Mesh::EAttribType::Float });
+				vertexLayout.Add({ attrib, count, VertexBuffer::EAttribType::Float });
 			}
 
-			std::shared_ptr<Mesh> spMesh = std::make_shared<Mesh>(std::move(vertexLayout), pSceneMesh->mNumFaces * 3, pSceneMesh->mNumVertices);
+			// Index buffer
+			pRenderable->m_spIndexBuffer = std::make_shared<IndexBuffer>(pSceneMesh->mNumFaces * 3);
+			for(uint32_t i = 0; i < pSceneMesh->mNumFaces; ++i)
+			{
+				ASSERT(pSceneMesh->mFaces[i].mNumIndices == 3);
+				pRenderable->m_spIndexBuffer->m_spIndices[i * 3 + 0] = pSceneMesh->mFaces[i].mIndices[0];
+				pRenderable->m_spIndexBuffer->m_spIndices[i * 3 + 1] = pSceneMesh->mFaces[i].mIndices[1];
+				pRenderable->m_spIndexBuffer->m_spIndices[i * 3 + 2] = pSceneMesh->mFaces[i].mIndices[2];
+			}
 
-			const uint32_t vertexSize = spMesh->GetVertexSize();
-			float* pVertex = spMesh->m_spVertices.get();
+			// Vertex buffer
+			pRenderable->m_spVertexBuffer = std::make_shared<VertexBuffer>(pSceneMesh->mNumVertices, std::move(vertexLayout));
+			const uint32_t vertexSize = pRenderable->m_spVertexBuffer->GetVertexSize();
+			float* pVertex = pRenderable->m_spVertexBuffer->m_spVertices.get();
 			for(uint32_t i = 0; i < pSceneMesh->mNumVertices; ++i)
 			{
 				uint32_t j = 0;
@@ -202,14 +222,6 @@ std::unique_ptr<Object> AssimpLoader::Load(const String& filename)
 				}
 
 				pVertex += vertexSize;
-			}
-
-			for(uint32_t i = 0; i < pSceneMesh->mNumFaces; ++i)
-			{
-				ASSERT(pSceneMesh->mFaces[i].mNumIndices == 3);
-				spMesh->m_spIndices[i * 3 + 0] = pSceneMesh->mFaces[i].mIndices[0];
-				spMesh->m_spIndices[i * 3 + 1] = pSceneMesh->mFaces[i].mIndices[1];
-				spMesh->m_spIndices[i * 3 + 2] = pSceneMesh->mFaces[i].mIndices[2];
 			}
 		}
 

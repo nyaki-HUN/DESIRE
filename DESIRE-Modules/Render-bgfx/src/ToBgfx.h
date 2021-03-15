@@ -1,38 +1,38 @@
 #pragma once
 
-#include "Engine/Render/Mesh.h"
 #include "Engine/Render/RenderEnums.h"
 #include "Engine/Render/Texture.h"
+#include "Engine/Render/VertexBuffer.h"
 
-inline bgfx::Attrib::Enum ToBgfx(Mesh::EAttrib attrib)
+inline bgfx::Attrib::Enum ToBgfx(VertexBuffer::EAttrib attrib)
 {
 	switch(attrib)
 	{
-		case Mesh::EAttrib::Position:	return bgfx::Attrib::Position;
-		case Mesh::EAttrib::Normal:		return bgfx::Attrib::Normal;
-		case Mesh::EAttrib::Tangent:	return bgfx::Attrib::Tangent;
-		case Mesh::EAttrib::Color:		return bgfx::Attrib::Color0;
-		case Mesh::EAttrib::Texcoord0:	return bgfx::Attrib::TexCoord0;
-		case Mesh::EAttrib::Texcoord1:	return bgfx::Attrib::TexCoord1;
-		case Mesh::EAttrib::Texcoord2:	return bgfx::Attrib::TexCoord2;
-		case Mesh::EAttrib::Texcoord3:	return bgfx::Attrib::TexCoord3;
-		case Mesh::EAttrib::Texcoord4:	return bgfx::Attrib::TexCoord4;
-		case Mesh::EAttrib::Texcoord5:	return bgfx::Attrib::TexCoord5;
-		case Mesh::EAttrib::Texcoord6:	return bgfx::Attrib::TexCoord6;
-		case Mesh::EAttrib::Texcoord7:	return bgfx::Attrib::TexCoord7;
-		case Mesh::EAttrib::Num:		break;
+		case VertexBuffer::EAttrib::Position:	return bgfx::Attrib::Position;
+		case VertexBuffer::EAttrib::Normal:		return bgfx::Attrib::Normal;
+		case VertexBuffer::EAttrib::Tangent:	return bgfx::Attrib::Tangent;
+		case VertexBuffer::EAttrib::Color:		return bgfx::Attrib::Color0;
+		case VertexBuffer::EAttrib::Texcoord0:	return bgfx::Attrib::TexCoord0;
+		case VertexBuffer::EAttrib::Texcoord1:	return bgfx::Attrib::TexCoord1;
+		case VertexBuffer::EAttrib::Texcoord2:	return bgfx::Attrib::TexCoord2;
+		case VertexBuffer::EAttrib::Texcoord3:	return bgfx::Attrib::TexCoord3;
+		case VertexBuffer::EAttrib::Texcoord4:	return bgfx::Attrib::TexCoord4;
+		case VertexBuffer::EAttrib::Texcoord5:	return bgfx::Attrib::TexCoord5;
+		case VertexBuffer::EAttrib::Texcoord6:	return bgfx::Attrib::TexCoord6;
+		case VertexBuffer::EAttrib::Texcoord7:	return bgfx::Attrib::TexCoord7;
+		case VertexBuffer::EAttrib::Num:		break;
 	}
 
 	ASSERT(false);
 	return bgfx::Attrib::Count;
 }
 
-inline bgfx::AttribType::Enum ToBgfx(Mesh::EAttribType attribType)
+inline bgfx::AttribType::Enum ToBgfx(VertexBuffer::EAttribType attribType)
 {
 	switch(attribType)
 	{
-		case Mesh::EAttribType::Float:	return bgfx::AttribType::Float;
-		case Mesh::EAttribType::Uint8:	return bgfx::AttribType::Uint8;
+		case VertexBuffer::EAttribType::Float:	return bgfx::AttribType::Float;
+		case VertexBuffer::EAttribType::Uint8:	return bgfx::AttribType::Uint8;
 	}
 
 	ASSERT(false);

@@ -2,11 +2,12 @@
 #include "Direct3D12Render.h"
 
 #include "DirectXMathExt.h"
-#include "MeshRenderDataD3D12.h"
-#include "RenderableRenderDataD3D12.h"
-#include "RenderTargetRenderDataD3D12.h"
-#include "ShaderRenderDataD3D12.h"
-#include "TextureRenderDataD3D12.h"
+#include "RenderData/IndexBufferRenderDataD3D12.h"
+#include "RenderData/RenderableRenderDataD3D12.h"
+#include "RenderData/RenderTargetRenderDataD3D12.h"
+#include "RenderData/ShaderRenderDataD3D12.h"
+#include "RenderData/TextureRenderDataD3D12.h"
+#include "RenderData/VertexBufferRenderDataD3D12.h"
 #include "ToD3D12.h"
 
 #include "Engine/Application/OSWindow.h"
@@ -15,12 +16,13 @@
 #include "Engine/Core/Math/Matrix4.h"
 #include "Engine/Core/String/StackString.h"
 
+#include "Engine/Render/IndexBuffer.h"
 #include "Engine/Render/Material.h"
-#include "Engine/Render/Mesh.h"
 #include "Engine/Render/Renderable.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
+#include "Engine/Render/VertexBuffer.h"
 
 #include <d3dcompiler.h>
 #include <dxgi1_4.h>
@@ -263,7 +265,8 @@ void Direct3D12Render::Kill()
 	Unbind(*m_spErrorPixelShader);
 
 	m_pActiveWindow = nullptr;
-	m_pActiveMesh = nullptr;
+	m_pActiveIndexBuffer = nullptr;
+	m_pActiveVertexBuffer = nullptr;
 	m_pActiveRenderTarget = nullptr;
 
 	m_pActivePipelineState = nullptr;
@@ -402,11 +405,11 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 	psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
 	// Input Layout
-	const Array<Mesh::VertexLayout>& vertexLayout = renderable.m_spMesh->GetVertexLayout();
-	D3D12_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(Mesh::EAttrib::Num)] = {};
+	const Array<VertexBuffer::Layout>& vertexLayout = renderable.m_spVertexBuffer->GetVertexLayout();
+	D3D12_INPUT_ELEMENT_DESC vertexElementDesc[static_cast<size_t>(VertexBuffer::EAttrib::Num)] = {};
 	for(size_t i = 0; i < vertexLayout.Size(); ++i)
 	{
-		const Mesh::VertexLayout& layout = vertexLayout[i];
+		const VertexBuffer::Layout& layout = vertexLayout[i];
 		vertexElementDesc[i] = ToD3D12(layout.attrib);
 		vertexElementDesc[i].Format = ToD3D12(layout.type, layout.count);
 	}
@@ -466,35 +469,15 @@ RenderData* Direct3D12Render::CreateRenderableRenderData(const Renderable& rende
 	return pRenderableRenderData;
 }
 
-RenderData* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
+RenderData* Direct3D12Render::CreateIndexBufferRenderData(const IndexBuffer& indexBuffer)
 {
-	MeshRenderDataD3D12* pMeshRenderData = new MeshRenderDataD3D12();
+	IndexBufferRenderDataD3D12* pIndexBufferRenderData = new IndexBufferRenderDataD3D12();
 
-	const CD3DX12_HEAP_PROPERTIES heapProperties((mesh.GetType() == Mesh::EType::Static) ? D3D12_HEAP_TYPE_DEFAULT : D3D12_HEAP_TYPE_UPLOAD);
-	const D3D12_RESOURCE_STATES resourceState((mesh.GetType() == Mesh::EType::Static) ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_GENERIC_READ);
+	const bool isStatic = indexBuffer.GetFlags() & DeviceBuffer::STATIC;
+	const CD3DX12_HEAP_PROPERTIES heapProperties(isStatic ? D3D12_HEAP_TYPE_DEFAULT : D3D12_HEAP_TYPE_UPLOAD);
+	const D3D12_RESOURCE_STATES resourceState(isStatic ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_GENERIC_READ);
 
-	// Create index buffer
-	if(mesh.GetNumIndices() != 0)
-	{
-		CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(mesh.GetSizeOfIndexData());
-
-		HRESULT hr = m_pDevice->CreateCommittedResource(
-			&heapProperties,
-			D3D12_HEAP_FLAG_NONE,
-			&resourceDesc,
-			resourceState,
-			nullptr,
-			IID_PPV_ARGS(&pMeshRenderData->m_pIndexBuffer)
-		);
-		DX_CHECK_HRESULT(hr);
-
-		pMeshRenderData->m_indexBufferView.BufferLocation = pMeshRenderData->m_pIndexBuffer->GetGPUVirtualAddress();
-		pMeshRenderData->m_indexBufferView.SizeInBytes = mesh.GetSizeOfIndexData();
-		pMeshRenderData->m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
-	}
-
-	// Create vertex buffer
-	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(mesh.GetSizeOfVertexData());
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(indexBuffer.GetDataSize());
 
 	HRESULT hr = m_pDevice->CreateCommittedResource(
 		&heapProperties,
@@ -502,45 +485,78 @@ RenderData* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 		&resourceDesc,
 		resourceState,
 		nullptr,
-		IID_PPV_ARGS(&pMeshRenderData->m_pVertexBuffer)
+		IID_PPV_ARGS(&pIndexBufferRenderData->m_pBuffer)
 	);
 	DX_CHECK_HRESULT(hr);
 
-	pMeshRenderData->m_vertexBufferView.BufferLocation = pMeshRenderData->m_pVertexBuffer->GetGPUVirtualAddress();
-	pMeshRenderData->m_vertexBufferView.SizeInBytes = mesh.GetSizeOfVertexData();
-	pMeshRenderData->m_vertexBufferView.StrideInBytes = mesh.GetVertexSize();
+	pIndexBufferRenderData->m_indexBufferView.BufferLocation = pIndexBufferRenderData->m_pBuffer->GetGPUVirtualAddress();
+	pIndexBufferRenderData->m_indexBufferView.SizeInBytes = indexBuffer.GetDataSize();
+	pIndexBufferRenderData->m_indexBufferView.Format = DXGI_FORMAT_R16_UINT;
 
-	if(mesh.GetType() == Mesh::EType::Static)
+	if(isStatic)
 	{
-		ID3D12Resource* pIndexUploadResource = nullptr;
-		ID3D12Resource* pVertexUploadResource = nullptr;
-
-		if(mesh.GetNumIndices() != 0)
-		{
-			// Create index upload buffer
-			const CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-			const CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pMeshRenderData->m_pIndexBuffer, 0, 1));
-
-			hr = m_pDevice->CreateCommittedResource(
-				&uploadHeapProperties,
-				D3D12_HEAP_FLAG_NONE,
-				&uploadResourceDesc,
-				D3D12_RESOURCE_STATE_GENERIC_READ,
-				nullptr,
-				IID_PPV_ARGS(&pIndexUploadResource)
-			);
-			DX_CHECK_HRESULT(hr);
-
-			D3D12_SUBRESOURCE_DATA indexData = {};
-			indexData.pData = mesh.m_spIndices.get();
-
-			UpdateSubresources<1>(m_pCmdList, pMeshRenderData->m_pIndexBuffer, pIndexUploadResource, 0, 0, 1, &indexData);
-		}
-
-		// Create vertex upload buffer
+		// Create upload buffer
 		const CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
-		const CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pMeshRenderData->m_pVertexBuffer, 0, 1));
+		const CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pIndexBufferRenderData->m_pBuffer, 0, 1));
 
+		ID3D12Resource* pIndexUploadResource = nullptr;
+		hr = m_pDevice->CreateCommittedResource(
+			&uploadHeapProperties,
+			D3D12_HEAP_FLAG_NONE,
+			&uploadResourceDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&pIndexUploadResource)
+		);
+		DX_CHECK_HRESULT(hr);
+
+		D3D12_SUBRESOURCE_DATA subResourceData = {};
+		subResourceData.pData = indexBuffer.m_spIndices.get();
+
+		UpdateSubresources<1>(m_pCmdList, pIndexBufferRenderData->m_pBuffer, pIndexUploadResource, 0, 0, 1, &subResourceData);
+
+		// Buffer transitions
+		const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(pIndexBufferRenderData->m_pBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+		m_pCmdList->ResourceBarrier(1, &barrier);
+
+		// TODO: this is a memory leak should be solved by executing the command list here
+//		DX_SAFE_RELEASE(pIndexUploadResource);
+	}
+
+	return pIndexBufferRenderData;
+}
+
+RenderData* Direct3D12Render::CreateVertexBufferRenderData(const VertexBuffer& vertexBuffer)
+{
+	VertexBufferRenderDataD3D12* pVertexBufferRenderData = new VertexBufferRenderDataD3D12();
+
+	const bool isStatic = vertexBuffer.GetFlags() & DeviceBuffer::STATIC;
+	const CD3DX12_HEAP_PROPERTIES heapProperties(isStatic ? D3D12_HEAP_TYPE_DEFAULT : D3D12_HEAP_TYPE_UPLOAD);
+	const D3D12_RESOURCE_STATES resourceState(isStatic ? D3D12_RESOURCE_STATE_COPY_DEST : D3D12_RESOURCE_STATE_GENERIC_READ);
+
+	CD3DX12_RESOURCE_DESC resourceDesc = CD3DX12_RESOURCE_DESC::Buffer(vertexBuffer.GetDataSize());
+
+	HRESULT hr = m_pDevice->CreateCommittedResource(
+		&heapProperties,
+		D3D12_HEAP_FLAG_NONE,
+		&resourceDesc,
+		resourceState,
+		nullptr,
+		IID_PPV_ARGS(&pVertexBufferRenderData->m_pBuffer)
+	);
+	DX_CHECK_HRESULT(hr);
+
+	pVertexBufferRenderData->m_vertexBufferView.BufferLocation = pVertexBufferRenderData->m_pBuffer->GetGPUVirtualAddress();
+	pVertexBufferRenderData->m_vertexBufferView.SizeInBytes = vertexBuffer.GetDataSize();
+	pVertexBufferRenderData->m_vertexBufferView.StrideInBytes = vertexBuffer.GetVertexSize();
+
+	if(isStatic)
+	{
+		// Create upload buffer
+		const CD3DX12_HEAP_PROPERTIES uploadHeapProperties(D3D12_HEAP_TYPE_UPLOAD);
+		const CD3DX12_RESOURCE_DESC uploadResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(GetRequiredIntermediateSize(pVertexBufferRenderData->m_pBuffer, 0, 1));
+
+		ID3D12Resource* pVertexUploadResource = nullptr;
 		hr = m_pDevice->CreateCommittedResource(
 			&uploadHeapProperties,
 			D3D12_HEAP_FLAG_NONE,
@@ -551,27 +567,20 @@ RenderData* Direct3D12Render::CreateMeshRenderData(const Mesh& mesh)
 		);
 		DX_CHECK_HRESULT(hr);
 
-		D3D12_SUBRESOURCE_DATA vertexData = {};
-		vertexData.pData = mesh.m_spVertices.get();
+		D3D12_SUBRESOURCE_DATA subResourceData = {};
+		subResourceData.pData = vertexBuffer.m_spVertices.get();
 
-		UpdateSubresources<1>(m_pCmdList, pMeshRenderData->m_pVertexBuffer, pVertexUploadResource, 0, 0, 1, &vertexData);
+		UpdateSubresources<1>(m_pCmdList, pVertexBufferRenderData->m_pBuffer, pVertexUploadResource, 0, 0, 1, &subResourceData);
 
 		// Buffer transitions
-		const CD3DX12_RESOURCE_BARRIER barriers[] =
-		{
-			CD3DX12_RESOURCE_BARRIER::Transition(pMeshRenderData->m_pVertexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER),
-			CD3DX12_RESOURCE_BARRIER::Transition(pMeshRenderData->m_pIndexBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER)
-		};
-
-		const uint32_t numBarriers = (mesh.GetNumIndices() != 0) ? 2 : 1;
-		m_pCmdList->ResourceBarrier(numBarriers, barriers);
+		const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(pVertexBufferRenderData->m_pBuffer, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
+		m_pCmdList->ResourceBarrier(1, &barrier);
 
 		// TODO: this is a memory leak should be solved by executing the command list here
-//		DX_SAFE_RELEASE(pIndexUploadResource);
 //		DX_SAFE_RELEASE(pVertexUploadResource);
 	}
 
-	return pMeshRenderData;
+	return pVertexBufferRenderData;
 }
 
 RenderData* Direct3D12Render::CreateShaderRenderData(const Shader& shader)
@@ -814,28 +823,16 @@ void Direct3D12Render::OnDestroyRenderableRenderData(RenderData* pRenderData)
 	}
 }
 
-void Direct3D12Render::SetMesh(Mesh& mesh)
+void Direct3D12Render::SetIndexBuffer(IndexBuffer& indexBuffer)
 {
-	const MeshRenderDataD3D12* pMeshRenderData = static_cast<const MeshRenderDataD3D12*>(mesh.m_pRenderData);
-	m_pCmdList->IASetIndexBuffer(&pMeshRenderData->m_indexBufferView);
-	m_pCmdList->IASetVertexBuffers(0, 1, &pMeshRenderData->m_vertexBufferView);
+	const IndexBufferRenderDataD3D12* pIndexBufferRenderData = static_cast<const IndexBufferRenderDataD3D12*>(indexBuffer.m_pRenderData);
+	m_pCmdList->IASetIndexBuffer(&pIndexBufferRenderData->m_indexBufferView);
 }
 
-void Direct3D12Render::UpdateDynamicMesh(DynamicMesh& dynamicMesh)
+void Direct3D12Render::SetVertexBuffer(VertexBuffer& vertexBuffer)
 {
-	MeshRenderDataD3D12* pMeshRenderData = static_cast<MeshRenderDataD3D12*>(dynamicMesh.m_pRenderData);
-
-	if(dynamicMesh.m_isIndicesDirty)
-	{
-		UpdateD3D12Resource(pMeshRenderData->m_pIndexBuffer, dynamicMesh.m_spIndices.get(), dynamicMesh.GetSizeOfIndexData());
-		dynamicMesh.m_isIndicesDirty = false;
-	}
-
-	if(dynamicMesh.m_isVerticesDirty)
-	{
-		UpdateD3D12Resource(pMeshRenderData->m_pVertexBuffer, dynamicMesh.m_spVertices.get(), dynamicMesh.GetSizeOfVertexData());
-		dynamicMesh.m_isVerticesDirty = false;
-	}
+	const VertexBufferRenderDataD3D12* pBertexBufferRenderData = static_cast<const VertexBufferRenderDataD3D12*>(vertexBuffer.m_pRenderData);
+	m_pCmdList->IASetVertexBuffers(0, 1, &pBertexBufferRenderData->m_vertexBufferView);
 }
 
 void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
@@ -865,7 +862,8 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 			hr = m_pCmdList->Reset(frameBuffer.m_pCommandAllocator, m_pActivePipelineState);
 			DX_CHECK_HRESULT(hr);
 
-			m_pActiveMesh = nullptr;
+			m_pActiveIndexBuffer = nullptr;
+			m_pActiveVertexBuffer = nullptr;
 			m_pActiveRenderTarget = nullptr;
 
 			m_pCmdList->SetGraphicsRootSignature(m_pRootSignature);
@@ -882,6 +880,14 @@ void Direct3D12Render::SetRenderTarget(RenderTarget* pRenderTarget)
 	}
 
 	m_pCmdList->RSSetViewports(1, &viewport);
+}
+
+void Direct3D12Render::UpdateDeviceBuffer(DeviceBuffer& deviceBuffer)
+{
+	DeviceBufferRenderDataD3D12* pDeviceBufferRenderData = static_cast<DeviceBufferRenderDataD3D12*>(deviceBuffer.m_pRenderData);
+
+	UpdateD3D12Resource(pDeviceBufferRenderData->m_pBuffer, deviceBuffer.GetData(), deviceBuffer.GetDataSize());
+	deviceBuffer.SetDirty(false);
 }
 
 void Direct3D12Render::UpdateShaderParams(const Material& material)

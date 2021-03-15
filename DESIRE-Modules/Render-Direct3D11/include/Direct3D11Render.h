@@ -7,6 +7,7 @@
 
 class ShaderRenderDataD3D11;
 
+struct D3D11_BUFFER_DESC;
 struct D3D11_SAMPLER_DESC;
 struct ID3D11BlendState;
 struct ID3D11DepthStencilState;
@@ -41,7 +42,8 @@ public:
 
 private:
 	RenderData* CreateRenderableRenderData(const Renderable& renderable) override;
-	RenderData* CreateMeshRenderData(const Mesh& mesh) override;
+	RenderData* CreateIndexBufferRenderData(const IndexBuffer& indexBuffer) override;
+	RenderData* CreateVertexBufferRenderData(const VertexBuffer& vertexBuffer) override;
 	RenderData* CreateShaderRenderData(const Shader& shader) override;
 	RenderData* CreateTextureRenderData(const Texture& texture) override;
 	RenderData* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
@@ -49,15 +51,17 @@ private:
 	void OnDestroyRenderableRenderData(RenderData* pRenderData) override;
 	void OnDestroyShaderRenderData(RenderData* pRenderData) override;
 
-	void SetMesh(Mesh& mesh) override;
-	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
+	void SetIndexBuffer(IndexBuffer& indexBuffer) override;
+	void SetVertexBuffer(VertexBuffer& vertexBuffer) override;
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
+	void UpdateDeviceBuffer(DeviceBuffer& deviceBuffer) override;
 	void UpdateShaderParams(const Material& material) override;
 	void UpdateShaderParams(const Material& material, ShaderRenderDataD3D11* pShaderRenderData);
 
 	void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) override;
 
 	bool CreateFrameBuffers(uint32_t width, uint32_t height);
+	RenderData* CreateDeviceBufferRenderData(const DeviceBuffer& deviceBuffer, uint32_t bindFlags);
 	void UpdateD3D11Resource(ID3D11Resource* pResource, const void* pData, size_t size);
 	void SetSamplerState(uint8_t samplerIdx, const D3D11_SAMPLER_DESC& samplerDesc);
 

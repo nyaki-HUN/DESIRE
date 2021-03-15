@@ -30,16 +30,18 @@ public:
 
 private:
 	RenderData* CreateRenderableRenderData(const Renderable& renderable) override;
-	RenderData* CreateMeshRenderData(const Mesh& mesh) override;
+	RenderData* CreateIndexBufferRenderData(const IndexBuffer& indexBuffer) override;
+	RenderData* CreateVertexBufferRenderData(const VertexBuffer& vertexBuffer) override;
 	RenderData* CreateShaderRenderData(const Shader& shader) override;
 	RenderData* CreateTextureRenderData(const Texture& texture) override;
 	RenderData* CreateRenderTargetRenderData(const RenderTarget& renderTarget) override;
 
 	void OnDestroyRenderableRenderData(RenderData* pRenderData) override;
 
-	void SetMesh(Mesh& mesh) override;
-	void UpdateDynamicMesh(DynamicMesh& dynamicMesh) override;
+	void SetIndexBuffer(IndexBuffer& indexBuffer) override;
+	void SetVertexBuffer(VertexBuffer& vertexBuffer) override;
 	void SetRenderTarget(RenderTarget* pRenderTarget) override;
+	void UpdateDeviceBuffer(DeviceBuffer& deviceBuffer) override;
 	void UpdateShaderParams(const Material& material) override;
 	void UpdateShaderParams(const Material& material, ShaderRenderDataD3D12* pShaderRenderData);
 

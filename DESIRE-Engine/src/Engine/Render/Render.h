@@ -1,9 +1,9 @@
 #pragma once
 
-class DynamicMesh;
+class DeviceBuffer;
+class IndexBuffer;
 class Material;
 class Matrix4;
-class Mesh;
 class OSWindow;
 class Renderable;
 class RenderData;
@@ -11,6 +11,7 @@ class RenderTarget;
 class Shader;
 class String;
 class Texture;
+class VertexBuffer;
 class View;
 class WritableString;
 
@@ -39,7 +40,8 @@ public:
 
 	// Resource unbind
 	void Unbind(Renderable& renderable);
-	void Unbind(Mesh& mesh);
+	void Unbind(IndexBuffer& indexBuffer);
+	void Unbind(VertexBuffer& vertexBuffer);
 	void Unbind(Shader& shader);
 	void Unbind(Texture& texture);
 	void Unbind(RenderTarget& renderTarget);
@@ -48,25 +50,27 @@ public:
 
 protected:
 	const OSWindow* m_pActiveWindow = nullptr;
-	const Mesh* m_pActiveMesh = nullptr;
+	const IndexBuffer* m_pActiveIndexBuffer = nullptr;
+	const VertexBuffer* m_pActiveVertexBuffer = nullptr;
 	const RenderTarget* m_pActiveRenderTarget = nullptr;
 
 private:
 	virtual RenderData* CreateRenderableRenderData(const Renderable& renderable) = 0;
-	virtual RenderData* CreateMeshRenderData(const Mesh& mesh) = 0;
+	virtual RenderData* CreateIndexBufferRenderData(const IndexBuffer& indexBuffer) = 0;
+	virtual RenderData* CreateVertexBufferRenderData(const VertexBuffer& vertexBuffer) = 0;
 	virtual RenderData* CreateShaderRenderData(const Shader& shader) = 0;
 	virtual RenderData* CreateTextureRenderData(const Texture& texture) = 0;
 	virtual RenderData* CreateRenderTargetRenderData(const RenderTarget& renderTarget) = 0;
 
 	virtual void OnDestroyRenderableRenderData(RenderData* pRenderData)		{ DESIRE_UNUSED(pRenderData); }
-	virtual void OnDestroyMeshRenderData(RenderData* pRenderData)			{ DESIRE_UNUSED(pRenderData); }
 	virtual void OnDestroyShaderRenderData(RenderData* pRenderData)			{ DESIRE_UNUSED(pRenderData); }
 	virtual void OnDestroyTextureRenderData(RenderData* pRenderData)		{ DESIRE_UNUSED(pRenderData); }
 	virtual void OnDestroyRenderTargetRenderData(RenderData* pRenderData)	{ DESIRE_UNUSED(pRenderData); }
 
-	virtual void SetMesh(Mesh& mesh) = 0;
-	virtual void UpdateDynamicMesh(DynamicMesh& dynamicMesh) = 0;
+	virtual void SetIndexBuffer(IndexBuffer& indexBuffer) = 0;
+	virtual void SetVertexBuffer(VertexBuffer& VertexBuffer) = 0;
 	virtual void SetRenderTarget(RenderTarget* pRenderTarget) = 0;
+	virtual void UpdateDeviceBuffer(DeviceBuffer& deviceBuffer) = 0;
 	virtual void UpdateShaderParams(const Material& material) = 0;
 
 	virtual void DoRender(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices) = 0;

@@ -3,13 +3,14 @@
 
 #include "Engine/Application/OSWindow.h"
 
+#include "Engine/Render/IndexBuffer.h"
 #include "Engine/Render/Material.h"
-#include "Engine/Render/Mesh.h"
 #include "Engine/Render/Renderable.h"
 #include "Engine/Render/RenderData.h"
 #include "Engine/Render/RenderTarget.h"
 #include "Engine/Render/Shader.h"
 #include "Engine/Render/Texture.h"
+#include "Engine/Render/VertexBuffer.h"
 
 Render::Render()
 {
@@ -31,9 +32,11 @@ void Render::BeginFrame(OSWindow& window)
 
 void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint32_t vertexOffset, uint32_t numIndices, uint32_t numVertices)
 {
-	if(renderable.m_spMesh == nullptr)
+	if((renderable.m_spIndexBuffer && indexOffset >= renderable.m_spIndexBuffer->GetNumIndices()) ||
+		renderable.m_spVertexBuffer == nullptr ||
+		vertexOffset >= renderable.m_spVertexBuffer->GetNumVertices())
 	{
-		ASSERT(false && "Invalid mesh");
+		// Nothing to render
 		return;
 	}
 
@@ -43,47 +46,77 @@ void Render::RenderRenderable(Renderable& renderable, uint32_t indexOffset, uint
 		return;
 	}
 
-	if(numIndices == UINT32_MAX)
-	{
-		// Use all the indices
-		numIndices = renderable.m_spMesh->GetNumIndices() - indexOffset;
-	}
-
-	if(numVertices == UINT32_MAX)
-	{
-		// Use all the vertices
-		numVertices = renderable.m_spMesh->GetNumVertices() - vertexOffset;
-	}
-
-	if(indexOffset + numIndices > renderable.m_spMesh->GetNumIndices() ||
-		vertexOffset + numVertices > renderable.m_spMesh->GetNumVertices())
-	{
-		return;
-	}
-
 	// If the mesh or the shaders changed we need to rebind the renderable
-	if(renderable.m_spMesh->m_pRenderData == nullptr ||
+	if(renderable.m_spVertexBuffer->m_pRenderData == nullptr ||
 		renderable.m_spMaterial->m_spVertexShader->m_pRenderData == nullptr ||
 		renderable.m_spMaterial->m_spPixelShader->m_pRenderData == nullptr)
 	{
 		Unbind(renderable);
 	}
 
-	// Mesh
-	if(renderable.m_spMesh->m_pRenderData == nullptr)
+	// Index buffer
+	if(renderable.m_spIndexBuffer)
 	{
-		renderable.m_spMesh->m_pRenderData = CreateMeshRenderData(*renderable.m_spMesh);
-	}
-	else if(renderable.m_spMesh->GetType() == Mesh::EType::Dynamic)
-	{
-		DynamicMesh* pDynamicMesh = static_cast<DynamicMesh*>(renderable.m_spMesh.get());
-		UpdateDynamicMesh(*pDynamicMesh);
+		if(numIndices > renderable.m_spIndexBuffer->GetNumIndices())
+		{
+			// Use all the available indices
+			numIndices = renderable.m_spIndexBuffer->GetNumIndices() - indexOffset;
+		}
+
+		if(numIndices == 0)
+		{
+			// Nothing to render
+			return;
+		}
+
+		if(renderable.m_spIndexBuffer->m_pRenderData == nullptr)
+		{
+			renderable.m_spIndexBuffer->m_pRenderData = CreateIndexBufferRenderData(*renderable.m_spIndexBuffer);
+		}
+		else if(renderable.m_spIndexBuffer->GetFlags() & DeviceBuffer::DIRTY)
+		{
+			UpdateDeviceBuffer(*renderable.m_spIndexBuffer);
+		}
+
+		if(m_pActiveIndexBuffer != renderable.m_spIndexBuffer.get())
+		{
+			SetIndexBuffer(*renderable.m_spIndexBuffer);
+			m_pActiveIndexBuffer = renderable.m_spIndexBuffer.get();
+		}
 	}
 
-	if(m_pActiveMesh != renderable.m_spMesh.get())
+	// Vertex buffer
+	if(numVertices > renderable.m_spVertexBuffer->GetNumVertices())
 	{
-		SetMesh(*renderable.m_spMesh);
-		m_pActiveMesh = renderable.m_spMesh.get();
+		// Use all the available vertices
+		numVertices = renderable.m_spVertexBuffer->GetNumVertices() - vertexOffset;
+	}
+
+	if(numVertices == 0)
+	{
+		// Nothing to render
+		return;
+	}
+
+	if(renderable.m_spVertexBuffer->m_pRenderData == nullptr)
+	{
+		renderable.m_spVertexBuffer->m_pRenderData = CreateVertexBufferRenderData(*renderable.m_spVertexBuffer);
+	}
+	else if(renderable.m_spVertexBuffer->GetFlags() & DeviceBuffer::DIRTY)
+	{
+		UpdateDeviceBuffer(*renderable.m_spVertexBuffer);
+	}
+
+	if(numVertices == UINT32_MAX)
+	{
+		// Use all the vertices
+		numVertices = renderable.m_spVertexBuffer->GetNumVertices() - vertexOffset;
+	}
+
+	if(m_pActiveVertexBuffer != renderable.m_spVertexBuffer.get())
+	{
+		SetVertexBuffer(*renderable.m_spVertexBuffer);
+		m_pActiveVertexBuffer = renderable.m_spVertexBuffer.get();
 	}
 
 	// Vertex shader
@@ -153,21 +186,36 @@ void Render::Unbind(Renderable& renderable)
 	renderable.m_pRenderData = nullptr;
 }
 
-void Render::Unbind(Mesh& mesh)
+void Render::Unbind(IndexBuffer& indexBuffer)
 {
-	if(mesh.m_pRenderData == nullptr)
+	if(indexBuffer.m_pRenderData == nullptr)
 	{
 		return;
 	}
 
-	if(m_pActiveMesh == &mesh)
+	if(m_pActiveIndexBuffer == &indexBuffer)
 	{
-		m_pActiveMesh = nullptr;
+		m_pActiveIndexBuffer = nullptr;
 	}
 
-	OnDestroyMeshRenderData(mesh.m_pRenderData);
-	delete mesh.m_pRenderData;
-	mesh.m_pRenderData = nullptr;
+	delete indexBuffer.m_pRenderData;
+	indexBuffer.m_pRenderData = nullptr;
+}
+
+void Render::Unbind(VertexBuffer& vertexBuffer)
+{
+	if(vertexBuffer.m_pRenderData == nullptr)
+	{
+		return;
+	}
+
+	if(m_pActiveVertexBuffer == &vertexBuffer)
+	{
+		m_pActiveVertexBuffer = nullptr;
+	}
+
+	delete vertexBuffer.m_pRenderData;
+	vertexBuffer.m_pRenderData = nullptr;
 }
 
 void Render::Unbind(Shader& shader)
